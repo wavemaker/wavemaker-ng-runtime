@@ -1,0 +1,163 @@
+/********************************************************************************
+*********************** Segmented Control classes ******************************
+*********************************************************************************/
+.app-segmented-control {
+  position: relative;
+  overflow: hidden;
+  .width-height();
+  > .btn-group.btn-group-justified {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: 99;
+    overflow: hidden;
+    .app-icon {
+      width: auto;
+    }
+    a.btn {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  &.bottom {
+    > .btn-group {
+      bottom: 0;
+    }
+  }
+  .app-segments-container {
+    .width-height();
+    overflow: hidden;
+    position: relative;
+    > ul {
+      .width-height();
+      white-space: nowrap;
+      margin: 0;
+      padding: 0;
+      > li.app-segment-content{
+        display: inline-block;
+        white-space: normal;
+        .width-height();
+        padding-top: 3em;
+        position: relative;
+        vertical-align: top;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+    }
+  }
+}
+/********************************************************************************
+*********************** Mobile File Selector classes ******************************
+*********************************************************************************/
+.app-file-browser {
+  .modal-backdrop{
+    z-index: 10000;
+  }
+  .modal-dialog {
+    height: 100%;
+
+    .modal-content {
+      height: 95%;
+
+      .modal-header {
+        height : 4em;
+      }
+      .modal-body {
+        .calc('height', ~"calc(100% - 9em)");
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 100%;
+      }
+      .modal-footer {
+        height : 5em;
+      }
+    }
+  }
+
+  .selected-file-button{
+    font-size: 2em;
+  }
+
+  .file-info-box {
+    width: 25%;
+    display: inline-block;
+    padding: 5px;
+    height: 7em;
+    overflow: hidden;
+
+    .file-info {
+      overflow: hidden;
+      padding: 5px;
+      text-align: center;
+
+      .file-icon {
+        display: block;
+        text-align: center;
+        font-size: 4em;
+      }
+      .file-name {
+        padding-left: 10px;
+        font-size: 0.9em;
+        height: 3.2em;
+        overflow: hidden;
+        display: block;
+      }
+    }
+  }
+}
+/******************************** Cordova styles ****************************************/
+.wm-app {
+  /**********************************Date, time widgets*****************************/
+  &.cordova {
+    input[type='date'], input[type='datetime-local'], input[type='time'] {
+      &.ng-empty:before {
+        content: attr(placeholder);
+      }
+    }
+  }
+}
+.mobile-app-page {
+  @app-page-content-loader-fg-color: rgba(0,0,0,0.5);
+  .app-page-content {
+    .app-page-content-loader {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      overflow: hidden;
+      .loader {
+        height: 0;
+        width: 100%;
+        &:before {
+          display: block;
+          position: absolute;
+          content: "";
+          width: 10%;
+          height: 2pt;
+          background-color: @app-page-content-loader-fg-color;
+          -webkit-animation: toAndFro 2s linear 0.1s infinite;
+          animation: toAndFro 2s linear 0.1s infinite;
+        }
+      }
+    }
+  }
+/****************************************************************************************************
+*****************************************File upload ***************************************************
+******************************************************************************************************/
+  .app-fileupload .file-upload {
+    .file-upload-status .upload-file-list  {
+      .file-details {
+        .file-detail{
+            .progress {
+              height: 5px;
+              margin: 0.5em;
+            }
+        }
+      }
+    }
+  }
+  .form-group input[type=file] {
+    width : 100%;
+  }
+}

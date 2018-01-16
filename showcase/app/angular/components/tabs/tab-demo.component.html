@@ -1,0 +1,39 @@
+<div class="col-md-9">
+    <wm-tabs [tabsposition]="tabsposition" [height]="height" [defaultpaneindex]="defaultPaneIndex">
+        <wm-tabpane [title]="'Tab1'">
+            <wm-datetime></wm-datetime>
+        </wm-tabpane>
+        <wm-tabpane [title]="'Tab2'"></wm-tabpane>
+        <wm-tabpane [title]="'Tab3'"></wm-tabpane>
+    </wm-tabs>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Default Pane Index
+        </div>
+        <div class="property-control col-md-8">
+            <input type="number" [(ngModel)]="defaultPaneIndex" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Tab position
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="tabsposition">
+                <option *ngFor="let position of tabPositions" [value]="position">{{position}}</option>
+            </select>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+<div class="col-md-9">
+    <wm-select
+            [dataset]="options"
+            [datafield]="datafield"
+            [displayfield]="displayfield"
+            [width]="width"
+            [required]="required"
+            [disable]="disable"
+            [height]="height"
+            [hint]="hint"
+            [tabindex]="tabindex"
+            [fontsize]="fontsize"
+            [multiple]="multiple"
+            [color]="color"
+            [show]="show"
+            [shortcutkey]="h"
+            #x
+    ></wm-select>
+    <div class="row clearfix">
+        <div class="col-sm-1">datavalue:</div>
+        <div class="col-sm-11">{{x._model_ | json}}</div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-sm-1">displayvalue:</div>
+        <div class="col-sm-11">{{x.displayValue}}</div>
+    </div>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Data field
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="datafield">
+                <option *ngFor="let key of dataFieldKeys" [value]="key">{{key}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Display field
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="displayfield">
+                <option *ngFor="let key of keys" [value]="key">{{key}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Hint
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="hint" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="width" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Font size
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="fontsize" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Color
+        </div>
+        <div class="property-control col-md-8">
+            <input type="color" [(ngModel)]="color" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="show" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Required
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="required" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Multiple
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="multiple" />
+        </div>
+    </div>
+</div>

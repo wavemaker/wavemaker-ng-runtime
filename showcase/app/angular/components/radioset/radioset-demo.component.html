@@ -1,0 +1,127 @@
+<div class="col-md-9">
+    <wm-radioset
+            [tabindex]="tabindex"
+            [width]="width"
+            [height]="height"
+            [layout]="layout"
+            [required]="required"
+            [disabled]="disable"
+            [readonly]="readonly"
+            [show]="show"
+            [dataset]="radioOptions"
+            [datafield]="datafield"
+            [displayfield]="displayfield"
+            [displayexpression]="displayexpression"
+            [orderby]="orderby"
+            [datavalue]="datavalue"
+            [margin]="margin"
+            #x
+    ></wm-radioset>
+    <div class="row clearfix">
+        <div class="col-sm-1">datavalue:</div>
+        <div class="col-sm-11">{{x.datavalue | json}}</div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-sm-1">displayvalue:</div>
+        <div class="col-sm-11">{{x.displayValue}}</div>
+    </div>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Data field
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="datafield">
+                <option *ngFor="let key of dataFieldKeys" [value]="key">{{key}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Display field
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="displayfield">
+                <option *ngFor="let key of keys" [value]="key">{{key}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Display Expression
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="displayexpression" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Layout
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="layout">
+                <option *ngFor="let layout of layouts" [value]="layout">{{layout}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="width" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Margin
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="margin" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="show" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Required
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="required" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Disable
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="disable" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Readonly
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="readonly" />
+        </div>
+    </div>
+</div>
+

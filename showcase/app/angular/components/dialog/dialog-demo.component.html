@@ -1,0 +1,62 @@
+<div class="col-md-9">
+  <wm-dialog dialogtype="design-dialog" modal="true" [title]="title" [iconclass]="iconclass" [closable]="closable" name="dialog1" #dialog [class]="class">
+    <wm-layoutgrid name="layoutgrid2">
+      <wm-gridrow name="gridrow3_1">
+        <wm-gridcolumn columnwidth="6" name="gridcolumn3_1">
+          <wm-label padding="unset 0.5em" caption="Name" name="label3"></wm-label>
+        </wm-gridcolumn>
+        <wm-gridcolumn columnwidth="6" name="gridcolumn4">
+          <wm-label padding="unset 0.5em" caption="Eric" name="label4"></wm-label>
+        </wm-gridcolumn>
+      </wm-gridrow>
+      <wm-gridrow name="gridrow4">
+        <wm-gridcolumn columnwidth="6" name="gridcolumn5">
+          <wm-label padding="unset 0.5em" caption="Title" name="label5"></wm-label>
+        </wm-gridcolumn>
+        <wm-gridcolumn columnwidth="6" name="gridcolumn6">
+          <wm-label padding="unset 0.5em" caption="Engineer" name="label6"></wm-label>
+        </wm-gridcolumn>
+      </wm-gridrow>
+    </wm-layoutgrid>
+    <wm-dialogactions name="dialogactions1">
+      <wm-button class="btn-primary" caption="Close" actiontype="closeDialog" name="button4"></wm-button>
+    </wm-dialogactions>
+  </wm-dialog>
+  <wm-button caption="Open Dialog" class="btn-primary" (click)="dialog.open()"></wm-button>
+</div>
+<div class="col-md-3 properties">
+  <h4 class="property-header">Properties</h4>
+  <hr>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">Title</label>
+    </div>
+    <div class="property-control col-md-8">
+      <input type="text" [(ngModel)]="title" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">Icon class</label>
+    </div>
+    <div class="property-control col-md-8">
+      <input type="text" [(ngModel)]="iconclass" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">Class</label>
+    </div>
+    <div class="property-control col-md-8">
+      <input type="text" [(ngModel)]="class" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">Closable</label>
+    </div>
+    <div class="property-control col-md-8">
+      <input type="checkbox" [(ngModel)]="closable"/>
+    </div>
+  </div>
+</div>

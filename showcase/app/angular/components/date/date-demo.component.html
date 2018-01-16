@@ -1,0 +1,81 @@
+<div class="col-md-9">
+    <wm-date [datavalue]="datavalue"
+             [mindate]="mindate"
+             [maxdate]="maxdate"
+             [disabled]="disabled"
+             [showweeks]="showweeks"
+             [onChange]="onModelChange"
+             [datepattern]="datepattern"
+             [outputformat]="outputformat"
+             [show]="show"
+             #wmDate></wm-date>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Data value
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="datavalue" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Min Date
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="mindate" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Max Date
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="maxdate" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Disabled
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="disabled" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show Weeks
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="showweeks" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Date Pattern
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="datepattern" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Output Format
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="outputformat" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show
+        </div>
+        <div class="property-control col-md-8">
+            <input type="boolean" [(ngModel)]="show" />
+        </div>
+    </div>
+</div>
+

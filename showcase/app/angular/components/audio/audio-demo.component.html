@@ -1,0 +1,39 @@
+<div class="col-md-9">
+    <wm-audio [controls]="controls" [mp3format]="mp3format" [loop]="loop" [muted]="muted"></wm-audio>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Controls
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="controls" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Loop
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="loop" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Muted
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="muted" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Mp3Format
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="mp3format" />
+        </div>
+    </div>
+</div>

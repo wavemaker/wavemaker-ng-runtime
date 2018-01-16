@@ -1,0 +1,68 @@
+<div class="col-md-9">
+  <wm-calendar [height]="height"
+               [onViewrender]="onViewRender"
+               [view]="selectedView"
+               [selectionmode]="selectionMode"
+               [onSelect]="onSelect"
+               [eventtitle]="eventTitle"
+               [dataset]="calendarDataset"
+               [calendartype]="calendarType"
+               [onEventclick]="onEventclick"
+               [onEventdrop]="onEventDrop">
+
+  </wm-calendar>
+</div>
+<div class="col-md-3 properties">
+  <h4 class="property-header">Properties</h4>
+  <hr>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">Height</label>
+    </div>
+    <div class="property-control col-md-8">
+      <input type="text" [(ngModel)]="height" class="app-textbox form-control"/>
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">View</label>
+    </div>
+    <div class="property-control col-md-8">
+      <select [(ngModel)]="selectedView" class="app-select form-control">
+        <option value="month">Month</option>
+        <option value="week">Week</option>
+        <option value="day">Day</option>
+      </select>
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">Selection Mode</label>
+    </div>
+    <div class="property-control col-md-8">
+      <select [(ngModel)]="selectionMode" class="app-select form-control">
+        <option value="none">None</option>
+        <option value="single">Single</option>
+        <option value="multiple">Multiple</option>
+      </select>
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      <label class="app-label control-label">Calendar Type</label>
+    </div>
+    <div class="property-control col-md-8">
+      <select [(ngModel)]="calendarType" class="app-select form-control">
+        <option value="basic">Basic</option>
+        <option value="agenda">Agenda</option>
+        <option value="list">List</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+

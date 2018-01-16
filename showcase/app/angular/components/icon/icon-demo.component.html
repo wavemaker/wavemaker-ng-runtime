@@ -1,0 +1,33 @@
+<div class="col-md-9">
+    <wm-icon [caption]="caption" [iconclass]="iconclass" [iconposition]="iconposition"></wm-icon>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Caption
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="caption" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Icon
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="iconclass" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Icon Position
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="iconposition" />
+        </div>
+    </div>
+</div>
+
+

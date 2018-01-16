@@ -1,0 +1,40 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    margin: 0 !important;
+}
+
+.container-fluid {
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.properties {
+    position: fixed;
+    right: -1px;
+    top: 52px;
+    bottom: 0;
+    width: 250px !important;
+    background-color: #3d3c3c;
+    border-right: 1px solid #CFDBE2;
+    box-shadow: -1px 0 0 #3d3c3c;
+    color: #b3b3b3;
+}
+
+.properties h6, .properties h5, .properties h4, .properties h3, .properties h2, .properties h1 {
+    color: inherit !important;
+    padding: 1px 10px;
+}
+
+.property {
+    padding: 10px;
+}
+
+.property-text {
+    word-break: break-all;
+}
+
+.property-control input{
+    color: black;
+}

@@ -1,0 +1,79 @@
+<div class="col-md-9">
+    <wm-spinner [type]="spinnerType"
+                [animation]="animation"
+                [image]="imageURL"
+                [imagewidth]="imageWidth"
+                [imageheight]="imageHeight"
+                [iconsize]="iconSize"
+                [iconclass]="iconClass"
+                [caption]="messageContent">
+    </wm-spinner>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Type
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="spinnerType" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Animation
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="animation" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Image
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="imageURL" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Image Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="imageWidth" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Image Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="imageHeight" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Icon Class
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="iconClass" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Icon Size
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="iconSize" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Caption
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="messageContent" />
+        </div>
+    </div>
+</div>

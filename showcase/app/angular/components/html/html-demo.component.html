@@ -1,0 +1,58 @@
+<div class="col-md-9">
+    <wm-html [fontsize]="fontsize"
+             [fontunit]="fontunit"
+             [color]="color"
+             [fontstyle]="fontstyle"
+             [fontweight]="fontweight"
+             [backgroundcolor]="backgroundcolor">
+        <div>
+            <span>Hello world!</span>
+        </div>
+    </wm-html>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Font size
+        </div>
+        <div class="property-control col-md-8">
+            <input type="number" [(ngModel)]="fontsize" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Font unit
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="fontunit" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Font style
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="fontstyle" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Background color
+        </div>
+        <div class="property-control col-md-8">
+            <input type="color" [(ngModel)]="backgroundcolor" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Color
+        </div>
+        <div class="property-control col-md-8">
+            <input type="color" [(ngModel)]="color" />
+        </div>
+    </div>
+</div>
+
+

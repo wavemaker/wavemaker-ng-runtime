@@ -1,0 +1,58 @@
+<div class="col-md-9">
+    <wm-accordion [closeothers]="closeothers" [height]="height" [defaultpaneindex]="defaultpaneindex" [tabindex]="tabindex">
+        <wm-accordionpane [title]="'News'" [subheading]="'14-12-17'">
+            <wm-panel [title]="'Regional'">
+                <wm-button [caption]="'Toggle'"></wm-button>
+                <wm-panel-footer></wm-panel-footer>
+            </wm-panel>
+        </wm-accordionpane>
+        <wm-accordionpane [title]="'Sports'" [subheading]="'14-12-17'">
+            <wm-panel [title]="'Cricket'">
+                <wm-button [caption]="'Toggle'"></wm-button>
+                <wm-panel-footer></wm-panel-footer>
+            </wm-panel>
+        </wm-accordionpane>
+        <wm-accordionpane [title]="'Movies'" [subheading]="'14-12-17'">
+            <wm-panel [title]="'Bollywood'">
+                <wm-button [caption]="'Toggle'"></wm-button>
+                <wm-panel-footer></wm-panel-footer>
+            </wm-panel>
+        </wm-accordionpane>
+    </wm-accordion>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Close others
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="closeothers" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            defaultpaneindex
+        </div>
+        <div class="property-control col-md-8">
+            <input type="number" [(ngModel)]="defaultpaneindex" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            tabindex
+        </div>
+        <div class="property-control col-md-8">
+            <input type="number" [(ngModel)]="tabindex" />
+        </div>
+    </div>
+</div>

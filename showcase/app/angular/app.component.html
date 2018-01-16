@@ -1,0 +1,76 @@
+<div class="container">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+              <a class="navbar-brand" href="#"> Wave Components</a>
+          </div>
+        </div><!-- /.container-fluid -->
+      </nav>
+    <div class="row clearfix">
+        <nav class="navbar navbar-default sidebar app-left-panel">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="javascript:void(0)" (click)="toggleNav('basic')"><i class="glyphicon" [ngClass]="{'glyphicon-chevron-down': !toggleConfig.basic, 'glyphicon-chevron-right': toggleConfig.basic}"></i>Basic</a>
+                    <ul class="nav navbar-nav sub-menu" [ngClass]="{'active': !toggleConfig.basic}" [style.opacity]="toggleConfig.basic ? '0': '1'" [style.visibility]="toggleConfig.basic ? 'hidden': 'visible'">
+                        <li routerLinkActive="active"><a [routerLink]="['./anchor']">Anchor <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./icon']">Icon <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./label']">Label <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./picture']">Picture <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./message']">Message <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./iframe']">Iframe <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./spinner']">Spinner <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./menu']">Menu <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./dialog']">Dialog <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" (click)="toggleNav('input')"><i class="glyphicon" [ngClass]="{'glyphicon-chevron-down': !toggleConfig.input, 'glyphicon-chevron-right': toggleConfig.input}"></i>Input</a>
+                    <ul class="nav navbar-nav sub-menu" [ngClass]="{'active': !toggleConfig.input}" [style.opacity]="toggleConfig.input ? '0': '1'" [style.visibility]="toggleConfig.input ? 'hidden': 'visible'">
+                        <li routerLinkActive="active"><a [routerLink]="['./audio']">Audio <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./video']">Video <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./button']">Button <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./buttongroup']">Button Group<span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./text']">Text <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./textarea']">Textarea<span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./select']">Select <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./radioset']">Radioset <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./switch']">Switch <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./checkbox']">Checkbox <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./checkboxset']">Checkboxset <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./html']">HTML <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./date']">Date <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./time']">Time <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./datetime']">Datetime <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./calendar']">Calendar <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./rating']">Rating <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./search']">Search <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./currency']">Currency <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./colorpicker']">Colorpicker <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./slider']">Slider <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./toggle']">Toggle <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" (click)="toggleNav('layout')"><i class="glyphicon" [ngClass]="{'glyphicon-chevron-down': !toggleConfig.layout, 'glyphicon-chevron-right': toggleConfig.layout}"></i>Layouts</a>
+                    <ul class="nav navbar-nav sub-menu" [ngClass]="{'active': !toggleConfig.layout}" [style.opacity]="toggleConfig.layout ? '0': '1'" [style.visibility]="toggleConfig.layout ? 'hidden': 'visible'">
+                        <li routerLinkActive="active"><a [routerLink]="['./layoutgrid']">Layoutgrid <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./tabs']">Tabs <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./panel']">Panel <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./accordion']">Accordion <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./container']">Container <span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./tile']">Tile <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" (click)="toggleNav('datawidgets')"><i class="glyphicon" [ngClass]="{'glyphicon-chevron-down': !toggleConfig.datawidgets, 'glyphicon-chevron-right': toggleConfig.datawidgets}"></i>Data Widgets</a>
+                    <ul class="nav navbar-nav sub-menu" [ngClass]="{'active': !toggleConfig.datawidgets}" [style.opacity]="toggleConfig.datawidgets ? '0': '1'" [style.visibility]="toggleConfig.datawidgets ? 'hidden': 'visible'">
+                        <li routerLinkActive="active"><a [routerLink]="['./pagination']">Pagination<span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </li>
+              </ul>
+          </nav>
+          <div class="main-content">
+              <router-outlet></router-outlet>
+          </div>
+    </div>
+</div>

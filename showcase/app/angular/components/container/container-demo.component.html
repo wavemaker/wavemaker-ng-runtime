@@ -1,0 +1,63 @@
+<div class="col-md-9">
+    <wm-container
+            [width]="width"
+            [height]="height"
+            [borderstyle]= "borderstyle"
+            [borderwidth]="borderwidth"></wm-container>
+  </div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+          <div class="property-text col-md-4">
+            Caption
+          </div>
+          <div class="property-control col-md-8">
+                <input type="text" [(ngModel)]="caption" />
+          </div>
+    </div>
+    <div class="property row">
+          <div class="property-text col-md-4">
+            Width
+          </div>
+          <div class="property-control col-md-8">
+                <input type="text" [(ngModel)]="width" />
+          </div>
+    </div>
+    <div class="property row">
+          <div class="property-text col-md-4">
+            Height
+          </div>
+          <div class="property-control col-md-8">
+                <input type="text" [(ngModel)]="height" />
+          </div>
+    </div>
+    <div class="property row">
+          <div class="property-text col-md-4">
+            Horizontal Align
+          </div>
+          <div class="property-control col-md-8">
+                <select [(ngModel)]="textalign">
+                      <option *ngFor="let align of textalignstyle" value="{{align.key}}">{{align.value}}</option>
+                </select>
+          </div>
+    </div>
+    <div class="property row">
+          <div class="property-text col-md-4">
+            Border Width:
+          </div>
+          <div class="property-control col-md-8">
+                <input type="text" [(ngModel)]="borderwidth" />
+          </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+          Border Style
+        </div>
+        <div class="property-control col-md-8">
+              <select [(ngModel)]="borderstyle">
+                    <option *ngFor="let style of borderstyles" value="{{style.key}}">{{style.value}}</option>
+              </select>
+        </div>
+    </div>
+</div>

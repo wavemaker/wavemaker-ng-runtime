@@ -1,0 +1,70 @@
+<div class="col-md-9">
+    <wm-panel (onClose)="panelClosed($event)" [title]="title" #panel [subheading]="subheading" [iconclass]="iconclass" [actions]="nodes" [collapsible]="collapsible" [enablefullscreen]="enablefullscreen" [closable]="closable" [expanded]="expanded">
+        <wm-button [class]="'btn-info'" [caption]="'Toggle fullscreen'" (click)="panel.toggleFullScreen($event)"></wm-button>
+        <wm-panel-footer>
+            <wm-label [class]="'text-muted'" [caption]="'Additional Info'"></wm-label>
+        </wm-panel-footer>
+    </wm-panel>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Title
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="title" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Subheading
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="subheading" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            iconclass
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="iconclass" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Collapsible
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="collapsible" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Enable Fullscreen
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="enablefullscreen" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Closable
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="closable" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Expanded
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="expanded" />
+        </div>
+    </div>
+</div>
+
+

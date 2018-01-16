@@ -1,0 +1,95 @@
+<div class="col-md-9">
+    <wm-checkbox
+            [type]="'toggle'"
+            [width]="width"
+            [height]="height"
+            [required]="required"
+            [hint]="hint"
+            [disable]="disable"
+            [readonly]="readonly"
+            [show]="show"
+            [shortcutkey]="shortcutkey"
+            [(datavalue)]="datavalue"
+            [checkedvalue]="checkedvalue"
+            [uncheckedvalue]="uncheckedvalue"
+            #toggle
+    ></wm-checkbox>
+    {{'datavalue = '+ toggle.datavalue}}
+  </div>
+  <div class="col-md-3 properties">
+      <h4 class="property-header">Properties</h4>
+      <hr>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Width
+          </div>
+          <div class="property-control col-md-8">
+              <input type="text" [(ngModel)]="width" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Height
+          </div>
+          <div class="property-control col-md-8">
+              <input type="text" [(ngModel)]="height" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Hint
+          </div>
+          <div class="property-control col-md-8">
+              <input type="text" [(ngModel)]="hint" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Required
+          </div>
+          <div class="property-control col-md-8">
+              <input type="checkbox" [(ngModel)]="required" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Disabled
+          </div>
+          <div class="property-control col-md-8">
+              <input type="checkbox" [(ngModel)]="disable" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Readonly
+          </div>
+          <div class="property-control col-md-8">
+              <input type="checkbox" [(ngModel)]="readonly" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Datavalue
+          </div>
+          <div class="property-control col-md-8">
+              <input type="text" [(ngModel)]="datavalue" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              Checked Value
+          </div>
+          <div class="property-control col-md-8">
+              <input type="text" [(ngModel)]="checkedvalue" />
+          </div>
+      </div>
+      <div class="property row">
+          <div class="property-text col-md-4">
+              UnChecked Value
+          </div>
+          <div class="property-control col-md-8">
+              <input type="text" [(ngModel)]="uncheckedvalue" />
+              {{uncheckedvalue}}
+          </div>
+      </div>
+</div>

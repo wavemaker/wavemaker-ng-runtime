@@ -1,0 +1,113 @@
+
+<div class="col-md-9">
+    <wm-currency
+            [currency]="currency"
+            [step]="5"
+            [minvalue]="minvalue"
+            [maxvalue]="maxvalue"
+            [datavalue]="datavalue"
+            [required]="required"
+            [disable]="disable"
+            [width]="width"
+            [height]="height"
+            [hint]="hint"
+            [tabindex]="tabindex"
+            [color]="color"
+            [show]="show"
+            [fontsize]="fontsize"
+            [shortcutkey]="'h'"
+            [backgroundcolor]="backgroundcolor"
+            [textalign]="textalign"></wm-currency>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Datavalue
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="datavalue" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Currency
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="currency" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Hint
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="hint" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="width" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Font size
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="fontsize" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-xs-4">
+            Color
+        </div>
+        <div class="property-control col-xs-8">
+            <input type="color" [(ngModel)]="color" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-xs-4">
+            Background Color
+        </div>
+        <div class="property-control col-xs-8">
+            <input type="color" [(ngModel)]="backgroundcolor" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-xs-4">
+            Show
+        </div>
+        <div class="property-control col-xs-8">
+            <input type="checkbox" [(ngModel)]="show" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-xs-4">
+            Disable
+        </div>
+        <div class="property-control col-xs-8">
+            <input type="checkbox" [(ngModel)]="disable" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-xs-4">
+            Required
+        </div>
+        <div class="property-control col-xs-8">
+            <input type="checkbox" [(ngModel)]="required" />
+        </div>
+    </div>
+</div>

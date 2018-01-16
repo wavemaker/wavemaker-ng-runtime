@@ -1,0 +1,86 @@
+<div class="col-md-9">
+    <wm-time
+            #wmTime
+            [datavalue]="datavalue"
+            [timepattern]="timepattern"
+            [outputformat]="outputformat"
+            [hourstep]="hourstep"
+            [minutestep]="minutestep"
+            [showseconds]="showseconds"
+            [ismeridian]="ismeridian"
+            [disabled]="disabled"></wm-time>
+    <div class="row clearfix">
+        <div class="col-sm-1">Datavalue:</div>
+        <div class="col-sm-11">{{wmTime.datavalue}}</div>
+    </div>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Data value
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="datavalue" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Time pattern
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="timepattern" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Output format
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="outputformat" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Hour step
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="hourstep" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Minute step
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="minutestep" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show seconds
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="showseconds" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Is Meridian
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="ismeridian" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Disabled
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="disabled" />
+        </div>
+    </div>
+</div>
+
+

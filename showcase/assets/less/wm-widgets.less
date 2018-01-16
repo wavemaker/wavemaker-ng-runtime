@@ -1,0 +1,3329 @@
+/*Returns Width and Height of an element*/
+.width-height(@width: 100%, @height: 100%) {
+  width: @width;
+  height: @height;
+}
+
+/*To show ellipsis for longer text*/
+.ellipsis(@width) {
+  width: @width;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  -ms-border-radius: @radius;
+  -o-border-radius: @radius;
+  border-radius: @radius;
+}
+
+//Use variables in property names (with hack)
+.calc(@prop, @val) {
+  Ignore: ~"a;@{prop}: -webkit-@{val}";
+  Ignore: ~"a;@{prop}: -moz-@{val}";
+  Ignore: ~"a;@{prop}: -ms-@{val}";
+  Ignore: ~"a;@{prop}: -o-@{val}";
+  Ignore: ~"a;@{prop}: @{val}";
+}
+
+/*The text of the element and sub-elements will appear as if they cannot be selected.*/
+.user-select-none() {
+  -webkit-user-select: none; /* Chrome all / Safari all */
+  -moz-user-select: none; /* Firefox all */
+  -ms-user-select: none; /* IE 10+ */
+  -o-user-select: none; /*Opera*/
+  user-select: none;
+}
+
+.ie-background-none() {
+  /* For IE 6 - 7 */
+  filter: progid:DXImageTransform.Microsoft.Shadow(enabled=false);
+  /* For IE8, IE9 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(enabled=false)";
+
+}
+/*Setting background to none does not remove gradient background in IE9. Hence, another mixin is used to solve this.
+This mixin removes background from IE & all other browsers so that they are consistent */
+.remove-background() {
+  background: none;
+  .ie-background-none();
+}
+
+/*Background images for studio*/
+.background-image(@image-name, @repeat: no-repeat, @background-position-x: center, @background-position-y: center) {
+  background-image: url("@{wm-image-base-url}/@{image-name}");
+  background-repeat: @repeat;
+  background-position: @background-position-x @background-position-y;
+}
+/*----- named constants -----*/
+@red: #FF0000;
+@white: #FFFFFF;
+@black: #000000;
+
+/*----- Standard constants -----*/
+@app-standard-margin: 8px;
+@app-standard-size: 8;
+@app-standard-size-pixels: unit(@app-standard-size, px);
+@app-standard-padding: 8px;
+@app-standard-border-radius: 4px;
+@app-standard-border-color: #CCCCCC;
+@app-standard-shadow-color: #666666;
+@wm-standard-border-color: rgba(0, 0, 0, 0.1);
+//Following variables are used as mixins are being used & the variables with wm prefix are being called in those mixins
+@wm-image-base-url: "../images";
+
+
+/*----- dialog color variables -----*/
+@app-modal-body-bg-color: #FBFBFB;
+
+
+/*Color for all warning messages*/
+@app-warning-text-color: #FF0000;
+
+/*Color for all type of messages*/
+@wm-app-msg-success-color: #6A8969;
+@wm-app-msg-info-color: #479ED6;
+@wm-app-msg-error-color: #AF4565;
+@wm-app-msg-warning-color: #caad16;
+
+.full-height {
+  height: 100%;
+}
+
+/*------ Spinner variables ------*/
+@wm-app-spinner-bg-color: rgba(0,0,0,.15);
+@wm-app-spinner-msg-bg-color: rgba(256,256,256, 0.5);
+@wm-app-spinner-border-color: #aeaeae;
+
+/*default values on html and body to show full screen*/
+html, body {
+  .width-height();
+}
+/*Define required classes for showing icons*/
+.app-icon {
+  display: inline-block;
+  position: relative;
+}
+
+//Icon widget styles
+.app-icon-wrapper {
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  &[icon-position="right"] {
+    direction: rtl;
+  }
+  .app-icon {
+    vertical-align: middle;
+  }
+  .app-label {
+    vertical-align: middle;
+    margin: 0;
+    text-overflow: ellipsis;
+    max-width: 95%;
+    overflow: hidden;
+  }
+}
+
+/*error message for missing partial*/
+.app-partial-info {
+  text-align: center;
+  .partial-message {
+    padding: 0 .25em;
+    border-radius: 0.25em;
+    border: 1px #9E9D9D solid;
+    text-align: center;
+    background: #575757;
+    color: #fff;
+    display: inline-block;
+  }
+}
+
+/*overrides default toaster properties*/
+.custom-toaster {
+  padding: 0 !important;
+  width: 100% !important;
+  color: #333;
+}
+
+/*====================================================================================================================
+  START - Widgets (the elements that are dragged into the canvas by user) Styling
+  The prefix "app-" represents all the widgets that are dragged onto the canvas.
+====================================================================================================================*/
+/*******************************************************************************
+*********************************Mobile Support*********************************
+*******************************************************************************/
+#wm-mobile-display {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  z-index: -1000;
+  display: none;
+  top: 0;
+}
+/********************************************************************************
+*********************************Search Widget*****************************************
+*********************************************************************************/
+.app-search-dropdown() {
+  width: auto;
+  text-align: left;
+  z-index: 2000 !important; /*Over-write bootstrap style so that search results appear on top of any content*/
+  max-height: 200px;
+  overflow-y: auto;
+  span {
+    padding-left: 4px;
+    text-overflow: ellipsis;
+    width: auto;
+    display: inline-block;
+    overflow: hidden;
+    line-height: 1em;
+    max-width: 100%;
+  }
+  img {
+    line-height: 1em;
+  }
+  .status {
+    padding: 8px 15px;
+    text-align: center;
+    font-size: 12px;
+    background-color: rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(0,0,0,0.1);
+    span {
+      overflow: initial;
+    }
+  }
+}
+.app-search {
+  width: 30em;
+  position: relative;
+  vertical-align: middle;
+  input {
+    height: 100%;
+    &.model-holder {
+      width: 0;
+      height: 0;
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      z-index: -1000;
+      opacity: 0;
+    }
+  }
+  .app-search-button {
+    .remove-background();
+    border: none;
+    padding: 0;
+    &:focus {
+      outline: none;
+    }
+  }
+  &.dropdown-menu {
+    .app-search-dropdown();
+  }
+  .dropdown-menu {
+    .app-search-dropdown();
+  }
+  .form-control-feedback {
+    right: 3em !important;
+    &.clear-btn, &.back-btn {
+      display: none;
+    }
+  }
+}
+.wm-app {
+  .app-search {
+    [uib-typeahead-popup].dropdown-menu {
+      display: none;
+    }
+  }
+  .app-search.full-screen {
+    &.input-group {
+      width: 100% !important;
+      position: fixed;
+      display: block;
+      background-color: #fff;
+      height: 100%;
+      z-index: 5000;
+      border-radius: 0;
+      top: 0;
+      left: 0;
+      input {
+        padding-left: 2.5em;
+        border-bottom: 1px solid rgba(0,0,0,0.5);
+      }
+    }
+    .input-group-addon {
+      display: none;
+    }
+    .dropdown-menu {
+      display: block;
+      position: relative;
+      width: 100%;
+      .calc('height', ~"calc(100% - 36px)");;
+      overflow: auto;
+      max-height: initial;
+      top: 0 !important;
+    }
+    .clear-btn, .back-btn {
+      right: 0.25em !important;
+      cursor: pointer;
+      pointer-events: initial;
+      display: block;
+      z-index: 5001;
+    }
+    .back-btn {
+      left: 0;
+    }
+  }
+}
+/*To override the bootstrap style to app-search class, specificity has been increased*/
+.wm-app .input-group.app-search {
+  display: inline-table;
+}
+
+/*To prevent the file upload from breaking in Firefox*/
+.wm-app input[type="file"] {
+  padding: 0;
+}
+
+/********************************************************************************
+*********************************Loader Widget*****************************************
+*********************************************************************************/
+.app-spinner {
+  .width-height();
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  text-align: center;
+  background-color: @wm-app-spinner-bg-color;
+  &.spinner-transparent {
+    background-color: transparent;
+    .spinner-message {
+      background-color: transparent;
+      border: none;
+    }
+  }
+  .spinner-messages {
+    p {
+      text-align: left;
+      margin:0 0.4em;
+    }
+    margin: 0;
+  }
+  &.app-page-switch {
+    .spinner-image {
+      color: #888;
+    }
+    .spinner-message {
+      background-color: transparent;
+      border: transparent;
+    }
+  }
+  .spinner-message {
+    position: relative;
+    top: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5em;
+    background-color: @wm-app-spinner-msg-bg-color;
+    border: 1px @wm-app-spinner-border-color solid;
+    display: inline-table;
+    border-collapse: separate;
+    border-radius: 0.25em;
+    /* this is fix for spinner overflow issue when height of the window is changed */
+    -webkit-transform: translate3d(0, 0, 0);
+
+
+    .spinner-messages, .spinner-text, .spinner-image {
+      vertical-align: middle;
+      display: table-cell;
+    }
+    .spinner-image {
+      font-size: 2em;
+      color: #212121;
+    }
+    .spinner-text {
+      text-align: left;
+      padding-left: 0.5em;
+    }
+  }
+}
+
+.infinite {
+  animation-iteration-count: infinite;
+}
+
+/*overriding the position for the spinner in index.html*/
+.global-spinner, [classname=global-spinner] {
+  position: fixed;
+}
+
+//Popover styles
+.app-popover {
+  min-width: 50px;
+  min-height: 50px;
+  padding: 0;
+  .popover-content {
+    .width-height(100%, 100%);
+    overflow: auto;
+    padding: 0;
+    > div {
+      .width-height(100%, 100%);
+    }
+    .app-partial {
+      overflow: auto;
+    }
+  }
+
+  .popover-title ~ .popover-content {
+    .calc('height', ~"calc(100% - 3em)");
+  }
+
+  &.top,&.bottom{
+    &.bottom-right, &.top-right {
+      > .arrow {
+        left: auto !important;
+        right: 1em !important;
+      }
+    }
+  }
+}
+
+/********************************************************************************
+*********************************Form Elements classes***************************
+*********************************************************************************/
+/** button class**/
+.app-button {
+  position: relative;
+  .btn-caption {
+    margin: 0 0.2em;
+    vertical-align: middle;
+    &:empty {
+      margin: 0;
+    }
+  }
+  //BADGE
+  .badge {
+    position: absolute;
+    top: 9pt;
+    right: 9pt;
+  }
+}
+
+.app-menu {
+  display: inline-block;
+  position: relative;
+  .app-button >.caret, .app-anchor >.caret {
+    border: none !important;
+    margin-top: 0.25em;
+    margin-right: 0.3em;
+    width: 6px;
+    position: relative;
+  }
+  .dropdown-toggle {
+    /**hiding the caret if there is only icon and no caption***/
+    .caption:empty + span + span.caret {
+      display: none;
+    }
+    &.btn {
+      white-space: normal;
+      text-align: inherit;
+    }
+  }
+  &.open {
+    .dropdown-menu {
+      &.horizontal {
+        display: table;
+      }
+    }
+  }
+  .dropdown-menu {
+    z-index: 1040 !important;
+    width: 100%;
+    padding: 0;
+    &.dropinline-menu {
+      position: relative;
+      float: none;
+      min-width: auto;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+      border-bottom-width: 0 !important;
+    }
+    &.horizontal {
+      padding-top: 0;
+      padding-bottom: 0;
+      &.pull-right {
+        left: -100%;
+      }
+      li {
+        display: table-cell;
+      }
+      //Sub menu position
+      .dropdown-submenu:hover {
+        > .dropdown-menu {
+          left: 0;
+          top: 100%;
+          display: table;
+          padding-top: 0;
+          padding-bottom: 0;
+          &.pull-right {
+            right: 0;
+            left: -100%;
+          }
+        }
+      }
+    }
+  }
+  ul > li > a {
+    cursor: pointer;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    .fa {
+      margin-top: 0.25em;
+    }
+  }
+  ul > li > a > i {
+    margin-right: 8px;
+  }
+  .app-anchor {
+    text-decoration: none;
+  }
+  .dropdown-submenu {
+    position: relative;
+    a >.caret {
+      border: none;
+      margin-top: 0.25em;
+      margin-right: 0.3em;
+      width: 6px;
+      position: relative;
+    }
+  }
+  .dropdown-submenu:hover {
+    > .dropdown-menu{
+      &.pull-right{
+        float: right;
+        left: -100%;
+      }
+        display: block;
+        left:100%;
+        top: 0px;
+        margin-top: -2px;
+        margin-left: -2px;
+      &.dropinline-menu {
+        position: relative;
+        float: none;
+        left: 0;
+      }
+
+    }
+    &.pull-left{
+        > .dropdown-menu{
+            display: block;
+            left: -100%;
+            bottom: 0px;
+            margin-bottom: -2px;
+        }
+    }
+  }
+  &.dropup .dropdown-submenu:hover{
+    > .dropdown-menu{
+        display: block;
+        left: 100%;
+        top : auto;
+        bottom: 0px;
+        margin-bottom: -2px;
+        margin-left: -2px;
+      &.pull-right{
+        float: right;
+        left: -100%;
+      }
+    }
+  }
+}
+
+.wm-app .popover.fade.in {
+  max-width : none;
+}
+
+.app-tree {
+  position: relative;
+  .user-select-none();
+  text-decoration: none;
+  overflow: auto;
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    li {
+      position: relative;
+      margin-left: 1em;
+
+      &.leaf-node {
+        margin-left: 2.25em;
+      }
+
+      i {
+       margin-right: 0.25em;
+       font-size: 1em;
+      }
+
+      &.expanded {
+        > ul {
+          display: block;
+        }
+      }
+
+      &.collapsed {
+        > ul {
+          display: none;
+        }
+      }
+
+      &.selected {
+        > i, > span {
+          color: @app-grid-row-selected-color;
+        }
+      }
+
+      i, span {
+        cursor: pointer
+      }
+      span:hover {
+        color: @app-grid-row-selected-color;
+      }
+    }
+  }
+  > ul > li {
+    margin-left: 0;
+    &.leaf-node {
+      margin-left: 1.25em;
+    }
+  }
+}
+
+/**composite container**/
+.app-composite-widget {
+  position: relative;
+}
+
+
+/**  slider class  **/
+.app-slider {
+  width: auto;
+  position: relative;
+  .app-slider-value {
+    display:inline-block;
+    text-align:center;
+  }
+  output {
+    display: inline-block;
+  }
+  .range-input {
+    display: inline-block;
+  }
+
+/***slider customization***/
+
+  @wm-slider-track: #d5cebc;
+  @wm-slider-thumb: #5b89db;
+
+  input[type='range'], input[type='range']::-webkit-slider-runnable-track, input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+  input[type='range'] {
+    color: @wm-slider-thumb;
+    border: solid 0 transparent;
+    background-color: transparent;
+    border-width: 0 1em;
+    padding: 0;
+    width: 100%;
+    height: 2.5em;
+    opacity: .65;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      opacity: .99;
+    }
+    &::-webkit-slider-runnable-track {
+    position: relative;
+    height: 1.25em;
+    background: linear-gradient(@wm-slider-track, @wm-slider-track) no-repeat;
+    background-size: 100% 0.2em;
+    }
+
+    &::-webkit-slider-thumb {
+    position: relative;
+    margin-top: -0.6em;
+    border-radius: 50%;
+    background: currentColor;
+    width: 1.25em;
+    height: 1.25em;
+    }
+
+    /*firefox hack */
+    &::-moz-range-track {
+    height: 1.25em;
+    background: linear-gradient(@wm-slider-track, @wm-slider-track) no-repeat;
+    background-size: 100% 0.2em;
+    }
+
+    &::-moz-range-progress {
+    height: 1.25em;
+    box-shadow: inset 0 0.2em currentColor;
+    }
+    &::-moz-range-thumb {
+    border: none;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translateY(-.58em);
+    width: 1.25em;
+    height: 1.25em;
+    }
+
+    /* ie 10+ hack */
+    &::-ms-track {
+    margin-left: 0.625em;
+    border: none;
+    height: 1.25em;
+    background: linear-gradient(@wm-slider-track, @wm-slider-track) no-repeat;
+    background-size: 100% 0.2em;
+    color: transparent;
+    }
+
+    &::-ms-fill-lower {
+    height: 1.25em;
+    box-shadow: inset 0 0.2em currentColor;
+    background: linear-gradient(transparent 0.125em, transparent 0.125em) no-repeat;
+    }
+
+    &::-ms-thumb {
+    border: none;
+    border-radius: 50%;
+    background: currentColor;
+    width: 1.25em;
+    height: 1.25em;
+    transform: translate(1px, -.58em);
+    }
+    &::-ms-tooltip {
+    display: none;
+    }
+  }
+}
+
+/*label*/
+@app-label-text-color: #333;
+@app-label-text-hover-color: #666;
+.app-label {
+  position: relative;
+  &.required:after {
+    content: "*";
+    color: red;
+    margin-left: unit((@app-standard-size / 4) , px);
+  }
+}
+
+/*text field, text area, select box*/
+@app-input-bg-color: #FFFFFF;
+@app-input-border-color: #A3A3A3;
+@app-input-bg-gradient-start-color: #FFFFFF;
+@app-input-bg-gradient-end-color: #EAEAEA;
+.form-group {
+  /*supporting the old projects*/
+  .form-control-static + .app-chips li:last-child  {
+    width: 100%;
+  }
+  .form-control-static + .form-control, .form-control-static + .form-control + .help-block, .form-control-static + li:last-child > .app-chip-input, .form-control-static + .input-group  {
+    width: 75%;
+    margin: 0;
+  }
+}
+.app-textbox, .app-textarea, .app-select {
+  max-width: 100%;
+  position: relative;
+/*Style for text-boxes with erroneous input*/
+  &.error {
+    border: 1px solid @red;
+  }
+}
+
+/*Style for select-locale widget*/
+.select-locale.form-control.app-select {
+  width: auto;
+}
+
+.app-select option[disabled]:first-child {
+  display: none;
+}
+
+/**checkbox set**/
+.app-checkboxset, .app-radioset {
+  overflow: auto;
+  li {
+    label {
+      vertical-align: middle;
+    }
+    input[type="checkbox"], input[type="radio"] {
+      position: relative;
+      margin-right: .5em;
+    }
+  }
+  &.inline {
+    li {
+      display: inline-block;
+      margin-right: 1em;
+      * {
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+/**checkbox **/
+.app-checkbox ,.app-checkboxset, .app-radioset, .app-radio, .app-anchor, .app-html-container, .app-currency, .app-textarea, .app-timeinput {
+  position: relative;
+  max-width: 100%;
+}
+/**Style for setting required * on checkbox label, when title is not given for form field**/
+[widget="checkbox"][required="required"]:not([displayname]){
+  .app-checkbox {
+    label.required:after {
+      content: "*";
+      color: red;
+      margin-left: unit((@app-standard-size / 4) , px);
+    }
+  }
+}
+.app-anchor {
+  cursor: pointer;
+  display: inline-block;
+  //BADGE
+  .anchor-caption {
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .badge {
+    position: absolute;
+    right: 2px;
+  }
+  .app-icon {
+    text-decoration: none;
+  }
+  &:hover, &:focus, .active {
+    .app-icon {
+      text-decoration: none;
+    }
+  }
+}
+
+.radio.app-radio, .app-checkbox.checkbox {
+  display: inline-block;
+  label {
+    .ellipsis(100%);
+    > * {
+      vertical-align: middle;
+    }
+    input:focus{
+      outline: 1px solid #1794ef !important;
+    }
+  }
+  .caption {
+    display: inline-block;
+    height: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+  }
+}
+/****************************************Toggle classes******************************************/
+.app-toggle.checkbox {
+  label {
+    width: 60px;
+    height: 32px;
+    overflow: hidden;
+    box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.05);
+    border-radius: 500px;
+    position: relative;
+    background-color: #2ecc71;
+    border: 1px rgba(0, 0, 0, 0.2) solid;
+    &.unchecked {
+      background-color: #fff !important;
+    }
+    &.disabled {
+      opacity: 0.5;
+    }
+  }
+  input[type="checkbox"]{
+    position: absolute;
+    display: block;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 6;
+    margin-top: 0 !important;
+  }
+  .caption {
+    visibility: hidden;
+  }
+  .switch {
+    position: absolute;
+    display: block;
+    left: 0;
+    top: 0;
+    background-color: #fff;
+    border-radius: 500px;
+    z-index: 1;
+    transition: 0.25s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+    transition-property: left, right;
+    transition-delay: 0s, .08s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    height: 100%;
+    border: 1px rgba(0, 0, 0, 0.1) solid;
+  }
+   input[type="checkbox"]:checked ~ .switch {
+      right: 0;
+      left: auto;
+      transition: 0.25s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+      transition-property: left, right;
+      transition-delay: .08s, 0s;
+   }
+}
+.order-by {
+  li button{
+    padding: 0;
+  }
+  li span{
+    display: inline-block;
+    .ellipsis(70%);
+  }
+}
+/**app chips ***/
+.nav.app-chips {
+  position: relative;
+  min-height: 20px;
+  > li {
+    position: relative;
+    padding: 0 0 2px 0;
+    &.disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .app-chip {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 500px;
+      padding: 0.5em 1em;
+      color: inherit;
+      font-weight: bold;
+      height: 2.4em;
+      .btn {
+        color: inherit;
+        padding: 0;
+        padding-left: 0.4em;
+        opacity: 0.5;
+        margin-top: -5px;
+        &:hover {
+          background-color: initial !important;
+          opacity: 1;
+        }
+      }
+      &.chip-duplicate {
+        background-color: #F44336;
+        color: #fff;
+      }
+      &.chip-picture {
+        img {
+          width: 32px;
+          height: 32px;
+          margin-top: -7px;
+          margin-left: -13px;
+          border-radius: 16px;
+          padding-right: 3px;
+        }
+      }
+    }
+    .app-chip-input {
+        border-color: transparent;
+        box-shadow: none;
+        background-color: transparent;
+        padding-top: 3px;
+        outline: 0;
+    }
+    .dropdown-menu {
+      font-size: 0.9em;
+      img {
+        .width-height(30px, 30px);
+        padding-right: 5px;
+      }
+    }
+  }
+}
+
+/**toggle-button**/
+.app-switch {
+  .model-holder {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 23px;
+    left: 50%;
+    z-index: -1000;
+  }
+  position: relative;
+  display: inline-block;
+  border-radius: 500px;
+  background: #fff;
+  overflow: hidden;
+  transform: scale(1);/**fix for animated icons messing up with the switch widget style***/
+  .app-icon {
+    margin-right: 0.2em;
+  }
+  .btn-group {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    > .btn {
+      border-radius: 500px;
+      height: 100%;
+    }
+  }
+
+  &[disabled] {
+    opacity: 0.65;
+    span.app-switch-overlay {
+      cursor: not-allowed;
+    }
+  }
+
+  span.app-switch-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    z-index: 10;
+    pointer-events: none;
+    margin-left: 0;
+    pointer-events: inherit;
+    height: 100%;
+    vertical-align: middle;
+    border-radius: 0;
+  }
+}
+
+/**textarea class**/
+.app-textarea {
+  height: 100%;
+}
+.wm-app .form-control.app-textarea {
+  height: 5.5em;
+}
+
+.app-currency {
+  width: 100%;
+}
+
+/**time input**/
+.app-timeinput.input-group {
+  max-width: 13em;
+  position: relative;
+  .dropdown {
+    position: static;
+  }
+  .dropdown-menu {
+    width: auto;
+   text-align: center;
+    table {
+      display: inline-table;
+    }
+  }
+}
+
+.app-datetime.input-group {
+  max-width: 21em;
+  position: relative;
+  .dropdown {
+    position: static;
+  }
+  .dropdown-menu {
+    top: 100% !important;
+    text-align: center;
+    width: auto;
+    table {
+      display: inline-table;
+    }
+    li:last-child {
+      overflow: visible !important;
+    }
+    padding: 0.5em;
+  }
+  button.btn.btn-default.btn-date {
+    border-right: 0px white;
+  }
+  button.btn.btn-default.btn-time {
+    border-left: 0px white;
+  }
+}
+
+/**date input**/
+.app-date.input-group {
+  position: relative;
+  max-width: 13em;
+  .form-control.app-dateinput {
+    position: relative;
+  }
+  .dropdown-menu {
+     padding: 0.5em;
+     width: auto;
+    li:last-child {
+      overflow: visible !important;
+    }
+  }
+}
+.app-datetime, .app-date {
+  .app-calendar-event {
+    .btn:after {
+      font-family: "FontAwesome";
+      font-size: 6px;
+      content: "\f111\00a0\f111\00a0\f111";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      color: rgba(0,0,0,0.2);
+      text-align: center;
+      line-height: 2px;
+    }
+    &.one {
+      .btn:after {
+        content: "\f111";
+      }
+    }
+    &.two {
+      .btn:after {
+        content: "\f111\00a0\f111";
+      }
+    }
+  }
+  .uib-daypicker {
+    tbody{
+      .btn-default {
+        position: relative;
+        margin: 0;
+        &:after {
+          bottom: -1em;
+        }
+      }
+    }
+    table {
+      tbody {
+        tr.uib-weeks {
+          td:first-child {
+            width: auto;
+          }
+        }
+      }
+    }
+  }
+  .model-holder {
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+}
+/**input required**/
+.app-required-input {
+  color: @red;
+}
+
+/**Color picker classes**/
+.app-colorpicker.input-group {
+  width: 10em;
+  position: relative;
+  .input-group-addon {
+    width: 25px;
+    position: absolute;
+    right: 0;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .dropdown {
+    position: absolute;
+    .dropdown-menu {
+      min-width: 129px;
+    }
+  }
+}
+
+/*readonly wrapper styles*/
+.readonly-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  cursor: not-allowed;
+  z-index: 1;
+}
+
+/********************************************************************************
+*********************************Dialog classes**********************************
+*********************************************************************************/
+/*Define dialog dimensions with specific values depending upon the size of the dialog*/
+@app-dialog-header-bg-gradient-start-color: #FEFEFE;
+@app-dialog-header-bg-gradient-end-color: #CCCCCC;
+@app-dialog-header-close-btn-bg-color: #CCCCCC;
+@app-dialog-body-bg-color: @white;
+@app-dialog-close-button-border-color: #999999;
+@app-dialog-close-box-shadow-color: #333333;
+/* giving absolute position to view*/
+.dialog-view {
+  .width-height();
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  z-index: 100;
+}
+
+/**dialog header**/
+.app-dialog-header {
+  position: relative;
+  .wm-icon24 {
+    top: 5px;
+  }
+  .wms-delete-datamodel {
+    top : 0px;
+  }
+  .app-dialog-title .wi {
+    vertical-align: baseline;
+  }
+}
+
+/**dialog body**/
+.app-dialog-body {
+  min-height: 100px;
+  position: relative;
+  &.noscroll {
+    overflow: inherit;
+  }
+  .app-content-column {
+    padding: 0;
+  }
+}
+
+/****page dialog classes****/
+.app-page-dialog {
+  .app-dialog-body {
+    .app-form {
+      border-color: transparent;
+    }
+  }
+}
+
+/****alert dialog classes****/
+.app-alert-dialog {
+  .app-dialog-message {
+    &.text-error {
+      color: @wm-app-msg-error-color;
+    }
+    &.text-information {
+      color: @wm-app-msg-info-color;
+    }
+    &.text-success {
+      color: @wm-app-msg-success-color;
+    }
+    &.text-warning {
+      color: @wm-app-msg-warning-color;
+    }
+  }
+}
+
+/****confirm dialog classes****/
+.app-confirm-dialog {
+  .app-dialog-message {
+    &.warning {
+      color: @red;
+      opacity: 0.8;
+    }
+  }
+}
+
+/**iframe dialog**/
+.app-iframe-dialog {
+  .app-dialog-body.modal-body {
+    padding: 0;
+    .app-iframe iframe {
+      height: 100%;
+      width: 100%;
+      border: 0;
+    }
+  }
+}
+
+/**login dialog widget **/
+.app-login-dialog {
+  .app-dialog-body {
+    .app-login-dialog-message {
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+    .app-form {
+      box-shadow: none;
+      .panel-body {
+        padding: 0;
+      }
+    }
+  }
+}
+
+/**dialog footer**/
+.app-dialog-footer {
+  position: relative;
+}
+
+.app-dialog {
+  position: relative;
+/******handling the forms in the dialog without the border*******/
+  .app-dialog-form {
+    box-shadow: none;
+    border-color: transparent;
+    .panel-body {
+      padding: 0;
+    }
+  }
+  .app-form {
+    box-shadow: none !important;
+    border-color: transparent;
+    margin-bottom: 0;
+  }
+}
+
+/*Basic Styles for Dialog Widget*/
+
+/*overriding bootstrap styles to avoid UI flicker on dialog open.*/
+body.modal-open {
+  margin-right: 0;
+  .modal {
+    overflow-y: auto;
+  }
+}
+.modal-backdrop {
+  height: 100%;
+  bottom: 0;
+  position: fixed !important;
+}
+/********************************************************************************
+*********************************File upload classes*****************************
+*********************************************************************************/
+/*File upload widget variables */
+@app-fileupload-border-color: rgba(0, 0, 0, 0.05);
+@app-fileupload-dropbox-bg-color: rgba(0,0,0,0.05);
+@app-fileupload-hover-color: rgba(0,0,0,0.2);
+
+.app-fileupload {
+  overflow: hidden;
+  position: relative;
+  margin: 0 0 @app-standard-margin 0;
+  &[disabled="disabled"] {
+    .app-multi-file-upload, .app-single-file-upload {
+      .caption, .form-horizontal .file-input, .drop-box {
+        cursor: not-allowed;
+      }
+      .app-button-wrapper {
+        .app-button {
+          opacity: 0.65;
+        }
+      }
+    }
+  }
+/**single file upload classes**/
+  .app-single-file-upload, .app-multi-file-upload {
+    position: relative;
+    min-height: 3em;
+    height: auto;
+    .app-button-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-right: 4px;
+    }
+  }
+
+/*file upload styles*/
+  .file-upload {
+    width: 100%;
+    overflow-y: auto;
+    .file-upload-status {
+      .upload-file-list {
+        .file-icon {
+          font-size: 1.5em;
+        }
+        .media-right {
+          a i, span {
+            font-size: 1.5em;
+            text-decoration: none;
+            color: inherit;
+          }
+        }
+        .file-details {
+          .file-detail {
+            .uploaddetails {
+              margin: 0;
+              .filesize, .upload-title {
+                vertical-align: middle;
+                margin: 0 5pt;
+              }
+              .upload-title {
+                height : 1.3em;
+                text-overflow: ellipsis;
+                overflow: hidden;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .form-horizontal {
+    position: relative;
+    .file-input {
+      position: absolute;
+      opacity: 0;
+      z-index: 2;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+
+/**  multiple file upload classes**/
+  .app-multi-file-upload {
+
+    .width-height();
+    .status {
+      border-bottom: 1px @app-fileupload-border-color solid;
+    }
+    .icon {
+      font-size: 2em;
+    }
+  /* style for the drop box*/
+    .drop-box {
+      border: 1px dashed @app-fileupload-border-color;
+      background-color: @app-fileupload-dropbox-bg-color;
+      vertical-align: middle;
+      text-align: center;
+    /* style when try to drag the file in drop box*/
+      &.file-dragover {
+        background-color: @app-fileupload-hover-color;
+        color: #fff;
+      }
+    }
+    .app-anchor {
+      color: inherit;
+    }
+  }
+}
+
+/********************************************************************************
+********************************* List classes *****************************
+*********************************************************************************/
+.app-list, .app-livelist {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-height: 2em;
+  &.inline {
+    .app-list-item {
+      display: inline-block;
+    }
+  }
+  &.Inline {
+    > .panel-heading {
+      display: table-caption;
+      background-color: inherit;
+    }
+  }
+  > ul {
+    display: block;
+    padding-bottom: 1px; //Fix for unnecessary vertical scrollbar on the list
+  }
+  ul.list-group {
+    margin-bottom: 0;
+  }
+  li.app-list-item-group {
+    list-style: none;
+  }
+  li.app-list-item-header {
+    list-style: none;
+    background-color: rgba(0,0,0,0.1);
+    &.collapsible-content {
+      cursor: pointer;
+    }
+    h4 {
+      margin: 0;
+      padding-left: 1em;
+      padding-right: 1em;
+      line-height: 2.5em;
+      display: table;
+      width: 100%;
+      text-transform: capitalize;
+      .header-action {
+        display: table-cell;
+        span, i{
+          float: right;
+        }
+        i {
+          padding: 0 10px 0 10px;
+        }
+      }
+    }
+  }
+  .app-list-item {
+    position: relative;
+    list-style: none;
+    outline: none;
+    .app-list-item-value {
+     word-break: break-all;
+    }
+    &.active {
+      z-index: auto !important;/***fix for popover in the list item getting hidden***/
+      &.list-group-item {
+        .app-label, .app-anchor {
+          color: inherit;
+        }
+        .app-label, .app-icon {
+          opacity: .9;
+        }
+        .text-muted {
+          opacity: 0.7;
+        }
+        .app-panel, .app-card, .app-tabs .tab-content, .ta-editor {
+          color: #333;
+        }
+        .app-panel, .app-card {
+          &:not(.panel) {
+            .panel-heading {
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
+   }
+  .app-picture {
+    text-align: center;
+  }
+}
+.app-livelist {
+  li.app-list-item {
+    display: inline-block;
+    float: none;
+    vertical-align: top;
+    > .app-card {
+      height: 100%;
+    }
+    &.active > .app-card {
+      border: 1px solid rgba(168,168,168,.9);
+    }
+    //Add overlay when disableitem is enabled
+    &.disable-item {
+      &:before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 999;
+      }
+    }
+    &:focus:not(.active):not(.disable-item) {
+      background-color: rgba(0,0,0,0.05);
+    }
+  }
+
+  /*for inline styles: start*/
+  > nav.app-datanavigator {
+    display: table-cell;
+    vertical-align: middle;
+    width: 40pt;
+    padding: 5pt;
+  }
+  &.Inline {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    .app-livelist-container {
+      padding: 0;
+      .app-list-item {
+        display: inline-block;
+      }
+    }
+    .app-list-item-group {
+      display: inline-block;
+    }
+    .app-datanavigator {
+      overflow: hidden;
+    }
+  }
+  .app-datanavigator + .app-livelist-container {
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden !important;
+    .app-list-item {
+      white-space: normal;
+      float: none;
+    }
+  /*for inline styles: end*/
+    .app-list-item-group {
+        ul.list-group {
+          display: inline-table;
+          > li {
+            display: inline-block;
+            vertical-align: middle;
+          }
+          .app-list-item-header {
+            display: table-cell;
+            text-align: center;
+            width: 10%;
+            white-space: normal;
+          }
+        }
+    }
+
+  }
+  ul {
+    position: relative;
+  }
+  .app-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+  }
+  .media {
+    margin-top: 0;
+    .img-thumbnail {
+      max-width: none;
+    }
+  }
+  .media-right {
+    padding-left: 0 !important;
+    a, a:hover, a:focus {
+      text-decoration: none;
+      i {
+        font-size: 18pt;
+        color: inherit;
+      }
+    }
+  }
+  .thumbnail{
+    margin-bottom: 0;
+    text-align: center;
+    .caption{
+      .detail {
+        font-weight: normal;
+      }
+    }
+  }
+  .no-data-msg, .loading-data-msg {
+    text-align: center;
+  }
+
+  .loading-data-msg {
+    .app-icon {
+      font-size: 16pt;
+    }
+    .loading-text {
+      vertical-align: top;
+      padding-left: 10px;
+    }
+  }
+
+  &:not(.On-Demand):not(.Scroll) {
+    .loading-data-msg {
+      position: absolute;
+      top: 0;
+      bottom: 5.3em;
+      width: 100%;
+      background: rgba(200, 200, 200, 0.55);
+      > span {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+      }
+    }
+    &.Inline {
+      .loading-data-msg {
+        left: 0;
+        bottom: 0;
+        z-index: 1;
+      }
+    }
+  }
+  &.On-Demand, &.Scroll {
+    .loading-data-msg {
+      height: 4em;
+      display: table;
+      width: 100%;
+      > span {
+        display: table-cell;
+        height: 100%;
+        vertical-align: middle;
+      }
+    }
+  }
+  &.On-Demand {
+    .panel-footer {
+      padding: 0;
+      .btn-justified {
+        display: block;
+        padding: 12px;
+      }
+    }
+  }
+}
+.app-iframe {
+  position: relative;
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/********************************************************************************
+********************************* App message classes *****************************
+*********************************************************************************/
+.app-message {
+  position: relative;
+  .icon {
+    display: inline-block;
+    font-size: 11px;
+    margin-right: 5px;
+  }
+  span {
+    vertical-align: text-top;
+  }
+  .close {
+    position: absolute;
+    top: 1px;
+    right: 4px;
+  }
+}
+
+/********************************************************************************
+********************************* Image classes *****************************
+*********************************************************************************/
+.app-picture {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  position: relative;
+  cursor: default;
+}
+/********************************************************************************
+********************************* Video classes *****************************
+*********************************************************************************/
+.app-video {
+  position: relative;
+/*Default width and height for video are 300 and 150.
+If the height and width are not specified the video takes the height of the poster*/
+  height: 150px;
+  width: 300px;
+  display: inline-block;
+  > video {
+    height: 100%;
+    width: 100%;
+  }
+}
+.app-audio {
+  position: relative;
+  display: inline-block;
+  width: 300px;
+  > audio {
+    width: 100%;
+  }
+}
+/********************************************************************************
+********************************* prefab style classes *****************************
+*********************************************************************************/
+.app-prefab {
+  min-height: 1em;
+  position: relative;
+  //View inside prefab should have lower z-index
+  .app-view {
+    z-index: 1000;
+  }
+  .app-page .app-content {
+    background-color: transparent;
+  }
+}
+
+/* class used to adjust height of container for prefab project in run mode */
+.app-prefab-run {
+  height: 100%;
+  min-height: 500px;
+}
+/********************************************************************************
+*********************************Data Navigator classes **********************************
+*********************************************************************************/
+
+.app-datanavigator {
+  position: relative;
+  overflow-y: auto;
+  ul.pagination, ul.pager {
+    margin : 0;
+    & > li.pagecount > a {
+      width: 4em;
+      padding-left: 0;
+      padding-right: 0;
+      height: 100%;
+      .form-control {
+        height: auto;
+        border: none;
+        box-shadow: none;
+        padding: 0 2px;
+        font-size: inherit !important;
+        background-color: transparent;
+        line-height: inherit;
+      }
+    }
+    & > li.totalcount.basiccount > a {
+      border-left: 0;
+    }
+  }
+  ul.pager {
+    display: inline-block;
+    &.pager-sm {
+      zoom: 80%;
+    }
+  }
+  ul.pagination {
+    &.basic {
+      &.pagination-sm {
+        .pagination-prev, .pagination-next, .pagination-first, .pagination-last {
+          a:before {
+            font-size: 11pt;
+          }
+        }
+      }
+      > li {
+        > a {
+          color: inherit;
+          background-color: transparent;
+          border-width: 0;
+          text-align: center;
+        }
+        &.active, &:hover, &:focus{
+          > a {
+            color: inherit;
+            background-color: transparent;
+            border-bottom-width: 3px;
+            &:hover {
+              background-color: transparent;
+              border-bottom-width: 3px;
+              color: inherit;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+      .pagination-prev, .pagination-next, .pagination-first, .pagination-last {
+        a {
+          padding: 0;
+          font-size: 0;
+          display: inline-table; //Removes the conflicts in alignment for old projects
+        }
+        a:before {
+          font-family: "wavicon";
+          font-size: 16pt;
+          vertical-align: initial;
+          width: 16pt;
+          height: 16pt;
+          position: relative;
+        }
+      }
+      .pagination-prev a:before {
+        content: "\f1d1";
+      }
+      .pagination-next a:before {
+        content: "\f1d2";
+      }
+      .pagination-first a:before {
+        content: "\f288";
+      }
+      .pagination-last a:before {
+        content: "\f322";
+      }
+    }
+    &.active {
+      background-color: transparent;
+      border-bottom-width: 2px;
+    }
+  }
+  li {
+    &.totalcount.basiccount {
+      > a , a:hover{
+        color: inherit;
+        background-color: transparent;
+        border-width: 0;
+      }
+    }
+  }
+}
+/********************************************************************************
+*********************************Grid classes **********************************
+*********************************************************************************/
+/*GridForm*/
+@app-disabled-text-color: #AAAAAA;
+@app-grid-border-color: #D4D4D4;
+@app-grid-header-border-color: #B9B9B9;
+@app-grid-row-selected-color: #E2F7FF;
+@app-grid-column-selected-color: #A0CBD4;
+
+.app-grid {
+  position: relative;
+  height: auto;
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  .form-search {
+    padding: 1em;
+    .app-search-button {
+      .remove-background();
+      border: none;
+      box-shadow: none;
+      color: inherit;
+      padding: 0;
+      &:focus,&:hover {
+        .remove-background();
+        outline: none;
+      }
+    }
+    .app-select {
+      width: auto;
+    }
+  }
+  .app-datagrid-actions {
+    text-align: right;
+    display: table-cell;
+    vertical-align: top;
+    > .btn {
+      margin: 0.33em;
+      &.disabled-new {
+        pointer-events: none;
+        opacity: 0.65;
+      }
+    }
+  }
+  > .panel-heading {
+    > .panel-actions {
+      &.panel-actions {
+        position: relative;
+        top: 0;
+      }
+      .app-menu.dropdown {
+        .btn.app-button .caret {
+          display: inline-block;
+        }
+      }
+    }
+  }
+  > .panel-footer {
+    display: table;
+    width: 100%;
+    border-collapse: initial;
+    // Fix for height of input box in pagination.
+    .app-datagrid-paginator  {
+      .app-datanavigator a:focus {
+        outline: 1px solid #1794ef !important;
+      }
+    }
+  }
+  .app-datagrid {
+    position: relative;
+    padding: 0;
+    .sort-buttons-container {
+      position: absolute;
+      float: right;
+      right: 0;
+      bottom: 0.8em;
+    }
+    .table-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      &.show-msg {
+        pointer-events: none;
+        .overlay {
+          position: relative;
+        }
+        .app-grid-content {
+          display: none;
+        }
+        .filter-row {
+          pointer-events: all;
+        }
+      }
+      .filter-row .input-group {
+        .app-checkbox {
+          margin: 0;
+        }
+        .input-group-addon {
+          .app-icon {
+            font-size: 1.2em;
+          }
+          padding-right: 0.3em;
+          padding-left: 0.3em;
+        }
+        .input-group-btn:last-child > .btn {
+          z-index: 0;
+        }
+        &.input-group-sm .input-group-btn {
+          padding: 0;
+        }
+        .app-datetime, .app-date, .app-timeinput {
+          max-width: inherit;
+          width: 100%;
+        }
+      }
+      .app-checkbox {
+        margin: 0;
+        .caption {
+          margin: 0;
+          vertical-align: inherit;
+        }
+      }
+    }
+    .app-datagrid-cell {
+      img {
+        max-width: 100%;
+      }
+      .app-datetime, .app-date, .app-timeinput, .file-upload {
+        width: 100%;
+      }
+      &.datetime-wrapper {
+        overflow-x: hidden;
+      }
+      &.cell-editing:not(.checkbox-widget) {
+        padding: 0;
+        .uib-timepicker input {
+          border: 1px solid #e0e0e0;
+        }
+        form {
+          margin: 7px 0 0 0;
+        }
+      }
+      &.required-field:before {
+        content: '*';
+        position: absolute;
+        top: 4px;
+        left: 0;
+        color: red;
+        line-height: 0;
+        padding-top: 5px;
+        padding-left: 5px;
+        z-index: 10;
+        font-size: 16px;
+      }
+      .row-action.disabled-action {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+    }
+    .grid-col-small {
+      width: 2.5em;
+    }
+    .app-grid-header {
+      .app-grid-header-inner {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        th {
+          &.app-datagrid-header-cell {
+            &[data-col-sortable] {
+              cursor: pointer;
+              .header-data {
+                cursor: pointer;
+              }
+            }
+            &[data-col-selectable] {
+              cursor: default;
+            }
+          }
+          &.app-datagrid-group-header-cell[colspan='0'] {
+              display: none;
+          }
+        }
+        .table-condensed {
+          .sort-buttons-container {
+            bottom: 0.2em;
+          }
+        }
+      }
+      &.scroll-visible {
+        padding-right: 17px;
+      }
+      /*Edge has scroll width of 12px*/
+      @supports (-ms-ime-align: auto) {
+        &.scroll-visible {
+          padding-right: 12px;
+        }
+      }
+    }
+
+    .app-grid-content {
+      overflow: auto;
+      width: 100%;
+      height: 100%;
+    }
+    .app-datagrid-body {
+      > tr {
+        > td {
+          .row-action-button {
+            i {
+              padding: 5px 0;
+            }
+            &:focus {
+              opacity: .9;
+              color: #333;
+              background-color: rgba(168,168,168,.3) !important;
+            }
+          }
+        }
+        &:focus {
+          > td {
+            background-color: rgba(168,168,168,.3);
+          }
+        }
+      }
+    }
+  }
+  .table {
+    table-layout: fixed;
+    margin-bottom: 0 !important;
+    min-width: 100%;
+    thead th {
+      position: relative;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      background-clip: padding-box;
+      .ui-resizable-handle {
+        right: -1px;
+        width: 4px;
+        pointer-events: all;
+      }
+      &.selected-column {
+        background-color: @app-grid-column-selected-color;
+      }
+    }
+
+
+    tbody {
+      tr {
+        &.active {
+          > td, > th {
+            background-color: @app-grid-row-selected-color;
+          }
+        }
+        td {
+          .actions-column {
+            white-space: nowrap;
+          }
+          text-overflow: ellipsis;
+          overflow: hidden;
+          position: relative;
+          .row-action-button {
+            &.btn-transparent {
+              opacity: 0.5;
+              font-size: 12pt;
+              padding: 0 5px;
+              &:hover {
+               opacity: 1;
+              }
+            }
+            i {
+              font-size: inherit;
+            }
+          }
+          &.selected-column {
+            background-color: @app-grid-column-selected-color;
+          }
+        }
+      }
+    }
+  }
+  .no-data {
+    position: absolute;
+    z-index: 100;
+    left: 40%;
+    top: 6em;
+  }
+
+
+  .editable-template {
+    width: 90%;
+  }
+
+
+  .app-spinner .spinner-message {
+    width: 48px;
+    height: 48px;
+    margin-left: -24px;
+    margin-top: -24px;
+    .spinner-image {
+      width: 48px;
+      height: 48px;
+      background-size: 100% 100%;
+    }
+    .spinner-text {
+      font-size: 12px;
+    }
+  }
+
+  .no-wrap {
+    white-space: nowrap;
+  }
+  .overlay {
+    width:100%;
+    height:100%;
+    position:absolute;
+    top: 0;
+    z-index: 999;
+    background: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 1em;
+    .loading {
+      display: inline-block;
+      .width-height(16px, 16px);
+      .background-image('spinner-small.gif', no-repeat, center, center);
+      vertical-align: middle;
+      position: relative;
+      top: 50%;
+    }
+    .status {
+      display: inline-block;
+      position: relative;
+      top: 50%;
+    }
+  }
+}
+
+// Fix for height of input box in pagination.
+.app-datagrid-paginator  {
+  display: table-cell;
+  vertical-align: top;
+  .pagination-sm {
+    li {
+      a {
+        padding-top: 6px;
+      }
+    }
+  }
+}
+
+.wm-app .dropdown-menu.matchmode-dropdown {
+  z-index: 2000;
+}
+//Styles for danger background in grid
+.wm-app .app-grid {
+  .table, .table-hover {
+    > thead, >tbody, >tfoot {
+      >tr {
+        > td.danger, &.danger > td, &.danger:hover > td {
+          background-color: #ffd3d3;
+          color: #333;
+        }
+      }
+    }
+  }
+}
+.app-livegrid {
+  position: relative;
+  height: auto;
+
+  .app-dialog {
+    width: auto !important;
+  }
+}
+
+
+
+
+/********************************************************************************
+*********************************Rich-text-editor classes **********************************
+*********************************************************************************/
+@app-richtexteditor-toolbar-background-color: #E6E6E6;
+@app-richtexteditor-toolbar-border-color: #cccccc;
+@app-richtexteditor-toolbar-text-color: #828282;
+//Minimum height for the Rich Text Editor at all times. This has to be same for both .ta-bind and .ta-editor
+@app-textarea-min-height: 140px;
+@app-richtexteditor-font-size: 0.95em;
+
+/************* important do not remove this. style is required to hide the input from the richtext editor**************/
+.ta-hidden-input {
+  width: 1px;
+  height: 1px;
+  border: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.app-richtexteditor {
+  position: relative;
+  overflow: auto;
+  /************* textAngular related styles**************/
+  .ta-root {
+    height: 100%;
+    position: relative;
+    .focussed > .ta-scroll-window.form-control {
+      border-color: #66afe9;
+      outline: 0;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+    }
+
+    .ta-scroll-window.form-control {
+      position: relative;
+      font-family: inherit;
+      font-size: 100%;
+      height: 90%;
+      .calc('height', ~"calc(100% - 88px)"); /*67px corresponds to the height of the toolbar in run mode*/
+      padding: 0;
+      & > .ta-bind {
+        min-height: @app-textarea-min-height;
+        padding: 6px 12px;
+        height: 100%;
+      }
+    }
+    .ta-editor:focus {
+      user-select: text;
+    }
+
+    /* add the styling for the awesomness of the resizer */
+    .ta-resizer-handle-overlay {
+      z-index: 100;
+      position: absolute;
+      display: none;
+      & > .ta-resizer-handle-info {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        border: 1px solid black;
+        background-color: #FFF;
+        padding: 0 4px;
+        opacity: 0.7;
+      }
+      & > .ta-resizer-handle-background {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        left: 5px;
+        top: 5px;
+        border: 1px solid black;
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      & > .ta-resizer-handle-corner {
+        width: 10px;
+        height: 10px;
+        position: absolute;
+      }
+      & > .ta-resizer-handle-corner-br {
+        bottom: 0;
+        right: 0;
+        border: 1px solid black;
+        cursor: se-resize;
+        background-color: white;
+      }
+      & > .ta-resizer-handle-corner-tl {
+        top: 0;
+        left: 0;
+        border-left: 1px solid black;
+        border-top: 1px solid black;
+      }
+      & > .ta-resizer-handle-corner-tr {
+        top: 0;
+        right: 0;
+        border-right: 1px solid black;
+        border-top: 1px solid black;
+      }
+      & > .ta-resizer-handle-corner-bl {
+        bottom: 0;
+        left: 0;
+        border-left: 1px solid black;
+        border-bottom: 1px solid black;
+      }
+    }
+
+    .ta-toolbar {
+      background: @app-richtexteditor-toolbar-background-color;
+      border: 1px solid @app-richtexteditor-toolbar-border-color;
+      border-bottom: 0;
+      margin: 0;
+      padding-top: 5px;
+      min-width: 100px;
+      .btn-group {
+        margin-bottom: 5px;
+        .btn {
+          font-size: @app-richtexteditor-font-size;
+          padding: 0.33em 0.66em;
+          float: left;
+          &.toolbar-plugin {
+            position: relative;
+            padding: 0!important;
+            &.colorpicker {
+              width:32px;
+              z-index: 1;
+            }
+            .colorpicker .dropdown-menu{
+              min-width:auto;
+            }
+            .colorpicker-togglebtn {
+              width: 100%;
+              border-radius:0;
+              border-width: 0 0 4px 0;
+            }
+            &.fontname-plugin {
+              width:42px;
+              .font-list, .fontsize-list {
+                max-height: 185px;
+                overflow: auto;
+              }
+            }
+            &.formatheader-plugin {
+              width:auto;
+              .dropdown-toggle {
+                border:0;
+              }
+              .btn span {
+                width:100px;
+                display: inline-block;
+              }
+            }
+            .table-insert {
+              border:0;
+            }
+            &.fontname-plugin, &.formatheader-plugin {
+              .dropdown-menu {
+                .btn-default {
+                  border: 0;
+                  text-align:start;
+                  width:100%;
+                  padding:10px;
+                }
+              }
+            }
+          }
+        }
+        .btn-default[disabled] {
+          pointer-events:none;
+        }
+        .table-plugin-text {
+          text-align: center;
+        }
+        .editor-grid-border {
+          td {
+            padding:1px 0;
+            a {
+              padding:0 10px;
+              border:1px solid #d6d6d6;
+              width:13px;
+              height:13px;
+              &.editor-active {
+                border-color: #3498db;
+                background: #3498db;
+              }
+            }
+          }
+        }
+      }
+    }
+    .btn {
+      .fa {
+        .width-height(@app-richtexteditor-font-size, @app-richtexteditor-font-size);
+        display: inline-block;
+        color: inherit;
+      }
+    }
+    .ta-editor {
+      min-height: @app-textarea-min-height;
+      height: 90%;
+      .calc('height', ~"calc(100% - 88px)"); /*67px corresponds to the height of the toolbar in run mode*/
+      min-width: 100px;
+      overflow: auto;
+      width: 100%;
+      &.ta-html {
+        overflow: auto;
+        font-family: inherit;
+        font-size: 100%;
+      }
+      img {
+        position: relative;
+        max-width: 100%;
+      }
+      td[contenteditable='true'] {
+        &:focus {
+          border: 2px rgba(128,128,128,0.5) solid;
+        }
+      }
+      .table {
+        table-layout: fixed;
+      }
+    }
+  }
+}
+/********************************************************************************
+******************************** Media List classes ******************************
+*********************************************************************************/
+@app-media-full-screen-info-panel-bg-color: rgba(74, 75, 76, 0.38);
+@app-media-full-screen-nav-control-bg-color: rgba(74, 75, 76, 0.38);
+@app-media-full-screen-nav-control-bg-color-on-hover: rgba(0, 0, 0, 0.5);
+@app-media-full-screen-modal-bg-color: #000;
+.app-medialist {
+  overflow: auto;
+  .thumbnail {
+    .width-height();
+    text-align: center;
+    position: relative;
+
+    .thumbnail-image {
+      max-width: 100%;
+      width: auto;
+      height: 100%;
+    }
+
+    .thumbnail-image-template {
+      max-width: 100%;
+      width: 100%;
+      height: 100%;
+    }
+
+    .thumbnail-details {
+      position: absolute;
+      .width-height();
+      top: 0;
+      text-align: left;
+    }
+  }
+
+  .app-media-item {
+    text-align: left;
+    position: relative;
+  }
+
+  &.singlerow {
+    white-space: nowrap;
+  }
+  .app-media-thumbnail {
+    z-index: 100;
+  }
+  .app-media-fullscreen {
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    .app-mobile-navbar .left-nav-btn{
+      display: none;
+    }
+    .media-content{
+      display: table;
+      width: 100%;
+      height: 100%;
+    }
+    .image-container {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .app-media-fullscreen-info-panel {
+      position: absolute;
+      top: 0;
+      font-size: 1.5em;
+      color: #fff;
+      text-align: center;
+      width: 100%;
+      padding: 10px;
+      background-color: @app-media-full-screen-info-panel-bg-color;
+
+      .back-btn{
+        font-size: 2em;
+      }
+    }
+    .app-media-fullscreen-nav-control {
+      position: absolute;
+      top: 50%;
+      background-color: @app-media-full-screen-nav-control-bg-color;
+      border-radius: 20pt;
+      margin: -15pt 10pt 0 10pt;
+      color: #fff;
+      font-size: 18pt;
+      width: 30pt;
+      height: 30pt;
+      text-align: center;
+
+
+      &:hover{
+        background-color: @app-media-full-screen-nav-control-bg-color-on-hover;
+      }
+
+      &.left{
+        left: 0;
+      }
+      &.right{
+        right: 0;
+      }
+      i {
+        &.wi{
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+/********************************************************************************
+******************************** Tile classes ******************************
+*********************************************************************************/
+
+.app-tile {
+    padding : 1em;
+    margin  : 0;
+    position : relative;
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+}
+/********************************************************************************
+******************************** Accordion classes ******************************
+*********************************************************************************/
+@app-accordion-panel-heading-bg-color: #d2d2d2;
+@app-accordion-bg-gradient-start-color: #eeeeee;
+@app-accordion-bg-gradient-end-color: #dedede;
+@app-accordion-panel-heading-border-color: #b2b2b2;
+@app-accordion-panel-collapse-bg-color: #fff;
+@app-accordion-panel-collapse-border-color: #CCCCCC;
+@app-accordion-panel-title-heading-color: #444444;
+@app-accordion-heading-text-shadow-color: #ffffff;
+
+.app-accordion {
+  margin-bottom: 0;
+  position: relative;
+  .panel + .panel {
+    margin: 0;
+  }
+  .app-accordion-panel {
+    position: relative;
+    .panel-collapse {
+      position: relative;
+    }
+    .panel-body {
+      position: relative;
+    }
+    > .panel-heading {
+      width: 100%;
+      position: relative;
+      cursor: pointer;
+      .panel-title {
+        > a {
+          text-decoration: none;
+        }
+        .panel-icon {
+          margin-right: 0.5em;
+        }
+      }
+      > .panel-actions {
+        float: right;
+        right: 0.25em;
+        top: 0.9em;
+        position: absolute;
+        margin-right: 0.2em;
+        .panel-action {
+          background: transparent;
+          box-shadow: none;
+          border: none;
+          padding: 0;
+          margin-right: 0.25em;
+          outline: none;
+        }
+        .label {
+          margin-right: 0.25em;
+        }
+      }
+    }
+  }
+}
+
+/********************************************************************************
+******************************** Tabs classes ******************************
+*********************************************************************************/
+@app-tabs-border-color: rgba(0,0,0,0.1);
+@app-tabs-bg-color: #FFFFFF;
+
+.app-tabs {
+  &:focus {
+    outline: none;
+  }
+  &.has-transition {
+    > .tab-content {
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      > .tab-pane {
+        vertical-align: top;
+        display: inline-block;
+        width: 100%;
+        &.active {
+          display: inline-block;
+        }
+        &::before, &::after {
+          display: inline;
+          font-size: 0;
+          content: '';
+        }
+      }
+    }
+  }
+  position: relative;
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+  overflow: hidden;
+
+  .nav.nav-tabs {
+    overflow: hidden;
+    white-space: nowrap;
+    > li {
+      float: none;
+      cursor: pointer;
+      display: inline-block;
+      .tab-heading {
+        * {
+          vertical-align: middle;
+        }
+        span.label {
+          margin-left: 1em;
+          display:inline-block;
+        }
+      }
+    }
+  }
+
+  &.inverted {
+    > ul.nav:not(.nav-stacked) {
+      border-bottom: none;
+      margin-top: -1px;
+      > li {
+        margin-bottom: 0;
+        > a {
+          border-radius: 0 0 3px 3px;
+          border-top-color: transparent;
+          border-bottom-color: @app-tabs-border-color;
+        }
+      }
+    }
+    > ul.nav-stacked {
+      > li.active {
+        margin-left: -1px;
+        > a {
+          border-left-color: transparent;
+        }
+      }
+    }
+  }
+  .tab-content {
+    height: 90%;
+    max-width: 100%;
+    .calc('height', ~"calc(100% - 2.5em)");
+    background-color: @app-tabs-bg-color;
+    overflow: auto;
+    position: relative;
+    .tab-pane {
+      position: relative;
+      height: 100%;
+      min-height: 4em;
+      overflow: inherit;
+      display: none;
+      &.active {
+        display: block;
+      }
+      .tab-body {
+        position: relative;
+        border-width: 1px;
+        border-style: solid;
+        border-top-width: 0;
+        height: 100%;
+        width: 100%;
+        overflow: inherit;
+        white-space: normal;
+      }
+    }
+  }
+
+  .nav-tabs.nav-stacked {
+    width: 20%;
+    float: left;
+    height: 100%;
+    vertical-align: top;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+    > li {
+      margin: 0;
+      display: block;
+      > a {
+        margin: 0;
+        border-radius: 0;
+      }
+      &.active {
+        > a {
+          border-right-color: transparent;
+        }
+      }
+    }
+  }
+  .tab-stacked {
+    float: left;
+    width: 80%;
+    height: 100%;
+    overflow: auto;
+    > .tab-pane > .tab-body{
+      border-top-width: 1px;
+    }
+  }
+}
+
+/********************************************************************************
+************************* Chart widget classes ***********************************
+*********************************************************************************/
+
+.app-chart {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  &.panel {
+    .panel-heading {
+      position: relative;
+      .panel-icon {
+        margin-right: 0.5em;
+      }
+    }
+    .app-chart-inner {
+      padding: 0 0 5px 0;
+      height: 100%;
+    }
+    .panel-heading +.app-chart-inner {
+      .calc('height', ~"calc(100% - 4em)");
+    }
+  }
+
+  /***to fix the tooltip issue*****/
+  .app-chart-inner {
+    position: relative;
+    .width-height();
+    &.loading {
+      svg {
+        visibility: hidden;
+      }
+    }
+  }
+  position: relative;
+
+  > svg {
+    width: 100%;
+    height: 100%;
+  }
+  .tooltip-container {
+    padding: 0.5em;
+  }
+  .nvd3 {
+    text {
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: normal;
+    }
+    .nv-axis {
+      line{
+        stroke: rgba(128,198,198,0.2);
+      }
+      path {
+        stroke: rgba(128,198,198,0.6);
+      }
+    }
+    &.nv-pie path {
+      stroke: rgba(255,255,255,0.5);
+    }
+  }
+  .app-spinner {
+    background-color: inherit;
+  }
+}
+
+/********************************************************************************
+************************* Mobile actions container for header classes ************
+*********************************************************************************/
+.app-mobile-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  display: none;
+}
+
+/********************************************************************************
+************************* Toaster position classes ******************************
+*********************************************************************************/
+#toast-container {
+  max-height: 80%;
+  overflow-y: auto;
+  .toast-title, .toast-message {
+    word-wrap: break-word;
+  }
+  > .toast-info,
+  > .toast-wait,
+  > .toast-error ,
+  > .toast-success,
+  > .toast-warning {
+    background-position: 1em 1em;
+  }
+}
+
+.toast-top-center {
+  top: 0;
+  right: 0;
+  width: 100%;
+  > div {
+    margin: auto;
+  }
+}
+
+.toast-center-center {
+  left: 50%;
+  top: 50%;
+  margin-top: -30px;
+  margin-left: -150px;
+  > div {
+    margin: auto;
+  }
+}
+
+.toast-bottom-center {
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  > div {
+    margin: auto;
+  }
+}
+
+.toast-center-left {
+  left: 12px;
+  top: 50%;
+  margin-top: -30px;
+  > div {
+    margin: auto;
+  }
+}
+
+.toast-center-right {
+  right: 12px;
+  top: 50%;
+  margin-top: -30px;
+  > div {
+    margin: auto;
+  }
+}
+
+.app-calendar {
+  display: inline-block;
+  position: relative;
+  margin-top: 1em;
+  .well {
+    padding: 0.2em;
+    margin-bottom: 0;
+  }
+  /***overriding the calendar classes*****/
+
+  .fc {
+    .fc-view-container {
+      background: #fff;
+    }
+    table {
+      background-color: transparent;
+    }
+    th {
+      text-align: center;
+      &:not(.fc-axis) {
+        padding: 1em 0;
+        text-align: center;
+      }
+    }
+    .fc-event {
+      font-size: 12px;
+      border-radius: 0;
+      text-decoration: none;
+      border: 1px solid rgba(0,0,0,0.2);
+      padding: 2px 4px;
+      background-color: #fff;
+    }
+    .fc-toolbar {
+      margin-bottom: 0.25em;
+      padding: 0 0.5em;
+      .fc-button {
+        border-radius: 0;
+        box-shadow: none;
+        background: #fff;
+        border-color: rgba(0,0,0,0.1);
+        text-shadow: 0;
+      }
+      //title
+      h2 {
+        font-size: 1.1rem;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      > * > * {
+        margin: 0;
+      }
+      .fc-today-button {
+        margin-left: .75em;
+      }
+    }
+    .fc-divider {
+      margin: 0;
+    }
+  }
+}
+
+.app-livefilter {
+  position: relative;
+  .panel-heading {
+    .panel-title {
+      display: table;
+      width: 100%;
+    }
+    .panel-actions {
+      display: table-cell;
+      text-align: right;
+      .panel-action {
+        background: transparent;
+        border: none;
+        padding: 0;
+        outline: none;
+      }
+    }
+  }
+  .form-control {
+    display: inline-block;
+  }
+  .app-button, .form-control {
+    margin-bottom: 4px;
+    margin-right: 8px;
+  }
+  .app-button {
+    float: right;
+  }
+  .form-group {
+    .list-group {
+      margin-bottom: 0px;
+    }
+    .checkbox , .radio {
+      margin-top: 0px;
+    }
+    div.col-md-4 {
+      padding-right: 4px;
+    }
+  }
+}
+
+// Custom styles for form widgets within liveform and livefilter
+.wm-app {
+  .app-liveform, .app-livefilter {
+    .form-control {
+      border-radius: 0;
+    }
+    .app-date, .app-timeinput, .app-datetime {
+      .input-group-btn {
+        .btn.btn-default, .btn.btn-default:hover {
+          border-radius: 0;
+          border: 1px solid @wm-standard-border-color;
+        }
+      }
+    }
+    .app-currency {
+      .input-group-addon {
+        border-radius: 0;
+        border-right: 1px solid @wm-standard-border-color;
+      }
+    }
+    .app-switch {
+      .btn-group {
+        > .btn.btn-default {
+          border:1px solid @wm-standard-border-color;
+          &:hover, &.active , &:focus {
+            border:1px solid @wm-standard-border-color;
+          }
+        }
+      }
+    }
+    &.align-right.position-top {
+      .radio.app-radio, .app-checkbox.checkbox {
+        .app-radioset-label, .app-checkboxset-label {
+          input[type="checkbox"], input[type="radio"] {
+            margin-right: -20px;
+          }
+        }
+      }
+      .app-switch {
+        .btn-group {
+          .btn.btn-default:first-child {
+            border: 1px solid @wm-standard-border-color;
+            border-top-right-radius: 19px;
+            border-bottom-right-radius: 19px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+          .btn.btn-default:last-child {
+            border: 1px solid @wm-standard-border-color;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-top-left-radius: 19px;
+            border-bottom-left-radius: 19px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/********************************************************************************
+************************* Login form classes ******************************
+*********************************************************************************/
+.app-login {
+  position: relative;
+  overflow : auto;
+  .app-message {
+    word-break: break-all;
+    padding: 4px;
+    margin: 1em 1.5em 0;
+    /*To overcome specificity issue*/
+    &.alert {
+      margin-bottom: 0;
+    }
+  }
+  .app-form.app-login-form {
+    padding: 2.5em 3em;
+    .app-login-button {
+      margin-right: 0;
+    }
+    .app-login-rememberme {
+      float: left;
+    }
+    .app-login-forgotlink {
+      float: right;
+      margin-top: 10px;
+      display: inline-block;
+    }
+  }
+}
+
+/************************************************************************************
+*************************Rating Widget Style**************************************
+************************************************************************************/
+@app-rating-star-color: rgb(247, 220, 111);
+@app-rating-star-hover-color: #DBC631;
+
+.app-ratings {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  font-size: 1em;
+  > * {
+    vertical-align: middle;
+  }
+  .active {
+    color:@app-rating-star-color;
+  }
+  .disabled {
+    color:#D3D3D3;
+  }
+  > label.caption {
+    margin: auto 0.25em;
+    font-size: 120%;
+  }
+  .rating-style {
+    display: inline-block;
+    > label {
+      position: relative;
+      float: right;
+      margin: 0;
+      &:before {
+        margin: 1px;
+        font-family: FontAwesome;
+        content: "\f006";
+      }
+      &.active {
+          &:before {
+            content: "\f005";
+        }
+      }
+      > input {
+        display: none;
+      }
+      &:hover ~ label,
+      &:hover {
+        color: @app-rating-star-hover-color;
+    }
+  }
+}
+
+  .ratings-container {
+    display: inline-block;
+    text-align: left;
+    position: relative;
+    > * {
+      vertical-align: middle;
+    }
+    &:before{
+      content: "\f005\f005\f005\f005\f005\f005\f005\f005\f005\f005";
+      font-family: FontAwesome;
+      position: absolute;
+      width: inherit;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      white-space: nowrap;
+    }
+    .ratings {
+       font-size: inherit;
+       left: 0;
+       width:100%;
+       overflow: hidden;
+       display: inline-block;
+      &:before{
+        content: "\f005\f005\f005\f005\f005\f005\f005\f005\f005\f005";
+        font-family: FontAwesome;
+        position: absolute;
+        overflow: hidden;
+        width: inherit;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+ }
+
+.app-progress {
+  .progress-bar {
+    .app-progress-label[data-caption-placement="hidden"] {
+      display: none;
+    }
+    .app-progress-label {
+      height: 100%;
+      display: inline-block;
+      vertical-align: middle;
+      &::before {
+        content: "";
+        height: 100%;
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.app-datetime {
+  &.input-group {
+    .app-dateinput {
+      &.form-control {
+        position: absolute;
+        z-index: -1 !important;
+        width: 1px;
+      }
+    }
+  }
+  &.dropdown-menu {
+    z-index: 2000 !important;
+  }
+}
+
+.app-date {
+  .uib-datepicker-popup.dropdown-menu {
+    z-index: 2000;
+  }
+  &[disabled="disabled"] {
+    > .input-group-btn {
+      .btn-date {
+        opacity:  0.65;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+/*Datepicker styles*/
+.bs-datepicker-container {
+  padding:0;
+}
+/*Time picker Styles*/
+.wm-app .input-group .form-group .form-control.bs-timepicker-field {
+  width: 45px;
+}
+.app-form {
+  .overlay {
+    background: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 1em;
+  }
+}
+
+.wm-app .popover.fade {
+  &.bottom, &.top, &.left, &.right {
+    >.arrow {
+      margin: 0;
+    }
+    >.popover-inner {
+      height: 100%;
+      overflow: auto;
+    }
+  }
+}
+/*====================================================================================================================
+  END - Widgets
+
+/*Third party style sheets*/
+//@import (less) "../../components/angular-bootstrap-colorpicker/colorpicker.css";
+//@import (less) "../../components/angular-toaster/toaster.css";
+
+/*This div was overlapping with the rest of the UI thereby blocking access to the content underneath it.
+Hence the height is set to 0. */
+.wm-app {
+  #wm-common-content {
+    height: 0;
+  }
+}

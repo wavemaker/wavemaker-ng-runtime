@@ -1,0 +1,82 @@
+<div class="col-md-9">
+    <wm-menu [caption]="caption" [width]="width" [height]="height" [dataset]="widgets" [menulayout]="layout" [iconclass]="iconclass" [menuposition]="position" [linktarget]="target"></wm-menu>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Caption
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="caption" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="width" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Menu Layout
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="layout">
+                <option value=""></option>
+                <option *ngFor="let layout of layouts" [value]="layout">{{layout}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Menu Position
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="position">
+                <option value=""></option>
+                <option *ngFor="let position of positions" [value]="position">{{position}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Target
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="target">
+                <option value=""></option>
+                <option *ngFor="let target of targets" [value]="target">{{target}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Icon class
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="iconclass" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Tabindex
+        </div>
+        <div class="property-control col-md-8">
+            <input type="number" [(ngModel)]="tabindex" />
+        </div>
+    </div>
+</div>
+
+

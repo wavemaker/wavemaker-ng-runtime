@@ -1,0 +1,66 @@
+<div class="col-md-9">
+    <wm-search [searchkey]="searchkey"
+               [dataset]="dataset"
+               [displayimagesrc]="displayimagesrc"
+               [datafield]="datafield"
+               [orderby]="orderby"
+               [displaylabel]="displaylabel"
+               [datavalue]="datavalue" #wmSearch></wm-search><br><br>
+
+    Result: {{wmSearch.result | json}} <br><br>
+
+    datavalue: {{wmSearch.datavalue | json}} <br><br>
+
+    query: {{wmSearch.query}}
+
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Datavalue</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="datavalue" class="app-textbox form-control"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Search Key</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="searchkey" class="app-textbox form-control"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Display Image source</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="displayimagesrc" class="app-textbox form-control"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Datafield</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="datafield" class="app-textbox form-control"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Display label</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="displaylabel" class="app-textbox form-control"/>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

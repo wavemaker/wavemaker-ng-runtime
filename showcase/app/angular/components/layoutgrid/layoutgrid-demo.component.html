@@ -1,0 +1,40 @@
+<div class="col-md-9">
+    <wm-layoutgrid width="width" height="height" backgroundcolor="backgroundcolor">
+        <wm-gridrow>
+            <wm-gridcolumn columnwidth="6" backgroundcolor="grey">col-sm-6</wm-gridcolumn>
+            <wm-gridcolumn columnwidth="6" backgroundcolor="lightgrey">col-sm-6</wm-gridcolumn>
+        </wm-gridrow>
+        <wm-gridrow>
+            <wm-gridcolumn columnwidth="6" backgroundcolor="grey">col-sm-6</wm-gridcolumn>
+            <wm-gridcolumn columnwidth="6" backgroundcolor="lightgrey">col-sm-6</wm-gridcolumn>
+        </wm-gridrow>
+    </wm-layoutgrid>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="width" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Background color
+        </div>
+        <div class="property-control col-md-8">
+            <input type="color" [(ngModel)]="backgroundcolor" />
+        </div>
+    </div>
+</div>

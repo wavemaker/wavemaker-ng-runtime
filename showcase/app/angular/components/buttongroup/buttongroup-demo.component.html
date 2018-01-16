@@ -1,0 +1,42 @@
+<div class="col-md-9">
+    <wm-buttongroup
+            [vertical]="vertical"
+            [show]="show"
+            [width]="width"
+            [horizontalalign]="'left'">
+        <wm-button [caption]="'button1'" [class]="'btn-primary'"></wm-button>
+        <wm-button [caption]="'button2'" [class]="'btn-warning'"></wm-button>
+        <wm-button [caption]="'button3'" [class]="'btn-info'"></wm-button>
+    </wm-buttongroup>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Vertical
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="vertical" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="show" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="width" />
+        </div>
+    </div>
+</div>
+
+
+

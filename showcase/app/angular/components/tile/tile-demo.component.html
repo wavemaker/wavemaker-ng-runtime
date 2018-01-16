@@ -1,0 +1,41 @@
+<div class="col-md-9">
+    <wm-tile [width]="width" [height]="height" [horizontalalign]="textalign">SAmple text</wm-tile>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+          Caption
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="caption" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+          Width
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="width" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+          Height
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+          Horizonal Align
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="textalign">
+                <option *ngFor="let align of textalignstyle" value="{{align.key}}">{{align.value}}</option>
+            </select>
+        </div>
+    </div>
+</div>
