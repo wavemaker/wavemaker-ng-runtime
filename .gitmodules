@@ -1,4 +1,0 @@
-[submodule "angular/components"]
-	path = angular/components
-	url = http://wmgit.pramati.com/wm-components
-	revision = *
