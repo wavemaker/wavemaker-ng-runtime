@@ -4,15 +4,9 @@
 /dist
 /tmp
 /out-tsc
-/angular/components/dist
-/angular/components/tmp
-/angular/components/out-tsc
 
 # dependencies
-/angular/components/node_modules
-
-# documentation
-/angular/components/documentation
+/node_modules
 
 # IDEs and editors
 /.idea
@@ -39,9 +33,6 @@ npm-debug.log
 testem.log
 /typings
 
-# e2e
-/angular/components/e2e/*.js
-/angular/components/e2e/*.map
 
 # System Files
 .DS_Store
