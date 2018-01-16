@@ -1,149 +1,119 @@
-import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
-import { idMaker, isDefined, isObject } from '@utils/utils';
-import { $watch, $unwatch, isChangeFromWatch, $digest } from '@utils/watcher';
-import { BaseComponent } from '../widgets/base/base.component';
-import { addClass, removeClass, setAttr, switchClass } from '@utils/dom';
-import { isStyle } from '@utils/styler';
+import { stringStartsWith, getEvaluatedExprValue } from '@utils/utils';
+import {
+    isNull as _isNull,
+    assign as _assign
+} from 'lodash';
 
-const widgetRegistryByName = new Map<string, any>();
-const widgetRegistryByWidgetId = new Map<string, any>();
+/**
+ * Returns the parsed, updated bound expression
+ * if the expression is $[data[$i][firstName]] + '--' + $[lastName] + '--' + $['@ID@']
+ * returns __1.firstName + '--' + lastName + '--' + __1['@ID@']
+ */
+const getUpdatedExpr = (expr: string) => {
+    let updated = '', ch, next, i, j, matchCh, matchCount, isQuotedStr, subStr, isQuotedStrEvaluated;
 
-const CLS_NG_HIDE = 'ng-hide';
+    expr = expr.replace(/\$\[data\[\$i\]/g, '$[__1');
 
-const idGen = idMaker('widget-id-');
+    for (i = 0; i < expr.length; i++) {
+        ch = expr[i];
+        next = expr[i + 1];
 
-const proxyHandler = {
-    set: (t, k, v) => {
-        globalPropertyChangeHandler(t, k, v);
-        return true;
-    },
-    get: (t, k) => {
-        return t[k];
-    }
-};
+        /**
+         * if the expression starts with $[, check the next(ch) character,
+         *    if ch is a quote(', ") change the expr to __[
+         *    if ch is a whiteSpace, remove it
+         *    else remove $[
+         */
+        if (ch === '$' && next === '[') {
+            matchCount = 1;
+            subStr = '';
+            isQuotedStrEvaluated = false;
+            isQuotedStr = false;
 
-const registerWidget = (name: string, widgetId: string, widget: any, component: any) => {
-    if (isDefined(name)) {
-        widgetRegistryByName.set(name, widget);
-    }
-    widgetRegistryByWidgetId.set(widgetId, widget);
-    component.addDestroyListener(() => {
-        widgetRegistryByName.delete(widgetId);
-        widgetRegistryByWidgetId.delete(widgetId);
-    });
-};
+            for (j = i + 2; j < expr.length; j++) {
 
-const getWatchIdentifier = (...args) => args.join('_');
+                matchCh = expr[j];
 
-const parseValue = (value, type) => {
-    if (type === PROP_TYPE.BOOLEAN) {
-        return Boolean(value).valueOf();
-    }
+                if (matchCh === ' ') {
+                    continue;
+                }
 
-    if (type === PROP_TYPE.NUMBER) {
-        return +value;
-    }
-};
+                if (!isQuotedStrEvaluated) {
+                    isQuotedStr = expr[j] === '"' || expr[j] === '\'';
+                    isQuotedStrEvaluated = true;
+                }
 
-const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv: any, ov: any) => {
-    const $el = component.$element;
-    const $host = component.$host;
+                if (matchCh === '[') {
+                    matchCount++;
+                } else if (matchCh === ']') {
+                    matchCount--;
+                }
 
-    if (key === 'class' || key === 'conditionalclass') {
-        switchClass($el, nv, ov);
-    } else if (key === 'name') {
-        setAttr($el, 'name', nv);
-    }
-    if (key === 'show') {
-        if (nv) {
-            removeClass($host, CLS_NG_HIDE);
+                if (!matchCount) {
+                    subStr = expr.substring(i + 2, j);
+                    if (isQuotedStr) {
+                        updated += '__1[' + subStr + ']';
+                    } else {
+                        updated += subStr;
+                    }
+
+                    break;
+                }
+            }
+            i = j;
         } else {
-            addClass($host, CLS_NG_HIDE);
+            updated += ch;
         }
     }
-    if (key === 'hint') {
-        setAttr($el, 'title', nv);
-    }
+
+    return updated;
 };
 
-const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: any) => {
-    const widgetId = component.widgetId;
-    const ov = component[key];
-
-    if (!isChangeFromWatch()) {
-        $unwatch(getWatchIdentifier(widgetId, key));
+/**
+ * Returns the value for the provided key in the object
+ */
+export const getObjValueByKey = (obj: any, strKey: string) => {
+    /* check for the key-string */
+    if (strKey) {
+        let val;
+        /* convert indexes to properties, so as to work for even 'key1[0].child1'*/
+        strKey.replace(/\[(\w+)\]/g, '.$1').split('.').forEach(function (key) {
+            // If obj is null, then assign val to null.
+            val = (val && val[key]) || (_isNull(obj) ? obj : obj[key]);
+        });
+        return val;
     }
-
-    const widgetProps = getWidgetPropsByType(component.widgetType);
-    const propInfo = widgetProps.get(key);
-    if (propInfo) {
-        const type = propInfo.type;
-        if (type) {
-            nv = parseValue(nv, type);
-        }
-    }
-
-    if (nv !== ov || isObject(nv) || isObject(ov)) {
-        component[key] = nv;
-
-        defaultPropertyChangeHandler(component, key, nv, ov);
-
-        if (isStyle(key)) {
-            component.onStyleChange(key, nv, ov);
-        } else if (propInfo && propInfo.notify) {
-            component.onPropertyChange(key, nv, ov);
-        }
-
-        // $digest();
-    }
+    return obj;
 };
 
+/**
+ * returns the display field data for select, radioboxset and checkboxset widgets
+ * Based on the bind display expression or display expression or display name,
+ * data is extracted and formatted from the passed option object
+ */
+export const getEvaluatedData = (dataObj: any, options: any) => {
+    let expressionValue;
+    const displayField = options.displayfield,
+        displayExp = options.displayexpression;
 
-export function initWidget(component: BaseComponent, widgetType: string, elDef: any, view: any) {
+    // if key is bound expression
+    if (displayExp) {
+        if (stringStartsWith(displayExp, 'bind:')) {
+            // remove 'bind:' prefix from the boundExpressionName
+            expressionValue = displayExp.replace('bind:', '');
+            // parse the expressionValue for replacing all the expressions with values in the object
+            expressionValue = this.getUpdatedExpr(expressionValue);
 
-    const widget = Proxy.revocable(component, proxyHandler).proxy;
-    const widgetId = idGen.next().value;
-
-    component.widgetId = widgetId;
-    component.widgetType = widgetType;
-    component.destroyListeners = [];
-
-    component.addDestroyListener(() => widget.revoke());
-
-    const widgetProps: Map<string, any> = getWidgetPropsByType(widgetType);
-    const $scope = view.component;
-    let $locals;
-    const initState: any = new Map<string, any>();
-
-    if (view.component !== view.context) {
-        $locals = view.context;
-    } else {
-        $locals = {};
+            // TODO: Optimize the behavior
+            const f = new Function('__1', '__2', '__3', 'return ' + expressionValue);
+            // evaluate the expression in the given scope and return the value
+            return f(_assign({}, dataObj, {'__1': dataObj}));
+        }
+        return getEvaluatedExprValue(dataObj, displayExp);
     }
 
-    widgetProps.forEach((v, k) => {
-        if (isDefined(v.value)) {
-            initState.set(k, v.value);
-        }
-    });
-
-    for (const [, attrName, attrValue] of elDef.element.attrs) {
-        const {0: propName, 1: bindKey, length} = attrName.split('.');
-        if (bindKey === 'bind') {
-            initState.delete(propName);
-            component.addDestroyListener($watch(attrValue, $scope, $locals, nv => widget[propName] = nv, getWatchIdentifier(widgetId, propName)));
-        } else if (length === 1) {
-            initState.set(propName, attrValue);
-        }
+    /*If value is passed*/
+    if (displayField) {
+        return this.getObjValueByKey(dataObj, displayField);
     }
-
-    setAttr(component.$element, 'widget-id', widgetId);
-
-    registerWidget(initState.get('name'), widgetId, widget, component);
-
-    initState.forEach((v, k) => {
-        widget[k] = v;
-    });
-}
-
-(<any>window).widgetRegistryByName = widgetRegistryByName;
+};

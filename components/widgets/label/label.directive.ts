@@ -1,6 +1,6 @@
 import { Directive, ElementRef, Injector } from '@angular/core';
 import { addClass, setProperty, toggleClass } from '@utils/dom';
-import { initWidget } from '../../utils/widget-utils';
+import { initWidget } from '../../utils/init-widget';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '@utils/styler';
 import { registerProps } from './label.props';
