@@ -4,12 +4,14 @@ import { LabelDirective } from './widgets/label/label.directive';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RadiosetComponent } from '@components/widgets/radioset/radioset.component';
 
 
 const wmComponents = [
     AnchorDirective,
     ButtonDirective,
-    LabelDirective
+    LabelDirective,
+    RadiosetComponent
 ];
 
 @NgModule({
