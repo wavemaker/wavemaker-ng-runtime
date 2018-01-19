@@ -51,6 +51,8 @@ then
         ./dist/tmp/common-http.umd.js \
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
+        ./node_modules/lodash/lodash.js \
+        ./node_modules/moment/moment.js \
         -o ./dist/bundles/wm-libs.min.js -b
 
     echo -e "${Green}Bundled libs\n"

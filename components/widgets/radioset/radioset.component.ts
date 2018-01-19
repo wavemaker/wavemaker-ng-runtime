@@ -25,10 +25,40 @@ const DEFAULT_CLS = '';
  */
 @Component({
     selector: 'wm-radioset',
-    templateUrl: './radioset.component.html',
-    styleUrls: ['./radioset.component.less']
+    template: `
+        <ul role="input"
+            [attr.required]="required"
+            [ngClass]="['app-radioset', 'list-group', class, layout]"
+            [ngStyle]="{
+              'width':width,
+              'height':height,
+              'margin':margin}">
+            <li [ngClass]="['radio', 'app-radio', itemclass]"
+                [class.active]="dataObj.isChecked"
+                *ngFor="let dataObj of displayOptions;let i = index"
+                (click)="_onRadioLabelClick($event, dataObj.key)">
+                <label class="app-radioset-label"
+                       [ngClass]="{'disabled':disabled}"
+                       [title]="dataObj.value">
+                    <input name="radioset" [required]="required" type="radio" [attr.data-attr-index]="i"
+                           [value]="dataObj.key" [tabindex]="tabindex" [checked]="dataObj.isChecked"/>
+                    <span class="caption" [textContent]="dataObj.value"></span>
+                </label>
+            </li>
+
+            <input [disabled]="disabled" [hidden]="true" class="model-holder">
+            <div *ngIf="readonly || disabled" class="readonly-wrapper"></div>
+        </ul>
+    `
 })
 export class RadiosetComponent extends BaseComponent implements OnInit {
+    class;
+    width;
+    height;
+    margin;
+    required;
+
+
     public displayOptions: any[];
     private ALLFIELDS = 'All Fields';
     private _isChangedManually = false;

@@ -6,8 +6,8 @@ export const registerProps = () => {
         new Map(
             [
                 ['animation', DEFAULT_PROP_DEF],
-                ['caption', {notify: true}],
-                ['class', {value: 'btn-default'}],
+                ['caption', {notify: true, value: 'Label'}],
+                ['class', DEFAULT_PROP_DEF],
                 ['conditionalclass', DEFAULT_PROP_DEF],
                 ['hint', DEFAULT_PROP_DEF],
                 ['name', DEFAULT_PROP_DEF],

@@ -1,5 +1,5 @@
-import { Component, OnInit, ElementRef, Injector } from '@angular/core';
-import { addClass } from '@utils/dom';
+import { OnInit, ElementRef, Injector, Directive } from '@angular/core';
+import { addClass, switchClass } from '@utils/dom';
 import { BaseComponent } from '../../base/base.component';
 import { initWidget } from '../../../utils/init-widget';
 import { styler } from '@utils/styler';
@@ -8,25 +8,18 @@ import { registerProps } from './gridcolumn.props';
 registerProps();
 
 const WIDGET_TYPE = 'wm-gridcolumn';
-const DEFAULT_CLS = '';
+const DEFAULT_CLS = 'app-grid-column';
 
-@Component({
-    selector: 'wm-gridcolumn',
-    templateUrl: './gridcolumn.component.html',
-    styleUrls: ['./gridcolumn.component.less']
+@Directive({
+    selector: '[wmGridcolumn]'
 })
-export class GridcolumnComponent extends BaseComponent implements OnInit {
-    height: string;
-    padding: string;
+export class GridcolumnDirective extends BaseComponent implements OnInit {
 
-    public _columnclass = '';
-    public _columnwidth;
 
     onPropertyChange(key, nv, ov?) {
         switch (key) {
             case 'columnwidth':
-                this._columnclass = `col-sm-${nv}`;
-                this._columnwidth = nv;
+                switchClass(this.$element, `col-sm-${nv}`, ov ? `col-sm-${ov}` : '');
                 break;
         }
     }

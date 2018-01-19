@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Injector } from '@angular/core';
+import { OnInit, ElementRef, Injector, Directive } from '@angular/core';
 import { addClass } from '@utils/dom';
 import { BaseComponent } from '../..//base/base.component';
 import { initWidget } from '../../../utils/init-widget';
@@ -8,16 +8,12 @@ import { registerProps } from './gridrow.props';
 registerProps();
 
 const WIDGET_TYPE = 'wm-gridrow';
-const DEFAULT_CLS = '';
+const DEFAULT_CLS = 'app-grid-row clearfix';
 
-@Component({
-    selector: 'wm-gridrow',
-    templateUrl: './gridrow.component.html',
-    styleUrls: ['./gridrow.component.less']
+@Directive({
+    selector: '[wmGridrow]'
 })
-export class GridrowComponent extends BaseComponent implements OnInit {
-
-    class = '';
+export class GridrowDirective extends BaseComponent implements OnInit {
 
     constructor(inj: Injector, elRef: ElementRef) {
         super();

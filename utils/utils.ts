@@ -1,4 +1,3 @@
-import * as moment from 'moment';
 import {
     includes as _includes,
     startsWith as _startsWith,
@@ -10,6 +9,8 @@ import {
     intersection as _intersection,
     isArray as _isArray
 } from 'lodash';
+
+declare const moment;
 
 const REGEX = {
     SNAKE_CASE: /[A-Z]/g,

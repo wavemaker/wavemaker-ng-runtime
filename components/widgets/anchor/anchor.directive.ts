@@ -42,8 +42,8 @@ export class AnchorDirective extends BaseComponent {
     $icon;
     encodeurl;
 
-    @HostBinding('tabIndex') tabindex: number;
-    @HostBinding('accessKey') shortcutkey: string;
+    @HostBinding('attr.tabindex') tabindex: number;
+    @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('target') target: string;
     @HostBinding('attr.icon-position') iconposition: string;
 

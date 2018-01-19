@@ -4,10 +4,10 @@ import { LabelDirective } from './widgets/label/label.directive';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RadiosetComponent } from '@components/widgets/radioset/radioset.component';
-import { LayoutgridComponent } from '@components/widgets/layoutgrid/layoutgrid.component';
-import { GridrowComponent } from '@components/widgets/layoutgrid/gridrow/gridrow.component';
-import { GridcolumnComponent } from '@components/widgets/layoutgrid/gridcolumn/gridcolumn.component';
+import { RadiosetComponent } from './widgets/radioset/radioset.component';
+import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
+import { GridrowDirective } from './widgets/layoutgrid/gridrow/gridrow.directive';
+import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
 
 
 const wmComponents = [
@@ -15,9 +15,9 @@ const wmComponents = [
     ButtonDirective,
     LabelDirective,
     RadiosetComponent,
-    LayoutgridComponent,
-    GridrowComponent,
-    GridcolumnComponent
+    LayoutgridDirective,
+    GridrowDirective,
+    GridcolumnDirective
 ];
 
 @NgModule({

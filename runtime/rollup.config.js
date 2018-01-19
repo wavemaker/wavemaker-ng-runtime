@@ -7,6 +7,7 @@ export default {
     name: 'wm.runtime',
     globals: {
         '@angular/core': 'ng.core',
+        '@angular/compiler': 'ng.compiler',
         '@angular/common': 'ng.common',
         '@angular/common/http': 'ng.common.http',
         '@angular/platform-browser-dynamic': 'ng.platformBrowserDynamic',
@@ -18,6 +19,7 @@ export default {
         '@utils/styler': 'wm.utils',
         '@utils/watcher': 'wm.utils',
         '@utils/expression-parser': 'wm.utils',
-        '@components/components.module': 'wm.components'
+        '@components/components.module': 'wm.components',
+        "lodash": "_"
     }
 };

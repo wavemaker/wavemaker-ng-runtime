@@ -1,4 +1,4 @@
-import { DEFAULT_PROP_DEF, PROP_TYPE, register } from '../../utils/widget-props';
+import { DEFAULT_PROP_DEF, DEFAULT_PROP_NOTIFY, PROP_TYPE, register } from '../../utils/widget-props';
 
 export const registerProps = () => {
     register(
@@ -7,12 +7,12 @@ export const registerProps = () => {
             [
                 ['animation', DEFAULT_PROP_DEF],
                 ['badgevalue', {notify: true}],
-                ['caption', {notify: true}],
-                ['class', {value: 'btn-default'}],
+                ['caption', {notify: true, value: 'link'}],
+                ['class', DEFAULT_PROP_DEF],
                 ['conditionalclass', DEFAULT_PROP_DEF],
                 ['encodeurl', {type: PROP_TYPE.BOOLEAN}],
                 ['hint', DEFAULT_PROP_DEF],
-                ['hyperlink', DEFAULT_PROP_DEF],
+                ['hyperlink', DEFAULT_PROP_NOTIFY],
                 ['iconclass', {notify: true}],
                 ['iconheight', {notify: true}],
                 ['iconmargin', {notify: true}],

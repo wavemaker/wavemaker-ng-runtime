@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
+import { OnInit, ElementRef, Injector, Directive } from '@angular/core';
 import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
 import { initWidget } from '../../utils/init-widget';
@@ -8,18 +8,14 @@ import { registerProps } from './layoutgrid.props';
 registerProps();
 
 const WIDGET_TYPE = 'wm-layoutgrid';
-const DEFAULT_CLS = '';
+const DEFAULT_CLS = 'app-grid-layout clearfix';
 
-@Component({
-    selector: 'wm-layoutgrid',
-    templateUrl: './layoutgrid.component.html',
-    styleUrls: ['./layoutgrid.component.less']
+@Directive({
+    selector: '[wmLayoutgrid]'
 })
-export class LayoutgridComponent extends BaseComponent implements OnInit {
+export class LayoutgridDirective extends BaseComponent implements OnInit {
 
-    class = '';
-
-    constructor(inj: Injector, elRef: ElementRef, private cdRef: ChangeDetectorRef) {
+    constructor(inj: Injector, elRef: ElementRef) {
         super();
 
         this.$host = elRef.nativeElement;
