@@ -1,0 +1,12 @@
+<div [ngClass]="['app-grid-row', 'clearfix', class]"
+     [ngStyle]="{
+      'height':height,
+      'background-color': backgroundcolor,
+      'border-color': bordercolor,
+      'border-style': borderstyle,
+      'border-width': borderwidth,
+      'overflow': overflow,
+      'padding': padding}">
+    <!-- Columns go here -->
+    <ng-content select="wm-gridcolumn"></ng-content>
+</div>

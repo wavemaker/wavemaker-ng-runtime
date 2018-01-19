@@ -1,0 +1,17 @@
+<div [ngClass]="['app-grid-column', _columnclass]"
+     [ngStyle]="{
+      'height':height,
+      'background-color': backgroundcolor,
+      'background-image': backgroundimage ? 'url(' + backgroundimage + ')' : '',
+      'background-repeat': backgroundrepeat,
+      'background-position': backgroundposition,
+      'background-size': backgroundsize,
+      'background-attachment': backgroundattachment,
+      'border-color': bordercolor,
+      'border-style': borderstyle,
+      'border-width': borderwidth,
+      'overflow': overflow,
+      'padding': padding}">
+    <!-- Content goes here -->
+    <ng-content></ng-content>
+</div>
