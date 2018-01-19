@@ -5,6 +5,7 @@ export const getWidgetPropsByType = (widgetType: string): Map<string, any> => {
 };
 
 export const DEFAULT_PROP_DEF = Object.create(null);
+export const DEFAULT_PROP_NOTIFY = {notify: true};
 
 export const register = (widgetType, props) => {
     widgetProps.set(widgetType, props);

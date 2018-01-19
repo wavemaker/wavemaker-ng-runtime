@@ -101,14 +101,15 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
 
 export function initWidget(component: BaseComponent, widgetType: string, elDef: any, view: any) {
 
-    const widget = Proxy.revocable(component, proxyHandler).proxy;
+    const revocable = Proxy.revocable(component, proxyHandler);
+    const widget = revocable.proxy;
     const widgetId = idGen.next().value;
 
     component.widgetId = widgetId;
     component.widgetType = widgetType;
     component.destroyListeners = [];
 
-    component.addDestroyListener(() => widget.revoke());
+    component.addDestroyListener(() => revocable.revoke());
 
     const widgetProps: Map<string, any> = getWidgetPropsByType(widgetType);
     const $scope = view.component;
