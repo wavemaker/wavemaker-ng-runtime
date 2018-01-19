@@ -10,8 +10,8 @@ if (environment.production) {
 
 console.time('bootstrap');
 platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .then(() => {
-    console.timeEnd('bootstrap');
-  })
-  .catch(err => console.log(err));
+    .bootstrapModule(AppModule)
+    .then(() => {
+        console.timeEnd('bootstrap');
+    })
+    .catch(err => console.log(err));

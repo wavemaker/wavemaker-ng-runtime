@@ -4,29 +4,34 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { AppComponent} from './app.component';
-
-import { PipeProvider } from './services/pipe-provider';
-
+import { AppComponent } from './app.component';
+import { PipeProvider } from './services/pipe-provider.service';
 import { WmComponentsModule } from '@components/components.module';
+import { PageUtils } from './services/page-utils.service';
+import { PageWrapperComponent } from './components/page-wrapper.component';
+import { HttpClientModule } from '@angular/common/http';
 
-const routes = [];
+const routes = [
+    {path: ':pageName', component: PageWrapperComponent, pathMatch: 'full'}
+];
 
- 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    WmComponentsModule,
-    RouterModule,
-    RouterModule.forRoot(routes, {useHash: true})
-  ],
-  providers: [PipeProvider],
-  bootstrap: [AppComponent] 
+    declarations: [
+        AppComponent,
+        PageWrapperComponent
+    ],
+    imports: [
+        BrowserModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        WmComponentsModule,
+        RouterModule,
+        HttpClientModule,
+        RouterModule.forRoot(routes, {useHash: true})
+    ],
+    providers: [PipeProvider, PageUtils],
+    bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

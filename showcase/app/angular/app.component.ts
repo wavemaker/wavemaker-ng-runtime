@@ -1,5 +1,5 @@
 import { ApplicationRef, Component, DoCheck } from '@angular/core';
-import { PipeProvider } from '@runtime/services/pipe-provider';
+import { PipeProvider } from '@runtime/services/pipe-provider.service';
 import { setPipeProvider } from '@utils/expression-parser';
 import { $digest } from '@utils/watcher';
 

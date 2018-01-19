@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { WmComponentsModule } from '@components/components.module';
-import { PipeProvider } from '@runtime/services/pipe-provider';
+import { PipeProvider } from '@runtime/services/pipe-provider.service';
 
 @NgModule({
     declarations: [
