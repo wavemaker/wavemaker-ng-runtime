@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, DoCheck } from '@angular/core';
 import { PipeProvider } from '@runtime/services/pipe-provider.service';
 import { setPipeProvider } from '@utils/expression-parser';
-import { $digest } from '@utils/watcher';
+import { $invokeWatchers, setAppRef } from '@utils/watcher';
 
 @Component({
     selector: 'app-root',
@@ -15,6 +15,7 @@ export class AppComponent implements DoCheck {
 
     constructor(pipeProvider: PipeProvider, _appRef: ApplicationRef) {
         setPipeProvider(pipeProvider);
+        setAppRef(_appRef);
     }
 
     toggleConfig = {
@@ -35,6 +36,6 @@ export class AppComponent implements DoCheck {
     }
 
     ngDoCheck() {
-        $digest();
+        $invokeWatchers();
     }
 }

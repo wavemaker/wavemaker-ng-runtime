@@ -94,7 +94,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
             component.onPropertyChange(key, nv, ov);
         }
 
-        // $digest();
+        $digest();
     }
 };
 

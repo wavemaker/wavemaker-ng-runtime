@@ -1,5 +1,6 @@
-import { isObject, debounce, idMaker } from './utils';
+import { debounce, idMaker } from './utils';
 import { $parse } from './expression-parser';
+import { isEqual as _isEqual } from 'lodash';
 
 const registry = new Map<string, any>();
 
@@ -27,7 +28,7 @@ const triggerWatchers = () => {
         const listener = watchInfo.listener;
         const ov = watchInfo.last;
         const nv = fn();
-        if (nv !== ov || isObject(nv) || isObject(ov)) {
+        if (!_isEqual(nv, ov)) {
             changedByWatch = true;
             listener(nv, ov);
             changedByWatch = false;
@@ -36,8 +37,14 @@ const triggerWatchers = () => {
     });
 };
 
+export const setAppRef = appRef => {
+    $digest = debounce(appRef.tick.bind(appRef), 100);
+};
+
 export const isChangeFromWatch = () => changedByWatch;
 
 (<any>window).watchRegistry = registry;
 
-export const $digest = debounce(triggerWatchers, 100);
+export const $invokeWatchers = debounce(triggerWatchers, 100);
+
+export let $digest = () => {};

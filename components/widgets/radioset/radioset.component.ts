@@ -9,6 +9,7 @@ import { initWidget } from '../../utils/init-widget';
 import { styler } from '@utils/styler';
 import { registerProps } from './radioset.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForSelected, updateCheckedValue } from '../../utils/form-utils';
+import { $digest } from '@utils/watcher';
 
 registerProps();
 
@@ -105,6 +106,7 @@ export class RadiosetComponent extends BaseComponent implements OnInit {
             this._model_ = assignModelForSelected(this.displayOptions, this._model_, this.modelProxy,
                 this.datafield, this._isChangedManually);
         }
+        $digest();
     }
 
     /**
