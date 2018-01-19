@@ -1,35 +1,42 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BsDatepickerModule } from 'ngx-bootstrap';
 
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
-import { BsDatepickerModule } from 'ngx-bootstrap';
 import { ButtonDirective } from './widgets/button/button.directive';
+import { ContainerDirective } from './widgets/container/container.directive';
 import { DateComponent } from './widgets/date/date.component';
-import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
 import { GridrowDirective } from './widgets/layoutgrid/gridrow/gridrow.directive';
+import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
+import { IconDirective } from './widgets/icon/icon.directive';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { PanelFooterDirective } from './widgets/panel/panel-footer/panel-footer.component';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
-import { TextareaDirective } from './widgets/textarea/textarea.directive';
 import { TextDirective } from './widgets/text/text.directive';
+import { TextareaDirective } from './widgets/textarea/textarea.directive';
+import { TileDirective } from './widgets/tile/tile.directive';
+
 
 
 const wmComponents = [
     AnchorDirective,
     ButtonDirective,
+    ContainerDirective,
     DateComponent,
-    GridcolumnDirective,
     GridrowDirective,
+    GridcolumnDirective,
+    IconDirective,
     LabelDirective,
     LayoutgridDirective,
     PanelComponent,
     PanelFooterDirective,
     RadiosetComponent,
+    TextDirective,
     TextareaDirective,
-    TextDirective
+    TileDirective
 ];
 
 @NgModule({

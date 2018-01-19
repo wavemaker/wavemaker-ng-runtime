@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./container-demo.component.less']
 })
 export class ContainerDemoComponent implements OnInit {
+    width: string = '350px';
+    height: string = '100px';
     borderwidth: string;
     borderstyle: string;
     textalignstyle: {key: string, value: string}[] = [
