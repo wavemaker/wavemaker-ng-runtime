@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TextDemoComponent implements OnInit {
 
+    myTextWidget;
+
     datavalue: string = '';
 
     width: string = '300px';
@@ -58,8 +60,11 @@ export class TextDemoComponent implements OnInit {
 
     type: string = this.types[9].key;
 
-    constructor() { }
+
+    constructor() {
+    }
 
     ngOnInit() {
+        this.myTextWidget = (<any>window).widgetRegistryByName.get('myText');
     }
 }

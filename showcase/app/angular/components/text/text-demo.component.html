@@ -1,19 +1,30 @@
 <div class="col-md-9">
-    <wm-text
-            [required]="required"
-            [disable]="disable"
-            [width]="width"
-            [height]="height"
-            [hint]="hint"
-            [tabindex]="tabindex"
-            [fontsize]="fontsize"
-            [color]="color"
-            [show]="show"
-            [type]="type"
-            [maxchars]="maxchars"
-            [backgroundcolor]="backgroundcolor"
-            [textalign]="textalign"
-            [(datavalue)]="datavalue"></wm-text>
+    <form ngNativeValidate>
+        <input
+                wmText
+                required.bind="required"
+                disabled.bind="disabled"
+                readonly.bind="readonly"
+                width.bind="width"
+                height.bind="height"
+                hint.bind="hint"
+                placeholder.bind="placeholder"
+                tabindex.bind="tabindex"
+                show.bind="show"
+                type.bind="type"
+                maxchars.bind="maxchars"
+                minvalue.bind="minvalue"
+                maxvalue.bind="maxvalue"
+                regexp.bind="regexp"
+                step.bind="step"
+                datavalue.bind="datavalue"
+                ngModel
+                name="myText">
+        <button type="submit" class="btn">Submit</button>
+    </form>
+    <div>
+        {{myTextWidget.datavalue}}
+    </div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
@@ -23,7 +34,7 @@
             Datavalue
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="datavalue" />
+            <input type="text" [(ngModel)]="datavalue"/>
         </div>
     </div>
     <div class="property row">
@@ -38,20 +49,18 @@
     </div>
     <div class="property row">
         <div class="property-text col-md-4">
-            Text align
+            Hint
         </div>
         <div class="property-control col-md-8">
-            <select [(ngModel)]="textalign">
-                <option *ngFor="let align of alignments" value="{{align.key}}">{{align.value}}</option>
-            </select>
+            <input type="text" [(ngModel)]="hint"/>
         </div>
     </div>
     <div class="property row">
         <div class="property-text col-md-4">
-            Hint
+            Placeholder
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="hint" />
+            <input type="text" [(ngModel)]="placeholder"/>
         </div>
     </div>
     <div class="property row">
@@ -59,7 +68,7 @@
             Width
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="width" />
+            <input type="text" [(ngModel)]="width"/>
         </div>
     </div>
     <div class="property row">
@@ -67,31 +76,7 @@
             Height
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="height" />
-        </div>
-    </div>
-    <div class="property row">
-        <div class="property-text col-md-4">
-            Font size
-        </div>
-        <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="fontsize" />
-        </div>
-    </div>
-    <div class="property row">
-        <div class="property-text col-md-4">
-            Color
-        </div>
-        <div class="property-control col-md-8">
-            <input type="color" [(ngModel)]="color" />
-        </div>
-    </div>
-    <div class="property row">
-        <div class="property-text col-md-4">
-            Background Color
-        </div>
-        <div class="property-control col-md-8">
-            <input type="color" [(ngModel)]="backgroundcolor" />
+            <input type="text" [(ngModel)]="height"/>
         </div>
     </div>
     <div class="property row">
@@ -99,7 +84,47 @@
             Show
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="show" />
+            <input type="checkbox" [(ngModel)]="show"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Max chars
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="maxchars"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Min value
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="minvalue"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Max value
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="maxvalue"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Step
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="step"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+           Regex
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="regexp"/>
         </div>
     </div>
     <div class="property row">
@@ -107,15 +132,23 @@
             Required
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="required" />
+            <input type="checkbox" [(ngModel)]="required"/>
         </div>
     </div>
     <div class="property row">
         <div class="property-text col-md-4">
-            Disable
+            Disabled
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="disable" />
+            <input type="checkbox" [(ngModel)]="disabled"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Readonly
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="readonly"/>
         </div>
     </div>
 </div>

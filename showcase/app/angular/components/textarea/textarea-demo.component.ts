@@ -8,6 +8,10 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 })
 export class TextareaDemoComponent implements OnInit {
 
+    myTextAreaWidget;
+
+    placeholder: string = 'Enter Text';
+
     datavalue: string = '';
 
     width: string = '300px';
@@ -44,6 +48,7 @@ export class TextareaDemoComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
+        this.myTextAreaWidget = (<any>window).widgetRegistryByName.get('myTextArea');
     }
 
 }

@@ -15,11 +15,12 @@ body {
     right: -1px;
     top: 52px;
     bottom: 0;
-    width: 250px !important;
+    width: 275px !important;
     background-color: #3d3c3c;
     border-right: 1px solid #CFDBE2;
     box-shadow: -1px 0 0 #3d3c3c;
     color: #b3b3b3;
+    overflow-y: auto;
 }
 
 .properties h6, .properties h5, .properties h4, .properties h3, .properties h2, .properties h1 {

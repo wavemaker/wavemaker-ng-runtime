@@ -57,7 +57,7 @@ export const toggleClass = ($node: HTMLElement, cls: string, condition: boolean)
 };
 
 export const setCSS = ($node: HTMLElement, cssName: string, val: string | number) => {
-    if (cssName === 'width' || cssName === 'height') {
+    if (val && (cssName === 'width' || cssName === 'height')) {
         val = toDimension(val);
     }
     invokeLater(() => $node.style[cssName] = val);
