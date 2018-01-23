@@ -1,9 +1,9 @@
-import { Directive, ElementRef, HostBinding, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Injector } from '@angular/core';
 import { addClass, appendNode, insertBefore, removeNode, setAttr, setCSS, setProperty, switchClass } from '@utils/dom';
 import { initWidget } from '../..//utils/init-widget';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '@utils/styler';
-import { encodeUrl } from '@utils/utils';
+import { debounce, encodeUrl } from '@utils/utils';
 import { registerProps } from './anchor.props';
 
 registerProps();
@@ -106,8 +106,10 @@ export class AnchorDirective extends BaseComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super();
+
+        this.$digest = debounce(cdr.detectChanges.bind(cdr));
 
         this.$host = elRef.nativeElement;
         this.$element = this.$host;

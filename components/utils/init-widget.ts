@@ -1,6 +1,6 @@
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
 import { idMaker, isDefined, isObject } from '@utils/utils';
-import { $watch, $unwatch, isChangeFromWatch, $digest } from '@utils/watcher';
+import { $watch, $unwatch, isChangeFromWatch } from '@utils/watcher';
 import { BaseComponent } from '../widgets/base/base.component';
 import { addClass, removeClass, setAttr, switchClass } from '@utils/dom';
 import { isStyle } from '@utils/styler';
@@ -94,7 +94,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
             component.onPropertyChange(key, nv, ov);
         }
 
-        $digest();
+        component.$digest();
     }
 };
 

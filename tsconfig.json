@@ -22,9 +22,5 @@
             "es2017",
             "dom"
         ]
-    },
-    "angularCompilerOptions": {
-        "genDir": "./dist",
-        "debug": false
     }
 }

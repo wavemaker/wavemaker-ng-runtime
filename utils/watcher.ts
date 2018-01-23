@@ -38,7 +38,7 @@ const triggerWatchers = () => {
 };
 
 export const setAppRef = appRef => {
-    $digest = debounce(appRef.tick.bind(appRef), 100);
+    $appDigest = debounce(appRef.tick.bind(appRef), 100);
 };
 
 export const isChangeFromWatch = () => changedByWatch;
@@ -47,4 +47,4 @@ export const isChangeFromWatch = () => changedByWatch;
 
 export const $invokeWatchers = debounce(triggerWatchers, 100);
 
-export let $digest = () => {};
+export let $appDigest = () => {};

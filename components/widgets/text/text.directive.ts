@@ -1,9 +1,10 @@
-import { ElementRef, Injector, Directive, HostBinding, HostListener } from '@angular/core';
-import { addClass, setAttr, removeAttr, setProperty } from '@utils/dom';
+import { ElementRef, Injector, Directive, HostBinding, HostListener, ChangeDetectorRef } from '@angular/core';
+import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
 import { initWidget } from '../../utils/init-widget';
 import { styler } from '@utils/styler';
 import { registerProps } from './text.props';
+import { debounce } from '@utils/utils';
 
 registerProps();
 
@@ -25,28 +26,22 @@ export class TextDirective extends BaseComponent {
     @HostBinding('attr.pattern') regexp: string;
     @HostBinding('attr.step') step: number;
     @HostBinding('value') datavalue: any;
+    @HostBinding() disabled: boolean;
+    @HostBinding() required: boolean;
+    @HostBinding() readonly: boolean;
+    @HostBinding() autofocus: boolean;
+    @HostBinding() autocomplete: boolean;
 
     @HostListener('ngModelChange', ['$event'])
     onChange(event: Event) {
         this.datavalue = event;
     }
 
-    onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'autocomplete':
-                nv ? removeAttr(this.$element, 'autocomplete') : setAttr(this.$element, 'autocomplete', 'off');
-                break;
-            case 'disabled':
-            case 'required':
-            case 'readonly':
-            case 'autofocus':
-                nv ? setAttr(this.$element, key, nv) : removeAttr(this.$element, key);
-                break;
-        }
-    }
 
-    constructor(inj: Injector, elRef: ElementRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super();
+
+        this.$digest = debounce(cdr.detectChanges.bind(cdr));
 
         this.$host = elRef.nativeElement;
         this.$element = this.$host;
@@ -57,3 +52,4 @@ export class TextDirective extends BaseComponent {
         styler(this.$element, this);
     }
 }
+

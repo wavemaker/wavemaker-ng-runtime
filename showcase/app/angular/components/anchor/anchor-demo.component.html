@@ -1,5 +1,5 @@
 <div class="col-md-9">
-    <wm-anchor [caption]="caption" [hyperlink]="hyperlink" [target]="target" [iconclass]="iconclass"></wm-anchor>
+    <a wmAnchor caption.bind="caption" hyperlink.bind="hyperlink" target.bind="target" iconclass.bind="iconclass"></a>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
@@ -33,7 +33,7 @@
             Icon
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="hyperlink" />
+            <input type="text" [(ngModel)]="iconclass" />
         </div>
     </div>
 </div>

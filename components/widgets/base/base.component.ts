@@ -5,6 +5,7 @@ export abstract class BaseComponent implements OnDestroy {
     $host: HTMLElement;
     widgetType: string;
     widgetId: string;
+    $digest;
 
     destroyListeners;
 

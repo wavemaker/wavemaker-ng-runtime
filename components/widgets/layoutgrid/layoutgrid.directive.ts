@@ -1,9 +1,10 @@
-import { OnInit, ElementRef, Injector, Directive } from '@angular/core';
+import { OnInit, ElementRef, Injector, Directive, ChangeDetectorRef } from '@angular/core';
 import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
 import { initWidget } from '../../utils/init-widget';
 import { styler } from '@utils/styler';
 import { registerProps } from './layoutgrid.props';
+import { debounce } from '@utils/utils';
 
 registerProps();
 
@@ -15,8 +16,10 @@ const DEFAULT_CLS = 'app-grid-layout clearfix';
 })
 export class LayoutgridDirective extends BaseComponent implements OnInit {
 
-    constructor(inj: Injector, elRef: ElementRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super();
+
+        this.$digest = debounce(cdr.detectChanges.bind(cdr));
 
         this.$host = elRef.nativeElement;
         this.$element = this.$host;

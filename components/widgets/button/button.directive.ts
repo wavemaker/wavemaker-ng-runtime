@@ -1,9 +1,10 @@
-import { Directive, ElementRef, HostBinding, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Injector } from '@angular/core';
 import { addClass, appendNode, insertBefore, removeNode, setCSS, setProperty, switchClass } from '@utils/dom';
 import { initWidget } from '../../utils/init-widget';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '@utils/styler';
 import { registerProps } from './button.props';
+import { debounce } from '@utils/utils';
 
 registerProps();
 
@@ -87,6 +88,8 @@ export class ButtonDirective extends BaseComponent {
                         this.$icon = getIconNode();
                         if (this.$caption) {
                             insertBefore(this.$icon, this.$caption);
+                        } else {
+                            appendNode(this.$icon, this.$element);
                         }
                         addClass(this.$icon, nv);
                     }
@@ -94,8 +97,10 @@ export class ButtonDirective extends BaseComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super();
+
+        this.$digest = debounce(cdr.detectChanges.bind(cdr));
 
         this.$host = elRef.nativeElement;
         this.$element = this.$host;

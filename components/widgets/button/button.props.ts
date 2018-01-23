@@ -1,29 +1,29 @@
-import { DEFAULT_PROP_DEF, PROP_TYPE, register } from '../../utils/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-button',
         new Map(
             [
-                ['animation', DEFAULT_PROP_DEF],
-                ['badgevalue', {notify: true}],
-                ['caption', {notify: true}],
-                ['class', {value: 'btn-default'}],
-                ['conditionalclass', DEFAULT_PROP_DEF],
-                ['disabled', {type: PROP_TYPE.BOOLEAN}],
-                ['hint', DEFAULT_PROP_DEF],
-                ['iconclass', {notify: true}],
-                ['iconheight', {notify: true}],
-                ['iconmargin', {notify: true}],
-                ['iconposition', {notify: true}],
-                ['iconurl', DEFAULT_PROP_DEF],
-                ['iconwidth', {notify: true}],
-                ['name', DEFAULT_PROP_DEF],
-                ['shortcutkey', DEFAULT_PROP_DEF],
-                ['show', {type: PROP_TYPE.BOOLEAN, value: true}],
-                ['showindevice', {displayType: 'inline-block', value: 'all'}],
-                ['tabindex', DEFAULT_PROP_DEF],
-                ['type', DEFAULT_PROP_DEF]
+                ['animation', PROP_STRING],
+                ['badgevalue', PROP_STRING_NOTIFY],
+                ['caption', PROP_STRING_NOTIFY],
+                ['class', Object.assign({value: 'btn-default'}, PROP_STRING)],
+                ['conditionalclass', PROP_STRING],
+                ['disabled', PROP_BOOLEAN],
+                ['hint', PROP_STRING],
+                ['iconclass', PROP_STRING_NOTIFY],
+                ['iconheight', PROP_STRING_NOTIFY],
+                ['iconmargin', PROP_STRING_NOTIFY],
+                ['iconposition', PROP_STRING_NOTIFY],
+                ['iconurl', PROP_STRING],
+                ['iconwidth', PROP_STRING_NOTIFY],
+                ['name', PROP_STRING],
+                ['shortcutkey', PROP_STRING],
+                ['show', PROP_BOOLEAN],
+                ['showindevice', Object.assign({displayType: 'inline-block', value: 'all'}, PROP_STRING)],
+                ['tabindex', PROP_NUMBER],
+                ['type', PROP_STRING]
             ]
         )
     );

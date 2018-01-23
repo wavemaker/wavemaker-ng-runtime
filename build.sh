@@ -1,5 +1,7 @@
 start=`date +%s`
 
+set -e
+
 # Reset
 Color_Off='\033[0m'       # Text Reset
 
@@ -19,23 +21,62 @@ White='\033[0;37m'        # White
 
 echo -e "${Cyan}Cleanup dist directory\n"
 rimraf ./dist
+mkdir dist
+
+if [ "$?" != "0" ]
+then
+	echo -e "${Red}Error in cleaning dist directory\n"
+	exit 1
+fi
+
+################################ ngc
 
 echo -e "${Cyan}Compiling typescript files using ngc ${White}"
 ./node_modules/.bin/ngc -p ./runtime/tsconfig.build.json
+if [ "$?" != "0" ]
+then
+	echo -e "${Red}Error while ngc \n"
+	exit 1
+fi
 echo -e "${Green}Done with ngc compilation\n"
+
+
+
+################################ inline-templates
+
+echo -e "${Cyan}Copy and inline html files ${White}"
+node inline-templates.js
+if [ "$?" != "0" ]
+then
+	echo -e "${Red}Error during inline templates\n"
+	exit 1
+fi
+echo -e "${Green}Done with inline templates\n"
 
 mkdir ./dist/bundles
 mkdir ./dist/tmp
 
 
+################################ Bundle libs
+
 if [ "$1" != "-sl" ]
 then
     echo -e "${Cyan}Building tslib ${White}"
     rollup ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent
+    if [ "$?" != "0" ]
+    then
+    	echo -e "${Red}Error in bundling tslib files"
+    	exit 1
+    fi
     echo -e "${Green}Built tslib\n"
 
     echo -e "${Cyan}Building @angular/common/http ${White}"
     rollup -c ./config/rollup.angular.common-http.config.js --silent
+    if [ "$?" != "0" ]
+        then
+        	echo -e "${Red}Error in building @angular/common/http"
+        	exit 1
+        fi
     echo -e "${Green}Built common-http\n"
 
     echo -e "${Cyan}Bundling libs ${White}"
@@ -55,25 +96,52 @@ then
         ./node_modules/moment/moment.js \
         -o ./dist/bundles/wm-libs.min.js -b
 
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in bundling libs\n"
+        exit 1
+    fi
+
     echo -e "${Green}Bundled libs\n"
 fi
-#./dist/tmp/common-http.umd.js \
-#./node_modules/@angular/common/bundles/common-http.umd.js \
+
+
+##################################### bundle wm-loader
 
 echo -e "${Cyan}Building utils ${White}"
 rollup -c ./utils/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building utils\n"
+    exit 1
+fi
 echo -e "${Green}Built utils\n"
 
 echo -e "${Cyan}Building components ${White}"
 rollup -c ./components/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building components\n"
+    exit 1
+fi
 echo -e "${Green}Built components\n"
 
 echo -e "${Cyan}Building runtime ${White}"
 rollup -c ./runtime/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in bundling runtime"
+    exit 1
+fi
 echo -e "${Green}Built runtime\n"
 
 echo -e "${Cyan}Bundling wm-loader ${White}"
 uglifyjs ./dist/tmp/wm-utils.umd.js ./dist/tmp/wm-components.umd.js ./dist/tmp/wm-runtime.umd.js -o ./dist/bundles/wm-loader.min.js -b
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in bundling wm-loader\n"
+    exit 1
+fi
 echo -e "${Green}Bundled wm-loader\n"
 
 echo -e "${Cyan}Cleanup tmp directory\n"

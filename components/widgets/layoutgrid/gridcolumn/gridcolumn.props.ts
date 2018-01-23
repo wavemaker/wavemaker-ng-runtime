@@ -1,16 +1,14 @@
-import { DEFAULT_PROP_DEF, PROP_TYPE, register, DEFAULT_PROP_NOTIFY } from '../../../utils/widget-props';
+import { PROP_STRING, register, PROP_STRING_NOTIFY, PROP_BOOLEAN } from '../../../utils/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-gridcolumn',
         new Map(
             [
-                ['class', {value: ''}],
-                ['height', DEFAULT_PROP_DEF],
-                ['name', DEFAULT_PROP_DEF],
-                ['columnwidth', DEFAULT_PROP_NOTIFY],
-                ['padding', DEFAULT_PROP_DEF],
-                ['show', {type: PROP_TYPE.BOOLEAN, value: true}],
+                ['class', PROP_STRING],
+                ['name', PROP_STRING],
+                ['columnwidth', PROP_STRING_NOTIFY],
+                ['show', PROP_BOOLEAN],
             ]
         )
     );

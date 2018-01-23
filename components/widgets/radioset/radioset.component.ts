@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Injector } from '@angular/core';
+import { Component, OnInit, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
 import {
     toString as _toString,
     find as _find
@@ -9,7 +9,8 @@ import { initWidget } from '../../utils/init-widget';
 import { styler } from '@utils/styler';
 import { registerProps } from './radioset.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForSelected, updateCheckedValue } from '../../utils/form-utils';
-import { $digest } from '@utils/watcher';
+import { debounce } from '@utils/utils';
+import { $appDigest } from '@utils/watcher';
 
 registerProps();
 
@@ -25,34 +26,10 @@ const DEFAULT_CLS = '';
  */
 @Component({
     selector: 'wm-radioset',
-    template: `
-        <ul role="input"
-            [attr.required]="required"
-            [ngClass]="['app-radioset', 'list-group', class, layout]"
-            [ngStyle]="{
-              'width':width,
-              'height':height,
-              'margin':margin}">
-            <li [ngClass]="['radio', 'app-radio', itemclass]"
-                [class.active]="dataObj.isChecked"
-                *ngFor="let dataObj of displayOptions;let i = index"
-                (click)="_onRadioLabelClick($event, dataObj.key)">
-                <label class="app-radioset-label"
-                       [ngClass]="{'disabled':disabled}"
-                       [title]="dataObj.value">
-                    <input name="radioset" [required]="required" type="radio" [attr.data-attr-index]="i"
-                           [value]="dataObj.key" [tabindex]="tabindex" [checked]="dataObj.isChecked"/>
-                    <span class="caption" [textContent]="dataObj.value"></span>
-                </label>
-            </li>
-
-            <input [disabled]="disabled" [hidden]="true" class="model-holder">
-            <div *ngIf="readonly || disabled" class="readonly-wrapper"></div>
-        </ul>
-    `
+    templateUrl: './radioset.component.html'
 })
 export class RadiosetComponent extends BaseComponent implements OnInit {
-    class;
+    class = '';
     width;
     height;
     margin;
@@ -136,7 +113,8 @@ export class RadiosetComponent extends BaseComponent implements OnInit {
             this._model_ = assignModelForSelected(this.displayOptions, this._model_, this.modelProxy,
                 this.datafield, this._isChangedManually);
         }
-        $digest();
+
+        $appDigest();
     }
 
     /**
@@ -183,8 +161,10 @@ export class RadiosetComponent extends BaseComponent implements OnInit {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super();
+
+        this.$digest = debounce(cdr.detectChanges.bind(cdr));
 
         this.$host = elRef.nativeElement;
         this.$element = this.$host;

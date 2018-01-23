@@ -1,19 +1,19 @@
-import { DEFAULT_PROP_DEF, PROP_TYPE, register } from '../../utils/widget-props';
+import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-label',
         new Map(
             [
-                ['animation', DEFAULT_PROP_DEF],
-                ['caption', {notify: true, value: 'Label'}],
-                ['class', DEFAULT_PROP_DEF],
-                ['conditionalclass', DEFAULT_PROP_DEF],
-                ['hint', DEFAULT_PROP_DEF],
-                ['name', DEFAULT_PROP_DEF],
-                ['required', {type: PROP_TYPE.BOOLEAN}],
-                ['show', {type: PROP_TYPE.BOOLEAN, value: true}],
-                ['showindevice', {displayType: 'inline-block', value: 'all'}],
+                ['animation', PROP_STRING],
+                ['caption', Object.assign({value: 'Label'}, PROP_STRING_NOTIFY)],
+                ['class', PROP_STRING],
+                ['conditionalclass', PROP_STRING],
+                ['hint', PROP_STRING],
+                ['name', PROP_STRING],
+                ['required', PROP_BOOLEAN],
+                ['show', PROP_BOOLEAN],
+                ['showindevice', Object.assign({displayType: 'inline-block', value: 'all'}, PROP_STRING)],
             ]
         )
     );
