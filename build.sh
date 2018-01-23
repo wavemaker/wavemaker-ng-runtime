@@ -1,4 +1,8 @@
 start=`date +%s`
+rimraf=./node_modules/.bin/rimraf
+rollup=./node_modules/.bin/rollup
+uglifyjs=./node_modules/.bin/uglifyjs
+ngc=./node_modules/.bin/ngc
 
 set -e
 
@@ -20,7 +24,7 @@ White='\033[0;37m'        # White
 
 
 echo -e "${Cyan}Cleanup dist directory\n"
-rimraf ./dist
+$rimraf ./dist
 mkdir dist
 
 if [ "$?" != "0" ]
@@ -32,7 +36,7 @@ fi
 ################################ ngc
 
 echo -e "${Cyan}Compiling typescript files using ngc ${White}"
-./node_modules/.bin/ngc -p ./runtime/tsconfig.build.json
+$ngc -p ./runtime/tsconfig.build.json
 if [ "$?" != "0" ]
 then
 	echo -e "${Red}Error while ngc \n"
@@ -62,7 +66,7 @@ mkdir ./dist/tmp
 if [ "$1" != "-sl" ]
 then
     echo -e "${Cyan}Building tslib ${White}"
-    rollup ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent
+    $rollup ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent
     if [ "$?" != "0" ]
     then
     	echo -e "${Red}Error in bundling tslib files"
@@ -71,7 +75,7 @@ then
     echo -e "${Green}Built tslib\n"
 
     echo -e "${Cyan}Building @angular/common/http ${White}"
-    rollup -c ./config/rollup.angular.common-http.config.js --silent
+    $rollup -c ./config/rollup.angular.common-http.config.js --silent
     if [ "$?" != "0" ]
         then
         	echo -e "${Red}Error in building @angular/common/http"
@@ -80,7 +84,7 @@ then
     echo -e "${Green}Built common-http\n"
 
     echo -e "${Cyan}Bundling libs ${White}"
-    uglifyjs \
+    $uglifyjs \
         ./dist/tmp/tslib.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/Rx.js \
@@ -109,7 +113,7 @@ fi
 ##################################### bundle wm-loader
 
 echo -e "${Cyan}Building utils ${White}"
-rollup -c ./utils/rollup.config.js --silent
+$rollup -c ./utils/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building utils\n"
@@ -118,7 +122,7 @@ fi
 echo -e "${Green}Built utils\n"
 
 echo -e "${Cyan}Building components ${White}"
-rollup -c ./components/rollup.config.js --silent
+$rollup -c ./components/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building components\n"
@@ -127,7 +131,7 @@ fi
 echo -e "${Green}Built components\n"
 
 echo -e "${Cyan}Building runtime ${White}"
-rollup -c ./runtime/rollup.config.js --silent
+$rollup -c ./runtime/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in bundling runtime"
@@ -136,7 +140,7 @@ fi
 echo -e "${Green}Built runtime\n"
 
 echo -e "${Cyan}Bundling wm-loader ${White}"
-uglifyjs ./dist/tmp/wm-utils.umd.js ./dist/tmp/wm-components.umd.js ./dist/tmp/wm-runtime.umd.js -o ./dist/bundles/wm-loader.min.js -b
+$uglifyjs ./dist/tmp/wm-utils.umd.js ./dist/tmp/wm-components.umd.js ./dist/tmp/wm-runtime.umd.js -o ./dist/bundles/wm-loader.min.js -b
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in bundling wm-loader\n"
@@ -145,10 +149,10 @@ fi
 echo -e "${Green}Bundled wm-loader\n"
 
 echo -e "${Cyan}Cleanup tmp directory\n"
-rimraf ./dist/tmp
+$rimraf ./dist/tmp
 
 echo -e "${Cyan}Cleanup out-tsc directory\n"
-rimraf ./dist/out-tsc
+$rimraf ./dist/out-tsc
 
 end=`date +%s`
 runtime=$((end-start))
