@@ -102,7 +102,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
 
 export function initWidget(component: BaseComponent, widgetType: string, elDef: any, view: any, cdr: ChangeDetectorRef) {
 
-    this.$digest = debounce(cdr.detectChanges.bind(cdr));
+    component.$digest = debounce(cdr.detectChanges.bind(cdr));
 
     const revocable = Proxy.revocable(component, proxyHandler);
     const widget = revocable.proxy;
