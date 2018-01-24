@@ -109,15 +109,13 @@ export class AnchorDirective extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super();
 
-        this.$digest = debounce(cdr.detectChanges.bind(cdr));
-
         this.$host = elRef.nativeElement;
         this.$element = this.$host;
 
         setAttr(this.$element, 'href', 'javascript:void(0)');
         addClass(this.$element, DEFAULT_CLS);
 
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
+        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view, cdr);
         styler(this.$element, this);
     }
 }
