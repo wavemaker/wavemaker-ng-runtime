@@ -3,7 +3,7 @@ import { idMaker, isDefined, isObject } from '@utils/utils';
 import { $watch, $unwatch, isChangeFromWatch } from '@utils/watcher';
 import { BaseComponent } from '../widgets/base/base.component';
 import { addClass, removeClass, setAttr, switchClass } from '@utils/dom';
-import { isStyle } from '@utils/styler';
+import { isStyle } from './styler';
 
 const widgetRegistryByName = new Map<string, any>();
 const widgetRegistryByWidgetId = new Map<string, any>();
@@ -91,7 +91,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
         if (isStyle(key)) {
             component.onStyleChange(key, nv, ov);
         } else if (propInfo && propInfo.notify) {
-            component.onPropertyChange(key, nv, ov);
+            component.propertyChange.next({key, nv, ov});
         }
 
         component.$digest();

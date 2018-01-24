@@ -1,9 +1,9 @@
 import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ContentChild, ChangeDetectorRef } from '@angular/core';
-import { PanelFooterDirective } from '../panel-footer/panel-footer.component';
+import { PanelFooterDirective } from './panel-footer/panel-footer.component';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { getImageUrl } from '@utils/utils';
 import { registerProps } from '../../widgets/panel/panel.props';
-import { styler } from '@utils/styler';
+import { styler } from '../../utils/styler';
 import { setCSS } from '@utils/dom';
 
 registerProps();

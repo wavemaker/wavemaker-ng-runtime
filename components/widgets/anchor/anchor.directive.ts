@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Injector } from '@angular/core';
 import { addClass, appendNode, insertBefore, removeNode, setAttr, setCSS, setProperty, switchClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '@utils/styler';
+import { styler } from '../../utils/styler';
 import { encodeUrl } from '@utils/utils';
 import { registerProps } from './anchor.props';
 

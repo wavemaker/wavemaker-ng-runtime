@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
 import { addClass, setProperty, toggleClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '@utils/styler';
+import { styler } from '../../utils/styler';
 import { registerProps } from './label.props';
 
 registerProps();

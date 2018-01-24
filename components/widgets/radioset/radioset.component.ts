@@ -4,7 +4,7 @@ import {
     find as _find
 } from 'lodash';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '@utils/styler';
+import { styler } from '../../utils/styler';
 import { registerProps } from './radioset.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForSelected, updateCheckedValue } from '../../utils/form-utils';
 import { $appDigest } from '@utils/watcher';

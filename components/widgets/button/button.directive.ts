@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Injector } from '@angular/core';
 import { addClass, appendNode, insertBefore, removeNode, setCSS, setProperty, switchClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '@utils/styler';
+import { styler } from '../../utils/styler';
 import { registerProps } from './button.props';
 
 registerProps();

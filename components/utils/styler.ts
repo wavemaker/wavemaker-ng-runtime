@@ -1,5 +1,5 @@
-import { setCSS } from './dom';
-import { isDefined } from './utils';
+import { setCSS } from '../../utils/dom';
+import { isDefined } from '../../utils/utils';
 
 export const propNameCSSKeyMap = {
     'backgroundattachment': 'backgroundAttachment',
@@ -48,7 +48,5 @@ export function styler($node: HTMLElement, component: any) {
     }
 
     // register onStyleChange
-    component.onStyleChange = (k, v) => {
-        setCSS($node, propNameCSSKeyMap[k], v);
-    };
+    component.styleChange$.subscribe(({key, nv}) => setCSS($node, propNameCSSKeyMap[key], nv));
 }

@@ -1,6 +1,7 @@
 import { OnDestroy, ChangeDetectorRef, ElementRef, OnInit } from '@angular/core';
 import { debounce } from '@utils/utils';
 import { initWidget } from '../../utils/init-widget';
+import { Subject } from 'rxjs/Subject';
 
 export class BaseComponent implements OnDestroy, OnInit {
     $element: HTMLElement;
@@ -13,11 +14,19 @@ export class BaseComponent implements OnDestroy, OnInit {
 
     _ngOnInit() {}
 
+    styleChange = new Subject();
+    styleChange$ = this.styleChange.asObservable();
+
+    propertyChange = new Subject();
+    propertyChange$ = this.propertyChange.asObservable();
+
     constructor ({widgetType, hasTemplate}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
         this.$host = $host.nativeElement;
         this.widgetType = widgetType;
         this.$digest = debounce(cdr.detectChanges.bind(cdr));
         this.init = initWidget(this, (<any>inj).elDef, (<any>inj).view);
+
+        this.propertyChange$.subscribe(({key, nv, ov}) => this.onPropertyChange(key, nv, ov));
 
         if (!hasTemplate) {
             this.$element = this.$host;

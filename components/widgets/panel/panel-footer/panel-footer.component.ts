@@ -24,5 +24,4 @@ export class PanelFooterDirective {
     get expanded() {
         return this._expanded;
     }
-
 }

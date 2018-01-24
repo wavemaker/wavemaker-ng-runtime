@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Outpu
 import { getFormattedDate } from '@utils/utils';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { registerProps } from './date.props';
-import { styler } from '@utils/styler';
+import { styler } from '../../utils/styler';
 
 registerProps();
 

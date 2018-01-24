@@ -1,7 +1,7 @@
 import { ElementRef, Injector, Directive, HostBinding, HostListener, ChangeDetectorRef } from '@angular/core';
 import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '@utils/styler';
+import { styler } from '../../utils/styler';
 import { registerProps } from './text.props';
 
 registerProps();

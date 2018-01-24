@@ -13,7 +13,7 @@ import { GridrowDirective } from './widgets/layoutgrid/gridrow/gridrow.directive
 import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
 import { BsDatepickerModule } from 'ngx-bootstrap';
 import { PanelComponent } from './widgets/panel/panel.component';
-import { PanelFooterDirective } from './widgets/panel-footer/panel-footer.component';
+import { PanelFooterDirective } from './widgets/panel/panel-footer/panel-footer.component';
 
 
 const wmComponents = [
