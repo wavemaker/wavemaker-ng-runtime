@@ -1,20 +1,18 @@
-import { OnInit, ElementRef, Injector, Directive, ChangeDetectorRef } from '@angular/core';
+import { ElementRef, Injector, Directive, ChangeDetectorRef } from '@angular/core';
 import { addClass, switchClass } from '@utils/dom';
 import { BaseComponent } from '../../base/base.component';
-import { initWidget } from '../../../utils/init-widget';
 import { styler } from '@utils/styler';
 import { registerProps } from './gridcolumn.props';
-import { debounce } from '@utils/utils';
 
 registerProps();
 
-const WIDGET_TYPE = 'wm-gridcolumn';
+const WIDGET_CONFIG = {widgetType: 'wm-gridcolumn', hasTemplate: false};
 const DEFAULT_CLS = 'app-grid-column';
 
 @Directive({
     selector: '[wmGridcolumn]'
 })
-export class GridcolumnDirective extends BaseComponent implements OnInit {
+export class GridcolumnDirective extends BaseComponent {
 
     onPropertyChange(key, nv, ov?) {
         switch (key) {
@@ -25,14 +23,9 @@ export class GridcolumnDirective extends BaseComponent implements OnInit {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(elRef.nativeElement, elRef.nativeElement, cdr);
+        super(WIDGET_CONFIG, inj, elRef, cdr);
 
         addClass(this.$element, DEFAULT_CLS);
-
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
     }
 }

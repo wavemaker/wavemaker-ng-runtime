@@ -1,15 +1,16 @@
 <div class="col-md-9">
-    <wm-date [datavalue]="datavalue"
-             [mindate]="mindate"
-             [maxdate]="maxdate"
-             [disabled]="disabled"
-             [showweeks]="showweeks"
-             [onChange]="onModelChange"
-             [datepattern]="datepattern"
-             [outputformat]="outputformat"
-             [show]="show"
+    <wm-date datavalue.bind="datavalue"
+             mindate.bind="mindate"
+             maxdate.bind="maxdate"
+             disabled.bind="disabled"
+             showweeks.bind="showweeks"
+             onChange.bind="onModelChange"
+             datepattern.bind="datepattern"
+             outputformat.bind="outputformat"
+             show.bind="show"
              #wmDate></wm-date>
 </div>
+{{wmDate.datavalue}}
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
     <hr>

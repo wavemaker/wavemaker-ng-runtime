@@ -1,37 +1,29 @@
 import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Injector } from '@angular/core';
 import { addClass, appendNode, insertBefore, removeNode, setCSS, setProperty, switchClass } from '@utils/dom';
-import { initWidget } from '../../utils/init-widget';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '@utils/styler';
 import { registerProps } from './button.props';
-import { debounce } from '@utils/utils';
 
 registerProps();
 
-const WIDGET_TYPE = 'wm-button';
+const WIDGET_CONFIG = {widgetType: 'wm-button', hasTemplate: false};
 const DEFAULT_CLS = 'btn app-button';
 
 const $captionTemplate = document.createElement('span');
 $captionTemplate.classList.add('btn-caption');
 
-const getCaptionNode = () => {
-    return $captionTemplate.cloneNode();
-};
+const getCaptionNode = () => $captionTemplate.cloneNode();
 
 const $iconTemplate = document.createElement('i');
 $iconTemplate.classList.add('app-icon');
 
-const getIconNode = () => {
-    return $iconTemplate.cloneNode();
-};
+const getIconNode = () => $iconTemplate.cloneNode();
 
 const $badgeTemplate = document.createElement('span');
 $badgeTemplate.classList.add('badge');
 $badgeTemplate.classList.add('pull-right');
 
-const getBadgeNode = () => {
-    return $badgeTemplate.cloneNode();
-};
+const getBadgeNode = () => $badgeTemplate.cloneNode();
 
 @Directive({
     'selector': '[wmButton]'
@@ -98,11 +90,9 @@ export class ButtonDirective extends BaseComponent {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(elRef.nativeElement, elRef.nativeElement, cdr);
+        super(WIDGET_CONFIG, inj, elRef, cdr);
 
         addClass(this.$element, DEFAULT_CLS);
-
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
         styler(this.$element, this);
     }
 }

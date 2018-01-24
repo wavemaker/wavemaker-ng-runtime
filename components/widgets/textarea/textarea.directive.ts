@@ -1,14 +1,12 @@
 import { ElementRef, Injector, Directive, HostBinding, HostListener, ChangeDetectorRef } from '@angular/core';
 import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
-import { initWidget } from '../../utils/init-widget';
 import { styler } from '@utils/styler';
 import { registerProps } from './textarea.props';
-import { debounce } from '@utils/utils';
 
 registerProps();
 
-const WIDGET_TYPE = 'wm-textarea';
+const WIDGET_CONFIG = {widgetType: 'wm-textarea', hasTemplate: false};
 const DEFAULT_CLS = 'form-control app-textarea';
 
 @Directive({
@@ -32,11 +30,10 @@ export class TextareaDirective extends BaseComponent {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(elRef.nativeElement, elRef.nativeElement, cdr);
+        super(WIDGET_CONFIG, inj, elRef, cdr);
 
         addClass(this.$element, DEFAULT_CLS);
-
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
         styler(this.$element, this);
     }
+
 }

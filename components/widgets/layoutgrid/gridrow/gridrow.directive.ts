@@ -1,31 +1,23 @@
-import { OnInit, ElementRef, Injector, Directive, ChangeDetectorRef } from '@angular/core';
+import { ElementRef, Injector, Directive, ChangeDetectorRef } from '@angular/core';
 import { addClass } from '@utils/dom';
-import { BaseComponent } from '../..//base/base.component';
-import { initWidget } from '../../../utils/init-widget';
+import { BaseComponent } from '../../base/base.component';
 import { styler } from '@utils/styler';
 import { registerProps } from './gridrow.props';
-import { debounce } from '@utils/utils';
 
 registerProps();
 
-const WIDGET_TYPE = 'wm-gridrow';
+const WIDGET_CONFIG = {widgetType: 'wm-gridrow', hasTemplate: false};
 const DEFAULT_CLS = 'app-grid-row clearfix';
 
 @Directive({
     selector: '[wmGridrow]'
 })
-export class GridrowDirective extends BaseComponent implements OnInit {
+export class GridrowDirective extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(elRef.nativeElement, elRef.nativeElement, cdr);
+        super(WIDGET_CONFIG, inj, elRef, cdr);
 
         addClass(this.$element, DEFAULT_CLS);
-
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
         styler(this.$element, this);
     }
-
-    ngOnInit() {
-    }
-
 }

@@ -1,14 +1,12 @@
 import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
 import { addClass, setProperty, toggleClass } from '@utils/dom';
-import { initWidget } from '../../utils/init-widget';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '@utils/styler';
 import { registerProps } from './label.props';
-import { debounce } from '@utils/utils';
 
 registerProps();
 
-const WIDGET_TYPE = 'wm-label';
+const WIDGET_CONFIG = {widgetType: 'wm-label', hasTemplate: false};
 const DEFAULT_CLS = 'app-label';
 
 @Directive({
@@ -27,11 +25,9 @@ export class LabelDirective extends BaseComponent {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(elRef.nativeElement, elRef.nativeElement, cdr);
+        super(WIDGET_CONFIG, inj, elRef, cdr);
 
         addClass(this.$element, DEFAULT_CLS);
-
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
         styler(this.$element, this);
     }
 }

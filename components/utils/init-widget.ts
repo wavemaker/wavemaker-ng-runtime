@@ -99,19 +99,17 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
 };
 
 
-export function initWidget(component: BaseComponent, widgetType: string, elDef: any, view: any) {
+export function initWidget(component: BaseComponent, elDef: any, view: any) {
 
     const revocable = Proxy.revocable(component, proxyHandler);
     const widget = revocable.proxy;
     const widgetId = idGen.next().value;
 
-    component.widgetId = widgetId;
-    component.widgetType = widgetType;
     component.destroyListeners = [];
 
     component.addDestroyListener(() => revocable.revoke());
 
-    const widgetProps: Map<string, any> = getWidgetPropsByType(widgetType);
+    const widgetProps: Map<string, any> = getWidgetPropsByType(component.widgetType);
     const $scope = view.component;
     let $locals;
     const initState: any = new Map<string, any>();
@@ -138,13 +136,11 @@ export function initWidget(component: BaseComponent, widgetType: string, elDef: 
         }
     }
 
-    setAttr(component.$element, 'widget-id', widgetId);
+    setAttr(component.$host, 'widget-id', widgetId);
 
     registerWidget(initState.get('name'), widgetId, widget, component);
 
-    initState.forEach((v, k) => {
-        widget[k] = v;
-    });
+    return () => initState.forEach((v, k) => widget[k] = v);
 }
 
 (<any>window).widgetRegistryByName = widgetRegistryByName;

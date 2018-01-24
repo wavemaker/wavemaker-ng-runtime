@@ -1,37 +1,30 @@
 import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Injector } from '@angular/core';
 import { addClass, appendNode, insertBefore, removeNode, setAttr, setCSS, setProperty, switchClass } from '@utils/dom';
-import { initWidget } from '../..//utils/init-widget';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '@utils/styler';
-import { debounce, encodeUrl } from '@utils/utils';
+import { encodeUrl } from '@utils/utils';
 import { registerProps } from './anchor.props';
 
 registerProps();
 
-const WIDGET_TYPE = 'wm-anchor';
+const WIDGET_CONFIG = {widgetType: 'wm-anchor', hasTemplate: false};
 const DEFAULT_CLS = 'app-anchor';
 
 const $captionTemplate = document.createElement('span');
 $captionTemplate.classList.add('anchor-caption');
 
-const getCaptionNode = () => {
-    return $captionTemplate.cloneNode();
-};
+const getCaptionNode = () => $captionTemplate.cloneNode();
 
 const $iconTemplate = document.createElement('i');
 $iconTemplate.classList.add('app-icon');
 
-const getIconNode = () => {
-    return $iconTemplate.cloneNode();
-};
+const getIconNode = () => $iconTemplate.cloneNode();
 
 const $badgeTemplate = document.createElement('span');
 $badgeTemplate.classList.add('badge');
 $badgeTemplate.classList.add('pull-right');
 
-const getBadgeNode = () => {
-    return $badgeTemplate.cloneNode();
-};
+const getBadgeNode = () => $badgeTemplate.cloneNode();
 
 @Directive({
     'selector': '[wmAnchor]'
@@ -107,12 +100,12 @@ export class AnchorDirective extends BaseComponent {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(elRef.nativeElement, elRef.nativeElement, cdr);
+        super(WIDGET_CONFIG, inj, elRef, cdr);
 
         setAttr(this.$element, 'href', 'javascript:void(0)');
         addClass(this.$element, DEFAULT_CLS);
 
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
         styler(this.$element, this);
     }
+
 }

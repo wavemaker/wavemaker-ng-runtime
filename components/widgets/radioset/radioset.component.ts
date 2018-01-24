@@ -3,27 +3,16 @@ import {
     toString as _toString,
     find as _find
 } from 'lodash';
-import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
-import { initWidget } from '../../utils/init-widget';
 import { styler } from '@utils/styler';
 import { registerProps } from './radioset.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForSelected, updateCheckedValue } from '../../utils/form-utils';
-import { debounce } from '@utils/utils';
 import { $appDigest } from '@utils/watcher';
 
 registerProps();
 
-const WIDGET_TYPE = 'wm-radioset';
-const DEFAULT_CLS = '';
+const WIDGET_CONFIG = {widgetType: 'wm-radioset', hasTemplate: true};
 
-/**
- * The radioset component
- * Radioset is arrangement of radio widgets grouped together.
- * Example of usage:
- * <example-url>http://localhost:4200/radioset</example-url>
- *
- */
 @Component({
     selector: 'wm-radioset',
     templateUrl: './radioset.component.html'
@@ -162,15 +151,10 @@ export class RadiosetComponent extends BaseComponent implements OnInit {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(elRef.nativeElement, elRef.nativeElement, cdr);
+        super(WIDGET_CONFIG, inj, elRef, cdr);
+    }
 
-        addClass(this.$element, DEFAULT_CLS);
-
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
+    _ngOnInit() {
         styler(this.$element, this);
     }
-
-    ngOnInit() {
-    }
-
 }

@@ -1,9 +1,16 @@
 <div class="col-md-9">
-    <wm-panel (onClose)="panelClosed($event)" [title]="title" #panel [subheading]="subheading" [iconclass]="iconclass" [actions]="nodes" [collapsible]="collapsible" [enablefullscreen]="enablefullscreen" [closable]="closable" [expanded]="expanded">
-        <wm-button [class]="'btn-info'" [caption]="'Toggle fullscreen'" (click)="panel.toggleFullScreen($event)"></wm-button>
-        <wm-panel-footer>
-            <wm-label [class]="'text-muted'" [caption]="'Additional Info'"></wm-label>
-        </wm-panel-footer>
+    <wm-panel (onClose)="panelClosed($event)" title.bind="title"
+              #panel subheading.bind="subheading"
+              iconclass.bind="iconclass"
+              actions.bind="nodes"
+              collapsible.bind="collapsible"
+              enablefullscreen.bind="enablefullscreen"
+              closable.bind="closable"
+              expanded.bind="expanded">
+        <button wmButton class.bind="'btn-info'" caption.bind="'Toggle fullscreen'" (click)="panel.toggleFullScreen($event)"></button>
+        <div wmPanelFooter>
+            <label wmLabel class.bind="'text-muted'" caption.bind="'Additional Info'"></label>
+        </div>
     </wm-panel>
 </div>
 <div class="col-md-3 properties">
@@ -14,7 +21,7 @@
             Title
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="title" />
+            <input type="text" [(ngModel)]="title"/>
         </div>
     </div>
     <div class="property row">
@@ -22,7 +29,7 @@
             Subheading
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="subheading" />
+            <input type="text" [(ngModel)]="subheading"/>
         </div>
     </div>
     <div class="property row">
@@ -30,7 +37,7 @@
             iconclass
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="iconclass" />
+            <input type="text" [(ngModel)]="iconclass"/>
         </div>
     </div>
     <div class="property row">
@@ -38,7 +45,7 @@
             Collapsible
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="collapsible" />
+            <input type="checkbox" [(ngModel)]="collapsible"/>
         </div>
     </div>
     <div class="property row">
@@ -46,7 +53,7 @@
             Enable Fullscreen
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="enablefullscreen" />
+            <input type="checkbox" [(ngModel)]="enablefullscreen"/>
         </div>
     </div>
     <div class="property row">
@@ -54,7 +61,7 @@
             Closable
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="closable" />
+            <input type="checkbox" [(ngModel)]="closable"/>
         </div>
     </div>
     <div class="property row">
@@ -62,7 +69,7 @@
             Expanded
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="expanded" />
+            <input type="checkbox" [(ngModel)]="expanded"/>
         </div>
     </div>
 </div>

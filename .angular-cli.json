@@ -46,6 +46,9 @@
                 "../../../node_modules/fullcalendar/dist/fullcalendar.min.css",
                 "../../../node_modules/ngx-toastr/toastr.css"
             ],
+            "scripts": [
+                "../../../node_modules/moment/min/moment.min.js"
+            ],
             "environmentSource": "environments/environment.ts",
             "environments": {
                 "dev": "environments/environment.ts",
