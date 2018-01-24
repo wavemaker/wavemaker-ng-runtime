@@ -1,4 +1,5 @@
-import { OnDestroy } from '@angular/core';
+import { OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { debounce } from '@utils/utils';
 
 export abstract class BaseComponent implements OnDestroy {
     $element: HTMLElement;
@@ -8,6 +9,12 @@ export abstract class BaseComponent implements OnDestroy {
     $digest;
 
     destroyListeners;
+
+    constructor($host: HTMLElement, $el: HTMLElement, cdr: ChangeDetectorRef) {
+        this.$host = $host;
+        this.$element = $el;
+        this.$digest = debounce(cdr.detectChanges.bind(cdr));
+    }
 
     onPropertyChange(k, nv, ov) {
     }

@@ -1,10 +1,9 @@
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
-import { debounce, idMaker, isDefined, isObject } from '@utils/utils';
+import { idMaker, isDefined, isObject } from '@utils/utils';
 import { $watch, $unwatch, isChangeFromWatch } from '@utils/watcher';
 import { BaseComponent } from '../widgets/base/base.component';
 import { addClass, removeClass, setAttr, switchClass } from '@utils/dom';
 import { isStyle } from '@utils/styler';
-import { ChangeDetectorRef } from '@angular/core';
 
 const widgetRegistryByName = new Map<string, any>();
 const widgetRegistryByWidgetId = new Map<string, any>();
@@ -100,9 +99,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
 };
 
 
-export function initWidget(component: BaseComponent, widgetType: string, elDef: any, view: any, cdr: ChangeDetectorRef) {
-
-    component.$digest = debounce(cdr.detectChanges.bind(cdr));
+export function initWidget(component: BaseComponent, widgetType: string, elDef: any, view: any) {
 
     const revocable = Proxy.revocable(component, proxyHandler);
     const widget = revocable.proxy;

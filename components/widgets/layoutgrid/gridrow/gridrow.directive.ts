@@ -17,14 +17,11 @@ const DEFAULT_CLS = 'app-grid-row clearfix';
 export class GridrowDirective extends BaseComponent implements OnInit {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super();
-
-        this.$host = elRef.nativeElement;
-        this.$element = this.$host;
+        super(elRef.nativeElement, elRef.nativeElement, cdr);
 
         addClass(this.$element, DEFAULT_CLS);
 
-        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view, cdr);
+        initWidget(this, WIDGET_TYPE, (<any>inj).elDef, (<any>inj).view);
         styler(this.$element, this);
     }
 
