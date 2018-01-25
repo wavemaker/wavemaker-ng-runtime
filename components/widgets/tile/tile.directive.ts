@@ -2,7 +2,7 @@ import { Directive, ElementRef, Injector, ChangeDetectorRef } from '@angular/cor
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './tile.props';
 import { addClass, setProperty } from '@utils/dom';
-import { styler } from '../../utils/styler';
+import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 
 registerProps();
 

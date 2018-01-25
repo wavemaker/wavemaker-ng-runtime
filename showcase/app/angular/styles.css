@@ -39,3 +39,8 @@ body {
 .property-control input{
     color: black;
 }
+
+
+.ng-hide {
+    display: none !important;
+}

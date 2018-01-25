@@ -13,7 +13,6 @@ import { IconDirective } from './widgets/icon/icon.directive';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
-import { PanelFooterDirective } from './widgets/panel/panel-footer/panel-footer.component';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { TextDirective } from './widgets/text/text.directive';
 import { TextareaDirective } from './widgets/textarea/textarea.directive';
@@ -32,7 +31,6 @@ const wmComponents = [
     LabelDirective,
     LayoutgridDirective,
     PanelComponent,
-    PanelFooterDirective,
     RadiosetComponent,
     TextDirective,
     TextareaDirective,

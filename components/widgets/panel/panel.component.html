@@ -1,7 +1,7 @@
 <div class="app-panel panel {{helpClass}}" [ngClass]="{fullscreen: fullscreen}" #panel>
-    <div class="panel-heading {{helpClass}}" *ngIf="toggleHeader()" #panelHeading>
+    <div class="panel-heading {{helpClass}}" [class.ng-hide]="!showHeader" #panelHeading>
         <h3 class="panel-title">
-            <a href="javascript:void(0)" class="panel-toggle" (click)="expandCollapsePanel($event)">
+            <a href="javascript:void(0)" class="panel-toggle" (click)="togglePanel($event)">
                 <div class="pull-left">
                     <i class="app-icon panel-icon {{iconclass}}" *ngIf="iconclass && !iconurl"></i>
                     <img data-identifier="img" class="panel-image-icon" [src]="iconurl" *ngIf="iconurl"
@@ -16,21 +16,21 @@
                 <span *ngIf="badgevalue" class="app-badge label label-{{badgetype}}">{{badgevalue}}</span>
                 <!--<wm-menu type="'anchor'" class="panel-action" [dataset]="actions" *ngIf="actions" [iconclass]="'wi wi-more-vert'" [datafield]="datafield" [itemlabel]="itemlabel" [itemicon]="itemicon" [itemaction]="itemaction" [userrole]="userrole" [itemlink]="itemlink" [itemchildren]="itemchildren"></wm-menu>
                 -->
-                <button type="button" class="app-icon panel-action wi wi-question" title="Help" *ngIf="helptext"
+                <button type="button" class="app-icon panel-action wi wi-question" title="Help" [class.ng-hide]="!helptext"
                         (click)="toggleHelp()"></button>
-                <button type="button" class="app-icon wi panel-action" *ngIf="collapsible" title="Collapse/ Expand"
-                        [ngClass]="{'wi-minus': expanded, 'wi-plus': !expanded}"
-                        (click)="expandCollapsePanel($event);"></button>
-                <button type="button" class="app-icon wi panel-action" *ngIf="enablefullscreen"
+                <button type="button" class="app-icon wi panel-action" [class.ng-hide]="!collapsible" title="Collapse/ Expand"
+                   [ngClass]="{'wi-minus': expanded, 'wi-plus': !expanded}"
+                   (click)="togglePanel($event);"></button>
+                <button type="button" class="app-icon wi panel-action" [class.ng-hide]="!enablefullscreen"
                         title="Fullscreen/Exit Fullscreen"
                         [ngClass]="{'wi-fullscreen-exit': fullscreen, 'wi-fullscreen': !fullscreen}"
                         (click)="toggleFullScreen($event);"></button>
-                <button type="button" class="app-icon wi panel-action wi-close" title="Close" *ngIf="closable"
+                <button type="button" class="app-icon wi panel-action wi-close" title="Close" [class.ng-hide]="!closable"
                         (click)="closePanel($event)"></button>
             </div>
         </h3>
     </div>
-    <div class="panel-content" *ngIf="expanded" #panelContent>
+    <div class="panel-content" [class.ng-hide]="!expanded" #panelContent>
         <div class="panel-body {{helpClass}}">
             <ng-content></ng-content>
         </div>
@@ -39,5 +39,7 @@
             <div class="panel-help-content" [innerHTML]="helptext"></div>
         </aside>
     </div>
-    <ng-content select="wm-panel-footer"></ng-content>
+    <div class="app-panel-footer panel-footer clearfix" [class.ng-hide]="!expanded">
+        <ng-content select="[wmPanelFooter]"></ng-content>
+    </div>
 </div>
