@@ -25,7 +25,9 @@
                 "../../../node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
-                "../../../node_modules/moment/min/moment.min.js"
+                "../../../node_modules/moment/min/moment.min.js",
+                "../../../node_modules/jquery/dist/jquery.min.js",
+                "../../../node_modules/fullcalendar/dist/fullcalendar.min.js"
             ],
             "environmentSource": "environments/environment.ts",
             "environments": {

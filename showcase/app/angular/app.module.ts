@@ -7,6 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { WmComponentsModule } from '@components/components.module';
 import { PipeProvider } from '@runtime/services/pipe-provider.service';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import { PipeProvider } from '@runtime/services/pipe-provider.service';
         FormsModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        WmComponentsModule
+        WmComponentsModule,
+        ToastrModule.forRoot()
     ],
     providers: [PipeProvider],
     bootstrap: [AppComponent]

@@ -1,57 +1,62 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
+const today: Date = new Date();
+
+const getDateObj = () => {
+    const dateObj = new Date(today);
+    return {dateObj, add: (days) => dateObj.setDate(dateObj.getDay() + (days || 0))};
+};
+
 @Component({
   selector: 'app-calendar-demo',
   templateUrl: './calendar-demo.component.html'
 })
 export class CalendarDemoComponent {
 
-    height = 600;
+    height = '650px';
 
     selectedView: string = 'month';
 
     selectionMode: string = 'single';
 
-    eventTitle: string = 'eventName';
-
     calendarDataset: any[] =  [
         {
             'title' : 'All Day Event',
-            'start' : 'Tue Nov 28 2017 00:00:00 GMT+0530 (India Standard Time)'
+            'start' : getDateObj().dateObj
         },
         {
             'title' : 'Long Event',
-            'start' : 'Thu Nov 30 2017 00:00:00 GMT+0530 (India Standard Time)',
-            'end'   : 'Fri Dec 08 2017 00:00:00 GMT+0530 (India Standard Time)'
+            'start' : getDateObj().add(1),
+            'end'   : getDateObj().add(8)
         },
         {
             'id'    : 999,
             'title' : 'Repeating Event',
-            'start' : 'Fri Dec 01 2017 00:00:00 GMT+0530 (India Standard Time)',
+            'start' : getDateObj().add(3),
             'allDay': false
         },
         {
             'id'    : 999,
             'title' : 'Repeating Event',
-            'start' : 'Fri Dec 01 2017 00:00:00 GMT+0530 (India Standard Time)',
+            'start' : getDateObj().add(3),
             'allDay': false
         },
         {
             'title' : 'Birthday Party',
-            'start' : 'Wed Dec 20 2017 00:00:00 GMT+0530 (India Standard Time)',
-            'end'   : 'Thu Dec 21 2017 00:00:00 GMT+0530 (India Standard Time)',
+            'start' : getDateObj().add(13),
+            'end'   : getDateObj().add(13),
             'allDay': false
         },
         {
             'title' : 'Click for Google',
-            'start' : 'Wed Dec 20 2017 00:00:00 GMT+0530 (India Standard Time)',
-            'end'   : 'Wed Dec 20 2017 00:00:00 GMT+0530 (India Standard Time)',
+            'start' : getDateObj().add(9),
+            'end'   : getDateObj().add(10),
             'url'   : 'http://google.com/'
         }
     ];
 
-    calendarType = 'list';
+    calendarType = 'agenda';
 
     changeData = () => {
         this.calendarDataset = [ // put the array in the `events` property
@@ -62,20 +67,20 @@ export class CalendarDemoComponent {
         ];
     }
 
-    onViewRender = (view) => {
-        console.log('View rendered!!!');
+    onViewRender(view) {
+        console.log('View rendered!!!', view);
     }
 
-    onSelect = (start, end) => {
-        this.toaster.success('Start: ' + new Date(start).toDateString() + '\n' + 'End: ' + new Date(end).toDateString(), 'Day Clicked!', { timeOut: 300000 });
+    onSelect(start, end) {
+        this.toaster.success('Start: ' + new Date(start).toDateString() + '\n' + 'End: ' + new Date(end).toDateString(), 'Day Clicked!');
         console.log(new Date(start), new Date(end));
     }
 
-    onEventclick = (jsEvent, event, view) => {
-        this.toaster.info('Am the ' + event.title , 'Event Clicked!', { timeOut: 300000 });
+    onEventclick(jsEvent, event, view) {
+        this.toaster.info('Am the ' + event.title , 'Event Clicked!', { timeOut: 3000, closeButton: true, progressBar: true });
     }
 
-    onEventDrop = (jsEvent, event, oldData, delta, revertFunc, ui, view) => {
+    onEventDrop(jsEvent, event, oldData, delta, revertFunc, ui, view) {
         this.toaster.info(`You've dragged ${event.title} from ${oldData._start.format('DD/MM/YYYY')} to ${event._start.format('DD/MM/YYYY')}`);
     }
 

@@ -27,6 +27,7 @@ export class BaseComponent implements OnDestroy, OnInit {
         this.init = initWidget(this, (<any>inj).elDef, (<any>inj).view);
 
         this.propertyChange$.subscribe(({key, nv, ov}) => this.onPropertyChange(key, nv, ov));
+        this.styleChange$.subscribe(({key, nv, ov}) => this.onStyleChange(key, nv, ov));
 
         if (!hasTemplate) {
             this.$element = this.$host;

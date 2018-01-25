@@ -1,14 +1,14 @@
-<div class="col-md-9">
-  <wm-calendar [height]="height"
-               [onViewrender]="onViewRender"
-               [view]="selectedView"
-               [selectionmode]="selectionMode"
-               [onSelect]="onSelect"
-               [eventtitle]="eventTitle"
-               [dataset]="calendarDataset"
-               [calendartype]="calendarType"
-               [onEventclick]="onEventclick"
-               [onEventdrop]="onEventDrop">
+<div class="col-md-9" style="height: 100%">
+  <wm-calendar height.bind="height"
+               (viewrender)="onViewRender($event)"
+               view.bind="selectedView"
+               selectionmode.bind="selectionMode"
+               (select)="onSelect($event.start, $event.end)"
+               eventtitle.bind="eventTitle"
+               dataset.bind="calendarDataset"
+               calendartype.bind="calendarType"
+               (eventclick)="onEventclick($event.jsEvent, $event.event, $event.view)"
+               (eventdrop)="onEventDrop($event.jsEvent, $event.event, $event.oldData, $event.delta, $event.revertFunc, $event.ui, $event.view)">
 
   </wm-calendar>
 </div>
