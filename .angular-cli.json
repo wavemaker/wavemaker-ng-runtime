@@ -5,28 +5,6 @@
     },
     "apps": [
         {
-            "name": "runtime",
-            "root": "runtime",
-            "outDir": "dist/angular/runtime",
-            "assets": [
-                "assets",
-                "favicon.ico"
-            ],
-            "main": "main.ts",
-            "polyfills": "polyfills.ts",
-            "test": "test.ts",
-            "testTsconfig": "tsconfig.spec.json",
-            "tsconfig": "tsconfig.app.json",
-            "prefix": "app",
-            "styles": [],
-            "scripts": [],
-            "environmentSource": "environments/environment.ts",
-            "environments": {
-                "dev": "environments/environment.ts",
-                "prod": "environments/environment.prod.ts"
-            }
-        },
-        {
             "name": "showcase",
             "root": "showcase/app/angular",
             "outDir": "dist/angular/showcase",
@@ -49,6 +27,28 @@
             "scripts": [
                 "../../../node_modules/moment/min/moment.min.js"
             ],
+            "environmentSource": "environments/environment.ts",
+            "environments": {
+                "dev": "environments/environment.ts",
+                "prod": "environments/environment.prod.ts"
+            }
+        },
+        {
+            "name": "runtime",
+            "root": "runtime",
+            "outDir": "dist/angular/runtime",
+            "assets": [
+                "assets",
+                "favicon.ico"
+            ],
+            "main": "main.ts",
+            "polyfills": "polyfills.ts",
+            "test": "test.ts",
+            "testTsconfig": "tsconfig.spec.json",
+            "tsconfig": "tsconfig.app.json",
+            "prefix": "app",
+            "styles": [],
+            "scripts": [],
             "environmentSource": "environments/environment.ts",
             "environments": {
                 "dev": "environments/environment.ts",
