@@ -89,7 +89,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
         defaultPropertyChangeHandler(component, key, nv, ov);
 
         if (isStyle(key)) {
-            component.onStyleChange(key, nv, ov);
+            component.styleChange.next({key, nv, ov});
         } else if (propInfo && propInfo.notify) {
             component.propertyChange.next({key, nv, ov});
         }
