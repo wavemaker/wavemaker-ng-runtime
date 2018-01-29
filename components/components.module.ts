@@ -5,6 +5,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap';
 
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { ButtonDirective } from './widgets/button/button.directive';
+import { ButtonGroupDirective } from './widgets/buttongroup/buttongroup.directive';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { ContainerDirective } from './widgets/container/container.directive';
 import { DateComponent } from './widgets/date/date.component';
@@ -24,6 +25,7 @@ import { TileDirective } from './widgets/tile/tile.directive';
 const wmComponents = [
     AnchorDirective,
     ButtonDirective,
+    ButtonGroupDirective,
     CalendarComponent,
     ContainerDirective,
     DateComponent,

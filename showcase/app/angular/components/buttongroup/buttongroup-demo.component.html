@@ -1,13 +1,13 @@
 <div class="col-md-9">
-    <wm-buttongroup
-            [vertical]="vertical"
-            [show]="show"
-            [width]="width"
-            [horizontalalign]="'left'">
-        <wm-button [caption]="'button1'" [class]="'btn-primary'"></wm-button>
-        <wm-button [caption]="'button2'" [class]="'btn-warning'"></wm-button>
-        <wm-button [caption]="'button3'" [class]="'btn-info'"></wm-button>
-    </wm-buttongroup>
+    <div wmButtongroup
+            vertical.bind="vertical"
+            show.bind="show"
+            width.bind="width"
+            horizontalalign.bind="'left'">
+        <button wmButton caption.bind="'button1'" class="btn-primary"></button>
+        <button wmButton caption.bind="'button2'" class="btn-warning"></button>
+        <button wmButton caption.bind="'button3'" class="btn-info"></button>
+    </div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
