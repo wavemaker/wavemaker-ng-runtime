@@ -1,23 +1,23 @@
 
 <div class="col-md-9">
     <wm-currency
-            [currency]="currency"
-            [step]="5"
-            [minvalue]="minvalue"
-            [maxvalue]="maxvalue"
-            [datavalue]="datavalue"
-            [required]="required"
-            [disable]="disable"
-            [width]="width"
-            [height]="height"
-            [hint]="hint"
-            [tabindex]="tabindex"
-            [color]="color"
-            [show]="show"
-            [fontsize]="fontsize"
-            [shortcutkey]="'h'"
-            [backgroundcolor]="backgroundcolor"
-            [textalign]="textalign"></wm-currency>
+            currency.bind="currency"
+            step.bind="5"
+            minvalue.bind="minvalue"
+            maxvalue.bind="maxvalue"
+            datavalue.bind="datavalue"
+            required.bind="required"
+            disabled.bind="disable"
+            width.bind="width"
+            height.bind="height"
+            hint.bind="hint"
+            tabindex.bind="tabindex"
+            color.bind="color"
+            show.bind="show"
+            fontsize.bind="fontsize"
+            shortcutkey.bind="'h'"
+            backgroundcolor.bind="backgroundcolor"
+            textalign.bind="textalign"></wm-currency>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
@@ -60,6 +60,22 @@
         </div>
         <div class="property-control col-md-8">
             <input type="text" [(ngModel)]="height" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Min Value
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="minvalue" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Max Value
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="maxvalue" />
         </div>
     </div>
     <div class="property row">

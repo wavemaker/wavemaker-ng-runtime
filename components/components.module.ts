@@ -7,6 +7,7 @@ import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { ButtonDirective } from './widgets/button/button.directive';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { ContainerDirective } from './widgets/container/container.directive';
+import { CurrencyComponent } from './widgets/currency/currency.component';
 import { DateComponent } from './widgets/date/date.component';
 import { GridrowDirective } from './widgets/layoutgrid/gridrow/gridrow.directive';
 import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
@@ -26,6 +27,7 @@ const wmComponents = [
     ButtonDirective,
     CalendarComponent,
     ContainerDirective,
+    CurrencyComponent,
     DateComponent,
     GridrowDirective,
     GridcolumnDirective,
