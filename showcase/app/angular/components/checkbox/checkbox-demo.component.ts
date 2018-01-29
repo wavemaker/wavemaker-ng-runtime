@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CheckboxDemoComponent implements OnInit {
 
-    datavalue: boolean = true;
+    datavalue= 'checked';
 
     color: string = '#121212';
 
@@ -25,7 +25,11 @@ export class CheckboxDemoComponent implements OnInit {
 
     checkedvalue: string = 'checked';
 
-    uncheckedvalue: string = 'unckecked';
+    uncheckedvalue: string = 'unchecked';
+
+    onChange($event, $isolateScope, newVal, oldVal) {
+        console.log(`newVal: ${newVal}, oldVal:${oldVal}`);
+    }
 
     constructor() { }
 

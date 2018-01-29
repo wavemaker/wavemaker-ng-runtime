@@ -1,17 +1,18 @@
 <div class="col-md-9">
     <wm-checkbox
-            [width]="width"
-            [required]="required"
-            [disable]="disable"
-            [height]="height"
-            [hint]="hint"
-            [tabindex]="tabindex"
-            [color]="color"
-            [show]="show"
-            [readonly]="readonly"
-            [(datavalue)]="datavalue"
-            [checkedvalue]="checkedvalue"
-            [uncheckedvalue]="uncheckedvalue"
+            width.bind="width"
+            required.bind="required"
+            disabled.bind="disable"
+            height.bind="height"
+            hint.bind="hint"
+            tabindex.bind="tabindex"
+            color.bind="color"
+            show.bind="show"
+            readonly.bind="readonly"
+            datavalue.bind="datavalue"
+            checkedvalue.bind="checkedvalue"
+            uncheckedvalue.bind="uncheckedvalue"
+            (change)="onChange($event.$event, $event.$isolateScope, $event.newVal, $event.oldVal);"
             #checkbox
     ></wm-checkbox>
     {{'datavalue  :  '+checkbox.datavalue}}
