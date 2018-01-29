@@ -1,0 +1,14 @@
+<div class="input-group app-currency">
+    <span class="input-group-addon" [innerHtml]="currencysymbol"></span>
+    <input type="number" class="form-control app-textbox app-currency-input"
+           [(ngModel)]="datavalue"
+           [step]="step"
+           [min]="minvalue"
+           [max]="maxvalue"
+           [required]="required"
+           [disabled]="disabled"
+           [readonly]="readonly"
+           [attr.accesskey]="shortcutkey"
+           [tabindex]="tabindex"
+           [placeholder]="placeholder">
+</div>
