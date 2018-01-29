@@ -9,6 +9,8 @@ import {JsonPipe} from '@angular/common';
 })
 export class SelectDemoComponent implements OnInit {
 
+    mySelectWidget;
+
     options: any[] = [{
     name: 'Eric',
     company : 'X'
@@ -55,6 +57,7 @@ export class SelectDemoComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
+        this.mySelectWidget = (<any>window).widgetRegistryByName.get('mySelect');
     }
 
 }

@@ -1,28 +1,27 @@
 <div class="col-md-9">
     <wm-select
-            [dataset]="options"
-            [datafield]="datafield"
-            [displayfield]="displayfield"
-            [width]="width"
-            [required]="required"
-            [disable]="disable"
-            [height]="height"
-            [hint]="hint"
-            [tabindex]="tabindex"
-            [fontsize]="fontsize"
-            [multiple]="multiple"
-            [color]="color"
-            [show]="show"
-            [shortcutkey]="h"
-            #x
+            dataset.bind="options"
+            datafield.bind="datafield"
+            displayfield.bind="displayfield"
+            width.bind="width"
+            usekeys.bind="usekeys"
+            required.bind="required"
+            readonly.bind="readonly"
+            disabled.bind="disabled"
+            height.bind="height"
+            hint.bind="hint"
+            multiple.bind="multiple"
+            show.bind="show"
+            placeholder="Enter text"
+            name="mySelect"
     ></wm-select>
     <div class="row clearfix">
-        <div class="col-sm-1">datavalue:</div>
-        <div class="col-sm-11">{{x._model_ | json}}</div>
+        <div class="col-sm-3">datavalue:</div>
+        <div class="col-sm-9">{{mySelectWidget.datavalue | json}}</div>
     </div>
     <div class="row clearfix">
-        <div class="col-sm-1">displayvalue:</div>
-        <div class="col-sm-11">{{x.displayValue}}</div>
+        <div class="col-sm-3">displayvalue:</div>
+        <div class="col-sm-9">{{mySelectWidget.displayValue}}</div>
     </div>
 </div>
 <div class="col-md-3 properties">
@@ -53,7 +52,7 @@
             Hint
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="hint" />
+            <input type="text" [(ngModel)]="hint"/>
         </div>
     </div>
     <div class="property row">
@@ -61,7 +60,7 @@
             Width
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="width" />
+            <input type="text" [(ngModel)]="width"/>
         </div>
     </div>
     <div class="property row">
@@ -69,23 +68,7 @@
             Height
         </div>
         <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="height" />
-        </div>
-    </div>
-    <div class="property row">
-        <div class="property-text col-md-4">
-            Font size
-        </div>
-        <div class="property-control col-md-8">
-            <input type="text" [(ngModel)]="fontsize" />
-        </div>
-    </div>
-    <div class="property row">
-        <div class="property-text col-md-4">
-            Color
-        </div>
-        <div class="property-control col-md-8">
-            <input type="color" [(ngModel)]="color" />
+            <input type="text" [(ngModel)]="height"/>
         </div>
     </div>
     <div class="property row">
@@ -93,7 +76,7 @@
             Show
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="show" />
+            <input type="checkbox" [(ngModel)]="show"/>
         </div>
     </div>
     <div class="property row">
@@ -101,7 +84,15 @@
             Required
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="required" />
+            <input type="checkbox" [(ngModel)]="required"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Use keys
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="usekeys"/>
         </div>
     </div>
     <div class="property row">
@@ -109,7 +100,23 @@
             Multiple
         </div>
         <div class="property-control col-md-8">
-            <input type="checkbox" [(ngModel)]="multiple" />
+            <input type="checkbox" [(ngModel)]="multiple"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            disabled
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="disabled"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            readonly
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="readonly"/>
         </div>
     </div>
 </div>

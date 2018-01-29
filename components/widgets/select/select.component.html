@@ -1,0 +1,13 @@
+<select
+  [ngClass]="['app-textbox', class]"
+  [disabled]="disabled"
+  [required]="required"
+  [tabindex]="tabindex"
+  [(ngModel)]="modelProxy"
+  [multiple]="multiple"
+  (change)="onSelectValueChange($event, this.modelProxy)"
+  >
+    <option
+      *ngFor="let option of displayOptions"
+      [value]="option.key" [label]="option.value" [attr.selected]="option.isChecked"></option>
+</select>
