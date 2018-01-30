@@ -127,8 +127,7 @@ export function styler($node: HTMLElement, component: any, type?: APPLY_STYLES_T
         } else if (key === 'backgroundimage') {
             setCSS($node, 'backgroundImage', component.picturesource);
         } else if (propNameCSSKeyMap[key]) {
-            setCSS($node, propNameCSSKeyMap[key], nv)
+            setCSS($node, propNameCSSKeyMap[key], nv);
         }
     });
-    component.addDestroyListener(() => subscription.unsubscribe());
 }

@@ -27,7 +27,7 @@ const registerWidget = (name: string, widgetId: string, widget: any, component: 
         widgetRegistryByName.set(name, widget);
     }
     widgetRegistryByWidgetId.set(widgetId, widget);
-    component.addDestroyListener(() => {
+    component.destroy$.subscribe(() => {
         widgetRegistryByName.delete(widgetId);
         widgetRegistryByWidgetId.delete(widgetId);
     });
@@ -105,9 +105,7 @@ export function initWidget(component: BaseComponent, elDef: any, view: any) {
     const widget = revocable.proxy;
     const widgetId = idGen.next().value;
 
-    component.destroyListeners = [];
-
-    component.addDestroyListener(() => revocable.revoke());
+    component.destroy$.subscribe(() => revocable.revoke());
 
     const widgetProps: Map<string, any> = getWidgetPropsByType(component.widgetType);
     const $scope = view.component;
@@ -130,7 +128,7 @@ export function initWidget(component: BaseComponent, elDef: any, view: any) {
         const {0: propName, 1: bindKey, length} = attrName.split('.');
         if (bindKey === 'bind') {
             initState.delete(propName);
-            component.addDestroyListener($watch(attrValue, $scope, $locals, nv => widget[propName] = nv, getWatchIdentifier(widgetId, propName)));
+            component.destroy$.subscribe($watch(attrValue, $scope, $locals, nv => widget[propName] = nv, getWatchIdentifier(widgetId, propName)));
         } else if (length === 1) {
             initState.set(propName, attrValue);
         }

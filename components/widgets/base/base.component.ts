@@ -10,15 +10,17 @@ export class BaseComponent implements OnDestroy, OnInit {
     widgetId: string;
     $digest;
     init;
-    destroyListeners;
-
-    _ngOnInit() {}
 
     styleChange = new Subject();
     styleChange$ = this.styleChange.asObservable();
 
     propertyChange = new Subject();
     propertyChange$ = this.propertyChange.asObservable();
+
+    destroy = new Subject();
+    destroy$ = this.destroy.asObservable();
+
+    _ngOnInit() {}
 
     constructor ({widgetType, hasTemplate}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
         this.$host = $host.nativeElement;
@@ -40,12 +42,11 @@ export class BaseComponent implements OnDestroy, OnInit {
     onStyleChange(k, nv, ov) {
     }
 
-    addDestroyListener(fn) {
-        this.destroyListeners.push(fn);
-    }
-
     ngOnDestroy() {
-        this.destroyListeners.forEach(fn => fn());
+        this.destroy.next();
+        this.propertyChange.complete();
+        this.styleChange.complete();
+        this.destroy.complete();
     }
 
     ngOnInit() {

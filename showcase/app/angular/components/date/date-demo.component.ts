@@ -23,7 +23,7 @@ export class DateDemoComponent {
 
     private disabled: boolean = false;
 
-    onModelChange = (scope, newVal, oldVal) => {
+    onModelChange = ($event, $isolateScope, newVal, oldVal) => {
         console.log(`Value Changed from ${oldVal} to ${newVal}`);
     }
 }

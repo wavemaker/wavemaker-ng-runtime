@@ -1,14 +1,14 @@
 <div class="col-md-9">
     <wm-time
             #wmTime
-            [datavalue]="datavalue"
-            [timepattern]="timepattern"
-            [outputformat]="outputformat"
-            [hourstep]="hourstep"
-            [minutestep]="minutestep"
-            [showseconds]="showseconds"
-            [ismeridian]="ismeridian"
-            [disabled]="disabled"></wm-time>
+            datavalue.bind="datavalue"
+            timepattern.bind="timepattern"
+            outputformat.bind="outputformat"
+            hourstep.bind="hourstep"
+            minutestep.bind="minutestep"
+            showseconds.bind="showseconds"
+            ismeridian.bind="ismeridian"
+            disabled.bind="disabled"></wm-time>
     <div class="row clearfix">
         <div class="col-sm-1">Datavalue:</div>
         <div class="col-sm-11">{{wmTime.datavalue}}</div>
