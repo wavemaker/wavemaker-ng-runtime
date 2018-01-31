@@ -18,6 +18,6 @@ export default {
         '@utils/styler': 'wm.utils',
         '@utils/watcher': 'wm.utils',
         '@utils/expression-parser': 'wm.utils',
-        "lodash": "_"
+        'rxjs/Subject': 'Rx'
     }
 };
