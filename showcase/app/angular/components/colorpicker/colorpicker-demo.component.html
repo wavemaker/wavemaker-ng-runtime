@@ -1,15 +1,17 @@
 <div class="col-md-9">
     <wm-colorpicker
-            [datavalue]="datavalue"
-            [required]="required"
-            [show]="show"
-            [readonly]="readonly"
-            [disable]="disable"
-            [hint]="hint"
-            [tabindex]="tabindex"
-            [class]="class"
-            [shortcutkey]="shortcutKey"></wm-colorpicker>
+            datavalue.bind="datavalue"
+            required.bind="required"
+            show.bind="show"
+            readonly.bind="readonly"
+            disable.bind="disable"
+            hint.bind="hint"
+            tabindex.bind="tabindex"
+            class.bind="class"
+            shortcutkey.bind="shortcutKey"
+    #colorpicker></wm-colorpicker>
 </div>
+{{colorpicker.datavalue}}
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
     <hr>
