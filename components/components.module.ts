@@ -11,6 +11,7 @@ import { CheckboxComponent } from './widgets/checkbox/checkbox.component';
 import { ContainerDirective } from './widgets/container/container.directive';
 import { CurrencyComponent } from './widgets/currency/currency.component';
 import { DateComponent } from './widgets/date/date.component';
+import { DatetimeComponent } from './widgets/datetime/datetime.component';
 import { GridrowDirective } from './widgets/layoutgrid/gridrow/gridrow.directive';
 import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
 import { IconDirective } from './widgets/icon/icon.directive';
@@ -34,6 +35,7 @@ const wmComponents = [
     ContainerDirective,
     CurrencyComponent,
     DateComponent,
+    DatetimeComponent,
     GridrowDirective,
     GridcolumnDirective,
     IconDirective,
