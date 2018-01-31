@@ -4,7 +4,7 @@
              maxdate.bind="maxdate"
              disabled.bind="disabled"
              showweeks.bind="showweeks"
-             onChange.bind="onModelChange"
+             (change)="onModelChange($event.$event, $event.$isolateScope, $event.newVal, $event.oldVal);"
              datepattern.bind="datepattern"
              outputformat.bind="outputformat"
              show.bind="show"

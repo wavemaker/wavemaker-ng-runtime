@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BsDatepickerModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, TimepickerModule } from 'ngx-bootstrap';
 
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { ButtonDirective } from './widgets/button/button.directive';
@@ -21,6 +21,7 @@ import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { TextDirective } from './widgets/text/text.directive';
 import { TextareaDirective } from './widgets/textarea/textarea.directive';
 import { TileDirective } from './widgets/tile/tile.directive';
+import { TimeComponent } from './widgets/time/time.component';
 
 
 
@@ -42,14 +43,17 @@ const wmComponents = [
     RadiosetComponent,
     TextDirective,
     TextareaDirective,
-    TileDirective
+    TileDirective,
+    TimeComponent
 ];
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
-        BsDatepickerModule.forRoot()
+        BsDatepickerModule.forRoot(),
+        TimepickerModule.forRoot(),
+        BsDropdownModule.forRoot()
     ],
     declarations: wmComponents,
     exports: wmComponents,
