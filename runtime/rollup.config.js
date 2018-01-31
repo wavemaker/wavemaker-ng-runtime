@@ -20,6 +20,6 @@ export default {
         '@utils/watcher': 'wm.utils',
         '@utils/expression-parser': 'wm.utils',
         '@components/components.module': 'wm.components',
-        "lodash": "_"
+        'ngx-bootstrap': 'ngxBootstrap'
     }
 };

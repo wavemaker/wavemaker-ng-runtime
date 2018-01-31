@@ -3,6 +3,7 @@ rimraf=./node_modules/.bin/rimraf
 rollup=./node_modules/.bin/rollup
 uglifyjs=./node_modules/.bin/uglifyjs
 ngc=./node_modules/.bin/ngc
+tsc=./node_modules/.bin/tsc
 
 set -e
 
@@ -77,11 +78,22 @@ then
     echo -e "${Cyan}Building @angular/common/http ${White}"
     $rollup -c ./config/rollup.angular.common-http.config.js --silent
     if [ "$?" != "0" ]
-        then
-        	echo -e "${Red}Error in building @angular/common/http"
-        	exit 1
-        fi
+    then
+        echo -e "${Red}Error in building @angular/common/http"
+        exit 1
+    fi
     echo -e "${Green}Built common-http\n"
+
+    echo -e "${Cyan}Building ngx-bootstrap ${White}"
+    $tsc --outDir dist/tmp --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015
+    $rollup -c ./config/rollup.ngx-bootstrap.config.js --silent
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in building ngx-bootstrap"
+        exit 1
+    fi
+    echo -e "${Green}Built ngx-bootstrap\n"
+
 
     echo -e "${Cyan}Bundling libs ${White}"
     $uglifyjs \
@@ -96,6 +108,7 @@ then
         ./dist/tmp/common-http.umd.js \
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
+        ./dist/tmp/ngx-bootstrap.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
         -o ./dist/bundles/wm-libs.min.js -b
