@@ -1,13 +1,11 @@
 import { Component, OnInit, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
-import {
-    toString as _toString,
-    find as _find
-} from 'lodash';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './radioset.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForSelected, updateCheckedValue } from '../../utils/form-utils';
 import { $appDigest } from '@utils/watcher';
+
+declare const _;
 
 registerProps();
 
@@ -116,11 +114,11 @@ export class RadiosetComponent extends BaseComponent implements OnInit {
 
         this._isChangedManually = true;
 
-        const dataObj = _find(this.displayOptions, {'isChecked': true});
+        const dataObj = _.find(this.displayOptions, {'isChecked': true});
         let checkedDisplayOption;
 
         // RadioOption should not be deselected when clicked again. Model and display value remains the same.
-        if (dataObj && (_toString(radioOption) === _toString(dataObj.key))) {
+        if (dataObj && (_.toString(radioOption) === _.toString(dataObj.key))) {
             return;
         }
 

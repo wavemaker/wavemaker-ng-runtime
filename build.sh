@@ -134,8 +134,26 @@ then
 fi
 echo -e "${Green}Built utils\n"
 
+echo -e "${Cyan}Building transpiler ${White}"
+$rollup -c ./transpiler/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building transpiler\n"
+    exit 1
+fi
+echo -e "${Green}Built transpiler\n"
+
+echo -e "${Cyan}Building components build task ${White}"
+$rollup -c ./components/rollup.wm-components.build.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building components build task \n"
+    exit 1
+fi
+echo -e "${Green}Built components build task\n"
+
 echo -e "${Cyan}Building components ${White}"
-$rollup -c ./components/rollup.config.js --silent
+$rollup -c ./components/rollup.wm-components.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building components\n"
@@ -153,7 +171,7 @@ fi
 echo -e "${Green}Built runtime\n"
 
 echo -e "${Cyan}Bundling wm-loader ${White}"
-$uglifyjs ./dist/tmp/wm-utils.umd.js ./dist/tmp/wm-components.umd.js ./dist/tmp/wm-runtime.umd.js -o ./dist/bundles/wm-loader.min.js -b
+$uglifyjs ./dist/tmp/wm-utils.umd.js ./dist/tmp/wm-transpiler.umd.js ./dist/tmp/wm-components.build.umd.js ./dist/tmp/wm-components.umd.js ./dist/tmp/wm-runtime.umd.js -o ./dist/bundles/wm-loader.min.js -b
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in bundling wm-loader\n"

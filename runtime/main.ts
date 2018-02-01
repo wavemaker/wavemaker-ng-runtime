@@ -8,10 +8,14 @@ if (environment.production) {
     enableProdMode();
 }
 
+
 console.time('bootstrap');
-platformBrowserDynamic()
-    .bootstrapModule(AppModule)
-    .then(() => {
-        console.timeEnd('bootstrap');
-    })
-    .catch(err => console.log(err));
+
+document.addEventListener('DOMContentLoaded', () => {
+    platformBrowserDynamic()
+        .bootstrapModule(AppModule)
+        .then(() => {
+            console.timeEnd('bootstrap');
+        })
+        .catch(err => console.log(err));
+});

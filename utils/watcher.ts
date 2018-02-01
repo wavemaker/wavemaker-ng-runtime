@@ -1,6 +1,7 @@
 import { debounce, idMaker } from './utils';
 import { $parse } from './expression-parser';
-import { isEqual as _isEqual } from 'lodash';
+
+declare const _;
 
 const registry = new Map<string, any>();
 
@@ -28,7 +29,7 @@ const triggerWatchers = () => {
         const listener = watchInfo.listener;
         const ov = watchInfo.last;
         const nv = fn();
-        if (!_isEqual(nv, ov)) {
+        if (!_.isEqual(nv, ov)) {
             changedByWatch = true;
             listener(nv, ov);
             changedByWatch = false;

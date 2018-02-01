@@ -1,15 +1,4 @@
-import {
-    includes as _includes,
-    startsWith as _startsWith,
-    attempt as _attempt,
-    isError as _isError,
-    get as  _get,
-    isFunction as _isFunction,
-    cloneDeep as _cloneDeep,
-    intersection as _intersection,
-    isArray as _isArray
-} from 'lodash';
-
+declare const _;
 declare const moment;
 
 const REGEX = {
@@ -97,12 +86,12 @@ export const encodeUrlParams = (url: string): string => {
             queryParams = queryParamsString.split('&');
             queryParams.forEach(function (param) {
                 let decodedParamValue;
-                const i = _includes(param, '=') ? param.indexOf('=') : (param && param.length),
+                const i = _.includes(param, '=') ? param.indexOf('=') : (param && param.length),
                     paramName = param.substr(0, i),
                     paramValue = param.substr(i + 1);
 
                 // add the = for param name only when the param value exists in the given param or empty value is assigned
-                if (paramValue || _includes(param, '=')) {
+                if (paramValue || _.includes(param, '=')) {
                     try {
                         decodedParamValue = decodeURIComponent(paramValue);
                     } catch (e) {
@@ -144,7 +133,7 @@ export const isInsecureContentRequest = (url: string): boolean => {
  * this method checks if a given string starts with the given string
  */
 export const stringStartsWith = (str: string, startsWith: string, ignoreCase?): boolean => {
-    return _startsWith(str, startsWith);
+    return _.startsWith(str, startsWith);
 };
 
 export const getEvaluatedExprValue = (object, expression) => {
@@ -154,7 +143,7 @@ export const getEvaluatedExprValue = (object, expression) => {
      * $eval is used, as expression can be in format of field1 + ' ' + field2
      * $eval can fail, if expression is not in correct format, so attempt the eval function
      */
-    val = _attempt(function () {
+    val = _.attempt(function () {
 
         const argsExpr = Object.keys(object).map((fieldName) => {
             return `var ${fieldName} = data['${fieldName}'];`;
@@ -166,8 +155,8 @@ export const getEvaluatedExprValue = (object, expression) => {
      * $eval fails if field expression has spaces. Ex: 'field name' or 'field@name'
      * As a fallback, get value directly from object or scope
      */
-    if (_isError(val)) {
-        val = _get(object, expression);
+    if (_.isError(val)) {
+        val = _.get(object, expression);
     }
     return val;
 };
@@ -235,7 +224,7 @@ export function triggerFn(fn, ...argmnts) {
         args[start - 1] = arguments[start];
     }
 
-    if (_isFunction(fn)) {
+    if (_.isFunction(fn)) {
         return fn.apply(null, args);
     }
 }
@@ -273,7 +262,7 @@ export const addEventListener = (_element: Element, excludeElement: Element, eve
  * @returns a clone of the passed object
  */
 export const getClonedObject = (object) => {
-    return _cloneDeep(object);
+    return _.cloneDeep(object);
 };
 
 /*Function to generate a random number*/
@@ -296,7 +285,7 @@ export const validateAccessRoles = (roleExp) => {
 
         roles = roleExp && roleExp.split(',').map(Function.prototype.call, String.prototype.trim);
 
-        return _intersection(roles, []).length;
+        return _.intersection(roles, []).length;
     }
 
     return true;
@@ -348,7 +337,7 @@ export const findValueOf = (obj, key, create?) => {
     }
 
     if (!create) {
-        return _get(obj, key);
+        return _.get(obj, key);
     }
 
     const parts = key.split('.'),
@@ -413,7 +402,7 @@ export const isNumberType = (type: any): boolean => {
 
 /* function to check if provided object is empty*/
 export const isEmptyObject = (obj: any): boolean => {
-    if (isObject(obj) && !_isArray(obj)) {
+    if (isObject(obj) && !_.isArray(obj)) {
         return Object.keys(obj).length === 0;
     }
     return false;

@@ -183,7 +183,7 @@ class ASTCompiler {
         const k = this.build(ast.key);
         const o = this.build(ast.obj);
         const v = this.createVar();
-        stmts.push(`${v}=${o}["${k}"]`);
+        stmts.push(`${v}=${o}&&${o}["${k}"]`);
         return v;
     }
 
@@ -410,6 +410,8 @@ export function setPipeProvider(_pipeProvider) {
     pipeProvider = _pipeProvider;
 }
 
+const parser = new Parser(new Lexer);
+
 export function $parse(expr) {
 
     if (!pipeProvider) {
@@ -433,7 +435,6 @@ export function $parse(expr) {
         return fn;
     }
 
-    const parser = new Parser(new Lexer);
     const ast = parser.parseBinding(expr, '');
     let boundFn;
 

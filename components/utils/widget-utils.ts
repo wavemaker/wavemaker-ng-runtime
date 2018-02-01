@@ -1,9 +1,6 @@
 import { stringStartsWith, getEvaluatedExprValue } from '@utils/utils';
-import {
-    isNull as _isNull,
-    assign as _assign
-} from 'lodash';
 
+declare const _;
 /**
  * Returns the parsed, updated bound expression
  * if the expression is $[data[$i][firstName]] + '--' + $[lastName] + '--' + $['@ID@']
@@ -79,7 +76,7 @@ export const getObjValueByKey = (obj: any, strKey: string) => {
         /* convert indexes to properties, so as to work for even 'key1[0].child1'*/
         strKey.replace(/\[(\w+)\]/g, '.$1').split('.').forEach(function (key) {
             // If obj is null, then assign val to null.
-            val = (val && val[key]) || (_isNull(obj) ? obj : obj[key]);
+            val = (val && val[key]) || (_.isNull(obj) ? obj : obj[key]);
         });
         return val;
     }
@@ -107,7 +104,7 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
             // TODO: Optimize the behavior
             const f = new Function('__1', '__2', '__3', 'return ' + expressionValue);
             // evaluate the expression in the given scope and return the value
-            return f(_assign({}, dataObj, {'__1': dataObj}));
+            return f(_.assign({}, dataObj, {'__1': dataObj}));
         }
         return getEvaluatedExprValue(dataObj, displayExp);
     }

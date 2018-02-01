@@ -20,6 +20,7 @@ export default {
         '@utils/watcher': 'wm.utils',
         '@utils/expression-parser': 'wm.utils',
         '@components/components.module': 'wm.components',
-        'ngx-bootstrap': 'ngxBootstrap'
+        'ngx-bootstrap': 'ngxBootstrap',
+        '@transpiler/build': 'wm.transpiler'
     }
 };

@@ -1,21 +1,6 @@
 import { getObjValueByKey, getEvaluatedData } from './widget-utils';
 
-import {
-    isArray as _isArray,
-    isObject as _isObject,
-    isString as _isString,
-    toString as _toString,
-    cloneDeep as _cloneDeep,
-    orderBy as _orderBy,
-    isEmpty as _isEmpty,
-    remove as _remove,
-    uniqBy as _uniqBy,
-    isNull as _isNull,
-    isUndefined as _isUndefined,
-    find as _find,
-    get as _get,
-    isEqual as _isEqual,
-} from 'lodash';
+declare const _;
 
 const ALLFIELDS = 'All Fields';
 
@@ -26,15 +11,15 @@ export const getDisplayField = (dataSet: any, displayField: string) => {
     /*if displayField is not set or set to all fields*/
     if (!displayField || displayField === ALLFIELDS) {
         /*if dataSet is an array*/
-        if (_isArray(dataSet) && dataSet.length > 0) {
+        if (_.isArray(dataSet) && dataSet.length > 0) {
             /*if dataSet is an array of objects*/
-            if (_isObject(dataSet[0])) {
+            if (_.isObject(dataSet[0])) {
                 /* get the first field of the object*/
                 displayField = Object.keys(dataSet[0])[0];
             } else {
                 displayField = '';
             }
-        } else if (_isObject(dataSet)) {
+        } else if (_.isObject(dataSet)) {
             displayField = '';
         }
     }
@@ -56,11 +41,11 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
         displayField = getDisplayField(dataSet, options.displayfield || options.datafield),
         data = [];
 
-    if (_isString(dataSet)) {
+    if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
     }
 
-    if (useKeys && _isObject(dataSet[0])) {
+    if (useKeys && _.isObject(dataSet[0])) {
         /*getting keys of the object*/
         objectKeys = Object.keys(dataSet[0]);
         /*iterating over object keys and creating checkboxset dataset*/
@@ -73,14 +58,14 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
     // if filter dataSet if dataField is selected other than 'All Fields'
     if (dataField && dataField !== ALLFIELDS) {
         // Widget selected item dataset will be object instead of array.
-        if (_isObject(dataSet) && !_isArray(dataSet)) {
+        if (_.isObject(dataSet) && !_.isArray(dataSet)) {
             key = getObjValueByKey(dataSet, dataField);
             value = getEvaluatedData(dataSet, {
                 displayfield: options.displayfield, displayexpression: options.displayexpression
             });
             data.push({'key': key, 'value': value});
         } else {
-            if (_isObject(dataSet[0])) {
+            if (_.isObject(dataSet[0])) {
                 dataSet.forEach((option) => {
                     key = getObjValueByKey(option, dataField);
                     value = getEvaluatedData(option, {
@@ -97,7 +82,7 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
 
     } else {
         dataSet.forEach((option, index) => {
-            if (_isObject(option)) {
+            if (_.isObject(option)) {
                 if (options.datafield === ALLFIELDS) {
                     key = index;
                     value = getEvaluatedData(option, {
@@ -113,7 +98,7 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
                     data.push({'key': key, 'value': value});
                 }
             } else {
-                if (_isArray(dataSet)) {
+                if (_.isArray(dataSet)) {
                     data.push({'key': option, 'value': option});
                 } else {
                     // If dataset is object with key, value and useKeys set to true, only keys are to be returned.
@@ -130,7 +115,7 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
  */
 export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
     if (!orderBy) {
-        return _cloneDeep(dataSet);
+        return _.cloneDeep(dataSet);
     }
 
     const items = orderBy.split(','),
@@ -141,7 +126,7 @@ export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
         fields.push(item[0]);
         directions.push(item[1]);
     });
-    return _orderBy(dataSet, fields, directions);
+    return _.orderBy(dataSet, fields, directions);
 };
 
 /**
@@ -157,15 +142,15 @@ export const extractDisplayOptions = (dataSet: any, options: DataSetProps): any[
     }
     newDataSet = getOrderedDataSet(dataSet, options.orderby);
 
-    if (!_isEmpty(newDataSet)) {
+    if (!_.isEmpty(newDataSet)) {
         displayOptions = extractDataObjects(newDataSet, options);
     }
 
-    displayOptions = _uniqBy(displayOptions, 'key');
+    displayOptions = _.uniqBy(displayOptions, 'key');
 
     // Omit all the options whose datafield (key) is null or undefined.
-    _remove(displayOptions, (opt) => {
-        return _isUndefined(opt.key) || _isNull(opt.key);
+    _.remove(displayOptions, (opt) => {
+        return _.isUndefined(opt.key) || _.isNull(opt.key);
     });
 
     return displayOptions;
@@ -175,8 +160,8 @@ export const extractDisplayOptions = (dataSet: any, options: DataSetProps): any[
  * This function finds the displayOption whose key is equal to the value and sets the isChecked flag for that displayOptions.
  */
 export const updateCheckedValue = (value: any, displayOptions: any[]) => {
-    const checkedDisplayOption = _find(displayOptions, function (dataObj) {
-        return _toString(dataObj.key) === _toString(value);
+    const checkedDisplayOption = _.find(displayOptions, function (dataObj) {
+        return _.toString(dataObj.key) === _.toString(value);
     });
     // set the isChecked flag for selected radioset value.
     if (checkedDisplayOption) {
@@ -196,12 +181,12 @@ export const assignModelForSelected = (displayOptions: any[], model: any, modelP
     const selectedValue = modelProxy;
 
     // ModelProxy is undefined, then update the _dataVal which can be used when latest dataset is obtained.
-    if (!_isChangedManually && _isUndefined(selectedValue) && !_isUndefined(model)) {
+    if (!_isChangedManually && _.isUndefined(selectedValue) && !_.isUndefined(model)) {
         _model_ = selectedValue;
-    } else if (_isNull(selectedValue)) { // key can never be null, so return model as undefined.
+    } else if (_.isNull(selectedValue)) { // key can never be null, so return model as undefined.
         _model_ = selectedValue;
     } else if (datafield === ALLFIELDS) {
-        selectedOption = _find(displayOptions, {key: selectedValue});
+        selectedOption = _.find(displayOptions, {key: selectedValue});
         if (selectedOption) {
             _model_ = selectedOption.dataObject;
         }
@@ -222,13 +207,13 @@ export const assignModelForMultiSelect = (displayOptions: any, datafield: any, m
     const selectedCheckboxValue = modelProxy;
 
     // ModelProxy is undefined or [] , then update the _dataVal which can be used when latest dataset is obtained.
-    if (!_isChangedManually && !_isUndefined(_model_) && (_isUndefined(selectedCheckboxValue) || (_isArray(selectedCheckboxValue) && !selectedCheckboxValue.length))) {
+    if (!_isChangedManually && !_.isUndefined(_model_) && (_.isUndefined(selectedCheckboxValue) || (_.isArray(selectedCheckboxValue) && !selectedCheckboxValue.length))) {
         datavalue = selectedCheckboxValue;
     } else if (selectedCheckboxValue) {
         _model_ = [];
         selectedCheckboxValue.forEach(value => {
             if (datafield === 'All Fields') {
-                selectedOption = _find(displayOptions, {key: value});
+                selectedOption = _.find(displayOptions, {key: value});
                 _model_.push(selectedOption.dataObject);
             } else {
                 _model_.push(value);
@@ -254,8 +239,8 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
     });
 
     // If model is null, reset the modelProxy and displayValue.
-    if (_isNull(model) || _isUndefined(model)) {
-        if (_isArray(modelProxy)) {
+    if (_.isNull(model) || _.isUndefined(model)) {
+        if (_.isArray(modelProxy)) {
             _modelProxy = [];
         } else {
             _modelProxy = undefined;
@@ -263,17 +248,17 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
         return _modelProxy;
     }
 
-    if (!_isUndefined(displayOptions) && !usekeys) {
+    if (!_.isUndefined(displayOptions) && !usekeys) {
         // set the filterField depending on whether displayOptions contain 'dataObject', if not set filterField to 'key'
-        filterField = _get(displayOptions[0], 'dataObject') ? 'dataObject' : 'key';
-        if (_isArray(model)) {
+        filterField = _.get(displayOptions[0], 'dataObject') ? 'dataObject' : 'key';
+        if (_.isArray(model)) {
             _modelProxy = [];
             model.forEach(modelVal => {
-                selectedOption = _find(displayOptions, function (obj) {
+                selectedOption = _.find(displayOptions, function (obj) {
                     if (filterField === 'dataObject') {
-                        return _isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(modelVal)));
+                        return _.isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(modelVal)));
                     }
-                    return _toString(obj[filterField]) === _toString(modelVal);
+                    return _.toString(obj[filterField]) === _.toString(modelVal);
                 });
                 if (selectedOption) {
                     _modelProxy.push(selectedOption.key);
@@ -281,11 +266,11 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
             });
         } else {
             _modelProxy = undefined;
-            selectedOption = _find(displayOptions, function (obj) {
+            selectedOption = _.find(displayOptions, function (obj) {
                 if (filterField === 'dataObject') {
-                    return _isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(model)));
+                    return _.isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(model)));
                 }
-                return _toString(obj[filterField]) === _toString(model);
+                return _.toString(obj[filterField]) === _.toString(model);
             });
             if (selectedOption) {
                 _modelProxy = selectedOption.key;
@@ -306,7 +291,7 @@ export const setCheckedAndDisplayValues = (displayOptions: any[], _modelProxy: a
     let selectedOption,
         displayValue;
 
-    if (_isArray(_modelProxy)) {
+    if (_.isArray(_modelProxy)) {
         displayValue = [];
         _modelProxy.forEach(val => {
             selectedOption = updateCheckedValue(val, displayOptions);

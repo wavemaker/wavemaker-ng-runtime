@@ -1,10 +1,8 @@
 import { ActivatedRoute } from '@angular/router';
 import { ApplicationRef, Component, ViewContainerRef } from '@angular/core';
 import { PageUtils } from '../services/page-utils.service';
-import { HtmlParser } from '@angular/compiler';
-import { getNgMarkup } from '../markup-converter';
+import { transpile } from '@transpiler/build';
 
-const parser = new HtmlParser();
 
 @Component({
     selector: 'app-page-outlet',
@@ -31,7 +29,7 @@ export class PageWrapperComponent {
                     script = script.join('\n');
                     styles = styles.join('\n');
 
-                    markup = getNgMarkup(parser.parse(markup, ''));
+                    markup = transpile(markup);
 
                     let componentRef = this.pageUtil.createDynamicPageComponent(`app-page-${pageName}`, markup, script, styles, variables);
                     let component = this.vcRef.createComponent(componentRef);

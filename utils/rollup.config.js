@@ -14,8 +14,7 @@ export default {
         '@angular/platform-browser-dynamic': 'ng.platformBrowserDynamic',
         '@angular/platform-browser': 'ng.platformBrowser',
         '@angular/forms': 'ng.forms',
-        '@angular/router': 'ng.router',
-        "lodash": "_"
+        '@angular/router': 'ng.router'
     },
     plugins: [
         multiEntry()

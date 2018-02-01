@@ -5,7 +5,8 @@
         "paths": {
             "@utils/*": [ "utils/*" ],
             "@components/*": [ "components/*" ],
-            "@runtime/*": ["runtime/*"]
+            "@runtime/*": ["runtime/*"],
+            "@transpiler/*": ["transpiler/*"]
         },
         "outDir": "./dist/out-tsc",
         "sourceMap": false,
