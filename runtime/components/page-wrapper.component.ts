@@ -1,6 +1,7 @@
 import { ActivatedRoute } from '@angular/router';
 import { ApplicationRef, Component, ViewContainerRef } from '@angular/core';
 import { PageUtils } from '../services/page-utils.service';
+import { MetadataService } from '@variables/services/metadataservice/metadata.service';
 
 
 @Component({
@@ -8,7 +9,8 @@ import { PageUtils } from '../services/page-utils.service';
     template: '<div></div>'
 })
 export class PageWrapperComponent {
-    constructor(private route: ActivatedRoute, private pageUtil: PageUtils, private vcRef: ViewContainerRef, private appRef: ApplicationRef) {
+    constructor(private route: ActivatedRoute, private pageUtil: PageUtils, private vcRef: ViewContainerRef, private appRef: ApplicationRef, private metadataService: MetadataService) {
+        this.metadataService.load();
     }
 
     renderDynamicComponent(pageName) {
@@ -18,7 +20,7 @@ export class PageWrapperComponent {
         let layoutTemplate = this.pageUtil.getLayoutTemplate(pageLayout);
 
         //let {componentFactory: layoutRef, postLayoutInitPromise} = this.pageUtil.createDynamicLayoutComponent(`app-layout-${pageLayout}`, layoutTemplate);
-        //this.vcRef.clear();
+        this.vcRef.clear();
         //this.vcRef.createComponent(layoutRef);
 
         //postLayoutInitPromise.then(() => {

@@ -13,6 +13,7 @@ import { WmComponentsModule, PageWidgets } from '@components/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
 import { transpile } from '@transpiler/build';
+import { VariablesService } from '@variables/services/variables.service';
 
 @NgModule({
     declarations: [PartialContainerDirective],
@@ -126,11 +127,18 @@ export class PageUtils {
         return DynamicModule;
     }
 
-    getScriptFn($js, containerName?) {
+    getScriptFn($js, containerName, pageName, variables) {
         return (instance, inj) => {
+            const variablesService = inj.get(VariablesService);
 
             if (!containerName) {
                 (<any>instance).Widgets = PageWidgets;
+                const $variables = variablesService.register(pageName, variables, instance);
+                console.log('registering variables & actions');
+                instance.Variables = $variables.Variables;
+                instance.Actions = $variables.Actions;
+                console.log('----registered variables', instance.Variables);
+                console.log('----registered actions', instance.Actions);
             }
 
             const scriptFn = new Function('Application', $js);
@@ -183,7 +191,7 @@ export class PageUtils {
 
     renderPage_(pageName, containerName, markup, script, styles, variables, vcRef, $target) {
 
-        const fn: Function = this.getScriptFn(script, containerName);
+        const fn: Function = this.getScriptFn(script, containerName, pageName, variables);
 
         const providers = [{provide: '@namespace', useValue: containerName }];
 

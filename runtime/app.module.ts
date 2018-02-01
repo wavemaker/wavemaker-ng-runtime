@@ -11,6 +11,9 @@ import { PageUtils } from './services/page-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 import { HttpClientModule } from '@angular/common/http';
 
+import { VariablesModule} from '@variables/variables.module';
+import {VariablesService} from '@variables/services/variables.service';
+
 const routes = [
     {path: ':pageName', component: PageWrapperComponent, pathMatch: 'full'}
 ];
@@ -26,11 +29,12 @@ const routes = [
         FormsModule,
         ReactiveFormsModule,
         WmComponentsModule,
+        VariablesModule,
         RouterModule,
         HttpClientModule,
         RouterModule.forRoot(routes, {useHash: true})
     ],
-    providers: [PipeProvider, PageUtils],
+    providers: [PipeProvider, PageUtils, VariablesService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

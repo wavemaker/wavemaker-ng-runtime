@@ -136,6 +136,7 @@ fi
 
 ##################################### bundle wm-loader
 
+########## utils
 echo -e "${Cyan}Building utils ${White}"
 $rollup -c ./utils/rollup.config.js --silent
 if [ "$?" != "0" ]
@@ -145,6 +146,7 @@ then
 fi
 echo -e "${Green}Built utils\n"
 
+########## transpiler
 echo -e "${Cyan}Building transpiler ${White}"
 $rollup -c ./transpiler/rollup.config.js --silent
 if [ "$?" != "0" ]
@@ -154,6 +156,7 @@ then
 fi
 echo -e "${Green}Built transpiler\n"
 
+########## components
 echo -e "${Cyan}Building components build task ${White}"
 $rollup -c ./components/rollup.wm-components.build.config.js --silent
 if [ "$?" != "0" ]
@@ -172,6 +175,27 @@ then
 fi
 echo -e "${Green}Built components\n"
 
+########## http-service
+echo -e "${Cyan}Building http-service ${White}"
+$rollup -c ./http-service/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building http-service\n"
+    exit 1
+fi
+echo -e "${Green}Built http-service\n"
+
+########## variables
+echo -e "${Cyan}Building Variables ${White}"
+$rollup -c ./variables/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building Variables\n"
+    exit 1
+fi
+echo -e "${Green}Built Variables\n"
+
+########## runtime
 echo -e "${Cyan}Building runtime ${White}"
 $rollup -c ./runtime/rollup.config.js --silent
 if [ "$?" != "0" ]
@@ -181,11 +205,14 @@ then
 fi
 echo -e "${Green}Built runtime\n"
 
+########## final bundle
 echo -e "${Cyan}Bundling wm-loader ${White}"
 $uglifyjs ./dist/tmp/wm-utils.umd.js \
     ./dist/tmp/wm-transpiler.umd.js \
     ./dist/tmp/wm-components.build.umd.js \
     ./dist/tmp/wm-components.umd.js \
+    ./dist/tmp/http-service.umd.js \
+    ./dist/tmp/wm-variables.umd.js \
     ./dist/tmp/wm-runtime.umd.js -o \
     ./dist/bundles/wm-loader.min.js -b
 if [ "$?" != "0" ]

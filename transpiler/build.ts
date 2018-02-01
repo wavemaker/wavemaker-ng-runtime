@@ -34,26 +34,29 @@ const getUpdatedArgs = (args = []) => {
 };
 
 const processEventValue = value => {
-    let parsed = expParser.parseAction(value, '');
 
-    if (parsed.errors.length) {
-        return '';
-    }
+    return value;
 
-    let ast = parsed.ast;
-
-    if (ast instanceof Chain) {
-        return (<any>ast).expressions.map(expr => {
-            if (expr instanceof MethodCall) {
-                return `${expr.name}(${getUpdatedArgs(expr.args)})`
-            }
-        }).join(';');
-    } else if (ast instanceof MethodCall) {
-        return `${ast.name}(${getUpdatedArgs(ast.args)})`;
-    } else if (ast instanceof PropertyWrite) {
-        return parsed.source;
-    }
-    return '';
+// let parsed = expParser.parseAction(value, '');
+//.,msckuh
+// (parsed.errors.length) {
+// ;o    return '';
+// }
+//
+// let ast = parsed.ast;
+//
+// if (ast instanceof Chain) {
+//     return (<any>ast).expressions.map(expr => {
+//         if (expr instanceof MethodCall) {
+//             return `${expr.name}(${getUpdatedArgs(expr.args)})`
+//         }
+//     }).join(';');
+// } else if (ast instanceof MethodCall) {
+//     return `${ast.name}(${getUpdatedArgs(ast.args)})`;
+// } else if (ast instanceof PropertyWrite) {
+//     return parsed.source;
+// }
+// return '';
 };
 
 const processEvent = attr => {

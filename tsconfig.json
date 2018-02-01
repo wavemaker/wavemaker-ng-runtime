@@ -5,6 +5,8 @@
         "paths": {
             "@utils/*": [ "utils/*" ],
             "@components/*": [ "components/*" ],
+            "@variables/*": [ "variables/*" ],
+            "@http-service/*": [ "http-service/*" ],
             "@runtime/*": ["runtime/*"],
             "@transpiler/*": ["transpiler/*"]
         },
