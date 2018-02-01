@@ -2,12 +2,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BsDatepickerModule, BsDropdownModule, TimepickerModule } from 'ngx-bootstrap';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { ButtonDirective } from './widgets/button/button.directive';
 import { ButtonGroupDirective } from './widgets/buttongroup/buttongroup.directive';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { CheckboxComponent } from './widgets/checkbox/checkbox.component';
+import { ColorpickerComponent } from './widgets/colorpicker/colorpicker.component';
 import { ContainerDirective } from './widgets/container/container.directive';
 import { CurrencyComponent } from './widgets/currency/currency.component';
 import { DateComponent } from './widgets/date/date.component';
@@ -33,6 +35,7 @@ const wmComponents = [
     ButtonGroupDirective,
     CalendarComponent,
     CheckboxComponent,
+    ColorpickerComponent,
     ContainerDirective,
     CurrencyComponent,
     DateComponent,
@@ -53,6 +56,7 @@ const wmComponents = [
 
 @NgModule({
     imports: [
+        ColorPickerModule,
         CommonModule,
         FormsModule,
         BsDatepickerModule.forRoot(),
