@@ -18,6 +18,8 @@ export default {
         '@utils/styler': 'wm.utils',
         '@utils/watcher': 'wm.utils',
         '@utils/expression-parser': 'wm.utils',
+        'ngx-bootstrap': 'ngxBootstrap',
+        'ngx-color-picker': 'zef.ngxColorPicker',
         'rxjs/Subject': 'Rx'
     }
 };

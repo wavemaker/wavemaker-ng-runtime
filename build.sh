@@ -109,6 +109,7 @@ then
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/ngx-bootstrap.umd.js \
+        ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
         -o ./dist/bundles/wm-libs.min.js -b
@@ -171,7 +172,12 @@ fi
 echo -e "${Green}Built runtime\n"
 
 echo -e "${Cyan}Bundling wm-loader ${White}"
-$uglifyjs ./dist/tmp/wm-utils.umd.js ./dist/tmp/wm-transpiler.umd.js ./dist/tmp/wm-components.build.umd.js ./dist/tmp/wm-components.umd.js ./dist/tmp/wm-runtime.umd.js -o ./dist/bundles/wm-loader.min.js -b
+$uglifyjs ./dist/tmp/wm-utils.umd.js \
+    ./dist/tmp/wm-transpiler.umd.js \
+    ./dist/tmp/wm-components.build.umd.js \
+    ./dist/tmp/wm-components.umd.js \
+    ./dist/tmp/wm-runtime.umd.js -o \
+    ./dist/bundles/wm-loader.min.js -b
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in bundling wm-loader\n"
