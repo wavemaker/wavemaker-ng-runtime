@@ -14,7 +14,9 @@ export class RatingDemoComponent implements OnInit {
 
   datavalue: any = 2;
 
-  iconsize: number;
+  iconsize: string = '40px';
+
+  iconcolor: string = '#df3f3f';
 
   datafield: string = 'datafield';
 
@@ -35,6 +37,7 @@ export class RatingDemoComponent implements OnInit {
       company : 'Z',
       datafield: 3
     }];
+  showcaptions: boolean = false;
 
   constructor() { }
 

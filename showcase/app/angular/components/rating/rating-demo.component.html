@@ -1,16 +1,20 @@
 <div class="col-md-9">
   <wm-rating
-    [name]="'rating1'"
-    [maxvalue]="maxvalue"
-    [datavalue]="datavalue"
-    [iconsize]="iconsize"
-    [dataset]="dataset"
-    [datafield]="datafield"
-    [displayfield]="displayfield"
-    [width]="width"
-    [showcaptions]="true"
-  >
+    name.bind="'rating1'"
+    maxvalue.bind="maxvalue"
+    datavalue.bind="datavalue"
+    iconsize.bind="iconsize"
+    iconcolor.bind="iconcolor"
+    dataset.bind="dataset"
+    datafield.bind="datafield"
+    displayfield.bind="displayfield"
+    width.bind="width"
+    showcaptions.bind="showcaptions"
+    show.bind="show"
+    readonly.bind="readonly"
+    #rating>
   </wm-rating>
+    {{rating.datavalue}}
 </div>
 <div class="col-md-3 properties">
   <h4 class="property-header">Properties</h4>
@@ -25,7 +29,7 @@
   </div>
   <div class="property row">
     <div class="property-text col-md-4">
-      Max Value
+      Maxvalue
     </div>
     <div class="property-control col-md-8">
       <input type="number" [(ngModel)]="maxvalue" />
@@ -33,58 +37,10 @@
   </div>
   <div class="property row">
     <div class="property-text col-md-4">
-      Data Value
+      Dataset
     </div>
     <div class="property-control col-md-8">
-      <input type="number" [(ngModel)]="datavalue" />
-    </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      iconsize
-    </div>
-    <div class="property-control col-md-8">
-      <input type="number" [(ngModel)]="iconsize" />
-    </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      Data Value
-    </div>
-    <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="datafield" />
-    </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      Display Value
-    </div>
-    <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="displayfield" />
-    </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      Color
-    </div>
-    <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="color" />
-    </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      Show
-    </div>
-    <div class="property-control col-md-8">
-      <input type="checkbox" [(ngModel)]="show" />
-    </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      Readonly
-    </div>
-    <div class="property-control col-md-8">
-      <input type="checkbox" [(ngModel)]="readonly" />
+        <textarea>{{dataset | json}}</textarea>
     </div>
   </div>
   <div class="property row">
@@ -97,18 +53,58 @@
   </div>
   <div class="property row">
     <div class="property-text col-md-4">
-      Checked Value
+      Icon size
     </div>
     <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="checkedvalue" />
+      <input type="text" [(ngModel)]="iconsize" />
     </div>
   </div>
   <div class="property row">
     <div class="property-text col-md-4">
-      Unchecked Value
+      Icon color
     </div>
     <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="uncheckedvalue" />
+      <input type="text" [(ngModel)]="iconcolor" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      Datafield
+    </div>
+    <div class="property-control col-md-8">
+      <input type="text" [(ngModel)]="datafield" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      Displayfield
+    </div>
+    <div class="property-control col-md-8">
+      <input type="text" [(ngModel)]="displayfield" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      Show
+    </div>
+    <div class="property-control col-md-8">
+      <input type="checkbox" [(ngModel)]="show" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      Show Captions
+    </div>
+    <div class="property-control col-md-8">
+      <input type="checkbox" [(ngModel)]="showcaptions" />
+    </div>
+  </div>
+  <div class="property row">
+    <div class="property-text col-md-4">
+      Readonly
+    </div>
+    <div class="property-control col-md-8">
+      <input type="checkbox" [(ngModel)]="readonly" />
     </div>
   </div>
 </div>
