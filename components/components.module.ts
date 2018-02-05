@@ -5,6 +5,7 @@ import { BsDatepickerModule, BsDropdownModule, TimepickerModule } from 'ngx-boot
 import { ColorPickerModule } from 'ngx-color-picker';
 
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
+import { AudioComponent } from './widgets/audio/audio.component';
 import { ButtonDirective } from './widgets/button/button.directive';
 import { ButtonGroupDirective } from './widgets/buttongroup/buttongroup.directive';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
@@ -26,11 +27,13 @@ import { TextDirective } from './widgets/text/text.directive';
 import { TextareaDirective } from './widgets/textarea/textarea.directive';
 import { TileDirective } from './widgets/tile/tile.directive';
 import { TimeComponent } from './widgets/time/time.component';
+import { VideoComponent } from './widgets/video/video.component';
 
 
 
 const wmComponents = [
     AnchorDirective,
+    AudioComponent,
     ButtonDirective,
     ButtonGroupDirective,
     CalendarComponent,
@@ -51,7 +54,8 @@ const wmComponents = [
     TextDirective,
     TextareaDirective,
     TileDirective,
-    TimeComponent
+    TimeComponent,
+    VideoComponent
 ];
 
 @NgModule({
