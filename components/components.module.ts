@@ -22,6 +22,7 @@ import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
 import { MessageComponent } from './widgets/message/message.component';
 import { PanelComponent } from './widgets/panel/panel.component';
+import { PictureDirective } from './widgets/picture/picture.directive';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { RatingComponent } from './widgets/rating/rating.component';
 import { SelectComponent } from './widgets/select/select.component';
@@ -53,6 +54,7 @@ const wmComponents = [
     LayoutgridDirective,
     MessageComponent,
     PanelComponent,
+    PictureDirective,
     RadiosetComponent,
     RatingComponent,
     SelectComponent,
