@@ -29,6 +29,7 @@ export const propNameCSSKeyMap = {
     'fontsize': 'fontSize',
     'fontfamily': 'fontFamily',
     'fontstyle': 'fontStyle',
+    'fontunit': 'fontunit',
     'fontvariant': 'fontVariant',
     'fontweight': 'fontWeight',
     'height': 'height',
@@ -123,7 +124,7 @@ export function styler($node: HTMLElement, component: any, type?: APPLY_STYLES_T
         }
 
         if (key === 'fontsize' || key === 'fontunit') {
-            setCSS($node, 'fontSize', component.fontsize === '' ? '' : component.fontsize + component.fontunit)
+            setCSS($node, 'fontSize', component.fontsize === '' ? '' : component.fontsize + (component.fontunit || 'px'));
         } else if (key === 'backgroundimage') {
             setCSS($node, 'backgroundImage', component.picturesource);
         } else if (propNameCSSKeyMap[key]) {
