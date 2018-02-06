@@ -1,13 +1,15 @@
 <div class="col-md-9">
-    <wm-spinner [type]="spinnerType"
-                [animation]="animation"
-                [image]="imageURL"
-                [imagewidth]="imageWidth"
-                [imageheight]="imageHeight"
-                [iconsize]="iconSize"
-                [iconclass]="iconClass"
-                [caption]="messageContent">
-    </wm-spinner>
+    <div style="height:500px;">
+        <wm-spinner type.bind="spinnerType"
+                    animation.bind="animation"
+                    image.bind="imageURL"
+                    imagewidth.bind="imageWidth"
+                    imageheight.bind="imageHeight"
+                    iconsize.bind="iconSize"
+                    iconclass.bind="iconClass"
+                    caption.bind="messageContent">
+        </wm-spinner>
+    </div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>

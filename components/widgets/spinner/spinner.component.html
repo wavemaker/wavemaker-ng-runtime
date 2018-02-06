@@ -1,0 +1,15 @@
+<div class="app-spinner">
+    <div class="spinner-message">
+    <span class="spinner-image animated infinite" [ngClass]="[animation]"
+          [ngStyle]="{
+              'width':imagewidth,
+              'height':imageheight,
+              'background-image': picture,
+              'background-size': imagewidth
+              }"
+          *ngIf="type === 'image'"></span>
+        <i class="spinner-image animated infinite" [ngClass]="[iconclass, animation]" [style.font-size]="iconsize" *ngIf="type === 'icon'"></i>
+        <span class="spinner-text" [innerHTML]="messageContent" *ngIf="showCaption"></span>
+        <div class="spinner-messages" *ngIf="!showCaption && spinnerMessages"><p *ngFor="let value of spinnerMessages" [innerHTML]="value"></p></div>
+    </div>
+</div>
