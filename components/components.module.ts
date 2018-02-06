@@ -19,6 +19,7 @@ import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.
 import { IconDirective } from './widgets/icon/icon.directive';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
+import { MessageComponent } from './widgets/message/message.component';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { SelectComponent } from './widgets/select/select.component';
@@ -45,6 +46,7 @@ const wmComponents = [
     IconDirective,
     LabelDirective,
     LayoutgridDirective,
+    MessageComponent,
     PanelComponent,
     RadiosetComponent,
     SelectComponent,

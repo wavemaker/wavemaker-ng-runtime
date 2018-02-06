@@ -1,0 +1,13 @@
+<p class='alert app-message'
+   [ngClass]="messageClass"
+   [class.ng-hide] ="!show">
+    <i [title]="type + 'Alert'"
+       [ngClass]="[type, 'icon', messageIconClass]"></i>
+    <span [innerHtml]="messageContent"></span>
+    <button title="Close"
+            type="button"
+            class="btn-transparent close"
+            [class.ng-hide]="hideclose"
+            (click)="dismiss($event)">&times;
+    </button>
+</p>
