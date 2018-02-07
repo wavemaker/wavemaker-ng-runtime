@@ -22,7 +22,7 @@ import { ToastrModule } from 'ngx-toastr';
         WmComponentsModule,
         ToastrModule.forRoot()
     ],
-    providers: [PipeProvider],
+    providers: [PipeProvider, {provide: '@namespace', useValue: undefined}],
     bootstrap: [AppComponent]
 })
 export class AppModule {
