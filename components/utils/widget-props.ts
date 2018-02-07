@@ -15,7 +15,7 @@ export enum PROP_TYPE {
 }
 
 export const PROP_STRING = {};
-export const PROP_STRING_NOTIFY = {notify: true};
+export const PROP_STRING_NOTIFY: any = {notify: true};
 export const PROP_NUMBER = {type: PROP_TYPE.NUMBER};
 export const PROP_NUMBER_NOTIFY = {type: PROP_TYPE.NUMBER, notify: true};
 export const PROP_BOOLEAN = {type: PROP_TYPE.BOOLEAN, notify: true};

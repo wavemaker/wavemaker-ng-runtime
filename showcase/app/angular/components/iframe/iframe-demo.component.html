@@ -1,5 +1,8 @@
 <div class="col-md-9">
-    <wm-iframe [iframesrc]="_iframesrc" [encodeurl]="_encodeurl" [width]="width" [height]="height"></wm-iframe>
+    <wm-iframe iframesrc.bind="_iframesrc"
+               encodeurl.bind="_encodeurl"
+               width.bind="width"
+               height.bind="height"></wm-iframe>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
