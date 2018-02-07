@@ -25,6 +25,7 @@ import { PanelComponent } from './widgets/panel/panel.component';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { RatingComponent } from './widgets/rating/rating.component';
 import { SelectComponent } from './widgets/select/select.component';
+import { SliderComponent } from './widgets/slider/slider.component';
 import { TextDirective } from './widgets/text/text.directive';
 import { TextareaDirective } from './widgets/textarea/textarea.directive';
 import { TileDirective } from './widgets/tile/tile.directive';
@@ -55,6 +56,7 @@ const wmComponents = [
     RadiosetComponent,
     RatingComponent,
     SelectComponent,
+    SliderComponent,
     TextDirective,
     TextareaDirective,
     TileDirective,

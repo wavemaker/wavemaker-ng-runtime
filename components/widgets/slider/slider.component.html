@@ -1,0 +1,13 @@
+<div class="app-slider slider">
+    <span class="app-slider-value" [innerText]="minvalue"></span>
+    <span class="app-slider-value pull-right" [innerText]="maxvalue"></span>
+    <input class="range-input"
+           type="range" [title]="datavalue"
+           [min]="minvalue" [max]="maxvalue"
+           [step]="step"
+           [(ngModel)]="datavalue"
+           [disabled]="disable"
+           [attr.accesskey]="shortcutkey"
+           (change)="onChange($event)"/>
+    <div *ngIf="readonly || disabled" class="readonly-wrapper"></div>
+</div>
