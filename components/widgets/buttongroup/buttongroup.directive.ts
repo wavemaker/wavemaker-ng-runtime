@@ -10,7 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-buttongroup', hasTemplate: false};
 const DEFAULT_CLS = 'btn-group app-button-group';
 
 @Directive({
-    'selector': '[wmButtongroup]'
+    selector: '[wmButtongroup]'
 })
 export class ButtonGroupDirective extends BaseComponent {
 

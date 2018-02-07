@@ -1,7 +1,28 @@
-import { AfterViewInit, Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, NgModule } from '@angular/core';
+import {
+    AfterViewInit,
+    Compiler,
+    Component,
+    CUSTOM_ELEMENTS_SCHEMA,
+    Injectable,
+    Injector,
+    NgModule,
+    ViewContainerRef
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WmComponentsModule } from '@components/components.module';
+import { WmComponentsModule, PageWidgets } from '@components/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
+import { transpile } from '@transpiler/build';
+
+@NgModule({
+    declarations: [PartialContainerDirective],
+    exports: [
+        PartialContainerDirective
+    ]
+})
+class TempModule {
+
+}
 
 @Injectable()
 export class PageUtils {
@@ -28,24 +49,8 @@ export class PageUtils {
         `.trim();
     }
 
-    // loadPageMarkup(pageName) {
-    //     return this.$http.get(`./pages-next/${pageName}/${pageName}.html`).toPromise();
-    // }
-    //
-    // loadPageScript(pageName) {
-    //     return this.$http.get(`./pages-next/${pageName}/${pageName}.js`).toPromise();
-    // }
-    //
-    // loadPageStyles(pageName) {
-    //     return this.$http.get(`./pages-next/${pageName}/${pageName}.css`).toPromise();
-    // }
-    //
-    // loadPageVariables(pageName) {
-    //     return this.$http.get(`./pages-next/${pageName}/${pageName}.variables.json`).toPromise();
-    // }
-
     loadPageResources(pageName) {
-        return this.$http.get(`./pages/${pageName}/page.min.json`);
+        return this.$http.get(`./pages/${pageName}/page.min.json`).toPromise();
     }
 
 
@@ -83,74 +88,6 @@ export class PageUtils {
         };
     }
 
-
-    createDynamicPageComponent(selector, template, $js, $css, $variables) {
-
-        const $http = this.$http;
-
-        @Component({
-            selector,
-            template
-        })
-        class DynamicComponent {
-            constructor() {
-                let scriptFn = new Function('Application', $js);
-                let ctrlCache = {};
-                let Application = {
-                    $controller: function (ctrlName, ctrlDef) {
-                        ctrlCache[ctrlName] = ctrlDef;
-                    }
-                };
-                scriptFn(Application);
-                Object.keys(ctrlCache).forEach((ctrlName) => {
-                    let ctrlArray = ctrlCache[ctrlName];
-                    let args = [];
-                    if (ctrlArray.length > 1) {
-
-                        for (let i = 0; i < ctrlArray.length - 1; i++) {
-                            let value = ctrlArray[i];
-                            if (value === '$scope') {
-                                args.push(this);
-                            }
-
-                            if (value === '$rootScope') {
-                                args.push({});
-                            }
-
-                            if (value === 'Utils') {
-                                args.push({toString: () => void 0});
-                            }
-
-                            if (value === '$http') {
-                                args.push($http);
-                            }
-
-                            if (value === '$timeout') {
-                                args.push(setTimeout);
-                            }
-
-                            if (value === '$interval') {
-                                args.push(setInterval);
-                            }
-                        }
-
-                        ctrlArray[ctrlArray.length - 1].apply(this, args);
-                    }
-                });
-            }
-        }
-
-        @NgModule({
-            declarations: [DynamicComponent],
-            imports: [WmComponentsModule, FormsModule, ReactiveFormsModule],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        })
-        class DynamicModule {
-        }
-
-        return this.getComponentFactory(DynamicComponent, DynamicModule);
-    }
-
     getComponentFactory(componentDef, moduleDef) {
         let retVal = this.compiler
             .compileModuleAndAllComponentsSync(moduleDef)
@@ -160,4 +97,131 @@ export class PageUtils {
             })[0];
         return retVal;
     }
+
+    getDynamicComponent(selector, template, styles, providers, scriptFn) {
+        @Component({
+            selector,
+            template,
+            styles,
+            providers
+        })
+        class DynamicComponent {
+            constructor(inj: Injector) {
+                scriptFn(this, inj);
+            }
+        }
+
+        return DynamicComponent;
+    }
+
+    getDynamicModule(component) {
+        @NgModule({
+            declarations: [component],
+            imports: [WmComponentsModule, FormsModule, ReactiveFormsModule, TempModule],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        })
+        class DynamicModule {
+        }
+
+        return DynamicModule;
+    }
+
+    getScriptFn($js, containerName?) {
+        return (instance, inj) => {
+
+            if (!containerName) {
+                (<any>instance).Widgets = PageWidgets;
+            }
+
+            const scriptFn = new Function('Application', $js);
+            const ctrlCache = {};
+            const Application = {
+                $controller: function (ctrlName, ctrlDef) {
+                    ctrlCache[ctrlName] = ctrlDef;
+                }
+            };
+            scriptFn(Application);
+
+            Object.keys(ctrlCache).forEach(ctrlName => {
+                let ctrlArray = ctrlCache[ctrlName];
+                let args = [];
+                if (ctrlArray.length > 1) {
+
+                    for (let i = 0; i < ctrlArray.length - 1; i++) {
+                        let value = ctrlArray[i];
+                        if (value === '$scope') {
+                            args.push(this);
+                        }
+
+                        if (value === '$rootScope') {
+                            args.push({});
+                        }
+
+                        if (value === 'Utils') {
+                            args.push({toString: () => void 0});
+                        }
+
+                        if (value === '$http') {
+                            args.push(inj.get(HttpClient));
+                        }
+
+                        if (value === '$timeout') {
+                            args.push(setTimeout);
+                        }
+
+                        if (value === '$interval') {
+                            args.push(setInterval);
+                        }
+                    }
+
+                    ctrlArray[ctrlArray.length - 1].apply(this, args);
+                }
+            });
+
+        }
+    }
+
+    renderPage_(pageName, containerName, markup, script, styles, variables, vcRef, $target) {
+
+        const fn: Function = this.getScriptFn(script, containerName);
+
+        const providers = [{provide: '@namespace', useValue: containerName }];
+
+        const selector = `app-${containerName ? 'partial' : 'page'}-${pageName}`;
+
+        const componentDef = this.getDynamicComponent(
+            selector,
+            markup,
+            styles,
+            providers,
+            fn
+        );
+        const moduleDef = this.getDynamicModule(componentDef);
+        const componentRef = this.getComponentFactory(componentDef, moduleDef);
+
+        const component = vcRef.createComponent(componentRef);
+        $target.appendChild(component.location.nativeElement);
+    }
+
+    renderPage(pageName, containerName, vcRef: ViewContainerRef, $target: HTMLElement) {
+
+        this.loadPageResources(pageName)
+            .then(({markup, script, styles, variables}: any) => {
+
+                this.renderPage_(
+                    pageName,
+                    containerName,
+                    transpile(markup.join('\n')),
+                    script.join('\n'),
+                    [styles.join('\n')],
+                    variables,
+                    vcRef,
+                    $target
+                )
+            })
+            .catch(e => {
+                console.error(`error loading the page: '${pageName}'`, e);
+            });
+    }
+
 }

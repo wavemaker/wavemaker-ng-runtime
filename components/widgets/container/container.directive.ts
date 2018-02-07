@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
+import { Directive, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './container.props';
 import { addClass } from '@utils/dom';
@@ -11,7 +11,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-container', hasTemplate: false};
 const DEFAULT_CLS = 'app-container';
 
 @Directive({
-    'selector': '[wmContainer]'
+    selector: '[wmContainer]',
+    providers: [
+        {provide: '@Widget', useExisting: forwardRef(() => ContainerDirective)}
+    ]
 })
 export class ContainerDirective extends BaseComponent {
 

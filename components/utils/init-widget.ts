@@ -7,6 +7,7 @@ import { isStyle } from './styler';
 
 const widgetRegistryByName = new Map<string, any>();
 const widgetRegistryByWidgetId = new Map<string, any>();
+export const widgetsByName = {};
 
 const CLS_NG_HIDE = 'ng-hide';
 
@@ -22,14 +23,32 @@ const proxyHandler = {
     }
 };
 
-const registerWidget = (name: string, widgetId: string, widget: any, component: any) => {
+const registerWidget = (name: string, parentName: string, widgetId: string, widget: any, component: any) => {
+    let parent;
     if (isDefined(name)) {
         widgetRegistryByName.set(name, widget);
+        if (isDefined(parentName)) {
+            parent = widgetsByName[parentName];
+            if (parent) {
+                if (!parent.Widgets) {
+                    parent.Widgets = {};
+                }
+                parent.Widgets[name] = widget;
+            }
+        } else {
+            widgetsByName[name] = widget;
+        }
     }
     widgetRegistryByWidgetId.set(widgetId, widget);
     component.destroy$.subscribe(() => {
         widgetRegistryByName.delete(widgetId);
         widgetRegistryByWidgetId.delete(widgetId);
+
+        if (parent) {
+            delete parent.Widgets[name];
+        } else {
+            delete widgetsByName[name];
+        }
     });
 };
 
@@ -99,7 +118,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
 };
 
 
-export function initWidget(component: BaseComponent, elDef: any, view: any) {
+export function initWidget(component: BaseComponent, elDef: any, view: any, parentContainer) {
 
     const revocable = Proxy.revocable(component, proxyHandler);
     const widget = revocable.proxy;
@@ -136,9 +155,16 @@ export function initWidget(component: BaseComponent, elDef: any, view: any) {
 
     setAttr(component.$host, 'widget-id', widgetId);
 
-    registerWidget(initState.get('name'), widgetId, widget, component);
+    registerWidget(initState.get('name'), parentContainer, widgetId, widget, component);
 
-    return () => initState.forEach((v, k) => widget[k] = v);
+    return () => {
+        widget.name = initState.get('name'); //TODO(VinayK) - implement priority system for the props.
+        initState.forEach((v, k) => {
+            if (k !== 'name') {
+                widget[k] = v;
+            }
+        });
+    }
 }
 
 (<any>window).widgetRegistryByName = widgetRegistryByName;

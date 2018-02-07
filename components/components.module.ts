@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { BsDatepickerModule, BsDropdownModule, TimepickerModule } from 'ngx-bootstrap';
 import { ColorPickerModule } from 'ngx-color-picker';
 
+import { widgetsByName } from './utils/init-widget';
+
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { AudioComponent } from './widgets/audio/audio.component';
 import { ButtonDirective } from './widgets/button/button.directive';
@@ -33,8 +35,6 @@ import { TextareaDirective } from './widgets/textarea/textarea.directive';
 import { TileDirective } from './widgets/tile/tile.directive';
 import { TimeComponent } from './widgets/time/time.component';
 import { VideoComponent } from './widgets/video/video.component';
-
-
 
 const wmComponents = [
     AnchorDirective,
@@ -84,3 +84,5 @@ const wmComponents = [
 })
 export class WmComponentsModule {
 }
+
+export { widgetsByName as PageWidgets} ;

@@ -4,7 +4,8 @@ register('wm-container', () => {
     return {
         tagName: 'div',
         directives: {
-            'wmContainer': undefined
+            'wmContainer': undefined,
+            'partialContainer': undefined
         }
     };
 });

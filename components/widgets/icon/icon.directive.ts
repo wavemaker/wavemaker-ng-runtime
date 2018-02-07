@@ -18,7 +18,7 @@ $labelTemplate.classList.add('app-label');
 const getLabelNode = () => $labelTemplate.cloneNode();
 
 @Directive({
-    'selector': '[wmIcon]'
+    selector: '[wmIcon]'
 })
 export class IconDirective extends BaseComponent {
     $caption;

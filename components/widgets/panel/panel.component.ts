@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ContentChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ContentChild, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { getImageUrl } from '@utils/utils';
 import { registerProps } from '../../widgets/panel/panel.props';
@@ -11,7 +11,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-panel', hasTemplate: true};
 
 @Component({
     selector: 'wm-panel',
-    templateUrl: './panel.component.html'
+    templateUrl: './panel.component.html',
+    providers: [
+        {provide: '@Widget', useExisting: forwardRef(() => PanelComponent)}
+    ]
 })
 export class PanelComponent extends BaseComponent {
 

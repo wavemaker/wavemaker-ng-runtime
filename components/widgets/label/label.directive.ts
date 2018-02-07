@@ -10,7 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-label', hasTemplate: false};
 const DEFAULT_CLS = 'app-label';
 
 @Directive({
-    'selector': '[wmLabel]'
+    selector: '[wmLabel]'
 })
 export class LabelDirective extends BaseComponent {
 

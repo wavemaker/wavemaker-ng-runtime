@@ -1,7 +1,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { ApplicationRef, Component, ViewContainerRef } from '@angular/core';
 import { PageUtils } from '../services/page-utils.service';
-import { transpile } from '@transpiler/build';
 
 
 @Component({
@@ -23,18 +22,13 @@ export class PageWrapperComponent {
         this.vcRef.createComponent(layoutRef);
 
         postLayoutInitPromise.then(() => {
-            this.pageUtil.loadPageResources(pageName)
-                .subscribe(({markup, script, styles, variables}: any) => {
-                    markup = markup.join('\n');
-                    script = script.join('\n');
-                    styles = styles.join('\n');
 
-                    markup = transpile(markup);
-
-                    let componentRef = this.pageUtil.createDynamicPageComponent(`app-page-${pageName}`, markup, script, styles, variables);
-                    let component = this.vcRef.createComponent(componentRef);
-                    this.appRef.components[0].location.nativeElement.querySelector('[page-content-outlet]').appendChild(component.location.nativeElement);
-                });
+            this.pageUtil.renderPage(
+                pageName,
+                undefined,
+                this.vcRef,
+                this.appRef.components[0].location.nativeElement.querySelector('[page-content-outlet]')
+            );
         });
     }
 

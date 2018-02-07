@@ -18,18 +18,11 @@ const htmlParser = new HtmlParser();
 const ignoreComments = true;
 const expParser = new Parser(new Lexer);
 
-const isEvent = name => {
-    return name[0] === 'o' && name[1] === 'n' && name[2] === '-';
-};
+const isEvent = name => name[0] === 'o' && name[1] === 'n' && name[2] === '-';
 
-const getEventName = key => {
-    return key.substr(3);
-};
+const getEventName = key => key.substr(3);
 
-
-const processBinding = (attr, expr) => {
-    return `${attr.name}.bind="${expr}"`;
-};
+const processBinding = (attr, expr) => `${attr.name}.bind="${expr}"`;
 
 const getUpdatedArgs = (args = []) => {
     return args.map(arg => {
@@ -90,9 +83,7 @@ const processAttr = attr => {
     return `${attr.name}${value}`;
 };
 
-const processAttrs = attrs => {
-    return attrs.map(processAttr).join(' ');
-};
+const processAttrs = attrs => attrs.map(processAttr).join(' ');
 
 const getDirectives = nodeDef => {
     if (nodeDef && nodeDef.directives) {
@@ -134,9 +125,9 @@ const processNode = node => {
         }
 
         markup += `${startTag}`;
-        node.children.forEach(child => {
-            markup += processNode(child);
-        });
+
+        node.children.forEach(child => markup += processNode(child));
+
         markup += `${endTag}`;
 
     } else if (node instanceof Text) {
@@ -168,6 +159,4 @@ export const transpile = (markup = '') => {
     return output;
 };
 
-export const register = (nodeName, nodeDefFn) => {
-    registry.set(nodeName, nodeDefFn());
-};
+export const register = (nodeName, nodeDefFn) => registry.set(nodeName, nodeDefFn());

@@ -27,7 +27,7 @@ $badgeTemplate.classList.add('pull-right');
 const getBadgeNode = () => $badgeTemplate.cloneNode();
 
 @Directive({
-    'selector': '[wmAnchor]'
+    selector: '[wmAnchor]'
 })
 export class AnchorDirective extends BaseComponent {
     $caption;

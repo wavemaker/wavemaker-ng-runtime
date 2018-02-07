@@ -26,7 +26,10 @@ export class BaseComponent implements OnDestroy, OnInit {
         this.$host = $host.nativeElement;
         this.widgetType = widgetType;
         this.$digest = debounce(cdr.detectChanges.bind(cdr));
-        this.init = initWidget(this, (<any>inj).elDef, (<any>inj).view);
+
+        const parentContainer = inj.get('@namespace', undefined);
+
+        this.init = initWidget(this, (<any>inj).elDef, (<any>inj).view, parentContainer);
 
         this.propertyChange$.subscribe(({key, nv, ov}) => this.onPropertyChange(key, nv, ov));
         this.styleChange$.subscribe(({key, nv, ov}) => this.onStyleChange(key, nv, ov));

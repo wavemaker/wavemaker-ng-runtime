@@ -10,7 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-tile', hasTemplate: false};
 const DEFAULT_CLS = 'app-tile bg-primary';
 
 @Directive({
-    'selector': '[wmTile]'
+    selector: '[wmTile]'
 })
 export class TileDirective extends BaseComponent {
 
