@@ -1,12 +1,12 @@
 <div class="col-md-9">
     <wm-video
-            [muted]="muted"
-            [videopreload]="videopreload"
-            [controls]="controls"
-            [loop]="loop"
-            [autoplay]="autoplay"
-            [postersource]="postersource"
-            [mp4videoUrl]="mp4videoUrl"
+            muted.bind="muted"
+            videopreload.bind="videopreload"
+            controls.bind="controls"
+            loop.bind="loop"
+            autoplay.bind="autoplay"
+            videoposter.bind="postersource"
+            mp4format.bind="mp4videoUrl"
     >
     </wm-video>
 </div>
