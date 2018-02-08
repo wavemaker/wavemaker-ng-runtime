@@ -11,7 +11,7 @@ export class PartialContainerDirective {
 
     constructor(@Self() @Inject('@Widget') public widget, public pageUtils: PageUtils, public vcRef: ViewContainerRef, public elRef: ElementRef) {
 
-        const $target = this.elRef.nativeElement.querySelector('[pageContainerTarget]') || this.elRef.nativeElement;
+        const $target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
 
         widget.propertyChange$.subscribe(({key, nv, ov}) => {
             if (key === 'content') {

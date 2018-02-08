@@ -20,6 +20,7 @@ export default {
         '@utils/expression-parser': 'wm.utils',
         'ngx-bootstrap': 'ngxBootstrap',
         'ngx-color-picker': 'zef.ngxColorPicker',
-        'rxjs/Subject': 'Rx'
+        'rxjs/Subject': 'Rx',
+        'lit-html/lit-html': 'litHtml'
     }
 };
