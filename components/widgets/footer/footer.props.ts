@@ -2,7 +2,7 @@ import { register, PROP_STRING, PROP_STRING_NOTIFY } from '../../utils/widget-pr
 
 export const registerProps = () => {
     register(
-        'wm-header',
+        'wm-footer',
         new Map(
             [
                 ['name', PROP_STRING],

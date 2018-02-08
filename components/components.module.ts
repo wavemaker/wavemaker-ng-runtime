@@ -17,6 +17,7 @@ import { ContainerDirective } from './widgets/container/container.directive';
 import { CurrencyComponent } from './widgets/currency/currency.component';
 import { DateComponent } from './widgets/date/date.component';
 import { DatetimeComponent } from './widgets/datetime/datetime.component';
+import { FooterDirective } from './widgets/footer/footer.directive';
 import { GridrowDirective } from './widgets/layoutgrid/gridrow/gridrow.directive';
 import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
 import { HeaderDirective } from './widgets/header/header.directive';
@@ -26,7 +27,11 @@ import { IframeComponent } from './widgets/iframe/iframe.component';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
 import { MessageComponent } from './widgets/message/message.component';
+import { NavDirective } from './widgets/nav/nav.directive';
+import { NavItemDirective } from './widgets/nav-item/nav-item.directive';
+import { NavbarComponent } from './widgets/navbar/navbar.component';
 import { PageDirective } from './widgets/page/page.directive';
+import { PartialDirective } from './widgets/partial/partial.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { PictureDirective } from './widgets/picture/picture.directive';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
@@ -38,6 +43,7 @@ import { TextDirective } from './widgets/text/text.directive';
 import { TextareaDirective } from './widgets/textarea/textarea.directive';
 import { TileDirective } from './widgets/tile/tile.directive';
 import { TimeComponent } from './widgets/time/time.component';
+import { TopNavDirective } from './widgets/top-nav/top-nav.directive';
 import { VideoComponent } from './widgets/video/video.component';
 
 const wmComponents = [
@@ -52,6 +58,7 @@ const wmComponents = [
     CurrencyComponent,
     DateComponent,
     DatetimeComponent,
+    FooterDirective,
     GridrowDirective,
     GridcolumnDirective,
     HeaderDirective,
@@ -61,7 +68,11 @@ const wmComponents = [
     LabelDirective,
     LayoutgridDirective,
     MessageComponent,
+    NavDirective,
+    NavItemDirective,
+    NavbarComponent,
     PageDirective,
+    PartialDirective,
     PanelComponent,
     PictureDirective,
     RadiosetComponent,
@@ -73,6 +84,7 @@ const wmComponents = [
     TextareaDirective,
     TileDirective,
     TimeComponent,
+    TopNavDirective,
     VideoComponent
 ];
 
