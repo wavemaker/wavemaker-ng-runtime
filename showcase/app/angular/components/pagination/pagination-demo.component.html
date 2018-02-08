@@ -1,13 +1,16 @@
 <div class="col-md-9">
-    <wm-pagination #pagination [navigation]="navigationtype" [maxResults]="_maxResults"
-                   [navigationalign]="_navigationalign"
-                   [navigationsize]="_navigationsize"
-                   [showrecordcount]="_showrecordcount"
-                   [dataset]="_data"></wm-pagination>
+    <wm-pagination
+            name="myPagination"
+            navigation.bind="navigationtype"
+            maxResults.bind="_maxResults"
+            navigationalign.bind="_navigationalign"
+            navigationsize.bind="_navigationsize"
+            showrecordcount.bind="_showrecordcount"
+            dataset.bind="_data"></wm-pagination>
 
     <div>
         <div>Page size: {{_maxResults}}</div>
-        {{pagination.result | json}}
+        {{myPaginationWidget.result | json}}
     </div>
 </div>
 <div class="col-md-3 properties">

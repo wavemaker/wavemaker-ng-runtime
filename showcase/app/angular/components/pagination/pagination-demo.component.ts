@@ -7,7 +7,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
     changeDetection:   ChangeDetectionStrategy.Default
 })
 export class PaginationDemoComponent implements OnInit {
-
+    myPaginationWidget;
     public navigationtypes = ['Basic', 'Pager', 'Classic'];
     public navigationtype = 'Pager';
 
@@ -64,6 +64,7 @@ export class PaginationDemoComponent implements OnInit {
 
     ];
     ngOnInit() {
+        this.myPaginationWidget = (<any>window).widgetRegistryByName.get('myPagination');
     }
 
     constructor() {

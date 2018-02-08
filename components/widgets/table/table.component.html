@@ -1,0 +1,36 @@
+<div data-identifier="table" class="app-grid app-panel panel" #applyStyles>
+    <div class="panel-heading" *ngIf="title || subheading || iconclass || exportOptions.length || _actions.header.length">
+        <h3 class="panel-title">
+            <div class="pull-left">
+                <i class="app-icon panel-icon {{iconclass}}" *ngIf="iconclass"></i>
+            </div>
+            <div class="pull-left">
+                <div class="heading" [textContent]="title"></div>
+                <div class="description" [textContent]="subheading"></div>
+            </div>
+            <div class="panel-actions app-datagrid-actions" *ngIf="exportOptions.length || _actions.header.length">
+                <button wmButton *ngFor="let btn of _actions.header" caption.bind="btn.displayName" show.bind="btn.show" class="{{btn.class}}"
+                           ngClass.bind="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
+                           iconclass.bind="btn.iconclass" (click)="btn.action" type="button" shortcutkey.bind="btn.shortcutkey" tabindex.bind="btn.tabindex"
+                           hint.bind="btn.title" attr.disabled.bind="btn.disabled"></button>
+                <!--<wm-menu autoclose="always" caption="{{$root.appLocale.LABEL_EXPORT}}" ng-if="exportOptions.length" name="{{::name}}-export"-->
+                         <!--scopedataset="exportOptions" on-select="export($item)" menuposition="down,left"></wm-menu>-->
+            </div>
+        </h3>
+    </div>
+    <div class="app-datagrid" #datagridElement></div>
+    <div class="panel-footer clearfix"  [hidden]="!shownavigation && !_actions.footer.length">
+        <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation">
+            <div #pagination></div>
+            <wm-pagination show.bind="shownavigation" navigationalign.bind="navigationalign" navigationsize.bind="navigationSize"
+                           navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize" boundarylinks.bind="boundarylinks"
+                           forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></wm-pagination>
+        </div>
+        <div class="app-datagrid-actions" *ngIf="_actions.footer.length">
+            <button wmButton *ngFor="let btn of _actions.footer" caption.bind="$implicit.displayName" show.bind="$implicit.show" class.bind="$implicit.class"
+                       [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
+                       iconclass.bind="$implicit.iconclass" (click)="$implicit.action" type="button" shortcutkey.bind="$implicit.shortcutkey" tabindex.bind="$implicit.tabindex"
+                       hint.bind="$implicit.title" attr.disabled.bind="$implicit.disabled"></button>
+        </div>
+    </div>
+</div>

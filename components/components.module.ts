@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BsDatepickerModule, BsDropdownModule, TimepickerModule } from 'ngx-bootstrap';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 
 import { widgetsByName } from './utils/init-widget';
@@ -45,6 +46,12 @@ import { TileDirective } from './widgets/tile/tile.directive';
 import { TimeComponent } from './widgets/time/time.component';
 import { TopNavDirective } from './widgets/top-nav/top-nav.directive';
 import { VideoComponent } from './widgets/video/video.component';
+import { PaginationComponent } from './widgets/pagination/pagination.component';
+import { TableComponent } from './widgets/table/table.component';
+import { TableColumnComponent } from './widgets/table/table-column.component';
+import { TableColumnGroupComponent } from './widgets/table/table-column-group.component';
+import { TableActionComponent } from './widgets/table/table-action.component';
+import { TableRowActionComponent } from './widgets/table/table-row-action.component';
 
 const wmComponents = [
     AnchorDirective,
@@ -85,7 +92,13 @@ const wmComponents = [
     TileDirective,
     TimeComponent,
     TopNavDirective,
-    VideoComponent
+    VideoComponent,
+    PaginationComponent,
+    TableComponent,
+    TableColumnComponent,
+    TableColumnGroupComponent,
+    TableActionComponent,
+    TableRowActionComponent
 ];
 
 @NgModule({
@@ -95,7 +108,8 @@ const wmComponents = [
         FormsModule,
         BsDatepickerModule.forRoot(),
         TimepickerModule.forRoot(),
-        BsDropdownModule.forRoot()
+        BsDropdownModule.forRoot(),
+        PaginationModule.forRoot()
     ],
     declarations: wmComponents,
     exports: wmComponents,
@@ -105,4 +119,4 @@ const wmComponents = [
 export class WmComponentsModule {
 }
 
-export { widgetsByName as PageWidgets} ;
+export { widgetsByName as PageWidgets } ;

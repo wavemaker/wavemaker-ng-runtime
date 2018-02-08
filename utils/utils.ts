@@ -408,3 +408,18 @@ export const isEmptyObject = (obj: any): boolean => {
     return false;
 };
 
+/*Function to check whether the specified object is a pageable object or not.*/
+export const isPageable = (obj: any): boolean => {
+    const pageable = {
+        'content'         : [],
+        'first'           : true,
+        'last'            : true,
+        'number'          : 0,
+        'numberOfElements': 10,
+        'size'            : 20,
+        'sort'            : null,
+        'totalElements'   : 10,
+        'totalPages'      : 1
+    };
+    return (_.equals(_.keys(pageable), _.keys(obj).sort()));
+}

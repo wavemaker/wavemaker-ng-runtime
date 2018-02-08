@@ -1,0 +1,132 @@
+<div class="col-md-9">
+    <wm-table
+              name="myTable"
+              title.bind="_title" subheading.bind="_subheading" iconclass.bind="_iconclass" showheader.bind="_showheader"
+              multiselect.bind="_multiselect" radioselect.bind="_radioselect" showrowindex.bind="_showrowindex"
+              gridclass="table-bordered table-striped table-hover"
+              filtermode="search"
+              navigation="Basic"
+              enablesort.bind="_enablesort"
+              enablecolumnselection.bind="_enablecolumnselection"
+              gridfirstrowselect.bind="_gridfirstrowselect"
+              showrecordcount.bind="_showrecordcount"
+              navigationalign.bind="_navigationalign"
+              dataset.bind="_dataset">
+        <wm-table-column-group name="group" caption="User Details">
+            <wm-table-column binding="userId" caption="User Id" primary-key="true" edit-widget-type="number" type="integer" generator="identity" readonly="true" show="true"></wm-table-column>
+            <wm-table-column-group name="group1" caption="Login Details">
+                <wm-table-column binding="username" caption="Username" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></wm-table-column>
+                <wm-table-column binding="password" caption="Password" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></wm-table-column>
+            </wm-table-column-group>
+        </wm-table-column-group>
+        <wm-table-column binding="role" caption="Role" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></wm-table-column>
+        <wm-table-column binding="tenantId" caption="Tenant Id" edit-widget-type="number" type="integer" generator="assigned" show="true" readonly="false"></wm-table-column>
+        <wm-table-column binding="rowOperations" caption="Actions" width="120px" edit-widget-type="text" type="custom" readonly="true" sortable="false" searchable="false" show="true"></wm-table-column>
+    </wm-table>
+    <!--<div>-->
+        <!--<span>Selected Item:</span>-->
+        <!--{{myTableWidget.selecteditem | json}}-->
+    <!--</div>-->
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Title
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="_title"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Subheading
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="_subheading"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show header
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_showheader"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Multiselect
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_multiselect"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Radio column
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_radioselect"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show row index
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_showrowindex"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Enable sort
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_enablesort"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Enable column selection
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_enablecolumnselection"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Select first row
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_gridfirstrowselect"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show record count
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="_showrecordcount"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Navigation Align
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="_navigationalign">
+                <option *ngFor="let align of navAligns" [value]="align">{{align}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            iconclass
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="_iconclass"/>
+        </div>
+    </div>
+</div>
