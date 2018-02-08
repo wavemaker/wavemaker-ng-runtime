@@ -8,8 +8,6 @@
         <source type="video/mp4" [src]="mp4videoUrl" *ngIf="mp4videoUrl">
         <source type="video/webm" [src]="webmvideoUrl" *ngIf="webmvideoUrl">
         <source type="video/ogg" [src]="oggvideoUrl" *ngIf="oggvideoUrl">
-        <!--<track kind="subtitles" [label]="subtitlelang" *ngIf="tracksource"-->
-               <!--[src]="tracksource" [srclang]="subtitlelang" default>-->
         {{videosupportmessage}}
     </video>
 </div>
