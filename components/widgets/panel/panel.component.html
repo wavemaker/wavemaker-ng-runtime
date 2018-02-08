@@ -31,7 +31,7 @@
         </h3>
     </div>
     <div class="panel-content" [class.ng-hide]="!expanded" #panelContent>
-        <div class="panel-body {{helpClass}}">
+        <div class="panel-body {{helpClass}}" partial-container-target>
             <ng-content></ng-content>
         </div>
         <aside class="panel-help-message {{helpClass}}">

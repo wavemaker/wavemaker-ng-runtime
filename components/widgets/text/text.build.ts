@@ -5,7 +5,8 @@ register('wm-text', () => {
         isVoid: true,
         tagName: 'input',
         attrs: {
-            'wmText': undefined
+            'wmText': undefined,
+            'ngModel': undefined
         }
     };
 });

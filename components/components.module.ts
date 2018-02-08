@@ -15,6 +15,7 @@ import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { CheckboxComponent } from './widgets/checkbox/checkbox.component';
 import { ColorpickerComponent } from './widgets/colorpicker/colorpicker.component';
 import { ContainerDirective } from './widgets/container/container.directive';
+import { ContentComponent } from './widgets/content/content.component';
 import { CurrencyComponent } from './widgets/currency/currency.component';
 import { DateComponent } from './widgets/date/date.component';
 import { DatetimeComponent } from './widgets/datetime/datetime.component';
@@ -27,16 +28,19 @@ import { IconDirective } from './widgets/icon/icon.directive';
 import { IframeComponent } from './widgets/iframe/iframe.component';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
+import { LeftPanelComponent } from './widgets/left-panel/left-panel.component';
 import { MessageComponent } from './widgets/message/message.component';
 import { NavDirective } from './widgets/nav/nav.directive';
 import { NavItemDirective } from './widgets/nav-item/nav-item.directive';
 import { NavbarComponent } from './widgets/navbar/navbar.component';
 import { PageDirective } from './widgets/page/page.directive';
+import { PageContentDirective } from './widgets/page-content/page-content.directive';
 import { PartialDirective } from './widgets/partial/partial.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { PictureDirective } from './widgets/picture/picture.directive';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { RatingComponent } from './widgets/rating/rating.component';
+import { RightPanelComponent } from './widgets/right-panel/right-panel.component';
 import { SelectComponent } from './widgets/select/select.component';
 import { SliderComponent } from './widgets/slider/slider.component';
 import { SpinnerComponent } from './widgets/spinner/spinner.component';
@@ -62,6 +66,7 @@ const wmComponents = [
     CheckboxComponent,
     ColorpickerComponent,
     ContainerDirective,
+    ContentComponent,
     CurrencyComponent,
     DateComponent,
     DatetimeComponent,
@@ -74,16 +79,19 @@ const wmComponents = [
     IframeComponent,
     LabelDirective,
     LayoutgridDirective,
+    LeftPanelComponent,
     MessageComponent,
     NavDirective,
     NavItemDirective,
     NavbarComponent,
     PageDirective,
+    PageContentDirective,
     PartialDirective,
     PanelComponent,
     PictureDirective,
     RadiosetComponent,
     RatingComponent,
+    RightPanelComponent,
     SelectComponent,
     SliderComponent,
     SpinnerComponent,

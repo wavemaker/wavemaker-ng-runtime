@@ -43,9 +43,9 @@ export const addClass = ($node: HTMLElement, nv: string = '') => {
     });
 };
 
-export const switchClass = ($node: HTMLElement, nv: string = '', ov: string = '') => {
-    removeClass($node, ov);
-    addClass($node, nv);
+export const switchClass = ($node: HTMLElement, toAdd: string = '', toRemove: string = '') => {
+    removeClass($node, toRemove);
+    addClass($node, toAdd);
 };
 
 export const toggleClass = ($node: HTMLElement, cls: string, condition: boolean) => {

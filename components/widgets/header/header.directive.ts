@@ -16,7 +16,7 @@ const getHeaderMenu = () => {
             ><i class="wi wi-menu"></i
         ></a
         ></div
-        ><div class="app-header-container" partial-container-target></div>" `;
+        ><div class="app-header-container" partial-container-target></div>`;
 };
 
 @Directive({

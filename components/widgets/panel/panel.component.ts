@@ -1,8 +1,8 @@
-import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ContentChild, ChangeDetectorRef, forwardRef } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { getImageUrl } from '@utils/utils';
-import { registerProps } from '../../widgets/panel/panel.props';
-import { styler } from '../../utils/styler';
+import { registerProps } from './panel.props';
+import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { setCSS } from '@utils/dom';
 
 registerProps();
@@ -116,6 +116,7 @@ export class PanelComponent extends BaseComponent {
     }
 
     _ngOnInit() {
-        styler(this.$element, this);
+        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
+        styler(this.$panel.nativeElement.children[0], this, APPLY_STYLES_TYPE.INNER_SHELL);
     }
 }

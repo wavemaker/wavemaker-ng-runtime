@@ -1,0 +1,15 @@
+import { PROP_NUMBER_NOTIFY, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
+
+export const registerProps = () => {
+    register(
+        'wm-right-panel',
+        new Map(
+            [
+                ['class', Object.assign({value: ''}, PROP_STRING)],
+                ['columnwidth', PROP_NUMBER_NOTIFY],
+                ['content', PROP_STRING_NOTIFY],
+                ['name', PROP_STRING]
+            ]
+        )
+    );
+};
