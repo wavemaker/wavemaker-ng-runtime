@@ -1,5 +1,15 @@
 <div class="col-md-9">
-    <wm-picture [picturesource]="picturesource" [width]="width" [height]="height"></wm-picture>
+    <div style="width: 200px;height: 200px;">
+        <img wmPicture
+             picturesource.bind="picturesource"
+             pictureaspect.bind="pictureaspect"
+             width.bind="width"
+             height.bind="height"
+             encodeurl.bind="encodeurl"
+             shape.bind="shape"
+             hint.bind="hint"
+        >
+    </div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
@@ -10,6 +20,22 @@
         </div>
         <div class="property-control col-md-8">
             <input type="text" [(ngModel)]="picturesource" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Picture Aspect
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="pictureaspect" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Shape
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="shape" />
         </div>
     </div>
     <div class="property row">

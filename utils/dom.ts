@@ -56,7 +56,12 @@ export const toggleClass = ($node: HTMLElement, cls: string, condition: boolean)
     }
 };
 
-export const setCSS = ($node: HTMLElement, cssName: string, val: string | number) => {
+export const setCSSObj = ($node: HTMLElement, cssObj: any) => {
+    const keys = Object.keys(cssObj || {});
+    keys.forEach(key => setCSS($node, key, cssObj[key]));
+};
+
+export const setCSS = ($node: HTMLElement, cssName: string, val?: string | number) => {
     if (val && (cssName === 'width' || cssName === 'height')) {
         val = toDimension(val);
     }
