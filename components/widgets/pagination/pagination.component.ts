@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, ElementRef, Injector, ChangeDetectorRef  } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
-import { styler } from '@components/utils/styler';
+import { styler } from '../../utils/styler';
 import { isDefined, isPageable, triggerFn } from '@utils/utils';
 import { registerProps } from './pagination.props';
 declare const _;

@@ -67,7 +67,6 @@ export class VariablesService {
             } else {
                 instanceActions[variableName] = actionInstance;
             }
-            console.log('instance', variableInstance);
         }
         return {
             Variables: instanceVariables,

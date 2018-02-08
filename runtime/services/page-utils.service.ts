@@ -133,13 +133,10 @@ export class PageUtils {
 
             if (!containerName) {
                 (<any>instance).Widgets = PageWidgets;
-                const $variables = variablesService.register(pageName, variables, instance);
-                console.log('registering variables & actions');
-                instance.Variables = $variables.Variables;
-                instance.Actions = $variables.Actions;
-                console.log('----registered variables', instance.Variables);
-                console.log('----registered actions', instance.Actions);
             }
+            const $variables = variablesService.register(pageName, variables, instance);
+            instance.Variables = $variables.Variables;
+            instance.Actions = $variables.Actions;
 
             const scriptFn = new Function('Application', $js);
             const ctrlCache = {};

@@ -122,6 +122,15 @@ then
         ./dist/tmp/lit-html.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
+        ./node_modules/jquery/dist/jquery.min.js \
+        ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/jquery-ui/ui/disable-selection.js \
+        ./node_modules/jquery-ui/ui/version.js \
+        ./node_modules/jquery-ui/ui/widget.js \
+        ./node_modules/jquery-ui/ui/plugin.js \
+        ./node_modules/jquery-ui/ui/widgets/mouse.js \
+        ./node_modules/jquery-ui/ui/widgets/resizable.js \
+        ./components/widgets/table/datatable.js \
         -o ./dist/bundles/wm-libs.min.js -b
 
     if [ "$?" != "0" ]

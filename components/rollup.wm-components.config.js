@@ -19,6 +19,7 @@ export default {
         '@utils/watcher': 'wm.utils',
         '@utils/expression-parser': 'wm.utils',
         'ngx-bootstrap': 'ngxBootstrap',
+        'ngx-bootstrap/pagination': 'ngxBootstrap',
         'ngx-color-picker': 'zef.ngxColorPicker',
         'rxjs/Subject': 'Rx',
         'lit-html/lit-html': 'litHtml'
