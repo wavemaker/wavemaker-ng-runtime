@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['class', {value: '', ...PROP_STRING}],
                 ['imgsrc', PROP_STRING_NOTIFY],
-                ['menuiconclass', PROP_STRING],
+                ['menuiconclass', {value: 'wi wi-more-vert', ...PROP_STRING}],
                 ['name', PROP_STRING],
                 ['show', PROP_BOOLEAN],
                 ['title', PROP_STRING]
