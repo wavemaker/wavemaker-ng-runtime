@@ -19,6 +19,7 @@ import { DateComponent } from './widgets/date/date.component';
 import { DatetimeComponent } from './widgets/datetime/datetime.component';
 import { GridrowDirective } from './widgets/layoutgrid/gridrow/gridrow.directive';
 import { GridcolumnDirective } from './widgets/layoutgrid/gridcolumn/gridcolumn.directive';
+import { HtmlDirective } from './widgets/html/html.directive';
 import { IconDirective } from './widgets/icon/icon.directive';
 import { IframeComponent } from './widgets/iframe/iframe.component';
 import { LabelDirective } from './widgets/label/label.directive';
@@ -50,6 +51,7 @@ const wmComponents = [
     DatetimeComponent,
     GridrowDirective,
     GridcolumnDirective,
+    HtmlDirective,
     IconDirective,
     IframeComponent,
     LabelDirective,
