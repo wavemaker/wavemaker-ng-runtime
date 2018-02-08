@@ -85,9 +85,9 @@ const processAttr = attr => {
 
 const processAttrs = attrs => attrs.map(processAttr).join(' ');
 
-const getDirectives = nodeDef => {
-    if (nodeDef && nodeDef.directives) {
-        return Object.entries(nodeDef.directives).map(([k, v]) => {
+const getAttrs = nodeDef => {
+    if (nodeDef && nodeDef.attrs) {
+        return Object.entries(nodeDef.attrs).map(([k, v]) => {
             if (v !== undefined) {
                 return `${k}=${v}`;
             }
@@ -119,7 +119,7 @@ const processNode = node => {
             tagName = node.name;
         }
 
-        startTag = `<${tagName} ${getDirectives(nodeDef)} ${processAttrs(node.attrs)}>`;
+        startTag = `<${tagName} ${getAttrs(nodeDef)} ${processAttrs(node.attrs)}>`;
         if (node.endSourceSpan && !isVoid) {
             endTag = `</${tagName}>`;
         }

@@ -3,7 +3,7 @@ import { register } from '@transpiler/build';
 register('wm-icon', () => {
     return {
         tagName: 'div',
-        directives: {
+        attrs: {
             'wmIcon': undefined
         }
     };

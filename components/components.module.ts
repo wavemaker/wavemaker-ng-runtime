@@ -26,6 +26,7 @@ import { IframeComponent } from './widgets/iframe/iframe.component';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layoutgrid/layoutgrid.directive';
 import { MessageComponent } from './widgets/message/message.component';
+import { PageDirective } from './widgets/page/page.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { PictureDirective } from './widgets/picture/picture.directive';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
@@ -60,6 +61,7 @@ const wmComponents = [
     LabelDirective,
     LayoutgridDirective,
     MessageComponent,
+    PageDirective,
     PanelComponent,
     PictureDirective,
     RadiosetComponent,

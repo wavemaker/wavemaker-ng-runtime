@@ -4,7 +4,7 @@ register('wm-text', () => {
     return {
         isVoid: true,
         tagName: 'input',
-        directives: {
+        attrs: {
             'wmText': undefined
         }
     };

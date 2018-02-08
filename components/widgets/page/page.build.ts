@@ -1,10 +1,12 @@
 import { register } from '@transpiler/build';
 
-register('wm-buttongroup', () => {
+register('wm-page', () => {
     return {
         tagName: 'div',
         attrs: {
-            'wmButtongroup': undefined
+            'wmPage': undefined,
+            'data-role': 'pageContainer',
+            'class': 'app-page container'
         }
     };
 });

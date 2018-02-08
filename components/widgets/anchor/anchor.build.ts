@@ -3,7 +3,7 @@ import { register } from '@transpiler/build';
 register('wm-anchor', () => {
     return {
         tagName: 'a',
-        directives: {
+        attrs: {
             'wmAnchor': undefined
         }
     };

@@ -1,7 +1,7 @@
 import { Directive, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './header.props';
-import { addClass, setAttr } from '@utils/dom';
+import { addClass } from '@utils/dom';
 import { styler, APPLY_STYLES_TYPE } from '../../utils/styler';
 import { html, render } from 'lit-html/lit-html';
 
@@ -30,7 +30,6 @@ export class HeaderDirective extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
-        setAttr(this.$element, 'data-role', 'page-header');
         render(getHeaderMenu(), this.$element);
 
         addClass(this.$element, DEFAULT_CLS);

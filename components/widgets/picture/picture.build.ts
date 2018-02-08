@@ -4,7 +4,7 @@ register('wm-picture', () => {
     return {
         isVoid: true,
         tagName: 'img',
-        directives: {
+        attrs: {
             'wmPicture': undefined
         }
     };

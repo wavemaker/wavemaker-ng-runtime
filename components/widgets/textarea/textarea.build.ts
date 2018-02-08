@@ -3,7 +3,7 @@ import { register } from '@transpiler/build';
 register('wm-textarea', () => {
     return {
         tagName: 'textarea',
-        directives: {
+        attrs: {
             'wmTextarea': undefined
         }
     };
