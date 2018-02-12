@@ -1,4 +1,4 @@
-import { Component, ElementRef, ChangeDetectorRef, Injector, forwardRef } from '@angular/core';
+import { Component, ElementRef, ChangeDetectorRef, Injector, forwardRef, OnInit, OnDestroy } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './menu.props';
 import { styler } from '../../utils/styler';
@@ -8,6 +8,7 @@ import { getEvaluatedData } from '../../utils/widget-utils';
 import { addClass, removeClass } from '@utils/dom';
 import { $appDigest } from '@utils/watcher';
 import { invokeEventHandler } from '../../utils/widget-utils';
+import { Subject } from 'rxjs/Subject';
 
 registerProps();
 
@@ -51,7 +52,7 @@ const PULL_RIGHT = 'pull-right';
     templateUrl: './menu.component.html',
     providers: [{provide: MenuParent, useExisting: forwardRef(() => MenuComponent)}]
 })
-export class MenuComponent extends BaseComponent implements MenuParent {
+export class MenuComponent extends BaseComponent implements MenuParent, OnInit, OnDestroy {
 
     orderby;
     userrole;
@@ -59,6 +60,7 @@ export class MenuComponent extends BaseComponent implements MenuParent {
     displayfield;
     itemlabel;
     type = 'menu';
+    hint = '';
     menualign = '';
     menulayout = '';
     menuItems;
@@ -72,12 +74,17 @@ export class MenuComponent extends BaseComponent implements MenuParent {
     menuclass = '';
     iconclass = '';
 
+    // explicitly defined OnInit to be triggered when the widget is created dynamically
+    _ngOnInit;
+
+    select = new Subject();
+
     constructor(inj: Injector, elRef: ElementRef, public cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
     }
 
-    onPropertyChange(key, newVal, oldVal) {
+    onPropertyChange(key, newVal, oldVal?) {
         switch (key) {
             case 'scopedataset':
             case 'dataset':
@@ -162,6 +169,17 @@ export class MenuComponent extends BaseComponent implements MenuParent {
     }
 
     onSelect(args) {
+        // emit the values to the subscribers as menu is also used as a dynamic component
+        this.select.next(args);
         invokeEventHandler(this, 'change', args);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        // condition validates to true when the widget is created dynamically e.g from nav widget
+        if (this._ngOnInit) {
+            this._ngOnInit();
+        }
+        this.destroy$.subscribe(() => this.select.complete());
     }
 }

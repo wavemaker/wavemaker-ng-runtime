@@ -101,7 +101,7 @@ export class MenuDropdownComponent implements MenuParent, AfterViewInit {
     }
 
     @HostListener('click') onSelect({$event, $scope, item}) {
-        const args = {$event, $scope: $scope || this, $item: item.value || item.label};
+        const args = {$event, $item: item.value || item.label};
         if ($event) {
             $event.stopPropagation();
         }

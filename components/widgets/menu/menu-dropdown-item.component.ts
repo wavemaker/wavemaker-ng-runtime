@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewContainerRef, SkipSelf, Optional, ComponentFactoryResolver, forwardRef, AfterViewInit, ViewChild, HostListener } from '@angular/core';
+import { Component, Input, ElementRef, ViewContainerRef, SkipSelf, Optional, ComponentFactoryResolver, forwardRef, AfterViewInit, ViewChild, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuComponent, MenuParent } from './menu.component';
 import { MenuDropdownComponent } from './menu-dropdown.component';
@@ -20,7 +20,7 @@ declare const $, _;
     templateUrl: './menu-dropdown-item.component.html',
     providers: [{provide: MenuParent, useExisting: forwardRef(() => MenuComponent)}]
 })
-export class MenuDropdownItemComponent implements MenuParent, AfterViewInit {
+export class MenuDropdownItemComponent implements MenuParent, AfterViewInit, OnDestroy {
 
     @Input() item;
 
@@ -49,6 +49,12 @@ export class MenuDropdownItemComponent implements MenuParent, AfterViewInit {
                 private route: Router,
                 @SkipSelf() @Optional() private parent: MenuParent) {}
 
+    ngOnDestroy() {
+        if (this.childMenuDropdownComponent) {
+            this.childMenuDropdownComponent.destroy();
+        }
+    }
+
     ngAfterViewInit() {
         this.menuLink = this.item[this.parent['itemLink'] || 'link'];
         this.$el = $(this.element.nativeElement);
@@ -72,7 +78,7 @@ export class MenuDropdownItemComponent implements MenuParent, AfterViewInit {
     }
 
     @HostListener('click', ['$event', 'item']) onSelect = ($event, item) => {
-        const args = {$event, $scope: this, item: item.value || item.label};
+        const args = {$event, item: item.value || item.label};
         const itemAction = args.item[this.parent.itemaction || 'action'],
             linkTarget = this.linktarget || '_self';
 
