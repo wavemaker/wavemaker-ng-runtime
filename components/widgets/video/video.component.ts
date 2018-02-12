@@ -2,11 +2,16 @@ import { Component, Injector, ElementRef, ChangeDetectorRef } from '@angular/cor
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './video.props';
 import { styler } from '../../utils/styler';
-import { setAttr } from '@utils/dom';
+import { removeAttr, setAttr } from '@utils/dom';
 import { getImageUrl, getResourceURL } from '@utils/utils';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { html, render } from 'lit-html/lit-html';
 
 const WIDGET_CONFIG = {widgetType: 'wm-video', hasTemplate: true};
+
+const getTrack = (subtitleLang, trackSource) => {
+    return html`<track kind="subtitles" label="${subtitleLang}" src="${trackSource}" srclang="${subtitleLang}" default>`;
+};
 
 registerProps();
 
@@ -16,13 +21,11 @@ registerProps();
 })
 export class VideoComponent extends BaseComponent {
 
-    $video;
-
     mp4videoUrl: SafeResourceUrl = '';
     webmvideoUrl: SafeResourceUrl = '';
     oggvideoUrl: SafeResourceUrl = '';
     videoposter;
-    tracksource = '';
+    subtitlelang;
 
     isValidResource(value) {
         return value && typeof value === 'string' && value.indexOf('Variables') === -1;
@@ -31,10 +34,12 @@ export class VideoComponent extends BaseComponent {
     onPropertyChange(key, newVal, oldVal) {
         switch (key) {
             case 'videoposter':
-                if (!this.$video || !newVal) {
-                    return;
+                const $video = this.$element.querySelector('video');
+                if (!newVal) {
+                    removeAttr($video, 'poster');
+                } else {
+                    setAttr($video, 'poster', getImageUrl(newVal));
                 }
-                setAttr(this.$video, 'poster', getImageUrl(newVal));
                 break;
             case 'mp4format':
                 if (this.isValidResource(newVal)) {
@@ -53,7 +58,11 @@ export class VideoComponent extends BaseComponent {
                 break;
             case 'subtitlesource':
                 if (this.isValidResource(newVal)) {
-                    this.tracksource = getResourceURL(newVal);
+                    const $track = this.$element.querySelector('track');
+                    if ($track) {
+                        $track.remove();
+                    }
+                    render(getTrack(this.subtitlelang, getResourceURL(newVal)), this.$element.querySelector('video'));
                 }
                 break;
         }
@@ -65,7 +74,6 @@ export class VideoComponent extends BaseComponent {
 
     _ngOnInit(): void {
         styler(this.$element, this);
-        this.$video = this.$element.querySelector('video');
     }
 
 }
