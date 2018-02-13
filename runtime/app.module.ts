@@ -14,8 +14,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { VariablesModule} from '@variables/variables.module';
 import {VariablesService} from '@variables/services/variables.service';
 
+import {MetadataResolve} from './resolves/metadata.resolve';
+
 const routes = [
-    {path: ':pageName', component: PageWrapperComponent, pathMatch: 'full'}
+    {
+        path: ':pageName',
+        component: PageWrapperComponent,
+        pathMatch: 'full',
+        resolve: {
+            metadata: MetadataResolve
+        }
+    }
 ];
 
 @NgModule({
@@ -34,7 +43,7 @@ const routes = [
         HttpClientModule,
         RouterModule.forRoot(routes, {useHash: true})
     ],
-    providers: [PipeProvider, PageUtils, VariablesService],
+    providers: [PipeProvider, PageUtils, VariablesService, MetadataResolve],
     bootstrap: [AppComponent]
 })
 export class AppModule {

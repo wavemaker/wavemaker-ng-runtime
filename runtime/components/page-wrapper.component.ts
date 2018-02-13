@@ -1,16 +1,13 @@
 import { ActivatedRoute } from '@angular/router';
 import { ApplicationRef, Component, ViewContainerRef } from '@angular/core';
 import { PageUtils } from '../services/page-utils.service';
-import { MetadataService } from '@variables/services/metadataservice/metadata.service';
-
 
 @Component({
     selector: 'app-page-outlet',
     template: '<div></div>'
 })
 export class PageWrapperComponent {
-    constructor(private route: ActivatedRoute, private pageUtil: PageUtils, private vcRef: ViewContainerRef, private appRef: ApplicationRef, private metadataService: MetadataService) {
-        this.metadataService.load();
+    constructor(private route: ActivatedRoute, private pageUtil: PageUtils, private vcRef: ViewContainerRef, private appRef: ApplicationRef) {
     }
 
     renderDynamicComponent(pageName) {

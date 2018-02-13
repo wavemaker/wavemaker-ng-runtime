@@ -9,6 +9,10 @@ export class MetadataService {
     this.httpClient = httpClient;
   }
 
+  isLoaded() {
+      return this.metadataMap ? Object.keys(this.metadataMap).length : false;
+  }
+
   load() {
     return new Promise((resolve, reject) =>  {
       this.httpClient.get('./services/servicedefs').toPromise().then((response) => {

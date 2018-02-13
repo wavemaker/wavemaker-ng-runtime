@@ -33,6 +33,10 @@ export class VariablesService {
         }
     }
 
+    invokeVariable(variable: any, $scope: any) {
+        variable.invoke();
+    }
+
     instantiateVariables(variables: any, scope: any) {
         // Variable instantiation for each class here.
         // Each variable is extended with its properties and methods.
@@ -48,6 +52,9 @@ export class VariablesService {
                 case 'wm.ServiceVariable':
                     variableInstance = new ServiceVariable(variable, this.serviceVariableService, scope);
                     this.processBinding(variableInstance, scope);
+                    if (variableInstance.startUpdate) {
+                        this.invokeVariable(variableInstance, scope);
+                    }
                     break;
                 case 'wm.LiveVariable':
                     variableInstance = new LiveVariable(variable);
