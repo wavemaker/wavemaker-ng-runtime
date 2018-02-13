@@ -1,14 +1,15 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './slider.props';
 
-const WIDGET_CONFIG = {widgetType: 'wm-slider', hasTemplate: true};
+const DEFAULT_CLS = 'app-slider slider';
+const WIDGET_CONFIG = {widgetType: 'wm-slider', hostClass: DEFAULT_CLS};
 
 registerProps();
 
 @Component({
-    selector: 'wm-slider',
+    selector: '[wmSlider]',
     templateUrl: './slider.component.html'
 })
 export class SliderComponent extends BaseComponent  {
@@ -20,9 +21,6 @@ export class SliderComponent extends BaseComponent  {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this);
     }
 

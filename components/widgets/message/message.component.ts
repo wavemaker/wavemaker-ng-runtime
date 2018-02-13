@@ -1,15 +1,17 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, Output, EventEmitter, HostBinding } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { DomSanitizer } from '@angular/platform-browser';
 import { registerProps } from './message.props';
+import { addClass, removeClass } from '@utils/dom';
 
-const WIDGET_CONFIG = {widgetType: 'wm-message', hasTemplate: true};
+const DEFAULT_CLS = 'alert app-message';
+const WIDGET_CONFIG = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
 
 registerProps();
 
 @Component({
-    selector: 'wm-message',
+    selector: '[wmMessage]',
     templateUrl: './message.component.html'
 })
 export class MessageComponent extends BaseComponent {
@@ -28,6 +30,7 @@ export class MessageComponent extends BaseComponent {
     }
 
     onMessageTypeChange(newVal) {
+        removeClass(this.$element, this.messageClass);
         switch (newVal) {
             case 'success':
                 this.messageClass = 'alert-success';
@@ -51,6 +54,7 @@ export class MessageComponent extends BaseComponent {
                 this.messageIconClass = 'fa fa-spinner fa-spin';
                 break;
         }
+        addClass(this.$element, this.messageClass);
         this.type = newVal;
     }
 
@@ -87,9 +91,6 @@ export class MessageComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitize: DomSanitizer) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this);
     }
 }

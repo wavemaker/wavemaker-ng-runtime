@@ -5,12 +5,13 @@ import { encodeUrl, isInsecureContentRequest } from '@utils/utils';
 import { styler } from '../../utils/styler';
 import { registerProps } from './iframe.props';
 
-const WIDGET_CONFIG = {widgetType: 'wm-iframe', hasTemplate: true};
+const DEFAULT_CLS = 'embed-responsive app-iframe';
+const WIDGET_CONFIG = {widgetType: 'wm-iframe', hostClass: DEFAULT_CLS};
 
 registerProps();
 
 @Component({
-    selector: 'wm-iframe',
+    selector: '[wmIframe]',
     templateUrl: './iframe.component.html'
 })
 export class IframeComponent extends BaseComponent {
@@ -28,6 +29,7 @@ export class IframeComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
+        styler(this.$element, this);
     }
 
     onIframeSrcChange(newVal) {
@@ -54,9 +56,5 @@ export class IframeComponent extends BaseComponent {
                 this.onIframeSrcChange(this.baseurl);
                 break;
         }
-    }
-
-    _ngOnInit() {
-        styler(this.$element, this);
     }
 }

@@ -4,11 +4,10 @@ import { registerProps } from './container.props';
 import { addClass } from '@utils/dom';
 import { styler, APPLY_STYLES_TYPE } from '../../utils/styler';
 
-
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-container', hasTemplate: false};
 const DEFAULT_CLS = 'app-container';
+const WIDGET_CONFIG = {widgetType: 'wm-container', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmContainer]',

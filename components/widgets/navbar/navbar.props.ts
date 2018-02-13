@@ -5,7 +5,7 @@ export const registerProps = () => {
         'wm-navbar',
         new Map(
             [
-                ['class', Object.assign({value: ''}, PROP_STRING)],
+                ['class', {value: '', ...PROP_STRING}],
                 ['imgsrc', PROP_STRING_NOTIFY],
                 ['menuiconclass', PROP_STRING],
                 ['name', PROP_STRING],

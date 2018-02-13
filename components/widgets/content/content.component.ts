@@ -5,7 +5,8 @@ import { styler } from '../../utils/styler';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-content', hasTemplate: true};
+const DEFAULT_CLS = 'app-content clearfix';
+const WIDGET_CONFIG = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: 'wm-content',

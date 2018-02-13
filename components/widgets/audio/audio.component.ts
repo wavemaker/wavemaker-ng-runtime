@@ -4,12 +4,13 @@ import { registerProps } from './audio.props';
 import { styler } from '../../utils/styler';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-const WIDGET_CONFIG = {widgetType: 'wm-audio', hasTemplate: true};
+const DEFAULT_CLS = 'app-audio';
+const WIDGET_CONFIG = {widgetType: 'wm-audio', hostClass: DEFAULT_CLS};
 
 registerProps();
 
 @Component({
-    selector: 'wm-audio',
+    selector: '[wmAudio]',
     templateUrl: './audio.component.html'
 })
 export class AudioComponent extends BaseComponent {
@@ -21,21 +22,16 @@ export class AudioComponent extends BaseComponent {
     }
 
     onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'mp3format':
-                if (this.isValidResource(newVal)) {
-                    this.mp3audioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
-                }
-                break;
+        if (key === 'mp3format') {
+            if (this.isValidResource(newVal)) {
+                this.mp3audioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
+            }
         }
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
 
-    _ngOnInit(): void {
         styler(this.$element, this);
     }
-
 }

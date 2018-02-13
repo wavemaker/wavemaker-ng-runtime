@@ -5,8 +5,7 @@ register('wm-partial', () => {
         tagName: 'section',
         attrs: {
             'wmPartial': undefined,
-            'data-role': 'partial',
-            'class': 'app-partial clearfix'
+            'data-role': 'partial'
         }
     };
 });

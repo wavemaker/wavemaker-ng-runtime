@@ -2,10 +2,10 @@ import { OnDestroy, ChangeDetectorRef, ElementRef, OnInit } from '@angular/core'
 import { debounce } from '@utils/utils';
 import { initWidget } from '../../utils/init-widget';
 import { Subject } from 'rxjs/Subject';
+import { addClass } from '@utils/dom';
 
 export class BaseComponent implements OnDestroy, OnInit {
     $element: HTMLElement;
-    $host: HTMLElement;
     widgetType: string;
     widgetId: string;
     $digest;
@@ -22,10 +22,14 @@ export class BaseComponent implements OnDestroy, OnInit {
 
     _ngOnInit() {}
 
-    constructor ({widgetType, hasTemplate}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
-        this.$host = $host.nativeElement;
+    constructor ({widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
+        this.$element = $host.nativeElement;
         this.widgetType = widgetType;
         this.$digest = debounce(cdr.detectChanges.bind(cdr));
+
+        if (hostClass) {
+            addClass(this.$element, hostClass);
+        }
 
         const parentContainer = inj.get('@namespace', undefined);
 
@@ -33,10 +37,6 @@ export class BaseComponent implements OnDestroy, OnInit {
 
         this.propertyChange$.subscribe(({key, nv, ov}) => this.onPropertyChange(key, nv, ov));
         this.styleChange$.subscribe(({key, nv, ov}) => this.onStyleChange(key, nv, ov));
-
-        if (!hasTemplate) {
-            this.$element = this.$host;
-        }
     }
 
     onPropertyChange(k, nv, ov) {
@@ -53,9 +53,6 @@ export class BaseComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit() {
-        if (!this.$element) {
-            this.$element = <HTMLElement>this.$host.children[0];
-        }
         this.init();
         this._ngOnInit();
     }

@@ -16,7 +16,7 @@ export const registerProps = () => {
                 ['shape', PROP_STRING_NOTIFY],
                 ['shape', PROP_STRING_NOTIFY],
                 ['show', PROP_BOOLEAN],
-                ['tabindex', Object.assign({value: 0}, PROP_NUMBER)]
+                ['tabindex', {value: 0, ...PROP_NUMBER}]
             ]
         )
     );

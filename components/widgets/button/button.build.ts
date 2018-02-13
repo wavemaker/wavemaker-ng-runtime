@@ -4,7 +4,8 @@ register('wm-button', () => {
     return {
         tagName: 'button',
         attrs: {
-            'wmButton': undefined
+            'wmButton': undefined,
+            'role': 'input'
         }
     };
 });

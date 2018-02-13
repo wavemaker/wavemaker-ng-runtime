@@ -1,0 +1,14 @@
+import { register, PROP_STRING, PROP_BOOLEAN } from '../../../utils/widget-props';
+
+export const registerProps = () => {
+    register(
+        'wm-layout-grid-row',
+        new Map(
+            [
+                ['class', PROP_STRING],
+                ['name', PROP_STRING],
+                ['show', PROP_BOOLEAN]
+            ]
+        )
+    );
+};

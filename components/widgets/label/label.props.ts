@@ -6,14 +6,14 @@ export const registerProps = () => {
         new Map(
             [
                 ['animation', PROP_STRING],
-                ['caption', Object.assign({value: 'Label'}, PROP_STRING_NOTIFY)],
+                ['caption', {value: 'Label', ...PROP_STRING_NOTIFY}],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_STRING],
                 ['hint', PROP_STRING],
                 ['name', PROP_STRING],
                 ['required', PROP_BOOLEAN],
                 ['show', PROP_BOOLEAN],
-                ['showindevice', Object.assign({displayType: 'inline-block', value: 'all'}, PROP_STRING)],
+                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
             ]
         )
     );

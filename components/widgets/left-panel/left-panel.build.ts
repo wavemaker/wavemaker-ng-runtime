@@ -2,9 +2,11 @@ import { register } from '@transpiler/build';
 
 register('wm-left-panel', () => {
     return {
-        tagName: 'wm-left-panel',
+        tagName: 'aside',
         attrs: {
-            'partialContainer': undefined
+            'wmLeftPanel': undefined,
+            'partialContainer': undefined,
+            'data-role': 'page-left-panel'
         }
     };
 });

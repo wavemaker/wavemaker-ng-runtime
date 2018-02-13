@@ -7,7 +7,9 @@ import { getImageUrl, getResourceURL } from '@utils/utils';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { html, render } from 'lit-html/lit-html';
 
-const WIDGET_CONFIG = {widgetType: 'wm-video', hasTemplate: true};
+
+const DEFAULT_CLS = 'app-video';
+const WIDGET_CONFIG = {widgetType: 'wm-video', hostClass: DEFAULT_CLS};
 
 const getTrack = (subtitleLang, trackSource) => {
     return html`<track kind="subtitles" label="${subtitleLang}" src="${trackSource}" srclang="${subtitleLang}" default>`;
@@ -16,7 +18,7 @@ const getTrack = (subtitleLang, trackSource) => {
 registerProps();
 
 @Component({
-    selector: 'wm-video',
+    selector: '[wmVideo]',
     templateUrl: './video.component.html'
 })
 export class VideoComponent extends BaseComponent {
@@ -70,10 +72,6 @@ export class VideoComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit(): void {
         styler(this.$element, this);
     }
-
 }

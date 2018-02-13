@@ -14,7 +14,7 @@ export const registerProps = () => {
                 ['maxvalue', PROP_NUMBER],
                 ['minvalue', PROP_NUMBER],
                 ['name', PROP_STRING],
-                ['placeholder', Object.assign({value: 'Enter text'}, PROP_STRING)],
+                ['placeholder', {value: 'Enter text', ...PROP_STRING}],
                 ['readonly', PROP_BOOLEAN],
                 ['regexp', PROP_STRING],
                 ['required', PROP_BOOLEAN],

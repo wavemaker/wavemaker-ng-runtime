@@ -5,7 +5,7 @@ export const registerProps = () => {
         'wm-left-panel',
         new Map(
             [
-                ['class', Object.assign({value: ''}, PROP_STRING)],
+                ['class', {value: '', ...PROP_STRING}],
                 ['columnwidth', PROP_NUMBER_NOTIFY],
                 ['content', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING]

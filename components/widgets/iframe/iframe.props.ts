@@ -6,10 +6,10 @@ export const registerProps = () => {
         new Map(
             [
                 ['encodeurl', PROP_STRING_NOTIFY],
-                ['height', Object.assign({value: '150px'}, PROP_STRING)],
+                ['height', {value: '150px', ...PROP_STRING}],
                 ['iframesrc', PROP_STRING_NOTIFY],
-                ['showindevice', Object.assign({value: 'all'}, PROP_STRING)],
-                ['width', Object.assign({value: '300px'}, PROP_STRING)]
+                ['showindevice', {value: 'all', ...PROP_STRING}],
+                ['width', {value: '300px', ...PROP_STRING}]
             ]
         )
     );

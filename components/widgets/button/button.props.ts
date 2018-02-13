@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../utils/widget-props';
 
 export const registerProps = () => {
     register(
@@ -6,22 +6,22 @@ export const registerProps = () => {
         new Map(
             [
                 ['animation', PROP_STRING],
-                ['badgevalue', PROP_STRING_NOTIFY],
-                ['caption', PROP_STRING_NOTIFY],
-                ['class', Object.assign({value: 'btn-default'}, PROP_STRING)],
+                ['badgevalue', PROP_STRING],
+                ['caption', PROP_STRING],
+                ['class', {value: 'btn-default', ...PROP_STRING}],
                 ['conditionalclass', PROP_STRING],
                 ['disabled', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
-                ['iconclass', PROP_STRING_NOTIFY],
-                ['iconheight', PROP_STRING_NOTIFY],
-                ['iconmargin', PROP_STRING_NOTIFY],
-                ['iconposition', PROP_STRING_NOTIFY],
+                ['iconclass', PROP_STRING],
+                ['iconheight', PROP_STRING],
+                ['iconmargin', PROP_STRING],
+                ['iconposition', PROP_STRING],
                 ['iconurl', PROP_STRING],
-                ['iconwidth', PROP_STRING_NOTIFY],
+                ['iconwidth', PROP_STRING],
                 ['name', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
                 ['show', PROP_BOOLEAN],
-                ['showindevice', Object.assign({displayType: 'inline-block', value: 'all'}, PROP_STRING)],
+                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['tabindex', PROP_NUMBER],
                 ['type', PROP_STRING]
             ]

@@ -4,15 +4,17 @@ import { styler } from '../../utils/styler';
 import { registerProps } from './radioset.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForSelected, updateCheckedValue } from '../../utils/form-utils';
 import { $appDigest } from '@utils/watcher';
+import { switchClass } from '@utils/dom';
 
 declare const _;
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-radioset', hasTemplate: true};
+const DEFAULT_CLS = 'app-radioset list-group';
+const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 
 @Component({
-    selector: 'wm-radioset',
+    selector: '[wmRadioset]',
     templateUrl: './radioset.component.html'
 })
 export class RadiosetComponent extends BaseComponent {
@@ -145,14 +147,14 @@ export class RadiosetComponent extends BaseComponent {
             case 'selectedvalue':
                 this._model_ = nv;
                 break;
+            case 'layout':
+                switchClass(this.$element, nv, ov);
+                break;
         }
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this);
     }
 }

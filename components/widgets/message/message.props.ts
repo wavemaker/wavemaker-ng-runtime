@@ -6,9 +6,9 @@ export const registerProps = () => {
         new Map(
             [
                 ['animation', PROP_STRING],
-                ['caption', Object.assign({value: 'Message'}, PROP_STRING_NOTIFY)],
+                ['caption', {value: 'Message', ...PROP_STRING_NOTIFY}],
                 ['dataset', PROP_STRING_NOTIFY],
-                ['hideclose', Object.assign({value: false}, PROP_BOOLEAN)],
+                ['hideclose', {value: false, ...PROP_BOOLEAN}],
                 ['type', PROP_STRING_NOTIFY],
             ]
         )

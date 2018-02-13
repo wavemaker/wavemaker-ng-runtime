@@ -4,12 +4,13 @@ import { CONSTANTS_CURRENCY } from './currency.constants';
 import { registerProps } from './currency.props';
 import { styler } from '../../utils/styler';
 
-const WIDGET_CONFIG = {widgetType: 'wm-currency', hasTemplate: true};
+const DEFAULT_CLS = 'input-group app-currency';
+const WIDGET_CONFIG = {widgetType: 'wm-currency', hostClass: DEFAULT_CLS};
 
 registerProps();
 
 @Component({
-    selector: 'wm-currency',
+    selector: '[wmCurrency]',
     templateUrl: './currency.component.html'
 })
 export class CurrencyComponent extends BaseComponent {

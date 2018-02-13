@@ -6,15 +6,15 @@ export const registerProps = () => {
         new Map(
             [
                 ['animation', PROP_STRING_NOTIFY],
-                ['caption', Object.assign({value: 'Loading...'}, PROP_STRING_NOTIFY)],
-                ['iconclass', Object.assign({value: 'fa fa-circle-o-notch'}, PROP_STRING)],
+                ['caption', {value: 'Loading...', ...PROP_STRING_NOTIFY}],
+                ['iconclass', {value: 'fa fa-circle-o-notch', ...PROP_STRING}],
                 ['iconsize', PROP_STRING],
                 ['image', PROP_STRING_NOTIFY],
                 ['imageheight', PROP_STRING],
-                ['imagewidth', Object.assign({value: '20px'}, PROP_STRING)],
+                ['imagewidth', {value: '20px', ...PROP_STRING}],
                 ['servicevariabletotrack', PROP_STRING_NOTIFY],
                 ['show', PROP_BOOLEAN],
-                ['type', Object.assign({value: 'icon'}, PROP_STRING)]
+                ['type', {value: 'icon', ...PROP_STRING}]
             ]
         )
     );

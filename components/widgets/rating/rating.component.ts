@@ -12,7 +12,9 @@ declare const _;
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-rating', hasTemplate: true};
+const DEFAULT_CLS = 'app-ratings';
+const WIDGET_CONFIG = {widgetType: 'wm-rating', hostClass: DEFAULT_CLS};
+
 const MAX_RATING = 10;
 const DEFAULT_RATING = 5;
 /**
@@ -24,7 +26,7 @@ const DEFAULT_RATING = 5;
  */
 
 @Component({
-    selector: 'wm-rating',
+    selector: '[wmRating]',
     templateUrl: './rating.component.html'
 })
 export class RatingComponent extends BaseComponent {
@@ -237,6 +239,7 @@ export class RatingComponent extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         this._id = generateGUId();
+        styler(this.$element, this);
     }
 
     onDatasetChange() {
@@ -319,6 +322,6 @@ export class RatingComponent extends BaseComponent {
             this.range = this.prepareRatingDataset(this.maxvalue);
             this.caption = this.getCaption();
         }
-        styler(this.$element, this);
+
     }
 }

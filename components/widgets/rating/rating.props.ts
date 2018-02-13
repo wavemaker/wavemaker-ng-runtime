@@ -15,12 +15,12 @@ export const registerProps = () => {
                 ['hint', PROP_STRING],
                 ['iconcolor', PROP_STRING],
                 ['iconsize', PROP_STRING],
-                ['maxvalue', Object.assign({value: 5}, PROP_NUMBER_NOTIFY)],
+                ['maxvalue', {value: 5, ...PROP_NUMBER_NOTIFY}],
                 ['name', PROP_STRING],
                 ['readonly', PROP_BOOLEAN_NOTIFY],
                 ['show', PROP_BOOLEAN],
                 ['showcaptions', PROP_BOOLEAN],
-                ['tabindex', Object.assign({value: 0}, PROP_NUMBER)]
+                ['tabindex', {value: 0, ...PROP_NUMBER}]
             ]
         )
     );

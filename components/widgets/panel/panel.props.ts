@@ -16,7 +16,7 @@ export const registerProps = () => {
                 ['datafield', PROP_STRING],
                 ['enablefullscreen', PROP_BOOLEAN],
                 ['expanded', PROP_BOOLEAN_NOTIFY],
-                ['fullscreen', PROP_BOOLEAN],
+                ['fullscreen', PROP_BOOLEAN_NOTIFY],
                 ['helpClass', PROP_STRING],
                 ['helptext', PROP_STRING],
                 ['iconclass', PROP_STRING_NOTIFY],
@@ -30,7 +30,7 @@ export const registerProps = () => {
                 ['itemlink', PROP_STRING],
                 ['name', PROP_STRING],
                 ['show', PROP_BOOLEAN],
-                ['showindevice', Object.assign({displayType: 'inline-block', value: 'all'}, PROP_STRING)],
+                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['subheading', PROP_STRING],
                 ['title', PROP_STRING],
                 ['userrole', PROP_STRING]

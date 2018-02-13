@@ -8,10 +8,10 @@ declare const _;
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-select', hasTemplate: true};
+const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'};
 
 @Component({
-    selector: 'wm-select',
+    selector: '[wmSelect]',
     templateUrl: './select.component.html'
 })
 export class SelectComponent extends BaseComponent {
@@ -138,6 +138,6 @@ export class SelectComponent extends BaseComponent {
     }
 
     _ngOnInit() {
-        styler(this.$element, this);
+        styler(<HTMLElement>this.$element.children[0], this);
     }
 }

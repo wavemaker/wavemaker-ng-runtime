@@ -2,8 +2,9 @@ import { register } from '@transpiler/build';
 
 register('wm-panel', () => {
     return {
-        tagName: 'wm-panel',
+        tagName: 'div',
         attrs: {
+            'wmPanel': undefined,
             'partialContainer': undefined
         }
     };

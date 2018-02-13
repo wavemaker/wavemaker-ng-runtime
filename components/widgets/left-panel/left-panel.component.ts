@@ -2,11 +2,12 @@ import { Component, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '
 import { BaseComponent } from '../../widgets/base/base.component';
 import { registerProps } from './left-panel.props';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
-import { addClass } from '@utils/dom';
+import { switchClass, toggleClass } from '@utils/dom';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-left-panel', hasTemplate: true};
+const DEFAULT_CLS = 'app-left-panel';
+const WIDGET_CONFIG = {widgetType: 'wm-left-panel', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: 'wm-left-panel',
@@ -19,17 +20,16 @@ export class LeftPanelComponent extends BaseComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
-            addClass(this.$host, `col-md-${nv} col-sm-${nv}`);
+            switchClass(this.$element, `col-md-${nv} col-sm-${nv}`, ov ? `col-md-${ov} col-sm-${ov}` : '');
+        } else if (key === 'expanded') {
+            toggleClass(this.$element, 'left-panel-expanded', nv);
+            toggleClass(this.$element, 'left-panel-collapsed', !nv);
         }
     }
 
     constructor(inj: Injector, elRef: ElementRef, private cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
-        addClass(this.$host, 'app-left-panel');
-    }
-
-    _ngOnInit() {
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

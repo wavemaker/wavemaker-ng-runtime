@@ -6,7 +6,8 @@ import { registerProps } from './time.props';
 import { $appDigest } from '@utils/watcher';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
-const WIDGET_CONFIG = {widgetType: 'wm-time', hasTemplate: true};
+const DEFAULT_CLS = 'input-group app-timeinput';
+const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
 
 registerProps();
 /**
@@ -17,7 +18,7 @@ registerProps();
  *
  */
 @Component({
-    selector: 'wm-time',
+    selector: '[wmTime]',
     templateUrl: './time.component.html'
 })
 export class TimeComponent extends BaseComponent implements OnDestroy {
@@ -126,14 +127,12 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
+
+        styler(this.$element, this);
         /**
          * Destroy the timer once the date widget is gone
          */
         this.destroy$.subscribe(() => this.clearTimeInterval());
-    }
-
-    _ngOnInit() {
-        styler(this.$element, this);
     }
 
     /**

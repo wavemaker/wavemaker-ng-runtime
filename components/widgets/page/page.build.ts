@@ -5,8 +5,7 @@ register('wm-page', () => {
         tagName: 'div',
         attrs: {
             'wmPage': undefined,
-            'data-role': 'pageContainer',
-            'class': 'app-page container'
+            'data-role': 'pageContainer'
         }
     };
 });

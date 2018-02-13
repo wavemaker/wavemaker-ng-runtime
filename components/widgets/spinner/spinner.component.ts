@@ -7,12 +7,13 @@ import { registerProps } from './spinner.props';
 
 declare const _;
 
-const WIDGET_CONFIG = {widgetType: 'wm-spinner', hasTemplate: true};
+const DEFAULT_CLS = 'app-spinner';
+const WIDGET_CONFIG = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};
 
 registerProps();
 
 @Component({
-    selector: 'wm-spinner',
+    selector: '[wmSpinner]',
     templateUrl: './spinner.component.html'
 })
 export class SpinnerComponent extends BaseComponent {
@@ -37,9 +38,6 @@ export class SpinnerComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this);
     }
 

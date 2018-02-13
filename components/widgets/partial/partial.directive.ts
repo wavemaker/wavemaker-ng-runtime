@@ -4,7 +4,8 @@ import { registerProps } from './partial.props';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-partial', hasTemplate: false};
+const DEFAULT_CLS = 'app-partial clearfix';
+const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmPartial]'

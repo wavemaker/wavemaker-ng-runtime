@@ -6,8 +6,8 @@ import { styler, APPLY_STYLES_TYPE } from '../../utils/styler';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-nav', hasTemplate: false};
 const DEFAULT_CLS = 'nav app-nav';
+const WIDGET_CONFIG = {widgetType: 'wm-nav', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmNav]'
@@ -37,7 +37,6 @@ export class NavDirective extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
-        addClass(this.$element, DEFAULT_CLS);
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

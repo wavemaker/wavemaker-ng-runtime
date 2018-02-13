@@ -5,7 +5,8 @@ import { registerProps } from './page.props';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-page', hasTemplate: false};
+const DEFAULT_CLS = 'app-page container';
+const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmPage]'

@@ -3,14 +3,15 @@ import { BaseComponent } from '../../widgets/base/base.component';
 import { getImageUrl } from '@utils/utils';
 import { registerProps } from './panel.props';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
-import { setCSS } from '@utils/dom';
+import { setCSS, toggleClass } from '@utils/dom';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-panel', hasTemplate: true};
+const DEFAULT_CLS = 'app-panel panel';
+const WIDGET_CONFIG = {widgetType: 'wm-panel', hostClass: DEFAULT_CLS};
 
 @Component({
-    selector: 'wm-panel',
+    selector: '[wmPanel]',
     templateUrl: './panel.component.html',
     providers: [
         {provide: '@Widget', useExisting: forwardRef(() => PanelComponent)}
@@ -31,7 +32,6 @@ export class PanelComponent extends BaseComponent {
     fullscreen: boolean;
     height: string;
 
-    @ViewChild('panel') private $panel: ElementRef;
     @ViewChild('panelHeading') private $panelHeader: ElementRef;
     @ViewChild('panelContent') private $panelContent: ElementRef;
 
@@ -72,6 +72,7 @@ export class PanelComponent extends BaseComponent {
 
     toggleHelp() {
         this.helpClass = this.helpClass ? null : 'show-help';
+        toggleClass(this.$element, 'show-help', !!this.helpClass);
     }
 
     closePanel($event) {
@@ -81,7 +82,7 @@ export class PanelComponent extends BaseComponent {
 
     private _toggleFullScreen() {
         const headerHeight = this.$panelHeader.nativeElement.offsetHeight,
-            $footer = this.$panel.nativeElement.querySelector('.panel-footer'),
+            $footer = this.$element.querySelector('.panel-footer'),
             $content = this.$panelContent,
             vwHeight = window.screen.height;
 
@@ -100,23 +101,25 @@ export class PanelComponent extends BaseComponent {
         return this.iconurl || this.iconclass || this.collapsible || this.actions || this.title || this.subheading || this.enablefullscreen;
     }
 
-    onPropertyChange(key, newVal, oldVal?) {
+    onPropertyChange(key, nv, ov?) {
         switch (key) {
             case 'iconurl':
-                this.iconurl = getImageUrl(newVal);
+                this.iconurl = getImageUrl(nv);
                 break;
             case 'expanded':
-                this.expanded = newVal;
+                this.expanded = nv;
                 break;
+            case 'fullscreen':
+                toggleClass(this.$element, 'fullscreen', nv);
         }
     }
 
     constructor(inj: Injector, elRef: ElementRef, private cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
+        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
     }
 
     _ngOnInit() {
-        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
-        styler(this.$panel.nativeElement.children[0], this, APPLY_STYLES_TYPE.INNER_SHELL);
+        styler(this.$panelContent.nativeElement.children[0], this, APPLY_STYLES_TYPE.INNER_SHELL);
     }
 }

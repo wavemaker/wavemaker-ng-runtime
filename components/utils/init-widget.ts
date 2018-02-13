@@ -66,7 +66,6 @@ const parseValue = (value, type) => {
 
 const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv: any, ov: any) => {
     const $el = component.$element;
-    const $host = component.$host;
 
     if (key === 'class' || key === 'conditionalclass') {
         switchClass($el, nv, ov);
@@ -75,9 +74,9 @@ const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv:
     }
     if (key === 'show') {
         if (nv) {
-            removeClass($host, CLS_NG_HIDE);
+            removeClass($el, CLS_NG_HIDE);
         } else {
-            addClass($host, CLS_NG_HIDE);
+            addClass($el, CLS_NG_HIDE);
         }
     }
     if (key === 'hint') {
@@ -153,7 +152,7 @@ export function initWidget(component: BaseComponent, elDef: any, view: any, pare
         }
     }
 
-    setAttr(component.$host, 'widget-id', widgetId);
+    setAttr(component.$element, 'widget-id', widgetId);
 
     registerWidget(initState.get('name'), parentContainer, widgetId, widget, component);
 

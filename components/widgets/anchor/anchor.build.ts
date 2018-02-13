@@ -4,7 +4,9 @@ register('wm-anchor', () => {
     return {
         tagName: 'a',
         attrs: {
-            'wmAnchor': undefined
+            'wmAnchor': undefined,
+            'data-identifier': 'anchor',
+            'role': 'button'
         }
     };
 });

@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['autofocus', PROP_BOOLEAN],
-                ['class', Object.assign({value: ''}, PROP_STRING)],
+                ['class', {value: '', ...PROP_STRING}],
                 ['datafield', PROP_STRING_NOTIFY],
                 ['dataset', PROP_STRING_NOTIFY],
                 ['datavalue', PROP_STRING],
@@ -16,7 +16,7 @@ export const registerProps = () => {
                 ['hint', PROP_STRING],
                 ['multiple', PROP_BOOLEAN_NOTIFY],
                 ['name', PROP_STRING],
-                ['placeholder', {value: 'Enter text'}],
+                ['placeholder', {value: 'Enter text', ...PROP_STRING}],
                 ['readonly', PROP_BOOLEAN],
                 ['required', PROP_BOOLEAN],
                 ['shortcutkey', PROP_STRING],

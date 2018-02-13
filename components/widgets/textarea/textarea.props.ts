@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['disabled', PROP_BOOLEAN],
                 ['maxchars', PROP_NUMBER],
                 ['name', PROP_STRING],
-                ['placeholder', Object.assign({value: 'Place your text'}, PROP_STRING)],
+                ['placeholder', {value: 'Place your text', ...PROP_STRING}],
                 ['readonly', PROP_BOOLEAN],
                 ['required', PROP_BOOLEAN],
                 ['shortcutkey', PROP_STRING],

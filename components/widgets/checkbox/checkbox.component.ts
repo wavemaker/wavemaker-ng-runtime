@@ -2,16 +2,19 @@ import { Component, EventEmitter, Output, Injector, ElementRef, ChangeDetectorRe
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './checkbox.props';
 import { styler } from '../../utils/styler';
+import { toggleClass } from '@utils/dom';
 
-const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hasTemplate: true};
+const DEFAULT_CLS = 'app-checkbox checkbox';
+const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
 
 registerProps();
 
 @Component({
-    selector: 'wm-checkbox',
+    selector: '[wmCheckbox]',
     templateUrl: './checkbox.component.html'
 })
 export class CheckboxComponent  extends BaseComponent {
+
     model: boolean;
     /**
      * This property defines the value of the widget when the element is in the checked state. Default value is boolean value true. If specified, the value will be of string type
@@ -40,6 +43,12 @@ export class CheckboxComponent  extends BaseComponent {
             this.model = true;
         } else {
             this.model = false;
+        }
+    }
+
+    onPropertyChange(key, nv, ov) {
+        if (key === 'type') {
+            toggleClass(this.$element, 'app-toggle', nv === 'toggle');
         }
     }
 

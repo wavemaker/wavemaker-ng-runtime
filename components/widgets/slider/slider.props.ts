@@ -16,7 +16,7 @@ export const registerProps = () => {
                 ['shortcutkey', PROP_STRING],
                 ['show', PROP_BOOLEAN],
                 ['step', PROP_NUMBER],
-                ['tabindex', Object.assign({value: 0}, PROP_NUMBER)]
+                ['tabindex', {value: 0, ...PROP_NUMBER}]
             ]
         )
     );

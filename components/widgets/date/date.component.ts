@@ -6,7 +6,9 @@ import { styler } from '../../utils/styler';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-date', hasTemplate: true};
+const DEFAULT_CLS = 'app-date input-group';
+const WIDGET_CONFIG = {widgetType: 'wm-date', hostClass: DEFAULT_CLS};
+
 const now: Date = new Date();
 const CURRENT_DATE: string = 'CURRENT_DATE';
 /**
@@ -21,7 +23,7 @@ const getDateObj = (value?: string): Date => {
 };
 
 @Component({
-    selector: 'wm-date',
+    selector: '[wmDate]',
     templateUrl: './date.component.html'
 })
 export class DateComponent extends BaseComponent {
@@ -109,9 +111,6 @@ export class DateComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this);
     }
 }

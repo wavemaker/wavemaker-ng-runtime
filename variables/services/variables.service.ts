@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import {StaticVariable} from './staticvariable/staticvariable';
-import {ServiceVariable} from './servicevariable/servicevariable';
-import {LiveVariable} from './livevariable/livevariable';
-import {NavigationVariable} from './navigationvariable/navigationvariable';
-import {ServiceVariableService} from './servicevariable/servicevariable.service';
-import {NavigationVariableService} from './navigationvariable/navigationvariable.service';
-import {NotificationVariable} from './notificationvariable/notificationvariable';
+import { StaticVariable } from './static-variable/static-variable';
+import { ServiceVariable } from './service-variable/service-variable';
+import { LiveVariable } from './live-variable/live-variable';
+import { NavigationVariable } from './navigation-variable/navigation-variable';
+import { ServiceVariableService } from './service-variable/service-variable.service';
+import { NavigationVariableService } from './navigation-variable/navigation-variable.service';
+import { NotificationVariable } from './notification-variable/notification-variable';
 import { $watch } from '@utils/watcher';
 
 @Injectable()
@@ -13,6 +13,7 @@ export class VariablesService {
 
     variablesMap = {};
     metadataMap = {};
+
     constructor(private serviceVariableService: ServiceVariableService, private navigationVariableService: NavigationVariableService) {
     }
 
@@ -24,7 +25,7 @@ export class VariablesService {
             let value = bindingObj.value;
             if (value.startsWith('bind:')) {
                 let bindExpr = value.replace('bind:', '');
-                $watch(bindExpr, $scope, {}, function(nv, ov) {
+                $watch(bindExpr, $scope, {}, function (nv, ov) {
                     variable.dataBinding[target] = nv;
                 });
             } else {

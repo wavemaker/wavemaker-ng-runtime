@@ -6,8 +6,8 @@ import { registerProps } from './text.props';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-text', hasTemplate: false};
 const DEFAULT_CLS = 'app-textbox form-control';
+const WIDGET_CONFIG = {widgetType: 'wm-text', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmText]'

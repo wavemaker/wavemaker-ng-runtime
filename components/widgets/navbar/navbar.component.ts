@@ -6,10 +6,11 @@ import { registerProps } from './navbar.props';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-navbar', hasTemplate: true};
+const DEFAULT_CLS = 'navbar navbar-default app-navbar';
+const WIDGET_CONFIG = {widgetType: 'wm-navbar', hostClass: DEFAULT_CLS};
 
 @Component({
-    selector: 'wm-navbar',
+    selector: '[wmNavbar]',
     templateUrl: './navbar.component.html'
 })
 export class NavbarComponent extends BaseComponent {
@@ -26,9 +27,6 @@ export class NavbarComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

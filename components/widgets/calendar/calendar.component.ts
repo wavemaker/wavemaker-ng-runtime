@@ -6,7 +6,9 @@ import { getClonedObject } from '@utils/utils';
 import { getEvaluatedData } from '../../utils/widget-utils';
 
 declare const _, $, moment;
-const WIDGET_CONFIG = {widgetType: 'wm-calendar', hasTemplate: true};
+
+const DEFAULT_CLS = 'app-calendar';
+const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
 /**
  * property to store the dateFormats
  */
@@ -84,15 +86,9 @@ const getUTCDateTime = (dateObj) => {
 };
 
 registerProps();
-/**
- * The Calendar component
- * Represents Calendar widget with dataset, view, calendar type etc., properties.
- * Example of usage:
- * <example-url>http://localhost:4200/calendar</example-url>
- *
- */
+
 @Component({
-    selector: 'wm-calendar',
+    selector: '[wmCalendar]',
     templateUrl: './calendar.component.html'
 })
 export class CalendarComponent extends BaseComponent implements AfterViewInit {
@@ -410,7 +406,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit {
 
     // to calculate the height for the event limit and parsing the value when it is percentage based.
     private calculateHeight(height): number {
-        const $parent = $(this.$host).parent(),
+        const $parent = $(this.$element).parent(),
             elHeight = height || '650px';
 
         let parentHeight = $parent.css('height'),

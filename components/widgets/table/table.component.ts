@@ -13,7 +13,8 @@ declare var $: any;
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-table', hasTemplate: true};
+const DEFAULT_CLS = 'app-grid app-panel panel';
+const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
 
 const rowOperations = {
     'update': {
@@ -33,7 +34,7 @@ const rowOperations = {
 };
 
 @Component({
-    selector: 'wm-table',
+    selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [provideTheParent(TableParent, TableComponent)]
 })
@@ -729,9 +730,6 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this);
     }
 }

@@ -1,16 +1,14 @@
-<div class="app-checkbox checkbox" [ngClass]="{'app-toggle': type === 'toggle'}" role="input">
-    <label [ngClass]="{'unchecked': !model, 'disabled': (disabled || readonly), 'required': (required && caption)}" role="button">
-        <input focus-target
-               type="checkbox"
-               [(ngModel)]="model"
-               [readOnly]="readonly"
-               [required]="required"
-               [disabled]="disabled || readonly"
-               [attr.accesskey]="shortcutkey"
-               [tabindex]="tabindex"
-               (change)="onChange($event)">
-        <span class="caption" [innerHtml]="caption"></span>
-        <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>
-    </label>
-    <input type="hidden" class="ng-hide model-holder" [disabled]="disabled" [value]="model">
-</div>
+<label [ngClass]="{'unchecked': !model, 'disabled': (disabled || readonly), 'required': (required && caption)}" role="button">
+    <input focus-target
+           type="checkbox"
+           [(ngModel)]="model"
+           [readOnly]="readonly"
+           [required]="required"
+           [disabled]="disabled || readonly"
+           [attr.accesskey]="shortcutkey"
+           [tabindex]="tabindex"
+           (change)="onChange($event)">
+    <span class="caption" [innerHtml]="caption"></span>
+    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>
+</label>
+<input type="hidden" class="ng-hide model-holder" [disabled]="disabled" [value]="model">

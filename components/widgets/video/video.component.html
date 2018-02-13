@@ -1,13 +1,11 @@
-<div class="app-video" [attr.alt]="hint">
-    <video [preload]="videopreload"
-           [src]="mp4videoUrl"
-           [muted]="muted"
-           [controls]="controls"
-           [loop]="loop"
-           [autoplay]="autoplay">
-        <source type="video/mp4" [src]="mp4videoUrl" *ngIf="mp4videoUrl">
-        <source type="video/webm" [src]="webmvideoUrl" *ngIf="webmvideoUrl">
-        <source type="video/ogg" [src]="oggvideoUrl" *ngIf="oggvideoUrl">
-        {{videosupportmessage}}
-    </video>
-</div>
+<video [preload]="videopreload"
+       [src]="mp4videoUrl"
+       [muted]="muted"
+       [controls]="controls"
+       [loop]="loop"
+       [autoplay]="autoplay">
+    <source type="video/mp4" [src]="mp4videoUrl" *ngIf="mp4videoUrl">
+    <source type="video/webm" [src]="webmvideoUrl" *ngIf="webmvideoUrl">
+    <source type="video/ogg" [src]="oggvideoUrl" *ngIf="oggvideoUrl">
+    {{videosupportmessage}}
+</video>

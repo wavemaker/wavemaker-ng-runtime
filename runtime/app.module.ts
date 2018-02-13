@@ -11,8 +11,8 @@ import { PageUtils } from './services/page-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 import { HttpClientModule } from '@angular/common/http';
 
-import { VariablesModule} from '@variables/variables.module';
-import {VariablesService} from '@variables/services/variables.service';
+import { VariablesModule } from '@variables/variables.module';
+import { VariablesService } from '@variables/services/variables.service';
 
 import {MetadataResolve} from './resolves/metadata.resolve';
 

@@ -15,12 +15,12 @@ export const registerProps = () => {
                 ['mindate', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
                 ['outputformat', PROP_STRING_NOTIFY],
-                ['placeholder', Object.assign({value: 'Select Date'}, PROP_STRING)],
+                ['placeholder', {value: 'Select Date', ...PROP_STRING}],
                 ['readonly', PROP_BOOLEAN_NOTIFY],
                 ['shortcutkey', PROP_STRING],
                 ['show', PROP_BOOLEAN],
                 ['showbuttonbar', PROP_BOOLEAN],
-                ['showindevice', Object.assign({displayType: 'inline-block', value: 'all'}, PROP_STRING)],
+                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['showweeks', PROP_BOOLEAN_NOTIFY],
                 ['tabindex', PROP_NUMBER]
             ]

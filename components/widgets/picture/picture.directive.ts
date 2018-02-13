@@ -7,8 +7,8 @@ import { getImageUrl } from '@utils/utils';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-picture', hasTemplate: false};
 const DEFAULT_CLS = 'app-picture';
+const WIDGET_CONFIG = {widgetType: 'wm-picture', hostClass: DEFAULT_CLS};
 
 @Directive({
     'selector': '[wmPicture]'
@@ -78,7 +78,6 @@ export class PictureDirective extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
-        addClass(this.$element, DEFAULT_CLS);
         styler(this.$element, this);
     }
 }

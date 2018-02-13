@@ -1,13 +1,16 @@
-import { Component, Output, EventEmitter, ElementRef, Injector, ChangeDetectorRef  } from '@angular/core';
+import { Component, Output, EventEmitter, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { styler } from '../../utils/styler';
 import { isDefined, isPageable, triggerFn } from '@utils/utils';
 import { registerProps } from './pagination.props';
+import { switchClass } from '@utils/dom';
+
 declare const _;
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-pagination', hasTemplate: true};
+const DEFAULT_CLS = 'app-datanavigator clearfix';
+const WIDGET_CONFIG = {widgetType: 'wm-pagination', hostClass: DEFAULT_CLS};
 
 const sizeClasses = {
     'Pager': {
@@ -23,6 +26,7 @@ const sizeClasses = {
         'large': 'pagination-lg'
     }
 };
+
 /**
  * The pagination component
  * Pagination component. Can be used with data table and list
@@ -31,7 +35,7 @@ const sizeClasses = {
  *
  */
 @Component({
-    selector: 'wm-pagination',
+    selector: '[wmPagination]',
     templateUrl: './pagination.component.html'
 })
 export class PaginationComponent extends BaseComponent {
@@ -46,7 +50,6 @@ export class PaginationComponent extends BaseComponent {
     public navcontrols = 'Basic';
     navigation;
 
-    public _navClass = '';
     navigationalign;
     maxsize;
     boundarylinks;
@@ -56,7 +59,7 @@ export class PaginationComponent extends BaseComponent {
 
     public navigationClass;
     public dn = {
-      currentPage: 1
+        currentPage: 1
     };
 
     public appLocale = {
@@ -84,10 +87,12 @@ export class PaginationComponent extends BaseComponent {
     get dataset() {
         return this._dataset;
     }
+
     set dataset(val) {
         this._dataset = val;
         this.setPagingValues(val);
     }
+
     // Update navigationClass based on navigation and navigationSize props
     private updateNavSize() {
         const sizeCls = sizeClasses[this.navcontrols];
@@ -112,7 +117,7 @@ export class PaginationComponent extends BaseComponent {
     }
 
     /*Function to set default values to the paging parameters*/
-    setDefaultPagingValues (dataSize, maxResults, currentPage) {
+    setDefaultPagingValues(dataSize, maxResults, currentPage) {
         /*If neither 'dataSize' nor 'maxResults' is set, then set default values to the paging parameters.*/
         if (!dataSize && !maxResults) {
             this.pageCount = 1;
@@ -136,15 +141,15 @@ export class PaginationComponent extends BaseComponent {
          * 2. Disable the 'GoToLastPage' link as the page number of the last page is not known.*/
         if (dataSize === -1 || dataSize === 2147483647) {
             this.prevshowrecordcount = this.showrecordcount;
-            this.isDisableLast       = true;
-            this.isDisableCount      = true;
-            this.showrecordcount     = false;
+            this.isDisableLast = true;
+            this.isDisableCount = true;
+            this.showrecordcount = false;
             // If number of records in current page is less than the max records size, this is the last page. So disable next button.
             if (numberOfElements < size) {
                 this.isDisableNext = true;
             }
         } else {
-            this.isDisableCount  = false;
+            this.isDisableCount = false;
             this.showrecordcount = this.prevshowrecordcount || this.showrecordcount;
         }
     }
@@ -171,7 +176,7 @@ export class PaginationComponent extends BaseComponent {
             maxResults,
             currentPage,
             startIndex;
-        dataSize   = _.isArray(newVal) ? newVal.length : (newVal.data ? newVal.data.length : _.isEmpty(newVal) ? 0 : 1);
+        dataSize = _.isArray(newVal) ? newVal.length : (newVal.data ? newVal.data.length : _.isEmpty(newVal) ? 0 : 1);
         maxResults = this.maxResults || dataSize;
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
         currentPage = this.dn.currentPage || 1;
@@ -180,7 +185,7 @@ export class PaginationComponent extends BaseComponent {
         this.disableNavigation();
 
         startIndex = (this.dn.currentPage - 1) * this.maxResults;
-        this.result =  _.isArray(newVal) ? newVal.slice(startIndex, startIndex + this.maxResults) : newVal;
+        this.result = _.isArray(newVal) ? newVal.slice(startIndex, startIndex + this.maxResults) : newVal;
         this.resultEmitter.emit(this.result);
     }
 
@@ -202,6 +207,7 @@ export class PaginationComponent extends BaseComponent {
     isFirstPage() {
         return (this.dn.currentPage === 1 || !this.dn.currentPage);
     }
+
     /*Function to check if the current page is the last page*/
     isLastPage() {
         return (this.dn.currentPage === this.pageCount);
@@ -256,6 +262,7 @@ export class PaginationComponent extends BaseComponent {
          * Check in the dataNavigator scope and also in the parent (i.e., grid/live-list) scope.*/
         // this.onSetrecord({$event: event, $scope: this, $data: data, $index: this.dn.currentPage});
     }
+
     /*Function to validate the page input.
      In case of invalid input, navigate to the appropriate page; also return false.
      In case of valid input, return true.*/
@@ -344,8 +351,8 @@ export class PaginationComponent extends BaseComponent {
                 this.updateNavSize();
                 break;
             case 'navigationalign':
-              this._navClass = 'text-' + newVal;
-              break;
+                switchClass(this.$element, `text-${nv}`, `text-{ov}`);
+                break;
             case 'maxsize':
             case 'maxResults':
                 this.setPagingValues(this.dataset);
@@ -356,10 +363,6 @@ export class PaginationComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
-    }
-
-    _ngOnInit() {
         styler(this.$element, this);
     }
-
 }
