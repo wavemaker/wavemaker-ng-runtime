@@ -82,14 +82,14 @@ export class PanelComponent extends BaseComponent {
 
     private _toggleFullScreen() {
         const headerHeight = this.$panelHeader.nativeElement.offsetHeight,
-            $footer = this.$element.querySelector('.panel-footer'),
+            $footer = <HTMLElement>this.$element.querySelector('.panel-footer'),
             $content = this.$panelContent,
             vwHeight = window.screen.height;
 
         let inlineHeight;
 
         if (this.fullscreen) {
-            inlineHeight = $footer.length ? vwHeight - ($footer.offsetHeight + headerHeight) : (vwHeight - headerHeight);
+            inlineHeight = $footer ? vwHeight - ($footer.offsetHeight + headerHeight) : (vwHeight - headerHeight);
         } else {
             inlineHeight = this.height || '';
         }

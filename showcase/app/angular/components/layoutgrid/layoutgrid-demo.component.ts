@@ -9,7 +9,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 export class LayoutgridDemoComponent implements OnInit {
 
     backgroundcolor: string = '#ececec';
-    width: string = '200px';
+    width: string = '500px';
     height: string = '200px';
 
     constructor() { }

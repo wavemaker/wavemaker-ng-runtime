@@ -4,9 +4,7 @@ register('wm-datetime', () => {
     return {
         tagName: 'div',
         attrs: {
-            'wmDateTime': undefined,
-            'dropdown': undefined,
-            'autoClose': false
+            'wmDateTime': undefined
         }
     };
 });

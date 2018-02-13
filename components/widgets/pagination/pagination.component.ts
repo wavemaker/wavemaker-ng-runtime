@@ -338,20 +338,20 @@ export class PaginationComponent extends BaseComponent {
         this.goToPage(event, callback);
     }
 
-    onPropertyChange(key: string, newVal) {
+    onPropertyChange(key: string, nv, ov) {
         switch (key) {
             case 'navigation':
-                if (newVal === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
+                if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
                     this.navigation = 'Classic';
                 }
                 this.updateNavSize();
-                this.navcontrols = newVal;
+                this.navcontrols = nv;
                 break;
             case 'navigationsize':
                 this.updateNavSize();
                 break;
             case 'navigationalign':
-                switchClass(this.$element, `text-${nv}`, `text-{ov}`);
+                switchClass(this.$element, `text-${nv}`, `text-${ov}`);
                 break;
             case 'maxsize':
             case 'maxResults':

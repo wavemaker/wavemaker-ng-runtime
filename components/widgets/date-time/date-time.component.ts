@@ -231,7 +231,4 @@ export class DatetimeComponent extends BaseComponent {
                 break;
         }
     }
-
-    @HostBinding('isOpen') isTimeOpen: boolean;
-    @HostListener('onShown') addClickListener;
 }

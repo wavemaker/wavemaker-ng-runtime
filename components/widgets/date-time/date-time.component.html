@@ -1,40 +1,42 @@
-<input class="form-control app-textbox display-input"
-       type="text"
-       [value]="formattedModel"
-       (click)="isDateOpen = !isDateOpen"
-       [disabled]="isDisabled"
-       [required]="required"
-       [placeholder]="placeholder">
-<span class="input-group-btn">
+<div dropdown [isOpen]="isTimeOpen" [autoClose]="false" (onShown)="addClickListener()" style="display: inherit;">
+    <input class="form-control app-textbox display-input"
+           type="text"
+           [value]="formattedModel"
+           (click)="isDateOpen = !isDateOpen"
+           [disabled]="isDisabled"
+           [required]="required"
+           [placeholder]="placeholder">
+    <span class="input-group-btn">
     <button type="button" class="btn btn-default btn-time" (click)="datepicker.toggle();"><i class="app-icon wi wi-calendar"></i></button>
     <button type="button" class="btn btn-default btn-date" (click)="toggleTimePicker(!isTimeOpen)"><i class="app-icon wi wi-access-time"></i></button>
 </span>
-<div style="height: 0;">
-    <input class="model-holder"
-           [container]="'body'"
-           [bsConfig]="_dateOptions"
-           [isOpen]="isDateOpen"
-           (onShown)="isDateOpen = !isDateOpen;"
-           (onHidden)="isDateOpen = !isDateOpen;"
-           #datepicker=bsDatepicker
-           bsDatepicker
-           [isDisabled]="isDisabled"
-           [bsValue]="dateModel"
-           [maxDate]="maxDate"
-           [minDate]="minDate"
-           (bsValueChange)="onModelUpdate($event, 'date')">
-</div>
-<div *dropdownMenu class="dropdown-menu">
-    <timepicker class="model-holder"
-                [showMeridian]="!ismeridian"
-                [readonlyInput]="isDisabled"
-                [(ngModel)]="timeModel"
-                [min]="minTime"
-                [max]="maxTime"
-                [hourStep]="hourstep"
-                [minuteStep]="minutestep"
-                [secondsStep]="secondsstep"
-                [mousewheel]="true"
-                [arrowkeys]="true"
-                [showSeconds]="showseconds" (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
+    <div style="height: 0;">
+        <input class="model-holder"
+               [container]="'body'"
+               [bsConfig]="_dateOptions"
+               [isOpen]="isDateOpen"
+               (onShown)="isDateOpen = !isDateOpen;"
+               (onHidden)="isDateOpen = !isDateOpen;"
+               #datepicker=bsDatepicker
+               bsDatepicker
+               [isDisabled]="isDisabled"
+               [bsValue]="dateModel"
+               [maxDate]="maxDate"
+               [minDate]="minDate"
+               (bsValueChange)="onModelUpdate($event, 'date')">
+    </div>
+    <div *dropdownMenu class="dropdown-menu">
+        <timepicker class="model-holder"
+                    [showMeridian]="!ismeridian"
+                    [readonlyInput]="isDisabled"
+                    [(ngModel)]="timeModel"
+                    [min]="minTime"
+                    [max]="maxTime"
+                    [hourStep]="hourstep"
+                    [minuteStep]="minutestep"
+                    [secondsStep]="secondsstep"
+                    [mousewheel]="true"
+                    [arrowkeys]="true"
+                    [showSeconds]="showseconds" (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
+    </div>
 </div>

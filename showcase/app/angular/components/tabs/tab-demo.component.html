@@ -1,11 +1,11 @@
 <div class="col-md-9">
-    <wm-tabs [tabsposition]="tabsposition" [height]="height" [defaultpaneindex]="defaultPaneIndex">
-        <wm-tabpane [title]="'Tab1'">
-            <wm-datetime></wm-datetime>
-        </wm-tabpane>
-        <wm-tabpane [title]="'Tab2'"></wm-tabpane>
-        <wm-tabpane [title]="'Tab3'"></wm-tabpane>
-    </wm-tabs>
+    <div wmTabs [tabsposition]="tabsposition" [height]="height" [defaultpaneindex]="defaultPaneIndex">
+        <div wmTabPane [title]="'Tab1'">
+            <div wmDateTime></div>
+        </div>
+        <div wmTabPane [title]="'Tab2'"></div>
+        <div wmTabPane [title]="'Tab3'"></div>
+    </div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>

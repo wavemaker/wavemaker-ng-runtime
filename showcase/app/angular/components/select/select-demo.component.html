@@ -1,5 +1,5 @@
 <div class="col-md-9">
-    <wm-select
+    <div wmSelect
             dataset.bind="options"
             datafield.bind="datafield"
             displayfield.bind="displayfield"
@@ -14,7 +14,7 @@
             show.bind="show"
             placeholder="Enter text"
             name="mySelect"
-    ></wm-select>
+    ></div>
     <div class="row clearfix">
         <div class="col-sm-3">datavalue:</div>
         <div class="col-sm-9">{{mySelectWidget.datavalue | json}}</div>

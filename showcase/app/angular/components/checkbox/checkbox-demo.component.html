@@ -1,5 +1,5 @@
 <div class="col-md-9">
-    <wm-checkbox
+    <div wmCheckbox
             width.bind="width"
             required.bind="required"
             disabled.bind="disable"
@@ -14,7 +14,7 @@
             uncheckedvalue.bind="uncheckedvalue"
             (change)="onChange($event.$event, $event.$isolateScope, $event.newVal, $event.oldVal);"
             #checkbox
-    ></wm-checkbox>
+    ></div>
     {{'datavalue  :  '+checkbox.datavalue}}
 </div>
 <div class="col-md-3 properties">

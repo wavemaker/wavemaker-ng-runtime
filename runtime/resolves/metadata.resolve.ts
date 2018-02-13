@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
-import { MetadataService } from '@variables/services/metadataservice/metadata.service';
+import { Resolve } from '@angular/router';
+import { MetadataService } from '@variables/services/metadata-service/metadata.service';
 
 @Injectable()
 export class MetadataResolve implements Resolve<any> {

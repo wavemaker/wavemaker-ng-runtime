@@ -52,10 +52,10 @@ import { TopNavDirective } from './widgets/top-nav/top-nav.directive';
 import { VideoComponent } from './widgets/video/video.component';
 import { PaginationComponent } from './widgets/pagination/pagination.component';
 import { TableComponent } from './widgets/table/table.component';
-import { TableColumnComponent } from './widgets/table/table-column/table-column.directive';
-import { TableColumnGroupComponent } from './widgets/table/table-column-group/table-column-group.directive';
-import { TableActionComponent } from './widgets/table/table-action/table-action.directive';
-import { TableRowActionComponent } from './widgets/table/table-row-action/table-row-action.directive';
+import { TableColumnDirective } from './widgets/table/table-column/table-column.directive';
+import { TableColumnGroupDirective } from './widgets/table/table-column-group/table-column-group.directive';
+import { TableActionDirective } from './widgets/table/table-action/table-action.directive';
+import { TableRowActionDirective } from './widgets/table/table-row-action/table-row-action.directive';
 
 const wmComponents = [
     AnchorComponent,
@@ -103,10 +103,10 @@ const wmComponents = [
     VideoComponent,
     PaginationComponent,
     TableComponent,
-    TableColumnComponent,
-    TableColumnGroupComponent,
-    TableActionComponent,
-    TableRowActionComponent
+    TableColumnDirective,
+    TableColumnGroupDirective,
+    TableActionDirective,
+    TableRowActionDirective
 ];
 
 @NgModule({

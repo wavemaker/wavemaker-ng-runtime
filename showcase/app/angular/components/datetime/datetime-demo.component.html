@@ -1,5 +1,5 @@
 <div class="col-md-9">
-    <wm-datetime datavalue.bind="datavalue"
+    <div wmDateTime datavalue.bind="datavalue"
                  mindate.bind="mindate"
                  maxdate.bind="maxdate"
                  disabled.bind="disabled"
@@ -12,7 +12,7 @@
                  minutestep.bind="minutestep"
                  showseconds.bind="showseconds"
                  ismeridian.bind="ismeridian"
-                 #wmDate></wm-datetime>
+                 #wmDate></div>
     <div class="row clearfix">
         <div class="col-sm-1">Datavalue:</div>
         <div class="col-sm-11">{{wmDate.datavalue}}</div>

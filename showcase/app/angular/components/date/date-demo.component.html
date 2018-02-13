@@ -1,5 +1,5 @@
 <div class="col-md-9">
-    <wm-date datavalue.bind="datavalue"
+    <div wmDate datavalue.bind="datavalue"
              mindate.bind="mindate"
              maxdate.bind="maxdate"
              disabled.bind="disabled"
@@ -8,9 +8,9 @@
              datepattern.bind="datepattern"
              outputformat.bind="outputformat"
              show.bind="show"
-             #wmDate></wm-date>
+             #wmDate></div>
+    {{wmDate.datavalue}}
 </div>
-{{wmDate.datavalue}}
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
     <hr>

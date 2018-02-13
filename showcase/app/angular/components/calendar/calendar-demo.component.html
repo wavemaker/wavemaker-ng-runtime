@@ -1,5 +1,5 @@
 <div class="col-md-9" style="height: 100%">
-  <wm-calendar height.bind="height"
+  <div wmCalendar height.bind="height"
                (viewrender)="onViewRender($event)"
                view.bind="selectedView"
                selectionmode.bind="selectionMode"
@@ -10,7 +10,7 @@
                (eventclick)="onEventclick($event.jsEvent, $event.event, $event.view)"
                (eventdrop)="onEventDrop($event.jsEvent, $event.event, $event.oldData, $event.delta, $event.revertFunc, $event.ui, $event.view)">
 
-  </wm-calendar>
+  </div>
 </div>
 <div class="col-md-3 properties">
   <h4 class="property-header">Properties</h4>

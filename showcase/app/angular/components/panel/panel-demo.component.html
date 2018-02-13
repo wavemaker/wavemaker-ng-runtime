@@ -1,5 +1,5 @@
 <div class="col-md-9">
-    <wm-panel (onClose)="panelClosed($event)" title.bind="title"
+    <div wmPanel (onClose)="panelClosed($event)" title.bind="title"
               #panel subheading.bind="subheading"
               iconclass.bind="iconclass"
               actions.bind="nodes"
@@ -11,7 +11,7 @@
         <div wmPanelFooter>
             <label wmLabel class.bind="'text-muted'" caption.bind="'Additional Info'"></label>
         </div>
-    </wm-panel>
+    </div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>

@@ -14,8 +14,6 @@ registerProps();
 })
 export class HtmlDirective extends BaseComponent {
 
-    @HostBinding('innterHTML') content;
-
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
@@ -24,6 +22,12 @@ export class HtmlDirective extends BaseComponent {
     onStyleChange(key, newVal, oldVal) {
         if (key === 'height') {
             setCSS(this.$element, 'overflow', newVal ? 'auto' : '');
+        }
+    }
+
+    onPropertyChange(key, newVal) {
+        if (key === 'content') {
+            this.$element.innerHTML = newVal;
         }
     }
 
