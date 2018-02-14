@@ -20,8 +20,8 @@ import { CurrencyComponent } from './widgets/currency/currency.component';
 import { DateComponent } from './widgets/date/date.component';
 import { DatetimeComponent } from './widgets/date-time/date-time.component';
 import { FooterDirective } from './widgets/footer/footer.directive';
-import { GridrowDirective } from './widgets/layout-grid/layout-grid-row/layout-grid-row.directive';
-import { GridcolumnDirective } from './widgets/layout-grid/layout-grid-column/layout-grid-column.component';
+import { LayoutGridRowDirective } from './widgets/layout-grid/layout-grid-row/layout-grid-row.directive';
+import { LayoutGridColumnComponent } from './widgets/layout-grid/layout-grid-column/layout-grid-column.component';
 import { HeaderComponent } from './widgets/header/header.component';
 import { HtmlDirective } from './widgets/html/html.directive';
 import { IconDirective } from './widgets/icon/icon.component';
@@ -71,8 +71,8 @@ const wmComponents = [
     DateComponent,
     DatetimeComponent,
     FooterDirective,
-    GridrowDirective,
-    GridcolumnDirective,
+    LayoutGridRowDirective,
+    LayoutGridColumnComponent,
     HeaderComponent,
     HtmlDirective,
     IconDirective,

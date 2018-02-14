@@ -5,10 +5,19 @@ const gulp = require('gulp');
 const src = './components/widgets';
 const dest = './dist/out-tsc/components/widgets';
 
-gulp.src([`${src}/**/*.html`])
-    .pipe(gulp.dest('./dist/out-tsc/components/widgets'));
+gulp.task('copy-html-files', () => {
+    return gulp.src([`${src}/**/*.html`]).pipe(gulp.dest(dest));
+});
 
+gulp.task('inline-html-files', () => {
+    gulp.src(`${dest}/**/*.js`)
+        .pipe(embedTemplates())
+        .pipe(gulp.dest(`${dest}`));
 
-gulp.src(`${dest}/**/*.js`) // also can use *.js files
-    .pipe(embedTemplates())
-    .pipe(gulp.dest(`${dest}`));
+});
+
+gulp.task('default', ['copy-html-files'], () => {
+    gulp.start('inline-html-files');
+});
+
+gulp.start('default');

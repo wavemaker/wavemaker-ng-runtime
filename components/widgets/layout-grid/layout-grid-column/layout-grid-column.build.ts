@@ -1,4 +1,4 @@
-import { register } from 'transpiler/build';
+import { register } from '@transpiler/build';
 
 register('wm-gridcolumn', () => {
     return {

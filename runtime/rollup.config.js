@@ -22,7 +22,7 @@ export default {
         '@components/components.module': 'wm.components',
         '@variables/variables.module': 'wm.variables',
         '@variables/services/variables.service': 'wm.variables',
-        '@variables/services/metadataservice/metadata.service': 'wm.variables',
+        '@variables/services/metadata-service/metadata.service': 'wm.variables',
         '@http-service/http-service.module': 'http-service',
         '@http-service/http.service': 'http-service',
         '@transpiler/build': 'wm.transpiler'

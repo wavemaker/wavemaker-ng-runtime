@@ -9,7 +9,7 @@ const DEFAULT_CLS = 'app-content clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};
 
 @Component({
-    selector: 'wm-content',
+    selector: '[wmContent]',
     templateUrl: './content.component.html'
 })
 export class ContentComponent extends BaseComponent {

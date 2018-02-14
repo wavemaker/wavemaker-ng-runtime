@@ -10,7 +10,7 @@ const DEFAULT_CLS = 'app-left-panel';
 const WIDGET_CONFIG = {widgetType: 'wm-left-panel', hostClass: DEFAULT_CLS};
 
 @Component({
-    selector: 'wm-left-panel',
+    selector: '[wmLeftPanel]',
     templateUrl: './left-panel.component.html',
     providers: [
         {provide: '@Widget', useExisting: forwardRef(() => LeftPanelComponent)}

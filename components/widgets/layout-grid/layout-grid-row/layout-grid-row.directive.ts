@@ -11,7 +11,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-layout-grid-row', hostClass: DEFAULT_CLS}
 @Directive({
     selector: '[wmLayoutGridRow]'
 })
-export class GridrowDirective extends BaseComponent {
+export class LayoutGridRowDirective extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);

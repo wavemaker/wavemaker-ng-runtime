@@ -11,7 +11,7 @@ const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG = {widgetType: 'wm-anchor', hostClass: DEFAULT_CLS};
 
 @Component({
-    selector: '[wmAnchor]',
+    selector: 'a[wmAnchor]',
     templateUrl: './anchor.component.html'
 })
 export class AnchorComponent extends BaseComponent {

@@ -8,7 +8,6 @@ if (environment.production) {
     enableProdMode();
 }
 
-
 console.time('bootstrap');
 
 document.addEventListener('DOMContentLoaded', () => {

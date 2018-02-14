@@ -1,5 +1,5 @@
-import { ElementRef, Injector, Directive, ChangeDetectorRef } from '@angular/core';
-import { switchClass } from 'utils/dom';
+import { ElementRef, Injector, ChangeDetectorRef, Component } from '@angular/core';
+import { switchClass } from '@utils/dom';
 import { BaseComponent } from '../../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../../utils/styler';
 import { registerProps } from './layout-grid-column.props';
@@ -9,10 +9,11 @@ registerProps();
 const DEFAULT_CLS = 'app-grid-column';
 const WIDGET_CONFIG = {widgetType: 'wm-gridcolumn', hostClass: DEFAULT_CLS};
 
-@Directive({
-    selector: '[wmLayoutGridColumn]'
+@Component({
+    selector: '[wmLayoutGridColumn]',
+    templateUrl: './layout-grid-column.component.html'
 })
-export class GridcolumnDirective extends BaseComponent {
+export class LayoutGridColumnComponent extends BaseComponent {
 
     onPropertyChange(key, nv, ov?) {
         switch (key) {

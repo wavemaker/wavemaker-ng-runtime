@@ -9,7 +9,7 @@ const DEFAULT_CLS = 'btn app-button';
 const WIDGET_CONFIG = {widgetType: 'wm-button', hostClass: DEFAULT_CLS};
 
 @Component({
-    selector: '[wmButton]',
+    selector: 'button[wmButton]',
     templateUrl: './button.component.html'
 })
 export class ButtonDirective extends BaseComponent {
