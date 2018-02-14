@@ -11,7 +11,7 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 @Directive({
-    selector: 'wmTableColumn'
+    selector: '[wmTableColumn]'
 })
 export class TableColumnDirective extends BaseComponent {
 

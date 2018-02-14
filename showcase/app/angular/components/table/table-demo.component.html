@@ -1,5 +1,5 @@
 <div class="col-md-9">
-    <wm-table
+    <div wmTable
               name="myTable"
               title.bind="_title" subheading.bind="_subheading" iconclass.bind="_iconclass" showheader.bind="_showheader"
               multiselect.bind="_multiselect" radioselect.bind="_radioselect" showrowindex.bind="_showrowindex"
@@ -12,17 +12,17 @@
               showrecordcount.bind="_showrecordcount"
               navigationalign.bind="_navigationalign"
               dataset.bind="_dataset">
-        <wm-table-column-group name="group" caption="User Details">
-            <wm-table-column binding="userId" caption="User Id" primary-key="true" edit-widget-type="number" type="integer" generator="identity" readonly="true" show="true"></wm-table-column>
-            <wm-table-column-group name="group1" caption="Login Details">
-                <wm-table-column binding="username" caption="Username" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></wm-table-column>
-                <wm-table-column binding="password" caption="Password" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></wm-table-column>
-            </wm-table-column-group>
-        </wm-table-column-group>
-        <wm-table-column binding="role" caption="Role" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></wm-table-column>
-        <wm-table-column binding="tenantId" caption="Tenant Id" edit-widget-type="number" type="integer" generator="assigned" show="true" readonly="false"></wm-table-column>
-        <wm-table-column binding="rowOperations" caption="Actions" width="120px" edit-widget-type="text" type="custom" readonly="true" sortable="false" searchable="false" show="true"></wm-table-column>
-    </wm-table>
+        <div wmTableColumnGroup name="group" caption="User Details">
+            <div wmTableColumn binding="userId" caption="User Id" primary-key="true" edit-widget-type="number" type="integer" generator="identity" readonly="true" show="true"></div>
+            <div wmTableColumnGroup name="group1" caption="Login Details">
+                <div wmTableColumn binding="username" caption="Username" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></div>
+                <div wmTableColumn binding="password" caption="Password" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></div>
+            </div>
+        </div>
+        <div wmTableColumn binding="role" caption="Role" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></div>
+        <div wmTableColumn binding="tenantId" caption="Tenant Id" edit-widget-type="number" type="integer" generator="assigned" show="true" readonly="false"></div>
+        <div wmTableColumn binding="rowOperations" caption="Actions" width="120px" edit-widget-type="text" type="custom" readonly="true" sortable="false" searchable="false" show="true"></div>
+    </div>
     <!--<div>-->
         <!--<span>Selected Item:</span>-->
         <!--{{myTableWidget.selecteditem | json}}-->
