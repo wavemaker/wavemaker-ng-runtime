@@ -1,5 +1,13 @@
 <div class="col-md-9">
-    <wm-menu [caption]="caption" [width]="width" [height]="height" [dataset]="widgets" [menulayout]="layout" [iconclass]="iconclass" [menuposition]="position" [linktarget]="target"></wm-menu>
+    <div wmMenu
+         caption.bind="caption"
+         width.bind="width"
+         height.bind="height"
+         dataset.bind="widgets"
+         menulayout.bind="layout"
+         iconclass.bind="iconclass"
+         menuposition.bind="position"
+         linktarget.bind="target"></div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>

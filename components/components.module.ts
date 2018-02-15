@@ -29,6 +29,9 @@ import { IframeComponent } from './widgets/iframe/iframe.component';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layout-grid/layout-grid.directive';
 import { LeftPanelComponent } from './widgets/left-panel/left-panel.component';
+import { MenuComponent } from './widgets/menu/menu.component';
+import { MenuDropdownComponent } from './widgets/menu/menu-dropdown.component';
+import { MenuDropdownItemComponent } from './widgets/menu/menu-dropdown-item.component';
 import { MessageComponent } from './widgets/message/message.component';
 import { NavDirective } from './widgets/nav/nav.directive';
 import { NavItemDirective } from './widgets/nav-item/nav-item.directive';
@@ -80,6 +83,9 @@ const wmComponents = [
     LabelDirective,
     LayoutgridDirective,
     LeftPanelComponent,
+    MenuComponent,
+    MenuDropdownComponent,
+    MenuDropdownItemComponent,
     MessageComponent,
     NavDirective,
     NavItemDirective,
@@ -122,7 +128,9 @@ const wmComponents = [
     declarations: wmComponents,
     exports: wmComponents,
     providers: [],
-    entryComponents: []
+    entryComponents: [
+        MenuDropdownComponent
+    ]
 })
 export class WmComponentsModule {
 }
