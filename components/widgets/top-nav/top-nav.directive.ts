@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Injector, ChangeDetectorRef, forwardRef, OnInit } from '@angular/core';
+import { Directive, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './top-nav.props';
 import { styler } from '../../utils/styler';
@@ -14,14 +14,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-top-nav', hostClass: DEFAULT_CLS};
         {provide: '@Widget', useExisting: forwardRef(() => TopNavDirective)}
     ]
 })
-export class TopNavDirective extends BaseComponent implements OnInit {
+export class TopNavDirective extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

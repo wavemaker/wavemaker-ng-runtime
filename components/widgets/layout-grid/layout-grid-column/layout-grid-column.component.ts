@@ -1,4 +1,4 @@
-import { ElementRef, Injector, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ElementRef, Injector, ChangeDetectorRef, Component } from '@angular/core';
 import { switchClass } from '@utils/dom';
 import { BaseComponent } from '../../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../../utils/styler';
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-gridcolumn', hostClass: DEFAULT_CLS};
     selector: '[wmLayoutGridColumn]',
     templateUrl: './layout-grid-column.component.html'
 })
-export class LayoutGridColumnComponent extends BaseComponent implements OnInit {
+export class LayoutGridColumnComponent extends BaseComponent {
 
     onPropertyChange(key, nv, ov?) {
         switch (key) {
@@ -27,9 +27,5 @@ export class LayoutGridColumnComponent extends BaseComponent implements OnInit {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

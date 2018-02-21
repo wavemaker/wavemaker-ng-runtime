@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BaseComponent } from '../base/base.component';
 import { encodeUrl, isInsecureContentRequest } from '@utils/utils';
@@ -14,7 +14,7 @@ registerProps();
     selector: '[wmIframe]',
     templateUrl: './iframe.component.html'
 })
-export class IframeComponent extends BaseComponent implements OnInit {
+export class IframeComponent extends BaseComponent {
 
     private _iframesrc;
 
@@ -56,9 +56,5 @@ export class IframeComponent extends BaseComponent implements OnInit {
                 this.onIframeSrcChange(this.baseurl);
                 break;
         }
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

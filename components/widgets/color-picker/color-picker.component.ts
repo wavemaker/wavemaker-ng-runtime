@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './color-picker.props';
@@ -13,7 +13,7 @@ registerProps();
     templateUrl: './color-picker.component.html'
 })
 
-export class ColorPickerComponent extends BaseComponent implements OnInit {
+export class ColorPickerComponent extends BaseComponent {
 
     @Output() change = new EventEmitter();
 
@@ -27,9 +27,5 @@ export class ColorPickerComponent extends BaseComponent implements OnInit {
     onChange($event) {
         this.change.emit({$event, $isolateScope: this, newVal: $event, oldVal: this.oldVal});
         this.oldVal = $event;
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

@@ -1,4 +1,4 @@
-import { ElementRef, Injector, Directive, ChangeDetectorRef, OnInit } from '@angular/core';
+import { ElementRef, Injector, Directive, ChangeDetectorRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { registerProps } from './layout-grid.props';
@@ -11,15 +11,11 @@ const WIDGET_CONFIG = {widgetType: 'wm-layoutgrid', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmLayoutGrid]'
 })
-export class LayoutgridDirective extends BaseComponent implements OnInit {
+export class LayoutgridDirective extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

@@ -14,6 +14,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
 import { transpile } from '@transpiler/build';
 import { VariablesService } from '@variables/services/variables.service';
+import { App } from './app.service';
+
+
+const pageScriptCache = new Map<string, Function>();
 
 @NgModule({
     declarations: [PartialContainerDirective],
@@ -27,7 +31,7 @@ class TempModule {
 
 @Injectable()
 export class PageUtils {
-    constructor(private $http: HttpClient, private compiler: Compiler) {
+    constructor(private $http: HttpClient, private compiler: Compiler, private app: App, private injector: Injector) {
     }
 
     getPageInfo(pageName) {
@@ -128,6 +132,18 @@ export class PageUtils {
     }
 
     getScriptFn($js, containerName, pageName, variables) {
+
+        let scriptFn = pageScriptCache.get(pageName);
+
+        //$js = '';
+
+        $js = `console.log(${containerName ? 'Partial' : 'Page'}, App, Injector); ${$js}`;
+
+        if (!scriptFn) {
+            scriptFn = new Function(containerName ? 'Partial' : 'Page', 'App', 'Injector', $js);
+            pageScriptCache.set(pageName, scriptFn);
+        }
+
         return (instance, inj) => {
             const variablesService = inj.get(VariablesService);
 
@@ -138,50 +154,52 @@ export class PageUtils {
             instance.Variables = $variables.Variables;
             instance.Actions = $variables.Actions;
 
-            const scriptFn = new Function('Application', $js);
-            const ctrlCache = {};
-            const Application = {
-                $controller: function (ctrlName, ctrlDef) {
-                    ctrlCache[ctrlName] = ctrlDef;
-                }
-            };
-            scriptFn(Application);
+            scriptFn(instance, this.app, this.injector)
 
-            Object.keys(ctrlCache).forEach(ctrlName => {
-                let ctrlArray = ctrlCache[ctrlName];
-                let args = [];
-                if (ctrlArray.length > 1) {
-
-                    for (let i = 0; i < ctrlArray.length - 1; i++) {
-                        let value = ctrlArray[i];
-                        if (value === '$scope') {
-                            args.push(instance);
-                        }
-
-                        if (value === '$rootScope') {
-                            args.push({});
-                        }
-
-                        if (value === 'Utils') {
-                            args.push({toString: () => void 0});
-                        }
-
-                        if (value === '$http') {
-                            args.push(inj.get(HttpClient));
-                        }
-
-                        if (value === '$timeout') {
-                            args.push(setTimeout);
-                        }
-
-                        if (value === '$interval') {
-                            args.push(setInterval);
-                        }
-                    }
-
-                    ctrlArray[ctrlArray.length - 1].apply(this, args);
-                }
-            });
+            // const scriptFn = new Function('Application', $js);
+            // const ctrlCache = {};
+            // const Application = {
+            //     $controller: function (ctrlName, ctrlDef) {
+            //         ctrlCache[ctrlName] = ctrlDef;
+            //     }
+            // };
+            // scriptFn(Application);
+            //
+            // Object.keys(ctrlCache).forEach(ctrlName => {
+            //     let ctrlArray = ctrlCache[ctrlName];
+            //     let args = [];
+            //     if (ctrlArray.length > 1) {
+            //
+            //         for (let i = 0; i < ctrlArray.length - 1; i++) {
+            //             let value = ctrlArray[i];
+            //             if (value === '$scope') {
+            //                 args.push(this);
+            //             }
+            //
+            //             if (value === '$rootScope') {
+            //                 args.push({});
+            //             }
+            //
+            //             if (value === 'Utils') {
+            //                 args.push({toString: () => void 0});
+            //             }
+            //
+            //             if (value === '$http') {
+            //                 args.push(inj.get(HttpClient));
+            //             }
+            //
+            //             if (value === '$timeout') {
+            //                 args.push(setTimeout);
+            //             }
+            //
+            //             if (value === '$interval') {
+            //                 args.push(setInterval);
+            //             }
+            //         }
+            //
+            //         ctrlArray[ctrlArray.length - 1].apply(this, args);
+            //     }
+            // });
 
         }
     }

@@ -1,4 +1,4 @@
-import { ElementRef, Injector, Directive, HostBinding, HostListener, ChangeDetectorRef, OnInit } from '@angular/core';
+import { ElementRef, Injector, Directive, HostBinding, HostListener, ChangeDetectorRef } from '@angular/core';
 import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
@@ -12,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-text', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmText]'
 })
-export class TextDirective extends BaseComponent implements OnInit {
+export class TextDirective extends BaseComponent {
 
     @HostBinding('attr.tabindex') tabindex: number;
     @HostBinding('attr.accesskey') shortcutkey: string;
@@ -40,10 +40,6 @@ export class TextDirective extends BaseComponent implements OnInit {
 
         addClass(this.$element, DEFAULT_CLS);
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }
 

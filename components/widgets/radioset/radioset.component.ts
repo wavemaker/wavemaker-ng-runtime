@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './radioset.props';
@@ -17,7 +17,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
     selector: '[wmRadioset]',
     templateUrl: './radioset.component.html'
 })
-export class RadiosetComponent extends BaseComponent implements OnInit {
+export class RadiosetComponent extends BaseComponent {
     class = '';
     width;
     height;
@@ -156,9 +156,5 @@ export class RadiosetComponent extends BaseComponent implements OnInit {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

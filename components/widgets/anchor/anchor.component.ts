@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector } from '@angular/core';
 import { setAttr} from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
@@ -14,7 +14,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-anchor', hostClass: DEFAULT_CLS};
     selector: 'a[wmAnchor]',
     templateUrl: './anchor.component.html'
 })
-export class AnchorComponent extends BaseComponent implements OnInit {
+export class AnchorComponent extends BaseComponent {
     encodeurl;
 
     @HostBinding('attr.tabindex') tabindex: number;
@@ -41,9 +41,5 @@ export class AnchorComponent extends BaseComponent implements OnInit {
         setAttr(this.$element, 'href', 'javascript:void(0)');
 
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

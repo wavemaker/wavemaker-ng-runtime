@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
 import { getFormattedDate, addEventListener, EVENT_LIFE } from '@utils/utils';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
@@ -16,7 +16,7 @@ registerProps();
     selector: '[wmDateTime]',
     templateUrl: './date-time.component.html'
 })
-export class DatetimeComponent extends BaseComponent implements OnInit {
+export class DatetimeComponent extends BaseComponent {
     /**
      * This property sets the widget to readonly mode
      */
@@ -208,10 +208,6 @@ export class DatetimeComponent extends BaseComponent implements OnInit {
             this.clearTimeInterval();
         });
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 
     onPropertyChange(key, newVal, oldVal) {

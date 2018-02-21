@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ChangeDetectorRef, forwardRef, OnInit } from '@angular/core';
+import { Component, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { registerProps } from './right-panel.props';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
@@ -16,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-right-panel', hostClass: DEFAULT_CLS};
         {provide: '@Widget', useExisting: forwardRef(() => RightPanelComponent)}
     ]
 })
-export class RightPanelComponent extends BaseComponent implements OnInit {
+export class RightPanelComponent extends BaseComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
@@ -28,9 +28,5 @@ export class RightPanelComponent extends BaseComponent implements OnInit {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

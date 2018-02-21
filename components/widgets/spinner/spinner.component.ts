@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import { getBackGroundImageUrl } from '@utils/utils';
 import { BaseComponent } from '../base/base.component';
@@ -16,7 +16,7 @@ registerProps();
     selector: '[wmSpinner]',
     templateUrl: './spinner.component.html'
 })
-export class SpinnerComponent extends BaseComponent implements OnInit {
+export class SpinnerComponent extends BaseComponent {
 
     iconclass = 'fa fa-spinner';
     /**
@@ -66,9 +66,5 @@ export class SpinnerComponent extends BaseComponent implements OnInit {
     set spinnerMessages(newVal) {
         this.showCaption = _.isEmpty(newVal);
         this._spinnerMessages = newVal;
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

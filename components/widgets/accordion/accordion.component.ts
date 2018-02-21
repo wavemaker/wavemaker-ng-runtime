@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, EventEmitter, forwardRef, Injector, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, EventEmitter, forwardRef, Injector, Output } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { registerProps } from './accordion.props';
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-accordion', hostClass: DEFAULT_CLS};
     selector: 'div[wmAccordion]',
     providers: [{provide: '@AccordionParent', useExisting: forwardRef(() => AccordionDirective)}]
 })
-export class AccordionDirective extends BaseComponent implements OnInit {
+export class AccordionDirective extends BaseComponent {
     panes: any = [];
     activePane: any;
     paneIndex = 0;
@@ -51,9 +51,5 @@ export class AccordionDirective extends BaseComponent implements OnInit {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

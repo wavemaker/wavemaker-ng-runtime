@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './slider.props';
@@ -12,7 +12,7 @@ registerProps();
     selector: '[wmSlider]',
     templateUrl: './slider.component.html'
 })
-export class SliderComponent extends BaseComponent implements OnInit {
+export class SliderComponent extends BaseComponent {
 
     oldVal;
     datavalue;
@@ -27,9 +27,5 @@ export class SliderComponent extends BaseComponent implements OnInit {
     onChange($event) {
         this.change.emit({$event, $isolateScope: this, newVal: this.datavalue, oldVal: this.oldVal});
         this.oldVal = this.datavalue;
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

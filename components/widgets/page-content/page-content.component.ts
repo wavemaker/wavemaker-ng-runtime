@@ -1,4 +1,4 @@
-import { ElementRef, Injector, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ElementRef, Injector, ChangeDetectorRef, Component } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './page-content.props';
 import { switchClass } from '@utils/dom';
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
     selector: '[wmPageContent]',
     templateUrl: './page-content.component.html'
 })
-export class PageContentComponent extends BaseComponent implements OnInit {
+export class PageContentComponent extends BaseComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
@@ -25,9 +25,5 @@ export class PageContentComponent extends BaseComponent implements OnInit {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

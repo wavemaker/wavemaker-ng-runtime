@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ElementRef, Injector, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { styler } from '../../utils/styler';
 import { isDefined, isPageable, triggerFn } from '@utils/utils';
@@ -38,7 +38,7 @@ const sizeClasses = {
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html'
 })
-export class PaginationComponent extends BaseComponent implements OnInit {
+export class PaginationComponent extends BaseComponent {
 
     @Output() resultEmitter: EventEmitter<any> = new EventEmitter();
     @Output() maxResultsEmitter: EventEmitter<any> = new EventEmitter();
@@ -364,9 +364,5 @@ export class PaginationComponent extends BaseComponent implements OnInit {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

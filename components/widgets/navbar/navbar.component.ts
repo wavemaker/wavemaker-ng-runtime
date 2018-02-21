@@ -1,5 +1,5 @@
 import { BaseComponent } from '../../widgets/base/base.component';
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { getImageUrl } from '@utils/utils';
 import { registerProps } from './navbar.props';
@@ -15,7 +15,7 @@ declare const _, $;
     selector: '[wmNavbar]',
     templateUrl: './navbar.component.html'
 })
-export class NavbarComponent extends BaseComponent implements OnInit {
+export class NavbarComponent extends BaseComponent {
     imagesrc;
 
     $navbarContent;
@@ -49,9 +49,5 @@ export class NavbarComponent extends BaseComponent implements OnInit {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$navbarContent = $(this.$element).children().find('> #collapse-content');
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

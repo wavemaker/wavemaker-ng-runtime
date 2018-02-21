@@ -1,4 +1,4 @@
-import { Injector, ElementRef, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Injector, ElementRef, ChangeDetectorRef, Component } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './icon.props';
 import { styler } from '../../utils/styler';
@@ -12,15 +12,11 @@ const WIDGET_CONFIG = {widgetType: 'wm-icon', hostClass: DEFAULT_CLS};
     selector: '[wmIcon]',
     templateUrl: './icon.component.html'
 })
-export class IconComponent extends BaseComponent implements OnInit {
+export class IconComponent extends BaseComponent {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

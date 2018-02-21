@@ -14,7 +14,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { VariablesModule } from '@variables/variables.module';
 import { VariablesService } from '@variables/services/variables.service';
 
-import {MetadataResolve} from './resolves/metadata.resolve';
+import { MetadataResolve } from './resolves/metadata.resolve';
+import { AppJSResolve } from './resolves/app-js.resolve';
+import { App } from './services/app.service';
 
 const routes = [
     {
@@ -22,7 +24,8 @@ const routes = [
         component: PageWrapperComponent,
         pathMatch: 'full',
         resolve: {
-            metadata: MetadataResolve
+            metadata: MetadataResolve,
+            appJS: AppJSResolve
         }
     }
 ];
@@ -43,7 +46,14 @@ const routes = [
         HttpClientModule,
         RouterModule.forRoot(routes, {useHash: true})
     ],
-    providers: [PipeProvider, PageUtils, VariablesService, MetadataResolve],
+    providers: [
+        PipeProvider,
+        PageUtils,
+        VariablesService,
+        MetadataResolve,
+        App,
+        AppJSResolve
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
