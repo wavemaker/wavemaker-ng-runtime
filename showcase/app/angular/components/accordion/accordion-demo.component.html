@@ -1,24 +1,39 @@
 <div class="col-md-9">
-    <wm-accordion [closeothers]="closeothers" [height]="height" [defaultpaneindex]="defaultpaneindex" [tabindex]="tabindex">
-        <wm-accordionpane [title]="'News'" [subheading]="'14-12-17'">
-            <wm-panel [title]="'Regional'">
-                <wm-button [caption]="'Toggle'"></wm-button>
-                <wm-panel-footer></wm-panel-footer>
-            </wm-panel>
-        </wm-accordionpane>
-        <wm-accordionpane [title]="'Sports'" [subheading]="'14-12-17'">
-            <wm-panel [title]="'Cricket'">
-                <wm-button [caption]="'Toggle'"></wm-button>
-                <wm-panel-footer></wm-panel-footer>
-            </wm-panel>
-        </wm-accordionpane>
-        <wm-accordionpane [title]="'Movies'" [subheading]="'14-12-17'">
-            <wm-panel [title]="'Bollywood'">
-                <wm-button [caption]="'Toggle'"></wm-button>
-                <wm-panel-footer></wm-panel-footer>
-            </wm-panel>
-        </wm-accordionpane>
-    </wm-accordion>
+    <div wmAccordion closeothers.bind="closeothers" height.bind="height" defaultpaneindex.bind="defaultpaneindex" tabindex.bind="tabindex">
+        <div wmAccordionPane title.bind="'News'" subheading.bind="'14-12-17'">
+            <div wmPanel title.bind="'Regional'" expanded.bind="true" collapsible.bind="true">
+                <img wmPicture
+                     picturesource.bind="'https://pbs.twimg.com/profile_images/718314968102367232/ypY1GPCQ.jpg'"
+                     width.bind="'100px'"
+                >
+                <div wmPanelFooter>
+                    <label wmLabel class.bind="'text-muted'" caption.bind="'Additional Info'"></label>
+                </div>
+            </div>
+        </div>
+        <div wmAccordionPane title.bind="'Sports'" subheading.bind="'14-12-17'">
+            <div wmPanel title.bind="'Cricket'" expanded.bind="true" collapsible.bind="true">
+                <img wmPicture
+                     picturesource.bind="'http://www.checkfit.co.uk/files-client/blog_images/800-600/cricket.jpg'"
+                     width.bind="'100px'"
+                >
+                <div wmPanelFooter>
+                    <label wmLabel class.bind="'text-muted'" caption.bind="'Additional Info'"></label>
+                </div>
+            </div>
+        </div>
+        <div wmAccordionPane title.bind="'Movies'" subheading.bind="'14-12-17'">
+            <div wmPanel title.bind="'Bollywood'" expanded.bind="true" collapsible.bind="true">
+                <img wmPicture
+                     picturesource.bind="'https://kinepolis.lu/en/sites/kinepolis.lu.en/files/styles/general_item_big/public/general_page/image/bollywood_logo.png'"
+                     width.bind="'100px'"
+                >
+                <div wmPanelFooter>
+                    <label wmLabel class.bind="'text-muted'" caption.bind="'Additional Info'"></label>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>
