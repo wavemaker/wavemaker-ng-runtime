@@ -121,7 +121,7 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
  * @param eventName
  * @param args
  */
-export const invokeEventHandler = (component, eventName, args) => {
+export const invokeEventHandler = (component, eventName, args?) => {
 
     if (!component) {
         return;

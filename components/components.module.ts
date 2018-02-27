@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BsDatepickerModule, BsDropdownModule, TimepickerModule, TypeaheadModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, TimepickerModule, ProgressbarModule, TypeaheadModule } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 
@@ -43,6 +43,7 @@ import { PageContentComponent } from './widgets/page-content/page-content.compon
 import { PartialDirective } from './widgets/partial/partial.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { PictureDirective } from './widgets/picture/picture.directive';
+import { ProgressBarComponent } from './widgets/progress-bar/progress-bar.component';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { RatingComponent } from './widgets/rating/rating.component';
 import { RightPanelComponent } from './widgets/right-panel/right-panel.component';
@@ -73,7 +74,7 @@ const wmComponents = [
     ButtonGroupDirective,
     CalendarComponent,
     CheckboxComponent,
-    ColorPickerComponent ,
+    ColorPickerComponent,
     ContainerDirective,
     ContentComponent,
     CurrencyComponent,
@@ -101,6 +102,7 @@ const wmComponents = [
     PartialDirective,
     PanelComponent,
     PictureDirective,
+    ProgressBarComponent,
     RadiosetComponent,
     RatingComponent,
     RightPanelComponent,
@@ -132,7 +134,8 @@ const wmComponents = [
         TimepickerModule.forRoot(),
         BsDropdownModule.forRoot(),
         PaginationModule.forRoot(),
-        TypeaheadModule.forRoot()
+        TypeaheadModule.forRoot(),
+        ProgressbarModule.forRoot()
     ],
     declarations: wmComponents,
     exports: wmComponents,

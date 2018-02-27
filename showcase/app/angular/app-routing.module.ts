@@ -46,7 +46,8 @@ import { HomeComponent } from './components/home/home.component';
             {path: 'accordion', loadChildren: './components/accordion/accordion-demo.module#AccordionDemoModule', pathMatch: 'full'},
             {path: 'container', loadChildren: './components/container/container-demo.module#ContainerDemoModule', pathMatch: 'full'},
             {path: 'tile', loadChildren: './components/tile/tile-demo.module#TileDemoModule', pathMatch: 'full'},
-            {path: 'toggle', loadChildren: './components/toggle/toggle-demo.module#ToggleDemoModule', pathMatch: 'full'}
+            {path: 'toggle', loadChildren: './components/toggle/toggle-demo.module#ToggleDemoModule', pathMatch: 'full'},
+            {path: 'progressbar', loadChildren: './components/progress-bar/progress-bar-demo.module#ProgressBarDemoModule', pathMatch: 'full'}
         ])
     ],
     exports: [RouterModule]
