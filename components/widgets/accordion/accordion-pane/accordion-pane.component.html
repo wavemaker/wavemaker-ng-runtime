@@ -1,0 +1,27 @@
+<div class="panel-heading clearfix" (click)="togglePane($event)" [ngClass]="{active: isActive}">
+    <h3 class="panel-title">
+        <a href="javascript:void(0);" class="accordion-toggle">
+            <div class="pull-left">
+                <i class="app-icon panel-icon {{iconclass}}" [class.ng-hide]="!iconclass"></i>
+            </div>
+            <div class="pull-left">
+                <div class="heading" [innerHTML]="title"></div>
+                <div class="description" [innerHTML]="subheading"></div>
+            </div>
+        </a>
+    </h3>
+    <div class="panel-actions">
+        <span class="label label-{{badgetype}}">{{badgevalue}}</span>
+        <button type="button"
+                class="app-icon wi panel-action"
+                title="{{$root.appLocale.LABEL_COLLAPSE}}/{{$root.appLocale.LABEL_EXPAND}}"
+                [ngClass]="isActive ? 'wi-minus': 'wi-plus'">
+        </button>
+    </div>
+</div>
+<div class="panel-collapse collapse"  [ngClass]="isActive ? 'collapse in' : 'collapse'">
+    <!--TODO: Implement smoothscroll directive and wm-navigable-element directive-->
+    <div class="panel-body" wm-smoothscroll="smoothscroll" partial-container-target>
+        <ng-content></ng-content>
+    </div>
+</div>

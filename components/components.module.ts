@@ -7,6 +7,8 @@ import { ColorPickerModule } from 'ngx-color-picker';
 
 import { widgetsByName } from './utils/init-widget';
 
+import { AccordionDirective } from './widgets/accordion/accordion.component';
+import { AccordionPaneComponent } from './widgets/accordion/accordion-pane/accordion-pane.component';
 import { AnchorComponent } from './widgets/anchor/anchor.component';
 import { AudioComponent } from './widgets/audio/audio.component';
 import { ButtonDirective } from './widgets/button/button.component';
@@ -62,6 +64,8 @@ import { TableActionDirective } from './widgets/table/table-action/table-action.
 import { TableRowActionDirective } from './widgets/table/table-row-action/table-row-action.directive';
 
 const wmComponents = [
+    AccordionDirective,
+    AccordionPaneComponent,
     AnchorComponent,
     AudioComponent,
     ButtonDirective,
