@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BsDatepickerModule, BsDropdownModule, TimepickerModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, TimepickerModule, TypeaheadModule } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 
@@ -44,6 +44,7 @@ import { PictureDirective } from './widgets/picture/picture.directive';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { RatingComponent } from './widgets/rating/rating.component';
 import { RightPanelComponent } from './widgets/right-panel/right-panel.component';
+import { SearchComponent } from './widgets/search/search.component';
 import { SelectComponent } from './widgets/select/select.component';
 import { SliderComponent } from './widgets/slider/slider.component';
 import { SpinnerComponent } from './widgets/spinner/spinner.component';
@@ -98,6 +99,7 @@ const wmComponents = [
     RadiosetComponent,
     RatingComponent,
     RightPanelComponent,
+    SearchComponent,
     SelectComponent,
     SliderComponent,
     SpinnerComponent,
@@ -123,7 +125,8 @@ const wmComponents = [
         BsDatepickerModule.forRoot(),
         TimepickerModule.forRoot(),
         BsDropdownModule.forRoot(),
-        PaginationModule.forRoot()
+        PaginationModule.forRoot(),
+        TypeaheadModule.forRoot()
     ],
     declarations: wmComponents,
     exports: wmComponents,

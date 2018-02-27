@@ -1,11 +1,11 @@
 <div class="col-md-9">
-    <wm-search [searchkey]="searchkey"
-               [dataset]="dataset"
-               [displayimagesrc]="displayimagesrc"
-               [datafield]="datafield"
-               [orderby]="orderby"
-               [displaylabel]="displaylabel"
-               [datavalue]="datavalue" #wmSearch></wm-search><br><br>
+    <div wmSearch searchkey.bind="searchkey"
+               dataset.bind="dataset"
+               displayimagesrc.bind="displayimagesrc"
+               datafield.bind="datafield"
+               orderby.bind="orderby"
+               displaylabel.bind="displaylabel"
+               datavalue.bind="datavalue" #wmSearch></div><br><br>
 
     Result: {{wmSearch.result | json}} <br><br>
 
