@@ -7,6 +7,10 @@ import { ServiceVariableService } from './service-variable/service-variable.serv
 import { NavigationVariableService } from './navigation-variable/navigation-variable.service';
 import { NotificationVariable } from './notification-variable/notification-variable';
 import { $watch } from '@utils/watcher';
+// import { HttpService } from '@http-service/http.service';
+import { HttpService } from './../../http-service/http.service';
+// import { setDependency } from '@variables/utils/variables.utils';
+import { setDependency } from './../utils/variables.utils';
 
 @Injectable()
 export class VariablesService {
@@ -14,17 +18,19 @@ export class VariablesService {
     variablesMap = {};
     metadataMap = {};
 
-    constructor(private serviceVariableService: ServiceVariableService, private navigationVariableService: NavigationVariableService) {
+    constructor(private serviceVariableService: ServiceVariableService, private navigationVariableService: NavigationVariableService, private httpService: HttpService) {
+        // set external dependencies
+        setDependency('http', this.httpService);
     }
 
     processBinding(variable: any, $scope: any) {
-        let dataBinding = variable.dataBinding;
+        const dataBinding = variable.dataBinding;
         variable.dataBinding = {};
-        for (let bindingObj of dataBinding) {
-            let target = bindingObj.target;
-            let value = bindingObj.value;
+        for (const bindingObj of dataBinding) {
+            const target = bindingObj.target;
+            const value = bindingObj.value;
             if (value.startsWith('bind:')) {
-                let bindExpr = value.replace('bind:', '');
+                const bindExpr = value.replace('bind:', '');
                 $watch(bindExpr, $scope, {}, function (nv, ov) {
                     variable.dataBinding[target] = nv;
                 });
@@ -41,7 +47,7 @@ export class VariablesService {
     instantiateVariables(variables: any, scope: any) {
         // Variable instantiation for each class here.
         // Each variable is extended with its properties and methods.
-        let instanceVariables = {},
+        const instanceVariables = {},
             instanceActions = {};
         for (const variableName in variables) {
             const variable = variables[variableName];
@@ -52,6 +58,7 @@ export class VariablesService {
                     break;
                 case 'wm.ServiceVariable':
                     variableInstance = new ServiceVariable(variable, this.serviceVariableService, scope);
+                    variableInstance.scope = scope;
                     this.processBinding(variableInstance, scope);
                     if (variableInstance.startUpdate) {
                         this.invokeVariable(variableInstance, scope);
@@ -59,6 +66,11 @@ export class VariablesService {
                     break;
                 case 'wm.LiveVariable':
                     variableInstance = new LiveVariable(variable);
+                    variableInstance.scope = scope;
+                    console.log('Live Variable Initialized', variableInstance);
+                    if (variableInstance.startUpdate) {
+                        this.invokeVariable(variableInstance, scope);
+                    }
                     break;
                 case 'wm.NavigationVariable':
                     actionInstance = new NavigationVariable(variable, this.navigationVariableService);

@@ -24,12 +24,12 @@ export class ServiceVariable extends StaticVariable {
     onBeforeDatasetReady: string;
     onSuccess: string;
 
-    constructor(variable: any, private serviceVariableService: ServiceVariableService, private scope: any) {
+    constructor(variable: any, private serviceVariableService?: ServiceVariableService, private scope?: any) {
         super(variable);
         Object.assign(this, variable);
     }
 
-    invoke() {
+    invoke(options, success, error) {
         return this.serviceVariableService.invoke(this);
     }
 

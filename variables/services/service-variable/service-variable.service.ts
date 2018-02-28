@@ -13,7 +13,6 @@ export class ServiceVariableService {
     httpClient;
     httpService;
 
-//  constructor(metadataService: MetadataService, httpCLient: HttpClient, httpService: HttpService) {
     constructor(metadataService: MetadataService, httpCLient: HttpClient, httpService: HttpService) {
         this.metadataService = metadataService;
         this.httpClient = httpCLient;

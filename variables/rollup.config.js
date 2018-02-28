@@ -16,6 +16,15 @@ export default {
         '@angular/common/http': 'ng.common.http',
         '@utils/watcher': 'wm.utils',
         '@utils/expression-parser': 'wm.utils',
-        '@utils/utils': 'wm.utils'
+        '@utils/utils': 'wm.utils',
+        '@variables/variables.module': 'wm.variables',
+        '@variables/services/variables.service': 'wm.variables',
+        '@variables/constants/variables.constants': 'wm.variables',
+        '@variables/utils/variables.utils': 'wm.variables',
+        '@variables/services/metadata-service/metadata.service': 'wm.variables',
+        '@variables/services/static-variable/static-variable': 'wm.variables',
+        '@variables/services/service-variable/service-variable': 'wm.variables',
+        '@variables/services/live-variable/live-variable.utils': 'wm.variables',
+        '@variables/services/live-variable/live-variable.http.utils': 'wm.variables'
     }
 };
