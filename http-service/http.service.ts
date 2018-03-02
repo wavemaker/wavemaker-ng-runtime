@@ -1,9 +1,11 @@
+declare const _;
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class HttpService {
     httpClient: HttpClient;
+    nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
 
     constructor(httpClient: HttpClient) {
         this.httpClient = httpClient;
@@ -36,13 +38,22 @@ export class HttpService {
         for (let h in headers) {
             reqHeaders = reqHeaders.append(h, headers[h]);
         }
+        reqHeaders = reqHeaders.append('testHeader', 'test Header Value');
         for (let p in params) {
             reqParams = reqParams.append(p, params[p]);
         }
-        let req = new HttpRequest(options.method, options.url, {
+        let third, fourth, reqOptions = {
             headers: reqHeaders,
             params: reqParams
-        });
+        };
+        if (_.includes(this.nonBodyTypeMethods, options.method)) {
+            third = reqOptions;
+            fourth = null;
+        } else {
+            third = options.data;
+            fourth = reqOptions;
+        }
+        let req = new HttpRequest(options.method, options.url, third, fourth );
 
         return this.httpClient.request(req).toPromise();
     }

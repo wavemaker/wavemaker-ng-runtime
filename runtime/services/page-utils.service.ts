@@ -155,7 +155,7 @@ export class PageUtils {
                     for (let i = 0; i < ctrlArray.length - 1; i++) {
                         let value = ctrlArray[i];
                         if (value === '$scope') {
-                            args.push(this);
+                            args.push(instance);
                         }
 
                         if (value === '$rootScope') {

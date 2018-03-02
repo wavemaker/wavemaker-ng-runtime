@@ -422,4 +422,61 @@ export const isPageable = (obj: any): boolean => {
         'totalPages'      : 1
     };
     return (_.equals(_.keys(pageable), _.keys(obj).sort()));
+};
+
+/*
+ * Util method to replace patterns in string with object keys or array values
+ * Examples:
+ * Utils.replace('Hello, ${first} ${last} !', {first: 'wavemaker', last: 'ng'}) --> Hello, wavemaker ng
+ * Utils.replace('Hello, ${0} ${1} !', ['wavemaker','ng']) --> Hello, wavemaker ng
+ */
+export const replace = (template, map) => {
+    if (!template) {
+        return;
+    }
+
+    return template.replace(REGEX.REPLACE_PATTERN, function (match, key) {
+        return _.get(map, key);
+    });
+};
+
+// Format value for datetime types
+const _formatDate = (dateValue, type) => {
+    var epoch;
+    if (_.isDate(dateValue)) {
+        epoch = dateValue.getTime();
+    } else {
+        if (!isNaN(dateValue)) {
+            dateValue = parseInt(dateValue, 10);
+        }
+        epoch = dateValue && moment(dateValue).valueOf();
+    }
+    if (type === 'timestamp') {
+        return epoch;
+    }
+    if (type === 'time' && !epoch) {
+        epoch = moment(new Date().toDateString() + ' ' + dateValue).valueOf();
+    }
+    return dateValue; // && $filter('date')(epoch, getDateTimeFormatForType(type));
 }
+
+/*Function to convert values of date time types into default formats*/
+export const formatDate = (value, type) => {
+    if (_.includes(type, '.')) {
+        type = _.toLower(extractType(type));
+    }
+    if (_.isArray(value)) {
+        return _.map(value, function (val) {
+            return _formatDate(val, type);
+        });
+    }
+    return _formatDate(value, type);
+};
+
+/*Function to check if date time type*/
+export const isDateTimeType = (type) => {
+    if (_.includes(type, '.')) {
+        type = _.toLower(extractType(type));
+    }
+    return _.includes(['date', 'time', 'timestamp', 'datetime', 'localdatetime'], type);
+};
