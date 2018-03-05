@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '@angular/core';
+import { Directive, ElementRef, Injector, ChangeDetectorRef, forwardRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './container.props';
 import { addClass } from '@utils/dom';
@@ -15,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-container', hostClass: DEFAULT_CLS};
         {provide: '@Widget', useExisting: forwardRef(() => ContainerDirective)}
     ]
 })
-export class ContainerDirective extends BaseComponent {
+export class ContainerDirective extends BaseComponent implements OnInit {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
@@ -24,4 +24,7 @@ export class ContainerDirective extends BaseComponent {
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+    }
 }

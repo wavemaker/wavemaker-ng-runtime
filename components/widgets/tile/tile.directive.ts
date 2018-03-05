@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
+import { Directive, ElementRef, Injector, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './tile.props';
 import { addClass, setProperty } from '@utils/dom';
@@ -12,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-tile', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmTile]'
 })
-export class TileDirective extends BaseComponent {
+export class TileDirective extends BaseComponent implements OnInit {
 
     onPropertyChange(key, nv, ov?) {
         switch (key) {
@@ -28,4 +28,7 @@ export class TileDirective extends BaseComponent {
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+    }
 }

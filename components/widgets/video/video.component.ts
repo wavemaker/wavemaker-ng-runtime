@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './video.props';
 import { styler } from '../../utils/styler';
@@ -21,7 +21,7 @@ registerProps();
     selector: '[wmVideo]',
     templateUrl: './video.component.html'
 })
-export class VideoComponent extends BaseComponent {
+export class VideoComponent extends BaseComponent implements OnInit {
 
     mp4videoUrl: SafeResourceUrl = '';
     webmvideoUrl: SafeResourceUrl = '';
@@ -73,5 +73,9 @@ export class VideoComponent extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

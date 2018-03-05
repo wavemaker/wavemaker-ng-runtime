@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './audio.props';
 import { styler } from '../../utils/styler';
@@ -13,7 +13,7 @@ registerProps();
     selector: '[wmAudio]',
     templateUrl: './audio.component.html'
 })
-export class AudioComponent extends BaseComponent {
+export class AudioComponent extends BaseComponent implements OnInit {
 
     mp3audioUrl: SafeResourceUrl = '';
 
@@ -33,5 +33,9 @@ export class AudioComponent extends BaseComponent {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

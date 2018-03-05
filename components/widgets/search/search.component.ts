@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, Injector, ChangeDetectorRef, Output, EventEmitter, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { BaseComponent } from '../base/base.component';
@@ -27,7 +27,7 @@ registerProps();
   selector: '[wmSearch]',
   templateUrl: './search.component.html'
 })
-export class SearchComponent extends BaseComponent {
+export class SearchComponent extends BaseComponent implements OnInit {
     /**
      * The onChange event for the search input
      */
@@ -302,7 +302,8 @@ export class SearchComponent extends BaseComponent {
         this.keydown.emit($event);
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         this.dataSource = Observable.create((observer: any) => {
             observer.next(this.queryModel);
         }).mergeMap((token: string) => this.filterData(token));

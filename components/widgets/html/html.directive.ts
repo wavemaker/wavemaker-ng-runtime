@@ -1,4 +1,4 @@
-import { Injector, ElementRef, ChangeDetectorRef, Directive, HostBinding } from '@angular/core';
+import { Injector, ElementRef, ChangeDetectorRef, Directive, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './html.props';
 import { styler } from '../../utils/styler';
@@ -12,7 +12,7 @@ registerProps();
 @Directive({
     selector: '[wmHtml]'
 })
-export class HtmlDirective extends BaseComponent {
+export class HtmlDirective extends BaseComponent implements OnInit {
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
@@ -31,4 +31,7 @@ export class HtmlDirective extends BaseComponent {
         }
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+    }
 }

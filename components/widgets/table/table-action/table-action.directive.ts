@@ -1,4 +1,4 @@
-import { Optional, ElementRef, Injector, ChangeDetectorRef, Directive } from '@angular/core';
+import { Optional, ElementRef, Injector, ChangeDetectorRef, Directive, OnInit } from '@angular/core';
 import { TableParent } from '../parent';
 import { registerProps } from './table-action.props';
 import { BaseComponent } from '../../base/base.component';
@@ -11,7 +11,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 @Directive({
     selector: '[wmTableAction]'
 })
-export class TableActionDirective extends BaseComponent {
+export class TableActionDirective extends BaseComponent implements OnInit {
     accessroles;
     action;
     caption;
@@ -51,9 +51,9 @@ export class TableActionDirective extends BaseComponent {
         };
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         this.populateAction();
         this._tableParent.registerActions(this.buttonDef);
     }
-
 }

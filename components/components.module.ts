@@ -11,7 +11,7 @@ import { AccordionDirective } from './widgets/accordion/accordion.component';
 import { AccordionPaneComponent } from './widgets/accordion/accordion-pane/accordion-pane.component';
 import { AnchorComponent } from './widgets/anchor/anchor.component';
 import { AudioComponent } from './widgets/audio/audio.component';
-import { ButtonDirective } from './widgets/button/button.component';
+import { ButtonComponent } from './widgets/button/button.component';
 import { ButtonGroupDirective } from './widgets/button-group/button-group.directive';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { CheckboxComponent } from './widgets/checkbox/checkbox.component';
@@ -26,7 +26,7 @@ import { LayoutGridRowDirective } from './widgets/layout-grid/layout-grid-row/la
 import { LayoutGridColumnComponent } from './widgets/layout-grid/layout-grid-column/layout-grid-column.component';
 import { HeaderComponent } from './widgets/header/header.component';
 import { HtmlDirective } from './widgets/html/html.directive';
-import { IconDirective } from './widgets/icon/icon.component';
+import { IconComponent } from './widgets/icon/icon.component';
 import { IframeComponent } from './widgets/iframe/iframe.component';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layout-grid/layout-grid.directive';
@@ -39,7 +39,7 @@ import { NavDirective } from './widgets/nav/nav.directive';
 import { NavItemDirective } from './widgets/nav-item/nav-item.directive';
 import { NavbarComponent } from './widgets/navbar/navbar.component';
 import { PageDirective } from './widgets/page/page.directive';
-import { PageContentDirective } from './widgets/page-content/page-content.component';
+import { PageContentComponent } from './widgets/page-content/page-content.component';
 import { PartialDirective } from './widgets/partial/partial.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { PictureDirective } from './widgets/picture/picture.directive';
@@ -68,7 +68,7 @@ const wmComponents = [
     AccordionPaneComponent,
     AnchorComponent,
     AudioComponent,
-    ButtonDirective,
+    ButtonComponent,
     ButtonGroupDirective,
     CalendarComponent,
     CheckboxComponent,
@@ -83,7 +83,7 @@ const wmComponents = [
     LayoutGridColumnComponent,
     HeaderComponent,
     HtmlDirective,
-    IconDirective,
+    IconComponent,
     IframeComponent,
     LabelDirective,
     LayoutgridDirective,
@@ -96,7 +96,7 @@ const wmComponents = [
     NavItemDirective,
     NavbarComponent,
     PageDirective,
-    PageContentDirective,
+    PageContentComponent,
     PartialDirective,
     PanelComponent,
     PictureDirective,

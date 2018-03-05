@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, Injector, OnInit } from '@angular/core';
 import { setProperty, toggleClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
@@ -12,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-label', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmLabel]'
 })
-export class LabelDirective extends BaseComponent {
+export class LabelDirective extends BaseComponent implements OnInit {
 
     onPropertyChange(key, nv, ov?) {
         switch (key) {
@@ -28,5 +28,9 @@ export class LabelDirective extends BaseComponent {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

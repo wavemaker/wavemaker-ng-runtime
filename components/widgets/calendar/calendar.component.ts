@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { registerProps } from './calendar.props';
@@ -91,7 +91,7 @@ registerProps();
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html'
 })
-export class CalendarComponent extends BaseComponent implements AfterViewInit {
+export class CalendarComponent extends BaseComponent implements AfterViewInit, OnInit {
     /**
      * The calendar element reference
      */
@@ -495,7 +495,8 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit {
         super(WIDGET_CONFIG, inj, elRef, cdr);
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
     }
 

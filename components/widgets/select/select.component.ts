@@ -1,4 +1,4 @@
-import { ElementRef, Injector, Component, ChangeDetectorRef } from '@angular/core';
+import { ElementRef, Injector, Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './select.props';
@@ -14,7 +14,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
     selector: '[wmSelect]',
     templateUrl: './select.component.html'
 })
-export class SelectComponent extends BaseComponent {
+export class SelectComponent extends BaseComponent implements OnInit {
 
     public readonly;
     public multiple;
@@ -137,7 +137,8 @@ export class SelectComponent extends BaseComponent {
         super(WIDGET_CONFIG, inj, elRef, cdr);
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         styler(<HTMLElement>this.$element.children[0], this);
     }
 }

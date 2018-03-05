@@ -1,4 +1,4 @@
-import { Directive, Optional, SkipSelf, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
+import { Directive, Optional, SkipSelf, ElementRef, Injector, ChangeDetectorRef, OnInit } from '@angular/core';
 import { TableGroupParent, TableParent, provideTheParent } from '../parent';
 import { setHeaderConfigForTable } from '../../../utils/live-utils';
 import { registerProps } from './table-column-group.props';
@@ -11,7 +11,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
     selector: '[wmTableColumnGroup',
     providers: [provideTheParent(TableGroupParent, TableColumnGroupDirective)]
 })
-export class TableColumnGroupDirective extends BaseComponent implements TableGroupParent {
+export class TableColumnGroupDirective extends BaseComponent implements TableGroupParent, OnInit {
 
     accessroles;
     backgroundcolor;
@@ -41,7 +41,8 @@ export class TableColumnGroupDirective extends BaseComponent implements TableGro
         };
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         this.populateConfig();
         setHeaderConfigForTable(this._tableParent.headerConfig, this.config, this._groupParent && this._groupParent.name);
     }

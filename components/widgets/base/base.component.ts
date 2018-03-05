@@ -20,8 +20,6 @@ export class BaseComponent implements OnDestroy, OnInit {
     destroy = new Subject();
     destroy$ = this.destroy.asObservable();
 
-    _ngOnInit() {}
-
     constructor ({widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
         this.$element = $host.nativeElement;
         this.widgetType = widgetType;
@@ -54,6 +52,5 @@ export class BaseComponent implements OnDestroy, OnInit {
 
     ngOnInit() {
         this.init();
-        this._ngOnInit();
     }
 }

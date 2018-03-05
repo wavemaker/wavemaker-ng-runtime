@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Injector, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Output, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './checkbox.props';
 import { styler } from '../../utils/styler';
@@ -13,7 +13,7 @@ registerProps();
     selector: '[wmCheckbox]',
     templateUrl: './checkbox.component.html'
 })
-export class CheckboxComponent  extends BaseComponent {
+export class CheckboxComponent  extends BaseComponent implements OnInit {
 
     model: boolean;
     /**
@@ -58,7 +58,8 @@ export class CheckboxComponent  extends BaseComponent {
         super(WIDGET_CONFIG, inj, elRef, cdr);
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         styler(this.$element.querySelector('label'), this);
     }
 

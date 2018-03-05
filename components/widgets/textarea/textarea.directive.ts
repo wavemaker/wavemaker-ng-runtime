@@ -1,4 +1,4 @@
-import { ElementRef, Injector, Directive, HostBinding, HostListener, ChangeDetectorRef } from '@angular/core';
+import { ElementRef, Injector, Directive, HostBinding, HostListener, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './textarea.props';
@@ -11,7 +11,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-textarea', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmTextarea]'
 })
-export class TextareaDirective extends BaseComponent {
+export class TextareaDirective extends BaseComponent implements OnInit {
 
     @HostBinding('attr.tabindex') tabindex: number;
     @HostBinding('attr.accesskey') shortcutkey: string;
@@ -34,4 +34,7 @@ export class TextareaDirective extends BaseComponent {
         styler(this.$element, this);
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+    }
 }

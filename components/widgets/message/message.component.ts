@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef, Output, EventEmitter, HostBinding } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, Output, EventEmitter, HostBinding, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -14,7 +14,7 @@ registerProps();
     selector: '[wmMessage]',
     templateUrl: './message.component.html'
 })
-export class MessageComponent extends BaseComponent {
+export class MessageComponent extends BaseComponent implements OnInit {
 
     messageClass = '';
     messageContent;
@@ -92,5 +92,9 @@ export class MessageComponent extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitize: DomSanitizer) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

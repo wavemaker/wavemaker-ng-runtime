@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnDestroy, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnDestroy, OnInit, Output } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { EVENT_LIFE, getFormattedDate, addEventListener } from '@utils/utils';
 import { styler } from '../../utils/styler';
@@ -21,7 +21,7 @@ registerProps();
     selector: '[wmTime]',
     templateUrl: './time.component.html'
 })
-export class TimeComponent extends BaseComponent implements OnDestroy {
+export class TimeComponent extends BaseComponent implements OnDestroy, OnInit {
     /**
      * This property sets the widget to readonly mode
      */
@@ -135,6 +135,9 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
         this.destroy$.subscribe(() => this.clearTimeInterval());
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+    }
     /**
      * This is an internal method used to execute the on time change functionality
      */

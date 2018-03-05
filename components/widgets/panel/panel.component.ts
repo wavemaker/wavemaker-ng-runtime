@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ChangeDetectorRef, forwardRef } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ChangeDetectorRef, forwardRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { getImageUrl } from '@utils/utils';
 import { registerProps } from './panel.props';
@@ -17,7 +17,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-panel', hostClass: DEFAULT_CLS};
         {provide: '@Widget', useExisting: forwardRef(() => PanelComponent)}
     ]
 })
-export class PanelComponent extends BaseComponent {
+export class PanelComponent extends BaseComponent implements OnInit {
 
     iconurl: string;
     iconclass: string;
@@ -119,7 +119,8 @@ export class PanelComponent extends BaseComponent {
         styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         styler(this.$panelContent.nativeElement.children[0], this, APPLY_STYLES_TYPE.INNER_SHELL);
     }
 }

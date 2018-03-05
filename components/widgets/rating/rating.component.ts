@@ -1,4 +1,4 @@
-import { Component, Input, Injector, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { generateGUId, getClonedObject } from '@utils/utils';
 import { styler } from '../../utils/styler';
@@ -29,7 +29,7 @@ const DEFAULT_RATING = 5;
     selector: '[wmRating]',
     templateUrl: './rating.component.html'
 })
-export class RatingComponent extends BaseComponent {
+export class RatingComponent extends BaseComponent implements OnInit {
     _model_;
     /**
      * A placeholder is text to show in the editor when there is no value.
@@ -317,11 +317,11 @@ export class RatingComponent extends BaseComponent {
         this.$digest();
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         if (!this.dataset) {
             this.range = this.prepareRatingDataset(this.maxvalue);
             this.caption = this.getCaption();
         }
-
     }
 }

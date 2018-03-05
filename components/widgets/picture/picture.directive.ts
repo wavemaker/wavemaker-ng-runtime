@@ -1,4 +1,4 @@
-import { Directive, Injector, ElementRef, ChangeDetectorRef, HostBinding } from '@angular/core';
+import { Directive, Injector, ElementRef, ChangeDetectorRef, HostBinding, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './picture.props';
 import { addClass, setAttr, setCSSObj } from '@utils/dom';
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-picture', hostClass: DEFAULT_CLS};
 @Directive({
     'selector': '[wmPicture]'
 })
-export class PictureDirective extends BaseComponent {
+export class PictureDirective extends BaseComponent implements OnInit {
 
     encodeurl;
     picturesource;
@@ -79,5 +79,9 @@ export class PictureDirective extends BaseComponent {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

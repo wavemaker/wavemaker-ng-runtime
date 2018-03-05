@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, Injector, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, Injector, OnInit, Output } from '@angular/core';
 import { BaseComponent } from '../../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../../utils/styler';
 import { registerProps } from './accordion-pane.props';
@@ -16,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
     selector: 'div[wmAccordionPane]',
     templateUrl: './accordion-pane.component.html'
 })
-export class AccordionPaneComponent extends BaseComponent implements AfterViewInit {
+export class AccordionPaneComponent extends BaseComponent implements AfterViewInit, OnInit {
     isActive;
     paneId;
 
@@ -63,5 +63,9 @@ export class AccordionPaneComponent extends BaseComponent implements AfterViewIn
 
     ngAfterViewInit() {
         this.parentAccordion.register(this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

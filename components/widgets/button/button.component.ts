@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './button.props';
@@ -12,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-button', hostClass: DEFAULT_CLS};
     selector: 'button[wmButton]',
     templateUrl: './button.component.html'
 })
-export class ButtonDirective extends BaseComponent {
+export class ButtonComponent extends BaseComponent implements OnInit {
 
     @HostBinding('type') type: string = 'button';
     @HostBinding('tabIndex') tabindex: number;
@@ -24,5 +24,9 @@ export class ButtonDirective extends BaseComponent {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

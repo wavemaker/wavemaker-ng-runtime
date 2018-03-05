@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { CONSTANTS_CURRENCY } from './currency.constants';
 import { registerProps } from './currency.props';
@@ -13,14 +13,15 @@ registerProps();
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html'
 })
-export class CurrencyComponent extends BaseComponent {
+export class CurrencyComponent extends BaseComponent implements OnInit {
     currency: string;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         styler(this.$element.querySelector('input'), this);
     }
 

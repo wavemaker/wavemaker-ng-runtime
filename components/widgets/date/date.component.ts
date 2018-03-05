@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnInit, Output } from '@angular/core';
 import { getFormattedDate } from '@utils/utils';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { registerProps } from './date.props';
@@ -26,7 +26,7 @@ const getDateObj = (value?: string): Date => {
     selector: '[wmDate]',
     templateUrl: './date.component.html'
 })
-export class DateComponent extends BaseComponent {
+export class DateComponent extends BaseComponent implements OnInit {
     /**
      * This is an internal property used to map it to the widget
      */
@@ -112,5 +112,9 @@ export class DateComponent extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef, OnInit } from '@angular/core';
 import { TableParent, provideTheParent } from './parent';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { styler } from '../../utils/styler';
@@ -38,7 +38,7 @@ const rowOperations = {
     templateUrl: './table.component.html',
     providers: [provideTheParent(TableParent, TableComponent)]
 })
-export class TableComponent extends BaseComponent implements TableParent, AfterContentInit {
+export class TableComponent extends BaseComponent implements TableParent, AfterContentInit, OnInit {
 
     @ViewChild(PaginationComponent) dataNavigator;
     @ViewChild('datagridElement') private _tableElement: ElementRef;
@@ -731,5 +731,9 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }

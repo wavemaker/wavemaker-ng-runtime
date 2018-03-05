@@ -1,4 +1,4 @@
-import { Optional, ElementRef, Injector, ChangeDetectorRef, Directive } from '@angular/core';
+import { Optional, ElementRef, Injector, ChangeDetectorRef, Directive, OnInit } from '@angular/core';
 import { TableParent, TableGroupParent } from '../parent';
 import { setHeaderConfigForTable } from '../../../utils/live-utils';
 import { registerProps } from './table-column.props';
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 @Directive({
     selector: '[wmTableColumn]'
 })
-export class TableColumnDirective extends BaseComponent {
+export class TableColumnDirective extends BaseComponent implements OnInit {
 
     backgroundcolor;
     binding;
@@ -82,7 +82,8 @@ export class TableColumnDirective extends BaseComponent {
         };
     }
 
-    _ngOnInit() {
+    ngOnInit() {
+        super.ngOnInit();
         this.populateFieldDef();
         this._tableParent.registerColumns(this.fieldDef);
         setHeaderConfigForTable(this._tableParent.headerConfig, {
