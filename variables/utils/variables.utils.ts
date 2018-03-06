@@ -1,10 +1,18 @@
 import { $parse } from '@utils/expression-parser';
 
 export let httpService;
+export let metadataService;
+export let routerService;
 export const setDependency = (type: string, ref: any) => {
     switch (type) {
         case 'http':
             httpService = ref;
+            break;
+        case 'metadata':
+            metadataService = ref;
+            break;
+        case 'router':
+            routerService = ref;
             break;
     }
 };

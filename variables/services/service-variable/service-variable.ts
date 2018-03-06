@@ -1,6 +1,5 @@
 import { StaticVariable } from '../static-variable/static-variable';
-// import {externalServices} from '../../../services/externalservices';
-import { ServiceVariableService } from './service-variable.service';
+import * as SVUtils from './service-variable.utils';
 
 export class ServiceVariable extends StaticVariable {
 
@@ -24,13 +23,13 @@ export class ServiceVariable extends StaticVariable {
     onBeforeDatasetReady: string;
     onSuccess: string;
 
-    constructor(variable: any, private serviceVariableService?: ServiceVariableService, private scope?: any) {
+    constructor(variable: any, private scope?: any) {
         super(variable);
         Object.assign(this, variable);
     }
 
     invoke(options, success, error) {
-        return this.serviceVariableService.invoke(this);
+        return SVUtils.invoke(this, options, success, error);
     }
 
     getData() {

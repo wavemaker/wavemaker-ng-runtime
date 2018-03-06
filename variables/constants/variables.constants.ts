@@ -1,3 +1,6 @@
+export const CONSTANTS = {
+    hasCordova: false
+};
 export const VARIABLE_CONSTANTS = {
     EVENTS: ['onBefore',
         'onBeforeUpdate',
@@ -39,8 +42,21 @@ export const VARIABLE_CONSTANTS = {
         'MESSAGE_RECEIVE': 'onMessageReceive',
         'BEFORE_CLOSE': 'onBeforeClose'
     },
-    OWNER: {'APP': 'App',
-        'PAGE': 'Page'}
+    OWNER: {
+        'APP': 'App',
+        'PAGE': 'Page'
+    },
+    REST_SUPPORTED_SERVICES: ['JavaService', 'SoapService', 'FeedService', 'RestService', 'SecurityServiceType', 'DataService', 'WebSocketService'],
+    PAGINATION_PARAMS: ['page', 'size', 'sort']
+};
+
+export const WS_CONSTANTS = {
+    NON_BODY_HTTP_METHODS: ['GET', 'HEAD'],
+    CONTENT_TYPES: {
+        FORM_URL_ENCODED: 'application/x-www-form-urlencoded',
+        MULTIPART_FORMDATA: 'multipart/form-data',
+        OCTET_STREAM: 'application/octet-stream'
+    }
 };
 
 export const DB_CONSTANTS = {

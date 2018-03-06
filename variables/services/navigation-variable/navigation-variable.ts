@@ -1,22 +1,16 @@
 import { StaticVariable } from '../static-variable/static-variable';
-// import {externalServices} from '../../../services/externalservices';
-import { NavigationVariableService } from './navigation-variable.service';
+import * as NVUtils from './navigation-variable.util';
 
 export class NavigationVariable extends StaticVariable {
     operation: string;
     pageName: string;
 
-    constructor(variable: any, private navigationVariableService: NavigationVariableService) {
+    constructor(variable: any) {
         super(variable);
         Object.assign(this, variable);
     }
 
-    navigate() {
-        console.log('Imma navigate soon. Trust me');
-        this.navigationVariableService.navigate(this.dataBinding.pageName);
-    }
-
     invoke() {
-        this.navigate();
+        NVUtils.navigate(this.dataBinding.pageName);
     }
 }

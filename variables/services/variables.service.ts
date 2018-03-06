@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { StaticVariable } from './static-variable/static-variable';
 import { ServiceVariable } from './service-variable/service-variable';
 import { LiveVariable } from './live-variable/live-variable';
 import { NavigationVariable } from './navigation-variable/navigation-variable';
-import { ServiceVariableService } from './service-variable/service-variable.service';
-import { NavigationVariableService } from './navigation-variable/navigation-variable.service';
 import { NotificationVariable } from './notification-variable/notification-variable';
+
 import { $watch } from '@utils/watcher';
-// import { HttpService } from '@http-service/http.service';
 import { HttpService } from './../../http-service/http.service';
-// import { setDependency } from '@variables/utils/variables.utils';
 import { setDependency } from './../utils/variables.utils';
+import { MetadataService } from './metadata-service/metadata.service';
 
 @Injectable()
 export class VariablesService {
@@ -18,9 +18,13 @@ export class VariablesService {
     variablesMap = {};
     metadataMap = {};
 
-    constructor(private serviceVariableService: ServiceVariableService, private navigationVariableService: NavigationVariableService, private httpService: HttpService) {
+    constructor(private httpService: HttpService,
+                private metadataService: MetadataService,
+                private routerService: Router) {
         // set external dependencies
         setDependency('http', this.httpService);
+        setDependency('metadata', this.metadataService);
+        setDependency('router', this.routerService);
     }
 
     processBinding(variable: any, $scope: any) {
@@ -57,7 +61,7 @@ export class VariablesService {
                     variableInstance = new StaticVariable(variable);
                     break;
                 case 'wm.ServiceVariable':
-                    variableInstance = new ServiceVariable(variable, this.serviceVariableService, scope);
+                    variableInstance = new ServiceVariable(variable, scope);
                     variableInstance.scope = scope;
                     this.processBinding(variableInstance, scope);
                     if (variableInstance.startUpdate) {
@@ -73,7 +77,7 @@ export class VariablesService {
                     }
                     break;
                 case 'wm.NavigationVariable':
-                    actionInstance = new NavigationVariable(variable, this.navigationVariableService);
+                    actionInstance = new NavigationVariable(variable);
                     this.processBinding(actionInstance, scope);
                     break;
                 case 'wm.NotificationVariable':
