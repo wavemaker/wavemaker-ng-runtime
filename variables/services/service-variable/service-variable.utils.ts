@@ -341,7 +341,7 @@ const makeCall = (params) => {
     return httpService.send(params);
 };
 
-const processErrorResponse = (variable, errMsg, errorCB, xhrObj, skipNotification, skipDefaultNotification) => {
+const processErrorResponse = (variable, errMsg, errorCB, xhrObj?, skipNotification?, skipDefaultNotification?) => {
     // EVENT: ON_ERROR
     if (!skipNotification) {
         initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, xhrObj, skipDefaultNotification);
@@ -395,5 +395,7 @@ export const invoke = (variable, options, success, error) => {
     return makeCall(requestParams).then(function (response) {
         variable.dataSet = response.body;
         initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
+    }, function (e) {
+        processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
     });
 };
