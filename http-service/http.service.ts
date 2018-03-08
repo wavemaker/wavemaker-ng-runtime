@@ -35,14 +35,22 @@ export class HttpService {
         let reqParams = new HttpParams();
         const headers = options.headers;
         const params = options.params;
+
+        // TODO[VIBHU]: not to be sent with non-proxy calls from service var
+        reqHeaders = reqHeaders.append('X-Requested-With', 'XMLHttpRequest');
+
+        // headers
         for (let h in headers) {
             reqHeaders = reqHeaders.append(h, headers[h]);
         }
-        reqHeaders = reqHeaders.append('testHeader', 'test Header Value');
+
+        // params
         for (let p in params) {
             reqParams = reqParams.append(p, params[p]);
         }
-        let third, fourth, reqOptions = {
+
+        let third, fourth;
+        const reqOptions = {
             headers: reqHeaders,
             params: reqParams
         };

@@ -1,15 +1,23 @@
-declare const _;
-import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS } from './../../constants/variables.constants';
-import { initiateCallback } from './../../utils/variables.utils';
-import { httpService, metadataService } from './../../utils/variables.utils';
+declare const _, window;
+import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS, SWAGGER_CONSTANTS, $rootScope } from './../../constants/variables.constants';
+import { httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy } from './../../utils/variables.utils';
+import { formatDate, isDateTimeType, extractType, getBlob, getClonedObject } from '@utils/utils';
 
-const getMethodInfo = (variable, inputFields, methodInfo, options) => {
-    // if(!variable._wmServiceOperationInfo) {
-    //     return {};
-    // }
-    // var methodInfo = Utils.getClonedObject(variable._wmServiceOperationInfo),
+const isBodyTypeQueryOrProcedure = (variable) => {
+    return (_.includes(['QueryExecution', 'ProcedureExecution'], variable.controller)) && (_.includes(['put', 'post'], variable.operationType));
+};
+
+const isQueryServiceVar = (variable) => {
+    return variable.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY && variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.DATA;
+};
+
+const getMethodInfo = (variable, inputFields, options) => {
+    const methodInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+    if (!methodInfo) {
+        return {};
+    }
     const securityDefnObj = _.get(methodInfo.securityDefinitions, '0'),
-        isOAuthTypeService = false; // securityDefnObj && (securityDefnObj.type === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN_OAUTH2);
+        isOAuthTypeService = securityDefnObj && (securityDefnObj.type === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2);
     if (methodInfo.parameters) {
         methodInfo.parameters.forEach(function (param) {
             // Ignore readOnly params in case of formData file params will be duplicated
@@ -24,14 +32,60 @@ const getMethodInfo = (variable, inputFields, methodInfo, options) => {
                 } else if (param.name === 'page') {
                     param.sampleValue = options.page || param.sampleValue;
                 } else if (param.name === 'sort') {
-                    // param.sampleValue = Variables.getEvaluatedOrderBy(variable.orderBy, options.orderBy) || param.sampleValue;
+                    param.sampleValue = getEvaluatedOrderBy(variable.orderBy, options.orderBy) || param.sampleValue;
                 }
             } else if (param.name === 'access_token' && isOAuthTypeService) {
-                // param.sampleValue = oAuthProviderService.getAccessToken(securityDefnObj[OAUTH_PROVIDER_KEY]);
+                // TODO: oauthProviderService integration
+                // param.sampleValue = oAuthProviderService.getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY]);
+                param.sampleValue = 'TEST_VAL' + securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY];
             }
         });
     }
     return methodInfo;
+};
+
+const getFormData = (formData, param, paramValue) => {
+    const paramType = _.toLower(extractType(_.get(param, 'items.type') || param.type)),
+        paramContentType = CONSTANTS.isStudioMode ? param['x-WM-CONTENT_TYPE'] : param.contentType;
+    if (isFileUploadSupported()) {
+        if ((paramType !== 'file') && (paramContentType === 'string' || !paramContentType)) {
+            if (_.isObject(paramValue)) {
+                paramValue = JSON.stringify(paramValue);
+            }
+            formData.append(param.name, paramValue);
+        } else {
+            if (_.isArray(paramValue) && paramType === 'file') {
+                _.forEach(paramValue, function (fileObject) {
+                    formData.append(param.name, getBlob(fileObject), fileObject.name);
+                });
+            } else {
+                formData.append(param.name, getBlob(paramValue, paramContentType), paramValue && paramValue.name);
+            }
+        }
+        return formData;
+    }
+};
+
+/**
+ * Goes though request headers, appends 'X-' to certain headers
+ * these headers need not be processed at proxy server and should directly be passed to the server
+ * e.g. Authorization, Cookie, etc.
+ * @param headers
+ * @returns {{}}
+ */
+export const cloakHeadersForProxy = (headers) => {
+    const _headers = {},
+        UNCLOAKED_HEADERS = VARIABLE_CONSTANTS.REST_SERVICE.UNCLOAKED_HEADERS,
+        CLOAK_PREFIX = VARIABLE_CONSTANTS.REST_SERVICE.PREFIX.CLOAK_HEADER_KEY;
+    _.forEach(headers, function (val, key) {
+        if (_.includes(UNCLOAKED_HEADERS, key.toUpperCase())) {
+            _headers[key] = val;
+        } else {
+            _headers[CLOAK_PREFIX + key] = val;
+        }
+    });
+
+    return _headers;
 };
 
 const processRequestBody = (inputData, params) => {
@@ -41,7 +95,7 @@ const processRequestBody = (inputData, params) => {
     _.forEach(params, function (param) {
         paramValue = _.get(inputData, param.name);
         if (!_.isUndefined(paramValue) && (paramValue !== '') && !param.readOnly) {
-            // paramValue = Utils.isDateTimeType(param.type) ? Utils.formatDate(paramValue, param.type) : paramValue;
+            // paramValue = isDateTimeType(param.type) ? formatDate(paramValue, param.type) : paramValue;
             // Construct ',' separated string if param is not array type but value is an array
             // if (_.isArray(paramValue) && _.toLower(Utils.extractType(param.type)) === 'string') {
             //     paramValue = _.join(paramValue, ',');
@@ -58,15 +112,15 @@ const processRequestBody = (inputData, params) => {
 };
 
 const constructRequestParams = (variable, operationInfo, inputFields) => {
-
     variable = variable || {};
-    let queryParams = '',
-        directPath = operationInfo.directPath || '',
+    const directPath = operationInfo.directPath || '',
         relativePath = operationInfo.basePath ? operationInfo.basePath + operationInfo.relativePath : operationInfo.relativePath,
+        nonFileTypeParams = {},
+        isBodyTypeQueryProcedure = isBodyTypeQueryOrProcedure(variable);
+    let queryParams = '',
         bodyInfo,
         headers = {},
         requestBody,
-        nonFileTypeParams = {},
         url,
         requiredParamMissing = [],
         target,
@@ -78,7 +132,6 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
         method,
         formData,
         isProxyCall,
-        isBodyTypeQueryProcedure = false,// = ServiceFactory.isBodyTypeQueryProcedure(variable),
         paramValueInfo,
         params,
         securityDefnObj,
@@ -94,19 +147,44 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
 
     securityDefnObj = _.get(operationInfo.securityDefinitions, '0');
 
-    // if (securityDefnObj && securityDefnObj.type === SECURITY_DEFINITIONS_TYPE_OAUTH) {
-    //     accessToken = oAuthProviderService.getAccessToken(securityDefnObj[OAUTH_PROVIDER_KEY]);
-    //     if (accessToken) {
-    //         headers[AUTH_HDR_KEY] = 'Bearer ' + accessToken;
-    //     } else {
-    //         return {
-    //             'error': {
-    //                 'type' : ERR_TYPE_NO_ACCESSTOKEN
-    //             },
-    //             'securityDefnObj': securityDefnObj
-    //         };
-    //     }
-    // }
+    if (securityDefnObj) {
+        switch (securityDefnObj.type) {
+            case VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2:
+                // TODO[VIBHU]: oAuthProviderService migration to be done.
+                // accessToken = oAuthProviderService.getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY]);
+                accessToken = 'TEMP_ACCESS_TOKEN_' + securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY];
+                if (accessToken) {
+                    headers[VARIABLE_CONSTANTS.REST_SERVICE.AUTH_HDR_KEY] = VARIABLE_CONSTANTS.REST_SERVICE.PREFIX.AUTH_HDR_VAL.OAUTH + ' ' + accessToken;
+                } else {
+                    return {
+                        'error': {
+                            'type' : VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN
+                        },
+                        'securityDefnObj': securityDefnObj
+                    };
+                }
+                break;
+            case VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.BASIC:
+                uname = inputFields['wm_auth_username'];
+                pswd = inputFields['wm_auth_password'];
+                if (uname && pswd) {
+                    // TODO[VIBHU]: bas64 encoding alternative.
+                    headers[VARIABLE_CONSTANTS.REST_SERVICE.AUTH_HDR_KEY] = VARIABLE_CONSTANTS.REST_SERVICE.PREFIX.AUTH_HDR_VAL.BASIC + ' ' + btoa(uname + ':' + pswd);
+                    authDetails = {
+                        'type': VARIABLE_CONSTANTS.REST_SERVICE.AUTH_TYPE.BASIC
+                    };
+                } else {
+                    return {
+                        'error': {
+                            'type' : VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_CREDENTIALS,
+                            'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_CREDENTIALS
+                        },
+                        'securityDefnObj': securityDefnObj
+                    };
+                }
+                break;
+        }
+    }
     operationInfo.proxySettings = operationInfo.proxySettings || {web: true, mobile: false};
     method = operationInfo.httpMethod || operationInfo.methodType;
     isProxyCall = (function () {
@@ -125,47 +203,34 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
                 paramValueInfo = inputFields;
                 params = _.get(operationInfo, ['definitions', param.type]);
             } else {
-                //For Api Designer
+                // For Api Designer
                 paramValueInfo = paramValue || {};
                 params = param.children;
             }
         }
 
-        var paramValue = param.sampleValue;
+        let paramValue = param.sampleValue;
 
         if ((!_.isUndefined(paramValue) && paramValue !== null && paramValue !== '') || (isBodyTypeQueryProcedure && param.type !== 'file')) {
-            //Format dateTime params for dataService variables
-            // if (variable.serviceType === 'DataService' && Utils.isDateTimeType(param.type)) {
-            //     paramValue = Utils.formatDate(paramValue, param.type);
-            // }
-            //Construct ',' separated string if param is not array type but value is an array
-            // if (WM.isArray(paramValue) && _.toLower(Utils.extractType(param.type)) === 'string' && variable.serviceType === 'DataService') {
-            //     paramValue = _.join(paramValue, ',');
-            // }
+            // Format dateTime params for dataService variables
+            if (variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.DATA && isDateTimeType(param.type)) {
+                paramValue = formatDate(paramValue, param.type);
+            }
+            // Construct ',' separated string if param is not array type but value is an array
+            if (_.isArray(paramValue) && _.toLower(extractType(param.type)) === 'string' && variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.DATA) {
+                paramValue = _.join(paramValue, ',');
+            }
             switch (param.parameterType.toUpperCase()) {
                 case 'QUERY':
-                    //Ignore null valued query params for queryService variable
-                    // if (_.isNull(paramValue) && isQueryServiceVar(variable)) {
-                    //     break;
-                    // }
+                    // Ignore null valued query params for queryService variable
+                    if (_.isNull(paramValue) && isQueryServiceVar(variable)) {
+                        break;
+                    }
                     if (!queryParams) {
                         queryParams = '?' + param.name + '=' + encodeURIComponent(paramValue);
                     } else {
                         queryParams += '&' + param.name + '=' + encodeURIComponent(paramValue);
                     }
-                    break;
-                case 'AUTH':
-                    // if (param.name === 'wm_auth_username') {
-                    //     uname = paramValue;
-                    // } else if (param.name === 'wm_auth_password') {
-                    //     pswd = paramValue;
-                    // }
-                    // if (uname && pswd) {
-                    //     headers[AUTH_HDR_KEY] = "Basic " + $base64.encode(uname + ':' + pswd);
-                    //     authDetails = {
-                    //         'type': AUTH_TYPE_BASIC
-                    //     };
-                    // }
                     break;
                 case 'PATH':
                     /* replacing the path param based on the regular expression in the relative path */
@@ -176,7 +241,7 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
                     headers[param.name] = paramValue;
                     break;
                 case 'BODY':
-                    //For post/put query methods wrap the input
+                    // For post/put query methods wrap the input
                     if (isBodyTypeQueryProcedure) {
                         setParamsOfChildNode();
                         bodyInfo = processRequestBody(paramValueInfo, params);
@@ -187,15 +252,15 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
                     }
                     break;
                 case 'FORMDATA':
-                    // if (isBodyTypeQueryProcedure && param.name === SWAGGER_CONSTANTS.WM_DATA_JSON) {
-                    //     setParamsOfChildNode();
-                    //     //Process query/procedure formData non-file params params
-                    //     bodyInfo = this.processRequestBody(paramValueInfo, params);
-                    //     requestBody = Utils.getFormData(getFormDataObj(), param, bodyInfo.requestBody);
-                    //     requiredParamMissing = _.concat(requiredParamMissing, bodyInfo.missingParams);
-                    // } else {
-                    //     requestBody = Utils.getFormData(getFormDataObj(), param, paramValue);
-                    // }
+                    if (isBodyTypeQueryProcedure && param.name === SWAGGER_CONSTANTS.WM_DATA_JSON) {
+                        setParamsOfChildNode();
+                        // Process query/procedure formData non-file params params
+                        bodyInfo = this.processRequestBody(paramValueInfo, params);
+                        requestBody = getFormData(getFormDataObj(), param, bodyInfo.requestBody);
+                        requiredParamMissing = _.concat(requiredParamMissing, bodyInfo.missingParams);
+                    } else {
+                        requestBody = getFormData(getFormDataObj(), param, paramValue);
+                    }
                     break;
             }
         } else if (param.required) {
@@ -227,16 +292,16 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
 
     // if the consumes has application/x-www-form-urlencoded and
     // if the http request of given method type can have body send the queryParams as Form Data
-    // if (_.includes(operationInfo.consumes, WS_CONSTANTS.CONTENT_TYPES.FORM_URL_ENCODED)
-    //     && !_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, (method || '').toUpperCase())) {
-    //     // remove the '?' at the start of the queryParams
-    //     if (queryParams) {
-    //         requestBody = (requestBody ? requestBody + '&' : '') + queryParams.substring(1);
-    //     }
-    //     headers['Content-Type'] = WS_CONSTANTS.CONTENT_TYPES.FORM_URL_ENCODED;
-    // } else {
-    url += queryParams;
-    // }
+    if (_.includes(operationInfo.consumes, WS_CONSTANTS.CONTENT_TYPES.FORM_URL_ENCODED)
+        && !_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, (method || '').toUpperCase())) {
+        // remove the '?' at the start of the queryParams
+        if (queryParams) {
+            requestBody = (requestBody ? requestBody + '&' : '') + queryParams.substring(1);
+        }
+        headers['Content-Type'] = WS_CONSTANTS.CONTENT_TYPES.FORM_URL_ENCODED;
+    } else {
+        url += queryParams;
+    }
 
     /*
      * for proxy calls:
@@ -244,8 +309,8 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
      *  - prepare complete url from relativeUrl
      */
     if (isProxyCall) {
-        //avoiding cloakHeadersForProxy when the method is invoked from apidesigner.
-        //headers = variable.serviceType !== SERVICE_TYPE_REST || operationInfo.skipCloakHeaders ? headers : cloakHeadersForProxy(headers);
+        // avoiding cloakHeadersForProxy when the method is invoked from apidesigner.
+         headers = variable.serviceType !== VARIABLE_CONSTANTS.SERVICE_TYPE.REST || operationInfo.skipCloakHeaders ? headers : cloakHeadersForProxy(headers);
         if (variable._prefabName && VARIABLE_CONSTANTS.REST_SUPPORTED_SERVICES.indexOf(variable.serviceType) !== -1) {
             /* if it is a prefab variable (used in a normal project), modify the url */
             url = '/prefabs/' + variable._prefabName + url;
@@ -253,20 +318,20 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
         } else if (!variable._prefabName) {
             url = 'services' + url;
         }
-        //url = $rootScope.project.deployedUrl + url;
+        url = $rootScope.project.deployedUrl + url;
     }
 
     /*creating the params needed to invoke the service. url is generated from the relative path for the operation*/
     invokeParams = {
-        // 'projectID': $rootScope.project.id,
+        'projectID': $rootScope.project.id,
         'url': url,
         'target': target,
         'method': method,
         'headers': headers,
-        'dataParams': requestBody,
+        'data': requestBody,
         'authDetails': authDetails,
-        'isDirectCall': !isProxyCall// ,
-        // 'isExtURL': variable.serviceType === SERVICE_TYPE_REST
+        'isDirectCall': !isProxyCall,
+        'isExtURL': variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.REST
     };
 
     return invokeParams;
@@ -276,12 +341,59 @@ const makeCall = (params) => {
     return httpService.send(params);
 };
 
+const processErrorResponse = (variable, errMsg, errorCB, xhrObj, skipNotification, skipDefaultNotification) => {
+    // EVENT: ON_ERROR
+    if (!skipNotification) {
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, xhrObj, skipDefaultNotification);
+    }
+    const methodInfo = getMethodInfo(variable, {}, {}),
+        securityDefnObj = _.get(methodInfo, 'securityDefinitions.0');
+    if (_.get(methodInfo.securityDefinitions, '0.type') === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2
+        && _.includes([VARIABLE_CONSTANTS.HTTP_STATUS_CODE.UNAUTHORIZED, VARIABLE_CONSTANTS.HTTP_STATUS_CODE.FORBIDDEN], _.get(xhrObj, 'status'))) {
+        // oAuthProviderService.removeAccessToken(securityDefnObj[OAUTH_PROVIDER_KEY]);
+    }
+    /* trigger error callback */
+    // triggerFn(errorCB, errMsg);
+
+    if (!CONSTANTS.isStudioMode) {
+        /* process next requests in the queue */
+        // variableActive[variable.activeScope.$id][variable.name] = false;
+        // variable.canUpdate = true;
+        // processRequestQueue(variable, requestQueue[variable.activeScope.$id], getDataInRun);
+
+        // EVENT: ON_CAN_UPDATE
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, xhrObj);
+    }
+};
+
+const handleRequestMetaError = (info, variable, errorCB, options) => {
+    if (info.error.type === VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN) {
+        // oAuthProviderService.performAuthorization(undefined, info.securityDefnObj[OAUTH_PROVIDER_KEY], getDataInRun.bind(undefined, variable, options, success, errorCB));
+        processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, true, true);
+        return;
+    }
+    if (info.error.message) {
+        console.warn(info.error.message);
+        processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
+        return;
+    }
+};
+
 export const invoke = (variable, options, success, error) => {
-    const metaData = metadataService.getByOperationId(variable.operationId);
-    const operationInfo = getMethodInfo(variable, variable.dataBinding, metaData.wmServiceOperationInfo, {});
-    const requestParams = constructRequestParams(variable, operationInfo, {});
+    options = options || {};
+    const operationInfo = getMethodInfo(variable, variable.dataBinding, {});
+    const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
+    const requestParams = constructRequestParams(variable, operationInfo, inputFields);
+
+    // check errors
+    if (requestParams.error) {
+        handleRequestMetaError(requestParams, variable, error, options);
+        return;
+    }
+
+    // make the call
     return makeCall(requestParams).then(function (response) {
         variable.dataSet = response.body;
-        initiateCallback('onSuccess', variable, variable.dataSet);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
     });
 };

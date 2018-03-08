@@ -480,3 +480,23 @@ export const isDateTimeType = (type) => {
     }
     return _.includes(['date', 'time', 'timestamp', 'datetime', 'localdatetime'], type);
 };
+
+/**
+ * prepare a blob object based on the content and content type provided
+ * if content is blob itself, simply returns it back
+ * @param val
+ * @param valContentType
+ * @returns {*}
+ */
+export const getBlob = (val, valContentType?) => {
+    if (val instanceof Blob) {
+        return val;
+    }
+    const jsonVal = getValidJSON(val);
+    if (jsonVal && jsonVal instanceof Object) {
+        val = new Blob([jsonVal], {type: valContentType || 'application/json'});
+    } else {
+        val = new Blob([val], {type: valContentType || 'text/plain'});
+    }
+    return val;
+};

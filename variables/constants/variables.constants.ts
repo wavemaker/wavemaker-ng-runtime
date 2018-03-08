@@ -1,5 +1,6 @@
 export const CONSTANTS = {
-    hasCordova: false
+    hasCordova: false,
+    isStudioMode: false
 };
 export const VARIABLE_CONSTANTS = {
     EVENTS: ['onBefore',
@@ -47,7 +48,57 @@ export const VARIABLE_CONSTANTS = {
         'PAGE': 'Page'
     },
     REST_SUPPORTED_SERVICES: ['JavaService', 'SoapService', 'FeedService', 'RestService', 'SecurityServiceType', 'DataService', 'WebSocketService'],
-    PAGINATION_PARAMS: ['page', 'size', 'sort']
+    PAGINATION_PARAMS: ['page', 'size', 'sort'],
+    REST_SERVICE: {
+        'BASE_PATH_KEY': 'x-WM-BASE_PATH',
+        'RELATIVE_PATH_KEY': 'x-WM-RELATIVE_PATH',
+        'OAUTH_PROVIDER_KEY': 'x-WM-PROVIDER_ID',
+        'AUTH_HDR_KEY': 'Authorization',
+        'SECURITY_DEFN': {
+            'BASIC': 'basic',
+            'OAUTH2': 'oauth2',
+        },
+        'AUTH_TYPE': {
+            'BASIC': 'BASIC',
+            'OAUTH': 'OAUTH2',
+            'NONE': 'NONE',
+        },
+        'CONTENT_TYPE_KEY': 'x-WM-CONTENT_TYPE',
+        'ACCESSTOKEN_PLACEHOLDER': {
+            'LEFT': '',
+            'RIGHT': '.access_token'
+        },
+        ERR_TYPE: {
+            NO_ACCESSTOKEN: 'missing_accesstoken',
+            NO_CREDENTIALS: 'no_credentials'
+        },
+        UNCLOAKED_HEADERS: ['CONTENT-TYPE', 'ACCEPT', 'CONTENT-LENGTH', 'ACCEPT-ENCODING', 'ACCEPT-LANGUAGE'],
+        PREFIX: {
+            AUTH_HDR_VAL: {
+                BASIC: 'Basic',
+                OAUTH: 'Bearer'
+            },
+            CLOAK_HEADER_KEY: 'X-WM-'
+        }
+    },
+    SERVICE_TYPE: {
+        JAVA: 'JavaService',
+        REST: 'RestService',
+        SOAP: 'SoapService',
+        FEED: 'FeedService',
+        DATA: 'DataService',
+        SECURITY: 'SecurityServiceType',
+        WEBSOCKET: 'WebSocketService',
+    },
+    CONTROLLER_TYPE: {
+        QUERY: 'QueryExecution',
+        PROCEDURE: 'ProcedureExecution'
+    },
+    HTTP_STATUS_CODE: {
+        CORS_FAILURE: -1,
+        UNAUTHORIZED: 401,
+        FORBIDDEN: 403
+    }
 };
 
 export const WS_CONSTANTS = {
