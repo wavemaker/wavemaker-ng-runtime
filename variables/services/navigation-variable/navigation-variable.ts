@@ -11,6 +11,6 @@ export class NavigationVariable extends StaticVariable {
     }
 
     invoke() {
-        NVUtils.navigate(this.dataBinding.pageName);
+        NVUtils.navigate(this.dataBinding.pageName, this.dataSet);
     }
 }

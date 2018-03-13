@@ -27,21 +27,22 @@ export class VariablesService {
         setDependency('router', this.routerService);
     }
 
-    processBinding(variable: any, $scope: any) {
-        const dataBinding = variable.dataBinding;
-        variable.dataBinding = {};
+    processBinding(variable: any, $scope: any, target: any) {
+        const dataBinding = target;
+        target = {};
         for (const bindingObj of dataBinding) {
-            const target = bindingObj.target;
+            const key = bindingObj.target;
             const value = bindingObj.value;
             if (value.startsWith('bind:')) {
                 const bindExpr = value.replace('bind:', '');
                 $watch(bindExpr, $scope, {}, function (nv, ov) {
-                    variable.dataBinding[target] = nv;
+                    target[key] = nv;
                 });
             } else {
-                variable.dataBinding[target] = value;
+                target[key] = value;
             }
         }
+        return target;
     }
 
     invokeVariable(variable: any, $scope: any) {
@@ -63,7 +64,7 @@ export class VariablesService {
                 case 'wm.ServiceVariable':
                     variableInstance = new ServiceVariable(variable, scope);
                     variableInstance.scope = scope;
-                    this.processBinding(variableInstance, scope);
+                    variableInstance.dataBinding = this.processBinding(variableInstance, scope, variableInstance.dataBinding);
                     if (variableInstance.startUpdate) {
                         this.invokeVariable(variableInstance, scope);
                     }
@@ -78,11 +79,12 @@ export class VariablesService {
                     break;
                 case 'wm.NavigationVariable':
                     actionInstance = new NavigationVariable(variable);
-                    this.processBinding(actionInstance, scope);
+                    actionInstance.dataSet = this.processBinding(actionInstance, scope, actionInstance.dataSet);
+                    actionInstance.dataBinding = this.processBinding(actionInstance, scope, actionInstance.dataBinding);
                     break;
                 case 'wm.NotificationVariable':
                     actionInstance = new NotificationVariable(variable);
-                    this.processBinding(actionInstance, scope);
+                    actionInstance.dataBinding = this.processBinding(actionInstance, scope, actionInstance.dataBinding);
                     break;
             }
 
