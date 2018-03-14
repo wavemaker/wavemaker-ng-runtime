@@ -6,7 +6,6 @@
     "angularCompilerOptions": {
         "genDir": "./dist",
         "debug": false,
-        "skipTemplateCodegen": true,
-        "enableIvy": true
+        "skipTemplateCodegen": true
     }
 }

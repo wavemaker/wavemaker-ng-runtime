@@ -2,17 +2,7 @@ import {
     HtmlParser,
     Element,
     Text,
-    Comment,
-    Parser,
-    Lexer,
-    MethodCall,
-    PropertyRead,
-    Chain,
-    PropertyWrite,
-    ImplicitReceiver,
-    LiteralPrimitive,
-    LiteralArray,
-    LiteralMap, PrefixNot, Binary, Conditional
+    Comment
 } from '@angular/compiler';
 
 const BIND_REG_EX = /^\s*bind:(.*)$/g;
@@ -40,77 +30,6 @@ const quoteAttr = v => {
 const registry = new Map<string, any>();
 const htmlParser = new HtmlParser();
 const ignoreComments = true;
-const expParser = new Parser(new Lexer);
-
-const processAST = (ast, argInfo) => {
-    let retValue = '';
-
-    if (ast instanceof LiteralPrimitive) {
-        if (typeof ast.value === 'string') {
-            return `'${ast.value}'`;
-        }
-        return ast.value;
-    } else if (ast instanceof LiteralArray) {
-        return `[${ast.expressions.map(e => processAST(e, argInfo))}]`;
-    } else if (ast instanceof LiteralMap) {
-        const keys = ast.keys.map(k => {
-            if (k.quoted) {
-                return `'${k.key}'`;
-            } else {
-                return k.key;
-            }
-        });
-
-        const values = ast.values.map(v => {
-            return processAST(v, argInfo);
-        });
-
-        const map = [];
-        keys.forEach((k, i) => {
-            map.push(`${k}:${values[i]}`);
-        });
-
-        return `{${map.join(',')}}`;
-    } else if (ast instanceof MethodCall) {
-        const args = ast.args.map(arg => {
-            if (argInfo[arg.name]) {
-
-                return argInfo[arg.name];
-            } else {
-                return processAST(arg, argInfo);
-            }
-        });
-
-        let receiver = processAST(ast.receiver, argInfo);
-        return `${receiver}${receiver.length ? '.' : ''}${ast.name}(${args.join(',')})`;
-    } else if (ast instanceof Chain) {
-        retValue += ast.expressions.map(e => {
-            return processAST(e, argInfo);
-        }).join(';');
-        return retValue;
-    } else if (ast instanceof ImplicitReceiver) {
-        return '';
-    } else if (ast instanceof PropertyRead) {
-        const receiver = processAST(ast.receiver, argInfo);
-        return `${receiver}${receiver.length ? '.' : ''}${ast.name}`;
-    } else if (ast instanceof PropertyWrite) {
-        let receiver = processAST(ast.receiver, argInfo);
-        let lhs = `${receiver}${receiver.length ? '.' : ''}${ast.name}`;
-        let rhs = processAST(ast.value, argInfo);
-
-        return `${lhs}=${rhs}`;
-    } else if (ast instanceof PrefixNot) {
-        ast = ast.expression;
-        let receiver = processAST(ast.receiver, argInfo);
-        return `!${receiver}${receiver.length ? '.' : ''}${ast.name}`;
-    } else if (ast instanceof Binary) {
-        return `${processAST(ast.left, argInfo)}${ast.operation}${processAST(ast.right, argInfo)}`;
-    } else if (ast instanceof Conditional) {
-        return `${processAST(ast.condition, argInfo)} ? ${processAST(ast.trueExp, argInfo)} : ${processAST(ast.falseExp, argInfo)}`;
-    }
-
-    return retValue;
-};
 
 const isEvent = name => name[0] === 'o' && name[1] === 'n' && name[2] === '-';
 
@@ -118,27 +37,12 @@ const getEventName = key => key.substr(3);
 
 const processBinding = (attr, expr) => `${attr.name}.bind="${quoteAttr(expr)}"`;
 
-const processEventValue = (value, argInfo) => {
-    let parsed = expParser.parseAction(value, '');
-
-    if (parsed.errors.length) {
-        return '';
-    }
-
-    let ast = parsed.ast;
-
-    return processAST(ast, argInfo);
-};
-
-const processEvent = (attr, eventArgOverrides) => {
+const processEvent = (attr) => {
     const evtName = getEventName(attr.name);
-
-    const value = processEventValue(attr.value, eventArgOverrides);
-
-    return `(${evtName})="${value}"`;
+    return `${evtName}.event="${attr.value}"`;
 };
 
-const processAttr = (attr, nodeDef, widgetName) => {
+const processAttr = attr => {
     let overridden = OVERRIDES[attr.name];
     let value = attr.valueSpan ? `="${attr.value}"` : '';
     if (overridden) {
@@ -146,19 +50,7 @@ const processAttr = (attr, nodeDef, widgetName) => {
     }
 
     if (isEvent(attr.name)) {
-        let eventArgOverrides = ((nodeDef.events || {})[attr.name] || {...DEFAULT_EVENT_DEF});
-
-        if (widgetName) {
-            Object.keys(eventArgOverrides).forEach(k => {
-                let v = eventArgOverrides[k];
-
-                if (v === 'WIDGET') {
-                    eventArgOverrides[k] = `Widgets.${widgetName}`;
-                }
-            });
-        }
-
-        return processEvent(attr, eventArgOverrides);
+        return processEvent(attr);
     }
 
     let boundExpr = getBoundToExpr(attr.value);
@@ -169,7 +61,7 @@ const processAttr = (attr, nodeDef, widgetName) => {
     return `${attr.name}${value}`;
 };
 
-const processAttrs = (attrs, nodeDef) => {
+const processAttrs = attrs => {
     let widgetName;
     attrs.some(attr => {
         if (attr.name === 'name') {
@@ -177,7 +69,7 @@ const processAttrs = (attrs, nodeDef) => {
             return true;
         }
     });
-    return attrs.map(attr => processAttr(attr, nodeDef, widgetName)).join(' ');
+    return attrs.map(attr => processAttr(attr)).join(' ');
 };
 
 const getAttrs = nodeDef => {
@@ -214,7 +106,7 @@ const processNode = node => {
             tagName = node.name;
         }
 
-        startTag = `<${tagName} ${getAttrs(nodeDef)} ${processAttrs(node.attrs, nodeDef)}>`;
+        startTag = `<${tagName} ${getAttrs(nodeDef)} ${processAttrs(node.attrs)}>`;
         if (node.endSourceSpan && !isVoid) {
             endTag = `</${tagName}>`;
         }
@@ -255,8 +147,3 @@ export const transpile = (markup = '') => {
 };
 
 export const register = (nodeName, nodeDefFn) => registry.set(nodeName, nodeDefFn());
-
-export const DEFAULT_EVENT_DEF = {
-    $event: '$event',
-    $scope: 'WIDGET'
-};

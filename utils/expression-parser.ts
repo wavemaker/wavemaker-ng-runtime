@@ -12,7 +12,9 @@ import {
     PrefixNot,
     KeyedRead,
     LiteralMap,
-    LiteralArray
+    LiteralArray,
+    Chain,
+    PropertyWrite
 } from '@angular/compiler';
 
 const isString = v => typeof v === 'string';
@@ -20,10 +22,10 @@ const isDef = v => v !== void 0;
 const ifDef = (v, d) => v === void 0 ? d : v;
 const plus = (a, b) => void 0 === a ? b : void 0 === b ? a : a + b;
 const minus = (a, b) => ifDef(a, 0) - ifDef(b, 0);
-const noop = () => {
-};
+const noop = () => {};
 
-const fnCache = new Map();
+const exprFnCache = new Map();
+const eventFnCache = new Map();
 const purePipes = new Map();
 
 const primitiveEquals = (a, b) => {
@@ -35,7 +37,6 @@ const primitiveEquals = (a, b) => {
     }
     return a === b;
 };
-
 
 const detectChanges = (ov, nv) => {
     const len = nv.length;
@@ -119,13 +120,15 @@ class ASTCompiler {
     cAst; // current AST node in the process
     cStmts;
     pipeNameVsIsPureMap;
+    exprType: ExpressionType;
 
-    constructor(ast, pipeNameVsIsPureMap) {
+    constructor(ast, exprType, pipeNameVsIsPureMap?) {
         this.ast = ast;
         this.declarations = [];
         this.stmts = [];
         this.pipes = [];
         this.vIdx = 0;
+        this.exprType = exprType;
         this.pipeNameVsIsPureMap = pipeNameVsIsPureMap;
     }
 
@@ -284,7 +287,7 @@ class ASTCompiler {
         return v;
     }
 
-    processMethod() {
+    processMethodCall() {
         const ast = this.cAst;
         const stmts = this.cStmts;
         const _args = [];
@@ -295,6 +298,26 @@ class ASTCompiler {
         const v = this.createVar();
         stmts.push(`${v}=${fn}.${ast.name}&&${fn}.${ast.name}(${_args.join(',')})`);
         return v;
+    }
+
+    processChain() {
+        const ast = this.cAst;
+        return ast.expressions.map(e => this.build(e)).join(';')
+    }
+
+    processPropertyWrite() {
+        const ast = this.cAst;
+        const stmts = this.cStmts;
+        let receiver, lhs;
+        if (ast.receiver instanceof ImplicitReceiver) {
+            lhs = `_ctx.${ast.name}`
+        } else {
+            receiver = this.build(ast.receiver);
+            lhs = `${receiver}${receiver.length ? '.' : ''}${ast.name}`;
+        }
+
+        const rhs = this.build(ast.value);
+        stmts.push(`${lhs}=${rhs}`);
     }
 
     processPipe() {
@@ -337,6 +360,8 @@ class ASTCompiler {
             return this.processLiteralMap();
         } else if (ast instanceof PropertyRead) {
             return this.processPropertyRead();
+        } else if (ast instanceof PropertyWrite){
+            return this.processPropertyWrite();
         } else if (ast instanceof KeyedRead) {
             return this.processKeyedRead();
         } else if (ast instanceof PrefixNot) {
@@ -346,7 +371,9 @@ class ASTCompiler {
         } else if (ast instanceof Conditional) {
             return this.processConditional();
         } else if (ast instanceof MethodCall) {
-            return this.processMethod();
+            return this.processMethodCall();
+        } else if (ast instanceof Chain) {
+            return this.processChain();
         } else if (ast instanceof BindingPipe) {
             return this.processPipe();
         }
@@ -356,29 +383,35 @@ class ASTCompiler {
         const v1 = this.createVar();
         this.stmts.push(
             `${v1}=Object.assign({}, locals)`,
-            `Object.setPrototypeOf(${v1}, ctx)`,
+            `Object.setPrototypeOf(${v1}, _ctx)`,
             `ctx=${v1}`
         );
     }
 
     fnBody() {
+        this.declarations.push('ctx');
         return '"use strict";\nvar ' + this.declarations.join(',') + ';\n' + this.stmts.join(';');
     }
 
     fnArgs() {
-        const args = ['_plus', '_minus', '_isDef', 'getPPVal', '_ppc'];
+        const args = ['_plus', '_minus', '_isDef'];
 
-        for (const [, pipeVar] of this.pipes) {
-            args.push(pipeVar);
+        if (this.exprType === ExpressionType.Binding) {
+            args.push('getPPVal', '_ppc');
+            for (const [, pipeVar] of this.pipes) {
+                args.push(pipeVar);
+            }
         }
 
-        args.push('ctx', 'locals');
+        args.push('_ctx', 'locals');
 
         return args.join(',');
     }
 
     addReturnStmt(result) {
-        this.stmts.push(`return ${result};`);
+        if (this.exprType === ExpressionType.Binding) {
+            this.stmts.push(`return ${result};`);
+        }
     }
 
     cleanup() {
@@ -390,9 +423,14 @@ class ASTCompiler {
         this.addReturnStmt(this.build(this.ast));
 
         const fn = new Function(this.fnArgs(), this.fnBody());
-        // console.log(fn);
-        const boundFn = fn.bind(undefined, plus, minus, isDef, getPurePipeVal);
-        boundFn.usedPipes = this.pipes.slice(0); // clone
+        let boundFn;
+        if (this.exprType === ExpressionType.Binding) {
+            boundFn = fn.bind(undefined, plus, minus, isDef, getPurePipeVal);
+            boundFn.usedPipes = this.pipes.slice(0); // clone
+        } else {
+            boundFn = fn.bind(undefined, plus, minus, isDef);
+        }
+
         this.cleanup();
         return boundFn;
     }
@@ -412,7 +450,12 @@ export function setPipeProvider(_pipeProvider) {
 
 const parser = new Parser(new Lexer);
 
-export function $parse(expr) {
+enum ExpressionType {
+    Binding,
+    Action
+}
+
+export function $parseExpr(expr) {
 
     if (!pipeProvider) {
         console.log('set pipe provider');
@@ -429,7 +472,7 @@ export function $parse(expr) {
         return noop;
     }
 
-    let fn = fnCache.get(expr);
+    let fn = exprFnCache.get(expr);
 
     if (fn) {
         return fn;
@@ -443,11 +486,10 @@ export function $parse(expr) {
         boundFn = fn;
     } else {
         const pipeNameVsIsPureMap = pipeProvider.getPipeNameVsIsPureMap();
-        const astCompiler = new ASTCompiler(ast.ast, pipeNameVsIsPureMap);
+        const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Binding, pipeNameVsIsPureMap);
         fn = astCompiler.compile();
         boundFn = fn;
         if (fn.usedPipes.length) {
-            const usedPurePipes = new Map();
             const pipeArgs = [];
             let hasPurePipe = false;
             for (const [pipeName] of fn.usedPipes) {
@@ -478,7 +520,35 @@ export function $parse(expr) {
             boundFn = fn.bind(undefined, undefined);
         }
     }
-    fnCache.set(expr, boundFn);
+    exprFnCache.set(expr, boundFn);
 
     return boundFn;
+}
+
+export function $parseEvent(expr) {
+    if (!isString(expr)) {
+        return noop;
+    }
+
+    expr = expr.trim();
+
+    if (!expr.length) {
+        return noop;
+    }
+
+    let fn = eventFnCache.get(expr);
+
+    if (fn) {
+        return fn;
+    }
+
+    const ast = parser.parseAction(expr, '');
+
+    if (ast.errors.length) {
+        return noop;
+    }
+    const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Action);
+    fn = astCompiler.compile();
+    eventFnCache.set(expr, fn);
+    return fn;
 }

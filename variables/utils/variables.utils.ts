@@ -1,5 +1,6 @@
+import { $parseExpr } from '@utils/expression-parser';
+
 declare const window, _;
-import { $parse } from '@utils/expression-parser';
 
 export let httpService;
 export let metadataService;
@@ -20,7 +21,7 @@ export const setDependency = (type: string, ref: any) => {
 
 export const initiateCallback = (type: string, variable: any, data: any, xhrObj?: any, skipDefaultNotification?: boolean) => {
     // TODO: [Vibhu], check whether to support legacy event calling mechanism (ideally, it should have been migrated)
-    const fn = $parse(variable[type]);
+    const fn = $parseExpr(variable[type]);
     fn(variable.scope, {$event: variable, $scope: data});
 };
 

@@ -1,5 +1,5 @@
 import { debounce, idMaker } from './utils';
-import { $parse } from './expression-parser';
+import { $parseExpr } from './expression-parser';
 
 declare const _;
 
@@ -8,7 +8,7 @@ const registry = new Map<string, any>();
 const idGen = idMaker('watch-id-');
 
 export const $watch = (expr, $scope, $locals, listener, identifier = idGen.next().value) => {
-    const fn = $parse(expr);
+    const fn = $parseExpr(expr);
 
     registry.set(identifier, {
         fn: fn.bind(expr, $scope, $locals),

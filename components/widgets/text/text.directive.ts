@@ -3,6 +3,7 @@ import { addClass } from '@utils/dom';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './text.props';
+import { Event } from '../../utils/decorators';
 
 registerProps();
 
@@ -13,6 +14,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-text', hostClass: DEFAULT_CLS};
     selector: '[wmText]'
 })
 export class TextDirective extends BaseComponent {
+
+    _oldVal;
 
     @HostBinding('attr.tabindex') tabindex: number;
     @HostBinding('attr.accesskey') shortcutkey: string;
@@ -31,9 +34,18 @@ export class TextDirective extends BaseComponent {
     @HostBinding() autocomplete: boolean;
 
     @HostListener('ngModelChange', ['$event'])
-    onChange(event: Event) {
+    onNgModelChange(event: Event) {
         this.datavalue = event;
     }
+
+    @Event('change')
+    onChange(fn, locals) {
+        locals.newVal = this.datavalue;
+        locals.oldVal = this._oldVal;
+        fn(locals);
+        this._oldVal = this.datavalue;
+    }
+
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);

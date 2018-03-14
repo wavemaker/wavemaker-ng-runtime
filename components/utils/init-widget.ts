@@ -4,6 +4,8 @@ import { $watch, $unwatch, isChangeFromWatch } from '@utils/watcher';
 import { BaseComponent } from '../widgets/base/base.component';
 import { addClass, removeClass, setAttr, switchClass } from '@utils/dom';
 import { isStyle } from './styler';
+import { $parseEvent } from '@utils/expression-parser';
+import { CUSTOM_EVT_KEY } from './decorators';
 
 const widgetRegistryByName = new Map<string, any>();
 const widgetRegistryByWidgetId = new Map<string, any>();
@@ -116,6 +118,29 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
     }
 };
 
+const handleEvent = (eventName, expr, component, parent, widget) => {
+    let fn = $parseEvent(expr);
+
+    fn = fn.bind(undefined, parent);
+
+    let meta = Object.getOwnPropertyDescriptor(component.constructor, CUSTOM_EVT_KEY) || {};
+    meta = (<any>meta).value || {};
+
+
+    component.eventHandlers.set(eventName, fn);
+
+    if (component._hostEvents.has(eventName)) {
+        let locals = {widget, $event: undefined};
+        component.$element.addEventListener(eventName, e => {
+            locals.$event = e;
+            if (meta[eventName]) {
+                meta[eventName].call(component, fn, locals);
+            } else {
+                (<Function>fn)(locals);
+            }
+        });
+    }
+};
 
 export function initWidget(component: BaseComponent, elDef: any, view: any, parentContainer) {
 
@@ -126,7 +151,7 @@ export function initWidget(component: BaseComponent, elDef: any, view: any, pare
     component.destroy$.subscribe(() => revocable.revoke());
 
     const widgetProps: Map<string, any> = getWidgetPropsByType(component.widgetType);
-    const $scope = view.component;
+    const parent = view.component;
     let $locals;
     const initState: any = new Map<string, any>();
 
@@ -143,11 +168,13 @@ export function initWidget(component: BaseComponent, elDef: any, view: any, pare
     });
 
     for (const [, attrName, attrValue] of elDef.element.attrs) {
-        const {0: propName, 1: bindKey, length} = attrName.split('.');
-        if (bindKey === 'bind') {
+        const {0: propName, 1: meta, length} = attrName.split('.');
+        if (meta === 'bind') {
             initState.delete(propName);
-            component.destroy$.subscribe($watch(attrValue, $scope, $locals, nv => widget[propName] = nv, getWatchIdentifier(widgetId, propName)));
-        } else if (length === 1) {
+            component.destroy$.subscribe($watch(attrValue, parent, $locals, nv => widget[propName] = nv, getWatchIdentifier(widgetId, propName)));
+        } else if(meta === 'event') {
+            handleEvent(propName, attrValue, component, parent, widget);
+        } if (length === 1) {
             initState.set(propName, attrValue);
         }
     }

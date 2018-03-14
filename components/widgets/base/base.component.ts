@@ -20,6 +20,10 @@ export class BaseComponent implements OnDestroy, OnInit {
     destroy = new Subject();
     destroy$ = this.destroy.asObservable();
 
+    eventHandlers = new Map();
+
+    _hostEvents = new Set(['click', 'change', 'dblclick']);
+
     constructor ({widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
         this.$element = $host.nativeElement;
         this.widgetType = widgetType;
