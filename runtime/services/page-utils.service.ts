@@ -15,6 +15,7 @@ import { PartialContainerDirective } from '../components/partial-container/parti
 import { transpile } from '@transpiler/build';
 import { VariablesService } from '@variables/services/variables.service';
 import { App } from './app.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 const pageScriptCache = new Map<string, Function>();
@@ -31,7 +32,8 @@ class TempModule {
 
 @Injectable()
 export class PageUtils {
-    constructor(private $http: HttpClient, private compiler: Compiler, private app: App, private injector: Injector) {
+    constructor(private $http: HttpClient, private compiler: Compiler, private app: App,
+                private injector: Injector, private route: ActivatedRoute) {
     }
 
     getPageInfo(pageName) {
@@ -135,7 +137,7 @@ export class PageUtils {
 
         let scriptFn = pageScriptCache.get(pageName);
 
-        //$js = '';
+        // $js = '';
 
         $js = `console.log(${containerName ? 'Partial' : 'Page'}, App, Injector); ${$js}`;
 
@@ -153,6 +155,10 @@ export class PageUtils {
             const $variables = variablesService.register(pageName, variables, instance);
             instance.Variables = $variables.Variables;
             instance.Actions = $variables.Actions;
+
+            this.route.queryParams.subscribe(params => {
+                instance.pageParams = params;
+            });
 
             scriptFn(instance, this.app, this.injector)
 
