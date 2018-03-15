@@ -21,7 +21,6 @@ export default {
         'ngx-bootstrap': 'ngxBootstrap',
         'ngx-bootstrap/pagination': 'ngxBootstrap',
         'ngx-color-picker': 'zef.ngxColorPicker',
-        'rxjs/Subject': 'Rx',
-        'lit-html/lit-html': 'litHtml'
+        'rxjs/Subject': 'Rx'
     }
 };

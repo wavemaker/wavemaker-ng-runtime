@@ -2,17 +2,22 @@ import { Component, Injector, ElementRef, ChangeDetectorRef } from '@angular/cor
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './video.props';
 import { styler } from '../../utils/styler';
-import { removeAttr, setAttr } from '@utils/dom';
+import { insertAfter, removeAttr, setAttr } from '@utils/dom';
 import { getImageUrl, getResourceURL } from '@utils/utils';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { html, render } from 'lit-html/lit-html';
 
 
 const DEFAULT_CLS = 'app-video';
 const WIDGET_CONFIG = {widgetType: 'wm-video', hostClass: DEFAULT_CLS};
 
 const getTrack = (subtitleLang, trackSource) => {
-    return html`<track kind="subtitles" label="${subtitleLang}" src="${trackSource}" srclang="${subtitleLang}" default>`;
+    let track = document.createElement('track');
+    setAttr(track, 'kind', 'subtitles');
+    setAttr(track, 'label', subtitleLang);
+    setAttr(track, 'srclang', subtitleLang);
+    setAttr(track, 'src', trackSource);
+    setAttr(track, 'default', '');
+    return track;
 };
 
 registerProps();
@@ -64,7 +69,7 @@ export class VideoComponent extends BaseComponent {
                     if ($track) {
                         $track.remove();
                     }
-                    render(getTrack(this.subtitlelang, getResourceURL(newVal)), this.$element.querySelector('video'));
+                    insertAfter(getTrack(this.subtitlelang, getResourceURL(newVal)), this.$element.querySelector('video'));
                 }
                 break;
         }
