@@ -50,6 +50,7 @@ import { SearchComponent } from './widgets/search/search.component';
 import { SelectComponent } from './widgets/select/select.component';
 import { SliderComponent } from './widgets/slider/slider.component';
 import { SpinnerComponent } from './widgets/spinner/spinner.component';
+import { SwitchComponent } from './widgets/switch/switch.component';
 import { TextDirective } from './widgets/text/text.directive';
 import { TextareaDirective } from './widgets/textarea/textarea.directive';
 import { TileDirective } from './widgets/tile/tile.directive';
@@ -107,6 +108,7 @@ const wmComponents = [
     SelectComponent,
     SliderComponent,
     SpinnerComponent,
+    SwitchComponent,
     TextDirective,
     TextareaDirective,
     TileDirective,

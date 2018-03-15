@@ -29,7 +29,8 @@ const REGEX = {
     SPECIAL_CHARACTERS: /[^A-Z0-9a-z_]+/i,
     APP_SERVER_URL_FORMAT: /^(http[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9\.\-]+([:]?[0-9]{2,5}|\.[a-zA-Z]{2,5}[\.]{0,1})\/+[^?#&=]+$/,
     JSON_DATE_FORMAT: /\d{4}-[0-1]\d-[0-3]\d(T[0-2]\d:[0-5]\d:[0-5]\d.\d{1,3}Z$)?/
-};
+},
+    compareBySeparator = ':';
 
 const NUMBER_TYPES = ['int', 'integer', 'float', 'double', 'long', 'short', 'byte', 'big_integer', 'big_decimal'];
 
@@ -499,4 +500,36 @@ export const getBlob = (val, valContentType?) => {
         val = new Blob([val], {type: valContentType || 'text/plain'});
     }
     return val;
+};
+
+/**
+ * This function returns true by comparing two objects based on the fields
+ * @param obj1 object
+ * @param obj2 object
+ * @param compareBy string field values to compare
+ * @returns {boolean} true if object equality returns true based on fields
+ */
+export const isEqualWithFields = (obj1, obj2, compareBy) => {
+    // compareBy can be 'id' or 'id1, id2' or 'id1, id2:id3'
+    // Split the compareby comma separated values
+    let _compareBy = _.isArray(compareBy) ? compareBy : _.split(compareBy, ',');
+
+    _compareBy = _.map(_compareBy, _.trim);
+
+    return _.isEqualWith(obj1, obj2, function (o1, o2) {
+        return _.every(_compareBy, function(cb) {
+            let cb1, cb2, _cb;
+
+            // If compareby contains : , compare the values by the keys on either side of :
+            if (_.indexOf(cb, compareBySeparator) === -1) {
+                cb1 = cb2 = _.trim(cb);
+            } else {
+                _cb = _.split(cb, compareBySeparator);
+                cb1 = _.trim(_cb[0]);
+                cb2 = _.trim(_cb[1]);
+            }
+
+            return _.get(o1, cb1) === _.get(o2, cb2);
+        });
+    });
 };
