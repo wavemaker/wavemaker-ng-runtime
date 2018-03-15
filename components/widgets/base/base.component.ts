@@ -7,6 +7,7 @@ import { addClass } from '@utils/dom';
 export class BaseComponent implements OnDestroy, OnInit {
     $element: HTMLElement;
     widgetType: string;
+    widget: any;
     widgetId: string;
     $digest;
     init;
@@ -20,9 +21,9 @@ export class BaseComponent implements OnDestroy, OnInit {
     destroy = new Subject();
     destroy$ = this.destroy.asObservable();
 
-    eventHandlers = new Map();
+    eventHandlers = new Map<string, Function>();
 
-    _hostEvents = new Set(['click', 'change', 'dblclick']);
+    _hostEvents = new Set(['click', 'dblclick']);
 
     constructor ({widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
         this.$element = $host.nativeElement;

@@ -50,6 +50,8 @@ export class TextDirective extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
+        this._hostEvents.add('change');
+
         addClass(this.$element, DEFAULT_CLS);
         styler(this.$element, this);
     }

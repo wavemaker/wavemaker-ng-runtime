@@ -20,7 +20,7 @@ export class SwitchDemoComponent implements OnInit {
     {
         name: 'Stella',
         company : 'Z',
-        iconclass: 'fa fa-bars'
+        iconclass: 'fa fa-search'
     }];
 
 
@@ -35,8 +35,14 @@ export class SwitchDemoComponent implements OnInit {
 
     datavalue: any = this.options[0][this.displayfield];
 
+    iconclass: any = this.keys[2];
+
     constructor() { }
 
     ngOnInit() { }
+
+    onChange($event, widget, newVal, oldVal) {
+        console.log($event, widget, newVal, oldVal);
+    }
 
 }

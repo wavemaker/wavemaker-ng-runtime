@@ -1,6 +1,5 @@
 <div class="col-md-9">
-  <div wmSwitch #switch [dataset]="options" [datafield]="datafield" [displayfield]="displayfield"
-             [iconclass]="icon" [orderby]="orderby" [datavalue]="datavalue"></div>
+  <div wmSwitch #switch dataset.bind="options" datafield.bind="datafield" displayfield.bind="displayfield" iconclass.bind="iconclass" change.event="onChange($event, widget, newVal, oldVal)"></div>
   <div>datavalue: {{switch.datavalue}}</div>
 </div>
 <div class="col-md-3 properties">
@@ -11,7 +10,7 @@
         Datafield
       </div>
       <div class="property-control col-md-8">
-        <select  [(ngModel)]="datafield">
+        <select [(ngModel)]="datafield">
           <option *ngFor="let key of dataFieldKeys" value="{{key}}">{{key}}</option>
         </select>
       </div>
@@ -21,7 +20,7 @@
         Display Field
       </div>
       <div class="property-control col-md-8">
-        <select  [(ngModel)]="displayfield">
+        <select [(ngModel)]="displayfield">
           <option *ngFor="let key of keys" value="{{key}}">{{key}}</option>
         </select>
       </div>
@@ -31,7 +30,7 @@
             Order by
         </div>
         <div class="property-control col-md-8">
-            <select  [(ngModel)]="orderby">
+            <select [(ngModel)]="orderby">
                 <option *ngFor="let key of keys" value="{{key}}">{{key}}</option>
             </select>
         </div>
@@ -41,7 +40,7 @@
             Icon
         </div>
         <div class="property-control col-md-8">
-            <select  [(ngModel)]="icon">
+            <select [(ngModel)]="iconclass">
                 <option *ngFor="let key of keys" value="{{key}}">{{key}}</option>
             </select>
         </div>

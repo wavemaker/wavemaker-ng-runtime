@@ -114,3 +114,27 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
         return this.getObjValueByKey(dataObj, displayField);
     }
 };
+
+/**
+ * This handler will invoke the function reference passed to the event
+ * @param component
+ * @param eventName
+ * @param args
+ */
+export const invokeEventHandler = (component, eventName, args) => {
+
+    if (!component) {
+        return;
+    }
+
+    if (!args) {
+        args = {};
+    }
+
+    const fn = component.eventHandlers.get(eventName);
+
+    if (fn) {
+        args.widget = args.widget || component.widget;
+        fn(args);
+    }
+};

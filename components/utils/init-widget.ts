@@ -148,6 +148,8 @@ export function initWidget(component: BaseComponent, elDef: any, view: any, pare
     const widget = revocable.proxy;
     const widgetId = idGen.next().value;
 
+    component.widget = widget;
+
     component.destroy$.subscribe(() => revocable.revoke());
 
     const widgetProps: Map<string, any> = getWidgetPropsByType(component.widgetType);
