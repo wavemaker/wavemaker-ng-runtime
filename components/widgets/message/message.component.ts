@@ -1,9 +1,10 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { DomSanitizer } from '@angular/platform-browser';
 import { registerProps } from './message.props';
 import { addClass, removeClass } from '@utils/dom';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'alert app-message';
 const WIDGET_CONFIG = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
@@ -22,11 +23,9 @@ export class MessageComponent extends BaseComponent {
     show: boolean = true;
     type: string = '';
 
-    @Output() close = new EventEmitter();
-
     dismiss($event) {
         this.show = false;
-        this.close.emit({$event, $isolateScope:this, newVal: this.show});
+        invokeEventHandler(this, 'close', {$event, newVal: this.show});
     }
 
     onMessageTypeChange(newVal) {

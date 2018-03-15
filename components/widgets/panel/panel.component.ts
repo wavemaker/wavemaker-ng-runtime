@@ -1,9 +1,10 @@
-import { Component, Output, EventEmitter, ViewChild, ElementRef, Injector, ChangeDetectorRef, forwardRef, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, Injector, ChangeDetectorRef, forwardRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { getImageUrl } from '@utils/utils';
 import { registerProps } from './panel.props';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { setCSS, toggleClass } from '@utils/dom';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 registerProps();
 
@@ -35,20 +36,12 @@ export class PanelComponent extends BaseComponent implements OnInit {
     @ViewChild('panelHeading') private $panelHeader: ElementRef;
     @ViewChild('panelContent') private $panelContent: ElementRef;
 
-    @Output() close = new EventEmitter();
-    @Output() expand = new EventEmitter();
-    @Output() collapse = new EventEmitter();
-    @Output('fullscreen') _fullScreenEvt= new EventEmitter();
-    @Output() exitfullscreen = new EventEmitter();
-    // @Output() onActionsclick = new EventEmitter();
-
-
     togglePanel($event) {
         if (this.collapsible) {
             if (this.expanded) {
-                this.collapse.emit({$event: $event, $context: this});
+                invokeEventHandler(this, 'collapse', {$event});
             } else {
-                this.expand.emit({$event: $event, $context: this});
+                invokeEventHandler(this, 'expand', {$event});
             }
 
             this.expanded = !this.expanded;
@@ -58,9 +51,9 @@ export class PanelComponent extends BaseComponent implements OnInit {
     toggleFullScreen($event) {
         if (this.enablefullscreen) {
             if (this.fullscreen) {
-                this.exitfullscreen.emit({$event: $event, $context: this});
+                invokeEventHandler(this, 'exitfullscreen', {$event});
             } else {
-                this._fullScreenEvt.emit({$event: $event, $context: this});
+                invokeEventHandler(this, 'fullscreen', {$event});
             }
 
             this.fullscreen = !this.fullscreen;
@@ -77,7 +70,7 @@ export class PanelComponent extends BaseComponent implements OnInit {
 
     closePanel($event) {
         this.show = false;
-        this.close.emit({$event: $event, $context: this});
+        invokeEventHandler(this, 'close', {$event});
     }
 
     private _toggleFullScreen() {

@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { registerProps } from './calendar.props';
 import { getClonedObject } from '@utils/utils';
 import { getEvaluatedData } from '../../utils/widget-utils';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 declare const _, $, moment;
 
@@ -123,31 +124,6 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
      */
     controls = 'navigation, today, year, month, week, day';
 
-    /*Event related properties*/
-    /**
-     * The viewrender property will trigger the function value once the view renders
-     */
-    @Output() viewrender = new EventEmitter();
-    /**
-     * The select property will trigger the function value once the selection is happened
-     */
-    @Output() select = new EventEmitter();
-    /**
-     * The eventdrop event will be triggered once the event is dropped on to the other day/time
-     */
-    @Output() eventdrop = new EventEmitter();
-    /**
-     * The eventresize event will be triggered once the event is resized usually happens in the week agenda mode
-     */
-    @Output() eventresize = new EventEmitter();
-    /**
-     * The onEventclick event will be triggered on click of any event
-     */
-    @Output() eventclick = new EventEmitter();
-    /**
-     * The onEventrender event will be triggered each time an event is rendered
-     */
-    @Output() eventrender = new EventEmitter();
     /**
      * The datavalue property is used to select a day, gotoYear, gotoDate etc.,
      */
@@ -321,7 +297,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
      * Private property to proxy the onEventdrop
      */
     private onEventdropProxy(event, delta, revertFunc, jsEvent, ui, view) {
-        this.eventdrop.emit({jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
+        invokeEventHandler(this, 'eventdrop', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
     }
     /**
      * Private property to proxy the onSelect
@@ -329,13 +305,13 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
     private onSelectProxy(start, end, jsEvent, view) {
         this.selecteddates = {start: getUTCDateTime(start), end: getUTCDateTime(end)};
         this.selecteddata = this.setSelectedData(start, end);
-        this.select.emit({start: start.valueOf(), end: end.valueOf(), view, selecteddata: this.selecteddata});
+        invokeEventHandler(this, 'select', {start: start.valueOf(), end: end.valueOf(), view, selecteddata: this.selecteddata});
     }
     /**
      * Private property to proxy the onEventresize
      */
     private onEventresizeProxy(event, delta, revertFunc, jsEvent, ui, view) {
-        this.eventresize.emit({jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
+        invokeEventHandler(this, 'eventresize', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
     }
     /**
      * Private property to proxy the onEventChangeStart
@@ -347,7 +323,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
      * Private property to proxy the onEventclick
      */
     private eventClickProxy(event, jsEvent, view) {
-        this.eventclick.emit({jsEvent, event, view});
+        invokeEventHandler(this, 'eventclick', {jsEvent, event, view});
     }
     /**
      * Private property to proxy the onEventrender
@@ -356,7 +332,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
-        this.eventrender.emit({jsEvent, event, view});
+        invokeEventHandler(this, 'eventrender', {jsEvent, event, view});
     }
     /**
      * Private property to proxy the viewrender
@@ -366,7 +342,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
-        this.viewrender.emit({view});
+        invokeEventHandler(this, 'viewrender', {view});
     }
     /**
      * Private property to update the calendar header options once the controls changes
@@ -432,7 +408,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
             start: moment(this._model_).valueOf(),
             end  : moment(this._model_).endOf('day').valueOf()
         };
-        this.eventrender.emit({$isolateScope: this, $scope: this, $data: this.eventData});
+        invokeEventHandler(this, 'eventrender', {$data: this.eventData});
     }
 
     /**

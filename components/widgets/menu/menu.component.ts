@@ -1,4 +1,4 @@
-import { Component, ElementRef, ChangeDetectorRef, Injector, forwardRef, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, ChangeDetectorRef, Injector, forwardRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './menu.props';
 import { styler } from '../../utils/styler';
@@ -7,6 +7,7 @@ import { findValueOf, isObject, validateAccessRoles } from '@utils/utils';
 import { getEvaluatedData } from '../../utils/widget-utils';
 import { addClass, removeClass } from '@utils/dom';
 import { $appDigest } from '@utils/watcher';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 registerProps();
 
@@ -70,8 +71,6 @@ export class MenuComponent extends BaseComponent implements MenuParent {
     animateClass = '';
     menuclass = '';
     iconclass = '';
-
-    @Output() select = new EventEmitter();
 
     constructor(inj: Injector, elRef: ElementRef, public cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
@@ -163,6 +162,6 @@ export class MenuComponent extends BaseComponent implements MenuParent {
     }
 
     onSelect(args) {
-        this.select.emit(args);
+        invokeEventHandler(this, 'change', args);
     }
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ChangeDetectorRef, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, ElementRef, Injector, ChangeDetectorRef, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { BaseComponent } from '../base/base.component';
@@ -8,6 +8,7 @@ import { getOrderedDataSet } from '../../utils/form-utils';
 import { registerProps } from './search.props';
 import { $appDigest } from '@utils/watcher';
 import { styler } from '../../utils/styler';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 declare const _;
 
@@ -28,16 +29,6 @@ registerProps();
   templateUrl: './search.component.html'
 })
 export class SearchComponent extends BaseComponent implements OnInit {
-    /**
-     * The onChange event for the search input
-     */
-    @Output() change = new EventEmitter();
-    /**
-     * The onKeyDown event for the search input
-     */
-    @Output() keydown = new EventEmitter();
-    @Output() select = new EventEmitter();
-    @Output() submit = new EventEmitter();
 
     displaylabel;
     datafield;
@@ -286,8 +277,8 @@ export class SearchComponent extends BaseComponent implements OnInit {
         this.queryModel = $label;
         this.result     = [];
         // call user 'onSubmit & onSelect' fn
-        this.select.emit({$event: $event, $scope: this, newVal: this.proxyDatavalue});
-        this.submit.emit({$event: $event, $scope: this});
+        invokeEventHandler(this, 'select', {$event, newVal: this.proxyDatavalue});
+        invokeEventHandler(this, 'submit', {$event});
     }
     /**
      * Private method to change the loading status of the flag
@@ -299,7 +290,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
      * Private method wrappper to the keyDown event
      */
     private executeKeyDownEvent = ($event) => {
-        this.keydown.emit($event);
+        invokeEventHandler(this, 'keydown', {$event});
     }
 
     ngOnInit() {

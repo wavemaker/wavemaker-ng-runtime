@@ -5,6 +5,7 @@ import { registerProps } from './accordion-pane.props';
 import { removeAttr } from '@utils/dom';
 import { $appDigest } from '@utils/watcher';
 import { AccordionDirective } from '../accordion.component';
+import { invokeEventHandler } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -25,14 +26,14 @@ export class AccordionPaneComponent extends BaseComponent implements AfterViewIn
 
     togglePane($event) {
         if (this.isActive) {
-            this.collapse.emit({$event});
+            invokeEventHandler(this, 'collapse', {$event});
         } else {
             /*TODO: Write method to execute all redraw methods for widgets inside the accordion*/
             if ($event) {
-                this.parentAccordion.change.emit({$event, $scope: this.parentAccordion, newPaneIndex: this.paneId, oldPaneIndex: (this.parentAccordion.activePane && this.parentAccordion.activePane.paneId) || 0});
+                invokeEventHandler(this.parentAccordion, 'change', {$event, newPaneIndex: this.paneId, oldPaneIndex: (this.parentAccordion.activePane && this.parentAccordion.activePane.paneId) || 0});
             }
             this.parentAccordion.activePane = this;
-            this.expand.emit($event);
+            invokeEventHandler(this, 'expand', {$event});
             this.parentAccordion.closeOthers();
         }
 

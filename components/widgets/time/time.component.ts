@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, OnDestroy, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { EVENT_LIFE, getFormattedDate, addEventListener } from '@utils/utils';
 import { styler } from '../../utils/styler';
 import { registerProps } from './time.props';
 import { $appDigest } from '@utils/watcher';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
@@ -71,10 +72,6 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
         }
         $appDigest();
     }
-    /**
-     * This is a event property. Triggers when the value changes
-     */
-    @Output() change = new EventEmitter();
 
     timestamp: number;
     /* Internal property to have a flag to check the given datavalue is of Current time*/
@@ -138,7 +135,7 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
      * This is an internal method used to execute the on time change functionality
      */
     private onTimeChange(newVal) {
-        this.change.emit({$event: null, $isolateScope: this, newVal, oldVal: this.proxyModel});
+        invokeEventHandler(this, 'change', {newVal, oldVal: this.proxyModel});
         this.proxyModel = newVal;
         this.formattedModel = getFormattedDate(newVal, this.timepattern);
         this.timestamp = this.proxyModel.valueOf();

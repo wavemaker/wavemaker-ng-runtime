@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Output, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './checkbox.props';
 import { styler } from '../../utils/styler';
 import { toggleClass } from '@utils/dom';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
@@ -52,8 +53,6 @@ export class CheckboxComponent  extends BaseComponent implements OnInit {
         }
     }
 
-    @Output() change = new EventEmitter();
-
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
     }
@@ -65,6 +64,6 @@ export class CheckboxComponent  extends BaseComponent implements OnInit {
 
     onChange($event) {
         $event.stopPropagation();
-        this.change.emit({$event: $event, $isolateScope: this, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
+        invokeEventHandler(this, 'change', {$event: $event, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
     }
 }

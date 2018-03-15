@@ -1,4 +1,4 @@
-import { Component, Input, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { generateGUId, getClonedObject } from '@utils/utils';
 import { styler } from '../../utils/styler';

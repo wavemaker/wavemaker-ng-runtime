@@ -23,7 +23,8 @@ export class BaseComponent implements OnDestroy, OnInit {
 
     eventHandlers = new Map<string, Function>();
 
-    _hostEvents = new Set(['click', 'dblclick']);
+    // TODO: Implement touch events for the mobile
+    _hostEvents = new Set(['click', 'dblclick', 'mouseenter', 'mouseleave', 'mouseout', 'mouseover', 'focus', 'blur', 'keydown', 'keypress', 'keyup']);
 
     constructor ({widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
         this.$element = $host.nativeElement;

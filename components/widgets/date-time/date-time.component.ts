@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
 import { getFormattedDate, addEventListener, EVENT_LIFE } from '@utils/utils';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './date-time.props';
 import { $appDigest } from '@utils/watcher';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -66,10 +67,6 @@ export class DatetimeComponent extends BaseComponent {
         $appDigest();
     }
     private timeinterval: any;
-    /**
-     * This is a event property. Triggers when the value changes
-     */
-    @Output() change = new EventEmitter();
     /**
      * This is an internal property used to map it to the widget
      */
@@ -171,7 +168,7 @@ export class DatetimeComponent extends BaseComponent {
      */
     private onModelUpdate(newVal, type?) {
         const dateObj = this.getDateObj(newVal);
-        this.change.emit({$event: newVal, $isolateScope: this, newVal: dateObj, oldVal: this.proxyModel});
+        invokeEventHandler(this, 'change', {$event: newVal, newVal: dateObj, oldVal: this.proxyModel});
         if (type === 'date') {
             this.selectedDate = dateObj.toDateString();
             if (this.isDateOpen) {

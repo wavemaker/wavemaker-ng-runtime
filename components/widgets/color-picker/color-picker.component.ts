@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './color-picker.props';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
 const WIDGET_CONFIG = {widgetType: 'wm-colorpicker', hostClass: DEFAULT_CLS};
@@ -12,10 +13,7 @@ registerProps();
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html'
 })
-
 export class ColorPickerComponent extends BaseComponent {
-
-    @Output() change = new EventEmitter();
 
     oldVal;
 
@@ -25,7 +23,7 @@ export class ColorPickerComponent extends BaseComponent {
     }
 
     onChange($event) {
-        this.change.emit({$event, $isolateScope: this, newVal: $event, oldVal: this.oldVal});
+        invokeEventHandler(this, 'change', {$event, newVal: $event, oldVal: this.oldVal});
         this.oldVal = $event;
     }
 }

@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
 import { getFormattedDate } from '@utils/utils';
 import { BaseComponent } from '../../widgets/base/base.component';
 import { registerProps } from './date.props';
 import { styler } from '../../utils/styler';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 registerProps();
 
@@ -53,8 +54,6 @@ export class DateComponent extends BaseComponent {
     readonly;
     _datavalue;
 
-    @Output() change: EventEmitter<any> = new EventEmitter();
-
     /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
      */
@@ -66,7 +65,7 @@ export class DateComponent extends BaseComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
-        this.change.emit({$event: newVal, $isolateScope: this, newVal, oldVal: this.datavalue});
+        invokeEventHandler(this, 'change', {$event: newVal, newVal, oldVal: this.datavalue});
         this.proxyModel = newVal;
         this.formattedModel = getFormattedDate(newVal, this.datePattern);
         this.datavalue = getFormattedDate(this.proxyModel, this.outputFormat);

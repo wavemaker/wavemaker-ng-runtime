@@ -19,8 +19,6 @@ export class AccordionDirective extends BaseComponent {
     paneIndex = 0;
     closeothers;
 
-    @Output() change = new EventEmitter();
-
     register(paneScope) {
         this.panes.push(paneScope);
         paneScope.paneId = this.paneIndex;

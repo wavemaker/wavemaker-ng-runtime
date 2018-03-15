@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { getBackGroundImageUrl } from '@utils/utils';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
