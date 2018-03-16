@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'label';
 
 register('wm-label', () => {
     return {
-        tagName: 'label',
-        attrs: {
-            'wmLabel': undefined
+        pre: attrs => {
+            return `<${tagName} wmLabel ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

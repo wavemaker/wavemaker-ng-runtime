@@ -1,12 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'header';
 
 register('wm-header', () => {
     return {
-        tagName: 'header',
-        attrs: {
-            'wmHeader': undefined,
-            'partialContainer': undefined,
-            'data-role': 'page-header'
+        pre: attrs => {
+            return `<${tagName} wmHeader partialContainer data-role="page-header" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

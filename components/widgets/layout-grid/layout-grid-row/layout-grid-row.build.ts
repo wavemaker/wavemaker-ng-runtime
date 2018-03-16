@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-gridrow', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmLayoutGridRow': undefined
+        pre: attrs => {
+            return `<${tagName} wmLayoutGridRow ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

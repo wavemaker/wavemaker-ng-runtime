@@ -1,12 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'a';
 
 register('wm-anchor', () => {
     return {
-        tagName: 'a',
-        attrs: {
-            'wmAnchor': undefined,
-            'data-identifier': 'anchor',
-            'role': 'button'
+        pre: attrs => {
+            return `<${tagName} wmAnchor role="button" data-identifier="anchor" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

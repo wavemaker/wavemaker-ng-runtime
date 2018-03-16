@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-layoutgrid', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmLayoutGrid': undefined
+        pre: attrs => {
+            return `<${tagName} wmLayoutGrid ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'p';
 
 register('wm-message', () => {
     return {
-        tagName: 'p',
-        attrs: {
-            'wmMessage': undefined
+        pre: attrs => {
+            return `<${tagName} wmMessage ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

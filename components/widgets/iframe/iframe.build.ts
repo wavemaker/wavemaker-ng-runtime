@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-iframe', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmIframe': undefined
+        pre: attrs => {
+            return `<${tagName} wmIframe ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

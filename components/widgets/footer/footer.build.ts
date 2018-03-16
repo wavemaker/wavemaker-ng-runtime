@@ -1,12 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'footer';
 
 register('wm-footer', () => {
     return {
-        tagName: 'footer',
-        attrs: {
-            'wmFooter': undefined,
-            'partialContainer': undefined,
-            'data-role': 'page-footer'
+        pre: attrs => {
+            return `<${tagName} wmFooter partialContainer data-role="page-footer" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'li';
 
 register('wm-nav-item', () => {
     return {
-        tagName: 'li',
-        attrs: {
-            'wmNavItem': undefined
+        pre: attrs => {
+            return `<${tagName} wmNavItem ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

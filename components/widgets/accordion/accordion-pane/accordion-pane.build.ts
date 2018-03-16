@@ -1,12 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-accordionpane', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmAccordionPane': undefined,
-            'partialContainer': undefined,
-            'wmNavigableElement': true
+        pre: attrs => {
+            return `<${tagName} wmAccordionPane partialContainer wmNavigableElement="true" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });
