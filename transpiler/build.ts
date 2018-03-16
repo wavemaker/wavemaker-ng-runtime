@@ -108,8 +108,13 @@ const getRequiredProviders = (nodeDef, providers) => {
 
 const processNode = (node, providers?) => {
     const nodeDef = registry.get(node.name);
-    const pre = nodeDef.pre || empty;
-    const post = nodeDef.post || empty;
+
+    let pre, post;
+
+    if (nodeDef) {
+        pre = nodeDef.pre || empty;
+        post = nodeDef.post || empty;
+    }
 
     let markup = '';
     let attrMap;
