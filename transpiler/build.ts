@@ -24,99 +24,125 @@ const quoteAttr = v => {
         .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
         .replace(/"/g, '&quot;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
+        .replace(/>/g, '&gt;');
 };
 
 const registry = new Map<string, any>();
 const htmlParser = new HtmlParser();
 const ignoreComments = true;
 
+const isString = s => typeof s === 'string';
+
+const empty = () => '';
+
 const isEvent = name => name[0] === 'o' && name[1] === 'n' && name[2] === '-';
 
 const getEventName = key => key.substr(3);
 
-const processBinding = (attr, expr) => `${attr.name}.bind="${quoteAttr(expr)}"`;
+const processBinding = (attr, expr) => [`${attr.name}.bind`, quoteAttr(expr)];
 
-const processEvent = (attr) => {
+const processEvent = attr => {
     const evtName = getEventName(attr.name);
-    return `${evtName}.event="${attr.value}"`;
+    return [`${evtName}.event`, attr.value];
 };
 
 const processAttr = attr => {
-    let overridden = OVERRIDES[attr.name];
-    let value = attr.valueSpan ? `="${attr.value}"` : '';
+    const overridden = OVERRIDES[attr.name];
+    const value = attr.valueSpan ? attr.value : undefined;
+
     if (overridden) {
-        return `${overridden}${value}`;
+        return [overridden, value];
     }
 
     if (isEvent(attr.name)) {
         return processEvent(attr);
     }
 
-    let boundExpr = getBoundToExpr(attr.value);
+    const boundExpr = getBoundToExpr(attr.value);
     if (boundExpr) {
         return processBinding(attr, boundExpr);
     }
 
-    return `${attr.name}${value}`;
+    return [attr.name, value];
 };
 
-const processAttrs = attrs => {
-    let widgetName;
-    attrs.some(attr => {
-        if (attr.name === 'name') {
-            widgetName = attr.value;
-            return true;
+const getAttrMap = attrs => {
+    const attrMap = new Map<string, string>();
+    attrs.forEach(attr => {
+        const [attrName, attrValue] = processAttr(attr);
+        attrMap.set(attrName, attrValue);
+    });
+
+    return attrMap;
+};
+
+export const getAttrMarkup = (attrs: Map<string, string>) => {
+    let attrMarkup = '';
+    attrs.forEach((v, k) => {
+        attrMarkup += ` ${k}`;
+        if (v) {
+            attrMarkup += `="${v}"`;
         }
     });
-    return attrs.map(attr => processAttr(attr)).join(' ');
+
+    return attrMarkup;
 };
 
-const getAttrs = nodeDef => {
-    if (nodeDef && nodeDef.attrs) {
-        return Object.entries(nodeDef.attrs).map(([k, v]) => {
-            if (v !== undefined) {
-                return `${k}=${v}`;
-            }
-
-            return `${k}`;
-        }).join(' ');
+const getRequiredProviders = (nodeDef, providers) => {
+    if (!nodeDef.requires) {
+        return;
     }
-    return '';
+
+    let requires = nodeDef.requires;
+
+    if (isString(requires)) {
+        requires = [requires];
+    }
+
+    if (!Array.isArray(requires)){
+        return;
+    }
+
+    return requires.map(require => providers.get(require));
 };
 
-const processNode = node => {
+const processNode = (node, providers?) => {
     const nodeDef = registry.get(node.name);
+    const pre = nodeDef.pre || empty;
+    const post = nodeDef.post || empty;
 
-    const isVoid = nodeDef && nodeDef.isVoid;
-
-    let tagName;
     let markup = '';
-    let startTag = '';
-    let endTag = '';
+    let attrMap;
+    let requiredProviders;
+
+    if (!providers) {
+        providers = new Map<string, Map<string, string>>();
+    }
 
     const isElementType = node instanceof Element;
 
     if (isElementType) {
+        attrMap = getAttrMap(node.attrs);
         if (nodeDef) {
-            if (nodeDef.tagName) {
-                tagName = nodeDef.tagName;
+            requiredProviders = getRequiredProviders(nodeDef, providers);
+            markup = (<any>pre)(attrMap, ...requiredProviders);
+            if (node.provide) {
+                providers.set(node.name, node.provide(attrMap))
             }
         } else {
-            tagName = node.name;
+            markup = `<${node.name} ${getAttrMarkup(attrMap)}>`;
         }
 
-        startTag = `<${tagName} ${getAttrs(nodeDef)} ${processAttrs(node.attrs)}>`;
-        if (node.endSourceSpan && !isVoid) {
-            endTag = `</${tagName}>`;
+        node.children.forEach(child => markup += processNode(child, providers));
+
+        if (nodeDef) {
+            providers.delete(node.name);
+            markup += (<any>post)(attrMap, ...requiredProviders);
+        } else {
+            if (node.endSourceSpan) {
+                markup += `</${node.name}>`;
+            }
         }
-
-        markup += `${startTag}`;
-
-        node.children.forEach(child => markup += processNode(child));
-
-        markup += `${endTag}`;
-
     } else if (node instanceof Text) {
         markup += node.value;
     } else if (node instanceof Comment) {
