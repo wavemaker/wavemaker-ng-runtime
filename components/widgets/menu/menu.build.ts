@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-menu', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmMenu': undefined
+        pre: attrs => {
+            return `<${tagName} wmMenu ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'span';
 
 register('wm-icon', () => {
     return {
-        tagName: 'span',
-        attrs: {
-            'wmIcon': undefined
+        pre: attrs => {
+            return `<${tagName} wmIcon ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

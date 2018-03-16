@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-checkbox', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmCheckbox': undefined,
-            'role': 'input'
+        pre: attrs => {
+            return `<${tagName} wmCheckbox role="input" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

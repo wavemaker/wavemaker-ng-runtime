@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-datetime', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmDateTime': undefined
+        pre: attrs => {
+            return `<${tagName} wmDateTime ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

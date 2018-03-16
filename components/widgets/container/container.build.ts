@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-container', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmContainer': undefined,
-            'partialContainer': undefined
+        pre: attrs => {
+            return `<${tagName} wmContainer partialContainer ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

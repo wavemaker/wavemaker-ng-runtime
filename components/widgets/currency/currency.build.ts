@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-currency', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmCurrency': undefined
+        pre: attrs => {
+            return `<${tagName} wmCurrency ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

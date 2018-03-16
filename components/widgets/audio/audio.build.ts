@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-audio', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmAudio': undefined
+        pre: attrs => {
+            return `<${tagName} wmAudio ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

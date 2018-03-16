@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-buttongroup', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmButtonGroup': undefined,
-            'role': 'input'
+        pre: attrs => {
+            return `<${tagName} wmButtonGroup role="input" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });
