@@ -1,12 +1,11 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'input';
 
 register('wm-text', () => {
     return {
-        isVoid: true,
-        tagName: 'input',
-        attrs: {
-            'wmText': undefined,
-            'ngModel': undefined
+        pre: attrs => {
+            return `<${tagName} wmText ngModel ${getAttrMarkup(attrs)}>`;
         }
     };
 });

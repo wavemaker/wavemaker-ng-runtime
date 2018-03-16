@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-video', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmVideo': undefined
+        pre: attrs => {
+            return `<${tagName} wmVideo ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

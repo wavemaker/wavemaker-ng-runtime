@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-page', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmPage': undefined,
-            'data-role': 'pageContainer'
+        pre: attrs => {
+            return `<${tagName} wmPage data-role="pageContainer" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

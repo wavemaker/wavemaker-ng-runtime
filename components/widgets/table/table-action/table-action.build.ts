@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-table-action', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmTableAction': undefined
+        pre: attrs => {
+            return `<${tagName} wmTableAction ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

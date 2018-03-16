@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-search', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'role': 'input'
+        pre: attrs => {
+            return `<${tagName} wmSearch role="input" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

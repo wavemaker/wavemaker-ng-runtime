@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const  tagName = 'div';
 
 register('wm-tile', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmTile': undefined
+        pre: attrs => {
+            return `<${tagName} wmTile ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

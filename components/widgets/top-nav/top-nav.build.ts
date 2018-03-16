@@ -1,12 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'section';
 
 register('wm-top-nav', () => {
     return {
-        tagName: 'section',
-        attrs: {
-            'wmTopNav': undefined,
-            'partialContainer': undefined,
-            'data-role': 'page-topnav'
+        pre: attrs => {
+            return `<${tagName} wmTopNav partialContainer data-role="page-topnav" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

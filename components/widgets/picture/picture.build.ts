@@ -1,11 +1,11 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'img';
 
 register('wm-picture', () => {
     return {
-        isVoid: true,
-        tagName: 'img',
-        attrs: {
-            'wmPicture': undefined
+        pre: attrs => {
+            return `<${tagName} wmPicture ${getAttrMarkup(attrs)}>`;
         }
     };
 });

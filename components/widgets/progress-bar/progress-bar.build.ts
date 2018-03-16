@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-progressbar', () => {
     return {
-        isVoid: true,
-        tagName: 'div',
-        attrs: {
-            'wmProgressBar': undefined
+        pre: attrs => {
+            return `<${tagName} wmProgressBar ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

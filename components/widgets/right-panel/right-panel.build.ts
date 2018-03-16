@@ -1,12 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'aside';
 
 register('wm-right-panel', () => {
     return {
-        tagName: 'aside',
-        attrs: {
-            'wmRightPanel': undefined,
-            'partialContainer': undefined,
-            'data-role': 'page-right-panel'
+        pre: attrs => {
+            return `<${tagName} wmRightPanel partialContainer data-role="page-right-panel" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

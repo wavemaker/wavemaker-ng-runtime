@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-select', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmSelect': undefined
+        pre: attrs => {
+            return `<${tagName} wmSelect ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

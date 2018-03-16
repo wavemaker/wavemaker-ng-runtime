@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-table-column-group', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmTableColumnGroup': undefined
+        pre: attrs => {
+            return `<${tagName} wmTableColumnGroup ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

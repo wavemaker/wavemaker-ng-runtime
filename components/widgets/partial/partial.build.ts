@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'section';
 
 register('wm-partial', () => {
     return {
-        tagName: 'section',
-        attrs: {
-            'wmPartial': undefined,
-            'data-role': 'partial'
+        pre: attrs => {
+            return `<${tagName} wmPartial data-role="partial" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

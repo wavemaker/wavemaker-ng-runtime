@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'ul';
 
 register('wm-radioset', () => {
     return {
-        tagName: 'ul',
-        attrs: {
-            'wmRadioset': undefined,
-            'role': 'input'
+        pre: attrs => {
+            return `<${tagName} wmRadioset role="input" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

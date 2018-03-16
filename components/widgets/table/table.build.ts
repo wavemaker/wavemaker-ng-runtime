@@ -1,11 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-table', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmTable': undefined,
-            'data-identifier': 'table'
+        pre: attrs => {
+            return `<${tagName} wmTable data-identifier="table" ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });

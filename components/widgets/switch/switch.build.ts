@@ -1,10 +1,14 @@
-import { register } from '@transpiler/build';
+import { getAttrMarkup, register } from '@transpiler/build';
+
+const tagName = 'div';
 
 register('wm-switch', () => {
     return {
-        tagName: 'div',
-        attrs: {
-            'wmSwitch': undefined
+        pre: attrs => {
+            return `<${tagName} wmSwitch ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => {
+            return `</${tagName}>`;
         }
     };
 });
