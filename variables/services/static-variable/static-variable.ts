@@ -1,3 +1,5 @@
+import * as SVUtils from './static-variable.util';
+
 export class StaticVariable {
 
     name: string;
@@ -19,7 +21,38 @@ export class StaticVariable {
     }
 
     setData(dataSet: any) {
-        this.dataSet = dataSet;
+        return SVUtils.setData(this, dataSet);
     }
 
+    getValue(key: string, index: number) {
+        return SVUtils.getValue(this, key, index);
+    }
+
+    setValue(key: string, value: any) {
+        return SVUtils.setValue(this, key, value);
+    }
+
+    getItem(index: number) {
+        return SVUtils.getItem(this, index);
+    }
+
+    setItem(index: number, value: any) {
+        return SVUtils.setItem(this, index, value);
+    }
+
+    addItem(value: any, index: number) {
+        return SVUtils.addItem(this, value, index);
+    }
+
+    removeItem(index: number, exactMatch: boolean) {
+        return SVUtils.removeItem(this, index, exactMatch);
+    }
+
+    clearData() {
+        return SVUtils.clearData(this);
+    }
+
+    getCount() {
+        return SVUtils.getCount(this);
+    }
 }
