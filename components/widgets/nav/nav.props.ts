@@ -5,11 +5,21 @@ export const registerProps = () => {
         'wm-nav',
         new Map(
             [
+                ['autoclose', Object.assign({value: 'always'}, PROP_STRING)],
                 ['class', PROP_STRING],
+                ['dataset', PROP_STRING_NOTIFY],
+                ['itemlabel', PROP_STRING_NOTIFY],
+                ['itemlink', PROP_STRING_NOTIFY],
+                ['itemicon', PROP_STRING_NOTIFY],
+                ['itemchildren', PROP_STRING_NOTIFY],
+                ['itemaction', PROP_STRING_NOTIFY],
+                ['itembadge', PROP_STRING_NOTIFY],
                 ['layout', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
+                ['orderby', PROP_STRING],
                 ['show', PROP_BOOLEAN],
-                ['type', PROP_STRING_NOTIFY]
+                ['type', PROP_STRING_NOTIFY],
+                ['userrole', PROP_STRING_NOTIFY]
             ]
         )
     );

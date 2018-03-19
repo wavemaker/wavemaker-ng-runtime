@@ -141,6 +141,7 @@ const wmComponents = [
     exports: wmComponents,
     providers: [],
     entryComponents: [
+        MenuComponent,
         MenuDropdownComponent
     ]
 })

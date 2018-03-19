@@ -115,6 +115,16 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
     }
 };
 
+export const isActiveNavItem = (link, routeName) => {
+    if (!link || !routeName) {
+        return false;
+    }
+    const routeRegex = new RegExp('^(#\/|#)' + routeName + '$');
+    link = link.indexOf('?') === -1 ? link : link.substring(0, link.indexOf('?'));
+    return routeRegex.test(link);
+};
+
+
 /**
  * This handler will invoke the function reference passed to the event
  * @param component
