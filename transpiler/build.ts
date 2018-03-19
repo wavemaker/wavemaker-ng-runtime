@@ -119,6 +119,7 @@ const processNode = (node, providers?) => {
     let markup = '';
     let attrMap;
     let requiredProviders;
+    let shared;
 
     if (!providers) {
         providers = new Map<string, Map<string, string>>();
@@ -130,9 +131,10 @@ const processNode = (node, providers?) => {
         attrMap = getAttrMap(node.attrs);
         if (nodeDef) {
             requiredProviders = getRequiredProviders(nodeDef, providers);
-            markup = (<any>pre)(attrMap, ...requiredProviders);
+            shared = new Map();
+            markup = (<any>pre)(attrMap, shared, ...requiredProviders);
             if (node.provide) {
-                providers.set(node.name, node.provide(attrMap))
+                providers.set(node.name, node.provide(attrMap, shared, ...requiredProviders))
             }
         } else {
             markup = `<${node.name} ${getAttrMarkup(attrMap)}>`;
@@ -142,7 +144,7 @@ const processNode = (node, providers?) => {
 
         if (nodeDef) {
             providers.delete(node.name);
-            markup += (<any>post)(attrMap, ...requiredProviders);
+            markup += (<any>post)(attrMap, shared, ...requiredProviders);
         } else {
             if (node.endSourceSpan) {
                 markup += `</${node.name}>`;
@@ -159,7 +161,7 @@ const processNode = (node, providers?) => {
     return markup;
 };
 
-export const transpile = (markup = '') => {
+export const transpile = (markup:string = '') => {
     if (!markup.length) {
         return;
     }
@@ -177,4 +179,11 @@ export const transpile = (markup = '') => {
     return output;
 };
 
-export const register = (nodeName, nodeDefFn) => registry.set(nodeName, nodeDefFn());
+export const register = (nodeName: string, nodeDefFn: () => BuildTaskDef) => registry.set(nodeName, nodeDefFn());
+
+export interface BuildTaskDef {
+    requires?: string | Array<string>
+    pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string,
+    provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>,
+    post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string,
+}

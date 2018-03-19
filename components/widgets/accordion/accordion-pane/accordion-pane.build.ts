@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'div';
 
-register('wm-accordionpane', () => {
+register('wm-accordionpane', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmAccordionPane partialContainer wmNavigableElement="true" ${getAttrMarkup(attrs)}>`;

@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'section';
 
-register('wm-partial', () => {
+register('wm-partial', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmPartial data-role="partial" ${getAttrMarkup(attrs)}>`;

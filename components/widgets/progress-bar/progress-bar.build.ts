@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'div';
 
-register('wm-progressbar', () => {
+register('wm-progressbar', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmProgressBar ${getAttrMarkup(attrs)}>`;

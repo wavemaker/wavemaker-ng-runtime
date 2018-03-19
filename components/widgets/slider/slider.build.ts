@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'div';
 
-register('wm-slider', () => {
+register('wm-slider', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmSlider ${getAttrMarkup(attrs)}>`;

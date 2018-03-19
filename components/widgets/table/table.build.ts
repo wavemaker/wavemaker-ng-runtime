@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'div';
 
-register('wm-table', () => {
+register('wm-table', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmTable data-identifier="table" ${getAttrMarkup(attrs)}>`;

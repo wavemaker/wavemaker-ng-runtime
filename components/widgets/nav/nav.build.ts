@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'ul';
 
-register('wm-nav', () => {
+register('wm-nav', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmNav data-element-type="wmNav" data-role="page-header" ${getAttrMarkup(attrs)}>`;

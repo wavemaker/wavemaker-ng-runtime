@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'span';
 
-register('wm-icon', () => {
+register('wm-icon', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmIcon ${getAttrMarkup(attrs)}>`;

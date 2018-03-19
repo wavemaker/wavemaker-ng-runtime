@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'div';
 
-register('wm-time', () => {
+register('wm-time', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmTime ${getAttrMarkup(attrs)}>`;

@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'button';
 
-register('wm-button', () => {
+register('wm-button', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmButton role="input" ${getAttrMarkup(attrs)}>`;

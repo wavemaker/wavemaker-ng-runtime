@@ -1,8 +1,8 @@
-import { getAttrMarkup, register } from '@transpiler/build';
+import { BuildTaskDef, getAttrMarkup, register } from '@transpiler/build';
 
 const tagName = 'textarea';
 
-register('wm-textarea', () => {
+register('wm-textarea', (): BuildTaskDef => {
     return {
         pre: attrs => {
             return `<${tagName} wmTextarea ${getAttrMarkup(attrs)}>`;
