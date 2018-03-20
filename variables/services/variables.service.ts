@@ -9,7 +9,7 @@ import { NotificationVariable } from './notification-variable/notification-varia
 
 import { $watch } from '@utils/watcher';
 import { HttpService } from './../../http-service/http.service';
-import { setDependency } from './../utils/variables.utils';
+import { setDependency, processBinding } from './../utils/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
 
 @Injectable()
@@ -27,24 +27,6 @@ export class VariablesService {
         setDependency('router', this.routerService);
     }
 
-    processBinding(variable: any, $scope: any, target: any) {
-        const dataBinding = target;
-        target = {};
-        for (const bindingObj of dataBinding) {
-            const key = bindingObj.target;
-            const value = bindingObj.value;
-            if (value.startsWith('bind:')) {
-                const bindExpr = value.replace('bind:', '');
-                $watch(bindExpr, $scope, {}, function (nv, ov) {
-                    target[key] = nv;
-                });
-            } else {
-                target[key] = value;
-            }
-        }
-        return target;
-    }
-
     invokeVariable(variable: any, $scope: any) {
         variable.invoke();
     }
@@ -60,11 +42,12 @@ export class VariablesService {
             switch (variable.category) {
                 case 'wm.Variable':
                     variableInstance = new StaticVariable(variable);
+                    processBinding(variableInstance, scope, 'dataBinding', 'dataSet');
                     break;
                 case 'wm.ServiceVariable':
                     variableInstance = new ServiceVariable(variable, scope);
                     variableInstance.scope = scope;
-                    variableInstance.dataBinding = this.processBinding(variableInstance, scope, variableInstance.dataBinding);
+                    processBinding(variableInstance, scope);
                     if (variableInstance.startUpdate) {
                         this.invokeVariable(variableInstance, scope);
                     }
@@ -72,19 +55,19 @@ export class VariablesService {
                 case 'wm.LiveVariable':
                     variableInstance = new LiveVariable(variable);
                     variableInstance.scope = scope;
-                    console.log('Live Variable Initialized', variableInstance);
+                    processBinding(variableInstance, scope);
                     if (variableInstance.startUpdate) {
                         this.invokeVariable(variableInstance, scope);
                     }
                     break;
                 case 'wm.NavigationVariable':
                     actionInstance = new NavigationVariable(variable);
-                    actionInstance.dataSet = this.processBinding(actionInstance, scope, actionInstance.dataSet);
-                    actionInstance.dataBinding = this.processBinding(actionInstance, scope, actionInstance.dataBinding);
+                    processBinding(actionInstance, scope, 'dataSet', 'dataSet');
+                    processBinding(actionInstance, scope, 'dataBinding', 'dataBinding');
                     break;
                 case 'wm.NotificationVariable':
                     actionInstance = new NotificationVariable(variable);
-                    actionInstance.dataBinding = this.processBinding(actionInstance, scope, actionInstance.dataBinding);
+                    processBinding(actionInstance, scope);
                     break;
             }
 

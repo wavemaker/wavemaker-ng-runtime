@@ -3,6 +3,18 @@ export const CONSTANTS = {
     isStudioMode: false
 };
 export const VARIABLE_CONSTANTS = {
+    CATEGORY: {
+        MODEL: 'wm.Variable',
+        LIVE: 'wm.LiveVariable',
+        SERVICE: 'wm.ServiceVariable',
+        WEBSOCKET: 'wm.WebSocketVariable',
+        NAVIGATION: 'wm.NavigationVariable',
+        NOTIFICATION: 'wm.NotificationVariable',
+        TIMER: 'wm.TimerVariable',
+        LOGIN: 'wm.LoginVariable',
+        LOGOUT: 'wm.LogoutVariable',
+        DEVICE: 'wm.DeviceVariable'
+    },
     EVENTS: ['onBefore',
         'onBeforeUpdate',
         'onResult',
