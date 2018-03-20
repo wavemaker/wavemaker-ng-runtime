@@ -1,29 +1,18 @@
 declare const _, window;
 
 import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType, getBlob } from '@utils/utils';
-import { VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope, SWAGGER_CONSTANTS } from './../../constants/variables.constants';
-import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType } from '@utils/utils';
-// import {VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope} from '@variables/constants/variables.constants';
 import { VARIABLE_CONSTANTS, DB_CONSTANTS, CONSTANTS, $rootScope,
          SWAGGER_CONSTANTS, WS_CONSTANTS} from './../../constants/variables.constants';
-// import * as LVService from '@variables/services/live-variable/live-variable.http.utils';
 import * as LVService from './live-variable.http.utils';
-import { initiateCallback, processRequestQueue } from './../../utils/variables.utils';
-import {httpService, initiateCallback} from './../../utils/variables.utils';
-
+import { httpService, initiateCallback, processRequestQueue } from './../../utils/variables.utils';
 const isRunMode = true,
     emptyArr = [],
     variableActive = new Map(),
     inFlightQueue = new Map();
 
 const _initiateCallback = initiateCallback,
-    _processInFlightQueue = processRequestQueue;
-const _initiateCallback = initiateCallback,
-      exportTypesMap   = VARIABLE_CONSTANTS.EXPORT_TYPES_MAP;
-
-function _processInFlightQueue(variable, queue, callback, options) {
-    console.log('_processInFlightQueue', 'WIP...');
-}
+    _processInFlightQueue = processRequestQueue,
+    exportTypesMap   = VARIABLE_CONSTANTS.EXPORT_TYPES_MAP;
 
 function _updateVariableDataset(variable, data, propertiesMap, pagingOptions) {
     variable.dataSet = {
@@ -990,7 +979,6 @@ export const download = (variable, options) => {
         'size'          : options.size
     });
 };
-
 
 export const setInput = (variable, key, val, options) => {
     let paramObj = {},
