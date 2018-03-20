@@ -4,11 +4,11 @@ import { idMaker } from '@utils/utils';
 const tagName = 'div';
 const idGen = idMaker('formfield_');
 
-const getWidgetTemplate = (attrs, pCounter) => {
+const getWidgetTemplate = (attrs, widgetType, pCounter) => {
     let tmpl;
-    const fieldName = attrs.get('name') || attrs.get('key');
+    const fieldName = attrs.get('key') || attrs.get('name');
     const defaultTmpl = `*ngIf="${pCounter}.isUpdateMode" formControlName="${fieldName}"`;
-    switch (attrs.get('widget')) {
+    switch (widgetType) {
         case 'number':
             tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" >`;
             break;
@@ -89,16 +89,18 @@ register('wm-form-field', (): BuildTaskDef => {
         pre: (attrs, shared, parentForm) => {
             const counter = idGen.next().value;
             const pCounter = parentForm.get('form_reference');
+            const widgetType = attrs.get('widget');
+            attrs.delete('widget');
             shared.set('counter', counter);
-            return `<${tagName} data-role="form-field" wmFormField #${counter}="wmFormField" widgettype="${attrs.get('widget')}" ${getAttrMarkup(attrs)}>
-                        <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="text">
-                            <div [ngClass]="[${pCounter}._widgetClass, ${counter}.class]">
-                                 <label *ngIf="${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
+            return `<${tagName} data-role="form-field" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getAttrMarkup(attrs)}>
+                        <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="${widgetType}">
+                            <label *ngIf="${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
+                            <div [ngClass]="[${pCounter}._widgetClass, ${counter}.class]">
                                  <label class="form-control-static app-label" [textContent]="value"
                                        [hidden]="${pCounter}.isUpdateMode || viewmodewidget === 'default'"></label>
-                                ${getWidgetTemplate(attrs, pCounter)}
+                                ${getWidgetTemplate(attrs, widgetType, pCounter)}
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>
                                 <p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"

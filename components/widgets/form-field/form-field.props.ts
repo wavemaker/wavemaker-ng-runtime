@@ -11,6 +11,7 @@ export const registerProps = () => {
                 ['displayfield', PROP_STRING_NOTIFY],
                 ['displayname', PROP_STRING],
                 ['hint', PROP_STRING],
+                ['key', PROP_STRING],
                 ['name', PROP_STRING],
                 ['placeholder', PROP_STRING_NOTIFY],
                 ['readonly', PROP_BOOLEAN],

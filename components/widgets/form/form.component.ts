@@ -13,7 +13,9 @@ const DEFAULT_CLS = 'panel app-panel app-form';
 const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: DEFAULT_CLS};
 
 export abstract class ParentForm {
-    _ngForm: any;
+    ngForm: any;
+
+    abstract registerFormFields(formField);
 }
 
 @Component({
@@ -31,21 +33,61 @@ export class FormComponent extends BaseComponent {
     public _widgetClass = '';
     public captionwidth: string;
     public _captionClass = '';
-    public _ngForm: FormGroup;
+    public ngForm: FormGroup;
     public isUpdateMode = true;
+    public formFields = [];
+    public formfields = {};
+    public dataoutput;
+
+    private operationType;
 
     @HostBinding('autocomplete') autocomplete: boolean;
     @HostBinding('action') action: string;
 
     @HostListener('submit') onSubmit() {
-        if (this._ngForm.invalid && this.validationtype === 'default') {
-            _.forEach(this._ngForm.controls, (control) => control.markAsTouched());
-            return;
-        }
-        this.statusMessage = 'Form Submitted Successfully';
+        this.submitForm();
     }
 
     @HostListener('reset') onReset() {
+    }
+
+    highlightInvalidFields() {
+        _.forEach(this.ngForm.controls, (control) => control.markAsTouched());
+    }
+
+    validateFieldsOnSubmit() {
+        // Disable the form submit if form is in invalid state. For delete operation, do not check the validation.
+        if (this.operationType !== 'delete' && (this.validationtype === 'html' || this.validationtype === 'default')
+                && this.ngForm && this.ngForm.invalid) {
+            // TODO: For blob type required fields, even if file is present, required error is shown.
+            // To prevent this, if value is present set the required validity to true
+            // $($formEle.find('input[type="file"].app-blob-upload')).each(function () {
+            //     var $blobEL = WM.element(this);
+            //     if ($blobEL.val()) {
+            //         ngForm[$blobEL.attr('name')].$setValidity('required', true);
+            //     }
+            // });
+
+            if (this.ngForm.invalid) {
+                if (this.validationtype === 'default') {
+                    this.highlightInvalidFields();
+                }
+                // TODO: Safari Validation
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    submitForm() {
+        let formData;
+        // Disable the form submit if form is in invalid state.
+        if (this.validateFieldsOnSubmit()) {
+            return;
+        }
+
+        formData = this.constructDataObject();
     }
 
     onPropertyChange(key, newVal, ov?) {
@@ -76,6 +118,39 @@ export class FormComponent extends BaseComponent {
 
         styler(this.$element, this);
 
-        this._ngForm = fb.group({});
+        this.ngForm = fb.group({});
+    }
+
+    registerFormFields(formField) {
+        this.formFields.push(formField);
+        this.formfields[formField.key] = formField;
+    }
+
+    constructDataObject() {
+        const formData     = {};
+        // Get all form fields and prepare form data as key value pairs
+        _.forEach(this.formFields, field => {
+            let fieldName,
+                fieldTarget,
+                fieldValue;
+            fieldTarget = _.split(field.key || field.target, '.');
+            fieldValue = field.datavalue || field._control.value;
+
+            // TODO: Blob file
+            // if (field.type === 'file') {
+            //     fieldValue = Utils.getFiles(scope.name, field.key + '_formWidget', field.multiple);
+            // }
+
+            fieldName   = fieldTarget[0] || field.key || field.name;
+            // In case of update the field will be already present in form data
+            if (fieldTarget.length === 1) {
+                formData[fieldName] = fieldValue;
+            } else {
+                formData[fieldTarget[0]]                 = formData[fieldTarget[0]] || {};
+                formData[fieldTarget[0]][fieldTarget[1]] = fieldValue;
+            }
+        });
+        this.dataoutput = formData;
+        return formData;
     }
 }

@@ -22,9 +22,11 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     private _validators = [];
     private applyProps = new Set();
 
-    public _ngForm: FormGroup;
+    public ngForm: FormGroup;
     public name: string;
     public key: string;
+    public target: string;
+    public binding: string;
     public widgettype: string;
     public class = '';
 
@@ -51,7 +53,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
                 } else {
                     this._validators = _.pull(this._validators, Validators.required);
                 }
-                if (this._ngForm) {
+                if (this.ngForm) {
                     this._control.setValidators(this._validators);
                     this._control.updateValueAndValidity();
                 }
@@ -60,7 +62,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     }
 
     get _control() {
-        return this._ngForm && this._ngForm.get(this.name || this.key);
+        return this.ngForm && this.ngForm.controls[this.key || this.name];
     }
 
     createControl() {
@@ -69,8 +71,8 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
 
     ngOnInit() {
         super.ngOnInit();
-        this._ngForm = this._parentForm._ngForm;
-        this._ngForm.addControl(this.name || this.key, this.createControl());
+        this.ngForm = this._parentForm.ngForm;
+        this.ngForm.addControl(this.key || this.name , this.createControl());
     }
 
     ngAfterContentInit() {
@@ -81,6 +83,8 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
                 });
             });
         }
+        this.key = this.key || this.target || this.binding || this.name;
+        this._parentForm.registerFormFields(this.widget);
     }
 }
 
