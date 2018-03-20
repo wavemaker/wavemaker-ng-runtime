@@ -2,8 +2,8 @@ declare const _;
 import { getClonedObject, getValidJSON, triggerFn, replace } from '@utils/utils';
 // import {VARIABLE_URLS} from '@variables/constants/variables.constants';
 import {VARIABLE_URLS} from './../../constants/variables.constants';
-// import {httpService} from '@variables/utils/variables.utils';
-import {httpService} from './../../utils/variables.utils';
+import {httpService, simulateFileDownload} from './../../utils/variables.utils';
+import * as LVUtils from './live-variable.utils';
 
 const isStudioMode = false;
 
@@ -69,12 +69,12 @@ const parseConfig = (serviceParams: any): any => {
 };
 
 const initiateAction = function (action, params, successCallback, failureCallback, noproxy) {
-    let param,
-        val,
-        config,
-        connectionParams,
+    let connectionParams,
         urlParams,
         requestData,
+        param,
+        val,
+        config,
         headers,
         httpDetails;
 
@@ -173,12 +173,11 @@ const initiateAction = function (action, params, successCallback, failureCallbac
                 'url' : params.url
             }
         };
-        connectionParams = parseConfig(connectionParams);
 
         if (action === 'exportTableData') {
-            alert('Work in progress...');
-            // simulateFileDownload(BaseService.parseReplace(connectionParams), connectionParams.urlParams.entityName, connectionParams.urlParams.exportFormat);
+            simulateFileDownload(parseConfig(connectionParams), connectionParams.urlParams.entityName, connectionParams.urlParams.exportFormat, null, null);
         } else {
+            connectionParams = parseConfig(connectionParams);
             console.log('making call from Live variable')
             return httpService.send({
                 url: connectionParams.url,
@@ -232,4 +231,8 @@ export const deleteTableData = function (params, successCallback, failureCallbac
 
 export const deleteCompositeTableData = function (params, successCallback, failureCallback) {
     return initiateAction('deleteCompositeTableData', params, successCallback, failureCallback, null);
+};
+
+export const exportTableData = function (params) {
+    return initiateAction('exportTableData', params, null, null, null);
 };

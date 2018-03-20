@@ -2,8 +2,14 @@ declare const _, window;
 
 import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType, getBlob } from '@utils/utils';
 import { VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope, SWAGGER_CONSTANTS } from './../../constants/variables.constants';
+import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType } from '@utils/utils';
+// import {VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope} from '@variables/constants/variables.constants';
+import { VARIABLE_CONSTANTS, DB_CONSTANTS, CONSTANTS, $rootScope,
+         SWAGGER_CONSTANTS, WS_CONSTANTS} from './../../constants/variables.constants';
+// import * as LVService from '@variables/services/live-variable/live-variable.http.utils';
 import * as LVService from './live-variable.http.utils';
 import { initiateCallback, processRequestQueue } from './../../utils/variables.utils';
+import {httpService, initiateCallback} from './../../utils/variables.utils';
 
 const isRunMode = true,
     emptyArr = [],
@@ -12,6 +18,12 @@ const isRunMode = true,
 
 const _initiateCallback = initiateCallback,
     _processInFlightQueue = processRequestQueue;
+const _initiateCallback = initiateCallback,
+      exportTypesMap   = VARIABLE_CONSTANTS.EXPORT_TYPES_MAP;
+
+function _processInFlightQueue(variable, queue, callback, options) {
+    console.log('_processInFlightQueue', 'WIP...');
+}
 
 function _updateVariableDataset(variable, data, propertiesMap, pagingOptions) {
     variable.dataSet = {
@@ -642,6 +654,7 @@ const prepareFormData = (variableDetails, rowObject) => {
     return formData;
 };
 
+
 function doCUD(action, variable, options, success, error) {
     const projectID = $rootScope.project.id || $rootScope.projectName,
         primaryKey = getPrimaryKey(variable),
@@ -956,6 +969,28 @@ export const deleteRecord = (variable, options, success, error) => {
     options = options || {};
     doCUD('deleteTableData', variable, options, success, error);
 };
+
+export const download = (variable, options) => {
+    options = options || {};
+    let tableOptions;
+    const dbOperation = 'exportTableData',
+        projectID   = $rootScope.project.id || $rootScope.projectName;
+    options.searchWithQuery = true; // For export, query api is used. So set this flag to true
+    tableOptions = prepareTableOptions(variable, options, undefined);
+    LVService[dbOperation]({
+        'projectID'     : projectID,
+        'service'       : variable._prefabName ? '' : 'services',
+        'dataModelName' : variable.liveSource,
+        'entityName'    : variable.type,
+        'sort'          : tableOptions.sort,
+        'url'           : variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
+        'data'          : tableOptions.query ? ('q=' + tableOptions.query) : '',
+        'filterMeta'    : tableOptions.filter,
+        'exportFormat'  : options.exportFormat,
+        'size'          : options.size
+    });
+};
+
 
 export const setInput = (variable, key, val, options) => {
     let paramObj = {},

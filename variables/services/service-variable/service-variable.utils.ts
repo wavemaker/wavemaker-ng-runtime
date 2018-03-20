@@ -1,7 +1,7 @@
 declare const _, window;
 import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS, SWAGGER_CONSTANTS, $rootScope } from './../../constants/variables.constants';
-import { httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy } from './../../utils/variables.utils';
-import { formatDate, isDateTimeType, extractType, getBlob, getClonedObject, findValueOf } from '@utils/utils';
+import { httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy, simulateFileDownload } from './../../utils/variables.utils';
+import { formatDate, isDateTimeType, extractType, getBlob, getClonedObject, findValueOf, triggerFn } from '@utils/utils';
 
 const isBodyTypeQueryOrProcedure = (variable) => {
     return (_.includes(['QueryExecution', 'ProcedureExecution'], variable.controller)) && (_.includes(['put', 'post'], variable.operationType));
@@ -389,6 +389,15 @@ export const invoke = (variable, options, success, error) => {
     if (requestParams.error) {
         handleRequestMetaError(requestParams, variable, error, options);
         return;
+    }
+    if (operationInfo && _.isArray(operationInfo.produces) && _.includes(operationInfo.produces, WS_CONSTANTS.CONTENT_TYPES.OCTET_STREAM)) {
+        return simulateFileDownload(requestParams, variable.dataBinding.file || variable.name, variable.dataBinding.exportType, function () {
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, null, null, null);
+            triggerFn(success);
+        }, function () {
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null, null, null);
+            triggerFn(error);
+        });
     }
 
     // make the call

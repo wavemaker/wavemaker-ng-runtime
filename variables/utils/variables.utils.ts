@@ -1,9 +1,11 @@
 import { $parseExpr } from '@utils/expression-parser';
 import {findValueOf, getClonedObject, stringStartsWith, triggerFn} from '@utils/utils';
 import { $watch } from '@utils/watcher';
-import { VARIABLE_CONSTANTS } from './../constants/variables.constants';
+import { VARIABLE_CONSTANTS, CONSTANTS, WS_CONSTANTS } from './../constants/variables.constants';
 
-declare const window, _;
+declare const window, _, $;
+
+const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 
 export let httpService;
 export let metadataService;
@@ -97,6 +99,248 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
     const fn = $parseExpr(variable[type]);
     fn(variable.scope, {$event: variable, $scope: data});
 };
+
+function triggerOnTimeout(success) {
+    setTimeout(() => { triggerFn(success); }, 500);
+}
+
+function downloadFilefromResponse(response, headerFn, success, error) {
+    // check for a filename
+    let filename = '',
+        filenameRegex,
+        matches,
+        type,
+        blob,
+        URL,
+        downloadUrl,
+        popup,
+        disposition = headerFn('Content-Disposition');
+    if (disposition && disposition.indexOf('attachment') !== -1) {
+        filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        matches = filenameRegex.exec(disposition);
+        if (matches !== null && matches[1]) {
+            filename = matches[1].replace(/['"]/g, '');
+        }
+    }
+
+    type = headerFn('Content-Type');
+    blob = new Blob([response], { type: type });
+
+    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+        if (window.navigator.msSaveBlob(blob, filename)) {
+            triggerOnTimeout(success);
+        } else {
+            triggerFn(error);
+        }
+    } else {
+        URL         = window.URL || window.webkitURL;
+        downloadUrl = URL.createObjectURL(blob);
+
+        if (filename) {
+            // use HTML5 a[download] attribute to specify filename
+            let a = document.createElement('a'),
+                reader;
+            // safari doesn't support this yet
+            if (typeof a.download === 'undefined') {
+                reader = new FileReader();
+                reader.onloadend = function () {
+                    let url   = reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;'),
+                        popup = window.open(url, '_blank');
+                    if (!popup) {
+                        window.location.href = url;
+                    }
+                    url = undefined; // release reference before dispatching
+                };
+                reader.onload = triggerOnTimeout(success);
+                reader.onerror = error;
+                reader.readAsDataURL(blob);
+            } else {
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                triggerOnTimeout(success);
+            }
+        } else {
+            popup = window.open(downloadUrl, '_blank');
+            if (!popup) {
+                window.location.href = downloadUrl;
+            }
+        }
+
+        setTimeout(() => { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+    }
+}
+
+function getService(serviceName) {
+    if (!serviceName) {
+        return;
+    }
+    return serviceName;
+    // Todo: Shubham, uncomment below code
+    /* /!* get a reference to the element where ng-app is defined *!/
+     let appEl = WM.element('[id=ng-app]'), injector;
+     if (appEl) {
+     try {
+     injector = appEl.injector(); // get the angular injector
+     if (injector) {
+     return injector.get(serviceName); // return the service
+     }
+     } catch (e) {
+     return undefined;
+     }
+     }*/
+}
+
+// Construct the form data params from the URL
+function setParamsFromURL(queryParams, params) {
+    queryParams = _.split(queryParams, '&');
+    _.forEach(queryParams, function (param) {
+        param = _.split(param, '=');
+        params[param[0]] = decodeURIComponent(_.join(_.slice(param, 1), '='));
+    });
+}
+
+// Todo, Shubham, Implement Download through I frame
+/**
+ * Simulates file download in an app through creating and submitting a hidden form in DOM.
+ * The action will be initiated through a Service Variable
+ *
+ * Query Params
+ * The request params like query params are added as hidden input elements
+ *
+ * Header Params
+ * The header params for a request are also added along with hidden input elements.
+ * This is done as headers can not be set for a form POST call from JavaScript
+ *
+ * Finally, request parameters are sent as follows:
+ * For a GET request, the request data is sent along with the query params.
+ * For POST, it is sent as request body.
+ *
+ * @param variable: the variable that is called from user action
+ * @param requestParams object consisting the info to construct the XHR request for the service
+ */
+function downloadThroughIframe(requestParams, success) {
+    // Todo: SHubham: URL contains '//' in between which should be handled at the URL formation only
+    if (requestParams.url[1] === '/' && requestParams.url[2] === '/') {
+        requestParams.url = requestParams.url.slice(0, 1) + requestParams.url.slice(2);
+    }
+    let iFrameElement,
+        formEl,
+        paramElement,
+        queryParams     = '',
+        IFRAME_NAME     = 'fileDownloadIFrame',
+        FORM_NAME       = 'fileDownloadForm',
+        CONTENT_TYPE    = 'Content-Type',
+        url             = requestParams.url,
+        encType         = _.get(requestParams.headers, CONTENT_TYPE),
+        params          = _.pickBy(requestParams.headers, function (val, key) {return key !== CONTENT_TYPE; });
+    /* Todo: shubham : define getService method
+     WS_CONSTANTS    = getService('WS_CONSTANTS');*/
+
+    /* look for existing iframe. If exists, remove it first */
+    iFrameElement = $('#' + IFRAME_NAME);
+    if (iFrameElement.length) {
+        iFrameElement.first().remove();
+    }
+    iFrameElement = $('<iframe id="' + IFRAME_NAME + '" name="' + IFRAME_NAME + '" class="ng-hide"></iframe>');
+    formEl        = $('<form id="' + FORM_NAME + '" name="' + FORM_NAME + '"></form>');
+    formEl.attr({
+        'target'  : iFrameElement.attr('name'),
+        'action'  : url,
+        'method'  : requestParams.method,
+        'enctype' : encType
+    });
+
+    /* process query params, append a hidden input element in the form against each param */
+    queryParams += url.indexOf('?') !== -1 ? url.substring(url.indexOf('?') + 1) : '';
+    queryParams += encType === WS_CONSTANTS.CONTENT_TYPES.FORM_URL_ENCODED ? ((queryParams ? '&' : '') + requestParams.dataParams) : '';
+
+    // For Non body methods only, set the input fields from query parameters
+    if (_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, _.toUpper(requestParams.method))) {
+        setParamsFromURL(queryParams, params); // Set params for URL query params
+    }
+    setParamsFromURL(requestParams.data, params); // Set params for request data
+    _.forEach(params, function (val, key) {
+        paramElement = $('<input type="hidden">');
+        paramElement.attr({
+            'name'  : key,
+            'value' : val
+        });
+        formEl.append(paramElement);
+    });
+
+    /* append form to iFrame and iFrame to the document and submit the form */
+    $('body').append(iFrameElement);
+
+    // timeout for IE 10, iframeElement.contents() is empty in IE 10 without timeout
+    setTimeout(function () {
+        iFrameElement.contents().find('body').append(formEl);
+        formEl.submit();
+        triggerFn(success);
+    }, 100);
+}
+
+function downloadThroughAnchor(config, success, error) {
+    const url     = config.url,
+        method  = config.method,
+        data    = config.dataParams || config.data,
+        headers = config.headers;
+
+    headers['Content-Type'] = headers['Content-Type'] || 'application/x-www-form-urlencoded';
+
+    // Todo: Replace http with getService
+    httpService.send({
+        'target' : 'WebService',
+        'action' : 'invokeRuntimeRestCall',
+        'method' : method,
+        'config' : {
+            'url'    : url,
+            'method' : method,
+            'headers': headers
+        },
+        'data'   : data,
+        'responseType': 'arraybuffer'
+    }, function (response, httpconfig) {
+        setTimeout(() => {
+            downloadFilefromResponse(response, httpconfig.headers, success, error);
+        }, 900);
+    }, function (err) {
+        triggerFn(error);
+        console.log('error', err);
+    });
+}
+
+function getModifiedFileName(fileName, exportFormat) {
+    let fileExtension,
+        currentTimestamp = Date.now();
+
+    if (exportFormat) {
+        fileExtension = exportTypesMap[exportFormat];
+    } else {
+        fileExtension = '.' + _.last(_.split(fileName, '.'));
+        fileName = _.replace(fileName, fileExtension, '');
+    }
+    return fileName + '_' + currentTimestamp + fileExtension;
+}
+
+function getCookieByName(name) {
+    //Todo: Shubham Implement cookie native js
+    return 'cookie';
+}
+
+/**
+ * This function returns the cookieValue if xsrf is enabled.
+ * In device, xsrf cookie is stored in localStorage.
+ * @returns xsrf cookie value
+ */
+function isXsrfEnabled() {
+    if (CONSTANTS.hasCordova) {
+        return localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
+    }
+    return false;
+}
 
 /* returns true if HTML5 File API is available else false*/
 export const isFileUploadSupported = () => {
@@ -319,6 +563,18 @@ export const processBinding = (variable: any, $scope: any, bindSource?: string, 
         }
         processBindObject(node, $scope, bindTarget, variable);
     });
+};
+
+export const simulateFileDownload = (requestParams, fileName, exportFormat, success, error) => {
+    /*success and error callbacks are executed incase of downloadThroughAnchor
+     Due to technical limitation cannot be executed incase of iframe*/
+    if (CONSTANTS.hasCordova) {
+        /*$rootScope.$emit('device-file-download', requestParams, getModifiedFileName(fileName, exportFormat));*/
+    } else if (!_.isEmpty(requestParams.headers) || isXsrfEnabled()) {
+        downloadThroughAnchor(requestParams, success, error);
+    } else {
+        downloadThroughIframe(requestParams, success);
+    }
 };
 
 // Trigger error handler before discarding queued requests

@@ -1,6 +1,7 @@
 export const CONSTANTS = {
     hasCordova: false,
-    isStudioMode: false
+    isStudioMode: false,
+    XSRF_COOKIE_NAME: 'wm_xsrf_token'
 };
 export const VARIABLE_CONSTANTS = {
     CATEGORY: {
@@ -110,7 +111,8 @@ export const VARIABLE_CONSTANTS = {
         CORS_FAILURE: -1,
         UNAUTHORIZED: 401,
         FORBIDDEN: 403
-    }
+    },
+    EXPORT_TYPES_MAP: { 'EXCEL' : '.xlsx', 'CSV' : '.csv'}
 };
 
 export const WS_CONSTANTS = {

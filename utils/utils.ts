@@ -266,6 +266,10 @@ export const getClonedObject = (object) => {
     return _.cloneDeep(object);
 };
 
+export const preventCachingOf = (url) => {
+    return url;
+};
+
 /*Function to generate a random number*/
 function random() {
     return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);

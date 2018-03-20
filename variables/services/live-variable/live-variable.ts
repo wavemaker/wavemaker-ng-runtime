@@ -54,4 +54,7 @@ export class LiveVariable extends StaticVariable {
         return LVUtils.setFilter(this, key, val);
     }
 
+    download(options) {
+        LVUtils.download(this, options);
+    }
 }
