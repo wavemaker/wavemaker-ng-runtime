@@ -44,8 +44,8 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
                     };
                 }
                 /* if auto-update set for the variable with read operation only, get its data */
-                if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.update) && !noUpdate) {
-                    _invoke(variable, 'update');
+                if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.listRecords) && !noUpdate) {
+                    _invoke(variable, 'listRecords');
                 }
             } else {
                 if (nodeName === 'dataBinding') {
@@ -60,13 +60,13 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
             }
             break;
         case VARIABLE_CONSTANTS.CATEGORY.SERVICE:
-            if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.update) && !noUpdate) {
-                _invoke(variable, 'update');
+            if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
+                _invoke(variable, 'invoke');
             }
             break;
         case VARIABLE_CONSTANTS.CATEGORY.LOGIN:
-            if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.login) && !noUpdate) {
-                _invoke(variable, 'login');
+            if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
+                _invoke(variable, 'invoke');
             }
             break;
         case VARIABLE_CONSTANTS.CATEGORY.DEVICE:
@@ -308,7 +308,7 @@ const processBindObject = (obj, scope, root, variable) => {
 
 export const processBinding = (variable: any, $scope: any, bindSource?: string, bindTarget?: string) => {
     bindSource = bindSource || 'dataBinding';
-    bindTarget = bindTarget || 'dataSet';
+    bindTarget = bindTarget || 'dataBinding';
 
     const bindMap = variable[bindSource];
     variable[bindSource] = {};
