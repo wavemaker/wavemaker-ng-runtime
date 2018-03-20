@@ -58,7 +58,7 @@ then
 fi
 echo -e "${Green}Done with inline templates\n"
 
-mkdir ./dist/bundles
+mkdir -p ./dist/webapp/wmapp/scripts
 mkdir ./dist/tmp
 
 
@@ -120,7 +120,7 @@ then
         ./node_modules/jquery-ui/ui/widgets/mouse.js \
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./components/widgets/table/datatable.js \
-        -o ./dist/bundles/wm-libs.min.js -b
+        -o ./dist/webapp/wmapp/scripts/wm-libs.min.js -b
 
     if [ "$?" != "0" ]
     then
@@ -212,7 +212,7 @@ $uglifyjs ./dist/tmp/wm-utils.umd.js \
     ./dist/tmp/http-service.umd.js \
     ./dist/tmp/wm-variables.umd.js \
     ./dist/tmp/wm-runtime.umd.js -o \
-    ./dist/bundles/wm-loader.min.js -b
+    ./dist/webapp/wmapp/scripts/wm-loader.min.js -b
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in bundling wm-loader\n"
