@@ -11,7 +11,8 @@ const DEFAULT_CLS = 'app-textbox form-control';
 const WIDGET_CONFIG = {widgetType: 'wm-text', hostClass: DEFAULT_CLS};
 
 @Directive({
-    selector: '[wmText]'
+    selector: '[wmText]',
+    exportAs: 'wmText'
 })
 export class TextDirective extends BaseComponent {
 
@@ -26,7 +27,7 @@ export class TextDirective extends BaseComponent {
     @HostBinding('attr.placeholder') placeholder: string;
     @HostBinding('attr.pattern') regexp: string;
     @HostBinding('attr.step') step: number;
-    @HostBinding('value') datavalue: any;
+    @HostBinding('value') datavalue: any = '';
     @HostBinding() disabled: boolean;
     @HostBinding() required: boolean;
     @HostBinding() readonly: boolean;

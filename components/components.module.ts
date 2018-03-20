@@ -59,6 +59,8 @@ import { TimeComponent } from './widgets/time/time.component';
 import { TopNavDirective } from './widgets/top-nav/top-nav.directive';
 import { VideoComponent } from './widgets/video/video.component';
 import { PaginationComponent } from './widgets/pagination/pagination.component';
+import { FormComponent } from './widgets/form/form.component';
+import { FormFieldDirective } from './widgets/form-field/form-field.directive';
 import { TableComponent } from './widgets/table/table.component';
 import { TableColumnDirective } from './widgets/table/table-column/table-column.directive';
 import { TableColumnGroupDirective } from './widgets/table/table-column-group/table-column-group.directive';
@@ -118,6 +120,8 @@ const wmComponents = [
     TopNavDirective,
     VideoComponent,
     PaginationComponent,
+    FormComponent,
+    FormFieldDirective,
     TableComponent,
     TableColumnDirective,
     TableColumnGroupDirective,

@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, Injector, ElementRef, ChangeDetectorRef, forwardRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { generateGUId, getClonedObject } from '@utils/utils';
 import { styler } from '../../utils/styler';
@@ -6,7 +6,7 @@ import { getEvaluatedData, getObjValueByKey } from '../../utils/widget-utils';
 import { registerProps } from './rating.props';
 import { $appDigest } from '@utils/watcher';
 import { setCSS } from '@utils/dom';
-
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 declare const _;
 
@@ -27,9 +27,16 @@ const DEFAULT_RATING = 5;
 
 @Component({
     selector: '[wmRating]',
-    templateUrl: './rating.component.html'
+    templateUrl: './rating.component.html',
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => RatingComponent),
+            multi: true
+        }
+    ]
 })
-export class RatingComponent extends BaseComponent implements OnInit {
+export class RatingComponent extends BaseComponent implements OnInit, ControlValueAccessor {
     _model_;
     /**
      * A placeholder is text to show in the editor when there is no value.
@@ -76,7 +83,8 @@ export class RatingComponent extends BaseComponent implements OnInit {
 
     private ratingname;
 
-    private selectOptions: any[];
+    private selectOptions: any[] = [];
+
     /*
      * gets the key to map the select options out of dataSet
      * if only one key is there in the option object it returns that key
@@ -116,6 +124,7 @@ export class RatingComponent extends BaseComponent implements OnInit {
         }
         return range;
     }
+
     /*
    * parse dataSet to filter the options based on the datafield, displayfield & displayexpression
    */
@@ -129,18 +138,19 @@ export class RatingComponent extends BaseComponent implements OnInit {
             data = {};
             // Widget selected item dataset will be object instead of array.
             if (_.isObject(dataSet) && !_.isArray(dataSet)) {
-                data[getObjValueByKey(dataSet, dataField)] = getEvaluatedData(dataSet, {displayfield: this.displayfield , displayexpression: this.displayexpression});
+                data[getObjValueByKey(dataSet, dataField)] = getEvaluatedData(dataSet, {displayfield: this.displayfield, displayexpression: this.displayexpression});
             } else {
                 _.forEach(dataSet, (option) => {
-                    data[getObjValueByKey(option, dataField)] = getEvaluatedData(option, {displayfield: this.displayfield , displayexpression: this.displayexpression});
+                    data[getObjValueByKey(option, dataField)] = getEvaluatedData(option, {displayfield: this.displayfield, displayexpression: this.displayexpression});
                 });
             }
         }
         return data;
     }
+
     /* This function returns the caption for the hovered item or the selected datavalue */
     private getCaption(selecteditem?) {
-        const captionItem = _.find(this.range,  (item) => {
+        const captionItem = _.find(this.range, (item) => {
             /* item value can be string / integer*/
             return item.key == (selecteditem ? selecteditem.value : this.datavalue);
         });
@@ -220,11 +230,19 @@ export class RatingComponent extends BaseComponent implements OnInit {
     }
 
     assignDatavalue(rate?) {
+        let _datavalue;
         this.selectedRatingValue = rate ? rate.value : this.selectedRatingValue;
-        const selectedItem = _.find(this.selectOptions, (rating) => {
-            return rating.index === this.selectedRatingValue - 1;
-        });
-        this.datavalue = this._model_ = selectedItem && selectedItem.key;
+        if (this.selectOptions && this.selectOptions.length) {
+            const selectedItem = _.find(this.selectOptions, (rating) => {
+                return rating.index === this.selectedRatingValue - 1;
+            });
+            _datavalue = selectedItem && selectedItem.key;
+        } else {
+            _datavalue = this.selectedRatingValue;
+        }
+        this.datavalue = this._model_ = _datavalue;
+        this.onChange(this._model_);
+        this.onTouched();
     }
 
     getActiveElements($event, rate) {
@@ -253,13 +271,15 @@ export class RatingComponent extends BaseComponent implements OnInit {
 
     onDatavalueChange() {
         if (this.dataset && !_.isEmpty(this.selectOptions) && this.datavalue) {
-            const selectedValue = _.find(this.selectOptions,  (option) => {
+            const selectedValue = _.find(this.selectOptions, (option) => {
                 return option.key == this.datavalue;
             });
             this.selectedRatingValue = selectedValue ? selectedValue.index + 1 : 0;
             this.caption = this.getCaption();
-            $appDigest();
+        } else if (!this.dataset && _.isEmpty(this.selectOptions)) {
+            this.selectedRatingValue = this.datavalue;
         }
+        $appDigest();
     }
 
     calculateRatingsWidth() {
@@ -280,7 +300,7 @@ export class RatingComponent extends BaseComponent implements OnInit {
         }
     }
 
-    onPropertyChange(key, newVal, oldVal) {
+    onPropertyChange(key, newVal, oldVal?) {
         switch (key) {
             case 'dataset':
             case 'displayfield':
@@ -307,12 +327,12 @@ export class RatingComponent extends BaseComponent implements OnInit {
         }
     }
 
-    onMouseleave ($event, rate) {
+    onMouseleave($event, rate) {
         this.caption = this.getCaption();
         this.$digest();
     }
 
-    onMouseenter ($event, rate) {
+    onMouseenter($event, rate) {
         this.caption = this.getCaption(rate);
         this.$digest();
     }
@@ -323,5 +343,21 @@ export class RatingComponent extends BaseComponent implements OnInit {
             this.range = this.prepareRatingDataset(this.maxvalue);
             this.caption = this.getCaption();
         }
+    }
+
+    private onChange: any = () => {};
+    private onTouched: any = () => {};
+
+    registerOnChange(fn) {
+        this.onChange = fn;
+    }
+
+    registerOnTouched(fn) {
+        this.onTouched = fn;
+    }
+
+    writeValue(value) {
+        this.datavalue = value;
+        this.onPropertyChange('datavalue', value);
     }
 }

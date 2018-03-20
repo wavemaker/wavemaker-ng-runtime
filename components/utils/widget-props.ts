@@ -9,7 +9,7 @@ export const register = (widgetType, props) => {
 };
 
 export enum PROP_TYPE {
-    BOOLEAN,
+    BOOLEAN = 1,
     NUMBER,
     STRING
 }

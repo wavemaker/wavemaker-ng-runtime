@@ -234,9 +234,11 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
         filterField;
 
     // reset isChecked flag for displayOptions.
-    displayOptions.forEach(dataObj => {
-        dataObj.isChecked = false;
-    });
+    if (displayOptions) {
+        displayOptions.forEach(dataObj => {
+            dataObj.isChecked = false;
+        });
+    }
 
     // If model is null, reset the modelProxy and displayValue.
     if (_.isNull(model) || _.isUndefined(model)) {

@@ -99,7 +99,7 @@ const getRequiredProviders = (nodeDef, providers) => {
         requires = [requires];
     }
 
-    if (!Array.isArray(requires)){
+    if (!Array.isArray(requires)) {
         return;
     }
 
@@ -133,8 +133,8 @@ const processNode = (node, providers?) => {
             requiredProviders = getRequiredProviders(nodeDef, providers);
             shared = new Map();
             markup = (<any>pre)(attrMap, shared, ...requiredProviders);
-            if (node.provide) {
-                providers.set(node.name, node.provide(attrMap, shared, ...requiredProviders))
+            if (nodeDef.provide) {
+                providers.set(node.name, nodeDef.provide(attrMap, shared, ...requiredProviders));
             }
         } else {
             markup = `<${node.name} ${getAttrMarkup(attrMap)}>`;
@@ -161,7 +161,7 @@ const processNode = (node, providers?) => {
     return markup;
 };
 
-export const transpile = (markup:string = '') => {
+export const transpile = (markup: string = '') => {
     if (!markup.length) {
         return;
     }
@@ -182,8 +182,8 @@ export const transpile = (markup:string = '') => {
 export const register = (nodeName: string, nodeDefFn: () => BuildTaskDef) => registry.set(nodeName, nodeDefFn());
 
 export interface BuildTaskDef {
-    requires?: string | Array<string>
-    pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string,
-    provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>,
-    post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string,
+    requires?: string | Array<string>;
+    pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
+    provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
+    post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
 }

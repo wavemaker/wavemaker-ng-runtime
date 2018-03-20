@@ -56,9 +56,19 @@ const registerWidget = (name: string, parentName: string, widgetId: string, widg
 
 const getWatchIdentifier = (...args) => args.join('_');
 
-const parseValue = (value, type) => {
+// create a set of boolean attrs
+const BOOLEAN_ATTRS = new Set([
+    'readonly', 'autofocus', 'disabled', 'startchecked', 'multiple',
+    'selected', 'required', 'controls', 'autoplay', 'loop', 'muted'
+]);
+
+const isBooleanAttr = key => BOOLEAN_ATTRS.has(key);
+
+const toBoolean = (val, identity?) => (val === true || val === 'true' || (identity ? val === identity : false));
+
+const parseValue = (key, value, type) => {
     if (type === PROP_TYPE.BOOLEAN) {
-        return Boolean(value).valueOf();
+        return toBoolean(value, isBooleanAttr(key) && key);
     }
 
     if (type === PROP_TYPE.NUMBER) {
@@ -99,7 +109,7 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
     if (propInfo) {
         const type = propInfo.type;
         if (type) {
-            nv = parseValue(nv, type);
+            nv = parseValue(key, nv, type);
         }
     }
 
@@ -130,7 +140,7 @@ const handleEvent = (eventName, expr, component, parent, widget) => {
     component.eventHandlers.set(eventName, fn);
 
     if (component._hostEvents.has(eventName)) {
-        let locals = {widget, $event: undefined};
+        const locals = {widget, $event: undefined};
         component.$element.addEventListener(eventName, e => {
             locals.$event = e;
             if (meta[eventName]) {
@@ -174,7 +184,7 @@ export function initWidget(component: BaseComponent, elDef: any, view: any, pare
         if (meta === 'bind') {
             initState.delete(propName);
             component.destroy$.subscribe($watch(attrValue, parent, $locals, nv => widget[propName] = nv, getWatchIdentifier(widgetId, propName)));
-        } else if(meta === 'event') {
+        } else if (meta === 'event') {
             handleEvent(propName, attrValue, component, parent, widget);
         } if (length === 1) {
             initState.set(propName, attrValue);
@@ -186,13 +196,13 @@ export function initWidget(component: BaseComponent, elDef: any, view: any, pare
     registerWidget(initState.get('name'), parentContainer, widgetId, widget, component);
 
     return () => {
-        widget.name = initState.get('name'); //TODO(VinayK) - implement priority system for the props.
+        (<any>widget).name = initState.get('name'); // TODO(VinayK) - implement priority system for the props.
         initState.forEach((v, k) => {
             if (k !== 'name') {
                 widget[k] = v;
             }
         });
-    }
+    };
 }
 
 (<any>window).widgetRegistryByName = widgetRegistryByName;

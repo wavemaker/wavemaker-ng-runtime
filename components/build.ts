@@ -11,6 +11,8 @@ export * from './widgets/currency/currency.build';
 export * from './widgets/date/date.build';
 export * from './widgets/date-time/date-time.build';
 export * from './widgets/footer/footer.build';
+export * from './widgets/form/form.build';
+export * from './widgets/form-field/form-field.build';
 export * from './widgets/header/header.build';
 export * from './widgets/html/html.build';
 export * from './widgets/icon/icon.build';

@@ -9,7 +9,8 @@ const DEFAULT_CLS = 'form-control app-textarea';
 const WIDGET_CONFIG = {widgetType: 'wm-textarea', hostClass: DEFAULT_CLS};
 
 @Directive({
-    selector: '[wmTextarea]'
+    selector: '[wmTextarea]',
+    exportAs: 'wmTextarea'
 })
 export class TextareaDirective extends BaseComponent {
 

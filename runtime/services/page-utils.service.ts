@@ -16,6 +16,7 @@ import { transpile } from '@transpiler/build';
 import { VariablesService } from '@variables/services/variables.service';
 import { App } from './app.service';
 import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 
 const pageScriptCache = new Map<string, Function>();
@@ -124,7 +125,7 @@ export class PageUtils {
     getDynamicModule(component) {
         @NgModule({
             declarations: [component],
-            imports: [WmComponentsModule, FormsModule, ReactiveFormsModule, TempModule],
+            imports: [WmComponentsModule, FormsModule, ReactiveFormsModule, TempModule, CommonModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
         })
         class DynamicModule {

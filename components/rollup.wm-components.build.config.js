@@ -6,6 +6,7 @@ export default {
     },
     name: 'wm.components.build',
     globals: {
-        '@transpiler/build': 'wm.transpiler'
+        '@transpiler/build': 'wm.transpiler',
+        '@utils/utils': 'wm.utils'
     }
 };

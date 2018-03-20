@@ -1,9 +1,10 @@
-import { ElementRef, Injector, Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { ElementRef, Injector, Component, ChangeDetectorRef, OnInit, forwardRef } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './select.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForMultiSelect, assignModelForSelected } from '../../utils/form-utils';
 import { removeAttr, setAttr } from '@utils/dom';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 declare const _;
 
 registerProps();
@@ -12,9 +13,16 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 
 @Component({
     selector: '[wmSelect]',
-    templateUrl: './select.component.html'
+    templateUrl: './select.component.html',
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectComponent),
+            multi: true
+        }
+    ]
 })
-export class SelectComponent extends BaseComponent implements OnInit {
+export class SelectComponent extends BaseComponent implements OnInit, ControlValueAccessor {
 
     public readonly;
     public multiple;
@@ -43,6 +51,7 @@ export class SelectComponent extends BaseComponent implements OnInit {
         model = updatedCheckedValues(this.displayOptions, val, this.modelProxy, this.usekeys);
         this.modelProxy = _.isArray(model) ? model : [model];
         this.displayValue = setCheckedAndDisplayValues(this.displayOptions, this.modelProxy);
+        this._onChange(this.datavalue);
     }
 
     get datavalue() {
@@ -76,6 +85,7 @@ export class SelectComponent extends BaseComponent implements OnInit {
             return;
         }
         this.assignModelValue();
+        this._onTouched();
     }
 
     /**
@@ -140,5 +150,20 @@ export class SelectComponent extends BaseComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         styler(<HTMLElement>this.$element.children[0], this);
+    }
+
+    private _onChange: any = () => {};
+    private _onTouched: any = () => {};
+
+    registerOnChange(fn) {
+        this._onChange = fn;
+    }
+
+    registerOnTouched(fn) {
+        this._onTouched = fn;
+    }
+
+    writeValue(value) {
+        this.datavalue = value;
     }
 }

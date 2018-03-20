@@ -41,3 +41,34 @@ export const getRowOperationsColumn = (): any => {
         'isRowOperation': true
     };
 };
+
+/**
+ * Returns caption and widget bootstrap classes for the field
+ */
+export const getFieldLayoutConfig = (captionWidth, captionPosition): any => {
+    let captionCls = '',
+        widgetCls = '';
+
+    captionPosition = captionPosition || 'top';
+
+    if (captionPosition === 'top') {
+        captionCls = widgetCls = 'col-xs-12';
+    } else if (captionWidth) {
+        // handling itemsperrow containing string of classes
+        _.forEach(_.split(captionWidth, ' '), function (cls) {
+            const keys = _.split(cls, '-'),
+                tier = keys[0];
+            let _captionWidth,
+                widgetWidth;
+            _captionWidth = parseInt(keys[1], 10);
+            widgetWidth  = 12 - _captionWidth;
+            widgetWidth  = widgetWidth <= 0 ? 12 : widgetWidth;
+            captionCls += ' ' + 'col-' + tier + '-' + _captionWidth;
+            widgetCls  += ' ' + 'col-' + tier + '-' + widgetWidth;
+        });
+    }
+    return {
+        'captionCls' : captionCls,
+        'widgetCls'  : widgetCls
+    };
+};
