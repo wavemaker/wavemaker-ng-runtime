@@ -1,3 +1,4 @@
+npm install
 start=`date +%s`
 rimraf=./node_modules/.bin/rimraf
 rollup=./node_modules/.bin/rollup
