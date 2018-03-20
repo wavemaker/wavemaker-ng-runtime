@@ -45,4 +45,13 @@ export class LiveVariable extends StaticVariable {
     deleteRecord(options, success, error) {
         LVUtils.deleteRecord(this, options, success, error);
     }
+
+    setInput(key, val, options) {
+        return LVUtils.setInput(this, key, val, options);
+    }
+
+    setFilter(key, val) {
+        return LVUtils.setFilter(this, key, val);
+    }
+
 }

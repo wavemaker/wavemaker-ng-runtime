@@ -1,5 +1,5 @@
 import { $parseExpr } from '@utils/expression-parser';
-import {findValueOf, getClonedObject, stringStartsWith} from '@utils/utils';
+import {findValueOf, getClonedObject, stringStartsWith, triggerFn} from '@utils/utils';
 import { $watch } from '@utils/watcher';
 import { VARIABLE_CONSTANTS } from './../constants/variables.constants';
 
@@ -320,3 +320,42 @@ export const processBinding = (variable: any, $scope: any, bindSource?: string, 
         processBindObject(node, $scope, bindTarget, variable);
     });
 };
+
+// Trigger error handler before discarding queued requests
+const triggerError = (requestQueue) => {
+    _.forEach(requestQueue, function (requestObj) {
+        triggerFn(requestObj && requestObj.error);
+    });
+};
+
+/**
+ * process the requests in the queue for a variable based on the inFlightBehavior flag of the variable
+ * @param variable
+ * @param requestQueue
+ * @param handler
+ * @param options
+ */
+export const processRequestQueue = (variable, requestQueue, handler, options?) => {
+    /* process request queue for the variable only if it is not empty */
+    if (requestQueue && requestQueue.length) {
+        const inFlightBehavior = _.get(options, 'inFlightBehavior') || variable.inFlightBehavior;
+        let requestObj;
+
+        switch (inFlightBehavior) {
+            case 'executeLast':
+                requestObj = requestQueue.pop();
+                triggerError(requestQueue);
+                handler(requestObj.variable, requestObj.options, requestObj.success, requestObj.error);
+                requestQueue.length = 0;
+                break;
+            case 'executeAll':
+                requestObj = requestQueue.splice(0, 1).pop();
+                handler(requestObj.variable, requestObj.options, requestObj.success, requestObj.error);
+                break;
+            default:
+                triggerError(requestQueue);
+                requestQueue.length = 0;
+                break;
+        }
+    }
+}

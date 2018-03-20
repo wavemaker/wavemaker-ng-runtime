@@ -1,22 +1,17 @@
 declare const _, window;
 
-import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType } from '@utils/utils';
-// import {VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope} from '@variables/constants/variables.constants';
+import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType, getBlob } from '@utils/utils';
 import { VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope, SWAGGER_CONSTANTS } from './../../constants/variables.constants';
-// import * as LVService from '@variables/services/live-variable/live-variable.http.utils';
 import * as LVService from './live-variable.http.utils';
-import { initiateCallback } from './../../utils/variables.utils';
+import { initiateCallback, processRequestQueue } from './../../utils/variables.utils';
 
 const isRunMode = true,
     emptyArr = [],
     variableActive = new Map(),
     inFlightQueue = new Map();
 
-const _initiateCallback = initiateCallback;
-
-function _processInFlightQueue(variable, queue, callback, options) {
-    console.log('_processInFlightQueue', 'WIP...');
-}
+const _initiateCallback = initiateCallback,
+    _processInFlightQueue = processRequestQueue;
 
 function _updateVariableDataset(variable, data, propertiesMap, pagingOptions) {
     variable.dataSet = {
@@ -647,7 +642,6 @@ const prepareFormData = (variableDetails, rowObject) => {
     return formData;
 };
 
-
 function doCUD(action, variable, options, success, error) {
     const projectID = $rootScope.project.id || $rootScope.projectName,
         primaryKey = getPrimaryKey(variable),
@@ -961,4 +955,61 @@ export const updateRecord = (variable, options, success, error) => {
 export const deleteRecord = (variable, options, success, error) => {
     options = options || {};
     doCUD('deleteTableData', variable, options, success, error);
+};
+
+export const setInput = (variable, key, val, options) => {
+    let paramObj = {},
+        targetObj = {};
+
+    // process, if extra options provided for input
+    if (_.isObject(options)) {
+        switch (options.type) {
+            case 'file':
+                val = getBlob(val, options.contentType);
+                break;
+            case 'number':
+                val = _.isNumber(val) ? val : parseInt(val, 10);
+                break;
+        }
+    }
+
+    if (_.isObject(key)) {
+        paramObj = key;
+    } else {
+        paramObj[key] = val;
+    }
+
+    if (!variable.inputFields) {
+        variable.inputFields = {};
+    }
+    targetObj = variable.inputFields;
+
+    _.forEach(paramObj, function (paramVal, paramKey) {
+        targetObj[paramKey] = paramVal;
+    });
+
+    return targetObj;
+};
+
+export const setFilter = (variable, key, val) => {
+    let paramObj = {},
+        targetObj = {};
+    if (_.isObject(key)) {
+        paramObj = key;
+    } else {
+        paramObj[key] = val;
+    }
+
+    if (!variable.filterFields) {
+        variable.filterFields = {};
+    }
+    targetObj = variable.filterFields;
+
+    _.forEach(paramObj, function (paramVal, paramKey) {
+        targetObj[paramKey] = {
+            'value': paramVal
+        };
+    });
+
+    return targetObj;
 };
