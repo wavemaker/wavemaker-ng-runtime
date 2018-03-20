@@ -1,7 +1,7 @@
 declare const _, window;
 import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS, SWAGGER_CONSTANTS, $rootScope } from './../../constants/variables.constants';
 import { httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy } from './../../utils/variables.utils';
-import { formatDate, isDateTimeType, extractType, getBlob, getClonedObject } from '@utils/utils';
+import { formatDate, isDateTimeType, extractType, getBlob, getClonedObject, findValueOf } from '@utils/utils';
 
 const isBodyTypeQueryOrProcedure = (variable) => {
     return (_.includes(['QueryExecution', 'ProcedureExecution'], variable.controller)) && (_.includes(['put', 'post'], variable.operationType));
@@ -398,4 +398,48 @@ export const invoke = (variable, options, success, error) => {
     }, function (e) {
         processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
     });
+};
+
+export const setInput = (variable, key, val, options) => {
+    let targetObj = variable.dataBinding,
+        keys,
+        lastKey,
+        paramObj = {};
+    if (_.isObject(options)) {
+        switch (options.type) {
+            case 'file':
+                val = getBlob(val, options.contentType);
+                break;
+            case 'number':
+                val = _.isNumber(val) ? val : parseInt(val, 10);
+                break;
+        }
+    }
+    if (_.isObject(key)) {
+        paramObj = key;
+    } else if (key.indexOf('.') > -1) {
+        keys = key.split('.');
+        lastKey = keys.pop();
+        // Finding the object based on the key
+        targetObj = findValueOf(targetObj, keys.join('.'), true);
+        key = lastKey;
+        paramObj[key] = val;
+    } else {
+        paramObj[key] = val;
+    }
+
+    _.forEach(paramObj, function (paramVal, paramKey) {
+        targetObj[paramKey] = paramVal;
+    });
+    return variable.dataBinding;
+};
+
+export const clearData = (variable) => {
+    variable.dataSet = {};
+    return variable.dataSet;
+};
+
+export const cancel = (variable) => {
+    /* process only if current variable is actually active */
+    console.warn('Yet to be implemented');
 };
