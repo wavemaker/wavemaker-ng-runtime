@@ -1,17 +1,15 @@
 declare const _, window;
 
 import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType, getBlob } from '@utils/utils';
-import { VARIABLE_CONSTANTS, DB_CONSTANTS, CONSTANTS, $rootScope,
-         SWAGGER_CONSTANTS, WS_CONSTANTS} from './../../constants/variables.constants';
+import { VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope, SWAGGER_CONSTANTS} from './../../constants/variables.constants';
 import * as LVService from './live-variable.http.utils';
-import { httpService, initiateCallback, processRequestQueue } from './../../utils/variables.utils';
+import { initiateCallback } from './../../utils/variables.utils';
+import { $queue } from './../../utils/inflight-queue';
+
 const isRunMode = true,
-    emptyArr = [],
-    variableActive = new Map(),
-    inFlightQueue = new Map();
+    emptyArr = [];
 
 const _initiateCallback = initiateCallback,
-    _processInFlightQueue = processRequestQueue,
     exportTypesMap   = VARIABLE_CONSTANTS.EXPORT_TYPES_MAP;
 
 function _updateVariableDataset(variable, data, propertiesMap, pagingOptions) {
@@ -465,11 +463,8 @@ function _getTableData(variable, options, success, error) {
         clonedFields,
         requestData;
     const handleError = function (response, xhrObj) {
-        /* If in Run mode, initiate error callback for the variable */
-        if (isRunMode) {
-            //  EVENT: ON_RESULT
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
-        }
+        //  EVENT: ON_RESULT
+        _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
 
         /* update the dataSet against the variable */
         if (!options.skipDataSetUpdate) {
@@ -479,34 +474,28 @@ function _getTableData(variable, options, success, error) {
          * The same callback if triggered in case of error also. The error-handling is done in grid.js*/
         triggerFn(error, response);
 
-        if (isRunMode) {
-            // $timeout(function () {
-            //  EVENT: ON_ERROR
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
-            //  EVENT: ON_CAN_UPDATE
-            variable.canUpdate = true;
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
+        // $timeout(function () {
+        //  EVENT: ON_ERROR
+        _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
+        //  EVENT: ON_CAN_UPDATE
+        variable.canUpdate = true;
+        _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
 
-            /* process next requests in the queue */
-            variableActive.set(variable, false);
-            _processInFlightQueue(variable, inFlightQueue.get(variable), _getTableData, options);
-            // }, null, false);
-        }
+        /* process next requests in the queue */
+        $queue.process(variable, _getTableData, options);
+        // }, null, false);
     };
 
-    if (isRunMode) {
-        clonedFields = getClonedObject(variable.filterFields);
-        //  EVENT: ON_BEFORE_UPDATE
-        output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
-        if (output === false) {
-            variableActive.set(variable, false);
-            _processInFlightQueue(variable, inFlightQueue.get(variable), _getTableData, options);
-            // $rootScope.$emit('toggle-variable-state', variable, false);
-            triggerFn(error);
-            return;
-        }
-        variable.canUpdate = false;
+    clonedFields = getClonedObject(variable.filterFields);
+    //  EVENT: ON_BEFORE_UPDATE
+    output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
+    if (output === false) {
+        $queue.process(variable, _getTableData, options);
+        // $rootScope.$emit('toggle-variable-state', variable, false);
+        triggerFn(error);
+        return;
     }
+    variable.canUpdate = false;
 
     tableOptions = prepareTableOptions(variable, options, _.isObject(output) ? output : clonedFields);
     //  if tableOptions object has query then set the dbOperation to 'searchTableDataWithQuery'
@@ -555,35 +544,26 @@ function _getTableData(variable, options, success, error) {
                 }
             }
 
-            if (isRunMode) {
-                //  EVENT: ON_RESULT
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, dataObj.data);
-                //  EVENT: ON_PREPARESETDATA
-                newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataObj.data);
-                if (newDataSet) {
-                    // setting newDataSet as the response to service variable onPrepareSetData
-                    dataObj.data = newDataSet;
-                }
+            //  EVENT: ON_RESULT
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, dataObj.data);
+            //  EVENT: ON_PREPARESETDATA
+            newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataObj.data);
+            if (newDataSet) {
+                // setting newDataSet as the response to service variable onPrepareSetData
+                dataObj.data = newDataSet;
             }
             /* update the dataSet against the variable */
             _updateVariableDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
 
-            if (isRunMode) {
-                setVariableOptions(variable, options);
-                // $timeout(function () {
-                //  EVENT: ON_SUCCESS
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data);
-                //  EVENT: ON_CAN_UPDATE
-                variable.canUpdate = true;
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
-                // });
-            }
+            setVariableOptions(variable, options);
+            //  EVENT: ON_SUCCESS
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data);
+            //  EVENT: ON_CAN_UPDATE
+            variable.canUpdate = true;
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
         }
-        if (isRunMode) {
-            /* process next requests in the queue */
-            variableActive.set(variable, false);
-            _processInFlightQueue(variable, inFlightQueue.get(variable), _getTableData, options);
-        }
+        /* process next requests in the queue */
+        $queue.process(variable, _getTableData, options);
         /* if callback function is provided, send the data to the callback */
         triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
     }, function (errorMsg, details, xhrObj) {
@@ -591,10 +571,8 @@ function _getTableData(variable, options, success, error) {
         triggerFn(handleError, errorMsg, xhrObj);
     });
 
-    if (isRunMode) {
-        variable.promise = promiseObj;
-        return promiseObj;
-    }
+    variable.promise = promiseObj;
+    return promiseObj;
 }
 
 /* Function to check if specified field is of type date*/
@@ -670,19 +648,16 @@ function doCUD(action, variable, options, success, error) {
     }
 
     // EVENT: ON_BEFORE_UPDATE
-    if (isRunMode) {
-        clonedFields = getClonedObject(inputFields);
-        output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
-        if (output === false) {
-            variableActive.set(variable, false);
-            _processInFlightQueue(variable, inFlightQueue.get(variable), _getTableData, options);
-            // $rootScope.$emit('toggle-variable-state', variable, false);
-            triggerFn(error);
-            return;
-        }
-        inputFields = _.isObject(output) ? output : clonedFields;
-        variable.canUpdate = false;
+    clonedFields = getClonedObject(inputFields);
+    output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
+    if (output === false) {
+        $queue.process(variable, doCUD, options);
+        // $rootScope.$emit('toggle-variable-state', variable, false);
+        triggerFn(error);
+        return;
     }
+    inputFields = _.isObject(output) ? output : clonedFields;
+    variable.canUpdate = false;
 
     if (options.row) {
         rowObject = options.row;
@@ -845,117 +820,102 @@ function doCUD(action, variable, options, success, error) {
         'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
     }).then(function (response, xhrObj) {
         response = response.body;
-        variableActive.set(variable, false);
-        _processInFlightQueue(variable, inFlightQueue.get(variable), _getTableData, options);
+        $queue.process(variable, doCUD, options);
         /* if error received on making call, call error callback */
         if (response && response.error) {
-            /* If in RUN mode trigger error events associated with the variable */
-            if (isRunMode) {
-                // EVENT: ON_RESULT
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
-                // $timeout(function () {
-                // EVENT: ON_ERROR
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error);
-                // EVENT: ON_CAN_UPDATE
-                variable.canUpdate = true;
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error);
-                // }, null, false);
-            }
-            /* trigger error callback */
-            triggerFn(error, response.error);
-        } else {
-            if (isRunMode) {
-                // EVENT: ON_RESULT
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
-                if (variable.operation !== 'read') {
-                    // EVENT: ON_PREPARESETDATA
-                    const newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response);
-                    if (newDataSet) {
-                        // setting newDataSet as the response to service variable onPrepareSetData
-                        response = newDataSet;
-                    }
-                    variable.dataSet = response;
-                }
-                // $timeout(function () {
-                // EVENT: ON_SUCCESS
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response);
-                // EVENT: ON_CAN_UPDATE
-                variable.canUpdate = true;
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
-                // }, null, false);
-            }
-            triggerFn(success, response);
-        }
-    }, function (response, details, xhrObj) {
-        /* If in RUN mode trigger error events associated with the variable */
-        if (isRunMode) {
             // EVENT: ON_RESULT
             _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
-
-            // $timeout(function () {
             // EVENT: ON_ERROR
-            if (!options.skipNotification) {
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error);
+            // EVENT: ON_CAN_UPDATE
+            variable.canUpdate = true;
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error);
+            triggerFn(error, response.error);
+        } else {
+            // EVENT: ON_RESULT
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
+            if (variable.operation !== 'read') {
+                // EVENT: ON_PREPARESETDATA
+                const newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response);
+                if (newDataSet) {
+                    // setting newDataSet as the response to service variable onPrepareSetData
+                    response = newDataSet;
+                }
+                variable.dataSet = response;
             }
+            // $timeout(function () {
+            // EVENT: ON_SUCCESS
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response);
             // EVENT: ON_CAN_UPDATE
             variable.canUpdate = true;
             _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
             // }, null, false);
+            triggerFn(success, response);
         }
+    }, function (response, details, xhrObj) {
+        // EVENT: ON_RESULT
+        _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
+
+        // $timeout(function () {
+        // EVENT: ON_ERROR
+        if (!options.skipNotification) {
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
+        }
+        // EVENT: ON_CAN_UPDATE
+        variable.canUpdate = true;
+        _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
+        // }, null, false);
         triggerFn(error, response);
     });
 
-    if (isRunMode) {
-        variable.promise = promiseObj;
-    }
+    return variable.promise = promiseObj;
 }
 
 export const listRecords = function (variable, options, success, error) {
     options = options || {};
-    if (variableActive.has(variable) && variableActive.get(variable)) {
-        if (!inFlightQueue.has(variable)) {
-            inFlightQueue.set(variable, []);
-        }
+    $queue.has(variable, function () {
         if (variable.operation === 'read') {
             options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
         } else {
             options.inputFields = options.row || getClonedObject(variable.inputFields);
         }
-        inFlightQueue.get(variable).push({variable: variable, options: options, success: success, error: error});
-        return;
-    } else {
-        variableActive.set(variable, true);
-    }
-    _getTableData(variable, options, success, error);
+        $queue.push(variable, {options: options, success: success, error: error});
+    }, function () {
+        _getTableData(variable, options, success, error);
+    });
 };
 
 export const insertRecord = (variable, options, success, error) => {
     options = options || {};
-    if (variableActive.has(variable) && variableActive.get(variable)) {
-        if (!inFlightQueue.has(variable)) {
-            inFlightQueue.set(variable, []);
-        }
+    $queue.has(variable, function () {
         if (variable.operation === 'read') {
             options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
         } else {
             options.inputFields = options.row || getClonedObject(variable.inputFields);
         }
-        inFlightQueue.get(variable).push({variable: variable, options: options, success: success, error: error});
-        return;
-    } else {
-        variableActive.set(variable, true);
-    }
-    doCUD('insertTableData', variable, options, success, error);
+        $queue.push(variable, {options: options, success: success, error: error});
+    }, function () {
+        doCUD('insertTableData', variable, options, success, error);
+    });
 };
 
 export const updateRecord = (variable, options, success, error) => {
     options = options || {};
-    doCUD('updateTableData', variable, options, success, error);
+    $queue.has(variable, function () {
+        $queue.push(variable, {options: options, success: success, error: error});
+    }, function () {
+        doCUD('updateTableData', variable, options, success, error);
+    });
 };
 
 export const deleteRecord = (variable, options, success, error) => {
     options = options || {};
-    doCUD('deleteTableData', variable, options, success, error);
+    options = options || {};
+    $queue.has(variable, function () {
+        $queue.push(variable, {options: options, success: success, error: error});
+    }, function () {
+        doCUD('deleteTableData', variable, options, success, error);
+    });
 };
 
 export const download = (variable, options) => {

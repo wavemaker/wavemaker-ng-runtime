@@ -113,8 +113,8 @@ function downloadFilefromResponse(response, headerFn, success, error) {
         blob,
         URL,
         downloadUrl,
-        popup,
-        disposition = headerFn('Content-Disposition');
+        popup;
+    const disposition = headerFn('Content-Disposition');
     if (disposition && disposition.indexOf('attachment') !== -1) {
         filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
         matches = filenameRegex.exec(disposition);
@@ -139,14 +139,14 @@ function downloadFilefromResponse(response, headerFn, success, error) {
 
         if (filename) {
             // use HTML5 a[download] attribute to specify filename
-            let a = document.createElement('a'),
-                reader;
+            const a = document.createElement('a');
+            let reader;
             // safari doesn't support this yet
             if (typeof a.download === 'undefined') {
                 reader = new FileReader();
                 reader.onloadend = function () {
-                    let url   = reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;'),
-                        popup = window.open(url, '_blank');
+                    let url   = reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
+                    popup = window.open(url, '_blank');
                     if (!popup) {
                         window.location.href = url;
                     }
@@ -229,8 +229,8 @@ function downloadThroughIframe(requestParams, success) {
     let iFrameElement,
         formEl,
         paramElement,
-        queryParams     = '',
-        IFRAME_NAME     = 'fileDownloadIFrame',
+        queryParams     = '';
+    const IFRAME_NAME     = 'fileDownloadIFrame',
         FORM_NAME       = 'fileDownloadForm',
         CONTENT_TYPE    = 'Content-Type',
         url             = requestParams.url,
@@ -313,8 +313,8 @@ function downloadThroughAnchor(config, success, error) {
 }
 
 function getModifiedFileName(fileName, exportFormat) {
-    let fileExtension,
-        currentTimestamp = Date.now();
+    let fileExtension;
+    const currentTimestamp = Date.now();
 
     if (exportFormat) {
         fileExtension = exportTypesMap[exportFormat];
@@ -326,7 +326,7 @@ function getModifiedFileName(fileName, exportFormat) {
 }
 
 function getCookieByName(name) {
-    //Todo: Shubham Implement cookie native js
+    // Todo: Shubham Implement cookie native js
     return 'cookie';
 }
 
@@ -574,44 +574,5 @@ export const simulateFileDownload = (requestParams, fileName, exportFormat, succ
         downloadThroughAnchor(requestParams, success, error);
     } else {
         downloadThroughIframe(requestParams, success);
-    }
-};
-
-// Trigger error handler before discarding queued requests
-const triggerError = (requestQueue) => {
-    _.forEach(requestQueue, function (requestObj) {
-        triggerFn(requestObj && requestObj.error);
-    });
-};
-
-/**
- * process the requests in the queue for a variable based on the inFlightBehavior flag of the variable
- * @param variable
- * @param requestQueue
- * @param handler
- * @param options
- */
-export const processRequestQueue = (variable, requestQueue, handler, options?) => {
-    /* process request queue for the variable only if it is not empty */
-    if (requestQueue && requestQueue.length) {
-        const inFlightBehavior = _.get(options, 'inFlightBehavior') || variable.inFlightBehavior;
-        let requestObj;
-
-        switch (inFlightBehavior) {
-            case 'executeLast':
-                requestObj = requestQueue.pop();
-                triggerError(requestQueue);
-                handler(requestObj.variable, requestObj.options, requestObj.success, requestObj.error);
-                requestQueue.length = 0;
-                break;
-            case 'executeAll':
-                requestObj = requestQueue.splice(0, 1).pop();
-                handler(requestObj.variable, requestObj.options, requestObj.success, requestObj.error);
-                break;
-            default:
-                triggerError(requestQueue);
-                requestQueue.length = 0;
-                break;
-        }
     }
 };
