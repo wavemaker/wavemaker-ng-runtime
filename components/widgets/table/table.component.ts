@@ -43,40 +43,45 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     @ViewChild(PaginationComponent) dataNavigator;
     @ViewChild('datagridElement') private _tableElement: ElementRef;
 
-    title;
-    subheading;
-    iconclass;
-    gridclass;
-    nodatamessage;
-    loadingdatamsg;
-    gridfirstrowselect;
-    filtermode;
-    navigation;
-    pagesize;
-    showheader;
-    multiselect;
-    radioselect;
-    showrowindex;
-    enablesort = true;
+    datagridElement;
+    editmode;
     enablecolumnselection;
-    showrecordcount;
+    enablesort = true;
+    filtermode;
+    formposition;
+    gridclass;
+    gridfirstrowselect;
+    iconclass;
+    loadingdatamsg;
+    multiselect;
+    name;
+    navigation;
+    navigationSize;
     navigationalign;
+    nodatamessage;
+    pagesize;
+    radioselect;
+    rowclass;
+    rowngclass;
+    selectedItems;
+    showheader;
+    showrecordcount;
+    showrowindex;
+    subheading;
+    title;
 
-    public selectedItems;
-    public items = [];
-
-    public shownavigation = false;
-    public navControls = 'Basic';
-
-    public datagridElement;
-
-    public actions = [];
-    public _actions = {
+    actions = [];
+    _actions = {
         'header': [],
         'footer': []
     };
-    public rowActions = [];
-    public exportOptions = [];
+    exportOptions = [];
+    headerConfig = [];
+    items = [];
+    navControls = 'Basic';
+    rowActions = [];
+    shownavigation = false;
+
     private _dataset;
     get dataset() {
         return this._dataset;
@@ -100,7 +105,8 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     private isBoundToLiveVariableRoot;
     private filternullrecords;
     private variableInflight;
-    public headerConfig = [];
+
+    private applyProps = new Map();
 
     private gridOptions = {
         'data': [],
@@ -113,12 +119,13 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         'rowActions': [],
         'headerConfig': [],
         'rowClass': '',
+        'rowNgClass': '',
         'editmode': '',
         'formPosition': '',
         'isMobile': false,
         'dateFormat': '',
         'timeFormat': '',
-        'name': 'UserTable1',
+        'name': '',
         'messages': {
             'selectField': 'Select Field'
         },
@@ -451,6 +458,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
 
     callDataGridMethod(...args) {
         if (!this.datagridElement || !this.datagridElement.datatable('instance')) {
+            this.applyProps.set(args[1], args);
             return; // If datagrid is not initiliazed or destroyed, return here
         }
         return this.datagridElement.datatable.apply(this.datagridElement, args);
@@ -670,6 +678,29 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
             case 'gridfirstrowselect':
                 this.setDataGridOption('selectFirstRow', newVal);
                 break;
+            case 'gridclass':
+                this.callDataGridMethod('option', 'cssClassNames.grid', newVal);
+                break;
+            case 'nodatamessage':
+                this.callDataGridMethod('option', 'dataStates.nodata', newVal);
+                break;
+            case 'loadingdatamsg':
+                this.callDataGridMethod('option', 'dataStates.loading', newVal);
+                break;
+            case 'loadingicon':
+                this.callDataGridMethod('option', 'loadingicon', newVal);
+                break;
+            case 'filternullrecords':
+                this.callDataGridMethod('option', 'filterNullRecords', newVal);
+                break;
+            case 'spacing':
+                this.callDataGridMethod('option', 'spacing', newVal);
+                if (newVal === 'condensed') {
+                    this.navigationSize = 'small';
+                } else {
+                    this.navigationSize = '';
+                }
+                break;
         }
     }
 
@@ -700,6 +731,11 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
 
         this.gridOptions.colDefs = this.fullFieldDefs;
         this.gridOptions.headerConfig = this.headerConfig;
+        this.gridOptions.rowNgClass = this.rowngclass;
+        this.gridOptions.rowClass = this.rowclass;
+        this.gridOptions.editmode = this.editmode;
+        this.gridOptions.formPosition = this.formposition;
+        this.gridOptions.name = this.name;
         this.datagridElement = $(this._tableElement.nativeElement);
 
         _.forEach(runModeInitialProperties, (value, key) => {
@@ -711,7 +747,11 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         this.renderOperationColumns();
 
         this.datagridElement.datatable(this.gridOptions);
+        this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+
         this.watchVariableDataSet(this.dataset);
+
+        this.applyProps.forEach(args => this.callDataGridMethod(...args));
     }
 
     registerColumns(tableColumn) {

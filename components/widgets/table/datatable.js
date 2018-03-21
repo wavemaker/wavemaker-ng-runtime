@@ -2559,7 +2559,7 @@ $.widget('wm.datatable', {
                     ngShowAttr = '',
                     ngDisabled = def.disabled ? ' ng-disabled="' + _.replace(def.disabled, 'bind:', '') + '" ' : '';
                 if (def.show === 'true' || def.show === 'false') {
-                    clsAttr += def.show === 'true' ? '' : ' ng-hide ';
+                    clsAttr += def.show === 'true' ? '' : ' hidden ';
                 } else if (_.includes(def.show, 'bind:')) {
                     ngShowAttr = _.replace(def.show, 'bind:', '');
                 }
@@ -2688,9 +2688,9 @@ $.widget('wm.datatable', {
             state = this.dataStatus.state;
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
-            loadingIndicator.removeClass('ng-hide');
+            loadingIndicator.removeClass('hidden');
         } else {
-            loadingIndicator.addClass('ng-hide');
+            loadingIndicator.addClass('hidden');
         }
         if (state === 'ready') {
             this.dataStatusContainer.hide();
