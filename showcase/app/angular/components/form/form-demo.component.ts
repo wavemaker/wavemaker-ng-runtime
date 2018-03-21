@@ -43,7 +43,7 @@ export class FormDemoComponent implements OnInit {
     }
 
     setData() {
-        this._Form._ngForm.setValue({
+        this._Form.ngForm.setValue({
             'username': 'abhi',
             'password': 'abhi',
             'role': 'admin',

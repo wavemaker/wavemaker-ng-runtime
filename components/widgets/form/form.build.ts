@@ -10,7 +10,7 @@ register('wm-form', () => {
             const tmpl = getAttrMarkup(attrs);
             const counter = idGen.next().value;
             shared.set('counter', counter);
-            return `<${tagName} wmForm #${counter}  ngNativeValidate [formGroup]="${counter}._ngForm" [noValidate]="${counter}.validationtype !== 'html'"
+            return `<${tagName} wmForm #${counter}  ngNativeValidate [formGroup]="${counter}.ngForm" [noValidate]="${counter}.validationtype !== 'html'"
                         [ngClass]="${counter}.captionAlignClass" ${tmpl}>`;
         },
         post: () => {

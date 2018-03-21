@@ -10,7 +10,7 @@
           #form_1
           [noValidate]="form_1.validationtype !== 'html'"
           [ngClass]="form_1.captionAlignClass"
-          [formGroup]="form_1._ngForm">
+          [formGroup]="form_1.ngForm">
 
         <div wmLayoutGrid columns="2">
             <div wmLayoutGridRow>
@@ -128,9 +128,9 @@
     <div>
         <button wmButton caption="Set Data" type="button" class="btn-primary" (click)="setData()"></button>
     </div>
-    <div>{{form_1._ngForm.value | json}}</div>
-    <div>Valid: {{form_1._ngForm.valid}}</div>
-    <div>Dirty: {{form_1._ngForm.dirty | json}}</div>
+    <div>{{form_1.ngForm.value | json}}</div>
+    <div>Valid: {{form_1.ngForm.valid}}</div>
+    <div>Dirty: {{form_1.ngForm.dirty | json}}</div>
 </div>
 <div class="col-md-3 properties">
     <h4 class="property-header">Properties</h4>

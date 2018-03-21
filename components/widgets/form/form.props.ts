@@ -7,28 +7,28 @@ export const registerProps = () => {
             [
                 ['action', PROP_STRING],
                 ['autocomplete', {value: true, ...PROP_BOOLEAN}],
-                ['captionalign', PROP_STRING_NOTIFY],
-                ['captionposition', PROP_STRING_NOTIFY],
+                ['captionalign', {value: 'left', ...PROP_STRING_NOTIFY}],
+                ['captionposition', {value: 'left', ...PROP_STRING_NOTIFY}],
                 ['captionsize', PROP_STRING],
-                ['captionwidth', PROP_STRING_NOTIFY],
+                ['captionwidth', {value: 'xs-12 sm-3 md-3 lg-3', ...PROP_STRING_NOTIFY}],
                 ['class', PROP_STRING],
                 ['dataset', PROP_STRING],
                 ['enctype', PROP_STRING],
-                ['errormessage', PROP_STRING],
+                ['errormessage', {value: 'An error occured. Please try again!', ...PROP_STRING}],
                 ['formdata', PROP_STRING],
-                ['messagelayout', PROP_STRING],
+                ['messagelayout',  {value: 'Inline', ...PROP_STRING}],
                 ['metadata', PROP_STRING],
                 ['method', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['name', PROP_STRING],
-                ['postmessage', PROP_STRING],
+                ['postmessage', {value: 'Data posted successfully', ...PROP_STRING}],
                 ['show', PROP_BOOLEAN],
                 ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['subheading', PROP_STRING],
                 ['tabindex', PROP_NUMBER],
                 ['target', PROP_STRING],
                 ['title', PROP_STRING],
-                ['validationtype', PROP_STRING]
+                ['validationtype', {value: 'default', ...PROP_STRING}]
             ]
         )
     );
