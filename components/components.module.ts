@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BsDatepickerModule, BsDropdownModule, TimepickerModule, ProgressbarModule, TypeaheadModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, TimepickerModule, ProgressbarModule, TypeaheadModule, ModalModule } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { DialogService } from './widgets/dialog/dialog.service';
 
 import { widgetsByName } from './utils/init-widget';
 
 import { AccordionDirective } from './widgets/accordion/accordion.component';
 import { AccordionPaneComponent } from './widgets/accordion/accordion-pane/accordion-pane.component';
+import { AlertDialogComponent } from './widgets/dialog/alert-dialog/alert-dialog.component';
 import { AnchorComponent } from './widgets/anchor/anchor.component';
 import { AudioComponent } from './widgets/audio/audio.component';
 import { ButtonComponent } from './widgets/button/button.component';
@@ -16,11 +18,15 @@ import { ButtonGroupDirective } from './widgets/button-group/button-group.direct
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { CheckboxComponent } from './widgets/checkbox/checkbox.component';
 import { ColorPickerComponent } from './widgets/color-picker/color-picker.component';
+import { ConfirmDialogComponent } from './widgets/dialog/confirm-dialog/confirm-dialog.component';
 import { ContainerDirective } from './widgets/container/container.directive';
 import { ContentComponent } from './widgets/content/content.component';
 import { CurrencyComponent } from './widgets/currency/currency.component';
 import { DateComponent } from './widgets/date/date.component';
 import { DatetimeComponent } from './widgets/date-time/date-time.component';
+import { DialogActionsComponent } from './widgets/dialog/dialog-actions/dialog-actions.component';
+import { DialogComponent } from './widgets/dialog/dialog.component';
+import { DialogHeaderComponent } from './widgets/dialog/dialog-header/dialog-header.component';
 import { FooterDirective } from './widgets/footer/footer.directive';
 import { LayoutGridRowDirective } from './widgets/layout-grid/layout-grid-row/layout-grid-row.directive';
 import { LayoutGridColumnComponent } from './widgets/layout-grid/layout-grid-column/layout-grid-column.component';
@@ -28,6 +34,7 @@ import { HeaderComponent } from './widgets/header/header.component';
 import { HtmlDirective } from './widgets/html/html.directive';
 import { IconComponent } from './widgets/icon/icon.component';
 import { IframeComponent } from './widgets/iframe/iframe.component';
+import { IframeDialogComponent } from './widgets/dialog/iframe-dialog/iframe-dialog.component';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layout-grid/layout-grid.directive';
 import { LeftPanelComponent } from './widgets/left-panel/left-panel.component';
@@ -40,6 +47,7 @@ import { NavItemDirective } from './widgets/nav-item/nav-item.directive';
 import { NavbarComponent } from './widgets/navbar/navbar.component';
 import { PageDirective } from './widgets/page/page.directive';
 import { PageContentComponent } from './widgets/page-content/page-content.component';
+import { PartialDialogComponent } from './widgets/dialog/partial-dialog/partial-dialog.component';
 import { PartialDirective } from './widgets/partial/partial.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
 import { PictureDirective } from './widgets/picture/picture.directive';
@@ -70,6 +78,7 @@ import { TableRowActionDirective } from './widgets/table/table-row-action/table-
 const wmComponents = [
     AccordionDirective,
     AccordionPaneComponent,
+    AlertDialogComponent,
     AnchorComponent,
     AudioComponent,
     ButtonComponent,
@@ -77,11 +86,15 @@ const wmComponents = [
     CalendarComponent,
     CheckboxComponent,
     ColorPickerComponent,
+    ConfirmDialogComponent,
     ContainerDirective,
     ContentComponent,
     CurrencyComponent,
     DateComponent,
     DatetimeComponent,
+    DialogActionsComponent,
+    DialogComponent,
+    DialogHeaderComponent,
     FooterDirective,
     LayoutGridRowDirective,
     LayoutGridColumnComponent,
@@ -89,6 +102,7 @@ const wmComponents = [
     HtmlDirective,
     IconComponent,
     IframeComponent,
+    IframeDialogComponent,
     LabelDirective,
     LayoutgridDirective,
     LeftPanelComponent,
@@ -101,6 +115,7 @@ const wmComponents = [
     NavbarComponent,
     PageDirective,
     PageContentComponent,
+    PartialDialogComponent,
     PartialDirective,
     PanelComponent,
     PictureDirective,
@@ -139,11 +154,14 @@ const wmComponents = [
         BsDropdownModule.forRoot(),
         PaginationModule.forRoot(),
         TypeaheadModule.forRoot(),
-        ProgressbarModule.forRoot()
+        ProgressbarModule.forRoot(),
+        ModalModule.forRoot()
     ],
     declarations: wmComponents,
     exports: wmComponents,
-    providers: [],
+    providers: [
+        DialogService
+    ],
     entryComponents: [
         MenuComponent,
         MenuDropdownComponent

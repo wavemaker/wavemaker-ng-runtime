@@ -1,0 +1,12 @@
+<ng-template #loginModal>
+    <div wmDialogHeader closable.bind="closable"
+         iconclass.bind="iconclass"
+         iconwidth.bind="iconwidth"
+         iconheight.bind="iconheight"
+         iconmargin.bind="iconmargin"
+         caption.bind="title"
+         dialogId.bind="dialogId"></div>
+    <div class="app-dialog-body modal-body" [style.height.px]="bodyHeight">
+        <ng-content></ng-content>
+    </div>
+</ng-template>

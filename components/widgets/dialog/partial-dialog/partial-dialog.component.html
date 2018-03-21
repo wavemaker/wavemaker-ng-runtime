@@ -1,0 +1,15 @@
+<ng-template #partialModal>
+    <div wmDialogHeader closable.bind="closable"
+         iconclass.bind="iconclass"
+         iconwidth.bind="iconwidth"
+         iconheight.bind="iconheight"
+         iconmargin.bind="iconmargin"
+         caption.bind="title"
+         dialogId.bind="dialogId"></div>
+    <div class="app-dialog-body modal-body" [style.height.px]="bodyHeight">
+        <div wmContainer content.bind="content" width="100%" height="100%"></div>
+    </div>
+    <div class="app-dialog-footer modal-footer">
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="okButtonHandler()"></button>
+    </div>
+</ng-template>

@@ -1,0 +1,15 @@
+<ng-template #alertModal>
+    <div wmDialogHeader closable.bind="closable"
+         iconclass.bind="iconclass"
+         iconwidth.bind="iconwidth"
+         iconheight.bind="iconheight"
+         iconmargin.bind="iconmargin"
+         caption.bind="title"
+         dialogId.bind="dialogId"></div>
+    <div class="app-dialog-body modal-body" [style.height.px]="bodyHeight">
+        <p class="app-dialog-message text-{{alerttype}}"> {{message}}</p>
+    </div>
+    <div class="app-dialog-footer modal-footer">
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="okButtonHandler()"></button>
+    </div>
+</ng-template>

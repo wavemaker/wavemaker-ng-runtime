@@ -1,62 +1,65 @@
 <div class="col-md-9">
-  <wm-dialog dialogtype="design-dialog" modal="true" [title]="title" [iconclass]="iconclass" [closable]="closable" name="dialog1" #dialog [class]="class">
-    <wm-layoutgrid name="layoutgrid2">
-      <wm-gridrow name="gridrow3_1">
-        <wm-gridcolumn columnwidth="6" name="gridcolumn3_1">
-          <wm-label padding="unset 0.5em" caption="Name" name="label3"></wm-label>
-        </wm-gridcolumn>
-        <wm-gridcolumn columnwidth="6" name="gridcolumn4">
-          <wm-label padding="unset 0.5em" caption="Eric" name="label4"></wm-label>
-        </wm-gridcolumn>
-      </wm-gridrow>
-      <wm-gridrow name="gridrow4">
-        <wm-gridcolumn columnwidth="6" name="gridcolumn5">
-          <wm-label padding="unset 0.5em" caption="Title" name="label5"></wm-label>
-        </wm-gridcolumn>
-        <wm-gridcolumn columnwidth="6" name="gridcolumn6">
-          <wm-label padding="unset 0.5em" caption="Engineer" name="label6"></wm-label>
-        </wm-gridcolumn>
-      </wm-gridrow>
-    </wm-layoutgrid>
-    <wm-dialogactions name="dialogactions1">
-      <wm-button class="btn-primary" caption="Close" actiontype="closeDialog" name="button4"></wm-button>
-    </wm-dialogactions>
-  </wm-dialog>
-  <wm-button caption="Open Dialog" class="btn-primary" (click)="dialog.open()"></wm-button>
+    <div wmDialog dialogtype="design-dialog" modal="true" title.bind="title" iconclass.bind="iconclass" closable.bind="closable" name="dialog1" #dialog class.bind="class">
+        <div wmLayoutGrid name="layoutgrid2">
+            <div wmLayoutGridRow name="gridrow4">
+                <div wmLayoutGridColumn columnwidth="6" name="gridcolumn5">
+                    <button wmButton caption="Open Alert Dialog" class="btn-primary" (click)="alertdialog.open()"></button><br/><br/>
+                </div>
+                <div wmLayoutGridColumn columnwidth="6" name="gridcolumn6">
+                    <button wmButton caption="Open Confirm Dialog" class="btn-primary" (click)="confirmdialog.open()"></button><br/><br/>
+                </div>
+            </div>
+            <div wmLayoutGridRow name="gridrow4">
+                <div wmLayoutGridColumn columnwidth="6" name="gridcolumn5">
+                    <button wmButton caption="Open Iframe Dialog" class="btn-primary" (click)="iframedialog.open()"></button><br/><br/>
+                </div>
+                <div wmLayoutGridColumn columnwidth="6" name="gridcolumn6">
+                    <button wmButton caption="Open Confirm Dialog" class="btn-primary" (click)="confirmdialog.open()"></button><br/><br/>
+                </div>
+            </div>
+        </div>
+        <div wmDialogActions name="dialogactions1">
+            <button wmButton class="btn-primary" caption="Close" click.event="closeDialog()" name="button4"></button>
+        </div>
+    </div>
+    <div wmAlertDialog name="alertdialog1" #alertdialog ok.event="onOk()" message="Hey this is an alert box!" alerttype="success" modal="true" closable="true"></div>
+    <div wmConfirmDialog name="confirmdialog1" #confirmdialog ok.event="onConfirmOk()" message="Hey this is an confirm box! Click yes to open an Alert Dialog!" oktext="yes" canceltext="no" modal="true" closable="true"></div>
+    <div wmIframeDialog name="iframedialog1" #iframedialog></div>
+    <button wmButton caption="Open Dialog" class="btn-primary" (click)="dialog.open()"></button><br/><br/>
 </div>
 <div class="col-md-3 properties">
-  <h4 class="property-header">Properties</h4>
-  <hr>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      <label class="app-label control-label">Title</label>
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Title</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="title" />
+        </div>
     </div>
-    <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="title" />
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Icon class</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="iconclass" />
+        </div>
     </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      <label class="app-label control-label">Icon class</label>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Class</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="class" />
+        </div>
     </div>
-    <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="iconclass" />
+    <div class="property row">
+        <div class="property-text col-md-4">
+            <label class="app-label control-label">Closable</label>
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="closable"/>
+        </div>
     </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      <label class="app-label control-label">Class</label>
-    </div>
-    <div class="property-control col-md-8">
-      <input type="text" [(ngModel)]="class" />
-    </div>
-  </div>
-  <div class="property row">
-    <div class="property-text col-md-4">
-      <label class="app-label control-label">Closable</label>
-    </div>
-    <div class="property-control col-md-8">
-      <input type="checkbox" [(ngModel)]="closable"/>
-    </div>
-  </div>
 </div>
