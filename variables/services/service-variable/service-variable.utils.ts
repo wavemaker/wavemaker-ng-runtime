@@ -1,6 +1,7 @@
 declare const _, window;
 import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS, SWAGGER_CONSTANTS, $rootScope } from './../../constants/variables.constants';
 import { httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy, simulateFileDownload } from './../../utils/variables.utils';
+import { $queue } from './../../utils/inflight-queue';
 import { formatDate, isDateTimeType, extractType, getBlob, getClonedObject, findValueOf, triggerFn } from '@utils/utils';
 
 const isBodyTypeQueryOrProcedure = (variable) => {
@@ -353,13 +354,12 @@ const processErrorResponse = (variable, errMsg, errorCB, xhrObj?, skipNotificati
         // oAuthProviderService.removeAccessToken(securityDefnObj[OAUTH_PROVIDER_KEY]);
     }
     /* trigger error callback */
-    // triggerFn(errorCB, errMsg);
+    triggerFn(errorCB, errMsg);
 
     if (!CONSTANTS.isStudioMode) {
         /* process next requests in the queue */
-        // variableActive[variable.activeScope.$id][variable.name] = false;
-        // variable.canUpdate = true;
-        // processRequestQueue(variable, requestQueue[variable.activeScope.$id], getDataInRun);
+        variable.canUpdate = true;
+        $queue.process(variable, invoke);
 
         // EVENT: ON_CAN_UPDATE
         initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, xhrObj);
@@ -381,31 +381,37 @@ const handleRequestMetaError = (info, variable, errorCB, options) => {
 
 export const invoke = (variable, options, success, error) => {
     options = options || {};
-    const operationInfo = getMethodInfo(variable, variable.dataBinding, {});
-    const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
-    const requestParams = constructRequestParams(variable, operationInfo, inputFields);
+    $queue.has(variable, function () {
+        options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
+        $queue.push(variable, {options: options, success: success, error: error});
+    }, function () {
+        const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
+        const operationInfo = getMethodInfo(variable, inputFields, {});
+        const requestParams = constructRequestParams(variable, operationInfo, inputFields);
 
-    // check errors
-    if (requestParams.error) {
-        handleRequestMetaError(requestParams, variable, error, options);
-        return;
-    }
-    if (operationInfo && _.isArray(operationInfo.produces) && _.includes(operationInfo.produces, WS_CONSTANTS.CONTENT_TYPES.OCTET_STREAM)) {
-        return simulateFileDownload(requestParams, variable.dataBinding.file || variable.name, variable.dataBinding.exportType, function () {
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, null, null, null);
-            triggerFn(success);
-        }, function () {
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null, null, null);
-            triggerFn(error);
+        // check errors
+        if (requestParams.error) {
+            handleRequestMetaError(requestParams, variable, error, options);
+            return;
+        }
+        if (operationInfo && _.isArray(operationInfo.produces) && _.includes(operationInfo.produces, WS_CONSTANTS.CONTENT_TYPES.OCTET_STREAM)) {
+            return simulateFileDownload(requestParams, variable.dataBinding.file || variable.name, variable.dataBinding.exportType, function () {
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, null, null, null);
+                triggerFn(success);
+            }, function () {
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null, null, null);
+                triggerFn(error);
+            });
+        }
+
+        // make the call
+        return makeCall(requestParams).then(function (response) {
+            variable.dataSet = response.body;
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
+            $queue.process(variable, invoke);
+        }, function (e) {
+            processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
         });
-    }
-
-    // make the call
-    return makeCall(requestParams).then(function (response) {
-        variable.dataSet = response.body;
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
-    }, function (e) {
-        processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
     });
 };
 

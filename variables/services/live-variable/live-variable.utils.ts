@@ -531,7 +531,6 @@ function _getTableData(variable, options, success, error) {
         'filterMeta'    : tableOptions.filter,
         'url'           : variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
     }).then(function (response, xhrObj) {
-        console.log('data here dude', response, xhrObj);
         response = response.body;
 
         if ((response && response.error) || !response || !_.isArray(response.content)) {
