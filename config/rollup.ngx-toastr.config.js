@@ -1,11 +1,11 @@
 
 export default {
-    input: './dist/tmp/ngx-bootstrap.es2015.js',
+    input: './dist/tmp/ngx-toastr.js',
     output: {
-        file: './dist/tmp/ngx-bootstrap.umd.js',
+        file: './dist/tmp/ngx-toastr.umd.js',
         format: 'umd'
     },
-    name: 'ngxBootstrap',
+    name: 'ngxToastr',
     globals: {
         '@angular/core': 'ng.core',
         '@angular/animations': 'ng.animations',

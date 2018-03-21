@@ -4,12 +4,16 @@ import { VariablesService } from './services/variables.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MetadataService } from './services/metadata-service/metadata.service';
 import { HttpServiceModule } from '../http-service/http-service.module';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     imports: [
         CommonModule,
+        ToastrModule.forRoot(),
         HttpClientModule,
-        HttpServiceModule
+        HttpServiceModule,
+        BrowserAnimationsModule
     ],
     declarations: [],
     providers: [

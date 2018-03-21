@@ -11,6 +11,7 @@ import { $watch } from '@utils/watcher';
 import { HttpService } from './../../http-service/http.service';
 import { setDependency, processBinding } from './../utils/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class VariablesService {
@@ -20,11 +21,13 @@ export class VariablesService {
 
     constructor(private httpService: HttpService,
                 private metadataService: MetadataService,
-                private routerService: Router) {
+                private routerService: Router,
+                private toasterService: ToastrService) {
         // set external dependencies
         setDependency('http', this.httpService);
         setDependency('metadata', this.metadataService);
         setDependency('router', this.routerService);
+        setDependency('toaster', this.toasterService);
     }
 
     invokeVariable(variable: any, $scope: any) {
@@ -62,11 +65,13 @@ export class VariablesService {
                     break;
                 case 'wm.NavigationVariable':
                     actionInstance = new NavigationVariable(variable);
+                    actionInstance.scope = scope;
                     processBinding(actionInstance, scope, 'dataSet', 'dataSet');
                     processBinding(actionInstance, scope, 'dataBinding', 'dataBinding');
                     break;
                 case 'wm.NotificationVariable':
                     actionInstance = new NotificationVariable(variable);
+                    actionInstance.scope = scope;
                     processBinding(actionInstance, scope);
                     break;
             }
