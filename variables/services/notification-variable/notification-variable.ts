@@ -1,4 +1,6 @@
 import { StaticVariable } from '../static-variable/static-variable';
+import { toasterService } from './../../utils/variables.utils';
+import * as NOVUtils from './notification-variable.utils';
 
 export class NotificationVariable extends StaticVariable {
 
@@ -17,11 +19,15 @@ export class NotificationVariable extends StaticVariable {
         this.dataSet = dataSet;
     }
 
-    notify() {
-        alert('Notifying: ' + this.message);
+    notify(options, success, error) {
+        NOVUtils.notify(this, options, success, error);
     }
 
-    invoke() {
-        this.notify();
+    invoke(options, success, error) {
+        this.notify(options, success, error);
+    }
+
+    getMessage(variable) {
+        return variable.dataBinding.text;
     }
 }

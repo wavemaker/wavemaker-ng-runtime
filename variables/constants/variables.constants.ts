@@ -112,7 +112,12 @@ export const VARIABLE_CONSTANTS = {
         UNAUTHORIZED: 401,
         FORBIDDEN: 403
     },
-    EXPORT_TYPES_MAP: { 'EXCEL' : '.xlsx', 'CSV' : '.csv'}
+    EXPORT_TYPES_MAP: {
+        'EXCEL' : '.xlsx',
+        'CSV' : '.csv'},
+    DEFAULT_VAR : {
+        'NOTIFICATION' : 'appNotification'
+    }
 };
 
 export const WS_CONSTANTS = {

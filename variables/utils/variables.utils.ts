@@ -10,6 +10,7 @@ const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 export let httpService;
 export let metadataService;
 export let routerService;
+export let toasterService;
 
 const DOT_EXPR_REX = /^\[("|')[\w\W]*(\1)\]$/,
     internalBoundNodeMap = new Map(),
@@ -91,10 +92,43 @@ export const setDependency = (type: string, ref: any) => {
         case 'router':
             routerService = ref;
             break;
+        case 'toaster':
+            toasterService =  ref;
+            break;
     }
 };
 
 export const initiateCallback = (type: string, variable: any, data: any, xhrObj?: any, skipDefaultNotification?: boolean) => {
+
+    /*checking if event is available and variable has event property and variable event property bound to function*/
+    const eventValues = variable[type],
+        callBackScope = variable.scope;
+    let errorVariable;
+    /**
+     * For error event:
+     * trigger app level error handler.
+     * if no event is assigned, trigger default appNotification variable.
+     */
+    if (type === VARIABLE_CONSTANTS.EVENT.ERROR && !skipDefaultNotification) {
+        // trigger the common error handler present in app.js
+        // triggerFn($rootScope.onServiceError, variable, data, xhrObj);
+        if (!eventValues) {
+            /* in case of error, if no event assigned, handle through default notification variable */
+            errorVariable = callBackScope.Actions[VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION];
+            if (errorVariable) {
+                data = errorVariable.getMessage(errorVariable) || data;
+                if (_.isString(data)) {
+                    errorVariable.dataBinding.text = data;
+                } else {
+                    errorVariable.dataBinding.text = 'An error has occured. Please check the app logs.';
+                }
+                errorVariable.invoke({}, undefined, undefined);
+                 // $rootScope.$evalAsync(function () {
+                    // $rootScope.$emit("invoke-service", VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION, {scope: callBackScope, message: response});
+                // });
+            }
+        }
+    }
     // TODO: [Vibhu], check whether to support legacy event calling mechanism (ideally, it should have been migrated)
     const fn = $parseEvent(variable[type]);
     fn(variable.scope, {$event: variable, $scope: data});

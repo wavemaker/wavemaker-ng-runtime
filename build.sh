@@ -95,20 +95,35 @@ then
     fi
     echo -e "${Green}Built ngx-bootstrap\n"
 
+
+    echo -e "${Cyan}Building ngx-toastr ${White}"
+    $tsc --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/esm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015
+    $rollup -c ./config/rollup.ngx-toastr.config.js --silent
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in building ngx-toastr"
+        exit 1
+    fi
+    echo -e "${Green}Built ngx-toastr\n"
+
     echo -e "${Cyan}Bundling libs ${White}"
     $uglifyjs \
         ./dist/tmp/tslib.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/Rx.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
+        ./node_modules/@angular/animations/bundles/animations.umd.js \
+        ./node_modules/@angular/animations/bundles/animations-browser.umd.js \
         ./node_modules/@angular/common/bundles/common.umd.js \
         ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/platform-browser/bundles/platform-browser.umd.js \
         ./node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js \
+        ./node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js \
         ./dist/tmp/common-http.umd.js \
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/ngx-bootstrap.umd.js \
+        ./dist/tmp/ngx-toastr.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
