@@ -116,11 +116,11 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
             /* in case of error, if no event assigned, handle through default notification variable */
             errorVariable = callBackScope.Actions[VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION];
             if (errorVariable) {
-                data = errorVariable.getMessage(errorVariable) || data;
+                data = errorVariable.getMessage() || data;
                 if (_.isString(data)) {
-                    errorVariable.dataBinding.text = data;
+                    errorVariable.setMessage(data);
                 } else {
-                    errorVariable.dataBinding.text = 'An error has occured. Please check the app logs.';
+                    errorVariable.setMessage('An error has occured. Please check the app logs.')
                 }
                 errorVariable.invoke({}, undefined, undefined);
                  // $rootScope.$evalAsync(function () {

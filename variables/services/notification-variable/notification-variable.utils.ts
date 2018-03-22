@@ -91,3 +91,15 @@ export const notify = (variable, options, success, error)  => {
         });*/
 };
 
+export const getMessage = (variable) => {
+    return variable.dataBinding.text;
+};
+
+export const setMessage = (variable, text) => {
+    if (_.isString(text)) {
+        variable.dataBinding.text = text;
+    }
+    return variable.dataBinding.text;
+};
+
+
