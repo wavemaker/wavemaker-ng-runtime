@@ -1,8 +1,14 @@
 declare const _, window;
 import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS, SWAGGER_CONSTANTS, $rootScope } from './../../constants/variables.constants';
-import { httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy, simulateFileDownload } from './../../utils/variables.utils';
+import {
+    httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy,
+    simulateFileDownload
+} from './../../utils/variables.utils';
 import { $queue } from './../../utils/inflight-queue';
-import { formatDate, isDateTimeType, extractType, getBlob, getClonedObject, findValueOf, triggerFn } from '@utils/utils';
+import {
+    formatDate, isDateTimeType, extractType, getBlob, getClonedObject, findValueOf, triggerFn,
+    getValidJSON, xmlToJson, isDefined
+} from '@utils/utils';
 
 const isBodyTypeQueryOrProcedure = (variable) => {
     return (_.includes(['QueryExecution', 'ProcedureExecution'], variable.controller)) && (_.includes(['put', 'post'], variable.operationType));
@@ -339,9 +345,84 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
 };
 
 const makeCall = (params) => {
+    params.responseType = 'text';
     return httpService.send(params);
 };
 
+/*
+ * function to transform the service data as according to the variable configuration
+ * @param data: data returned from the service
+ * @variable: variable object triggering the service
+ */
+const transformData = (data, variable) => {
+    data.wmTransformedData = [];
+
+    const columnsArray = variable.transformationColumns,
+        dataArray = data[variable.dataField] || [],
+        transformedData = data.wmTransformedData;
+
+    _.forEach(dataArray, function (datum, index) {
+        transformedData[index] = {};
+        _.forEach(columnsArray, function (column, columnIndex) {
+            transformedData[index][column] = datum[columnIndex];
+        });
+    });
+    return data;
+};
+
+/**
+ * function to process success response from a service
+ * @param response
+ * @param variable
+ * @param options
+ * @param success
+ */
+const processSuccessResponse = (response, variable, options, success) => {
+    let newDataSet;
+
+    response = getValidJSON(response) || xmlToJson(response) || response;
+
+    // EVENT: ON_RESULT
+    initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, options.xhrObj);
+
+    /* if dataTransformation enabled, transform the data */
+    if (variable.transformationColumns) {
+        response = transformData(response, variable);
+    }
+
+    // EVENT: ON_PREPARE_SETDATA
+    newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response, options.xhrObj);
+    if (isDefined(newDataSet)) {
+        // setting newDataSet as the response to service variable onPrepareSetData
+        response = newDataSet;
+    }
+
+    /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
+    if (!options.forceRunMode && !options.skipDataSetUpdate) {
+        variable.dataSet = (!_.isObject(response)) ? {'value': response} : response;
+    }
+
+    /* trigger success callback */
+    triggerFn(success, response);
+
+    setTimeout(function () {
+        // EVENT: ON_SUCCESS
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, options.xhrObj);
+
+        if (!CONSTANTS.isStudioMode) {
+            /* process next requests in the queue */
+            variable.canUpdate = true;
+            $queue.process(variable, invoke);
+        }
+
+        // EVENT: ON_CAN_UPDATE
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, options.xhrObj);
+    });
+};
+
+/**
+ * function to process error response from a service
+ */
 const processErrorResponse = (variable, errMsg, errorCB, xhrObj?, skipNotification?, skipDefaultNotification?) => {
     // EVENT: ON_ERROR
     if (!skipNotification) {
@@ -397,6 +478,7 @@ export const invoke = (variable, options, success, error) => {
         if (operationInfo && _.isArray(operationInfo.produces) && _.includes(operationInfo.produces, WS_CONSTANTS.CONTENT_TYPES.OCTET_STREAM)) {
             return simulateFileDownload(requestParams, variable.dataBinding.file || variable.name, variable.dataBinding.exportType, function () {
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, null, null, null);
+                $queue.process(variable, invoke);
                 triggerFn(success);
             }, function () {
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null, null, null);
@@ -406,9 +488,8 @@ export const invoke = (variable, options, success, error) => {
 
         // make the call
         return makeCall(requestParams).then(function (response) {
-            variable.dataSet = response.body;
+            processSuccessResponse(response.body, variable, options, success);
             initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
-            $queue.process(variable, invoke);
         }, function (e) {
             processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
         });

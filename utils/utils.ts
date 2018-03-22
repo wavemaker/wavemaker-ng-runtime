@@ -1,4 +1,4 @@
-declare const _;
+declare const _, X2JS;
 declare const moment;
 
 const REGEX = {
@@ -310,6 +310,15 @@ export const getValidJSON = (content) => {
     }
 };
 
+export const xmlToJson = (xmlString) => {
+    const x2jsObj = new X2JS({'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false});
+    let json = x2jsObj.xml2js(xmlString);
+    if (json) {
+        json = _.get(json, Object.keys(json)[0]);
+    }
+    return json;
+};
+
 /*
  * Util method to find the value of a key in the object
  * if key not found and create is true, an object is created against that node
@@ -447,7 +456,7 @@ export const replace = (template, map) => {
 
 // Format value for datetime types
 const _formatDate = (dateValue, type) => {
-    var epoch;
+    let epoch;
     if (_.isDate(dateValue)) {
         epoch = dateValue.getTime();
     } else {
@@ -463,7 +472,7 @@ const _formatDate = (dateValue, type) => {
         epoch = moment(new Date().toDateString() + ' ' + dateValue).valueOf();
     }
     return dateValue; // && $filter('date')(epoch, getDateTimeFormatForType(type));
-}
+};
 
 /*Function to convert values of date time types into default formats*/
 export const formatDate = (value, type) => {

@@ -127,6 +127,7 @@ then
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
+        ./node_modules/x2js/x2js.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \

@@ -35,6 +35,7 @@ export class HttpService {
         let reqParams = new HttpParams();
         const headers = options.headers;
         const params = options.params;
+        const responseType = options.responseType;
 
         // TODO[VIBHU]: not to be sent with non-proxy calls from service var
         reqHeaders = reqHeaders.append('X-Requested-With', 'XMLHttpRequest');
@@ -52,7 +53,8 @@ export class HttpService {
         let third, fourth;
         const reqOptions = {
             headers: reqHeaders,
-            params: reqParams
+            params: reqParams,
+            responseType: responseType
         };
         if (_.includes(this.nonBodyTypeMethods, options.method)) {
             third = reqOptions;
