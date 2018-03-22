@@ -1,23 +1,23 @@
 import { Directive, ElementRef, Inject, Self, ViewContainerRef } from '@angular/core';
-import { PageUtils } from '../../services/page-utils.service';
+import { RenderUtilsService } from '../../services/render-utils.service';
 
 @Directive({
     selector: '[partialContainer]:not([content="inline"])'
 })
 export class PartialContainerDirective {
     get name() {
-        return this.widget.name;
+        return this.componentInstance.name;
     }
 
-    constructor(@Self() @Inject('@Widget') public widget, public pageUtils: PageUtils, public vcRef: ViewContainerRef, public elRef: ElementRef) {
+    constructor(@Self() @Inject('@Widget') public componentInstance, public renderUtils: RenderUtilsService, public vcRef: ViewContainerRef, public elRef: ElementRef) {
 
-        widget.propertyChange$.subscribe(({key, nv, ov}) => {
+        componentInstance.propertyChange$.subscribe(({key, nv, ov}) => {
             if (key === 'content') {
-                this.pageUtils.renderPage(
+                this.renderUtils.renderPartial(
                     nv,
-                    widget.name,
                     vcRef,
-                    this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement
+                    this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement,
+                    componentInstance
                 );
             }
         });

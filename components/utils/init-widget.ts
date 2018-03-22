@@ -9,7 +9,6 @@ import { CUSTOM_EVT_KEY } from './decorators';
 
 const widgetRegistryByName = new Map<string, any>();
 const widgetRegistryByWidgetId = new Map<string, any>();
-export const widgetsByName = {};
 
 const CLS_NG_HIDE = 'ng-hide';
 
@@ -25,31 +24,20 @@ const proxyHandler = {
     }
 };
 
-const registerWidget = (name: string, parentName: string, widgetId: string, widget: any, component: any) => {
-    let parent;
+const registerWidget = (name: string, parent: any, widgetId: string, widget: any, component: any) => {
+    let registered;
     if (isDefined(name)) {
-        widgetRegistryByName.set(name, widget);
-        if (isDefined(parentName)) {
-            parent = widgetsByName[parentName];
-            if (parent) {
-                if (!parent.Widgets) {
-                    parent.Widgets = {};
-                }
-                parent.Widgets[name] = widget;
-            }
-        } else {
-            widgetsByName[name] = widget;
+        if (isDefined(parent.Widgets)) {
+            registered = true;
+            parent.Widgets[name] = widget;
         }
     }
     widgetRegistryByWidgetId.set(widgetId, widget);
     component.destroy$.subscribe(() => {
-        widgetRegistryByName.delete(widgetId);
         widgetRegistryByWidgetId.delete(widgetId);
 
-        if (parent) {
-            delete parent.Widgets[name];
-        } else {
-            delete widgetsByName[name];
+        if (registered) {
+            parent.Widgets[name] = undefined;
         }
     });
 };
@@ -74,6 +62,8 @@ const parseValue = (key, value, type) => {
     if (type === PROP_TYPE.NUMBER) {
         return +value;
     }
+
+    return value;
 };
 
 const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv: any, ov: any) => {
@@ -152,7 +142,7 @@ const handleEvent = (eventName, expr, component, parent, widget) => {
     }
 };
 
-export function initWidget(component: BaseComponent, elDef: any, view: any, parentContainer) {
+export function initWidget(component: BaseComponent, elDef: any, view: any) {
 
     const revocable = Proxy.revocable(component, proxyHandler);
     const widget = revocable.proxy;
@@ -193,7 +183,7 @@ export function initWidget(component: BaseComponent, elDef: any, view: any, pare
 
     setAttr(component.$element, 'widget-id', widgetId);
 
-    registerWidget(initState.get('name'), parentContainer, widgetId, widget, component);
+    registerWidget(initState.get('name'), parent, widgetId, widget, component);
 
     return () => {
         (<any>widget).name = initState.get('name'); // TODO(VinayK) - implement priority system for the props.

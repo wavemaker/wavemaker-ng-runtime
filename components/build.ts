@@ -32,6 +32,7 @@ export * from './widgets/pagination/pagination.build';
 export * from './widgets/panel/panel.build';
 export * from './widgets/partial/partial.build';
 export * from './widgets/picture/picture.build';
+export * from './widgets/prefab/prefab.build';
 export * from './widgets/radioset/radioset.build';
 export * from './widgets/rating/rating.build';
 export * from './widgets/right-panel/right-panel.build';

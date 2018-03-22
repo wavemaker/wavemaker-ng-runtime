@@ -4,13 +4,15 @@ import { initWidget } from '../../utils/init-widget';
 import { Subject } from 'rxjs/Subject';
 import { addClass } from '@utils/dom';
 
+const noop = () => {};
+
 export class BaseComponent implements OnDestroy, OnInit {
     $element: HTMLElement;
     widgetType: string;
     widget: any;
     widgetId: string;
     $digest;
-    init;
+    init = noop;
 
     styleChange = new Subject();
     styleChange$ = this.styleChange.asObservable();
@@ -26,7 +28,7 @@ export class BaseComponent implements OnDestroy, OnInit {
     // TODO: Implement touch events for the mobile
     _hostEvents = new Set(['click', 'dblclick', 'mouseenter', 'mouseleave', 'mouseout', 'mouseover', 'focus', 'blur', 'keydown', 'keypress', 'keyup']);
 
-    constructor ({widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
+    preInit({widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef) {
         this.$element = $host.nativeElement;
         this.widgetType = widgetType;
         this.$digest = debounce(cdr.detectChanges.bind(cdr));
@@ -35,12 +37,21 @@ export class BaseComponent implements OnDestroy, OnInit {
             addClass(this.$element, hostClass);
         }
 
-        const parentContainer = inj.get('@namespace', undefined);
-
-        this.init = initWidget(this, (<any>inj).elDef, (<any>inj).view, parentContainer);
+        this.init = initWidget(this, (<any>inj).elDef, (<any>inj).view);
 
         this.propertyChange$.subscribe(({key, nv, ov}) => this.onPropertyChange(key, nv, ov));
         this.styleChange$.subscribe(({key, nv, ov}) => this.onStyleChange(key, nv, ov));
+    }
+
+    constructor (widgetConfig: {widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef, propsReady?: Promise<void>) {
+        if (propsReady) {
+            propsReady.then(() => {
+                this.preInit(widgetConfig, inj, $host, cdr);
+                this.init();
+            });
+        } else {
+            this.preInit(widgetConfig, inj, $host, cdr);
+        }
     }
 
     onPropertyChange(k, nv, ov) {

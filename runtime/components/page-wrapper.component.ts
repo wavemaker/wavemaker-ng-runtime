@@ -1,6 +1,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { ApplicationRef, Component, ViewContainerRef } from '@angular/core';
-import { PageUtils } from '../services/page-utils.service';
+import { RenderUtilsService } from '../services/render-utils.service';
 import { MetadataService } from '@variables/services/metadata-service/metadata.service';
 
 
@@ -9,36 +9,30 @@ import { MetadataService } from '@variables/services/metadata-service/metadata.s
     template: '<div></div>'
 })
 export class PageWrapperComponent {
-    constructor(private route: ActivatedRoute, private pageUtil: PageUtils, private vcRef: ViewContainerRef, private appRef: ApplicationRef, private metadataService: MetadataService) {
+    constructor(
+        private route: ActivatedRoute,
+        private renderUtils: RenderUtilsService,
+        private vcRef: ViewContainerRef,
+        private appRef: ApplicationRef,
+        private metadataService: MetadataService
+    ) {
         this.metadataService.load();
     }
 
-    renderDynamicComponent(pageName) {
-
-
-        let { layout: pageLayout } = this.pageUtil.getPageInfo(pageName);
-        let layoutTemplate = this.pageUtil.getLayoutTemplate(pageLayout);
-
-        //let {componentFactory: layoutRef, postLayoutInitPromise} = this.pageUtil.createDynamicLayoutComponent(`app-layout-${pageLayout}`, layoutTemplate);
+    renderPage(pageName) {
         this.vcRef.clear();
-        //this.vcRef.createComponent(layoutRef);
 
-        //postLayoutInitPromise.then(() => {
-
-            this.pageUtil.renderPage(
-                pageName,
-                undefined,
-                this.vcRef,
-                //this.appRef.components[0].location.nativeElement.querySelector('[page-content-outlet]')
-                this.appRef.components[0].location.nativeElement
-            );
-        //});
+        this.renderUtils.renderPage(
+            pageName,
+            this.vcRef,
+            this.appRef.components[0].location.nativeElement
+        );
     }
 
     ngOnInit() {
         this.route.params.subscribe(({ pageName }) => {
             if (pageName) {
-                this.renderDynamicComponent(pageName);
+                this.renderPage(pageName);
             }
         });
     }

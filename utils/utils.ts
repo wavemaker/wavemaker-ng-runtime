@@ -1,5 +1,6 @@
 declare const _, X2JS;
 declare const moment;
+declare const document;
 
 const REGEX = {
     SNAKE_CASE: /[A-Z]/g,
@@ -134,7 +135,13 @@ export const isInsecureContentRequest = (url: string): boolean => {
  * this method checks if a given string starts with the given string
  */
 export const stringStartsWith = (str: string, startsWith: string, ignoreCase?): boolean => {
-    return _.startsWith(str, startsWith);
+    if (!str) {
+        return false;
+    }
+
+    const regEx = new RegExp('^' + startsWith, ignoreCase ? 'i' : '');
+
+    return regEx.test(str);
 };
 
 export const getEvaluatedExprValue = (object, expression) => {
@@ -545,4 +552,65 @@ export const isEqualWithFields = (obj1, obj2, compareBy) => {
             return _.get(o1, cb1) === _.get(o2, cb2);
         });
     });
+};
+
+const getNode = selector => document.querySelector(selector);
+
+// function to check if the stylesheet is already loaded
+const isStyleSheetLoaded = href => !!getNode(`link[href="${href}"]`);
+
+// function to remove stylesheet if the stylesheet is already loaded
+const removeStyleSheet = href => {
+    const node = getNode(`link[href="${href}"]`);
+    if (node) {
+        node.remove();
+    }
+};
+
+// function to load a stylesheet
+export const loadStyleSheet = (url, attr) => {
+    if (isStyleSheetLoaded(url)) {
+        return;
+    }
+    const link = document.createElement('link');
+    link.href = url;
+    //To add attributes to link tag
+    if (attr && attr.name) {
+        link.setAttribute(attr.name, attr.value);
+    }
+    document.head.appendChild(link);
+    return link;
+};
+
+// function to load stylesheets
+export const loadStyleSheets = (urls = []) => {
+    // if the first argument is not an array, convert it to an array
+    if (!Array.isArray(urls)) {
+        urls = [urls];
+    }
+    urls.forEach(loadStyleSheet);
+};
+
+// function to check if the script is already loaded
+const isScriptLoaded = src => !!getNode(`script[src="${src}"], script[data-src="${src}"]`);
+
+export const loadScript = async url => {
+    const _url = url.trim();
+    if (!_url.length || isScriptLoaded(_url)) {
+        return Promise.resolve();
+    }
+    return fetch(_url)
+        .then(response => response.text())
+        .then(text => {
+            const script = document.createElement('script');
+            script.textContent = text;
+            document.head.appendChild(script);
+        });
+};
+
+export const loadScripts = async (urls = []) => {
+    for (const url of urls) {
+        await loadScript(url);
+    }
+    return Promise.resolve();
 };

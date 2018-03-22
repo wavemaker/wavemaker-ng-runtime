@@ -6,8 +6,6 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { DialogService } from './widgets/dialog/dialog.service';
 
-import { widgetsByName } from './utils/init-widget';
-
 import { AccordionDirective } from './widgets/accordion/accordion.component';
 import { AccordionPaneComponent } from './widgets/accordion/accordion-pane/accordion-pane.component';
 import { AlertDialogComponent } from './widgets/dialog/alert-dialog/alert-dialog.component';
@@ -50,6 +48,7 @@ import { PageContentComponent } from './widgets/page-content/page-content.compon
 import { PartialDialogComponent } from './widgets/dialog/partial-dialog/partial-dialog.component';
 import { PartialDirective } from './widgets/partial/partial.directive';
 import { PanelComponent } from './widgets/panel/panel.component';
+import { PrefabDirective } from './widgets/prefab/prefab.directive';
 import { PictureDirective } from './widgets/picture/picture.directive';
 import { ProgressBarComponent } from './widgets/progress-bar/progress-bar.component';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
@@ -119,6 +118,7 @@ const wmComponents = [
     PartialDirective,
     PanelComponent,
     PictureDirective,
+    PrefabDirective,
     ProgressBarComponent,
     RadiosetComponent,
     RatingComponent,
@@ -169,5 +169,3 @@ const wmComponents = [
 })
 export class WmComponentsModule {
 }
-
-export { widgetsByName as PageWidgets } ;

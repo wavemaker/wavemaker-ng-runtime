@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { PipeProvider } from './services/pipe-provider.service';
 import { WmComponentsModule } from '@components/components.module';
-import { PageUtils } from './services/page-utils.service';
+import { RenderUtilsService } from './services/render-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -17,6 +17,8 @@ import { VariablesService } from '@variables/services/variables.service';
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
 import { App } from './services/app.service';
+import { AppResourceManagerService } from './services/app-resource-manager.service';
+import { PrefabManagerService } from './services/prefab-manager.service';
 
 const routes = [
     {
@@ -48,11 +50,13 @@ const routes = [
     ],
     providers: [
         PipeProvider,
-        PageUtils,
+        RenderUtilsService,
         VariablesService,
         MetadataResolve,
         App,
-        AppJSResolve
+        AppJSResolve,
+        AppResourceManagerService,
+        PrefabManagerService
     ],
     bootstrap: [AppComponent]
 })
