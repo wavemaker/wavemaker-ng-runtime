@@ -31,7 +31,10 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${basedir}/build.sh</executable>
+                            <executable>sh</executable>
+                            <arguments>
+                                <argument>${basedir}/build.sh</argument>
+                            </arguments>                                
                         </configuration>
                     </execution>
                 </executions>
