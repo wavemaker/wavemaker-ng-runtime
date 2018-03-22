@@ -11,14 +11,6 @@ export class NotificationVariable extends StaticVariable {
         Object.assign(this, variable);
     }
 
-    getData() {
-        return this.dataSet;
-    }
-
-    setData(dataSet: any) {
-        this.dataSet = dataSet;
-    }
-
     notify(options, success, error) {
         NOVUtils.notify(this, options, success, error);
     }
@@ -27,7 +19,11 @@ export class NotificationVariable extends StaticVariable {
         this.notify(options, success, error);
     }
 
-    getMessage(variable) {
-        return variable.dataBinding.text;
+    getMessage() {
+        return NOVUtils.getMessage(this);
+    }
+
+    setMessage(text) {
+        return NOVUtils.setMessage(this, text);
     }
 }

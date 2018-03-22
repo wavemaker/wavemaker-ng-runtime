@@ -36,10 +36,6 @@ export class ServiceVariable extends StaticVariable {
         return this.invoke(options, success, error);
     }
 
-    getData() {
-        return this.dataSet;
-    }
-
     setInput (key, val, options) {
         return SVUtils.setInput(this, key, val, options);
     }
