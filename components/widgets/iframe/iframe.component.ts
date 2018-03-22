@@ -16,9 +16,11 @@ registerProps();
 })
 export class IframeComponent extends BaseComponent {
 
-    private _iframesrc;
+    _iframesrc: any;
 
     private baseurl: string;
+
+    showIframe;
 
     encodeurl: boolean;
 
@@ -44,6 +46,10 @@ export class IframeComponent extends BaseComponent {
             }
             this.baseurl = newVal;
             this._iframesrc = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
+            setTimeout(() => {
+                this.showIframe = true;
+                this.$digest();
+            }, 200);
         }
     }
 

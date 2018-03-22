@@ -1,0 +1,16 @@
+<ng-template #confirmModal>
+    <div wmDialogHeader closable.bind="closable"
+         iconclass.bind="iconclass"
+         iconwidth.bind="iconwidth"
+         iconheight.bind="iconheight"
+         iconmargin.bind="iconmargin"
+         caption.bind="title"
+         dialogId.bind="dialogId"></div>
+    <div class="app-dialog-body modal-body" [style.height.px]="bodyHeight">
+        <p class="app-dialog-message {{messageclass}}">{{message}}</p>
+    </div>
+    <div class="app-dialog-footer modal-footer">
+        <button wmButton class="btn-default btn-secondary cancel-action" caption.bind="canceltext" (click)="cancelButtonHandler()"></button>
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="okButtonHandler()"></button>
+    </div>
+</ng-template>

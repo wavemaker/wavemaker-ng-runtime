@@ -1,0 +1,15 @@
+<ng-template #modalTemplate>
+    <div wmDialogHeader closable.bind="closable" iconclass.bind="iconclass" caption.bind="title" subheading.bind="subheading" dialogId.bind="dialogId">
+        <div class="wm-dialog-header-action" *ngIf="actiontitle || actionlink">
+            <i [title]="actiontitle" class="wm-icon wms wms-help"></i>
+            <a [href]="actionlink" target="_blank">Help</a>
+        </div>
+    </div>
+    <div class="app-dialog-body modal-body {{contentclass}}">
+        <ng-content></ng-content>
+    </div>
+    <div #footer>
+        <ng-content select="[wmDialogactions]">
+        </ng-content>
+    </div>
+</ng-template>
