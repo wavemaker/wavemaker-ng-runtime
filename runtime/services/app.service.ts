@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { i18nService } from './i18n.service';
 
 const noop = () => {};
 
@@ -8,4 +9,12 @@ export class App {
     onSessionTimeout = noop;
     onPageReady = noop;
     onServiceError =  noop;
+
+    changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
+
+    reload() {
+        window.location.reload();
+    }
+
+    constructor(private i18nService: i18nService) {}
 }

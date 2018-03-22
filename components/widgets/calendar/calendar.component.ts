@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Injector, OnIn
 import { BaseComponent } from '../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { registerProps } from './calendar.props';
-import { getClonedObject } from '@utils/utils';
+import { getClonedObject, getSessionStorageItem } from '@utils/utils';
 import { getEvaluatedData } from '../../utils/widget-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 
@@ -188,7 +188,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
             height: 600,
             eventSources: this.eventSources,
             editable: true,
-            locale: 'en',
+            locale: getSessionStorageItem('selectedLocale') || 'en',
             selectable: false,
             header: defaultHeaderOptions,
             buttonText: {

@@ -5,6 +5,7 @@ import { registerProps } from './select.props';
 import { updatedCheckedValues, setCheckedAndDisplayValues, extractDisplayOptions, assignModelForMultiSelect, assignModelForSelected } from '../../utils/form-utils';
 import { removeAttr, setAttr } from '@utils/dom';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { invokeEventHandler } from '../../utils/widget-utils';
 declare const _;
 
 registerProps();
@@ -40,6 +41,7 @@ export class SelectComponent extends BaseComponent implements OnInit, ControlVal
     public modelProxy: any;
 
     private __model;
+    private oldValue;
 
     get _model_() {
         return this.__model;
@@ -86,6 +88,8 @@ export class SelectComponent extends BaseComponent implements OnInit, ControlVal
         }
         this.assignModelValue();
         this._onTouched();
+        invokeEventHandler(this, 'change', {$event, newVal: this.datavalue, oldVal: this.oldValue});
+        this.oldValue = this.datavalue;
     }
 
     /**

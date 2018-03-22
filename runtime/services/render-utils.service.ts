@@ -19,6 +19,7 @@ import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { CommonModule } from '@angular/common';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
+import { i18nService } from './i18n.service';
 
 const scriptCache = new Map<string, Function>();
 
@@ -97,7 +98,7 @@ const execScript = (script, identifier, ctx, instance, app, inj) => {
 export class RenderUtilsService {
     constructor(private compiler: Compiler, private app: App,
                 private injector: Injector, private route: ActivatedRoute,
-                private resouceMngr: AppResourceManagerService) {
+                private resouceMngr: AppResourceManagerService, private i18nService: i18nService) {
     }
 
     getComponentFactory(componentDef, moduleDef) {
@@ -132,14 +133,21 @@ export class RenderUtilsService {
         $target.appendChild(component.location.nativeElement);
     }
 
+    private defineI18nProps(instance) {
+        instance.appLocale = this.i18nService.getAppLocale();
+    }
+
     async renderPage(pageName: string, vcRef: ViewContainerRef, $target: HTMLElement) {
         const {markup, script, styles, variables} = await this.loadMinJson(getPageOrPartialMinUrl(pageName));
 
         const postConstructFn = (pageInstance, inj) => {
+            this.defineI18nProps(pageInstance);
             pageInstance.Widgets = {};
             registerVariablesAndActions(inj, pageName, variables, pageInstance);
 
             execScript(script, `page-${pageName}`, 'Page', pageInstance, this.app, inj);
+
+            pageInstance.App = this.app;
 
             this.route.queryParams.subscribe(params => pageInstance.pageParams = params);
         };
@@ -151,11 +159,13 @@ export class RenderUtilsService {
         const {markup, script, styles, variables} = await this.loadMinJson(getPageOrPartialMinUrl(partialName));
 
         const postConstructFn = (partialInstance, inj) => {
+            this.defineI18nProps(partialInstance);
             partialInstance.Widgets = {};
             registerVariablesAndActions(inj, partialName, variables, partialInstance);
 
             execScript(script, `partial-${partialName}`, 'Partial', partialInstance, this.app, inj);
 
+            partialInstance.App = this.app;
             containerWidget.Widgets = partialInstance.Widgets;
             containerWidget.Variables = partialInstance.Variables;
             containerWidget.Actions = partialInstance.Actions;
@@ -170,11 +180,13 @@ export class RenderUtilsService {
         const {markup, script, styles, variables} = await this.loadMinJson(getPrefabMinJsonUrl(prefabName));
 
         const postConstructFn = (prefabInstance, inj) => {
+            this.defineI18nProps(prefabInstance);
             prefabInstance.Widgets = {};
             registerVariablesAndActions(inj, prefabName, variables, prefabInstance);
 
             execScript(script, `prefab-${prefabName}`, 'Prefab', prefabInstance, this.app, inj);
 
+            prefabInstance.App = this.app;
             containerWidget.onPropertyChange = prefabInstance.onPropertyChange;
             containerWidget.onStyleChange = prefabInstance.onPropertyChange;
             prefabInstance.$element = containerWidget.$element;

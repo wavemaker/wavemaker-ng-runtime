@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import { invokeEventHandler } from '@components/utils/widget-utils';
+import { Injectable } from '@angular/core';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 declare const $;
 

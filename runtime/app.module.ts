@@ -19,6 +19,8 @@ import { AppJSResolve } from './resolves/app-js.resolve';
 import { App } from './services/app.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
+import { i18nService } from './services/i18n.service';
+import { i18nResolve } from './resolves/i18n.resolve';
 
 const routes = [
     {
@@ -27,7 +29,8 @@ const routes = [
         pathMatch: 'full',
         resolve: {
             metadata: MetadataResolve,
-            appJS: AppJSResolve
+            appJS: AppJSResolve,
+            i18n: i18nResolve
         }
     }
 ];
@@ -55,6 +58,8 @@ const routes = [
         MetadataResolve,
         App,
         AppJSResolve,
+        i18nService,
+        i18nResolve,
         AppResourceManagerService,
         PrefabManagerService
     ],

@@ -1,4 +1,4 @@
-declare const _, X2JS;
+declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
 declare const document;
 
@@ -613,4 +613,35 @@ export const loadScripts = async (urls = []) => {
         await loadScript(url);
     }
     return Promise.resolve();
+};
+
+/**
+ * This function sets session storage item based on the project ID
+ * @param key string
+ * @param value string
+ */
+export const setSessionStorageItem = (key, value) => {
+    let sessionStorageObj: any = window.sessionStorage.getItem(_WM_APP_PROPERTIES.name);
+
+    if (sessionStorageObj) {
+        sessionStorageObj = JSON.parse(sessionStorageObj);
+    } else {
+        sessionStorageObj = {};
+    }
+    sessionStorageObj[key] = value;
+
+    window.sessionStorage.setItem(_WM_APP_PROPERTIES.name, JSON.stringify(sessionStorageObj));
+};
+
+/**
+ * This function gets session storage item based on the project ID
+ * @param key string
+ */
+export const getSessionStorageItem = key => {
+    var sessionStorageObj = window.sessionStorage.getItem(_WM_APP_PROPERTIES.name);
+
+    if (sessionStorageObj) {
+        sessionStorageObj = JSON.parse(sessionStorageObj);
+        return sessionStorageObj[key];
+    }
 };

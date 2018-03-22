@@ -111,7 +111,7 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
 
     /*If value is passed*/
     if (displayField) {
-        return this.getObjValueByKey(dataObj, displayField);
+        return getObjValueByKey(dataObj, displayField);
     }
 };
 
