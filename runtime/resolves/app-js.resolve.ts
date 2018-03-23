@@ -15,7 +15,6 @@ export class AppJSResolve implements Resolve<any> {
         //execute app.js
         return appJsLoaded || this.$http.get('./app.js', {responseType: 'text'})
             .subscribe(response => {
-                response = `console.log(App, Utils, Injector); ${response}`;
                 //@ts-ignore
                 let appJs = new Function('App', 'Utils', 'Injector', response);
                 appJs(this.app, Utils, this.inj);

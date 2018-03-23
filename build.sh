@@ -1,10 +1,10 @@
 npm install
 start=`date +%s`
-rimraf=./node_modules/.bin/rimraf
-rollup=./node_modules/.bin/rollup
-uglifyjs=./node_modules/.bin/uglifyjs
-ngc=./node_modules/.bin/ngc
-tsc=./node_modules/.bin/tsc
+RIMRAF=./node_modules/.bin/rimraf
+ROLLUP=./node_modules/.bin/rollup
+UGLIFYJS=./node_modules/.bin/uglifyjs
+NGC=./node_modules/.bin/ngc
+TSC=./node_modules/.bin/tsc
 
 set -e
 
@@ -26,7 +26,7 @@ White='\033[0;37m'        # White
 
 
 echo -e "${Cyan}Cleanup dist directory\n"
-$rimraf ./dist
+$RIMRAF ./dist
 mkdir dist
 
 if [ "$?" != "0" ]
@@ -38,7 +38,7 @@ fi
 ################################ ngc
 
 echo -e "${Cyan}Compiling typescript files using ngc ${White}"
-$ngc -p ./runtime/tsconfig.build.json
+$NGC -p ./runtime/tsconfig.build.json
 if [ "$?" != "0" ]
 then
 	echo -e "${Red}Error while ngc \n"
@@ -68,7 +68,7 @@ mkdir ./dist/tmp
 if [ "$1" != "-sl" ]
 then
     echo -e "${Cyan}Building tslib ${White}"
-    $rollup ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent
+    $ROLLUP ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent
     if [ "$?" != "0" ]
     then
     	echo -e "${Red}Error in bundling tslib files"
@@ -77,7 +77,7 @@ then
     echo -e "${Green}Built tslib\n"
 
     echo -e "${Cyan}Building @angular/common/http ${White}"
-    $rollup -c ./config/rollup.angular.common-http.config.js --silent
+    $ROLLUP -c ./config/rollup.angular.common-http.config.js --silent
     if [ "$?" != "0" ]
     then
         echo -e "${Red}Error in building @angular/common/http"
@@ -86,8 +86,8 @@ then
     echo -e "${Green}Built common-http\n"
 
     echo -e "${Cyan}Building ngx-bootstrap ${White}"
-    $tsc --outDir dist/tmp --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015
-    $rollup -c ./config/rollup.ngx-bootstrap.config.js --silent
+    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015
+    $ROLLUP -c ./config/rollup.ngx-bootstrap.config.js --silent
     if [ "$?" != "0" ]
     then
         echo -e "${Red}Error in building ngx-bootstrap"
@@ -97,8 +97,8 @@ then
 
 
     echo -e "${Cyan}Building ngx-toastr ${White}"
-    $tsc --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/esm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015
-    $rollup -c ./config/rollup.ngx-toastr.config.js --silent
+    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/toastr.es2015.js --allowJs --skipLibCheck --module es2015
+    $ROLLUP -c ./config/rollup.ngx-toastr.config.js --silent
     if [ "$?" != "0" ]
     then
         echo -e "${Red}Error in building ngx-toastr"
@@ -107,7 +107,7 @@ then
     echo -e "${Green}Built ngx-toastr\n"
 
     echo -e "${Cyan}Bundling libs ${White}"
-    $uglifyjs \
+    $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/Rx.js \
@@ -153,7 +153,7 @@ fi
 
 ########## utils
 echo -e "${Cyan}Building utils ${White}"
-$rollup -c ./utils/rollup.config.js --silent
+$ROLLUP -c ./utils/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building utils\n"
@@ -163,7 +163,7 @@ echo -e "${Green}Built utils\n"
 
 ########## transpiler
 echo -e "${Cyan}Building transpiler ${White}"
-$rollup -c ./transpiler/rollup.config.js --silent
+$ROLLUP -c ./transpiler/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building transpiler\n"
@@ -173,7 +173,7 @@ echo -e "${Green}Built transpiler\n"
 
 ########## components
 echo -e "${Cyan}Building components build task ${White}"
-$rollup -c ./components/rollup.wm-components.build.config.js --silent
+$ROLLUP -c ./components/rollup.wm-components.build.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building components build task \n"
@@ -182,7 +182,7 @@ fi
 echo -e "${Green}Built components build task\n"
 
 echo -e "${Cyan}Building components ${White}"
-$rollup -c ./components/rollup.wm-components.config.js --silent
+$ROLLUP -c ./components/rollup.wm-components.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building components\n"
@@ -192,7 +192,7 @@ echo -e "${Green}Built components\n"
 
 ########## http-service
 echo -e "${Cyan}Building http-service ${White}"
-$rollup -c ./http-service/rollup.config.js --silent
+$ROLLUP -c ./http-service/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building http-service\n"
@@ -202,7 +202,7 @@ echo -e "${Green}Built http-service\n"
 
 ########## variables
 echo -e "${Cyan}Building Variables ${White}"
-$rollup -c ./variables/rollup.config.js --silent
+$ROLLUP -c ./variables/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building Variables\n"
@@ -212,7 +212,7 @@ echo -e "${Green}Built Variables\n"
 
 ########## runtime
 echo -e "${Cyan}Building runtime ${White}"
-$rollup -c ./runtime/rollup.config.js --silent
+$ROLLUP -c ./runtime/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in bundling runtime"
@@ -222,7 +222,7 @@ echo -e "${Green}Built runtime\n"
 
 ########## final bundle
 echo -e "${Cyan}Bundling wm-loader ${White}"
-$uglifyjs ./dist/tmp/wm-utils.umd.js \
+$UGLIFYJS ./dist/tmp/wm-utils.umd.js \
     ./dist/tmp/wm-transpiler.umd.js \
     ./dist/tmp/wm-components.build.umd.js \
     ./dist/tmp/wm-components.umd.js \
@@ -238,10 +238,10 @@ fi
 echo -e "${Green}Bundled wm-loader\n"
 
 echo -e "${Cyan}Cleanup tmp directory\n"
-$rimraf ./dist/tmp
+$RIMRAF ./dist/tmp
 
 echo -e "${Cyan}Cleanup out-tsc directory\n"
-$rimraf ./dist/out-tsc
+$RIMRAF ./dist/out-tsc
 
 end=`date +%s`
 runtime=$((end-start))
