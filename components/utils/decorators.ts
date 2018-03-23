@@ -7,5 +7,6 @@ export function Event(eventName) {
             type[CUSTOM_EVT_KEY] :
             Object.defineProperty(type, CUSTOM_EVT_KEY, {value: {}})[CUSTOM_EVT_KEY];
         meta[eventName] = descriptor.value;
-    }
+    };
 }
+

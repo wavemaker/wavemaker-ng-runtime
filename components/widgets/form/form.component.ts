@@ -1,21 +1,27 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, forwardRef, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, forwardRef, HostListener, Attribute } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
-import { registerProps } from './form.props';
+import { registerFormProps } from './form.props';
+import { registerLiveFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
 import { $appDigest } from '@utils/watcher';
+import { getVariableName, performDataOperation } from '../../utils/data-utils';
+import { isDefined } from '@utils/utils';
 declare const _;
 
-registerProps();
+registerFormProps();
+registerLiveFormProps();
 
-const DEFAULT_CLS = 'panel app-panel app-form';
-const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: DEFAULT_CLS};
+const DEFAULT_CLS = 'panel app-panel app-liveform liveform-inline';
+const WIDGET_CONFIG = {widgetType: 'wm-liveform', hostClass: DEFAULT_CLS};
 
 export abstract class ParentForm {
     ngForm: any;
 
     abstract registerFormFields(formField);
+
+    abstract registerActions(formAction);
 }
 
 @Component({
@@ -23,7 +29,7 @@ export abstract class ParentForm {
     templateUrl: './form.component.html',
     providers: [{ provide: ParentForm, useExisting: forwardRef(() => FormComponent) }]
 })
-export class FormComponent extends BaseComponent {
+export class FormComponent extends BaseComponent implements ParentForm {
 
     public statusMessage: string;
     public captionAlignClass: string;
@@ -37,9 +43,17 @@ export class FormComponent extends BaseComponent {
     public isUpdateMode = true;
     public formFields = [];
     public formfields = {};
+    public buttonArray = [];
     public dataoutput;
+    public rowdata;
+    public isSelected;
+    public prevformFields;
+    public prevDataValues;
 
     private operationType;
+    private binddataset;
+    private variable;
+    private isLayoutDialog;
 
     @HostBinding('autocomplete') autocomplete: boolean;
     @HostBinding('action') action: string;
@@ -88,6 +102,10 @@ export class FormComponent extends BaseComponent {
         }
 
         formData = this.constructDataObject();
+
+        performDataOperation(formData, this.variable, {
+            operationType: this.operationType
+        });
     }
 
     onPropertyChange(key, newVal, ov?) {
@@ -101,6 +119,17 @@ export class FormComponent extends BaseComponent {
             case 'captionwidth':
                 this.setLayoutConfig();
                 break;
+            case 'formdata':
+            case 'rowdata':
+                this.setDefaultValues(newVal);
+                break;
+            case 'defaultmode':
+                if (newVal && newVal === 'Edit') {
+                    this.isUpdateMode = true;
+                } else {
+                    this.isUpdateMode = false;
+                }
+                break;
         }
     }
 
@@ -113,17 +142,24 @@ export class FormComponent extends BaseComponent {
         $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private fb: FormBuilder) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private fb: FormBuilder, @Attribute('dataset.bind') binddataset) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
 
         this.ngForm = fb.group({});
+
+        this.binddataset = binddataset;
+        this.variable = this.parent.Variables[getVariableName(this.binddataset)];
     }
 
     registerFormFields(formField) {
         this.formFields.push(formField);
         this.formfields[formField.key] = formField;
+    }
+
+    registerActions(formAction) {
+        this.buttonArray.push(formAction);
     }
 
     constructDataObject() {
@@ -152,5 +188,72 @@ export class FormComponent extends BaseComponent {
         });
         this.dataoutput = formData;
         return formData;
+    }
+
+    setDefaultValues(rowData) {
+        if (!this.formFields) {
+            return;
+        }
+
+        this.formFields.forEach((field) => {
+            field.datavalue =  _.get(rowData, field.key || field.name);
+        });
+    }
+
+    resetFormState() {
+        this.ngForm.markAsUntouched();
+        this.ngForm.markAsPristine();
+    }
+
+    emptyDataModel() {
+        this.formFields.forEach(function (field) {
+            if (isDefined(field)) {
+                field.datavalue = '';
+            }
+        });
+    }
+
+    setPrevDataValues() {
+        if (!this.formFields) {
+            return;
+        }
+        this.prevDataValues = this.formFields.map(function (obj) {
+            return {'key': obj.key, 'value': obj.value};
+        });
+    }
+
+    edit() {
+        this.resetFormState();
+        this.isUpdateMode = true;
+        this.operationType = 'update';
+    }
+
+    cancel() {
+        this.formCancel();
+    }
+
+    formCancel() {
+        this.isUpdateMode = false;
+    }
+
+    new() {
+        this.resetFormState();
+        if (this.isSelected && !this.isLayoutDialog) {
+            // this.prevformFields = getClonedObject(this.formFields);
+        }
+        if (this.formFields && this.formFields.length > 0) {
+            this.emptyDataModel();
+        }
+        this.setPrevDataValues();
+        this.constructDataObject();
+        this.isUpdateMode = true;
+        this.operationType = 'insert';
+    }
+
+    callEvent(event) {
+        // TODO: Change logic to handle all scenarios
+        if (event) {
+            this[event.substring(0, event.indexOf('('))]();
+        }
     }
 }

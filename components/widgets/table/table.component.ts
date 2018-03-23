@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef, ViewChildren, ViewContainerRef, TemplateRef, Optional  } from '@angular/core';
 import { TableParent, provideTheParent } from './parent';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { styler } from '../../utils/styler';
@@ -6,6 +6,8 @@ import { BaseComponent } from '../base/base.component';
 import { registerProps } from './table.props';
 import { isDefined, getClonedObject, isEmptyObject, isNumberType, getValidJSON } from '@utils/utils';
 import { getRowOperationsColumn } from '../../utils/live-utils';
+import { LiveTableParent } from '../../widgets/live-table/live-table.component';
+import { Subject } from 'rxjs/Subject';
 
 declare const _;
 declare const moment;
@@ -42,6 +44,8 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
 
     @ViewChild(PaginationComponent) dataNavigator;
     @ViewChild('datagridElement') private _tableElement: ElementRef;
+    @ViewChild('rowActions') rowActionsTmpl: TemplateRef<any>;
+    @ViewChild('rowActionsContainer', {read: ViewContainerRef}) rowActionsContainer: ViewContainerRef;
 
     datagridElement;
     editmode;
@@ -52,6 +56,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     gridclass;
     gridfirstrowselect;
     iconclass;
+    isGridEditMode;
     loadingdatamsg;
     multiselect;
     name;
@@ -60,15 +65,19 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     navigationalign;
     nodatamessage;
     pagesize;
+    prevData;
     radioselect;
     rowclass;
     rowngclass;
-    selectedItems;
+    selectedItems = [];
     showheader;
     showrecordcount;
     showrowindex;
     subheading;
     title;
+
+    selectedItemChange = new Subject();
+    selectedItemChange$ = this.selectedItemChange.asObservable();
 
     actions = [];
     _actions = {
@@ -136,9 +145,12 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
             }
             this.callDataGridMethod('selectRows', this.items);
             this.selectedItems = this.callDataGridMethod('getSelectedRows');
+            this.selectedItemChange.next(this.selectedItems);
         },
         onRowSelect: (rowData, e) => {
             this.selectedItems = this.callDataGridMethod('getSelectedRows');
+            this.selectedItemChange.next(this.selectedItems);
+
             /*
              * in case of single select, update the items with out changing the reference.
              * for multi select, keep old selected items in tact
@@ -170,7 +182,11 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         },
         onRowInsert: () => {
         },
-        beforeRowUpdate: () => {
+        beforeRowUpdate: (rowData, eventName?) => {
+            if (this._liveTableParent) {
+                this._liveTableParent.updateRow(rowData, eventName);
+            }
+            this.prevData = getClonedObject(rowData);
         },
         afterRowUpdate: () => {
         },
@@ -183,6 +199,9 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         onBeforeFormRender: () => {
         },
         getCompiledTemplate: () => {
+            // TODO: Demo code. Need to change
+            this.rowActionsContainer.createEmbeddedView(this.rowActionsTmpl);
+            return $(this.$element).find('.row__actions')[0];
         },
         compileTemplateInGridScope: () => {
         },
@@ -745,6 +764,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         });
 
         this.renderOperationColumns();
+        this.gridOptions.colDefs = this.fieldDefs;
 
         this.datagridElement.datatable(this.gridOptions);
         this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
@@ -768,7 +788,44 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         this.rowActions.push(tableRowAction);
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    editRow(evt) {
+        let row;
+        if (evt && evt.target) {
+            this.callDataGridMethod('toggleEditRow', evt, {'selectRow': true});
+        } else {
+            // For live form, call the update function with selected item
+            if (this.editmode === 'form' || this.editmode === 'dialog') {
+                row = evt || this.selectedItems[0];
+                this.gridOptions.beforeRowUpdate(row);
+            } else {
+                // Wait for the selected item to get updated
+                setTimeout(() => {
+                    row = this.datagridElement.find('tr.active');
+                    if (row.length) {
+                        this.callDataGridMethod('toggleEditRow', undefined, {$row: row, action: 'edit'});
+                    }
+                });
+            }
+        }
+    }
+
+    addNewRow() {
+        if (!this.isGridEditMode) { // If grid is already in edit mode, do not add new row
+            this.callDataGridMethod('addNewRow');
+            if (this._liveTableParent) {
+                this._liveTableParent.addNewRow();
+            }
+        }
+    }
+
+    callEvent(event) {
+        // TODO: Change logic to handle all scenarios
+        if (event) {
+            this[event.substring(0, event.indexOf('('))]();
+        }
+    }
+
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Optional() public _liveTableParent: LiveTableParent) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
     }

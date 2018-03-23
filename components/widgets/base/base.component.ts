@@ -10,6 +10,7 @@ export class BaseComponent implements OnDestroy, OnInit {
     $element: HTMLElement;
     widgetType: string;
     widget: any;
+    parent: any;
     widgetId: string;
     $digest;
     init = noop;

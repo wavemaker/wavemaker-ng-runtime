@@ -1,42 +1,44 @@
 import { Optional, ElementRef, Injector, ChangeDetectorRef, Directive, OnInit } from '@angular/core';
-import { TableParent } from '../parent';
-import { registerProps } from './table-action.props';
+import { ParentForm } from '../form.component';
+import { registerProps } from './form-action.props';
 import { BaseComponent } from '../../base/base.component';
 declare const _;
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
+const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 
 @Directive({
-    selector: '[wmTableAction]'
+    selector: '[wmFormAction]'
 })
-export class TableActionDirective extends BaseComponent implements OnInit {
+export class FormActionDirective extends BaseComponent implements OnInit {
     accessroles;
     action;
-    caption;
+    binding;
     class;
     disabled;
     displayName;
-    icon;
     iconclass;
+    iconname;
+    key;
     position;
     shortcutkey;
     show;
     tabindex;
     title;
-    key;
+    type;
+    updateMode;
 
     public buttonDef;
 
-    constructor(@Optional() public _tableParent: TableParent, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(@Optional() public _parentForm: ParentForm, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
     }
 
     populateAction() {
         this.buttonDef = {
-            key: this.key,
-            displayName: this['display-name'] || this.caption || '',
+            key: this.key || this.binding,
+            displayName: this['display-name'],
             show: this.show || 'false',
             class: this.class || '',
             iconclass: this.iconclass || '',
@@ -46,14 +48,16 @@ export class TableActionDirective extends BaseComponent implements OnInit {
             shortcutkey: this.shortcutkey,
             disabled: this.disabled || 'false',
             tabindex: this.tabindex ? +this.tabindex : undefined,
-            icon: this.icon,
-            position: this.position || 'footer'
+            iconname: this.iconname,
+            type: this.type || 'type',
+            updateMode: this['update-mode'] === true || this['update-mode'] === 'true',
+            position: this.position
         };
     }
 
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
-        this._tableParent.registerActions(this.buttonDef);
+        this._parentForm.registerActions(this.buttonDef);
     }
 }

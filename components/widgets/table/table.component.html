@@ -8,27 +8,73 @@
             <div class="description" [textContent]="subheading"></div>
         </div>
         <div class="panel-actions app-datagrid-actions" *ngIf="exportOptions.length || _actions.header.length">
-            <button wmButton *ngFor="let btn of _actions.header" caption.bind="btn.displayName" show.bind="btn.show" class="{{btn.class}}"
-                       ngClass.bind="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
-                       iconclass.bind="btn.iconclass" (click)="btn.action" type="button" shortcutkey.bind="btn.shortcutkey" tabindex.bind="btn.tabindex"
-                       hint.bind="btn.title" attr.disabled.bind="btn.disabled"></button>
+            <button wmButton *ngFor="let btn of _actions.header" caption.bind="btn.displayName" show.bind="btn.show"
+                    class="{{btn.class}}"
+                    ngClass.bind="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
+                    iconclass.bind="btn.iconclass" (click)="btn.action" type="button" shortcutkey.bind="btn.shortcutkey"
+                    tabindex.bind="btn.tabindex"
+                    hint.bind="btn.title" attr.disabled.bind="btn.disabled"></button>
             <!--<wm-menu autoclose="always" caption="{{$root.appLocale.LABEL_EXPORT}}" ng-if="exportOptions.length" name="{{::name}}-export"-->
-                     <!--scopedataset="exportOptions" on-select="export($item)" menuposition="down,left"></wm-menu>-->
+            <!--scopedataset="exportOptions" on-select="export($item)" menuposition="down,left"></wm-menu>-->
         </div>
     </h3>
 </div>
 <div class="app-datagrid" #datagridElement></div>
-<div class="panel-footer clearfix"  [hidden]="!shownavigation && !_actions.footer.length">
+<div class="panel-footer clearfix" [hidden]="!shownavigation && !_actions.footer.length">
     <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation">
         <div #pagination></div>
-        <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign" navigationsize.bind="navigationSize"
-                       navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize" boundarylinks.bind="boundarylinks"
-                       forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></nav>
+        <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign"
+             navigationsize.bind="navigationSize"
+             navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize"
+             boundarylinks.bind="boundarylinks"
+             forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></nav>
     </div>
     <div class="app-datagrid-actions" *ngIf="_actions.footer.length">
-        <button wmButton *ngFor="let btn of _actions.footer" caption.bind="$implicit.displayName" show.bind="$implicit.show" class.bind="$implicit.class"
-                   [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
-                   iconclass.bind="$implicit.iconclass" (click)="$implicit.action" type="button" shortcutkey.bind="$implicit.shortcutkey" tabindex.bind="$implicit.tabindex"
-                   hint.bind="$implicit.title" attr.disabled.bind="$implicit.disabled"></button>
+        <button wmButton *ngFor="let btn of _actions.footer" caption.bind="$implicit.displayName"
+                show.bind="$implicit.show" class.bind="$implicit.class"
+                [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
+                iconclass.bind="$implicit.iconclass" (click)="callEvent(btn.action)" type="button"
+                shortcutkey.bind="$implicit.shortcutkey" tabindex.bind="$implicit.tabindex"
+                hint.bind="$implicit.title" attr.disabled.bind="$implicit.disabled"></button>
     </div>
 </div>
+
+
+<div #rowActionsContainer>
+
+</div>
+
+<ng-template #rowActions>
+    <span class="row__actions">
+        <button type="button" data-action-key="updaterow"
+                class="row-action row-action-button app-button btn btn-transparent edit edit-row-button "
+                title="Edit" ng-disabled="false"
+                (click)="editRow()">
+            <i class="app-icon wi wi-pencil"></i>
+        </button>
+        <button type="button" class="save row-action-button btn app-button btn-transparent save-edit-row-button hidden"
+                title="Save">
+            <i class="wi wi-done"></i>
+        </button>
+        <button type="button"
+                class="cancel row-action-button btn app-button btn-transparent cancel-edit-row-button hidden"
+                title="Cancel">
+            <i class="wi wi-cancel"></i>
+        </button>
+        <button type="button" data-action-key="deleterow"
+                class="row-action row-action-button app-button btn btn-transparent delete delete-row-button "
+                title="Delete" ng-disabled="false">
+            <i class="app-icon wi wi-trash"></i>
+        </button>
+
+          <!--<button *ngFor="let action of rowActions;" type="button"-->
+                  <!--class="row-action row-action-button app-button btn {{action.class}}"-->
+                  <!--[ngClass]="{'edit edit-row-button': action.action.indexOf('editRow()') !== -1, 'delete delete-row-button': action.action.indexOf('deleteRow()') !== -1}"-->
+                  <!--[hidden]="!action.show"-->
+                  <!--[tabindex]="action.tabindex"-->
+                  <!--[title]="action.title" [disabled]="action.disabled">-->
+            <!--<i class="app-icon {{action.iconclass}}"></i>-->
+            <!--<span class="btn-caption" *ngIf="action.displayName">{{action.displayName}}</span>-->
+        <!--</button>-->
+    </span>
+</ng-template>

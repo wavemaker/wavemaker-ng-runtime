@@ -61,6 +61,20 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         }
     }
 
+    get datavalue() {
+        return this.formWidgetInstance && this.formWidgetInstance.datavalue;
+    }
+
+    set datavalue(val) {
+        if (this.formWidgetInstance.widget) {
+            this.formWidgetInstance.widget.datavalue = val;
+        }
+    }
+
+    get value() {
+        return this.datavalue;
+    }
+
     get _control() {
         return this.ngForm && this.ngForm.controls[this.key || this.name];
     }

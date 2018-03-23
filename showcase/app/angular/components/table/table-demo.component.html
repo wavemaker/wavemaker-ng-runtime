@@ -21,6 +21,8 @@
         </div>
         <div wmTableColumn binding="role" caption="Role" edit-widget-type="text" type="string" generator="assigned" show="true" readonly="false"></div>
         <div wmTableColumn binding="tenantId" caption="Tenant Id" edit-widget-type="number" type="integer" generator="assigned" show="true" readonly="false"></div>
+        <div wmTableRowAction key="updaterow" display-name="" show="true" class="btn-transparent" iconclass="wi wi-pencil" title="Edit" action="editRow()" disabled="false"></div>
+        <div wmTableRowAction key="deleterow" display-name="" show="true" class="btn-transparent" iconclass="wi wi-trash" title="Delete" action="deleteRow()" disabled="false"></div>
         <div wmTableColumn binding="rowOperations" caption="Actions" width="120px" edit-widget-type="text" type="custom" readonly="true" sortable="false" searchable="false" show="true"></div>
     </div>
     <!--<div>-->

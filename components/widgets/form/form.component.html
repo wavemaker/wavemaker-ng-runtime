@@ -14,4 +14,9 @@
     <div class="form-elements">
         <ng-content></ng-content>
     </div>
+    <div class="basic-btn-grp form-action panel-footer clearfix">
+        <button *ngFor="let btn of buttonArray" wmButton name="{{btn.key}}" caption.bind="$implicit.displayName" class.bind="$implicit.class" iconclass.bind="$implicit.iconclass"
+                (click)="callEvent(btn.action)" type.bind="$implicit.type" hint.bind="$implicit.title" shortcutkey.bind="$implicit.shortcutkey" disabled.bind="$implicit.disabled"
+                tabindex.bind="btnField.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+    </div>
 </div>

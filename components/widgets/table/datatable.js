@@ -2608,11 +2608,13 @@ $.widget('wm.datatable', {
             self = this;
             template = self._getRowActionsTemplate();
             $htm.find("[data-identifier='actionButtons']").each(function (index) {
-                if (isNewRow) {
-                    $(this).empty().append(self.options.getCompiledTemplate(template, rowData, rowOperationsCol));
-                } else {
-                    $(this).empty().append(self.options.getCompiledTemplate(template, self.preparedData[index], rowOperationsCol));
-                }
+                //TODO: Change this
+                $(this).empty().append(self.options.getCompiledTemplate());
+                // if (isNewRow) {
+                //     $(this).empty().append(self.options.getCompiledTemplate(template, rowData, rowOperationsCol));
+                // } else {
+                //     $(this).empty().append(self.options.getCompiledTemplate(template, self.preparedData[index], rowOperationsCol));
+                // }
             });
         }
     },

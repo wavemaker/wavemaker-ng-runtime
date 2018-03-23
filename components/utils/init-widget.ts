@@ -154,6 +154,9 @@ export function initWidget(component: BaseComponent, elDef: any, view: any) {
 
     const widgetProps: Map<string, any> = getWidgetPropsByType(component.widgetType);
     const parent = view.component;
+
+    component.parent = parent;
+
     let $locals;
     const initState: any = new Map<string, any>();
 

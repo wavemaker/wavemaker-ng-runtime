@@ -16,6 +16,7 @@ export const registerProps = () => {
                 ['placeholder', PROP_STRING_NOTIFY],
                 ['readonly', PROP_BOOLEAN],
                 ['required', PROP_BOOLEAN_NOTIFY],
+                ['show', PROP_BOOLEAN],
                 ['validationmessage', PROP_STRING],
                 ['widgettype', PROP_STRING]
             ]

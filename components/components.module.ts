@@ -26,6 +26,9 @@ import { DialogActionsComponent } from './widgets/dialog/dialog-actions/dialog-a
 import { DialogComponent } from './widgets/dialog/dialog.component';
 import { DialogHeaderComponent } from './widgets/dialog/dialog-header/dialog-header.component';
 import { FooterDirective } from './widgets/footer/footer.directive';
+import { FormComponent } from './widgets/form/form.component';
+import { FormActionDirective} from './widgets/form/form-action/form-action.directive';
+import { FormFieldDirective } from './widgets/form-field/form-field.directive';
 import { LayoutGridRowDirective } from './widgets/layout-grid/layout-grid-row/layout-grid-row.directive';
 import { LayoutGridColumnComponent } from './widgets/layout-grid/layout-grid-column/layout-grid-column.component';
 import { HeaderComponent } from './widgets/header/header.component';
@@ -36,6 +39,7 @@ import { IframeDialogComponent } from './widgets/dialog/iframe-dialog/iframe-dia
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layout-grid/layout-grid.directive';
 import { LeftPanelComponent } from './widgets/left-panel/left-panel.component';
+import { LiveTableComponent } from './widgets/live-table/live-table.component';
 import { MenuComponent } from './widgets/menu/menu.component';
 import { MenuDropdownComponent } from './widgets/menu/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './widgets/menu/menu-dropdown-item.component';
@@ -66,8 +70,6 @@ import { TimeComponent } from './widgets/time/time.component';
 import { TopNavDirective } from './widgets/top-nav/top-nav.directive';
 import { VideoComponent } from './widgets/video/video.component';
 import { PaginationComponent } from './widgets/pagination/pagination.component';
-import { FormComponent } from './widgets/form/form.component';
-import { FormFieldDirective } from './widgets/form-field/form-field.directive';
 import { TableComponent } from './widgets/table/table.component';
 import { TableColumnDirective } from './widgets/table/table-column/table-column.directive';
 import { TableColumnGroupDirective } from './widgets/table/table-column-group/table-column-group.directive';
@@ -95,6 +97,9 @@ const wmComponents = [
     DialogComponent,
     DialogHeaderComponent,
     FooterDirective,
+    FormComponent,
+    FormActionDirective,
+    FormFieldDirective,
     LayoutGridRowDirective,
     LayoutGridColumnComponent,
     HeaderComponent,
@@ -105,6 +110,7 @@ const wmComponents = [
     LabelDirective,
     LayoutgridDirective,
     LeftPanelComponent,
+    LiveTableComponent,
     MenuComponent,
     MenuDropdownComponent,
     MenuDropdownItemComponent,
@@ -135,8 +141,6 @@ const wmComponents = [
     TopNavDirective,
     VideoComponent,
     PaginationComponent,
-    FormComponent,
-    FormFieldDirective,
     TableComponent,
     TableColumnDirective,
     TableColumnGroupDirective,
