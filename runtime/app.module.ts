@@ -16,22 +16,34 @@ import { VariablesService } from '@variables/services/variables.service';
 
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
+import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { App } from './services/app.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { i18nService } from './services/i18n.service';
 import { i18nResolve } from './resolves/i18n.resolve';
+import { SecurityService } from './services/security.service';
+import { HttpServiceModule } from '@http-service/http-service.module';
+
+const resolve = {
+    securityConfig: SecurityConfigResolve,
+    metadata: MetadataResolve,
+    appJS: AppJSResolve,
+    i18n: i18nResolve
+};
 
 const routes = [
+    {
+        path: '',
+        component: PageWrapperComponent,
+        pathMatch: 'full',
+        resolve: resolve
+    },
     {
         path: ':pageName',
         component: PageWrapperComponent,
         pathMatch: 'full',
-        resolve: {
-            metadata: MetadataResolve,
-            appJS: AppJSResolve,
-            i18n: i18nResolve
-        }
+        resolve: resolve
     }
 ];
 
@@ -49,6 +61,7 @@ const routes = [
         VariablesModule,
         RouterModule,
         HttpClientModule,
+        HttpServiceModule,
         RouterModule.forRoot(routes, {useHash: true})
     ],
     providers: [
@@ -61,7 +74,9 @@ const routes = [
         i18nService,
         i18nResolve,
         AppResourceManagerService,
-        PrefabManagerService
+        PrefabManagerService,
+        SecurityService,
+        SecurityConfigResolve
     ],
     bootstrap: [AppComponent]
 })

@@ -112,8 +112,8 @@ export class RenderUtilsService {
         return retVal;
     }
 
-    loadMinJson(url): Promise<IPageMinJSON> {
-        return this.resouceMngr.get(url)
+    loadMinJson(url, pageName?): Promise<IPageMinJSON> {
+        return this.resouceMngr.get(url, pageName)
             .then(({markup, script, styles, variables}: IPageMinJSON) => {
                 return {
                     markup: transpile(_decodeURIComponent(markup)),
@@ -139,7 +139,7 @@ export class RenderUtilsService {
     }
 
     async renderPage(pageName: string, vcRef: ViewContainerRef, $target: HTMLElement) {
-        const {markup, script, styles, variables} = await this.loadMinJson(getPageOrPartialMinUrl(pageName));
+        const {markup, script, styles, variables} = await this.loadMinJson(getPageOrPartialMinUrl(pageName), pageName);
 
         const postConstructFn = (pageInstance, inj) => {
             this.defineI18nProps(pageInstance);

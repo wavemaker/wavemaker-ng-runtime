@@ -1,6 +1,6 @@
 declare const _;
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class HttpService {
@@ -9,25 +9,6 @@ export class HttpService {
 
     constructor(httpClient: HttpClient) {
         this.httpClient = httpClient;
-    }
-
-    get(url: string, options: any) {
-        return this.httpClient.get(url, options).toPromise();
-    }
-
-    post(url, data, options) {
-        return this.httpClient.post(url, data, options).toPromise();
-    }
-
-    doGet(options: any) {
-        let url = options.url;
-        return this.get(url, options);
-    }
-
-    doPost(options: any) {
-        let url = options.url,
-            data = options.data;
-        return this.post(url, data, options);
     }
 
     send(options: any) {
@@ -56,7 +37,7 @@ export class HttpService {
             params: reqParams,
             responseType: responseType
         };
-        if (_.includes(this.nonBodyTypeMethods, options.method)) {
+        if (_.includes(this.nonBodyTypeMethods, options.method.toUpperCase())) {
             third = reqOptions;
             fourth = null;
         } else {
@@ -66,5 +47,21 @@ export class HttpService {
         let req = new HttpRequest(options.method, options.url, third, fourth );
 
         return this.httpClient.request(req).toPromise();
+    }
+
+    get(url: string, options?: any) {
+        options = options || {};
+        options.url = url;
+        options.method = 'get';
+        return this.send(options).then((response: HttpResponse<string>) => {
+            return response.body;
+        });
+    }
+
+    post(url, data, options) {
+        options = options || {};
+        options.url = url;
+        options.method = 'post';
+        return this.send(options);
     }
 }
