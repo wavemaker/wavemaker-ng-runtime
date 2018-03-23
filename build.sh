@@ -97,7 +97,7 @@ then
 
 
     echo -e "${Cyan}Building ngx-toastr ${White}"
-    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/toastr.es2015.js --allowJs --skipLibCheck --module es2015
+    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/esm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015
     $ROLLUP -c ./config/rollup.ngx-toastr.config.js --silent
     if [ "$?" != "0" ]
     then
