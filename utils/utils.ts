@@ -615,13 +615,15 @@ export const loadScripts = async (urls = []) => {
     return Promise.resolve();
 };
 
+export let _WM_APP_PROJECT: any = {};
+
 /**
  * This function sets session storage item based on the project ID
  * @param key string
  * @param value string
  */
 export const setSessionStorageItem = (key, value) => {
-    let sessionStorageObj: any = window.sessionStorage.getItem(_WM_APP_PROPERTIES.name);
+    let sessionStorageObj: any = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
 
     if (sessionStorageObj) {
         sessionStorageObj = JSON.parse(sessionStorageObj);
@@ -630,7 +632,7 @@ export const setSessionStorageItem = (key, value) => {
     }
     sessionStorageObj[key] = value;
 
-    window.sessionStorage.setItem(_WM_APP_PROPERTIES.name, JSON.stringify(sessionStorageObj));
+    window.sessionStorage.setItem(_WM_APP_PROJECT.id, JSON.stringify(sessionStorageObj));
 };
 
 /**
@@ -638,7 +640,7 @@ export const setSessionStorageItem = (key, value) => {
  * @param key string
  */
 export const getSessionStorageItem = key => {
-    var sessionStorageObj = window.sessionStorage.getItem(_WM_APP_PROPERTIES.name);
+    let sessionStorageObj = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
 
     if (sessionStorageObj) {
         sessionStorageObj = JSON.parse(sessionStorageObj);
