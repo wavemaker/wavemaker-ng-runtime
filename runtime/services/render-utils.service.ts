@@ -20,6 +20,7 @@ import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { CommonModule } from '@angular/common';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
 import { i18nService } from './i18n.service';
+import { getValidJSON } from '@utils/utils';
 
 const scriptCache = new Map<string, Function>();
 
@@ -118,7 +119,7 @@ export class RenderUtilsService {
                     markup: transpile(_decodeURIComponent(markup)),
                     script: _decodeURIComponent(script),
                     styles: _decodeURIComponent(styles),
-                    variables: _decodeURIComponent(variables)
+                    variables: getValidJSON(_decodeURIComponent(variables)) || {}
                 }
             });
     }
