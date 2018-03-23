@@ -25,12 +25,17 @@ function handleLiveVariableOperations(formData, variable, options) {
         case 'update':
             variable.updateRecord({
                 row: formData
-            });
+            }, options.success, options.error);
             break;
         case 'insert':
             variable.insertRecord({
                 row: formData
-            });
+            }, options.success, options.error);
+            break;
+        case 'delete':
+            variable.deleteRecord({
+                row: formData
+            }, options.success, options.error);
             break;
     }
 }

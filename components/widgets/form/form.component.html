@@ -10,7 +10,7 @@
     </h3>
 </div>
 <div class="form-body panel-body">
-    <p wmMessage *ngIf="statusMessage" caption.bind="statusMessage" type="success"></p>
+    <p wmMessage *ngIf="statusMessage.caption" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
     <div class="form-elements">
         <ng-content></ng-content>
     </div>

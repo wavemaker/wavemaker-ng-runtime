@@ -7,7 +7,7 @@ import { registerLiveFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
 import { $appDigest } from '@utils/watcher';
 import { getVariableName, performDataOperation } from '../../utils/data-utils';
-import { isDefined } from '@utils/utils';
+import { isDefined, getClonedObject } from '@utils/utils';
 declare const _;
 
 registerFormProps();
@@ -31,7 +31,6 @@ export abstract class ParentForm {
 })
 export class FormComponent extends BaseComponent implements ParentForm {
 
-    public statusMessage: string;
     public captionAlignClass: string;
     public validationtype: string;
     public captionalign: string;
@@ -49,6 +48,13 @@ export class FormComponent extends BaseComponent implements ParentForm {
     public isSelected;
     public prevformFields;
     public prevDataValues;
+    public prevDataObject;
+    public statusMessage = {
+        caption: '',
+        type: ''
+    };
+    public messagelayout;
+    public errormessage;
 
     private operationType;
     private binddataset;
@@ -59,7 +65,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
     @HostBinding('action') action: string;
 
     @HostListener('submit') onSubmit() {
-        this.submitForm();
+        this.formSave();
     }
 
     @HostListener('reset') onReset() {
@@ -94,20 +100,6 @@ export class FormComponent extends BaseComponent implements ParentForm {
         return false;
     }
 
-    submitForm() {
-        let formData;
-        // Disable the form submit if form is in invalid state.
-        if (this.validateFieldsOnSubmit()) {
-            return;
-        }
-
-        formData = this.constructDataObject();
-
-        performDataOperation(formData, this.variable, {
-            operationType: this.operationType
-        });
-    }
-
     onPropertyChange(key, newVal, ov?) {
         switch (key) {
             case 'captionalign':
@@ -130,6 +122,25 @@ export class FormComponent extends BaseComponent implements ParentForm {
                     this.isUpdateMode = false;
                 }
                 break;
+        }
+    }
+
+    onFormSuccess() {
+        this.isUpdateMode = false;
+    }
+
+    toggleMessage(show, msg?, type?, header?) {
+        let template;
+        if (show && msg) {
+            if (this.messagelayout === 'Inline') {
+                template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
+                this.statusMessage = {'caption': template || '', type: type};
+            } else {
+                template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
+                // wmToaster.show(type, WM.isDefined(header) ? header : type.toUpperCase(), template, undefined, 'trustedHtml');
+            }
+        } else {
+            this.statusMessage.caption = '';
         }
     }
 
@@ -224,6 +235,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
 
     edit() {
         this.resetFormState();
+        this.toggleMessage(false);
         this.isUpdateMode = true;
         this.operationType = 'update';
     }
@@ -233,11 +245,13 @@ export class FormComponent extends BaseComponent implements ParentForm {
     }
 
     formCancel() {
+        this.toggleMessage(false);
         this.isUpdateMode = false;
     }
 
     new() {
         this.resetFormState();
+        this.toggleMessage(false);
         if (this.isSelected && !this.isLayoutDialog) {
             // this.prevformFields = getClonedObject(this.formFields);
         }
@@ -249,6 +263,35 @@ export class FormComponent extends BaseComponent implements ParentForm {
         this.isUpdateMode = true;
         this.operationType = 'insert';
     }
+
+    formSave(event?, updateMode?, newForm?, callBackFn?) {
+        let formData;
+        // Disable the form submit if form is in invalid state.
+        if (this.validateFieldsOnSubmit()) {
+            return;
+        }
+
+        formData = this.constructDataObject();
+
+        performDataOperation(formData, this.variable, {
+            operationType: this.operationType,
+            success: () => {
+                this.toggleMessage(true, 'Form save success', 'success');
+                this.onFormSuccess();
+            },
+            error: () => {
+                this.toggleMessage(true, this.errormessage, 'success');
+            }
+        });
+    }
+
+    delete(callBackFn) {
+        this.resetFormState();
+        this.operationType = 'delete';
+        this.prevDataObject = getClonedObject(this.rowdata || {});
+        this.formSave(undefined, undefined, undefined, callBackFn);
+    }
+
 
     callEvent(event) {
         // TODO: Change logic to handle all scenarios

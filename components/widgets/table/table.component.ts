@@ -818,6 +818,23 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         }
     }
 
+    deleteRow(evt) {
+        let row;
+        if (evt && evt.target) {
+            this.callDataGridMethod('deleteRowAndUpdateSelectAll', evt);
+        } else {
+            if (this._liveTableParent) {
+                this._liveTableParent.deleteRow(this.selectedItems[0]);
+                return;
+            }
+            // Wait for the selected item to get updated
+            setTimeout(function () {
+                row = evt || this.selectedItems[0];
+                // deleteRecord(row);
+            });
+        }
+    }
+
     callEvent(event) {
         // TODO: Change logic to handle all scenarios
         if (event) {
