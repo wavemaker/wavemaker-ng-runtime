@@ -177,13 +177,13 @@ export class DatetimeComponent extends BaseComponent {
             if (!this.selectedTime) {
                 this.selectedTime = dateObj.toTimeString();
             }
-            this.proxyModel = new Date(this.selectedDate + ' ' + this.selectedTime);
+            this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
         } else {
             this.selectedTime = dateObj.toTimeString();
             if (!this.selectedDate) {
                 this.selectedDate = dateObj.toDateString();
             }
-            this.proxyModel = new Date(this.selectedDate + ' ' + this.selectedTime);
+            this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
         }
         this.formattedModel = getFormattedDate(this.proxyModel, this.datepattern);
         $appDigest();

@@ -12,23 +12,23 @@ export class HttpService {
     }
 
     send(options: any) {
-        let reqHeaders = new HttpHeaders();
-        let reqParams = new HttpParams();
+        const reqHeaders = new HttpHeaders();
+        const reqParams = new HttpParams();
         const headers = options.headers;
         const params = options.params;
         const responseType = options.responseType;
 
         // TODO[VIBHU]: not to be sent with non-proxy calls from service var
-        reqHeaders = reqHeaders.append('X-Requested-With', 'XMLHttpRequest');
+        reqHeaders.append('X-Requested-With', 'XMLHttpRequest');
 
         // headers
-        for (let h in headers) {
-            reqHeaders = reqHeaders.append(h, headers[h]);
+        if (headers) {
+            Object.entries(headers).forEach(([k, v]) => reqHeaders.append(k, v));
         }
 
         // params
-        for (let p in params) {
-            reqParams = reqParams.append(p, params[p]);
+        if (params) {
+            Object.entries(params).forEach(([k, v]) => reqParams.append(k, v));
         }
 
         let third, fourth;
@@ -44,7 +44,8 @@ export class HttpService {
             third = options.data;
             fourth = reqOptions;
         }
-        let req = new HttpRequest(options.method, options.url, third, fourth );
+
+        const req = new HttpRequest(options.method, options.url, third, fourth );
 
         return this.httpClient.request(req).toPromise();
     }
@@ -53,9 +54,7 @@ export class HttpService {
         options = options || {};
         options.url = url;
         options.method = 'get';
-        return this.send(options).then((response: HttpResponse<string>) => {
-            return response.body;
-        });
+        return this.send(options).then((response: HttpResponse<string>) => response.body);
     }
 
     post(url, data, options) {

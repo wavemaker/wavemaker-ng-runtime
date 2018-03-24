@@ -19,7 +19,7 @@ import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { CommonModule } from '@angular/common';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
-import { i18nService } from './i18n.service';
+import { I18nService } from './i18n.service';
 import { getValidJSON } from '@utils/utils';
 
 const scriptCache = new Map<string, Function>();
@@ -36,10 +36,10 @@ class TempModule {}
 const getPageOrPartialMinUrl = name => `./pages/${name}/page.min.json`;
 
 interface IPageMinJSON {
-    markup: string,
-    script: string,
-    styles: string,
-    variables: string
+    markup: string;
+    script: string;
+    styles: string;
+    variables: string;
 }
 
 const getDynamicComponent = (selector: string, template: string, styles: Array<string>, providers: Array<any>, postConstructFn: Function) => {
@@ -83,7 +83,7 @@ const registerVariablesAndActions = (inj: Injector, identifier: string, variable
 };
 
 const _decodeURIComponent = str => {
-    return decodeURIComponent(str.replace(/\+/g, ' '))
+    return decodeURIComponent(str.replace(/\+/g, ' '));
 };
 
 const execScript = (script, identifier, ctx, instance, app, inj) => {
@@ -99,17 +99,15 @@ const execScript = (script, identifier, ctx, instance, app, inj) => {
 export class RenderUtilsService {
     constructor(private compiler: Compiler, private app: App,
                 private injector: Injector, private route: ActivatedRoute,
-                private resouceMngr: AppResourceManagerService, private i18nService: i18nService) {
+                private resouceMngr: AppResourceManagerService,
+                private i18nService: I18nService) {
     }
 
     getComponentFactory(componentDef, moduleDef) {
-        let retVal = this.compiler
+        return this.compiler
             .compileModuleAndAllComponentsSync(moduleDef)
             .componentFactories
-            .filter((factory) => {
-                return factory.componentType === componentDef;
-            })[0];
-        return retVal;
+            .filter(factory => factory.componentType === componentDef)[0];
     }
 
     loadMinJson(url, pageName?): Promise<IPageMinJSON> {
@@ -120,11 +118,11 @@ export class RenderUtilsService {
                     script: _decodeURIComponent(script),
                     styles: _decodeURIComponent(styles),
                     variables: getValidJSON(_decodeURIComponent(variables)) || {}
-                }
+                };
             });
     }
 
-    renderResource(selector: string, markup: string, styles: any, providers: Array<any>, postConstructFn: Function, vcRef: ViewContainerRef, $target: HTMLElement) {;
+    renderResource(selector: string, markup: string, styles: any, providers: Array<any>, postConstructFn: Function, vcRef: ViewContainerRef, $target: HTMLElement) {
 
         const componentDef = getDynamicComponent(selector, markup, [styles], providers, postConstructFn);
         const moduleDef = getDynamicModule(componentDef);

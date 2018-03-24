@@ -574,7 +574,7 @@ export const loadStyleSheet = (url, attr) => {
     }
     const link = document.createElement('link');
     link.href = url;
-    //To add attributes to link tag
+    // To add attributes to link tag
     if (attr && attr.name) {
         link.setAttribute(attr.name, attr.value);
     }
@@ -623,16 +623,16 @@ export let _WM_APP_PROJECT: any = {};
  * @param value string
  */
 export const setSessionStorageItem = (key, value) => {
-    let sessionStorageObj: any = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
+    let item: any = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
 
-    if (sessionStorageObj) {
-        sessionStorageObj = JSON.parse(sessionStorageObj);
+    if (item) {
+        item = JSON.parse(item);
     } else {
-        sessionStorageObj = {};
+        item = {};
     }
-    sessionStorageObj[key] = value;
+    item[key] = value;
 
-    window.sessionStorage.setItem(_WM_APP_PROJECT.id, JSON.stringify(sessionStorageObj));
+    window.sessionStorage.setItem(_WM_APP_PROJECT.id, JSON.stringify(item));
 };
 
 /**
@@ -640,10 +640,10 @@ export const setSessionStorageItem = (key, value) => {
  * @param key string
  */
 export const getSessionStorageItem = key => {
-    let sessionStorageObj = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
+    let item = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
 
-    if (sessionStorageObj) {
-        sessionStorageObj = JSON.parse(sessionStorageObj);
-        return sessionStorageObj[key];
+    if (item) {
+        item = JSON.parse(item);
+        return item[key];
     }
 };

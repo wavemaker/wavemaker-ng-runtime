@@ -29,7 +29,7 @@ const setApplicationLocaleDirection = () => {
 };
 
 @Injectable()
-export class i18nService {
+export class I18nService {
 
     getAppLocale() {
         return Object.assign({}, localeData);
@@ -65,7 +65,7 @@ export class i18nService {
                     // error case
                     localeData = {};
                     reject();
-                    console.warn("Error while loading the message bundle for locale(" + selectedLocale + ")" );
+                    console.warn(`Error while loading the message bundle for locale(${selectedLocale})` );
                 });
         });
     }

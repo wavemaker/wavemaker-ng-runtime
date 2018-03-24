@@ -11,7 +11,7 @@
             "check-space"
         ],
         "curly": true,
-        "eofline": true,
+        "eofline": false,
         "forin": true,
         "import-blacklist": [
             true,
@@ -47,8 +47,6 @@
             true,
             "debug",
             "info",
-            "time",
-            "timeEnd",
             "trace"
         ],
         "no-construct": true,
@@ -118,19 +116,7 @@
         "directive-selector": [
             true,
             "attribute",
-            [
-                "app",
-                "wm"
-            ],
-            "camelCase"
-        ],
-        "component-selector": [
-            true,
-            "attribute",
-            [
-                "app",
-                "wm"
-            ],
+            "",
             "camelCase"
         ],
         "use-input-property-decorator": true,

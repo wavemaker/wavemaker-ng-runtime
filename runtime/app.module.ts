@@ -20,8 +20,8 @@ import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { App } from './services/app.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
-import { i18nService } from './services/i18n.service';
-import { i18nResolve } from './resolves/i18n.resolve';
+import { I18nService } from './services/i18n.service';
+import { I18nResolve } from './resolves/i18n.resolve';
 import { SecurityService } from './services/security.service';
 import { HttpServiceModule } from '@http-service/http-service.module';
 
@@ -29,7 +29,7 @@ const resolve = {
     securityConfig: SecurityConfigResolve,
     metadata: MetadataResolve,
     appJS: AppJSResolve,
-    i18n: i18nResolve
+    i18n: I18nResolve
 };
 
 const routes = [
@@ -71,8 +71,8 @@ const routes = [
         MetadataResolve,
         App,
         AppJSResolve,
-        i18nService,
-        i18nResolve,
+        I18nService,
+        I18nResolve,
         AppResourceManagerService,
         PrefabManagerService,
         SecurityService,

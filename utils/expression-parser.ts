@@ -302,7 +302,7 @@ class ASTCompiler {
 
     processChain() {
         const ast = this.cAst;
-        return ast.expressions.map(e => this.build(e)).join(';')
+        return ast.expressions.map(e => this.build(e)).join(';');
     }
 
     processPropertyWrite() {
@@ -310,7 +310,7 @@ class ASTCompiler {
         const stmts = this.cStmts;
         let receiver, lhs;
         if (ast.receiver instanceof ImplicitReceiver) {
-            lhs = `_ctx.${ast.name}`
+            lhs = `_ctx.${ast.name}`;
         } else {
             receiver = this.build(ast.receiver);
             lhs = `${receiver}${receiver.length ? '.' : ''}${ast.name}`;
@@ -360,7 +360,7 @@ class ASTCompiler {
             return this.processLiteralMap();
         } else if (ast instanceof PropertyRead) {
             return this.processPropertyRead();
-        } else if (ast instanceof PropertyWrite){
+        } else if (ast instanceof PropertyWrite) {
             return this.processPropertyWrite();
         } else if (ast instanceof KeyedRead) {
             return this.processKeyedRead();

@@ -36,13 +36,15 @@ export class ConfirmDialogComponent extends BaseComponent implements OnInit {
         this._class = nv;
     }
 
+    close;
+
     @ViewChild('confirmModal') dialogTemplate: TemplateRef<any>;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private modalService: BsModalService, private dialogService: DialogService) {
         super(WIDGET_INFO, inj, elRef, cdr);
         // TODO: Get the modal element reference
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER, ['height', 'width']);
-        styler(this.$element.querySelector('.app-dialog-body.modal-body'), this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(this.$element.querySelector('.app-dialog-body.modal-body') as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
     onBeforeDialogOpen() {
@@ -58,8 +60,6 @@ export class ConfirmDialogComponent extends BaseComponent implements OnInit {
         invokeEventHandler(this, 'cancel');
         this.close();
     }
-
-    close;
 
     onPropertyChange(key, nv, ov) {
         switch (key) {

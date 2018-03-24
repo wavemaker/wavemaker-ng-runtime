@@ -25,15 +25,15 @@ const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
 export class PrefabManagerService {
 
     loadConfig(prefabName): Promise<any> {
-        let config = prefabConfigCache.get(prefabName);
+        const config = prefabConfigCache.get(prefabName);
         if (config) {
             return Promise.resolve(config);
         }
 
         return this.resourceMngr.get(getConfigUrl(prefabName))
-            .then(config => {
-                prefabConfigCache.set(prefabName, config);
-                return config;
+            .then(_config => {
+                prefabConfigCache.set(prefabName, _config);
+                return _config;
             });
     }
 
@@ -51,7 +51,7 @@ export class PrefabManagerService {
         return Promise.resolve();
     }
 
-    //TODO [Vinay] - implement onPrefabResourceLoad
+    // TODO [Vinay] - implement onPrefabResourceLoad
     loadScripts(prefabName, {resources: {scripts}} = {resources: {scripts: []}}): Promise<any> {
         const baseUrl = getPrefabBaseUrl(prefabName);
         const _scripts = scripts.map(url => getPrefabResourceUrl(url, baseUrl));
@@ -63,7 +63,7 @@ export class PrefabManagerService {
         return Promise.all([
             this.loadStyles(prefabName, config),
             this.loadScripts(prefabName, config),
-            //this.loadModules(prefabName, config)
+            // this.loadModules(prefabName, config)
         ]);
     }
 

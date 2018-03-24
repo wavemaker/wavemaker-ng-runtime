@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { i18nService } from './i18n.service';
+import { I18nService } from './i18n.service';
 
 const noop = () => {};
 
@@ -16,5 +16,5 @@ export class App {
         window.location.reload();
     }
 
-    constructor(private i18nService: i18nService) {}
+    constructor(private i18nService: I18nService) {}
 }
