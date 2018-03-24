@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Inject, Self, ViewContainerRef } from '@angular/core';
+import { Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 import { RenderUtilsService } from '../../services/render-utils.service';
 
 @Directive({
@@ -9,7 +9,15 @@ export class PartialContainerDirective {
         return this.componentInstance.name;
     }
 
-    constructor(@Self() @Inject('@Widget') public componentInstance, public renderUtils: RenderUtilsService, public vcRef: ViewContainerRef, public elRef: ElementRef) {
+    constructor(
+        @Self() @Inject('@Widget') public componentInstance,
+        public renderUtils: RenderUtilsService,
+        public vcRef: ViewContainerRef,
+        public elRef: ElementRef,
+        public inj: Injector
+    ) {
+
+        (this.inj as any).view.component._registerFragment();
 
         componentInstance.propertyChange$.subscribe(({key, nv, ov}) => {
             if (key === 'content') {
@@ -17,7 +25,8 @@ export class PartialContainerDirective {
                     nv,
                     vcRef,
                     this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement,
-                    componentInstance
+                    componentInstance,
+                    () => (this.inj as any).view.component._resolveFragment()
                 );
             }
         });

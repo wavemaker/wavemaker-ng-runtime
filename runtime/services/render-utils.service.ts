@@ -23,6 +23,7 @@ import { I18nService } from './i18n.service';
 import { getValidJSON } from '@utils/utils';
 
 const scriptCache = new Map<string, Function>();
+const noop = () => {};
 
 @NgModule({
     declarations: [PartialContainerDirective, PrefabDirective],
@@ -95,6 +96,19 @@ const execScript = (script, identifier, ctx, instance, app, inj) => {
     fn(instance, app, inj);
 };
 
+const monitorFragments = (instance, onParseEnd: Promise<void>, onReadyFn) => {
+    let fragments = 0;
+
+    const invokeOnReady = () => fragments || onReadyFn();
+
+    instance._registerFragment = () => fragments++;
+    instance._resolveFragment = () => {
+        fragments--;
+        invokeOnReady();
+    };
+    onParseEnd.then(invokeOnReady);
+};
+
 @Injectable()
 export class RenderUtilsService {
     constructor(private compiler: Compiler, private app: App,
@@ -122,7 +136,15 @@ export class RenderUtilsService {
             });
     }
 
-    renderResource(selector: string, markup: string, styles: any, providers: Array<any>, postConstructFn: Function, vcRef: ViewContainerRef, $target: HTMLElement) {
+    renderResource(
+        selector: string,
+        markup: string,
+        styles: any,
+        providers: Array<any>,
+        postConstructFn: Function,
+        vcRef: ViewContainerRef,
+        $target: HTMLElement
+    ): Promise<void> {
 
         const componentDef = getDynamicComponent(selector, markup, [styles], providers, postConstructFn);
         const moduleDef = getDynamicModule(componentDef);
@@ -130,6 +152,8 @@ export class RenderUtilsService {
         const component = vcRef.createComponent(componentRef);
 
         $target.appendChild(component.location.nativeElement);
+
+        return Promise.resolve();
     }
 
     private defineI18nProps(instance) {
@@ -138,6 +162,9 @@ export class RenderUtilsService {
 
     async renderPage(pageName: string, vcRef: ViewContainerRef, $target: HTMLElement) {
         const {markup, script, styles, variables} = await this.loadMinJson(getPageOrPartialMinUrl(pageName), pageName);
+
+        let parseEndResolveFn;
+        const parseEndPromise: Promise<void> = new Promise(resolve => parseEndResolveFn = resolve);
 
         const postConstructFn = (pageInstance, inj) => {
             this.defineI18nProps(pageInstance);
@@ -148,14 +175,20 @@ export class RenderUtilsService {
 
             pageInstance.App = this.app;
 
+            monitorFragments(pageInstance, parseEndPromise, () => (pageInstance.onReady || noop)());
+
             this.route.queryParams.subscribe(params => pageInstance.pageParams = params);
         };
 
-        this.renderResource(`app-page-${pageName}`, markup, styles, undefined, postConstructFn, vcRef, $target);
+        this.renderResource(`app-page-${pageName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
+            .then(() => parseEndResolveFn());
     }
 
-    async renderPartial(partialName: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: any) {
+    async renderPartial(partialName: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: any, resolveFn: Function) {
         const {markup, script, styles, variables} = await this.loadMinJson(getPageOrPartialMinUrl(partialName));
+
+        let parseEndResolveFn;
+        const parseEndPromise: Promise<void> = new Promise(resolve => parseEndResolveFn = resolve);
 
         const postConstructFn = (partialInstance, inj) => {
             this.defineI18nProps(partialInstance);
@@ -169,14 +202,23 @@ export class RenderUtilsService {
             containerWidget.Variables = partialInstance.Variables;
             containerWidget.Actions = partialInstance.Actions;
 
+            monitorFragments(partialInstance, parseEndPromise, () => {
+                (partialInstance.onReady || noop)();
+                resolveFn();
+            });
+
             this.route.queryParams.subscribe(params => partialInstance.pageParams = params);
         };
 
-        this.renderResource(`app-partial-${partialName}`, markup, styles, undefined, postConstructFn, vcRef, $target);
+        this.renderResource(`app-partial-${partialName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
+            .then(() => parseEndResolveFn());
     }
 
     async renderPrefab(prefabName: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: any) {
         const {markup, script, styles, variables} = await this.loadMinJson(getPrefabMinJsonUrl(prefabName));
+
+        let onReadyResolveFn = noop;
+        const onReadyPromise = new Promise(resolve => onReadyResolveFn = resolve);
 
         const postConstructFn = (prefabInstance, inj) => {
             this.defineI18nProps(prefabInstance);
@@ -189,8 +231,11 @@ export class RenderUtilsService {
             containerWidget.onPropertyChange = prefabInstance.onPropertyChange;
             containerWidget.onStyleChange = prefabInstance.onPropertyChange;
             prefabInstance.$element = containerWidget.$element;
+
+            onReadyPromise.then(() => (prefabInstance.onReady || noop)());
         };
 
-        this.renderResource(`app-prefab-${prefabName}`, markup, styles, undefined, postConstructFn, vcRef, $target);
+        this.renderResource(`app-prefab-${prefabName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
+            .then(onReadyResolveFn);
     }
 }
