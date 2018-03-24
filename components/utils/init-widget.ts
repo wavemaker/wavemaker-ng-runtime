@@ -1,5 +1,5 @@
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
-import { idMaker, isDefined, isObject } from '@utils/utils';
+import { idMaker, isDefined, isObject, toBoolean } from '@utils/utils';
 import { $watch, $unwatch, isChangeFromWatch } from '@utils/watcher';
 import { BaseComponent } from '../widgets/base/base.component';
 import { addClass, removeClass, setAttr, switchClass } from '@utils/dom';
@@ -51,8 +51,6 @@ const BOOLEAN_ATTRS = new Set([
 ]);
 
 const isBooleanAttr = key => BOOLEAN_ATTRS.has(key);
-
-const toBoolean = (val, identity?) => (val === true || val === 'true' || (identity ? val === identity : false));
 
 const parseValue = (key, value, type) => {
     if (type === PROP_TYPE.BOOLEAN) {

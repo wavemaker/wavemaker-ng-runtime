@@ -18,34 +18,39 @@ function getVariableCategory(variable) {
     return variable.category;
 }
 
-function handleLiveVariableOperations(formData, variable, options) {
-    const operationType = options.operationType;
-
-    switch (operationType) {
-        case 'update':
-            variable.updateRecord({
-                row: formData
-            }, options.success, options.error);
-            break;
-        case 'insert':
-            variable.insertRecord({
-                row: formData
-            }, options.success, options.error);
-            break;
-        case 'delete':
-            variable.deleteRecord({
-                row: formData
-            }, options.success, options.error);
-            break;
+function onSuccess(response, res, rej) {
+    if (response.error) {
+        rej(response);
+    } else {
+        res(response);
     }
 }
 
-export function performDataOperation(formData, variable, options) {
+
+export function performDataOperation(requestData, variable, options): Promise<any> {
     const varCategory = getVariableCategory(variable);
 
     if (varCategory === 'wm.LiveVariable') {
-        handleLiveVariableOperations(formData, variable, options);
+        return new Promise((res, rej) => {
+            let fn;
+            const operationType = options.operationType;
+
+            switch (operationType) {
+                case 'update':
+                    fn = 'updateRecord';
+                    break;
+                case 'insert':
+                    fn = 'insertRecord';
+                    break;
+                case 'delete':
+                    fn = 'delete';
+                    break;
+            }
+            variable[fn](requestData, response => onSuccess(response, res, rej), rej);
+        });
     }
+
+    return Promise.resolve();
 }
 
 

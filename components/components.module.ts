@@ -39,6 +39,7 @@ import { IframeDialogComponent } from './widgets/dialog/iframe-dialog/iframe-dia
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutgridDirective } from './widgets/layout-grid/layout-grid.directive';
 import { LeftPanelComponent } from './widgets/left-panel/left-panel.component';
+import { LiveFormDirective } from './widgets/form/live-form.directive';
 import { LiveTableComponent } from './widgets/live-table/live-table.component';
 import { MenuComponent } from './widgets/menu/menu.component';
 import { MenuDropdownComponent } from './widgets/menu/menu-dropdown.component';
@@ -110,6 +111,7 @@ const wmComponents = [
     LabelDirective,
     LayoutgridDirective,
     LeftPanelComponent,
+    LiveFormDirective,
     LiveTableComponent,
     MenuComponent,
     MenuDropdownComponent,

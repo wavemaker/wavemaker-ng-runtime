@@ -14,6 +14,7 @@ export const registerProps = () => {
                 ['key', PROP_STRING],
                 ['name', PROP_STRING],
                 ['placeholder', PROP_STRING_NOTIFY],
+                ['primary-key', PROP_STRING_NOTIFY],
                 ['readonly', PROP_BOOLEAN],
                 ['required', PROP_BOOLEAN_NOTIFY],
                 ['show', PROP_BOOLEAN],

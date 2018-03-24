@@ -98,6 +98,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
     }
 
     ngAfterContentInit() {
+        this.formInstance._liveTableParent = this;
         this.tableInstance.datagridElement.datatable('option', this.tableOptions);
 
         this.tableInstance.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));

@@ -41,6 +41,8 @@ export const isDefined = v => 'undefined' !== typeof v;
 
 export const isObject = v => null !== v && 'object' === typeof v;
 
+export const toBoolean = (val, identity?) => (val === true || val === 'true' || (identity ? val === identity : false));
+
 export const debounce = (fn: Function, wait: number = 50) => {
     let timeout;
     return (...args) => {
@@ -495,11 +497,28 @@ export const formatDate = (value, type) => {
 };
 
 /*Function to check if date time type*/
-export const isDateTimeType = (type) => {
+export const isDateTimeType = type => {
     if (_.includes(type, '.')) {
         type = _.toLower(extractType(type));
     }
     return _.includes(['date', 'time', 'timestamp', 'datetime', 'localdatetime'], type);
+};
+
+/*  This function returns date object. If val is undefined it returns invalid date */
+export const getValidDateObject = val => {
+    if (moment(val).isValid()) {
+        return val;
+    }
+    /*if the value is a timestamp string, convert it to a number*/
+    if (!isNaN(val)) {
+        val = parseInt(val, 10);
+    } else {
+        /*if the value is in HH:mm:ss format, it returns a wrong date. So append the date to the given value to get date*/
+        if (!(new Date(val).getTime())) {
+            val = moment().format('YYYY-MM-DD') + ' ' + val;
+        }
+    }
+    return new Date(moment(val).valueOf());
 };
 
 /**

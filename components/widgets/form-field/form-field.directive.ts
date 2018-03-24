@@ -4,7 +4,7 @@ import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './form-field.props';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-
+import { toBoolean } from '@utils/utils';
 declare const _;
 
 registerProps();
@@ -22,13 +22,14 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     private _validators = [];
     private applyProps = new Set();
 
-    public ngForm: FormGroup;
-    public name: string;
-    public key: string;
-    public target: string;
-    public binding: string;
-    public widgettype: string;
-    public class = '';
+    ngForm: FormGroup;
+    name: string;
+    key: string;
+    target: string;
+    binding: string;
+    widgettype: string;
+    class = '';
+    primarykey;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
                 @Optional() public _parentForm: ParentForm, private fb: FormBuilder) {
@@ -58,6 +59,12 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
                     this._control.updateValueAndValidity();
                 }
                 break;
+            case 'primary-key':
+                this.primarykey = toBoolean(newVal);
+                if (this.primarykey) {
+                    this._parentForm.setPrimaryKey(this.key);
+                }
+                break;
         }
     }
 
@@ -73,6 +80,10 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
 
     get value() {
         return this.datavalue;
+    }
+
+    set value(val) {
+        this.datavalue = val;
     }
 
     get _control() {

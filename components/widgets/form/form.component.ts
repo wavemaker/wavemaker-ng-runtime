@@ -1,20 +1,18 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, forwardRef, HostListener, Attribute } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, forwardRef, HostListener, Attribute, Self, Optional, Inject } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerFormProps } from './form.props';
-import { registerLiveFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
 import { $appDigest } from '@utils/watcher';
-import { getVariableName, performDataOperation } from '../../utils/data-utils';
-import { isDefined, getClonedObject } from '@utils/utils';
+import { getVariableName } from '../../utils/data-utils';
 declare const _;
 
 registerFormProps();
-registerLiveFormProps();
 
-const DEFAULT_CLS = 'panel app-panel app-liveform liveform-inline';
-const WIDGET_CONFIG = {widgetType: 'wm-liveform', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-form'};
+const LIVE_WIDGET_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
+
 
 export abstract class ParentForm {
     ngForm: any;
@@ -22,7 +20,11 @@ export abstract class ParentForm {
     abstract registerFormFields(formField);
 
     abstract registerActions(formAction);
+
+    abstract setPrimaryKey(fieldName);
 }
+
+const getWidgetConfig = isLiveForm => isLiveForm !== null ? LIVE_WIDGET_CONFIG : WIDGET_CONFIG;
 
 @Component({
     selector: 'form[wmForm]',
@@ -31,30 +33,49 @@ export abstract class ParentForm {
 })
 export class FormComponent extends BaseComponent implements ParentForm {
 
-    public captionAlignClass: string;
-    public validationtype: string;
-    public captionalign: string;
-    public captionposition: string;
-    public _widgetClass = '';
-    public captionwidth: string;
-    public _captionClass = '';
-    public ngForm: FormGroup;
-    public isUpdateMode = true;
-    public formFields = [];
-    public formfields = {};
-    public buttonArray = [];
-    public dataoutput;
-    public rowdata;
-    public isSelected;
-    public prevformFields;
-    public prevDataValues;
-    public prevDataObject;
-    public statusMessage = {
+    captionAlignClass: string;
+    validationtype: string;
+    captionalign: string;
+    captionposition: string;
+    _widgetClass = '';
+    captionwidth: string;
+    _captionClass = '';
+    ngForm: FormGroup;
+    isUpdateMode = true;
+    formFields = [];
+    formfields = {};
+    buttonArray = [];
+    dataoutput;
+    formdata;
+    rowdata;
+    isSelected;
+    prevDataValues;
+    prevDataObject;
+    prevformFields;
+    statusMessage = {
         caption: '',
         type: ''
     };
-    public messagelayout;
-    public errormessage;
+    messagelayout;
+    errormessage;
+    primaryKey;
+    _liveTableParent;
+
+    // Live Form Methods
+    edit: Function;
+    update: Function;
+    reset: Function;
+    new: Function;
+    cancel: Function;
+    formCancel: Function;
+    delete: Function;
+    formSave: Function;
+    save: Function;
+    emptyDataModel: Function;
+    setPrevDataValues: Function;
+    getPrevDataValues: Function;
+    setPrevformFields: Function;
+    setPrimaryKey: () => {};
 
     private operationType;
     private binddataset;
@@ -64,11 +85,17 @@ export class FormComponent extends BaseComponent implements ParentForm {
     @HostBinding('autocomplete') autocomplete: boolean;
     @HostBinding('action') action: string;
 
-    @HostListener('submit') onSubmit() {
-        this.formSave();
+    @HostListener('submit', ['$event']) onSubmit($event) {
+        if (this.isLiveForm !== null) {
+            this.formSave();
+            return;
+        }
+
+        this.submitForm($event);
     }
 
     @HostListener('reset') onReset() {
+        this.reset();
     }
 
     highlightInvalidFields() {
@@ -144,6 +171,10 @@ export class FormComponent extends BaseComponent implements ParentForm {
         }
     }
 
+    clearMessage() {
+        this.toggleMessage(false);
+    }
+
     private setLayoutConfig() {
         let layoutConfig;
         layoutConfig = getFieldLayoutConfig(this.captionwidth, this.captionposition);
@@ -153,8 +184,10 @@ export class FormComponent extends BaseComponent implements ParentForm {
         $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private fb: FormBuilder, @Attribute('dataset.bind') binddataset) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private fb: FormBuilder,
+                @Attribute('dataset.bind') binddataset,
+                @Attribute('wmLiveForm') public isLiveForm) {
+        super(getWidgetConfig(isLiveForm), inj, elRef, cdr);
 
         styler(this.$element, this);
 
@@ -212,84 +245,21 @@ export class FormComponent extends BaseComponent implements ParentForm {
     }
 
     resetFormState() {
+        if (!this.ngForm) {
+            return;
+        }
         this.ngForm.markAsUntouched();
         this.ngForm.markAsPristine();
     }
 
-    emptyDataModel() {
-        this.formFields.forEach(function (field) {
-            if (isDefined(field)) {
-                field.datavalue = '';
-            }
-        });
-    }
-
-    setPrevDataValues() {
-        if (!this.formFields) {
-            return;
-        }
-        this.prevDataValues = this.formFields.map(function (obj) {
-            return {'key': obj.key, 'value': obj.value};
-        });
-    }
-
-    edit() {
-        this.resetFormState();
-        this.toggleMessage(false);
-        this.isUpdateMode = true;
-        this.operationType = 'update';
-    }
-
-    cancel() {
-        this.formCancel();
-    }
-
-    formCancel() {
-        this.toggleMessage(false);
-        this.isUpdateMode = false;
-    }
-
-    new() {
-        this.resetFormState();
-        this.toggleMessage(false);
-        if (this.isSelected && !this.isLayoutDialog) {
-            // this.prevformFields = getClonedObject(this.formFields);
-        }
-        if (this.formFields && this.formFields.length > 0) {
-            this.emptyDataModel();
-        }
-        this.setPrevDataValues();
-        this.constructDataObject();
-        this.isUpdateMode = true;
-        this.operationType = 'insert';
-    }
-
-    formSave(event?, updateMode?, newForm?, callBackFn?) {
-        let formData;
+    submitForm($event) {
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
             return;
         }
 
-        formData = this.constructDataObject();
-
-        performDataOperation(formData, this.variable, {
-            operationType: this.operationType,
-            success: () => {
-                this.toggleMessage(true, 'Form save success', 'success');
-                this.onFormSuccess();
-            },
-            error: () => {
-                this.toggleMessage(true, this.errormessage, 'success');
-            }
-        });
-    }
-
-    delete(callBackFn) {
         this.resetFormState();
-        this.operationType = 'delete';
-        this.prevDataObject = getClonedObject(this.rowdata || {});
-        this.formSave(undefined, undefined, undefined, callBackFn);
+
     }
 
 
