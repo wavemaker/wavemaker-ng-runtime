@@ -4,7 +4,7 @@ import {BaseComponent} from '../base/base.component';
 import {registerProps} from './live-table.props';
 import {FormComponent} from '../../widgets/form/form.component';
 import {TableComponent} from '../../widgets/table/table.component';
-import {getClonedObject} from '@utils/utils';
+import {getClonedObject, isDefined} from '@utils/utils';
 
 declare const _;
 declare const moment;
@@ -30,8 +30,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 })
 export class LiveTableComponent extends BaseComponent implements AfterContentInit {
 
-    @ContentChild(FormComponent) formInstance: FormComponent;
-    @ContentChild(TableComponent) tableInstance: TableComponent;
+    @ContentChild(FormComponent) form: FormComponent;
+    @ContentChild(TableComponent) table: TableComponent;
+
+    private isLayoutDialog;
 
     private tableOptions = {
         'multiselect': false,
@@ -40,68 +42,110 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
     };
 
     deleteRow(row, callBackFn?) {
-        this.formInstance.widget.rowdata = row;
-        this.formInstance.delete(callBackFn);
+        this.form.widget.rowdata = row;
+        this.form.delete(callBackFn);
     }
 
     addNewRow() {
-        this.formInstance.isSelected = true;
-        this.formInstance.widget.rowdata = '';
+        this.form.isSelected = true;
+        this.form.widget.rowdata = '';
 
-        this.formInstance.new();
+        this.form.new();
 
         // TODO: Layout Dialog
     }
 
     updateRow(row, eventName) {
 
-        if (!this.formInstance) {
+        if (!this.form) {
             return;
         }
 
-        this.formInstance.widget.rowdata = row;
-        this.formInstance.isSelected = true;
-        this.formInstance.edit();
+        this.form.widget.rowdata = row;
+        this.form.isSelected = true;
+        this.form.edit();
 
         // TODO: Layout Dialog
     }
 
     onSelectedItemChange(newValue) {
         let rowData;
-        if (!this.formInstance || !this.tableInstance) {
+        if (!this.form || !this.table) {
             return;
         }
 
-        if (newValue && newValue.length > 0 && !this.formInstance.isSelected) {
-            this.formInstance.isSelected = true;
+        if (newValue && newValue.length > 0 && !this.form.isSelected) {
+            this.form.isSelected = true;
         }
 
         /*Update the rowdata of only that grid form that is associated with the specific grid on which row selection is being performed...
          * Since both the grid & gridform are associated with the same "parentgrid", match the same*/
         if (newValue && newValue.length > 0) {
-            if (this.tableInstance.multiselect) {
+            if (this.table.multiselect) {
                 rowData = newValue[0];
             } else {
                 rowData = newValue[newValue.length - 1];
             }
 
-            this.formInstance.widget.rowdata = getClonedObject(rowData);
+            this.form.widget.rowdata = getClonedObject(rowData);
             /*If the form is already in update mode, call the form update function*/
-            if (this.formInstance.isUpdateMode) {
-                this.formInstance.edit();
+            if (this.form.isUpdateMode) {
+                this.form.edit();
             }
         } else {
-            this.formInstance.isSelected = false;
-            this.formInstance.widget.rowdata = '';
-            // this.formInstance.clearData();
+            this.form.isSelected = false;
+            this.form.widget.rowdata = '';
+            // this.form.clearData();
         }
     }
 
-    ngAfterContentInit() {
-        this.formInstance._liveTableParent = this;
-        this.tableInstance.datagridElement.datatable('option', this.tableOptions);
+    onResult(operation, response, newForm, updateMode) {
+        this.form.isUpdateMode = isDefined(updateMode) ? updateMode : newForm ? true : false;
+        switch (operation) {
+            case 'insert':
+                if (newForm) {
+                    /*if new form is to be shown after insert, skip the highlight of the row*/
+                    this.table.gridfirstrowselect = false;
+                    this.table.initiateSelectItem(this.table.getNavigationTargetBySortInfo(), response, true);
+                } else {
+                    /*The new row would always be inserted at the end of all existing records. Hence navigate to the last page and highlight the inserted row.*/
+                    this.table.initiateSelectItem(this.table.getNavigationTargetBySortInfo(), response);
+                }
+                break;
+            case 'update':
+                /*The updated row would be found in the current page itself. Hence simply highlight the row in the current page.*/
+                if (newForm) {
+                    this.table.gridfirstrowselect = false;
+                    this.table.initiateSelectItem('current', response, true);
+                } else {
+                    this.table.initiateSelectItem('current', response);
+                }
+                break;
+            case 'delete':
+                this.table.onRecordDelete();
+                break;
+        }
+        this.table.updateVariable();
+        if (this.isLayoutDialog) {
+            /*if new form is to be shown after update or insert, don't close the dialog*/
+            if (newForm) {
+                if (operation === 'insert') {
+                    this.form.new();
+                } else if (operation === 'update') {
+                    this.form.edit();
+                }
+            } else {
+                // DialogService.hideDialog(scope.gridform._dialogid);
+            }
+        }
+    }
 
-        this.tableInstance.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));
+
+    ngAfterContentInit() {
+        this.form._liveTableParent = this;
+        this.table.datagridElement.datatable('option', this.tableOptions);
+
+        this.table.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {

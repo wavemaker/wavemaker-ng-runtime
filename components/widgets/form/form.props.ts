@@ -2,7 +2,7 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } 
 
 const propsMap = new Map(
     [
-        ['autocomplete', {value: true, ...PROP_BOOLEAN}],
+        ['autocomplete', {value: false, ...PROP_BOOLEAN}],
         ['captionalign', {value: 'left', ...PROP_STRING_NOTIFY}],
         ['captionposition', {value: 'left', ...PROP_STRING_NOTIFY}],
         ['captionsize', PROP_STRING],
@@ -43,6 +43,10 @@ export const registerFormProps = () => {
 const liveFormMap = new Map(propsMap);
 liveFormMap.set('defaultmode',  {value: 'View', ...PROP_STRING_NOTIFY});
 liveFormMap.set('rowdata',  PROP_STRING_NOTIFY);
+liveFormMap.set('formlayout',  {value: 'inline', ...PROP_STRING_NOTIFY});
+liveFormMap.set('insertmessage',  {value: 'Record added successfully', ...PROP_STRING});
+liveFormMap.set('updatemessage',  {value: 'Record updated successfully', ...PROP_STRING});
+liveFormMap.set('deletemessage',  {value: 'Record deleted successfully', ...PROP_STRING});
 
 export const registerLiveFormProps = () => {
     register(

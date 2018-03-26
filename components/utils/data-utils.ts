@@ -27,14 +27,13 @@ function onSuccess(response, res, rej) {
 }
 
 
-export function performDataOperation(requestData, variable, options): Promise<any> {
+export function performDataOperation(variable, requestData, options): Promise<any> {
     const varCategory = getVariableCategory(variable);
 
-    if (varCategory === 'wm.LiveVariable') {
-        return new Promise((res, rej) => {
+    return new Promise((res, rej) => {
+        if (varCategory === 'wm.LiveVariable') {
             let fn;
             const operationType = options.operationType;
-
             switch (operationType) {
                 case 'update':
                     fn = 'updateRecord';
@@ -47,10 +46,25 @@ export function performDataOperation(requestData, variable, options): Promise<an
                     break;
             }
             variable[fn](requestData, response => onSuccess(response, res, rej), rej);
-        });
-    }
-
-    return Promise.resolve();
+        } else if (varCategory === 'wm.ServiceVariable') {
+            variable.setInput(requestData);
+            variable.update({
+                'skipNotification': true
+            }, res, rej);
+        }
+    });
 }
 
+export function refreshVariable(variable, options): Promise<any> {
+    const varCategory = getVariableCategory(variable);
 
+    return new Promise((res, rej) => {
+        if (varCategory === 'wm.LiveVariable') {
+            variable.listRecords({
+                // 'filterFields' : filterFields,
+                // 'orderBy'      : sortOptions,
+                'page': options.page || 1
+            }, res, rej);
+        }
+    });
+}

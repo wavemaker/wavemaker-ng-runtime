@@ -39,25 +39,26 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
         form.setPrimaryKey = this.setPrimaryKey.bind(this);
         form.setPrevformFields = this.setPrevformFields.bind(this);
         form.constructDataObject = this.constructDataObject.bind(this);
-        form.changeDataObject = this.changeDataObject.bind(this);
+        form.changeDataObject = this.setDefaultValues.bind(this);
+        form.setDefaultValues = this.setDefaultValues.bind(this);
     }
 
-    changeDataObject(dataObj) {
+    setDefaultValues(dataObj) {
         if (!this.form.formFields || !dataObj) {
             return;
         }
-        this.form.formFields.forEach((formField) => {
-            const value = _.get(dataObj, formField.key);
-            if (isTimeType(formField)) {
-                formField.value = getValidTime(value);
-            } else if (formField.type === 'blob') {
+        this.form.formFields.forEach((field) => {
+            const value = _.get(dataObj, field.key || field.name);
+            if (isTimeType(field)) {
+                field.value = getValidTime(value);
+            } else if (field.type === 'blob') {
                 // resetFileUploadWidget(formField, true);
                 // formField.href  = $scope.getBlobURL(dataObj, formField.key, value);
                 // formField.value = value;
             } else {
-                formField.value = value;
+                field.value = value;
             }
-            // this.form.applyFilterOnField(formField);
+            // this.form.applyFilterOnField(field);
         });
         this.form.setPrevDataValues();
         this.form.constructDataObject();
@@ -67,7 +68,7 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
         if (newForm) {
             this.form.new();
         } else {
-            this.form.changeDataObject(response);
+            this.form.setDefaultValues(response);
         }
         this.form.isUpdateMode = isDefined(updateMode) ? updateMode : true;
     }
@@ -326,7 +327,7 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
     save(event?, updateMode?, newForm?, callBackFn?) {
         let data, prevData, requestData, operationType;
 
-        operationType = this.form.operationType = this.form.operationType || this.form.findOperationType(this.form.variable);
+        operationType = this.form.operationType = this.form.operationType || this.findOperationType(this.form.variable);
 
         // Disable the form submit if form is in invalid state.
         if (this.form.validateFieldsOnSubmit()) {
@@ -349,7 +350,7 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
             requestData.prevData = prevData;
         }
 
-        performDataOperation(requestData, this.form.variable, {
+        performDataOperation(this.form.variable, requestData, {
             operationType: operationType
         }).then((response) => {
             const msg = operationType === 'insert' ? this.form.insertmessage : (operationType === 'update' ?
@@ -358,7 +359,7 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
             this.form.toggleMessage(true, msg, 'success');
             if (this.form._liveTableParent) {
                 /* highlight the current updated row */
-                // $scope.$emit("on-result", "update", response, newForm, updateMode);
+                this.form._liveTableParent.onResult(operationType, response, newForm, updateMode);
             } else {
                 /*get updated data without refreshing page*/
                 this.form.variable.invoke({

@@ -1,13 +1,14 @@
-import { Component, ViewChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef, ViewChildren, ViewContainerRef, TemplateRef, Optional  } from '@angular/core';
+import { Component, ViewChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef, Attribute, ViewContainerRef, TemplateRef, Optional  } from '@angular/core';
 import { TableParent, provideTheParent } from './parent';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { styler } from '../../utils/styler';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './table.props';
-import { isDefined, getClonedObject, isEmptyObject, isNumberType, getValidJSON } from '@utils/utils';
+import { isDefined, getClonedObject, isEmptyObject, isNumberType, getValidJSON, triggerFn } from '@utils/utils';
 import { getRowOperationsColumn } from '../../utils/live-utils';
 import { LiveTableParent } from '../../widgets/live-table/live-table.component';
 import { Subject } from 'rxjs/Subject';
+import { getVariableName, refreshVariable } from '../../utils/data-utils';
 
 declare const _;
 declare const moment;
@@ -47,6 +48,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     @ViewChild('rowActions') rowActionsTmpl: TemplateRef<any>;
     @ViewChild('rowActionsContainer', {read: ViewContainerRef}) rowActionsContainer: ViewContainerRef;
 
+    binddataset;
     datagridElement;
     editmode;
     enablecolumnselection;
@@ -66,6 +68,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     nodatamessage;
     pagesize;
     prevData;
+    primaryKey;
     radioselect;
     rowclass;
     rowngclass;
@@ -75,6 +78,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     showrowindex;
     subheading;
     title;
+    variable;
 
     selectedItemChange = new Subject();
     selectedItemChange$ = this.selectedItemChange.asObservable();
@@ -835,6 +839,97 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         }
     }
 
+    onRecordDelete(callBack?) {
+        let index;
+        /*Check for sanity*/
+        if (this.dataNavigator) {
+            this.dataNavigator.dataSize -= 1;
+            this.dataNavigator.calculatePagingValues();
+            /*If the current page does not contain any records due to deletion, then navigate to the previous page.*/
+            index = this.dataNavigator.pageCount < this.dataNavigator.dn.currentPage ? 'prev' : undefined;
+            this.dataNavigator.navigatePage(index, null, true, function () {
+                setTimeout(function () {
+                    triggerFn(callBack);
+                }, undefined, false);
+            });
+        }
+    }
+
+    getNavigationTargetBySortInfo() {
+        return this.sortInfo && this.sortInfo.direction === 'desc' && _.includes(this.primaryKey, this.sortInfo.field) ? 'first' : 'last';
+    }
+
+    selectItem(item, data) {
+        /* server is not updating immediately, so set the server data to success callback data */
+        if (data) {
+            this.serverData = data;
+        }
+        // TODO: For live variable, on update/insert while selecting the row, remove the keys with empty array
+        if (_.isObject(item)) {
+            item = _.omitBy(item, function (value) {
+                return _.isArray(value) && _.isEmpty(value);
+            });
+        }
+        this.callDataGridMethod('selectRow', item, true);
+    }
+    /* deselect the given item*/
+    deselectItem(item) {
+        this.callDataGridMethod('deselectRow', item);
+    }
+
+    selectItemOnSuccess(row, skipSelectItem, callBack) {
+        /*$timeout is used so that by then $is.dataset has the updated value.
+         * Selection of the item is done in the callback of page navigation so that the item that needs to be selected actually exists in the grid.*/
+        /*Do not select the item if skip selection item is specified*/
+        setTimeout(() => {
+            if (!skipSelectItem) {
+                this.selectItem(row, this.dataset && this.dataset.data);
+            }
+            triggerFn(callBack);
+        }, undefined, false);
+    }
+
+    initiateSelectItem(index, row, skipSelectItem?, isStaticVariable?, callBack?) {
+        /*index === "last" indicates that an insert operation has been successfully performed and navigation to the last page is required.
+         * Hence increment the "dataSize" by 1.*/
+        if (index === 'last') {
+            if (!isStaticVariable) {
+                this.dataNavigator.dataSize += 1;
+            }
+            /*Update the data in the current page in the grid after insert/update operations.*/
+            if (!this.shownavigation) {
+                index = 'current';
+            }
+        }
+        /*Re-calculate the paging values like pageCount etc that could change due to change in the dataSize.*/
+        this.dataNavigator.calculatePagingValues();
+        this.dataNavigator.navigatePage(index, null, true, function () {
+            if (this.shownavigation || isStaticVariable) {
+                this.selectItemOnSuccess(row, skipSelectItem, callBack);
+            }
+        });
+    }
+
+    updateVariable(row?, callBack?) {
+        const variable = this.variable;
+        // TODO: Filter
+        // if (this.isBoundToFilter) {
+        //     //If grid is bound to filter, call the apply fiter and update filter options
+        //     if (!this.shownavigation) {
+        //         refreshLiveFilter();
+        //     }
+        //     this.Widgets[this.widgetName].fetchDistinctValues();
+        //     return;
+        // }
+        if (variable && !this.shownavigation) {
+            refreshVariable(variable, {
+                page: 1
+            }).then(() => {
+                this.selectItemOnSuccess(row, true, callBack);
+            });
+        }
+    }
+
     callEvent(event) {
         // TODO: Change logic to handle all scenarios
         if (event) {
@@ -842,8 +937,12 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Optional() public _liveTableParent: LiveTableParent) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Optional() public _liveTableParent: LiveTableParent,
+                @Attribute('dataset.bind') binddataset) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
+
+        this.binddataset = binddataset;
+        this.variable = this.parent.Variables[getVariableName(this.binddataset)];
     }
 }

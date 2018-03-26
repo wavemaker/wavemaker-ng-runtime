@@ -30,6 +30,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     widgettype: string;
     class = '';
     primarykey;
+    show;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
                 @Optional() public _parentForm: ParentForm, private fb: FormBuilder) {
@@ -49,7 +50,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
 
         switch (key) {
             case 'required':
-                if (newVal) {
+                if (newVal && this.show) {
                     this._validators.push(Validators.required);
                 } else {
                     this._validators = _.pull(this._validators, Validators.required);
@@ -63,6 +64,11 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
                 this.primarykey = toBoolean(newVal);
                 if (this.primarykey) {
                     this._parentForm.setPrimaryKey(this.key);
+                }
+                break;
+            case 'show':
+                if (!newVal) {
+                    this.widget.required = false;
                 }
                 break;
         }

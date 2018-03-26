@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, forwardRef, HostListener, Attribute, Self, Optional, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector, forwardRef, HostListener, Attribute } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
 import { $appDigest } from '@utils/watcher';
-import { getVariableName } from '../../utils/data-utils';
+import { getVariableName, performDataOperation } from '../../utils/data-utils';
 declare const _;
 
 registerFormProps();
@@ -59,12 +59,12 @@ export class FormComponent extends BaseComponent implements ParentForm {
     messagelayout;
     errormessage;
     primaryKey;
+    postmessage;
     _liveTableParent;
 
     // Live Form Methods
     edit: Function;
     update: Function;
-    reset: Function;
     new: Function;
     cancel: Function;
     formCancel: Function;
@@ -85,7 +85,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
     @HostBinding('autocomplete') autocomplete: boolean;
     @HostBinding('action') action: string;
 
-    @HostListener('submit', ['$event']) onSubmit($event) {
+    @HostListener('submit', ['$event']) submit($event) {
         if (this.isLiveForm !== null) {
             this.formSave();
             return;
@@ -152,8 +152,16 @@ export class FormComponent extends BaseComponent implements ParentForm {
         }
     }
 
-    onFormSuccess() {
-        this.isUpdateMode = false;
+    onResult(data, status, event) {
+        /* whether service call success or failure call this method*/
+        // triggerFn(scope.onResult, {$event: event, $isolateScope: scope, $data: data});
+        // if (status === 'success') {
+        //     /*if service call is success call this method */
+        //     triggerFn(scope.onSuccess, {$event: event, $isolateScope: scope, $data: data});
+        // } else {
+        //     /* if service call fails call this method */
+        //     triggerFn(scope.onError, {$event: event, $isolateScope: scope, $data: data});
+        // }
     }
 
     toggleMessage(show, msg?, type?, header?) {
@@ -240,8 +248,10 @@ export class FormComponent extends BaseComponent implements ParentForm {
         }
 
         this.formFields.forEach((field) => {
-            field.datavalue =  _.get(rowData, field.key || field.name);
+            field.value =  _.get(rowData, field.key || field.name);
         });
+
+        this.constructDataObject();
     }
 
     resetFormState() {
@@ -252,7 +262,19 @@ export class FormComponent extends BaseComponent implements ParentForm {
         this.ngForm.markAsPristine();
     }
 
+    reset() {
+        this.resetFormState();
+        if (_.isArray(this.formFields)) {
+            this.formFields.forEach((field) => {
+                field.value = undefined;
+            });
+        }
+        this.constructDataObject();
+    }
+
     submitForm($event) {
+        let formData, template;
+        const formVariable = this.variable;
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
             return;
@@ -260,6 +282,30 @@ export class FormComponent extends BaseComponent implements ParentForm {
 
         this.resetFormState();
 
+        formData = this.constructDataObject();
+
+        if (formVariable) {
+            // If on submit is there execute it and if it returns true do service variable invoke else return
+            // If its a service variable call setInput and assign form data and invoke the service
+            if (formVariable) {
+                performDataOperation(formVariable, formData, {})
+                    .then((data) => {
+                        this.toggleMessage(true, this.postmessage, 'success');
+                        this.onResult(data, 'success', $event);
+                        // Utils.triggerFn(scope.onSubmit, params);
+                    }, (errMsg) => {
+                        template = this.errormessage || errMsg;
+                        this.toggleMessage(true, template, 'error');
+                        this.onResult(errMsg, 'error', $event);
+                        // Utils.triggerFn(scope.onSubmit, params);
+                    });
+            } else {
+                // Utils.triggerFn(scope.onSubmit, params);
+                this.onResult({}, 'success', $event);
+            }
+        } else {
+            this.onResult({}, 'success', $event);
+        }
     }
 
 
