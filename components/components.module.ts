@@ -41,6 +41,7 @@ import { LayoutgridDirective } from './widgets/layout-grid/layout-grid.directive
 import { LeftPanelComponent } from './widgets/left-panel/left-panel.component';
 import { LiveFormDirective } from './widgets/form/live-form.directive';
 import { LiveTableComponent } from './widgets/live-table/live-table.component';
+import { LoginComponent } from './widgets/login/login.component';
 import { MenuComponent } from './widgets/menu/menu.component';
 import { MenuDropdownComponent } from './widgets/menu/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './widgets/menu/menu-dropdown-item.component';
@@ -113,6 +114,7 @@ const wmComponents = [
     LeftPanelComponent,
     LiveFormDirective,
     LiveTableComponent,
+    LoginComponent,
     MenuComponent,
     MenuDropdownComponent,
     MenuDropdownItemComponent,
