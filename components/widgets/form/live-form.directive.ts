@@ -1,9 +1,9 @@
-import {Directive, OnInit, AfterContentInit, Inject, Self} from '@angular/core';
-import {registerLiveFormProps} from './form.props';
-import {FormComponent} from './form.component';
-import {getClonedObject, isDefined, isEmptyObject, isDateTimeType, getValidDateObject} from '@utils/utils';
-import {performDataOperation} from '../../utils/data-utils';
-import {$appDigest} from '@utils/watcher';
+import { Directive, OnInit, AfterContentInit, Inject, Self } from '@angular/core';
+import { registerLiveFormProps } from './form.props';
+import { FormComponent } from './form.component';
+import { getClonedObject, isDefined, isEmptyObject, isDateTimeType, getValidDateObject } from '@utils/utils';
+import { performDataOperation } from '../../utils/data-utils';
+import { $appDigest } from '@utils/watcher';
 
 declare const _, moment;
 
@@ -13,7 +13,7 @@ const isTimeType = field => field.widget === 'time' || (field.type === 'time' &&
 const getValidTime = val => {
     if (val) {
         const date = (new Date()).toDateString();
-        return (new Date(date + ' ' + val)).getTime();
+        return (new Date(`${date} ${val}`)).getTime();
     }
     return undefined;
 };

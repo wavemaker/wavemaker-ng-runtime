@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationRef, Component, ViewContainerRef, OnInit } from '@angular/core';
 import { RenderUtilsService } from '../services/render-utils.service';
 import { MetadataService } from '@variables/services/metadata-service/metadata.service';
-import { SecurityService } from './../services/security.service';
-
+import { SecurityService } from '../services/security.service';
+import { App } from '../services/app.service';
 
 @Component({
     selector: 'app-page-outlet',
@@ -18,7 +18,8 @@ export class PageWrapperComponent implements OnInit {
         private appRef: ApplicationRef,
         private metadataService: MetadataService,
         private securityService: SecurityService,
-        private routerService: Router
+        private routerService: Router,
+        private app: App
     ) {
         this.metadataService.load();
     }
@@ -30,7 +31,10 @@ export class PageWrapperComponent implements OnInit {
             pageName,
             this.vcRef,
             this.appRef.components[0].location.nativeElement
-        );
+        ).then(() => {
+            this.app.internals.lastActivePageName = this.app.internals.activePageName;
+            this.app.internals.activePageName = pageName;
+        });
     }
 
     ngOnInit() {

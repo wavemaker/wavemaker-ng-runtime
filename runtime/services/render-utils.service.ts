@@ -175,7 +175,10 @@ export class RenderUtilsService {
 
             pageInstance.App = this.app;
 
-            monitorFragments(pageInstance, parseEndPromise, () => (pageInstance.onReady || noop)());
+            monitorFragments(pageInstance, parseEndPromise, () => {
+                (pageInstance.onReady || noop)();
+                (this.app.onPageReady || noop)(this.app.internals.activePageName, pageInstance);
+            });
 
             this.route.queryParams.subscribe(params => pageInstance.pageParams = params);
         };
