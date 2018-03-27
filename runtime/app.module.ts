@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -24,6 +24,7 @@ import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { SecurityService } from './services/security.service';
 import { HttpServiceModule } from '@http-service/http-service.module';
+import { NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 
 const resolve = {
     securityConfig: SecurityConfigResolve,
@@ -31,6 +32,14 @@ const resolve = {
     appJS: AppJSResolve,
     i18n: I18nResolve
 };
+
+
+const PIPES = [
+    ToDatePipe,
+    ToNumberPipe, ToCurrencyPipe, PrefixPipe,
+    SuffixPipe, TimeFromNowPipe, NumberToStringPipe, StringToNumberPipe
+];
+
 
 const routes = [
     {
@@ -50,7 +59,7 @@ const routes = [
 @NgModule({
     declarations: [
         AppComponent,
-        PageWrapperComponent
+        PageWrapperComponent, ...PIPES
     ],
     imports: [
         BrowserModule,
@@ -76,7 +85,9 @@ const routes = [
         AppResourceManagerService,
         PrefabManagerService,
         SecurityService,
-        SecurityConfigResolve
+        SecurityConfigResolve,
+        DecimalPipe,
+        DatePipe
     ],
     bootstrap: [AppComponent]
 })

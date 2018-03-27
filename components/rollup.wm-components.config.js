@@ -13,6 +13,7 @@ export default {
         '@angular/platform-browser': 'ng.platformBrowser',
         '@angular/forms': 'ng.forms',
         '@angular/router': 'ng.router',
+        '@utils/currency-constants': 'wm.utils',
         '@utils/dom': 'wm.utils',
         '@utils/utils': 'wm.utils',
         '@utils/styler': 'wm.utils',
