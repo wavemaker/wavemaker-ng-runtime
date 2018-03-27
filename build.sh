@@ -25,13 +25,13 @@ White='\033[0;37m'        # White
 #############################################################################
 
 
-echo -e "${Cyan}Cleanup dist directory\n"
+echo -e "${Cyan}Cleanup dist directory ${White} \n"
 $RIMRAF ./dist
 mkdir dist
 
 if [ "$?" != "0" ]
 then
-	echo -e "${Red}Error in cleaning dist directory\n"
+	echo -e "${Red}Error in cleaning dist directory ${White}\n"
 	exit 1
 fi
 
@@ -41,10 +41,10 @@ echo -e "${Cyan}Compiling typescript files using ngc ${White}"
 $NGC -p ./runtime/tsconfig.build.json
 if [ "$?" != "0" ]
 then
-	echo -e "${Red}Error while ngc \n"
+	echo -e "${Red}Error while ngc ${White}\n"
 	exit 1
 fi
-echo -e "${Green}Done with ngc compilation\n"
+echo -e "${Green}Done with ngc compilation ${White}\n"
 
 
 
@@ -54,10 +54,10 @@ echo -e "${Cyan}Copy and inline html files ${White}"
 node inline-templates.js
 if [ "$?" != "0" ]
 then
-	echo -e "${Red}Error during inline templates\n"
+	echo -e "${Red}Error during inline templates ${White}\n"
 	exit 1
 fi
-echo -e "${Green}Done with inline templates\n"
+echo -e "${Green}Done with inline templates ${White}\n"
 
 mkdir -p ./dist/bundles/wmapp/scripts
 mkdir ./dist/tmp
@@ -156,69 +156,69 @@ echo -e "${Cyan}Building utils ${White}"
 $ROLLUP -c ./utils/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building utils\n"
+    echo -e "${Red}Error in building utils ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built utils\n"
+echo -e "${Green}Built utils ${White}\n"
 
 ########## transpiler
 echo -e "${Cyan}Building transpiler ${White}"
 $ROLLUP -c ./transpiler/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building transpiler\n"
+    echo -e "${Red}Error in building transpiler ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built transpiler\n"
+echo -e "${Green}Built transpiler ${White}\n"
 
 ########## components
 echo -e "${Cyan}Building components build task ${White}"
 $ROLLUP -c ./components/rollup.wm-components.build.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building components build task \n"
+    echo -e "${Red}Error in building components build task ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built components build task\n"
+echo -e "${Green}Built components build task ${White}\n"
 
 echo -e "${Cyan}Building components ${White}"
 $ROLLUP -c ./components/rollup.wm-components.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building components\n"
+    echo -e "${Red}Error in building components ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built components\n"
+echo -e "${Green}Built components ${White}\n"
 
 ########## http-service
 echo -e "${Cyan}Building http-service ${White}"
 $ROLLUP -c ./http-service/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building http-service\n"
+    echo -e "${Red}Error in building http-service ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built http-service\n"
+echo -e "${Green}Built http-service ${White}\n"
 
 ########## variables
 echo -e "${Cyan}Building Variables ${White}"
 $ROLLUP -c ./variables/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building Variables\n"
+    echo -e "${Red}Error in building Variables ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built Variables\n"
+echo -e "${Green}Built Variables ${White}\n"
 
 ########## runtime
 echo -e "${Cyan}Building runtime ${White}"
 $ROLLUP -c ./runtime/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in bundling runtime"
+    echo -e "${Red}Error in bundling runtime ${White}"
     exit 1
 fi
-echo -e "${Green}Built runtime\n"
+echo -e "${Green}Built runtime ${White}\n"
 
 ########## final bundle
 echo -e "${Cyan}Bundling wm-loader ${White}"
@@ -232,18 +232,19 @@ $UGLIFYJS ./dist/tmp/wm-utils.umd.js \
     ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in bundling wm-loader\n"
+    echo -e "${Red}Error in bundling wm-loader ${White}\n"
     exit 1
 fi
-echo -e "${Green}Bundled wm-loader\n"
+echo -e "${Green}Bundled wm-loader ${White}\n"
 
-echo -e "${Cyan}Cleanup tmp directory\n"
+echo -e "${Cyan}Cleanup tmp directory ${White}\n"
 $RIMRAF ./dist/tmp
 
-echo -e "${Cyan}Cleanup out-tsc directory\n"
+echo -e "${Cyan}Cleanup out-tsc directory ${White}\n"
 $RIMRAF ./dist/out-tsc
 
 end=`date +%s`
+
 runtime=$((end-start))
 
-echo -e "${Purple}Execution time: ${runtime}sec"
+echo -e "${Purple}Execution time: ${runtime}sec${White}"
