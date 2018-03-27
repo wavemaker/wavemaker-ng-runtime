@@ -32,6 +32,7 @@ export * from './widgets/layout-grid/layout-grid-row/layout-grid-row.build';
 export * from './widgets/layout-grid/layout-grid.build';
 export * from './widgets/left-panel/left-panel.build';
 export * from './widgets/live-table/live-table.build';
+export * from './widgets/login/login.build';
 export * from './widgets/message/message.build';
 export * from './widgets/nav-item/nav-item.build';
 export * from './widgets/nav/nav.build';

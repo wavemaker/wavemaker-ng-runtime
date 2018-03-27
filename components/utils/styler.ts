@@ -1,4 +1,5 @@
 import { setCSS } from '@utils/dom';
+import { getBackGroundImageUrl } from '@utils/utils';
 
 export enum APPLY_STYLES_TYPE {
     CONTAINER,
@@ -126,7 +127,7 @@ export function styler($node: HTMLElement, component: any, type?: APPLY_STYLES_T
         if (key === 'fontsize' || key === 'fontunit') {
             setCSS($node, 'fontSize', component.fontsize === '' ? '' : component.fontsize + (component.fontunit || 'px'));
         } else if (key === 'backgroundimage') {
-            setCSS($node, 'backgroundImage', component.picturesource);
+            setCSS($node, 'backgroundImage', component.picturesource || getBackGroundImageUrl(nv));
         } else if (propNameCSSKeyMap[key]) {
             setCSS($node, propNameCSSKeyMap[key], nv);
         }

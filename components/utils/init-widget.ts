@@ -73,6 +73,7 @@ const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv:
         setAttr($el, 'name', nv);
     }
     if (key === 'show') {
+        nv = parseValue(key, nv, PROP_TYPE.BOOLEAN);
         if (nv) {
             removeClass($el, CLS_NG_HIDE);
         } else {

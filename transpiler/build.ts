@@ -106,6 +106,64 @@ const getRequiredProviders = (nodeDef, providers) => {
     return requires.map(require => providers.get(require));
 };
 
+const DIMENSION_PROPS = ['padding', 'borderwidth', 'margin'];
+
+
+const setDimensionProp = (cssObj, key, nv) => {
+    let cssKey = key, val, top, right, bottom, left, SEPARATOR = ' ', UNSET = 'unset', suffix = '';
+
+    function setVal(prop, value) {
+        // if the value is UNSET, reset the existing value
+        if (value === UNSET) {
+            value = '';
+        }
+        cssObj[cssKey + prop + suffix] = value;
+    }
+
+    if (key === 'borderwidth') {
+        suffix =  'width';
+        cssKey = 'border';
+    }
+
+    val = nv;
+
+    if (val.indexOf(UNSET) !== -1) {
+        val = val.split(SEPARATOR);
+
+        top    = val[0];
+        right  = val[1] || val[0];
+        bottom = val[2] || val[0];
+        left   = val[3] || val[1] || val[0];
+
+        setVal('top',    top);
+        setVal('right',  right);
+        setVal('bottom', bottom);
+        setVal('left',   left);
+    } else {
+        if (key === 'borderwidth') {
+            cssKey = 'borderwidth';
+        }
+        cssObj[cssKey] = nv;
+    }
+};
+
+const processDimensionAttributes = attrMap => {
+    const attrKeys = Array.from(attrMap.keys());
+    attrKeys.forEach((attrKey: any) => {
+        if (DIMENSION_PROPS.includes(attrKey)) {
+            const cssObj = {},
+                attrValue = attrMap.get(attrKey);
+            attrMap.delete(attrKey);
+            setDimensionProp(cssObj, attrKey, attrValue);
+            Object.keys(cssObj).forEach(key => {
+                if (cssObj[key]) {
+                    attrMap.set(key, cssObj[key]);
+                }
+            });
+        }
+    });
+};
+
 const processNode = (node, providers?) => {
     const nodeDef = registry.get(node.name);
 
@@ -130,6 +188,9 @@ const processNode = (node, providers?) => {
 
     if (isElementType) {
         attrMap = getAttrMap(node.attrs);
+
+        processDimensionAttributes(attrMap);
+
         if (nodeDef) {
             requiredProviders = getRequiredProviders(nodeDef, providers);
             shared = new Map();
