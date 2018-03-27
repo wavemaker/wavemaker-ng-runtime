@@ -12,8 +12,8 @@ export class HttpService {
     }
 
     send(options: any) {
-        const reqHeaders = new HttpHeaders();
-        const reqParams = new HttpParams();
+        let reqHeaders = new HttpHeaders(),
+            reqParams = new HttpParams();
         const headers = options.headers;
         const params = options.params;
         const responseType = options.responseType;
@@ -23,12 +23,14 @@ export class HttpService {
 
         // headers
         if (headers) {
-            Object.entries(headers).forEach(([k, v]) => reqHeaders.append(k, v));
+            Object.entries(headers).forEach(([k, v]) =>
+                reqHeaders = reqHeaders.append(k, v));
         }
 
         // params
         if (params) {
-            Object.entries(params).forEach(([k, v]) => reqParams.append(k, v));
+            Object.entries(params).forEach(([k, v]) =>
+                reqParams = reqParams.append(k, v));
         }
 
         let third, fourth;
