@@ -1,6 +1,6 @@
-import * as SVUtils from './static-variable.util';
+import * as SVUtils from './model-variable.util';
 
-export class StaticVariable {
+export class ModelVariable {
 
     name: string;
     _id: string;

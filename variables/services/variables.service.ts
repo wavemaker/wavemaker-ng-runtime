@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { StaticVariable } from './static-variable/static-variable';
+import { ModelVariable } from './model-variable/model-variable';
 import { ServiceVariable } from './service-variable/service-variable';
 import { LiveVariable } from './live-variable/live-variable';
 import { NavigationVariable } from './navigation-variable/navigation-variable';
@@ -44,7 +44,7 @@ export class VariablesService {
             let variableInstance, actionInstance;
             switch (variable.category) {
                 case 'wm.Variable':
-                    variableInstance = new StaticVariable(variable);
+                    variableInstance = new ModelVariable(variable);
                     processBinding(variableInstance, scope, 'dataBinding', 'dataSet');
                     break;
                 case 'wm.ServiceVariable':

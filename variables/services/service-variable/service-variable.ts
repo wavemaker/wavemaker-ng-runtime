@@ -1,7 +1,7 @@
-import { StaticVariable } from '../static-variable/static-variable';
+import { ModelVariable } from '../model-variable/model-variable';
 import * as SVUtils from './service-variable.utils';
 
-export class ServiceVariable extends StaticVariable {
+export class ServiceVariable extends ModelVariable {
 
     name: string;
     dataSet: any;

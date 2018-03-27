@@ -1,7 +1,7 @@
-import { StaticVariable } from '../static-variable/static-variable';
+import { ModelVariable } from '../model-variable/model-variable';
 import * as NVUtils from './navigation-variable.util';
 
-export class NavigationVariable extends StaticVariable {
+export class NavigationVariable extends ModelVariable {
     operation: string;
     pageName: string;
 

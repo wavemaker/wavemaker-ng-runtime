@@ -1,10 +1,10 @@
 // import { ServiceVariable } from '@variables/services/service-variable/service-variable';
-// import { StaticVariable } from '@variables/services/static-variable/static-variable';
-import { StaticVariable } from './../static-variable/static-variable';
+// import { StaticVariable } from '@variables/services/model-variable/model-variable';
+import { ModelVariable } from '../model-variable/model-variable';
 // import * as LVUtils from '@variables/services/live-variable/live-variable.utils';
 import * as LVUtils from './live-variable.utils';
 
-export class LiveVariable extends StaticVariable {
+export class LiveVariable extends ModelVariable {
 
     name: string;
     dataSet: any;

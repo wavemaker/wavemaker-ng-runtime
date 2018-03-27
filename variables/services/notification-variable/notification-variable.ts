@@ -1,8 +1,8 @@
-import { StaticVariable } from '../static-variable/static-variable';
+import { ModelVariable } from '../model-variable/model-variable';
 import { toasterService } from './../../utils/variables.utils';
 import * as NOVUtils from './notification-variable.utils';
 
-export class NotificationVariable extends StaticVariable {
+export class NotificationVariable extends ModelVariable {
 
     message: string;
 
