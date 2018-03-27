@@ -4,12 +4,8 @@ const tagName = 'li';
 
 register('wm-nav-item', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmNavItem ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmNavItem ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

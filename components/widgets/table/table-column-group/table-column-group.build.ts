@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-table-column-group', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmTableColumnGroup ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmTableColumnGroup ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

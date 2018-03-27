@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-alertdialog', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmAlertDialog ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmAlertDialog ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

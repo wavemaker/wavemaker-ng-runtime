@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-spinner', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmSpinner ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmSpinner ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

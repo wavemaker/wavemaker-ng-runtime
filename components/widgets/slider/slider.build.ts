@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-slider', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmSlider ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmSlider ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

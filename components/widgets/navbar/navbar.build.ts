@@ -4,12 +4,8 @@ const tagName = 'nav';
 
 register('wm-navbar', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmNavbar data-element-type="wmNavbar" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmNavbar data-element-type="wmNavbar" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

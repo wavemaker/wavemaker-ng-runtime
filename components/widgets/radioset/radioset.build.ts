@@ -4,12 +4,8 @@ const tagName = 'ul';
 
 register('wm-radioset', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmRadioset role="input" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmRadioset role="input" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

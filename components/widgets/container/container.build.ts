@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-container', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmContainer partialContainer ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmContainer partialContainer ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

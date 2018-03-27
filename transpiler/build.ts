@@ -109,11 +109,12 @@ const getRequiredProviders = (nodeDef, providers) => {
 const processNode = (node, providers?) => {
     const nodeDef = registry.get(node.name);
 
-    let pre, post;
+    let pre, post, template;
 
     if (nodeDef) {
         pre = nodeDef.pre || empty;
         post = nodeDef.post || empty;
+        template = nodeDef.template || empty;
     }
 
     let markup = '';
@@ -132,6 +133,7 @@ const processNode = (node, providers?) => {
         if (nodeDef) {
             requiredProviders = getRequiredProviders(nodeDef, providers);
             shared = new Map();
+            template(node, shared, ...requiredProviders);
             markup = (<any>pre)(attrMap, shared, ...requiredProviders);
             if (nodeDef.provide) {
                 providers.set(node.name, nodeDef.provide(attrMap, shared, ...requiredProviders));
@@ -183,6 +185,7 @@ export const register = (nodeName: string, nodeDefFn: () => BuildTaskDef) => reg
 
 export interface BuildTaskDef {
     requires?: string | Array<string>;
+    template?: (node: Element | Text | Comment, shared?: Map<any, any>, ...requires: Array<Map<any, any>>) => void;
     pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
     provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
     post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;

@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-iframedialog', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmIframeDialog ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmIframeDialog ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

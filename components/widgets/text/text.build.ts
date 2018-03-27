@@ -4,9 +4,7 @@ const tagName = 'input';
 
 register('wm-text', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmText ngModel ${getAttrMarkup(attrs)}>`;
-        }
+        pre: attrs => `<${tagName} wmText ngModel ${getAttrMarkup(attrs)}>`
     };
 });
 

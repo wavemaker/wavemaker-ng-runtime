@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-video', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmVideo ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmVideo ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

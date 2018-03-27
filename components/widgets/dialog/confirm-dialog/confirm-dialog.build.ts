@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-confirmdialog', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmConfirmDialog ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmConfirmDialog ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

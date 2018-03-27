@@ -4,12 +4,8 @@ const tagName = 'section';
 
 register('wm-top-nav', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmTopNav partialContainer data-role="page-topnav" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmTopNav partialContainer data-role="page-topnav" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

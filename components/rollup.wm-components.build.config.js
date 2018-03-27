@@ -7,6 +7,7 @@ export default {
     name: 'wm.components.build',
     globals: {
         '@transpiler/build': 'wm.transpiler',
-        '@utils/utils': 'wm.utils'
+        '@utils/utils': 'wm.utils',
+        '@angular/compiler': 'ng.compiler'
     }
 };

@@ -4,12 +4,8 @@ const tagName = 'p';
 
 register('wm-message', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmMessage ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmMessage ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

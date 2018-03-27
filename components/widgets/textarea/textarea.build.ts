@@ -4,12 +4,8 @@ const tagName = 'textarea';
 
 register('wm-textarea', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmTextarea ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmTextarea ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

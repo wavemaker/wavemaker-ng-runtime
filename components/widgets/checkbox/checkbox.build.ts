@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-checkbox', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmCheckbox role="input" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmCheckbox role="input" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

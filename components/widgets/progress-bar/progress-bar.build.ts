@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-progressbar', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmProgressBar ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmProgressBar ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-layoutgrid', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmLayoutGrid ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmLayoutGrid ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

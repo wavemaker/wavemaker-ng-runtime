@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-livetable', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmLiveTable ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmLiveTable ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

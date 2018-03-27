@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-gridcolumn', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmLayoutGridColumn ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmLayoutGridColumn ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

@@ -4,12 +4,8 @@ const tagName = 'a';
 
 register('wm-anchor', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmAnchor role="button" data-identifier="anchor" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmAnchor role="button" data-identifier="anchor" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

@@ -110,9 +110,7 @@ register('wm-form-field', (): BuildTaskDef => {
                             </div>
                         </div>`;
         },
-        post: () => {
-            return `</${tagName}>`;
-        },
+        post: () => `</${tagName}>`,
         provide: (attrs, shared) => {
             const provider = new Map();
             provider.set('form_reference', shared.get('counter'));

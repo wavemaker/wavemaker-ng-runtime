@@ -14,9 +14,7 @@ const buildTask = (isLiveForm?) => {
             return `<${tagName} wmForm ${liveFormAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngForm" [noValidate]="${counter}.validationtype !== 'html'"
                         [ngClass]="${counter}.captionAlignClass" ${tmpl}>`;
         },
-        post: () => {
-            return `</${tagName}>`;
-        },
+        post: () => `</${tagName}>`,
         provide: (attrs, shared) => {
             const provider = new Map();
             provider.set('form_reference', shared.get('counter'));

@@ -4,12 +4,8 @@ const tagName = 'main';
 
 register('wm-content', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmContent data-role="page-content" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmContent data-role="page-content" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-audio', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmAudio ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmAudio ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-calendar', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmCalendar style="width:100%" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmCalendar style="width:100%" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

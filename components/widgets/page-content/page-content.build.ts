@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-page-content', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmPageContent ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmPageContent ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

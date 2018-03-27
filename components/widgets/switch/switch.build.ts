@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-switch', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmSwitch ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmSwitch ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-table', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmTable data-identifier="table" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmTable data-identifier="table" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

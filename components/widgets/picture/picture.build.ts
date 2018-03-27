@@ -4,9 +4,7 @@ const tagName = 'img';
 
 register('wm-picture', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmPicture ${getAttrMarkup(attrs)}>`;
-        }
+        pre: attrs => `<${tagName} wmPicture ${getAttrMarkup(attrs)}>`
     };
 });
 

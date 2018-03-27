@@ -4,12 +4,8 @@ const tagName = 'span';
 
 register('wm-icon', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmIcon ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmIcon ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

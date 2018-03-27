@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-menu', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmMenu ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmMenu ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

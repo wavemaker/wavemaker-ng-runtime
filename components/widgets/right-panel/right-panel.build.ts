@@ -4,12 +4,8 @@ const tagName = 'aside';
 
 register('wm-right-panel', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmRightPanel partialContainer data-role="page-right-panel" ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmRightPanel partialContainer data-role="page-right-panel" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

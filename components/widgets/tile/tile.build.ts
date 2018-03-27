@@ -4,12 +4,8 @@ const  tagName = 'div';
 
 register('wm-tile', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmTile ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmTile ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

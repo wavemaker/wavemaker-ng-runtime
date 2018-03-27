@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-pagedialog', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmPartialDialog ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmPartialDialog ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

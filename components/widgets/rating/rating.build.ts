@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-rating', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmRating ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmRating ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

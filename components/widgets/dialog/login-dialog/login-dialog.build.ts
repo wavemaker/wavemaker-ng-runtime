@@ -4,12 +4,8 @@ const tagName = 'div';
 
 register('wm-logindialog', (): BuildTaskDef => {
     return {
-        pre: attrs => {
-            return `<${tagName} wmLoginDialog ${getAttrMarkup(attrs)}>`;
-        },
-        post: () => {
-            return `</${tagName}>`;
-        }
+        pre: attrs => `<${tagName} wmLoginDialog ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 
