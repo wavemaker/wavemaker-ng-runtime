@@ -10,7 +10,9 @@ declare const $, _, moment, _WM_APP_PROPERTIES;
 const _appLocaleRootPath = 'resources/i18n/';
 const NG_LOCALE_PATH = 'resources/ngLocale/';
 const MOMENT_LOCALE_PATH = 'resources/momentLocale/';
-const RTL_LANGUAGE_CODES = ["ar", "ar-001", "ar-ae", "ar-bh", "ar-dz", "ar-eg", "ar-iq", "ar-jo", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-om", "ar-qa", "ar-sa", "ar-sd", "ar-sy", "ar-tn", "ar-ye", "arc", "bcc", "bqi", "ckb", "dv", "fa", "glk", "he", "ku", "mzn", "pnb", "ps", "sd", "ug", "ur", "yi"];
+const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
+    'ar-ma', 'ar-om', 'ar-qa', 'ar-sa', 'ar-sd', 'ar-sy', 'ar-tn', 'ar-ye', 'arc', 'bcc', 'bqi', 'ckb', 'dv', 'fa', 'glk',
+    'he', 'ku', 'mzn', 'pnb', 'ps', 'sd', 'ug', 'ur', 'yi'];
 const localeKey = 'appLocale';
 
 const getLocalizedMessage = function () {
@@ -76,6 +78,7 @@ export class I18nService {
             if (!_appLocaleRootPath || selectedLocale === 'en') {
                 moment.locale('en');
                 resolve();
+                return;
             }
             path = MOMENT_LOCALE_PATH +  selectedLocale + '.js';
             // load the script tag
