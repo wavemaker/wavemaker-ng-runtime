@@ -258,7 +258,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
                 this.setDataGridOption('colDefs', getClonedObject(this.fieldDefs));
             }
             // Map the col defs to columns
-            // _.map(gridOptions.colDefs, function (column) {
+            // _.map(gridOptions.colDefs, (column) => {
             //     this.columns[column.field] = column;
             // });
             // If data and colDefs are present, call on before data render event
@@ -832,7 +832,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
                 return;
             }
             // Wait for the selected item to get updated
-            setTimeout(function () {
+            setTimeout(() => {
                 row = evt || this.selectedItems[0];
                 // deleteRecord(row);
             });
@@ -847,8 +847,8 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
             this.dataNavigator.calculatePagingValues();
             /*If the current page does not contain any records due to deletion, then navigate to the previous page.*/
             index = this.dataNavigator.pageCount < this.dataNavigator.dn.currentPage ? 'prev' : undefined;
-            this.dataNavigator.navigatePage(index, null, true, function () {
-                setTimeout(function () {
+            this.dataNavigator.navigatePage(index, null, true, () => {
+                setTimeout(() => {
                     triggerFn(callBack);
                 }, undefined, false);
             });
@@ -866,7 +866,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         }
         // TODO: For live variable, on update/insert while selecting the row, remove the keys with empty array
         if (_.isObject(item)) {
-            item = _.omitBy(item, function (value) {
+            item = _.omitBy(item, (value) => {
                 return _.isArray(value) && _.isEmpty(value);
             });
         }
@@ -903,7 +903,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         }
         /*Re-calculate the paging values like pageCount etc that could change due to change in the dataSize.*/
         this.dataNavigator.calculatePagingValues();
-        this.dataNavigator.navigatePage(index, null, true, function () {
+        this.dataNavigator.navigatePage(index, null, true, () => {
             if (this.shownavigation || isStaticVariable) {
                 this.selectItemOnSuccess(row, skipSelectItem, callBack);
             }

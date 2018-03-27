@@ -1,11 +1,11 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
+import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
 
 const propsMap = new Map(
     [
         ['autocomplete', {value: false, ...PROP_BOOLEAN}],
         ['captionalign', {value: 'left', ...PROP_STRING_NOTIFY}],
         ['captionposition', {value: 'left', ...PROP_STRING_NOTIFY}],
-        ['captionsize', PROP_STRING],
+        ['captionsize', PROP_STRING_NOTIFY],
         ['captionwidth', {value: 'xs-12 sm-3 md-3 lg-3', ...PROP_STRING_NOTIFY}],
         ['class', PROP_STRING],
         ['dataset', PROP_STRING],
@@ -15,6 +15,7 @@ const propsMap = new Map(
         ['messagelayout',  {value: 'Inline', ...PROP_STRING}],
         ['iconclass', PROP_STRING],
         ['name', PROP_STRING],
+        ['novalidate', PROP_BOOLEAN_NOTIFY],
         ['rowdata', PROP_STRING_NOTIFY],
         ['show', PROP_BOOLEAN],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],

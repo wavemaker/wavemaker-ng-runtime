@@ -1,9 +1,10 @@
-import { Directive, OnInit, AfterContentInit, Inject, Self } from '@angular/core';
+import { Directive, Inject, Self } from '@angular/core';
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
 import { getClonedObject, isDefined, isEmptyObject, isDateTimeType, getValidDateObject } from '@utils/utils';
 import { performDataOperation } from '../../utils/data-utils';
 import { $appDigest } from '@utils/watcher';
+import { invokeEventHandler } from '../../utils/widget-utils';
 
 declare const _, moment;
 
@@ -21,7 +22,7 @@ const getValidTime = val => {
 @Directive({
     selector: '[wmLiveForm]'
 })
-export class LiveFormDirective implements OnInit, AfterContentInit {
+export class LiveFormDirective {
 
     constructor(@Self() @Inject(FormComponent) private form) {
         form.edit = this.edit.bind(this);
@@ -41,6 +42,8 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
         form.constructDataObject = this.constructDataObject.bind(this);
         form.changeDataObject = this.setDefaultValues.bind(this);
         form.setDefaultValues = this.setDefaultValues.bind(this);
+        form.saveAndNew = this.saveAndNew.bind(this);
+        form.saveAndView = this.saveAndView.bind(this);
     }
 
     setDefaultValues(dataObj) {
@@ -71,19 +74,6 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
             this.form.setDefaultValues(response);
         }
         this.form.isUpdateMode = isDefined(updateMode) ? updateMode : true;
-    }
-
-    onResult(data, status, event) {
-        // TODO: Events
-        // /* whether service call success or failure call this method*/
-        // $scope.onResult({$event: event, $operation: $scope.operationType, $data: data});
-        // if (status) {
-        //     /*if service call is success call this method */
-        //     Utils.triggerFn($scope.onSuccess, {$event: event, $operation: $scope.operationType, $data: data});
-        // } else {
-        //     /* if service call fails call this method */
-        //     Utils.triggerFn($scope.onError, {$event: event, $operation: $scope.operationType, $data: data});
-        // }
     }
 
     setPrevformFields() {
@@ -324,8 +314,17 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
         this.form.formSave(undefined, undefined, undefined, callBackFn);
     }
 
+    // Function use to save the form and open new form after save
+    saveAndNew() {
+        this.save(undefined, true, true);
+    }
+    // Function use to save the form and open new form after save
+    saveAndView() {
+        this.save(undefined, false);
+    }
+
     save(event?, updateMode?, newForm?, callBackFn?) {
-        let data, prevData, requestData, operationType;
+        let data, prevData, requestData, operationType, isValid;
 
         operationType = this.form.operationType = this.form.operationType || this.findOperationType(this.form.variable);
 
@@ -336,6 +335,28 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
 
         data = this.form.constructDataObject();
         prevData = this.form.prevformFields ? this.form.constructDataObject(true) : data;
+
+        try {
+            isValid = invokeEventHandler(this.form, 'beforeservicecall', {$event: event, $operation: this.form.operationType, $data: data});
+            if (isValid === false) {
+                return;
+            }
+            if (isValid && isValid.error) {
+                this.form.toggleMessage(true, isValid.error, 'error');
+                return;
+            }
+        } catch (err) {
+            if (err.message === 'Abort') {
+                return;
+            }
+        }
+
+        // If operation is update, form is not touched and current data and previous data is same, Show no changes detected message
+        if (this.form.operationType === 'update' && this.form.ngform && this.form.ngform.pristine &&
+                (this.form.isSelected && _.isEqual(data, prevData))) {
+            this.form.toggleMessage(true, 'No changes detected', 'info', '');
+            return;
+        }
 
         this.form.resetFormState();
 
@@ -355,10 +376,19 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
         }).then((response) => {
             const msg = operationType === 'insert' ? this.form.insertmessage : (operationType === 'update' ?
                 this.form.updatemessage : this.form.deletemessage);
-            this.onResult(response, true, event);
+
+            if (operationType === 'delete') {
+                this.form.onResult(requestData.row, true, event);
+                this.form.emptyDataModel();
+                this.form.prevDataValues = [];
+                this.form.isSelected = false;
+            } else {
+                this.form.onResult(response, true, event);
+            }
+
             this.form.toggleMessage(true, msg, 'success');
             if (this.form._liveTableParent) {
-                /* highlight the current updated row */
+                // highlight the current updated row
                 this.form._liveTableParent.onResult(operationType, response, newForm, updateMode);
             } else {
                 /*get updated data without refreshing page*/
@@ -368,14 +398,9 @@ export class LiveFormDirective implements OnInit, AfterContentInit {
                 this.onVariableUpdate(response, newForm, updateMode);
             }
         }, (error) => {
+            this.form.onResult(error, false, event);
             this.form.toggleMessage(true, error, 'error');
         });
-    }
-
-    ngOnInit() {
-    }
-
-    ngAfterContentInit() {
     }
 }
 

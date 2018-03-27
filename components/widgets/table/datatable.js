@@ -136,7 +136,7 @@ $.widget('wm.datatable', {
                 return -1;
             }
             data.some(function (data, index) {
-                if (_.isEquals(data, obj)) {
+                if (_.isEqual(data, obj)) {
                     matchIndex = index;
                     return true;
                 }
