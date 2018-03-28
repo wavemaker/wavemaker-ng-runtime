@@ -178,6 +178,8 @@ const initiateAction = function (action, params, successCallback, failureCallbac
             simulateFileDownload(parseConfig(connectionParams), connectionParams.urlParams.entityName, connectionParams.urlParams.exportFormat, null, null);
         } else {
             connectionParams = parseConfig(connectionParams);
+            // TODO: Remove after backend fix
+            connectionParams.url = connectionParams.url.replace('//', '/');
             console.log('making call from Live variable')
             return httpService.send({
                 url: connectionParams.url,

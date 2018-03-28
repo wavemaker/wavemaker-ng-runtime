@@ -6,6 +6,7 @@ import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
 import { $appDigest } from '@utils/watcher';
 import { getVariableName, performDataOperation } from '../../utils/data-utils';
+import { invokeEventHandler } from '../../utils/widget-utils';
 declare const _;
 
 registerFormProps();
@@ -37,6 +38,8 @@ export class FormComponent extends BaseComponent implements ParentForm {
     validationtype: string;
     captionalign: string;
     captionposition: string;
+    captionsize;
+    elScope;
     _widgetClass = '';
     captionwidth: string;
     _captionClass = '';
@@ -61,7 +64,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
     primaryKey;
     postmessage;
     _liveTableParent;
-
+    resetForm: Function;
     // Live Form Methods
     edit: Function;
     update: Function;
@@ -71,6 +74,8 @@ export class FormComponent extends BaseComponent implements ParentForm {
     delete: Function;
     formSave: Function;
     save: Function;
+    saveAndNew: Function;
+    saveAndView: Function;
     emptyDataModel: Function;
     setPrevDataValues: Function;
     getPrevDataValues: Function;
@@ -78,7 +83,6 @@ export class FormComponent extends BaseComponent implements ParentForm {
     setPrimaryKey: () => {};
 
     private operationType;
-    private binddataset;
     private variable;
     private isLayoutDialog;
 
@@ -87,7 +91,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
 
     @HostListener('submit', ['$event']) submit($event) {
         if (this.isLiveForm !== null) {
-            this.formSave();
+            this.formSave($event);
             return;
         }
 
@@ -138,6 +142,13 @@ export class FormComponent extends BaseComponent implements ParentForm {
             case 'captionwidth':
                 this.setLayoutConfig();
                 break;
+            case 'captionsize':
+                this.captionsize = newVal;
+                break;
+            case 'novalidate':
+                //  Set validation type based on the novalidate property
+                this.widget.validationtype = (newVal === true || newVal === 'true') ? 'none' : 'default';
+                break;
             case 'formdata':
             case 'rowdata':
                 this.setDefaultValues(newVal);
@@ -152,16 +163,17 @@ export class FormComponent extends BaseComponent implements ParentForm {
         }
     }
 
-    onResult(data, status, event) {
-        /* whether service call success or failure call this method*/
-        // triggerFn(scope.onResult, {$event: event, $isolateScope: scope, $data: data});
-        // if (status === 'success') {
-        //     /*if service call is success call this method */
-        //     triggerFn(scope.onSuccess, {$event: event, $isolateScope: scope, $data: data});
-        // } else {
-        //     /* if service call fails call this method */
-        //     triggerFn(scope.onError, {$event: event, $isolateScope: scope, $data: data});
-        // }
+    onResult(data, status, event?) {
+        const params = {$event: event, $data: data};
+        // whether service call success or failure call this method
+        invokeEventHandler(this, 'result', params);
+        if (status) {
+            // if service call is success call this method
+            invokeEventHandler(this, 'success', params);
+        } else {
+            // if service call fails call this method
+            invokeEventHandler(this, 'error', params);
+        }
     }
 
     toggleMessage(show, msg?, type?, header?) {
@@ -193,15 +205,18 @@ export class FormComponent extends BaseComponent implements ParentForm {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private fb: FormBuilder,
-                @Attribute('dataset.bind') binddataset,
+                @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
+                @Attribute('submit.event') public onSubmitEvt,
+                @Attribute('dataset.bind') public binddataset,
                 @Attribute('wmLiveForm') public isLiveForm) {
         super(getWidgetConfig(isLiveForm), inj, elRef, cdr);
 
         styler(this.$element, this);
 
         this.ngForm = fb.group({});
+        this.elScope = this;
+        this.resetForm = this.reset.bind(this);
 
-        this.binddataset = binddataset;
         this.variable = this.parent.Variables[getVariableName(this.binddataset)];
     }
 
@@ -243,7 +258,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
     }
 
     setDefaultValues(rowData) {
-        if (!this.formFields) {
+        if (!this.formFields || _.isEmpty(this.formFields)) {
             return;
         }
 
@@ -273,7 +288,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
     }
 
     submitForm($event) {
-        let formData, template;
+        let formData, template, params;
         const formVariable = this.variable;
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
@@ -284,27 +299,33 @@ export class FormComponent extends BaseComponent implements ParentForm {
 
         formData = this.constructDataObject();
 
-        if (formVariable) {
+        params = {$event: event, $formData: formData, $data: formData};
+
+        if (this.onBeforeSubmitEvt && invokeEventHandler(this, 'beforesubmit', params)) {
+            return;
+        }
+
+        if (this.onSubmitEvt && formVariable) {
             // If on submit is there execute it and if it returns true do service variable invoke else return
             // If its a service variable call setInput and assign form data and invoke the service
             if (formVariable) {
                 performDataOperation(formVariable, formData, {})
                     .then((data) => {
                         this.toggleMessage(true, this.postmessage, 'success');
-                        this.onResult(data, 'success', $event);
-                        // Utils.triggerFn(scope.onSubmit, params);
+                        this.onResult(data, true, $event);
+                        invokeEventHandler(this, 'submit', params);
                     }, (errMsg) => {
                         template = this.errormessage || errMsg;
                         this.toggleMessage(true, template, 'error');
-                        this.onResult(errMsg, 'error', $event);
-                        // Utils.triggerFn(scope.onSubmit, params);
+                        this.onResult(errMsg, false, $event);
+                        invokeEventHandler(this, 'submit', params);
                     });
             } else {
-                // Utils.triggerFn(scope.onSubmit, params);
-                this.onResult({}, 'success', $event);
+                invokeEventHandler(this, 'submit', params);
+                this.onResult({}, true, $event);
             }
         } else {
-            this.onResult({}, 'success', $event);
+            this.onResult({}, true, $event);
         }
     }
 
