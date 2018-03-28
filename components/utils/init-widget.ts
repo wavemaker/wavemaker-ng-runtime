@@ -42,7 +42,7 @@ const registerWidget = (name: string, parent: any, widgetId: string, widget: any
     });
 };
 
-const getWatchIdentifier = (...args) => args.join('_');
+export const getWatchIdentifier = (...args) => args.join('_');
 
 // create a set of boolean attrs
 const BOOLEAN_ATTRS = new Set([
@@ -148,6 +148,7 @@ export function initWidget(component: BaseComponent, elDef: any, view: any) {
     const widgetId = idGen.next().value;
 
     component.widget = widget;
+    component.widgetId = widgetId;
 
     component.destroy$.subscribe(() => revocable.revoke());
 

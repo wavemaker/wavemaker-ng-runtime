@@ -444,7 +444,7 @@ export const isPageable = (obj: any): boolean => {
         'totalElements'   : 10,
         'totalPages'      : 1
     };
-    return (_.equals(_.keys(pageable), _.keys(obj).sort()));
+    return (_.isEqual(_.keys(pageable), _.keys(obj).sort()));
 };
 
 /*
