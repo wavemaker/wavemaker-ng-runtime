@@ -2,7 +2,7 @@ declare const _WM_APP_PROPERTIES;
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationRef, Component, ViewContainerRef, OnInit } from '@angular/core';
 import { RenderUtilsService } from '../services/render-utils.service';
-import { MetadataService } from '@variables/services/metadata-service/metadata.service';
+import { MetadataService } from '@variables/service/metadata-service/metadata.service';
 import { SecurityService } from '../services/security.service';
 import { App } from '../services/app.service';
 

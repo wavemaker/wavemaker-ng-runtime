@@ -102,7 +102,7 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
 
     /*checking if event is available and variable has event property and variable event property bound to function*/
     const eventValues = variable[type],
-        callBackScope = variable.scope;
+        callBackScope = variable._context;
     let errorVariable;
     /**
      * For error event:
@@ -131,7 +131,7 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
     }
     // TODO: [Vibhu], check whether to support legacy event calling mechanism (ideally, it should have been migrated)
     const fn = $parseEvent(variable[type]);
-    fn(variable.scope, {$event: variable, $scope: data});
+    fn(variable._context, {$event: variable, $scope: data});
 };
 
 function triggerOnTimeout(success) {
@@ -590,6 +590,10 @@ export const processBinding = (variable: any, $scope: any, bindSource?: string, 
 
     const bindMap = variable[bindSource];
     variable[bindSource] = {};
+
+    if (!bindMap) {
+        return;
+    }
     bindMap.forEach(function (node) {
         /* for static variable change the binding with target 'dataBinding' to 'dataSet', as the results have to reflect directly in the dataSet */
         if (variable.category === 'wm.Variable' && node.target === 'dataBinding') {

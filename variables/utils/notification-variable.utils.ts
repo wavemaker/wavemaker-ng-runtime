@@ -1,7 +1,7 @@
 declare const _, window, $;
 
-import {initiateCallback, toasterService} from '../../utils/variables.utils';
-import {$rootScope, VARIABLE_CONSTANTS} from '../../constants/variables.constants';
+import {initiateCallback, toasterService} from './variables.utils';
+import {$rootScope, VARIABLE_CONSTANTS} from '../constants/variables.constants';
 
 export const notify = (variable, options, success, error)  => {
     const variableName = variable.name,

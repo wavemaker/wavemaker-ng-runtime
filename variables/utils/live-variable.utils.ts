@@ -1,10 +1,10 @@
 declare const _, window;
 
 import { getClonedObject, triggerFn, formatDate, isNumberType, replace, isDateTimeType, getBlob } from '@utils/utils';
-import { VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope, SWAGGER_CONSTANTS} from './../../constants/variables.constants';
+import { VARIABLE_CONSTANTS, DB_CONSTANTS, $rootScope, SWAGGER_CONSTANTS} from '../constants/variables.constants';
 import * as LVService from './live-variable.http.utils';
-import {getEvaluatedOrderBy, initiateCallback} from './../../utils/variables.utils';
-import { $queue } from './../../utils/inflight-queue';
+import {getEvaluatedOrderBy, initiateCallback} from './variables.utils';
+import { $queue } from './inflight-queue';
 
 const isRunMode = true,
     emptyArr = [];

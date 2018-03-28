@@ -12,7 +12,7 @@ import { WmComponentsModule } from '@components/components.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
 import { transpile } from '@transpiler/build';
-import { VariablesService } from '@variables/services/variables.service';
+import { VariablesService } from '@variables/service/variables.service';
 import { App } from './app.service';
 import { ActivatedRoute } from '@angular/router';
 import { AppResourceManagerService } from './app-resource-manager.service';

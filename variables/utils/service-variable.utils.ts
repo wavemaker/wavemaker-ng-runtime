@@ -1,10 +1,10 @@
 declare const _, window;
-import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS, SWAGGER_CONSTANTS, $rootScope } from './../../constants/variables.constants';
+import { VARIABLE_CONSTANTS, WS_CONSTANTS, CONSTANTS, SWAGGER_CONSTANTS, $rootScope } from '../constants/variables.constants';
 import {
     httpService, metadataService, initiateCallback, isFileUploadSupported, getEvaluatedOrderBy,
     simulateFileDownload
-} from './../../utils/variables.utils';
-import { $queue } from './../../utils/inflight-queue';
+} from './variables.utils';
+import { $queue } from './inflight-queue';
 import {
     formatDate, isDateTimeType, extractType, getBlob, getClonedObject, findValueOf, triggerFn,
     getValidJSON, xmlToJson, isDefined

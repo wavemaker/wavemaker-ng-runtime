@@ -12,7 +12,6 @@ import { PageWrapperComponent } from './components/page-wrapper.component';
 import { HttpClientModule } from '@angular/common/http';
 
 import { VariablesModule } from '@variables/variables.module';
-import { VariablesService } from '@variables/services/variables.service';
 
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
@@ -67,7 +66,6 @@ const routes = [
     providers: [
         PipeProvider,
         RenderUtilsService,
-        VariablesService,
         MetadataResolve,
         App,
         AppJSResolve,

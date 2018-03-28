@@ -1,9 +1,7 @@
 declare const _;
-import { getClonedObject, getValidJSON, triggerFn, replace } from '@utils/utils';
-// import {VARIABLE_URLS} from '@variables/constants/variables.constants';
-import {VARIABLE_URLS} from './../../constants/variables.constants';
-import {httpService, simulateFileDownload} from './../../utils/variables.utils';
-import * as LVUtils from './live-variable.utils';
+import { getClonedObject } from '@utils/utils';
+import {VARIABLE_URLS} from '../constants/variables.constants';
+import {httpService, simulateFileDownload} from './variables.utils';
 
 const isStudioMode = false;
 

@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { VariablesService } from './services/variables.service';
+import { VariablesService } from './service/variables.service';
 import { HttpClientModule } from '@angular/common/http';
-import { MetadataService } from './services/metadata-service/metadata.service';
+import { MetadataService } from './service/metadata-service/metadata.service';
 import { HttpServiceModule } from '../http-service/http-service.module';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -25,5 +25,5 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 })
 export class VariablesModule {}
 
-export * from './services/variables.service';
-export * from './services/metadata-service/metadata.service';
+export * from './service/variables.service';
+export * from './service/metadata-service/metadata.service';
