@@ -148,3 +148,21 @@ export const invokeEventHandler = (component, eventName, args?) => {
         fn(args);
     }
 };
+
+/**
+ * Returns the orderBy Expression based on the 'sort 'option in pageable object
+ * returned by backend
+ * @param pageableObj
+ * @returns {string}
+ */
+export const getOrderByExpr = (pageableObj) => {
+    pageableObj = pageableObj || [];
+    const expressions       = [],
+        KEY_VAL_SEPARATOR = ' ',
+        FIELD_SEPARATOR   = ',';
+    _.forEach(pageableObj, function (obj) {
+        expressions.push(obj.property + KEY_VAL_SEPARATOR + obj.direction.toLowerCase());
+    });
+
+    return _.join(expressions, FIELD_SEPARATOR);
+};

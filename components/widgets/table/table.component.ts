@@ -6,7 +6,6 @@ import { BaseComponent } from '../base/base.component';
 import { registerProps } from './table.props';
 import { isDefined, getClonedObject, isEmptyObject, isNumberType, getValidJSON, triggerFn } from '@utils/utils';
 import { getRowOperationsColumn } from '../../utils/live-utils';
-import { LiveTableParent } from '../../widgets/live-table/live-table.component';
 import { Subject } from 'rxjs/Subject';
 import { getVariableName, refreshVariable } from '../../utils/data-utils';
 
@@ -48,7 +47,6 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     @ViewChild('rowActions') rowActionsTmpl: TemplateRef<any>;
     @ViewChild('rowActionsContainer', {read: ViewContainerRef}) rowActionsContainer: ViewContainerRef;
 
-    binddataset;
     datagridElement;
     editmode;
     enablecolumnselection;
@@ -94,16 +92,8 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     navControls = 'Basic';
     rowActions = [];
     shownavigation = false;
-
-    private _dataset;
-    get dataset() {
-        return this._dataset;
-    }
-
-    set dataset(val) {
-        this._dataset = val;
-        this.watchVariableDataSet(val);
-    }
+    dataset;
+    _liveTableParent;
 
     private fullFieldDefs = [];
     private fieldDefs = [];
@@ -559,15 +549,15 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
                             this.watchVariableDataSet(newVal);
                         } else {
                             if (_.isArray(newVal)) {
-                                this.dataset = [].concat(newVal);
+                                this.widget.dataset = [].concat(newVal);
                             } else if (_.isObject(newVal)) {
-                                this.dataset = _.extend({}, newVal);
+                                this.widget.dataset = _.extend({}, newVal);
                             } else {
-                                this.dataset = newVal;
+                                this.widget.dataset = newVal;
                             }
                         }
                     } else {
-                        this.dataset = undefined;
+                        this.widget.dataset = undefined;
                     }
                 }, true);
                 /*De-register the watch if it is exists */
@@ -581,8 +571,8 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
                 // If dataset is a pageable object, data is present inside the content property
                 this.__fullData = this.dataset;
 
-                this.dataNavigator.maxResults = this.pagesize || 5;
-                this.dataNavigator.dataset = this.dataset;
+                this.dataNavigator.widget.maxResults = this.pagesize || 5;
+                this.dataNavigator.setBindDataSet(this.binddataset, this.parent);
             }
         }
     }
@@ -669,6 +659,9 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
 
     onPropertyChange(key: string, newVal) {
         switch (key) {
+            case 'dataset':
+                this.watchVariableDataSet(newVal);
+                break;
             case 'gridclass':
                 this.callDataGridMethod('option', 'cssClassNames.grid', newVal);
                 break;
@@ -937,12 +930,11 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Optional() public _liveTableParent: LiveTableParent,
-                @Attribute('dataset.bind') binddataset) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
+                @Attribute('dataset.bind') public binddataset) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
 
-        this.binddataset = binddataset;
         this.variable = this.parent.Variables[getVariableName(this.binddataset)];
     }
 }

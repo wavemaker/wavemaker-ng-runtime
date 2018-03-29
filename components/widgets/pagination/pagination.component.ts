@@ -4,6 +4,10 @@ import { styler } from '../../utils/styler';
 import { isDefined, isPageable, triggerFn } from '@utils/utils';
 import { registerProps } from './pagination.props';
 import { switchClass } from '@utils/dom';
+import { getVariableCategory, getVariableName, isVariablePaginated } from '../../utils/data-utils';
+import { getOrderByExpr, invokeEventHandler } from '../../utils/widget-utils';
+import { getWatchIdentifier } from '../../utils/init-widget';
+import { $watch } from '@utils/watcher';
 
 declare const _;
 
@@ -47,7 +51,7 @@ export class PaginationComponent extends BaseComponent {
     navigationsize;
     showrecordcount;
 
-    public navcontrols = 'Basic';
+    navcontrols = 'Basic';
     navigation;
 
     navigationalign;
@@ -56,13 +60,12 @@ export class PaginationComponent extends BaseComponent {
     forceellipses;
     directionlinks;
 
-
-    public navigationClass;
-    public dn = {
+    navigationClass;
+    dn = {
         currentPage: 1
     };
 
-    public appLocale = {
+    appLocale = {
         'LABEL_FIRST': 'First',
         'LABEL_PREVIOUS': 'Previous',
         'LABEL_NEXT': 'Next',
@@ -70,27 +73,32 @@ export class PaginationComponent extends BaseComponent {
         'LABEL_TOTAL_RECORDS': 'Total records'
     };
 
-    public pageCount = 0;
-    public isDisableNext = true;
-    public isDisablePrevious = true;
-    public isDisableFirst = true;
-    public isDisableLast = true;
-    public dataSize;
-    public prevshowrecordcount;
-    public isDisableCount;
-    public firstRow;
-    public result;
-    public __fullData;
+    pageCount = 0;
+    isDisableNext = true;
+    isDisablePrevious = true;
+    isDisableFirst = true;
+    isDisableLast = true;
+    isDisableCurrent;
+    dataSize;
+    prevshowrecordcount;
+    isDisableCount;
+    firstRow;
+    result;
+    __fullData;
+    dataset;
+    variable;
+    pagingOptions;
+    isBoundToFilter;
+    filterFields;
+    sortOptions;
+    binddataset;
+    widgetName;
+    variableName;
 
-    private _dataset;
-
-    get dataset() {
-        return this._dataset;
-    }
-
-    set dataset(val) {
-        this._dataset = val;
-        this.setPagingValues(val);
+    setResult(result) {
+        // TODO: Emit event only if result is changed
+        this.result = result;
+        this.resultEmitter.emit(this.result);
     }
 
     // Update navigationClass based on navigation and navigationSize props
@@ -130,11 +138,11 @@ export class PaginationComponent extends BaseComponent {
             this.dn.currentPage = currentPage || this.dn.currentPage;
             this.calculatePagingValues();
         }
-        // this.maxResultsEmitter.emit(this.maxResults);
+        this.maxResultsEmitter.emit(this.maxResults);
     }
 
     /*Function to check the dataSize and manipulate the navigator accordingly.*/
-    checkDataSize(dataSize, numberOfElements, size) {
+    checkDataSize(dataSize, numberOfElements?, size?) {
         /*If the dataSize is -1 or Integer.MAX_VALUE( which is 2147483647), then the total number of records is not known.
          * Hence,
          * 1. Hide the 'Total Record Count'.
@@ -155,20 +163,24 @@ export class PaginationComponent extends BaseComponent {
     }
 
     /*Function to disable navigation based on the current and total pages.*/
-    disableNavigation = function () {
+    disableNavigation() {
         const isCurrentPageFirst = (this.dn.currentPage === 1),
             isCurrentPageLast = (this.dn.currentPage === this.pageCount);
         this.isDisableFirst = this.isDisablePrevious = isCurrentPageFirst;
         this.isDisableNext = this.isDisableLast = isCurrentPageLast;
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
-    };
+    }
 
     /*Function to check if the variable bound to the data-navigator has paging.*/
-    isVariableHasPaging = function () {
+    isVariableHasPaging() {
         const dataSet = this.dataset;
 
-        return (_.isObject(dataSet) && isPageable(dataSet));
-    };
+        if (isVariablePaginated(this.variable)) {
+            return true;
+        }
+
+        return (_.isObject(dataSet) && (dataSet.pagingOptions || isPageable(dataSet)));
+    }
 
     // Set the result for client side pagination
     setNonPageableData(newVal) {
@@ -177,31 +189,94 @@ export class PaginationComponent extends BaseComponent {
             currentPage,
             startIndex;
         dataSize = _.isArray(newVal) ? newVal.length : (newVal.data ? newVal.data.length : _.isEmpty(newVal) ? 0 : 1);
-        maxResults = this.maxResults || dataSize;
+        maxResults = (this.pagingOptions && this.pagingOptions.maxResults) || dataSize;
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
-        currentPage = this.dn.currentPage || 1;
+
+        if (getVariableCategory(this.variable) === 'wm.Variable') {
+            currentPage = this.dn.currentPage || 1;
+        } else {
+            currentPage = 1;
+        }
 
         this.setDefaultPagingValues(dataSize, maxResults, currentPage);
         this.disableNavigation();
 
         startIndex = (this.dn.currentPage - 1) * this.maxResults;
-        this.result = _.isArray(newVal) ? newVal.slice(startIndex, startIndex + this.maxResults) : newVal;
-        this.resultEmitter.emit(this.result);
+        this.setResult(_.isArray(newVal) ? newVal.slice(startIndex, startIndex + this.maxResults) : newVal);
     }
 
     /*Function to set the values needed for pagination*/
-    setPagingValues = function (newVal) {
+    private setPagingValues(newVal) {
+        let dataSize,
+            maxResults,
+            currentPage,
+            variable;
+        let variableOptions: any = {};
         // Store the data in __fullData. This is used for client side searching witvah out modifying the actual dataset.
         this.__fullData = newVal;
-        /*Set the default value of the 'result' property to the newVal so that the widgets bound to the data-navigator can have the dataSet set properly.*/
-        // this.result = newVal;
-        // this.resultEmitter.emit(newVal);
+        this.isBoundToFilter = undefined;
         /*Check for sanity*/
+        if (this.binddataset) {
 
-        if (newVal && !_.isString(newVal)) {
-            this.setNonPageableData(newVal);
+            if (newVal) {
+                if (newVal.isBoundToFilter && newVal.widgetName) {
+                    this.isBoundToFilter = true;
+                    this.widgetName = newVal.widgetName;
+                } else if (newVal.variableName) {
+                    this.variableName = newVal.variableName;
+                    this.variable = this.parent[this.variableName];
+                }
+            }
+
+            variable        = this.variable || {};
+            variableOptions = variable._options || {};
+            /*Check for number of elements in the data set*/
+            if (newVal) {
+                if (this.isVariableHasPaging()) {
+                    /*If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.*/
+                    this.filterFields = variableOptions.filterFields || {};
+                    this.sortOptions = variableOptions.orderBy || (_.isArray(newVal.sort) ? getOrderByExpr(newVal.sort) : '');
+                    if (_.isObject(newVal) && isPageable(newVal)) {
+                        dataSize = newVal.totalElements;
+                        maxResults = newVal.size;
+                        if (newVal.numberOfElements > 0) {
+                            if (isDefined(newVal.number)) { // number is page number received from backend
+                                this.dn.currentPage = newVal.number + 1;
+                            }
+                            currentPage = this.dn.currentPage || 1;
+                        } else {
+                            currentPage = 1;
+                        }
+                        /* Sending pageCount undefined to calculate it again for query.*/
+                        this.setDefaultPagingValues(dataSize, maxResults, currentPage);
+                        this.disableNavigation();
+                        this.checkDataSize(dataSize, newVal.numberOfElements, newVal.size);
+                    }
+                    /*Re-compute the paging values in the following cases.
+                    Data corresponding to the table associated with the live-variable changes.*/
+                    if (newVal.pagingOptions) {
+                        dataSize = newVal.pagingOptions.dataSize;
+
+                        maxResults = newVal.pagingOptions.maxResults;
+                        currentPage = newVal.pagingOptions.currentPage;
+                        this.setDefaultPagingValues(dataSize, maxResults, currentPage);
+                        this.disableNavigation();
+                        this.checkDataSize(dataSize);
+                    }
+                    this.setResult(newVal);
+                } else if (!_.isString(newVal)) {
+                    this.setNonPageableData(newVal);
+                }
+            } else {
+                this.setResult(newVal);
+                this.resetPageNavigation();
+            }
+        } else {
+            if (newVal && !_.isString(newVal)) {
+                this.setNonPageableData(newVal);
+            }
         }
-    };
+    }
 
     /*Function to check if the current page is the first page*/
     isFirstPage() {
@@ -224,14 +299,14 @@ export class PaginationComponent extends BaseComponent {
     }
 
     /*Function to navigate to the first page*/
-    goToFirstPage = function (isRefresh, event, callback) {
+    goToFirstPage(isRefresh, event, callback) {
         if (!this.isFirstPage()) {
             this.dn.currentPage = 1;
             this.goToPage(event, callback);
         } else if (isRefresh) {
             this.goToPage(event, callback);
         }
-    };
+    }
 
     /*Function to navigate to the current page*/
     goToPage(event?, callback?) {
@@ -250,17 +325,62 @@ export class PaginationComponent extends BaseComponent {
     getPageData(event, callback) {
         let data,
             startIndex;
-        startIndex = (this.dn.currentPage - 1) * this.maxResults;
-        data = _.isArray(this.__fullData) ? this.__fullData.slice(startIndex, startIndex + this.maxResults) : this.__fullData;
-        this.result = data;
-        this.resultEmitter.emit(data);
-        this.onPageDataReady(event, data, callback);
+        // TODO: Handle Filter
+
+        if (this.isVariableHasPaging()) {
+            if (getVariableCategory(this.variable) === 'wm.LiveVariable') {
+                // Invoke the function to get the data corresponding to the specific page
+                this.variable.update({
+                    'page': this.dn.currentPage,
+                    'filterFields': this.filterFields,
+                    'orderBy': this.sortOptions,
+                    'matchMode': 'anywhere'
+                }, (response, propertiesMap, pagingOptions) => {
+                    // Update the 'result' in the scope so that widgets bound to the data-navigator are updated
+                    this.setResult({
+                        'data': response,
+                        'propertiesMap': propertiesMap,
+                        'pagingOptions': pagingOptions,
+                        'filterFields': this.filterFields,
+                        'orderBy': this.sortOptions,
+                        'variableName': this.variableName
+                    });
+                    // Update the paging options and invoke the function to re-calculate the paging values.
+                    this.dataSize = pagingOptions.dataSize;
+                    this.maxResults = pagingOptions.maxResults;
+                    this.calculatePagingValues();
+                    // Invoke the 'onPageDataReady' function
+                    this.onPageDataReady(event, response, callback);
+                }, (error) => {
+                    // If error is undefined, do not show any message as this may be discarded request
+                    if (error) {
+                        // TODO: Handle Error
+                        // wmToaster.show('error', 'ERROR', 'Unable to get data of page -' + this.dn.currentPage + ':' + error);
+                    }
+                });
+            } else if (isPageable(this.dataset)) {
+                /*Invoke the function to get the data corresponding to the specific page.*/
+                this.variable.update({
+                    'page': this.dn.currentPage,
+                    'filterFields': this.filterFields,
+                    'orderBy': this.sortOptions,
+                    'matchMode': 'anywhere'
+                }, (response) => {
+                    this.setResult(response);
+                    this.onPageDataReady(event, response, callback);
+                });
+            }
+        } else {
+            startIndex = (this.dn.currentPage - 1) * this.maxResults;
+            data = _.isArray(this.__fullData) ? this.__fullData.slice(startIndex, startIndex + this.maxResults) : this.__fullData;
+            this.setResult(data);
+            this.onPageDataReady(event, data, callback);
+        }
     }
 
     invokeSetRecord(event, data) {
-        /*Trigger the event handler if exists.
-         * Check in the dataNavigator scope and also in the parent (i.e., grid/live-list) scope.*/
-        // this.onSetrecord({$event: event, $scope: this, $data: data, $index: this.dn.currentPage});
+        // Trigger the event handler if exists.
+        invokeEventHandler(this, 'setrecord', {$event: event, $data: data, $index: this.dn.currentPage});
     }
 
     /*Function to validate the page input.
@@ -293,18 +413,16 @@ export class PaginationComponent extends BaseComponent {
     }
 
     pageChanged(event: any) {
-        // var callbackFn = $scope.$parent._onPaginationchange || $scope.$parent.onPaginationchange || $scope.onPaginationchange;
         this.dn.currentPage = event && event.page;
         this.goToPage();
-        // callbackFn({$event: undefined, $scope: this, $index: $scope.dn.currentPage});
+        invokeEventHandler(this, 'paginationchange', {$event: undefined, $index: this.dn.currentPage});
     }
 
     /*Function to navigate to the respective pages.*/
     navigatePage(index, event, isRefresh, callback) {
-        // var callbackFn = $scope.$parent._onPaginationchange || $scope.$parent.onPaginationchange || $scope.onPaginationchange;
-        // callbackFn({$event: undefined, $scope: this, $index: $scope.dn.currentPage});
+        invokeEventHandler(this, 'paginationchange', {$event: undefined, $index: this.dn.currentPage});
 
-        /*Convert the current page to a valid page number.*/
+        // Convert the current page to a valid page number.
         this.dn.currentPage = +this.dn.currentPage;
 
         switch (index) {
@@ -338,8 +456,17 @@ export class PaginationComponent extends BaseComponent {
         this.goToPage(event, callback);
     }
 
+    setBindDataSet(binddataset, parent) {
+        this.binddataset = binddataset;
+        this.destroy$.subscribe($watch(binddataset, parent, {}, nv => this.widget.dataset = nv, getWatchIdentifier(this.widgetId, 'dataset')));
+        this.variable = parent.Variables[getVariableName(binddataset)];
+    }
+
     onPropertyChange(key: string, nv, ov) {
         switch (key) {
+            case 'dataset':
+                this.setPagingValues(nv);
+                break;
             case 'navigation':
                 if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
                     this.navigation = 'Classic';

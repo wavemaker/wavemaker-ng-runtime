@@ -1,4 +1,4 @@
-import {Component, ContentChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef, forwardRef} from '@angular/core';
+import {Component, ContentChild, AfterContentInit, ElementRef, Injector, ChangeDetectorRef} from '@angular/core';
 import {styler} from '../../utils/styler';
 import {BaseComponent} from '../base/base.component';
 import {registerProps} from './live-table.props';
@@ -12,21 +12,12 @@ declare var $: any;
 
 registerProps();
 
-export abstract class LiveTableParent {
-    abstract updateRow(row, eventName);
-
-    abstract addNewRow();
-
-    abstract deleteRow(row, callBackFn?);
-}
-
 const DEFAULT_CLS = 'app-livegrid';
 const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmLiveTable]',
-    templateUrl: './live-table.component.html',
-    providers: [{provide: LiveTableParent, useExisting: forwardRef(() => LiveTableComponent)}]
+    templateUrl: './live-table.component.html'
 })
 export class LiveTableComponent extends BaseComponent implements AfterContentInit {
 
@@ -143,6 +134,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
 
     ngAfterContentInit() {
         this.form._liveTableParent = this;
+        this.table._liveTableParent = this;
         this.table.datagridElement.datatable('option', this.tableOptions);
 
         this.table.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));

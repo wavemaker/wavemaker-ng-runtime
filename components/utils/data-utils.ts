@@ -14,8 +14,18 @@ export function getVariableName(binddataset: string) {
     return variableName;
 }
 
-function getVariableCategory(variable) {
-    return variable.category;
+export function isVariablePaginated(variable) {
+    const varCategory = getVariableCategory(variable);
+
+    if (varCategory === 'wm.LiveVariable' || (varCategory === 'wm.ServiceVariable' && variable.controller === 'QueryExecution')) {
+        return true;
+    }
+
+    return false;
+}
+
+export function getVariableCategory(variable) {
+    return variable && variable.category;
 }
 
 function onSuccess(response, res, rej) {
@@ -42,7 +52,7 @@ export function performDataOperation(variable, requestData, options): Promise<an
                     fn = 'insertRecord';
                     break;
                 case 'delete':
-                    fn = 'delete';
+                    fn = 'deleteRecord';
                     break;
             }
             variable[fn](requestData, response => onSuccess(response, res, rej), rej);
