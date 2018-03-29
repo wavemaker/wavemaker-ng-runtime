@@ -15,6 +15,7 @@ export default {
         '@angular/forms': 'ng.forms',
         '@angular/router': 'ng.router',
         '@utils/dom': 'wm.utils',
+        '@utils/currency-constants': 'wm.utils',
         '@utils/utils': 'wm.utils',
         '@utils/styler': 'wm.utils',
         '@utils/watcher': 'wm.utils',

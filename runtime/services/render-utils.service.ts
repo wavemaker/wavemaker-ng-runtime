@@ -23,7 +23,7 @@ import { I18nService } from './i18n.service';
 import { getValidJSON } from '@utils/utils';
 
 const scriptCache = new Map<string, Function>();
-const noop = () => {};
+const noop = (...args) => {};
 
 @NgModule({
     declarations: [PartialContainerDirective, PrefabDirective],

@@ -1,8 +1,8 @@
 import { Component, Injector, ElementRef, ChangeDetectorRef, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
-import { CONSTANTS_CURRENCY } from './currency.constants';
 import { registerProps } from './currency.props';
 import { styler } from '../../utils/styler';
+import { CONSTANTS_CURRENCY } from '@utils/currency-constants';
 
 const DEFAULT_CLS = 'input-group app-currency';
 const WIDGET_CONFIG = {widgetType: 'wm-currency', hostClass: DEFAULT_CLS};
