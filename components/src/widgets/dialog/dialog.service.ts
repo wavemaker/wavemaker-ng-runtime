@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, TemplateRef } from '@angular/core';
 import { invokeEventHandler } from '../../utils/widget-utils';
+import { BsModalService } from 'ngx-bootstrap';
 
 declare const $;
 
@@ -53,4 +54,23 @@ export class DialogService {
         }
         this.dialogInstances[dialogId].close();
     }
+
+    // Opens the dialog from the template reference provided
+    openDialogFromTemplate(component, dialogId: string, template: TemplateRef<any>, dialogOptions?) {
+        if (this.dialogInstances[dialogId] || !dialogId || !template) {
+            return;
+        }
+        this.dialogInstances[dialogId] = component;
+        component.bsModalRef = this.modalService.show(template, dialogOptions);
+        if (!component.close) {
+            component.close = () => {
+                component.bsModalRef.hide();
+                if (dialogOptions.onClose) {
+                    dialogOptions.onClose();
+                }
+            };
+        }
+    }
+
+    constructor(private modalService: BsModalService) {}
 }
