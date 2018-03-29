@@ -159,4 +159,9 @@ end=`date +%s`
 
 runtime=$((end-start))
 
-echo -e "${Purple}Execution time: ${runtime}sec${White}"
+echo -e "${Purple}Execution time: ${runtime}sec${White}\n"
+
+cp ./dist/bundles/wmapp/scripts/* ../wavemaker-studio-editor/src/main/webapp/wmapp/scripts/
+echo -e "${Green}Copied files to studio-editor ${White}\n"
+
+
