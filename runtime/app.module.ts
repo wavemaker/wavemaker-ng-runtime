@@ -6,12 +6,12 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { PipeProvider } from './services/pipe-provider.service';
-import { WmComponentsModule } from '@components/components.module';
+import { WmComponentsModule } from '@wm/components';
 import { RenderUtilsService } from './services/render-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 import { HttpClientModule } from '@angular/common/http';
 
-import { VariablesModule } from '@variables/variables.module';
+import { VariablesModule } from '@wm/variables';
 
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
@@ -22,7 +22,7 @@ import { PrefabManagerService } from './services/prefab-manager.service';
 import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { SecurityService } from './services/security.service';
-import { HttpServiceModule } from '@http-service/http-service.module';
+import { HttpServiceModule } from '@wm/http';
 import { NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 
 const resolve = {

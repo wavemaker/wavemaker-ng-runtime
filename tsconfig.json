@@ -3,12 +3,12 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@utils/*": [ "utils/*" ],
-            "@components/*": [ "components/*" ],
-            "@variables/*": [ "variables/*" ],
-            "@http-service/*": [ "http-service/*" ],
-            "@runtime/*": ["runtime/*"],
-            "@transpiler/*": ["transpiler/*"]
+            "@wm/utils": [ "utils" ],
+            "@wm/components": [ "components" ],
+            "@wm/variables": [ "variables" ],
+            "@wm/http": [ "http-service" ],
+            "@wm/runtime": ["runtime"],
+            "@wm/transpiler": ["transpiler"]
         },
         "outDir": "./dist/out-tsc",
         "sourceMap": false,

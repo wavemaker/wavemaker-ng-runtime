@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getSessionStorageItem, replace, setSessionStorageItem } from '@utils/utils';
+import { getSessionStorageItem, replace, setSessionStorageItem } from '@wm/utils';
 import { HttpClient } from '@angular/common/http';
 
 let localeData: any;

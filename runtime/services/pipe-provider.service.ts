@@ -1,4 +1,4 @@
-import { Injectable, Compiler, Injector } from '@angular/core';
+import { Compiler, Injectable, Injector } from '@angular/core';
 
 @Injectable()
 export class PipeProvider {

@@ -36,7 +36,7 @@
                 "../../../node_modules/jquery-ui/ui/plugin.js",
                 "../../../node_modules/jquery-ui/ui/widgets/mouse.js",
                 "../../../node_modules/jquery-ui/ui/widgets/resizable.js",
-                "../../../components/widgets/table/datatable.js"
+                "../../../components/src/widgets/table/datatable.js"
             ],
             "environmentSource": "environments/environment.ts",
             "environments": {

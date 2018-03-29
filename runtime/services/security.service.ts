@@ -1,8 +1,8 @@
-declare const _WM_APP_PROPERTIES, _;
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router, ActivatedRoute } from '@angular/router';
-import { triggerFn } from '@utils/utils';
+import { ActivatedRoute, Router } from '@angular/router';
+
+declare const _WM_APP_PROPERTIES, _;
 
 @Injectable()
 export class SecurityService {

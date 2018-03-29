@@ -1,6 +1,6 @@
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { Injectable } from '@angular/core';
-import { stringStartsWith, loadStyleSheets, loadScripts } from '@utils/utils';
+import { stringStartsWith, loadStyleSheets, loadScripts } from '@wm/utils';
 import { RenderUtilsService } from './render-utils.service';
 
 declare const _;

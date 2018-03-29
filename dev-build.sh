@@ -83,7 +83,7 @@ echo -e "${Green}Built transpiler ${White}\n"
 
 ########## components
 echo -e "${Cyan}Building components build task ${White}"
-$ROLLUP -c ./components/rollup.wm-components.build.config.js --silent
+$ROLLUP -c ./components/rollup.wm-components.build-task.config.js --silent
 if [ "$?" != "0" ]
 then
     echo -e "${Red}Error in building components build task ${White}\n"
@@ -134,7 +134,7 @@ echo -e "${Green}Built runtime ${White}\n"
 echo -e "${Cyan}Bundling wm-loader ${White}"
 $UGLIFYJS ./dist/tmp/wm-utils.umd.js \
     ./dist/tmp/wm-transpiler.umd.js \
-    ./dist/tmp/wm-components.build.umd.js \
+    ./dist/tmp/wm-components.build-task.umd.js \
     ./dist/tmp/wm-components.umd.js \
     ./dist/tmp/http-service.umd.js \
     ./dist/tmp/wm-variables.umd.js \

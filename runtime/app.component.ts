@@ -1,8 +1,6 @@
-import { Component, DoCheck, ApplicationRef } from '@angular/core';
+import { ApplicationRef, Component, DoCheck } from '@angular/core';
 import { PipeProvider } from './services/pipe-provider.service';
-import { setPipeProvider } from '@utils/expression-parser';
-import { $invokeWatchers, setAppRef } from '@utils/watcher';
-import { _WM_APP_PROJECT } from '@utils/utils';
+import { $invokeWatchers, _WM_APP_PROJECT, setAppRef, setPipeProvider } from '@wm/utils';
 
 @Component({
     selector: 'div#wm-app-content',

@@ -1,0 +1,22 @@
+export default {
+    '@angular/animations': 'ng.animations',
+    '@angular/common': 'ng.common',
+    '@angular/common/http': 'ng.common.http',
+    '@angular/compiler': 'ng.compiler',
+    '@angular/core': 'ng.core',
+    '@angular/forms': 'ng.forms',
+    '@angular/platform-browser-dynamic': 'ng.platformBrowserDynamic',
+    '@angular/platform-browser': 'ng.platformBrowser',
+    '@angular/platform-browser/animations': 'ng.platformBrowser.animations',
+    '@angular/router': 'ng.router',
+    '@wm/utils': 'wm.utils',
+    '@wm/transpiler': 'wm.transpiler',
+    '@wm/components': 'wm.components',
+    '@wm/runtime': 'wm.runtime',
+    '@wm/variables': 'wm.variables',
+    '@wm/http': 'wm.http',
+    'ngx-bootstrap': 'ngxBootstrap',
+    'ngx-bootstrap/pagination': 'ngxBootstrap',
+    'ngx-color-picker': 'zef.ngxColorPicker',
+    'rxjs/Subject': 'Rx'
+};

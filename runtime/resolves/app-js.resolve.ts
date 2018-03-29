@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Resolve } from '@angular/router';
-import * as Utils from '@utils/utils';
+import * as Utils from '@wm/utils';
 import { App } from '../services/app.service';
 
 let appJsLoaded = false;

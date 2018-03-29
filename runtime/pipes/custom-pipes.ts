@@ -1,17 +1,16 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { CONSTANTS_CURRENCY } from '@utils/currency-constants';
-import { isDefined } from '@utils/utils';
+import { CONSTANTS_CURRENCY, isDefined } from '@wm/utils';
 
 declare const moment, _, $;
 
 const getEpochValue = data => {
     let epoch;
-    //For data in form of string number ('123'), convert to number (123). And don't parse date objects.
+    // For data in form of string number ('123'), convert to number (123). And don't parse date objects.
     if (!_.isDate(data) && !isNaN(data)) {
         data = parseInt(data, 10);
     }
-    //get the timestamp value. If data is time string, append date string to the time value
+    // get the timestamp value. If data is time string, append date string to the time value
     epoch = moment(data).valueOf() || moment(new Date().toDateString() + ' ' + data).valueOf();
     return epoch;
 };
@@ -22,7 +21,7 @@ const getEpochValue = data => {
 export class ToDatePipe implements PipeTransform {
     transform(data: any, format: any) {
         let timestamp;
-        //'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
+        // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
         if (data === 'null') {
             return '';
         }
@@ -60,7 +59,7 @@ export class ToNumberPipe implements PipeTransform {
 })
 export class ToCurrencyPipe implements PipeTransform {
     transform(data, currencySymbol, fracSize) {
-        let _currencySymbol = (CONSTANTS_CURRENCY[currencySymbol] || {}).symbol || currencySymbol || '',
+        const _currencySymbol = (CONSTANTS_CURRENCY[currencySymbol] || {}).symbol || currencySymbol || '',
             _val = new ToNumberPipe(this.decimalPipe).transform(data, fracSize);
         return _val ? _currencySymbol + _val : '';
     }
@@ -103,7 +102,7 @@ export class TimeFromNowPipe implements PipeTransform {
 @Pipe({
     name: 'numberToString'
 })
-export class NumberToStringPipe extends ToNumberPipe {}
+export class NumberToStringPipe extends ToNumberPipe implements PipeTransform {}
 
 @Pipe({
     name: 'stringToNumber'

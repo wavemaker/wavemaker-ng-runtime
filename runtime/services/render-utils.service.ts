@@ -1,18 +1,9 @@
-import {
-    Compiler,
-    Component,
-    CUSTOM_ELEMENTS_SCHEMA,
-    Injectable,
-    Injector,
-    NgModule,
-    ViewContainerRef
-} from '@angular/core';
-
-import { WmComponentsModule } from '@components/components.module';
+import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, ViewContainerRef } from '@angular/core';
+import { WmComponentsModule } from '@wm/components';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
-import { transpile } from '@transpiler/build';
-import { VariablesService } from '@variables/service/variables.service';
+import { transpile } from '@wm/transpiler';
+import { VariablesService } from '@wm/variables';
 import { App } from './app.service';
 import { ActivatedRoute } from '@angular/router';
 import { AppResourceManagerService } from './app-resource-manager.service';
@@ -20,7 +11,7 @@ import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { CommonModule } from '@angular/common';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
 import { I18nService } from './i18n.service';
-import { getValidJSON } from '@utils/utils';
+import { getValidJSON } from '@wm/utils';
 
 const scriptCache = new Map<string, Function>();
 const noop = (...args) => {};
