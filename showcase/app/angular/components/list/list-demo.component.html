@@ -1,0 +1,61 @@
+<div class="col-md-9">
+    <div wmList listclass="list-group" disableitem.bind="(index % 2 === 0 ? false : true)" itemclass.bind="'list-group-item ' + (index % 2 === 0 ? 'bg-success' : 'bg-danger')"
+         template="true" itemsperrow="xs-1 sm-1 md-1 lg-1" class="media-list"
+         dataset.bind="dataset" navigation.bind="naviagtionType">
+        <ng-template #listTemplate let-item="item" let-index="index">
+            <div wmContainer class="media-left" name="container1">
+                <img wmPicture
+                     class="media-object" shape="circle"
+                     width="32pt" height="32pt" picturesource.bind="item.picurl">
+            </div>
+            <div wmContainer class="media-body" padding="unset unset unset 1.25em" name="container2">
+                <label wmLabel caption.bind="item.firstname" class="p media-heading"
+                       fontsize="1.143" fontunit="em"
+                ></label>
+                <label wmLabel caption.bind="item.lastname" class="p text-muted"
+                ></label>
+            </div>
+        </ng-template>
+    </div>
+</div>
+<div class="col-md-3 properties">
+    <h4 class="property-header">Properties</h4>
+    <hr>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            title
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="title" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            subheading
+        </div>
+        <div class="property-control col-md-8">
+            <input type="text" [(ngModel)]="subheading" />
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Show
+        </div>
+        <div class="property-control col-md-8">
+            <input type="checkbox" [(ngModel)]="show" value="true"/>
+        </div>
+    </div>
+    <div class="property row">
+        <div class="property-text col-md-4">
+            Navigation Type
+        </div>
+        <div class="property-control col-md-8">
+            <select [(ngModel)]="naviagtionType">
+                <option value=""></option>
+                <option *ngFor="let naviagtionType of paginationList" [value]="naviagtionType">{{naviagtionType}}</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+

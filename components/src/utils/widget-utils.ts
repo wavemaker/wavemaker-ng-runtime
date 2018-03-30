@@ -199,3 +199,14 @@ export const getBackGroundImageUrl = (urlString) => {
     }
     return 'url(' + getImageUrl(urlString) + ')';
 };
+
+export const NAVIGATION_TYPE = {
+    'ADVANCED' : 'Advanced',
+    'BASIC'    : 'Basic',
+    'CLASSIC'  : 'Classic',
+    'INLINE'   : 'Inline',
+    'NONE'     : 'None',
+    'ONDEMAND' : 'On-Demand',
+    'PAGER'    : 'Pager',
+    'SCROLL'   : 'Scroll'
+};
