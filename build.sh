@@ -76,15 +76,6 @@ then
     fi
     echo -e "${Green}Built tslib\n"
 
-    echo -e "${Cyan}Building @angular/common/http ${White}"
-    $ROLLUP -c ./config/rollup.angular.common-http.config.js --silent
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in building @angular/common/http"
-        exit 1
-    fi
-    echo -e "${Green}Built common-http\n"
-
     echo -e "${Cyan}Building ngx-bootstrap ${White}"
     $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015
     $ROLLUP -c ./config/rollup.ngx-bootstrap.config.js --silent
@@ -119,7 +110,7 @@ then
         ./node_modules/@angular/platform-browser/bundles/platform-browser.umd.js \
         ./node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js \
         ./node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js \
-        ./dist/tmp/common-http.umd.js \
+        ./node_modules/@angular/common/bundles/common-http.umd.js \
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/ngx-bootstrap.umd.js \
