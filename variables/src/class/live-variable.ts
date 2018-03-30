@@ -7,7 +7,9 @@ export class LiveVariable extends ServiceVariable {
     constructor(variable: any) {
         super(variable);
         Object.assign(this, variable);
-        manager = manager || VariableManagerFactory.get(this.category);
+        if (!manager && this.constructor === LiveVariable) {
+            manager = VariableManagerFactory.get(this.category);
+        }
     }
 
     listRecords(options?, success?, error?) {

@@ -16,7 +16,7 @@ export class ModelVariable {
     constructor(variable: any) {
         Object.assign(this, variable);
 
-        if (!manager) {
+        if (!manager && this.constructor === ModelVariable) {
             manager = VariableManagerFactory.get(this.category);
         }
     }

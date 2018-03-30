@@ -26,7 +26,7 @@ export class ServiceVariable extends ModelVariable {
         super(variable);
         Object.assign(this, variable);
 
-        if (!manager) {
+        if (!manager && this.constructor === ServiceVariable) {
             manager = VariableManagerFactory.get(variable.category);
         }
     }

@@ -9,7 +9,9 @@ export class NavigationVariable extends ModelVariable {
     constructor(variable: any) {
         super(variable);
         Object.assign(this, variable);
-        manager = manager || VariableManagerFactory.get(this.category);
+        if (!manager && this.constructor === NavigationVariable) {
+            manager = VariableManagerFactory.get(this.category);
+        }
     }
 
     isAction() {
