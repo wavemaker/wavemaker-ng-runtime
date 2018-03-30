@@ -27,6 +27,7 @@ export * from './widgets/html/html.build';
 export * from './widgets/icon/icon.build';
 export * from './widgets/iframe/iframe.build';
 export * from './widgets/label/label.build';
+export * from './widgets/list/list.build';
 export * from './widgets/layout-grid/layout-grid-column/layout-grid-column.build';
 export * from './widgets/layout-grid/layout-grid-row/layout-grid-row.build';
 export * from './widgets/layout-grid/layout-grid.build';

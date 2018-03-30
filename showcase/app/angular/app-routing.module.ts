@@ -18,6 +18,7 @@ import { HomeComponent } from './components/home/home.component';
             {path: 'switch', loadChildren: './components/switch/switch-demo.module#SwitchDemoModule', pathMatch: 'full'},
             {path: 'pagination', loadChildren: './components/pagination/pagination-demo.module#PaginationDemoModule', pathMatch: 'full'},
             {path: 'table', loadChildren: './components/table/table-demo.module#TableDemoModule'},
+            {path: 'list', loadChildren: './components/list/list-demo.module#ListDemoModule'},
             {path: 'form', loadChildren: './components/form/form-demo.module#FormDemoModule'},
             {path: 'checkbox', loadChildren: './components/checkbox/checkbox-demo.module#CheckboxDemoModule', pathMatch: 'full'},
             {path: 'video', loadChildren: './components/video/video-demo.module#VideoDemoModule', pathMatch: 'full'},
