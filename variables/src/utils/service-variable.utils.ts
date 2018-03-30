@@ -2,6 +2,7 @@ import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTA
 import { getEvaluatedOrderBy, httpService, initiateCallback, isFileUploadSupported, metadataService, simulateFileDownload } from './variables.utils';
 import { $queue } from './inflight-queue';
 import { extractType, findValueOf, formatDate, getBlob, getClonedObject, getValidJSON, isDateTimeType, isDefined, triggerFn, xmlToJson } from '@wm/utils';
+import { performAuthorization, getAccessToken, removeAccessToken } from './oAuth.utils';
 
 declare const _, window;
 
@@ -37,9 +38,7 @@ const getMethodInfo = (variable, inputFields, options) => {
                     param.sampleValue = getEvaluatedOrderBy(variable.orderBy, options.orderBy) || param.sampleValue;
                 }
             } else if (param.name === 'access_token' && isOAuthTypeService) {
-                // TODO: oauthProviderService integration
-                // param.sampleValue = oAuthProviderService.getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY]);
-                param.sampleValue = 'TEST_VAL' + securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY];
+                param.sampleValue = getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], null);
             }
         });
     }
@@ -152,9 +151,7 @@ const constructRequestParams = (variable, operationInfo, inputFields) => {
     if (securityDefnObj) {
         switch (securityDefnObj.type) {
             case VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2:
-                // TODO[VIBHU]: oAuthProviderService migration to be done.
-                // accessToken = oAuthProviderService.getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY]);
-                accessToken = 'TEMP_ACCESS_TOKEN_' + securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY];
+                accessToken = getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], null);
                 if (accessToken) {
                     headers[VARIABLE_CONSTANTS.REST_SERVICE.AUTH_HDR_KEY] = VARIABLE_CONSTANTS.REST_SERVICE.PREFIX.AUTH_HDR_VAL.OAUTH + ' ' + accessToken;
                 } else {
@@ -427,7 +424,7 @@ const processErrorResponse = (variable, errMsg, errorCB, xhrObj?, skipNotificati
         securityDefnObj = _.get(methodInfo, 'securityDefinitions.0');
     if (_.get(methodInfo.securityDefinitions, '0.type') === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2
         && _.includes([VARIABLE_CONSTANTS.HTTP_STATUS_CODE.UNAUTHORIZED, VARIABLE_CONSTANTS.HTTP_STATUS_CODE.FORBIDDEN], _.get(xhrObj, 'status'))) {
-        // oAuthProviderService.removeAccessToken(securityDefnObj[OAUTH_PROVIDER_KEY]);
+        removeAccessToken(securityDefnObj['x-WM-PROVIDER_ID']);
     }
     /* trigger error callback */
     triggerFn(errorCB, errMsg);
@@ -444,7 +441,7 @@ const processErrorResponse = (variable, errMsg, errorCB, xhrObj?, skipNotificati
 
 const handleRequestMetaError = (info, variable, errorCB, options) => {
     if (info.error.type === VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN) {
-        // oAuthProviderService.performAuthorization(undefined, info.securityDefnObj[OAUTH_PROVIDER_KEY], getDataInRun.bind(undefined, variable, options, success, errorCB));
+        performAuthorization(undefined, info.securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], invoke.bind(undefined, variable, options, null, errorCB), null);
         processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, true, true);
         return;
     }

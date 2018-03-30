@@ -6,13 +6,14 @@ import { MetadataService } from './service/metadata-service/metadata.service';
 import { HttpServiceModule } from '@wm/http';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { OAuthModule } from '@wm/oAuth';
 @NgModule({
     imports: [
         CommonModule,
         ToastrModule.forRoot(),
         HttpClientModule,
         HttpServiceModule,
+        OAuthModule,
         BrowserAnimationsModule
     ],
     declarations: [],
@@ -27,3 +28,4 @@ export class VariablesModule {}
 
 export * from './service/variables.service';
 export * from './service/metadata-service/metadata.service';
+export * from './utils/variables.utils';

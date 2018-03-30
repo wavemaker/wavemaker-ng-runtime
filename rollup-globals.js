@@ -15,6 +15,7 @@ export default {
     '@wm/runtime': 'wm.runtime',
     '@wm/variables': 'wm.variables',
     '@wm/http': 'wm.http',
+    '@wm/oAuth': 'wm.oAuth',
     'ngx-bootstrap': 'ngxBootstrap',
     'ngx-bootstrap/pagination': 'ngxBootstrap',
     'ngx-color-picker': 'zef.ngxColorPicker',

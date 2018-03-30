@@ -9,6 +9,7 @@ export let httpService;
 export let metadataService;
 export let routerService;
 export let toasterService;
+export let oauthService;
 
 const DOT_EXPR_REX = /^\[("|')[\w\W]*(\1)\]$/,
     internalBoundNodeMap = new Map(),
@@ -92,6 +93,9 @@ export const setDependency = (type: string, ref: any) => {
             break;
         case 'toaster':
             toasterService =  ref;
+            break;
+        case 'oAuth':
+            oauthService =  ref;
             break;
     }
 };

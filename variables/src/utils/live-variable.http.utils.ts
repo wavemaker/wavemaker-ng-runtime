@@ -5,7 +5,7 @@ import { httpService, simulateFileDownload } from './variables.utils';
 
 const isStudioMode = false;
 
-const parseConfig = (serviceParams: any): any => {
+export const parseConfig = (serviceParams: any): any => {
 
     let val, param, config;
     const urlParams = serviceParams.urlParams;

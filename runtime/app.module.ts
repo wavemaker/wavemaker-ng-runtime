@@ -24,6 +24,7 @@ import { I18nResolve } from './resolves/i18n.resolve';
 import { SecurityService } from './services/security.service';
 import { HttpServiceModule } from '@wm/http';
 import { NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
+import { OAuthModule } from '@wm/oAuth';
 
 const resolve = {
     securityConfig: SecurityConfigResolve,
@@ -67,6 +68,7 @@ const routes = [
         ReactiveFormsModule,
         WmComponentsModule,
         VariablesModule,
+        OAuthModule,
         RouterModule,
         HttpClientModule,
         HttpServiceModule,

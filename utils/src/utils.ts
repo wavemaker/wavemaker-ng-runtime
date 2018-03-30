@@ -58,6 +58,16 @@ export function* idMaker(token) {
     }
 }
 
+function isIE11 () {
+    return navigator.appVersion.indexOf('Trident/') > -1;
+}
+function isIE9 () {
+    return navigator.appVersion.indexOf('MSIE 9') > -1;
+}
+
+export const isIE = () => {
+    return isIE9() || isIE11() || navigator.userAgent.indexOf('MSIE') > -1;
+};
 
 /**
  * this method encodes the url and returns the encoded string

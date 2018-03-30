@@ -1,5 +1,6 @@
 export const CONSTANTS = {
     hasCordova: false,
+    isWaveLens: false,
     isStudioMode: false,
     XSRF_COOKIE_NAME: 'wm_xsrf_token'
 };
@@ -271,7 +272,13 @@ export const VARIABLE_URLS = {
         url: '/:service/:dataModelName/procedureExecutor/procedure/execute/:procedureName?page=:page&size=:size&:procedureParams',
             method: 'GET'
     }
-}
+},
+    oauthConfiguration : {
+        getAuthorizationUrl: {
+            url: 'services/oauth2/:providerId/authorizationUrl',
+                method: 'GET'
+        }
+    }
 };
 
 export const $rootScope = {
