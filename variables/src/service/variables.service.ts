@@ -6,6 +6,7 @@ import { MetadataService } from './metadata-service/metadata.service';
 import { ToastrService } from 'ngx-toastr';
 import { VariableFactory } from '../factory/variable.factory';
 import { OAuthService } from '@wm/oAuth';
+import { BaseAction } from '../model/base-action';
 
 @Injectable()
 export class VariablesService {
@@ -36,7 +37,8 @@ export class VariablesService {
         for (const variableName in variablesJson) {
             varInstance = VariableFactory.create(variablesJson[variableName], scope);
             varInstance.init();
-            if (varInstance.isAction()) {
+            // if action type, put it in Actions namespace
+            if (varInstance instanceof BaseAction) {
                 variableInstances.Actions[variableName] = varInstance;
             } else {
                 variableInstances.Variables[variableName] = varInstance;

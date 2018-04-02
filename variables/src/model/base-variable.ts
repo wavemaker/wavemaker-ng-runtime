@@ -10,11 +10,6 @@ export abstract class BaseVariable {
     dataSet: any;
     dataBinding: any;
 
-    // TODO[Vibhu]: to be removed
-    isAction() {
-        return false;
-    }
-
     getData() {
         return VariableManagerFactory.get('Variable').getData(this);
     }
