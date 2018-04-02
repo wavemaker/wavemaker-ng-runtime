@@ -9,6 +9,7 @@ export const registerProps = () => {
                 ['datafield', PROP_STRING_NOTIFY],
                 ['disabled', PROP_BOOLEAN],
                 ['displayfield', PROP_STRING_NOTIFY],
+                ['displayexpression', PROP_STRING_NOTIFY],
                 ['displayname', PROP_STRING],
                 ['hint', PROP_STRING],
                 ['key', PROP_STRING],

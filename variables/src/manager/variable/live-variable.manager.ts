@@ -34,4 +34,16 @@ export class LiveVariableManager extends BaseVariableManager {
     download(variable, options) {
         LVUtils.download(variable, options);
     }
+
+    getRelatedTablePrimaryKeys(variable, columnName) {
+        return LVUtils.getRelatedTablePrimaryKeys(variable, columnName);
+    }
+
+    getRelatedTableData(variable, columnName, options, success, error) {
+        LVUtils.getRelatedTableData(variable, columnName, options, success, error);
+    }
+
+    getDistinctDataByFields(variable, options, success, error) {
+        LVUtils.getDistinctDataByFields(variable, options, success, error);
+    }
 }

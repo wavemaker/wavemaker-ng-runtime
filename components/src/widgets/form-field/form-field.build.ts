@@ -1,5 +1,7 @@
 import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 import { idMaker } from '@wm/utils';
+import { ALLFIELDS } from '../../utils/data-utils';
+import { isDataSetWidget } from '../../utils/widget-utils';
 
 const tagName = 'div';
 const idGen = idMaker('formfield_');
@@ -83,6 +85,28 @@ const getWidgetTemplate = (attrs, widgetType, pCounter) => {
     return tmpl;
 };
 
+const getCaptionByWidget = (attrs, widgetType, counter) => {
+    if (attrs.get('is-related') === 'true') {
+        return `${counter}.getDisplayExpr()`;
+    }
+    if (widgetType === 'password') {
+        return '\'********\'';
+    }
+    let caption = `${counter}.value`;
+    if (widgetType === 'datetime' || widgetType === 'timestamp') {
+        caption += ` | date:${counter}.datepattern || 'yyyy-MM-dd hh:mm:ss a'`;
+    } else if (widgetType === 'time') {
+        caption += ` | date:${counter}.timepattern || 'hh:mm a'`;
+    } else if (widgetType === 'date') {
+        caption += ` | date:${counter}.datepattern ||  'yyyy-MMM-dd'`;
+    } else if (widgetType === 'rating' || widgetType === 'upload') {
+        caption = '';
+    } else if (isDataSetWidget(widgetType) && attrs.get('datafield') === ALLFIELDS) {
+        return `${counter}.getDisplayExpr()`;
+    }
+    return caption;
+};
+
 register('wm-form-field', (): BuildTaskDef => {
     return {
         requires: ['wm-form', 'wm-liveform'],
@@ -99,8 +123,8 @@ register('wm-form-field', (): BuildTaskDef => {
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
                             <div [ngClass]="[${pCounter}._widgetClass, ${counter}.class]">
-                                 <label class="form-control-static app-label" [textContent]="${counter}.value"
-                                       [hidden]="${pCounter}.isUpdateMode || viewmodewidget === 'default'"></label>
+                                 <label class="form-control-static app-label"
+                                       [hidden]="${pCounter}.isUpdateMode || viewmodewidget === 'default'">{{${getCaptionByWidget(attrs, widgetType, counter)}}}</label>
                                 ${getWidgetTemplate(attrs, widgetType, pCounter)}
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>

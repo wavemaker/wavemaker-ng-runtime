@@ -40,7 +40,7 @@ export class HttpService {
             params: reqParams,
             responseType: responseType
         };
-        if (_.includes(this.nonBodyTypeMethods, options.method.toUpperCase())) {
+        if (_.includes(this.nonBodyTypeMethods, options.method && options.method.toUpperCase())) {
             third = reqOptions;
             fourth = null;
         } else {

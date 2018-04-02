@@ -343,7 +343,7 @@ function getParamValue (value, options, ignoreCase, skipEncode) {
     return !_.isUndefined(param) ? param : '';
 }
 
-function getSearchQuery (filterOptions, operator, ignoreCase, skipEncode) {
+function getSearchQuery (filterOptions, operator, ignoreCase, skipEncode?) {
     let query;
     const params = [];
     _.forEach(filterOptions, function (fieldValue) {
@@ -373,7 +373,7 @@ function getSearchQuery (filterOptions, operator, ignoreCase, skipEncode) {
     return query;
 }
 
-function prepareTableOptions(variable, options, clonedFields) {
+function prepareTableOptions(variable, options, clonedFields?) {
     if (_.isUndefined(options.searchWithQuery)) {
         options.searchWithQuery = true; //  Using query api instead of  search api
     }
@@ -970,4 +970,104 @@ export const setFilter = (variable, key, val) => {
     });
 
     return targetObj;
+};
+
+export const getRelatedTablePrimaryKeys = (variable, relatedField) => {
+    let primaryKeys,
+        result,
+        relatedCols;
+    if (!variable.propertiesMap) {
+        return;
+    }
+    result = _.find(variable.propertiesMap.columns || [], {'fieldName': relatedField});
+    // if related field name passed, get its type from columns inside the current field
+    if (result) {
+        relatedCols = result.columns;
+        primaryKeys = _.map(_.filter(relatedCols, 'isPrimaryKey'), 'fieldName');
+        if (primaryKeys.length) {
+            return primaryKeys;
+        }
+        if (relatedCols && relatedCols.length) {
+            relatedCols = _.find(relatedCols, {'isRelated': false});
+            return relatedCols && relatedCols.fieldName;
+        }
+    }
+};
+
+export const getRelatedTableData = (variable, columnName, options, success, error) => {
+    const projectID    = $rootScope.project.id || $rootScope.projectName;
+    const relatedTable = _.find(variable.relatedTables, table => table.relationName === columnName || table.columnName === columnName); // Comparing column name to support the old projects
+    const selfRelatedCols = _.map(_.filter(variable.relatedTables, o => o.type === variable.type), 'relationName');
+    const filterFields = [];
+    let orderBy,
+        filterOptions,
+        query,
+        action;
+    _.forEach(options.filterFields, (value, key) => {
+        value.fieldName = key;
+        value.type      = getFieldType(columnName, variable, key);
+        filterFields.push(value);
+    });
+    filterOptions = getFilterOptions(variable, filterFields, options);
+    query         = getSearchQuery(filterOptions, ' ' + (options.logicalOp || 'AND') + ' ', variable.ignoreCase);
+    query         = query ? ('q=' + query) : '';
+    action        = 'searchTableDataWithQuery';
+    orderBy       = _.isEmpty(options.orderBy) ? '' : 'sort=' + options.orderBy;
+    LVService[action]({
+        'projectID'     : projectID,
+        'service'       : variable._prefabName ? '' : 'services',
+        'dataModelName' : variable.liveSource,
+        'entityName'    : relatedTable.type,
+        'page'          : options.page || 1,
+        'size'          : options.pagesize || undefined,
+        'url'           : variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
+        'data'          : query || '',
+        'filterMeta'    : filterOptions,
+        'sort'          : orderBy
+    }).then(res => {
+        const response = res.body;
+        /*Remove the self related columns from the data. As backend is restricting the self related column to one level, In liveform select, dataset and datavalue object
+        * equality does not work. So, removing the self related columns to acheive the quality*/
+        const data = _.map(response.content, o => _.omit(o, selfRelatedCols));
+        triggerFn(success, data, undefined, response ? {'dataSize': response.totalElements, 'maxResults': response.size, 'currentPage': response.number + 1} : {});
+    }, (errMsg) => {
+        triggerFn(error, errMsg);
+    });
+};
+
+
+export const getDistinctDataByFields = (variable, options, success, error) => {
+    const dbOperation = 'getDistinctDataByFields';
+    const projectID   = $rootScope.project.id || $rootScope.projectName;
+    const requestData: any = {};
+    let sort;
+    let tableOptions;
+    options.skipEncode = true;
+    options.operation  = 'read';
+    options = options || {};
+    tableOptions = prepareTableOptions(variable, options);
+    if (tableOptions.query) {
+        requestData.filter = tableOptions.query;
+    }
+    requestData.groupByFields = _.isArray(options.fields) ? options.fields : [options.fields];
+    sort = options.sort ||  requestData.groupByFields[0] + ' asc';
+    sort = sort ? 'sort=' + sort : '';
+
+    LVService[dbOperation]({
+        'projectID'     : projectID,
+        'service'       : variable._prefabName ? '' : 'services',
+        'dataModelName' : variable.liveSource,
+        'entityName'    : options.entityName || variable.type,
+        'page'          : options.page || 1,
+        'size'          : options.pagesize,
+        'sort'          : sort,
+        'data'          : requestData,
+        'url'           : variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
+    }).then(response => {
+        if ((response && response.error) || !response) {
+            triggerFn(error, response.error);
+            return;
+        }
+        triggerFn(success, response.body);
+    }, errorMsg => triggerFn(error, errorMsg));
 };

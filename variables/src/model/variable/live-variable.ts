@@ -37,7 +37,7 @@ export class LiveVariable extends ApiAwareVariable {
     }
 
     invoke(options?, success?, error?) {
-        switch(this.operation) {
+        switch (this.operation) {
             case 'insert':
                 return this.insertRecord(options, success, error);
             case 'update':
@@ -47,6 +47,18 @@ export class LiveVariable extends ApiAwareVariable {
             default:
                 return this.listRecords(options, success, error);
         }
+    }
+
+    getRelatedTablePrimaryKeys(columnName) {
+        return VariableManagerFactory.get(this.category).getRelatedTablePrimaryKeys(this, columnName);
+    }
+
+    getRelatedTableData(columnName, options, success, error) {
+        VariableManagerFactory.get(this.category).getRelatedTableData(this, columnName, options, success, error);
+    }
+
+    getDistinctDataByFields(options, success, error) {
+        VariableManagerFactory.get(this.category).getDistinctDataByFields(this, options, success, error);
     }
 
     // legacy method

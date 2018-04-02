@@ -68,7 +68,7 @@ export const parseConfig = (serviceParams: any): any => {
     return null;
 };
 
-const initiateAction = function (action, params, successCallback, failureCallback, noproxy) {
+const initiateAction = function (action, params, successCallback?, failureCallback?, noproxy?) {
     let connectionParams,
         urlParams,
         requestData,
@@ -238,3 +238,8 @@ export const deleteCompositeTableData = function (params, successCallback, failu
 export const exportTableData = function (params) {
     return initiateAction('exportTableData', params, null, null, null);
 };
+
+export const getDistinctDataByFields = function (params) {
+    return initiateAction('getDistinctDataByFields', params);
+};
+

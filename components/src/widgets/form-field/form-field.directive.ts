@@ -1,11 +1,12 @@
-import { AfterContentInit, ChangeDetectorRef, ContentChild, Directive, ElementRef, Injector, OnInit, Optional } from '@angular/core';
+import { ElementRef, Injector, Directive, Optional, ChangeDetectorRef, OnInit, AfterContentInit, ContentChild, Attribute } from '@angular/core';
 import { ParentForm } from '../form/form.component';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './form-field.props';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder,  FormGroup, Validators } from '@angular/forms';
 import { toBoolean } from '@wm/utils';
-
+import { getEvaluatedData, isDataSetWidget } from '../../utils/widget-utils';
+import { fetchRelatedFieldData, getFormVariable, ALLFIELDS, getDistinctValuesForField } from '../../utils/data-utils';
 declare const _;
 
 registerProps();
@@ -18,13 +19,16 @@ const WIDGET_CONFIG = {widgetType: 'wm-form-field', hostClass: ''};
 })
 export class FormFieldDirective extends BaseComponent implements OnInit, AfterContentInit {
 
-    @ContentChild('formWidget') formWidgetInstance;
+    @ContentChild('formWidget') formWidget;
 
     private _validators = [];
     private applyProps = new Set();
 
     ngForm: FormGroup;
     name: string;
+    displayexpression;
+    displayfield;
+    displaylabel;
     key: string;
     target: string;
     binding: string;
@@ -32,22 +36,55 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     class = '';
     primarykey;
     show;
+    type;
+    isDataSetBound;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
-                @Optional() public _parentForm: ParentForm, private fb: FormBuilder) {
+                @Optional() public form: ParentForm, private fb: FormBuilder,
+                @Attribute('dataset.bind') public binddataset) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
     }
 
+    evaluateExpr(object, displayExpr) {
+        if (!displayExpr) {
+            displayExpr = Object.keys(object)[0];
+            // If dataset is not ready, display expression will not be defined
+            if (!displayExpr) {
+                return;
+            }
+        }
+        return getEvaluatedData(object, {
+            displayexpression: displayExpr
+        });
+    }
+
+    getDisplayExpr() {
+        const caption = [];
+        const value = this.value;
+        const displayExpr = this.displayexpression || this.displayfield || this.displaylabel;
+        if (_.isObject(value)) {
+            if (_.isArray(value)) {
+                _.forEach(value, function (obj) {
+                    caption.push(this.evaluateExpr(obj, displayExpr));
+                });
+            } else {
+                caption.push(this.evaluateExpr(value, displayExpr));
+            }
+            return _.join(caption, ',');
+        }
+        return value;
+    }
+
     onPropertyChange(key, newVal, ov?) {
 
-        if (!this.formWidgetInstance) {
+        if (!this.formWidget) {
             this.applyProps.add(key);
             return;
         }
 
-        this.formWidgetInstance.widget[key] = newVal;
+        this.formWidget.widget[key] = newVal;
 
         switch (key) {
             case 'required':
@@ -64,7 +101,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
             case 'primary-key':
                 this.primarykey = toBoolean(newVal);
                 if (this.primarykey) {
-                    this._parentForm.setPrimaryKey(this.key);
+                    this.form.setPrimaryKey(this.key);
                 }
                 break;
             case 'show':
@@ -76,12 +113,12 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     }
 
     get datavalue() {
-        return this.formWidgetInstance && this.formWidgetInstance.datavalue;
+        return this.formWidget && this.formWidget.datavalue;
     }
 
     set datavalue(val) {
-        if (this.formWidgetInstance.widget) {
-            this.formWidgetInstance.widget.datavalue = val;
+        if (this.formWidget.widget) {
+            this.formWidget.widget.datavalue = val;
         }
     }
 
@@ -103,12 +140,12 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
 
     ngOnInit() {
         super.ngOnInit();
-        this.ngForm = this._parentForm.ngForm;
+        this.ngForm = this.form.ngForm;
         this.ngForm.addControl(this.key || this.name , this.createControl());
     }
 
     ngAfterContentInit() {
-        if (this.formWidgetInstance) {
+        if (this.formWidget) {
             setTimeout(() => {
                 this.applyProps.forEach((key) => {
                     this.onPropertyChange(key, this[key]);
@@ -116,7 +153,21 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
             });
         }
         this.key = this.key || this.target || this.binding || this.name;
-        this._parentForm.registerFormFields(this.widget);
+        this.form.registerFormFields(this.widget);
+
+        if (this.binddataset) {
+            this.isDataSetBound = true;
+        } else if (isDataSetWidget(this.widgettype)) {
+            if (this['is-related']) {
+                this.isDataSetBound = true;
+                fetchRelatedFieldData(getFormVariable(this.form), this.widget, {
+                    relatedField: this.key,
+                    datafield: ALLFIELDS
+                });
+            } else {
+                getDistinctValuesForField(getFormVariable(this.form), this.widget, {widget: 'widgettype'});
+            }
+        }
     }
 }
 

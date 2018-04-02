@@ -1,6 +1,8 @@
 import { encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith } from '@wm/utils';
 
 declare const _;
+
+const DATASET_WIDGETS = new Set(['select', 'checkboxset', 'radioset', 'switch', 'autocomplete', 'chips', 'typeahead', 'rating']);
 /**
  * Returns the parsed, updated bound expression
  * if the expression is $[data[$i][firstName]] + '--' + $[lastName] + '--' + $['@ID@']
@@ -155,7 +157,7 @@ export const invokeEventHandler = (component, eventName, args?) => {
  * @param pageableObj
  * @returns {string}
  */
-export const getOrderByExpr = (pageableObj) => {
+export const getOrderByExpr = pageableObj => {
     pageableObj = pageableObj || [];
     const expressions       = [],
         KEY_VAL_SEPARATOR = ' ',
@@ -165,6 +167,10 @@ export const getOrderByExpr = (pageableObj) => {
     });
 
     return _.join(expressions, FIELD_SEPARATOR);
+};
+
+export const isDataSetWidget = widget => {
+    return DATASET_WIDGETS.has(widget);
 };
 
 /*This function returns the url to the image after checking the validity of url*/
