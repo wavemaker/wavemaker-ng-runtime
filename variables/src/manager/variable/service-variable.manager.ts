@@ -1,7 +1,7 @@
-import { ModelVariableManager } from './model-variable.manager';
-import * as SVUtils from '../utils/service-variable.utils';
+import * as SVUtils from '../../util/variable/service-variable.utils';
+import { BaseVariableManager } from './base-variable.manager';
 
-export class ServiceVariableManager extends ModelVariableManager{
+export class ServiceVariableManager extends BaseVariableManager {
 
     invoke(variable, options, success, error) {
         SVUtils.invoke(variable, options, success, error);

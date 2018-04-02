@@ -1,28 +1,29 @@
-import { LiveVariable } from '../class/live-variable';
-import { NavigationVariable } from '../class/navigation-variable';
-import { NotificationVariable } from '../class/notification-variable';
-import { ModelVariable } from '../class/model-variable';
-import { ServiceVariable } from '../class/service-variable';
+import { LiveVariable } from '../model/variable/live-variable';
+import { NavigationAction } from '../model/action/navigation-action';
+import { ModelVariable } from '../model/variable/model-variable';
+import { ServiceVariable } from '../model/variable/service-variable';
+import { NotificationAction } from '../model/action/notification-action';
+import {VARIABLE_CONSTANTS} from '../constants/variables.constants';
 
 export class VariableFactory {
 
     static create(variable, context) {
         let variableInstance;
         switch (variable.category) {
-            case 'wm.Variable':
+            case VARIABLE_CONSTANTS.CATEGORY.MODEL:
                 variableInstance = new ModelVariable(variable);
                 break;
-            case 'wm.ServiceVariable':
+            case VARIABLE_CONSTANTS.CATEGORY.SERVICE:
                 variableInstance = new ServiceVariable(variable);
                 break;
-            case 'wm.LiveVariable':
+            case VARIABLE_CONSTANTS.CATEGORY.LIVE:
                 variableInstance = new LiveVariable(variable);
                 break;
-            case 'wm.NavigationVariable':
-                variableInstance = new NavigationVariable(variable);
+            case VARIABLE_CONSTANTS.CATEGORY.NAVIGATION:
+                variableInstance = new NavigationAction(variable);
                 break;
-            case 'wm.NotificationVariable':
-                variableInstance = new NotificationVariable(variable);
+            case VARIABLE_CONSTANTS.CATEGORY.NOTIFICATION:
+                variableInstance = new NotificationAction(variable);
                 break;
         }
 

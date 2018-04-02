@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '@wm/http';
-import { setDependency } from '../utils/variables.utils';
+import { setDependency } from '../util/variable/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
 import { ToastrService } from 'ngx-toastr';
 import { VariableFactory } from '../factory/variable.factory';

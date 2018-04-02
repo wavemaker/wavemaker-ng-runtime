@@ -1,5 +1,5 @@
-import { initiateCallback, toasterService } from './variables.utils';
-import { $rootScope, VARIABLE_CONSTANTS } from '../constants/variables.constants';
+import { initiateCallback, toasterService } from '../variable/variables.utils';
+import { $rootScope, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 
 declare const _, window, $;
 

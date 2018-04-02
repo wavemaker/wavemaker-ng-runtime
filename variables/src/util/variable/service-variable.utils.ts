@@ -1,8 +1,8 @@
-import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../constants/variables.constants';
+import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 import { getEvaluatedOrderBy, httpService, initiateCallback, isFileUploadSupported, metadataService, simulateFileDownload } from './variables.utils';
-import { $queue } from './inflight-queue';
+import { $queue } from '../inflight-queue';
 import { extractType, findValueOf, formatDate, getBlob, getClonedObject, getValidJSON, isDateTimeType, isDefined, triggerFn, xmlToJson } from '@wm/utils';
-import { performAuthorization, getAccessToken, removeAccessToken } from './oAuth.utils';
+import { performAuthorization, getAccessToken, removeAccessToken } from './../oAuth.utils';
 
 declare const _, window;
 

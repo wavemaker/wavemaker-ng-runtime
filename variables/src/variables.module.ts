@@ -28,4 +28,4 @@ export class VariablesModule {}
 
 export * from './service/variables.service';
 export * from './service/metadata-service/metadata.service';
-export * from './utils/variables.utils';
+export * from './util/variable/variables.utils';

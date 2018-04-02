@@ -1,6 +1,6 @@
 declare const _;
 import { getClonedObject } from '@wm/utils';
-import { VARIABLE_URLS } from '../constants/variables.constants';
+import { VARIABLE_URLS } from '../../constants/variables.constants';
 import { httpService, simulateFileDownload } from './variables.utils';
 
 const isStudioMode = false;

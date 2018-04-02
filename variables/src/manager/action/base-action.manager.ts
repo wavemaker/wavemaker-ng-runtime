@@ -1,8 +1,11 @@
-import { VariableManager } from './variable.manager';
+import { processBinding } from '../../util/variable/variables.utils';
 
 declare const _;
 
-export class ModelVariableManager extends VariableManager {
+export abstract class BaseActionManager {
+    initBinding(variable, bindSource?, bindTarget?) {
+        processBinding(variable, variable._context, bindSource, bindTarget);
+    }
 
     getData(variable: any) {
         return variable.dataSet;
@@ -23,7 +26,7 @@ export class ModelVariableManager extends VariableManager {
 
         // return the value since it is not an async call
         return variable.dataSet;
-    };
+    }
 
     getValue(variable, key, index) {
         index = index || 0;
@@ -48,7 +51,7 @@ export class ModelVariableManager extends VariableManager {
     getItem(variable, index) {
         /* return the object against the specified index */
         return variable.isList ? variable.dataSet[index] : variable.dataSet;
-    };
+    }
 
     setItem(variable, i, value) {
         let index;
@@ -68,7 +71,7 @@ export class ModelVariableManager extends VariableManager {
 
         /* return the new dataSet */
         return variable.dataSet;
-    };
+    }
 
     addItem(variable, value, index) {
         /* check param sanity */
@@ -84,7 +87,7 @@ export class ModelVariableManager extends VariableManager {
 
         /* return the new dataSet */
         return variable.dataSet;
-    };
+    }
 
     removeItem(variable, i, exactMatch) {
         /**
@@ -106,7 +109,7 @@ export class ModelVariableManager extends VariableManager {
         }
         /* return the new dataSet */
         return variable.dataSet;
-    };
+    }
 
     clearData(variable) {
         /* empty the variable dataset */
@@ -114,11 +117,10 @@ export class ModelVariableManager extends VariableManager {
 
         /* return the variable dataSet*/
         return variable.dataSet;
-    };
+    }
 
     getCount(variable) {
         /* return the length of dataSet */
         return variable.isList ? variable.dataSet.length : 1;
-    };
-
+    }
 }

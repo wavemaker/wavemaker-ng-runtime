@@ -1,7 +1,7 @@
-import { ModelVariableManager } from './model-variable.manager';
-import * as LVUtils from '../utils/live-variable.utils';
+import * as LVUtils from '../../util/variable/live-variable.utils';
+import { BaseVariableManager } from './base-variable.manager';
 
-export class LiveVariableManager extends ModelVariableManager{
+export class LiveVariableManager extends BaseVariableManager {
 
     invoke(variable, options, success, error) {
         LVUtils.listRecords(variable, options, success, error);

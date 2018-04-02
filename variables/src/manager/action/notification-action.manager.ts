@@ -1,7 +1,7 @@
-import { ModelVariableManager } from './model-variable.manager';
-import * as NOVUtils from '../utils/notification-variable.utils';
+import * as NOVUtils from '../../util/action/notification-variable.utils';
+import { BaseActionManager } from './base-action.manager';
 
-export class NotificationVariableManager extends ModelVariableManager{
+export class NotificationActionManager extends BaseActionManager {
 
     notify(variable, options, success, error) {
         NOVUtils.notify(variable, options, success, error);

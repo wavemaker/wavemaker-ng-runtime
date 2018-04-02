@@ -2,7 +2,7 @@ declare const _WM_APP_PROPERTIES, moment, _;
 
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../variables/src/constants/variables.constants';
 import { _WM_APP_PROJECT, isIE } from '@wm/utils';
-import { parseConfig } from '../../variables/src/utils/live-variable.http.utils';
+import { parseConfig } from '../../variables/src/util/variable/live-variable.http.utils';
 
 const listeners = {},
     ACCESSTOKEN_PLACEHOLDERS = {
