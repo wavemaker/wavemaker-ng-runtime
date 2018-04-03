@@ -60,6 +60,7 @@ export * from './widgets/text/text.build';
 export * from './widgets/textarea/textarea.build';
 export * from './widgets/tile/tile.build';
 export * from './widgets/time/time.build';
+export * from './widgets/tree/tree.build';
 export * from './widgets/top-nav/top-nav.build';
 export * from './widgets/video/video.build';
 
