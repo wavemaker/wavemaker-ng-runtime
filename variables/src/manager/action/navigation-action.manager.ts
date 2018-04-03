@@ -1,4 +1,4 @@
-import * as NVUtils from '../../util/action/navigation-variable.util';
+import * as NVUtils from '../../util/action/navigation-action.utils';
 import { BaseActionManager } from './base-action.manager';
 
 export class NavigationActionManager extends BaseActionManager {

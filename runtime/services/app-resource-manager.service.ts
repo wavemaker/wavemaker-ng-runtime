@@ -6,12 +6,13 @@ import { SecurityService } from './security.service';
 export class AppResourceManagerService {
 
     get(url, pageName?): string | any {
-        return this.$http.get(url).catch(e => {
-            if (e.status === 401) {
-                this.securityService.handle401(pageName);
-            }
-            return Promise.reject('error loading the app resource');
-        });
+        return this.$http.get(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            .catch(e => {
+                if (e.status === 401) {
+                    this.securityService.handle401(pageName);
+                }
+                return Promise.reject('error loading the app resource');
+            });
     }
 
     constructor(private $http: HttpService, private securityService: SecurityService) {}

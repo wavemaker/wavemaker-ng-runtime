@@ -1,4 +1,4 @@
-import * as NOVUtils from '../../util/action/notification-variable.utils';
+import * as NOVUtils from '../../util/action/notification-action.utils';
 import { BaseActionManager } from './base-action.manager';
 
 export class NotificationActionManager extends BaseActionManager {
