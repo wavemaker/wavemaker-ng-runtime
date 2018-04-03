@@ -1,5 +1,10 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
+import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+
+const  getManager = () => {
+    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.LIVE);
+};
 
 export class LiveVariable extends ApiAwareVariable {
 
@@ -9,31 +14,31 @@ export class LiveVariable extends ApiAwareVariable {
     }
 
     listRecords(options?, success?, error?) {
-        return VariableManagerFactory.get(this.category).listRecords(this, options, success, error);
+        return getManager().listRecords(this, options, success, error);
     }
 
     updateRecord(options?, success?, error?) {
-        return VariableManagerFactory.get(this.category).updateRecord(this, options, success, error);
+        return getManager().updateRecord(this, options, success, error);
     }
 
     insertRecord(options?, success?, error?) {
-        return VariableManagerFactory.get(this.category).insertRecord(this, options, success, error);
+        return getManager().insertRecord(this, options, success, error);
     }
 
     deleteRecord(options?, success?, error?) {
-        return VariableManagerFactory.get(this.category).deleteRecord(this, options, success, error);
+        return getManager().deleteRecord(this, options, success, error);
     }
 
     setInput(key, val, options) {
-        return VariableManagerFactory.get(this.category).setInput(this, key, val, options);
+        return getManager().setInput(this, key, val, options);
     }
 
     setFilter(key, val) {
-        return VariableManagerFactory.get(this.category).setFilter(this, key, val);
+        return getManager().setFilter(this, key, val);
     }
 
     download(options?) {
-        return VariableManagerFactory.get(this.category).download(this, options);
+        return getManager().download(this, options);
     }
 
     invoke(options?, success?, error?) {
@@ -50,15 +55,15 @@ export class LiveVariable extends ApiAwareVariable {
     }
 
     getRelatedTablePrimaryKeys(columnName) {
-        return VariableManagerFactory.get(this.category).getRelatedTablePrimaryKeys(this, columnName);
+        return getManager().getRelatedTablePrimaryKeys(this, columnName);
     }
 
     getRelatedTableData(columnName, options, success, error) {
-        VariableManagerFactory.get(this.category).getRelatedTableData(this, columnName, options, success, error);
+        getManager().getRelatedTableData(this, columnName, options, success, error);
     }
 
     getDistinctDataByFields(options, success, error) {
-        VariableManagerFactory.get(this.category).getDistinctDataByFields(this, options, success, error);
+        getManager().getDistinctDataByFields(this, options, success, error);
     }
 
     // legacy method
@@ -67,7 +72,7 @@ export class LiveVariable extends ApiAwareVariable {
     }
 
     init() {
-        VariableManagerFactory.get(this.category).initBinding(this, 'dataBinding', this.operation === 'read' ? 'filterFields' : 'inputFields');
+        getManager().initBinding(this, 'dataBinding', this.operation === 'read' ? 'filterFields' : 'inputFields');
         if (this.startUpdate) {
             this.invoke();
         }

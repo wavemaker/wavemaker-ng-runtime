@@ -1,5 +1,10 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseAction } from '../base-action';
+import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+
+const  getManager = () => {
+    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.NAVIGATION);
+};
 
 export class NavigationAction extends BaseAction {
     operation: string;
@@ -11,14 +16,14 @@ export class NavigationAction extends BaseAction {
     }
 
     invoke() {
-        VariableManagerFactory.get(this.category).invoke(this);
+        getManager().invoke(this);
     }
 
     init() {
         // static property bindings
-        VariableManagerFactory.get(this.category).initBinding(this, 'dataBinding', 'dataBinding');
+        getManager().initBinding(this, 'dataBinding', 'dataBinding');
 
         // dynamic property bindings (e.g. page params)
-        VariableManagerFactory.get(this.category).initBinding(this, 'dataSet', 'dataSet');
+        getManager().initBinding(this, 'dataSet', 'dataSet');
     }
 }

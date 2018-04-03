@@ -1,5 +1,9 @@
 import { VariableManagerFactory } from '../factory/variable-manager.factory';
 
+const  getManager = () => {
+    return VariableManagerFactory.get('Variable');
+};
+
 export abstract class BaseVariable {
 
     protected _id: string;
@@ -11,42 +15,42 @@ export abstract class BaseVariable {
     dataBinding: any;
 
     getData() {
-        return VariableManagerFactory.get('Variable').getData(this);
+        return getManager().getData(this);
     }
 
     setData(dataSet: any) {
-        return VariableManagerFactory.get('Variable').setData(this, dataSet);
+        return getManager().setData(this, dataSet);
     }
 
     getValue(key: string, index: number) {
-        return VariableManagerFactory.get('Variable').getValue(this, key, index);
+        return getManager().getValue(this, key, index);
     }
 
     setValue(key: string, value: any) {
-        return VariableManagerFactory.get('Variable').setValue(this, key, value);
+        return getManager().setValue(this, key, value);
     }
 
     getItem(index: number) {
-        return VariableManagerFactory.get('Variable').getItem(this, index);
+        return getManager().getItem(this, index);
     }
 
     setItem(index: number, value: any) {
-        return VariableManagerFactory.get('Variable').setItem(this, index, value);
+        return getManager().setItem(this, index, value);
     }
 
     addItem(value: any, index: number) {
-        return VariableManagerFactory.get('Variable').addItem(this, value, index);
+        return getManager().addItem(this, value, index);
     }
 
     removeItem(index: number, exactMatch: boolean) {
-        return VariableManagerFactory.get('Variable').removeItem(this, index, exactMatch);
+        return getManager().removeItem(this, index, exactMatch);
     }
 
     clearData() {
-        return VariableManagerFactory.get('Variable').clearData(this);
+        return getManager().clearData(this);
     }
 
     getCount() {
-        return VariableManagerFactory.get('Variable').getCount(this);
+        return getManager().getCount(this);
     }
 }

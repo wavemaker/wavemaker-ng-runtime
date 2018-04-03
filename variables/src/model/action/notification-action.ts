@@ -1,5 +1,10 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseAction } from '../base-action';
+import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+
+const  getManager = () => {
+    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.NOTIFICATION);
+};
 
 export class NotificationAction extends BaseAction {
 
@@ -11,7 +16,7 @@ export class NotificationAction extends BaseAction {
     }
 
     notify(options, success, error) {
-        VariableManagerFactory.get(this.category).notify(this, options, success, error);
+        getManager().notify(this, options, success, error);
     }
 
     invoke(options, success, error) {
@@ -19,18 +24,18 @@ export class NotificationAction extends BaseAction {
     }
 
     getMessage() {
-        return VariableManagerFactory.get(this.category).getMessage(this);
+        return getManager().getMessage(this);
     }
 
     setMessage(text) {
-        return VariableManagerFactory.get(this.category).setMessage(this, text);
+        return getManager().setMessage(this, text);
     }
 
     init() {
         // static property bindings
-        VariableManagerFactory.get(this.category).initBinding(this, 'dataBinding', 'dataBinding');
+        getManager().initBinding(this, 'dataBinding', 'dataBinding');
 
         // dynamic property bindings
-        VariableManagerFactory.get(this.category).initBinding(this, 'dataSet', 'dataSet');
+        getManager().initBinding(this, 'dataSet', 'dataSet');
     }
 }

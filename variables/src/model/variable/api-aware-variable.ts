@@ -1,6 +1,10 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
 
+const  getManager = (category: string) => {
+    return VariableManagerFactory.get(category);
+};
+
 export abstract class ApiAwareVariable extends BaseVariable {
 
     service: string;
@@ -22,11 +26,11 @@ export abstract class ApiAwareVariable extends BaseVariable {
     onSuccess: string;
 
     invoke(options?, success?, error?) {
-        return VariableManagerFactory.get(this.category).invoke(this, options, success, error);
+        return getManager(this.category).invoke(this, options, success, error);
     }
 
     init() {
-        VariableManagerFactory.get(this.category).initBinding(this);
+        getManager(this.category).initBinding(this);
         if (this.startUpdate) {
             this.invoke();
         }

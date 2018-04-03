@@ -1,5 +1,10 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
+import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+
+const  getManager = () => {
+    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.SERVICE);
+};
 
 export class ServiceVariable extends ApiAwareVariable {
 
@@ -9,27 +14,27 @@ export class ServiceVariable extends ApiAwareVariable {
     }
 
     invoke(options?, success?, error?) {
-        return VariableManagerFactory.get(this.category).invoke(this, options, success, error);
+        return getManager().invoke(this, options, success, error);
     }
 
     update(options, success, error) {
-        return VariableManagerFactory.get(this.category).invoke(this, options, success, error);
+        return getManager().invoke(this, options, success, error);
     }
 
     setInput (key, val, options) {
-        return VariableManagerFactory.get(this.category).setInput(this, key, val, options);
+        return getManager().setInput(this, key, val, options);
     }
 
     clearData () {
-        return VariableManagerFactory.get(this.category).clearData(this);
+        return getManager().clearData(this);
     }
 
     cancel () {
-        return VariableManagerFactory.get(this.category).cancel(this);
+        return getManager().cancel(this);
     }
 
     init() {
-        VariableManagerFactory.get(this.category).initBinding(this);
+        getManager().initBinding(this);
         if (this.startUpdate) {
             this.invoke();
         }
