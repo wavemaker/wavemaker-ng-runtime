@@ -24,11 +24,11 @@ export class PrefabDirective extends BaseComponent {
         Object.entries(props).forEach(([k, v]: [string, any]) => {
             let type = PROP_TYPE.STRING;
 
-            if (v.type === "boolean") {
+            if (v.type === 'boolean') {
                 type = PROP_TYPE.BOOLEAN;
-            } else if (v.type === "number") {
+            } else if (v.type === 'number') {
                 type = PROP_TYPE.NUMBER;
-            } else if (v.type !== "string") {
+            } else if (v.type !== 'string') {
                 type = v.type;
             }
 
@@ -49,7 +49,7 @@ export class PrefabDirective extends BaseComponent {
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName) {
-        let widgetType = `wm-prefab-${prefabName}`;
+        const widgetType = `wm-prefab-${prefabName}`;
         const WIDGET_CONFIG = {widgetType, hostClass: DEFAULT_CLS};
 
         super(WIDGET_CONFIG, inj, elRef, cdr, new Promise(res => this.propsReady = res));

@@ -1,4 +1,3 @@
-
 export default {
     input: './dist/tmp/ngx-bootstrap.es2015.js',
     output: {
@@ -15,12 +14,6 @@ export default {
         '@angular/platform-browser': 'ng.platformBrowser',
         '@angular/forms': 'ng.forms',
         '@angular/router': 'ng.router',
-        '@utils/dom': 'wm.utils',
-        '@utils/utils': 'wm.utils',
-        '@utils/styler': 'wm.utils',
-        '@utils/watcher': 'wm.utils',
-        '@utils/expression-parser': 'wm.utils',
-        '@components/components.module': 'wm.components',
         'rxjs/observable/of': 'Rx.Observable',
         'rxjs/operator/concatMap': 'Rx.Observable.prototype',
         'rxjs/operator/filter': 'Rx.Observable.prototype',
@@ -37,7 +30,7 @@ export default {
         'rxjs/add/observable/mergeMap': 'Rx.Observable.prototype',
         'rxjs/add/observable/toArray': 'Rx.Observable.prototype',
 
-        'rxjs/scheduler/queue': 'Rx.Scheduler.prototype',
+        'rxjs/scheduler/queue': 'Rx.Scheduler',
 
         'rxjs/Observable': 'Rx',
         'rxjs/BehaviorSubject': 'Rx',

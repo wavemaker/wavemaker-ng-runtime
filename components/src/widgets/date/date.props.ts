@@ -11,6 +11,7 @@ export const registerProps = () => {
                 ['datepattern', PROP_STRING_NOTIFY],
                 ['disabled', PROP_BOOLEAN_NOTIFY],
                 ['excludedays', PROP_STRING],
+                ['hint', {value: '', ...PROP_STRING}],
                 ['maxdate', PROP_STRING_NOTIFY],
                 ['mindate', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
