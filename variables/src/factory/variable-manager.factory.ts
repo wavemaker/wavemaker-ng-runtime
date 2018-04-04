@@ -5,6 +5,9 @@ import { NavigationActionManager } from '../manager/action/navigation-action.man
 import { NotificationActionManager } from '../manager/action/notification-action.manager';
 import { BaseVariableManager } from '../manager/variable/base-variable.manager';
 import { BaseActionManager } from '../manager/action/base-action.manager';
+import { LoginActionManager } from '../manager/action/login-action.manager';
+import { LogoutActionManager } from '../manager/action/logout-action.manager';
+import { TimerActionManager } from '../manager/action/timer-action.manager';
 
 const managerMap = new Map(),
     typeToManagerMap = {
@@ -14,7 +17,10 @@ const managerMap = new Map(),
         'wm.ServiceVariable': ServiceVariableManager,
         'wm.LiveVariable': LiveVariableManager,
         'wm.NavigationVariable': NavigationActionManager,
-        'wm.NotificationVariable': NotificationActionManager
+        'wm.NotificationVariable': NotificationActionManager,
+        'wm.LoginVariable': LoginActionManager,
+        'wm.LogoutVariable': LogoutActionManager,
+        'wm.TimerVariable': TimerActionManager
     };
 
 export class VariableManagerFactory {

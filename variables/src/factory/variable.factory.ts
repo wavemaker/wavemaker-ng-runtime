@@ -4,6 +4,9 @@ import { ModelVariable } from '../model/variable/model-variable';
 import { ServiceVariable } from '../model/variable/service-variable';
 import { NotificationAction } from '../model/action/notification-action';
 import {VARIABLE_CONSTANTS} from '../constants/variables.constants';
+import { LoginAction } from '../model/action/login-action';
+import { LogoutAction } from '../model/action/logout-action';
+import { TimerAction } from '../model/action/timer-action';
 
 export class VariableFactory {
 
@@ -24,6 +27,15 @@ export class VariableFactory {
                 break;
             case VARIABLE_CONSTANTS.CATEGORY.NOTIFICATION:
                 variableInstance = new NotificationAction(variable);
+                break;
+            case VARIABLE_CONSTANTS.CATEGORY.LOGIN:
+                variableInstance = new LoginAction(variable);
+                break;
+            case VARIABLE_CONSTANTS.CATEGORY.LOGOUT:
+                variableInstance = new LogoutAction(variable);
+                break;
+            case VARIABLE_CONSTANTS.CATEGORY.TIMER:
+                variableInstance = new TimerAction(variable);
                 break;
         }
 
