@@ -61,6 +61,7 @@ import { PictureDirective } from './widgets/picture/picture.directive';
 import { ProgressBarComponent } from './widgets/progress-bar/progress-bar.component';
 import { RadiosetComponent } from './widgets/radioset/radioset.component';
 import { RatingComponent } from './widgets/rating/rating.component';
+import { RichTextEditorComponent } from './widgets/rich-text-editor/rich-text-editor.component';
 import { RightPanelComponent } from './widgets/right-panel/right-panel.component';
 import { SearchComponent } from './widgets/search/search.component';
 import { SelectComponent } from './widgets/select/select.component';
@@ -136,6 +137,7 @@ const wmComponents = [
     ProgressBarComponent,
     RadiosetComponent,
     RatingComponent,
+    RichTextEditorComponent,
     RightPanelComponent,
     SearchComponent,
     SelectComponent,
