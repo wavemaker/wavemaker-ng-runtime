@@ -1,6 +1,7 @@
 <span class="input-group-addon" [innerHtml]="currencysymbol"></span>
 <input type="number" class="form-control app-textbox app-currency-input"
        [(ngModel)]="datavalue"
+       (change)="onChange($event);"
        [step]="step"
        [min]="minvalue"
        [max]="maxvalue"

@@ -30,10 +30,10 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
             tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget type="toggle"></div>`;
             break;
         case 'checkboxset':
-            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
+            // tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
             break;
         case 'radioset':
-            tmpl = `<div wmRadioSet ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmRadioset ${defaultTmpl} #formWidget></div>`;
             break;
         case 'slider':
             tmpl = `<div wmSlider ${defaultTmpl} #formWidget></div>`;
@@ -76,7 +76,7 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
             break;
         case 'typeahead':
         case 'autocomplete':
-            /*TODO*/
+            tmpl = `<div wmSearch ${defaultTmpl} #formWidget></div>`;
             break;
         default:
             tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText">`;

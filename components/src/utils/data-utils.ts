@@ -170,13 +170,13 @@ function setDataFields(formField, options?) {
 function setFieldDataSet(formField, data, options?) {
     const emptySupportWidgets = ['select', 'radioset'];
     const emptyOption         = {};
-    formField.dataset = [];
+    const dataSet = [];
     if (options.isEnableEmptyFilter && _.includes(emptySupportWidgets, formField[options.widget]) &&
         !formField.isRange && !formField.multiple) {
         // If empty option is selected, push an empty object in to dataSet
         emptyOption[LIVE_CONSTANTS.LABEL_KEY]   = LIVE_CONSTANTS.EMPTY_KEY;
         emptyOption[LIVE_CONSTANTS.LABEL_VALUE] = LIVE_CONSTANTS.EMPTY_VALUE;
-        formField.dataset.push(emptyOption);
+        dataSet.push(emptyOption);
     }
     _.each(data.content, key => {
         const value  = key[options.aliasColumn];
@@ -184,9 +184,10 @@ function setFieldDataSet(formField, data, options?) {
         if (value !== null && value !== '') {
             option[LIVE_CONSTANTS.LABEL_KEY]   = value;
             option[LIVE_CONSTANTS.LABEL_VALUE] = value;
-            formField.dataset.push(option);
+            dataSet.push(option);
         }
     });
+    formField.dataset = dataSet;
     setDataFields(formField, options);
 }
 

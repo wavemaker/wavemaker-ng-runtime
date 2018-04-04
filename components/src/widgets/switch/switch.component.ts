@@ -4,7 +4,7 @@ import { styler } from '../../utils/styler';
 import { registerProps } from './switch.props';
 import { $appDigest, isEqualWithFields, setCSS } from '@wm/utils';
 import { getOrderedDataSet } from '../../utils/form-utils';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 
 declare const _, $;
 
@@ -29,7 +29,8 @@ registerProps();
 
 @Component({
     selector: 'div[wmSwitch]',
-    templateUrl: './switch.component.html'
+    templateUrl: './switch.component.html',
+    providers: [getControlValueAccessor(SwitchComponent)]
 })
 export class SwitchComponent extends BaseComponent {
 
@@ -170,6 +171,7 @@ export class SwitchComponent extends BaseComponent {
         setTimeout(() => {
             this.updateHighlighter(true);
         }, 130);
+        this._onChange(val);
     }
 
     private selectOptAtIndex($index) {
@@ -189,6 +191,7 @@ export class SwitchComponent extends BaseComponent {
 
     selectOpt($event, $index) {
 
+        this._onTouched();
         $event.preventDefault();
 
         if (this.disabled) {
