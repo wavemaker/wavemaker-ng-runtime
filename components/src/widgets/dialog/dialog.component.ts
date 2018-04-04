@@ -50,7 +50,9 @@ export class DialogComponent extends BaseComponent implements OnInit {
         switch (key) {
             case 'name':
                 this.dialogId = nv;
-                this.dialogActionsComponent.dialogId = nv;
+                if (this.dialogActionsComponent) {
+                    this.dialogActionsComponent.dialogId = nv;
+                }
                 break;
             case 'closable':
                 this.modalConfig.keyboard = nv;
