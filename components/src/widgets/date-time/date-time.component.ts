@@ -3,7 +3,7 @@ import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './date-time.props';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -14,7 +14,8 @@ const CURRENT_DATE: string = 'CURRENT_DATE';
 registerProps();
 @Component({
     selector: '[wmDateTime]',
-    templateUrl: './date-time.component.html'
+    templateUrl: './date-time.component.html',
+    providers: [getControlValueAccessor(DatetimeComponent)]
 })
 export class DatetimeComponent extends BaseComponent {
     /**
@@ -56,13 +57,19 @@ export class DatetimeComponent extends BaseComponent {
             this.setTimeInterval();
             return;
         }
-        this.dateModel = this.dateModel || this.getDateObj(newVal);
-        this.timeModel = this.timeModel || this.getDateObj(newVal);
         this.isCurrentDate = false;
-        this.proxyModel = this.getDateObj(newVal);
-        this.formattedModel = getFormattedDate(this.proxyModel, this.datepattern);
-        this.timestamp = this.proxyModel.valueOf();
         this.clearTimeInterval();
+
+        if (newVal) {
+            this.dateModel = this.dateModel || this.getDateObj(newVal);
+            this.timeModel = this.timeModel || this.getDateObj(newVal);
+            this.proxyModel = this.getDateObj(newVal);
+            this.formattedModel = getFormattedDate(this.proxyModel, this.datepattern);
+            this.timestamp = this.proxyModel.valueOf();
+        } else {
+            this.dateModel = this.timeModel = this.proxyModel = this.timestamp = this.formattedModel = undefined;
+        }
+        this._onChange(this.datavalue);
         $appDigest();
     }
     private timeinterval: any;
@@ -162,10 +169,20 @@ export class DatetimeComponent extends BaseComponent {
             }, EVENT_LIFE.ONCE);
         }, 350);
     }
+    onDatePickerOpen() {
+        this.isDateOpen = !this.isDateOpen;
+        this._onTouched();
+    }
     /**
      * This is an internal method to update the model
      */
     private onModelUpdate(newVal, type?) {
+        if (!newVal) {
+            invokeEventHandler(this, 'change', {$event: newVal, newVal: undefined, oldVal: this.proxyModel});
+            this.proxyModel = undefined;
+            this._onChange(this.datavalue);
+            return;
+        }
         const dateObj = this.getDateObj(newVal);
         invokeEventHandler(this, 'change', {$event: newVal, newVal: dateObj, oldVal: this.proxyModel});
         if (type === 'date') {
@@ -185,6 +202,7 @@ export class DatetimeComponent extends BaseComponent {
             this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
         }
         this.formattedModel = getFormattedDate(this.proxyModel, this.datepattern);
+        this._onChange(this.datavalue);
         $appDigest();
     }
     /**

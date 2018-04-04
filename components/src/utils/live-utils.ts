@@ -1,5 +1,10 @@
 declare const _;
 
+const  VIEW_MODE_OPTIONS = {
+    'DEFAULT'   : 'default',
+    'LABEL'     : 'label'
+};
+
 // Method to set the header config of the data table
 export const setHeaderConfig = (headerConfig, config, field): void => {
     _.forEach(headerConfig, (cols) => {
@@ -72,3 +77,11 @@ export const getFieldLayoutConfig = (captionWidth, captionPosition): any => {
         'widgetCls'  : widgetCls
     };
 };
+
+export const getDefaultViewModeWidget = widget => {
+    if (_.includes(['checkbox', 'toggle', 'rating', 'upload'], widget)) {
+        return VIEW_MODE_OPTIONS.DEFAULT;
+    }
+    return VIEW_MODE_OPTIONS.LABEL;
+};
+

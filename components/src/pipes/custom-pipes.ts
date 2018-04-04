@@ -22,7 +22,7 @@ export class ToDatePipe implements PipeTransform {
     transform(data: any, format: any) {
         let timestamp;
         // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
-        if (data === 'null') {
+        if (data === 'null' || data === '') {
             return '';
         }
         if (!isDefined(data)) {

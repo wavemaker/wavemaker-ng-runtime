@@ -6,10 +6,10 @@ import { isDataSetWidget } from '../../utils/widget-utils';
 const tagName = 'div';
 const idGen = idMaker('formfield_');
 
-const getWidgetTemplate = (attrs, widgetType, pCounter) => {
+const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
     let tmpl;
     const fieldName = attrs.get('key') || attrs.get('name');
-    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode" formControlName="${fieldName}"`;
+    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" formControlName="${fieldName}"`;
     switch (widgetType) {
         case 'number':
             tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" >`;
@@ -94,11 +94,11 @@ const getCaptionByWidget = (attrs, widgetType, counter) => {
     }
     let caption = `${counter}.value`;
     if (widgetType === 'datetime' || widgetType === 'timestamp') {
-        caption += ` | date:${counter}.datepattern || 'yyyy-MM-dd hh:mm:ss a'`;
+        caption += ` | toDate:${counter}.datepattern || 'yyyy-MM-dd hh:mm:ss a'`;
     } else if (widgetType === 'time') {
-        caption += ` | date:${counter}.timepattern || 'hh:mm a'`;
+        caption += ` | toDate:${counter}.timepattern || 'hh:mm a'`;
     } else if (widgetType === 'date') {
-        caption += ` | date:${counter}.datepattern ||  'yyyy-MMM-dd'`;
+        caption += ` | toDate:${counter}.datepattern ||  'yyyy-MMM-dd'`;
     } else if (widgetType === 'rating' || widgetType === 'upload') {
         caption = '';
     } else if (isDataSetWidget(widgetType) && attrs.get('datafield') === ALLFIELDS) {
@@ -124,8 +124,8 @@ register('wm-form-field', (): BuildTaskDef => {
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
                             <div [ngClass]="[${pCounter}._widgetClass, ${counter}.class]">
                                  <label class="form-control-static app-label"
-                                       [hidden]="${pCounter}.isUpdateMode || viewmodewidget === 'default'">{{${getCaptionByWidget(attrs, widgetType, counter)}}}</label>
-                                ${getWidgetTemplate(attrs, widgetType, pCounter)}
+                                       [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
+                                ${getWidgetTemplate(attrs, widgetType, counter, pCounter)}
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>
                                 <p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"

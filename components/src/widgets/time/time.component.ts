@@ -3,7 +3,7 @@ import { BaseComponent } from '../base/base.component';
 import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/utils';
 import { styler } from '../../utils/styler';
 import { registerProps } from './time.props';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
@@ -19,7 +19,8 @@ registerProps();
  */
 @Component({
     selector: '[wmTime]',
-    templateUrl: './time.component.html'
+    templateUrl: './time.component.html',
+    providers: [getControlValueAccessor(TimeComponent)]
 })
 export class TimeComponent extends BaseComponent implements OnDestroy {
     /**
@@ -69,6 +70,7 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
             this.clearTimeInterval();
             this.isCurrentTime = false;
         }
+        this._onChange(this.datavalue);
         $appDigest();
     }
 
@@ -135,9 +137,15 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
      */
     private onTimeChange(newVal) {
         invokeEventHandler(this, 'change', {newVal, oldVal: this.proxyModel});
-        this.proxyModel = newVal;
-        this.formattedModel = getFormattedDate(newVal, this.timepattern);
-        this.timestamp = this.proxyModel.valueOf();
+        if (newVal) {
+            this.proxyModel = newVal;
+            this.formattedModel = getFormattedDate(newVal, this.timepattern);
+            this.timestamp = this.proxyModel.valueOf();
+        } else {
+            this.proxyModel = this.formattedModel = this.timestamp = undefined;
+        }
+        this._onTouched();
+        this._onChange(this.datavalue);
     }
     /**
      * This is an internal method to get the date object from the input received

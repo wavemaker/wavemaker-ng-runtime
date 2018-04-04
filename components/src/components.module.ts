@@ -80,6 +80,7 @@ import { TimeComponent } from './widgets/time/time.component';
 import { TopNavDirective } from './widgets/top-nav/top-nav.directive';
 import { TreeDirective } from './widgets/tree/tree.directive';
 import { VideoComponent } from './widgets/video/video.component';
+import { NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 
 const wmComponents = [
     AccordionDirective,
@@ -158,6 +159,12 @@ const wmComponents = [
     VideoComponent
 ];
 
+const PIPES = [
+    ToDatePipe,
+    ToNumberPipe, ToCurrencyPipe, PrefixPipe,
+    SuffixPipe, TimeFromNowPipe, NumberToStringPipe, StringToNumberPipe
+];
+
 @NgModule({
     imports: [
         ColorPickerModule,
@@ -171,10 +178,11 @@ const wmComponents = [
         ProgressbarModule.forRoot(),
         ModalModule.forRoot()
     ],
-    declarations: wmComponents,
-    exports: wmComponents,
+    declarations: [...wmComponents, ...PIPES],
+    exports: [...wmComponents, ...PIPES],
     providers: [
-        DialogService
+        DialogService,
+        ToDatePipe
     ],
     entryComponents: [
         MenuComponent,

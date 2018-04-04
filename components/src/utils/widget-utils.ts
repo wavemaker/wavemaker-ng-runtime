@@ -1,4 +1,6 @@
 import { encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith } from '@wm/utils';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { forwardRef } from '@angular/core';
 
 declare const _;
 
@@ -204,6 +206,14 @@ export const getBackGroundImageUrl = (urlString) => {
         return urlString;
     }
     return 'url(' + getImageUrl(urlString) + ')';
+};
+
+export const getControlValueAccessor = component => {
+    return  {
+        provide: NG_VALUE_ACCESSOR,
+        useExisting: forwardRef(() => component),
+        multi: true
+    };
 };
 
 export const NAVIGATION_TYPE = {

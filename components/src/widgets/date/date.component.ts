@@ -3,7 +3,7 @@ import { getFormattedDate } from '@wm/utils';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './date.props';
 import { styler } from '../../utils/styler';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 
 registerProps();
 
@@ -25,7 +25,8 @@ const getDateObj = (value?: string): Date => {
 
 @Component({
     selector: '[wmDate]',
-    templateUrl: './date.component.html'
+    templateUrl: './date.component.html',
+    providers: [getControlValueAccessor(DateComponent)]
 })
 export class DateComponent extends BaseComponent {
     /**
@@ -61,22 +62,35 @@ export class DateComponent extends BaseComponent {
         'containerClass': 'theme-red'
     };
 
+    onDatePickerOpen() {
+        this._onTouched();
+    }
     /**
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
         invokeEventHandler(this, 'change', {$event: newVal, newVal, oldVal: this.datavalue});
         this.proxyModel = newVal;
-        this.formattedModel = getFormattedDate(newVal, this.datePattern);
-        this.datavalue = getFormattedDate(this.proxyModel, this.outputFormat);
+        if (newVal) {
+            this.formattedModel = getFormattedDate(newVal, this.datePattern);
+            this.datavalue = getFormattedDate(this.proxyModel, this.outputFormat);
+        } else {
+            this.formattedModel = this.datavalue = undefined;
+        }
+        this._onChange(this.datavalue);
     }
 
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
-        this._datavalue = newVal;
-        this.proxyModel = getDateObj(newVal);
-        this.formattedModel = getFormattedDate(this.proxyModel, this.datePattern);
-        this.datavalue = getFormattedDate(this.proxyModel, this.outputFormat);
+        if (newVal) {
+            this._datavalue = newVal;
+            this.proxyModel = getDateObj(newVal);
+            this.formattedModel = getFormattedDate(this.proxyModel, this.datePattern);
+            this.datavalue = getFormattedDate(this.proxyModel, this.outputFormat);
+        } else {
+            this._datavalue = this.proxyModel = this.formattedModel = this.datavalue = undefined;
+        }
+        this._onChange(this.datavalue);
     }
 
     get isDisabled(): boolean {

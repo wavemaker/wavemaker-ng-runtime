@@ -1,11 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './select.props';
 import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../utils/form-utils';
 import { removeAttr, setAttr } from '@wm/utils';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { invokeEventHandler, getControlValueAccessor } from '../../utils/widget-utils';
 
 declare const _;
 
@@ -16,15 +15,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 @Component({
     selector: '[wmSelect]',
     templateUrl: './select.component.html',
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => SelectComponent),
-            multi: true
-        }
-    ]
+    providers: [getControlValueAccessor(SelectComponent)]
 })
-export class SelectComponent extends BaseComponent implements OnInit, ControlValueAccessor {
+export class SelectComponent extends BaseComponent implements OnInit {
 
     public readonly;
     public multiple;
@@ -155,20 +148,5 @@ export class SelectComponent extends BaseComponent implements OnInit, ControlVal
     ngOnInit() {
         super.ngOnInit();
         styler(<HTMLElement>this.$element.children[0], this);
-    }
-
-    private _onChange: any = () => {};
-    private _onTouched: any = () => {};
-
-    registerOnChange(fn) {
-        this._onChange = fn;
-    }
-
-    registerOnTouched(fn) {
-        this._onTouched = fn;
-    }
-
-    writeValue(value) {
-        this.datavalue = value;
     }
 }

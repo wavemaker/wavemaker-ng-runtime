@@ -15,7 +15,7 @@
                [container]="'body'"
                [bsConfig]="_dateOptions"
                [isOpen]="isDateOpen"
-               (onShown)="isDateOpen = !isDateOpen;"
+               (onShown)="onDatePickerOpen()"
                (onHidden)="isDateOpen = !isDateOpen;"
                #datepicker=bsDatepicker
                bsDatepicker

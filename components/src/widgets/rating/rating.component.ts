@@ -2,9 +2,8 @@ import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit 
 import { BaseComponent } from '../base/base.component';
 import { $appDigest, generateGUId, getClonedObject, setCSS } from '@wm/utils';
 import { styler } from '../../utils/styler';
-import { getEvaluatedData, getObjValueByKey } from '../../utils/widget-utils';
+import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../utils/widget-utils';
 import { registerProps } from './rating.props';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 declare const _;
 
@@ -26,15 +25,9 @@ const DEFAULT_RATING = 5;
 @Component({
     selector: '[wmRating]',
     templateUrl: './rating.component.html',
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => RatingComponent),
-            multi: true
-        }
-    ]
+    providers: [getControlValueAccessor(RatingComponent)]
 })
-export class RatingComponent extends BaseComponent implements OnInit, ControlValueAccessor {
+export class RatingComponent extends BaseComponent implements OnInit {
     _model_;
     /**
      * A placeholder is text to show in the editor when there is no value.
@@ -239,8 +232,8 @@ export class RatingComponent extends BaseComponent implements OnInit, ControlVal
             _datavalue = this.selectedRatingValue;
         }
         this.datavalue = this._model_ = _datavalue;
-        this.onChange(this._model_);
-        this.onTouched();
+        this._onChange(this._model_);
+        this._onTouched();
     }
 
     getActiveElements($event, rate) {
@@ -341,17 +334,6 @@ export class RatingComponent extends BaseComponent implements OnInit, ControlVal
             this.range = this.prepareRatingDataset(this.maxvalue);
             this.caption = this.getCaption();
         }
-    }
-
-    private onChange: any = () => {};
-    private onTouched: any = () => {};
-
-    registerOnChange(fn) {
-        this.onChange = fn;
-    }
-
-    registerOnTouched(fn) {
-        this.onTouched = fn;
     }
 
     writeValue(value) {

@@ -23,7 +23,6 @@ import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { SecurityService } from './services/security.service';
 import { HttpServiceModule } from '@wm/http';
-import { NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 import { OAuthModule } from '@wm/oAuth';
 
 const resolve = {
@@ -32,14 +31,6 @@ const resolve = {
     appJS: AppJSResolve,
     i18n: I18nResolve
 };
-
-
-const PIPES = [
-    ToDatePipe,
-    ToNumberPipe, ToCurrencyPipe, PrefixPipe,
-    SuffixPipe, TimeFromNowPipe, NumberToStringPipe, StringToNumberPipe
-];
-
 
 const routes = [
     {
@@ -59,7 +50,7 @@ const routes = [
 @NgModule({
     declarations: [
         AppComponent,
-        PageWrapperComponent, ...PIPES
+        PageWrapperComponent
     ],
     imports: [
         BrowserModule,

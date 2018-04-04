@@ -7,6 +7,7 @@ import { FormBuilder,  FormGroup, Validators } from '@angular/forms';
 import { toBoolean } from '@wm/utils';
 import { getEvaluatedData, isDataSetWidget } from '../../utils/widget-utils';
 import { fetchRelatedFieldData, getFormVariable, ALLFIELDS, getDistinctValuesForField } from '../../utils/data-utils';
+import { getDefaultViewModeWidget } from '../../utils/live-utils';
 declare const _;
 
 registerProps();
@@ -35,9 +36,11 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     widgettype: string;
     class = '';
     primarykey;
+    required;
     show;
     type;
     isDataSetBound;
+    viewmodewidget;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
                 @Optional() public form: ParentForm, private fb: FormBuilder,
@@ -77,6 +80,18 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         return value;
     }
 
+    private setRequired() {
+        if (this.required && this.show) {
+            this._validators.push(Validators.required);
+        } else {
+            this._validators = _.pull(this._validators, Validators.required);
+        }
+        if (this.ngForm) {
+            this._control.setValidators(this._validators);
+            this._control.updateValueAndValidity();
+        }
+    }
+
     onPropertyChange(key, newVal, ov?) {
 
         if (!this.formWidget) {
@@ -88,15 +103,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
 
         switch (key) {
             case 'required':
-                if (newVal && this.show) {
-                    this._validators.push(Validators.required);
-                } else {
-                    this._validators = _.pull(this._validators, Validators.required);
-                }
-                if (this.ngForm) {
-                    this._control.setValidators(this._validators);
-                    this._control.updateValueAndValidity();
-                }
+                this.setRequired();
                 break;
             case 'primary-key':
                 this.primarykey = toBoolean(newVal);
@@ -105,9 +112,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
                 }
                 break;
             case 'show':
-                if (!newVal) {
-                    this.widget.required = false;
-                }
+                this.setRequired();
                 break;
         }
     }
@@ -153,6 +158,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
             });
         }
         this.key = this.key || this.target || this.binding || this.name;
+        this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
         this.form.registerFormFields(this.widget);
 
         if (this.binddataset) {

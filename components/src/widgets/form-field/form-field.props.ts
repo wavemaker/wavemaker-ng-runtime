@@ -20,6 +20,7 @@ export const registerProps = () => {
                 ['required', PROP_BOOLEAN_NOTIFY],
                 ['show', PROP_BOOLEAN],
                 ['validationmessage', PROP_STRING],
+                ['viewmodewidget', PROP_STRING],
                 ['widgettype', PROP_STRING]
             ]
         )

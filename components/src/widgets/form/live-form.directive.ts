@@ -4,6 +4,7 @@ import { FormComponent } from './form.component';
 import { $appDigest, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/utils';
 import { performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
+import { ToDatePipe } from '../../pipes/custom-pipes';
 
 declare const _, moment;
 
@@ -23,7 +24,7 @@ const getValidTime = val => {
 })
 export class LiveFormDirective {
 
-    constructor(@Self() @Inject(FormComponent) private form) {
+    constructor(@Self() @Inject(FormComponent) private form, public datePipe: ToDatePipe) {
         form.edit = this.edit.bind(this);
         form.update = this.edit.bind(this);
         form.cancel = this.cancel.bind(this);
@@ -117,7 +118,7 @@ export class LiveFormDirective {
                     if (field.outputformat === 'timestamp' || field.type === 'timestamp') {
                         fieldValue = field.value ? dateTime.getTime() : null;
                     } else if (field.outputformat) {
-                        fieldValue = moment(dateTime).format(field.outputformat);
+                        fieldValue = this.datePipe.transform(dateTime, field.outputformat);
                     } else {
                         fieldValue = field.value;
                     }

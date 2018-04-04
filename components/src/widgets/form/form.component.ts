@@ -274,8 +274,10 @@ export class FormComponent extends BaseComponent implements ParentForm {
         if (!this.ngForm) {
             return;
         }
-        this.ngForm.markAsUntouched();
-        this.ngForm.markAsPristine();
+        setTimeout(() => {
+            this.ngForm.markAsUntouched();
+            this.ngForm.markAsPristine();
+        });
     }
 
     reset() {

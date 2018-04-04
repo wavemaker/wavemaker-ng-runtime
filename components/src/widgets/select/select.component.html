@@ -7,7 +7,7 @@
   [multiple]="multiple"
   (change)="onSelectValueChange($event, this.modelProxy)"
   >
-    <option selected value="" *ngIf="placeholder">{{placeholder}}</option>
+    <option selected [ngValue]="undefined" *ngIf="placeholder">{{placeholder}}</option>
     <option
       *ngFor="let option of displayOptions"
       [value]="option.key" [selected]="option.isChecked">{{option.value}}</option>
