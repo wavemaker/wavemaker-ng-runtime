@@ -1,9 +1,4 @@
-import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
-
-const  getManager = (category: string) => {
-    return VariableManagerFactory.get(category);
-};
 
 export abstract class ApiAwareVariable extends BaseVariable {
 
@@ -25,14 +20,4 @@ export abstract class ApiAwareVariable extends BaseVariable {
     onBeforeDatasetReady: string;
     onSuccess: string;
 
-    invoke(options?, success?, error?) {
-        return getManager(this.category).invoke(this, options, success, error);
-    }
-
-    init() {
-        getManager(this.category).initBinding(this);
-        if (this.startUpdate) {
-            this.invoke();
-        }
-    }
 }
