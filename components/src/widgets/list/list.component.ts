@@ -8,6 +8,7 @@ import { isDefined, isObject, $appDigest } from '@wm/utils';
 import { NAVIGATION_TYPE } from '../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
+import { getOrderedDataSet } from '../../utils/form-utils';
 
 declare const _;
 declare const $;
@@ -40,12 +41,27 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
     navigatorMaxResultWatch;
     navigatorResultWatch;
     noDataFound;
-    orderby;
     pagesize;
     dataset;
     multiselect;
     selectfirstitem;
     showNavigation;
+    reorderProps: {
+        minIndex: number,
+        maxIndex: number
+    } = {minIndex: null, maxIndex: null};
+
+    orderby: string;
+    loadingicon: string = 'fa fa-circle-o-notch';
+    paginationclass: string;
+    ondemandmessage: string = 'Load More';
+    loadingdatamsg: string = 'Loading...';
+
+    infScroll: boolean;
+    onDemandLoad: boolean;
+    enablereorder: boolean = false;
+    variableInflight: boolean = false;
+
 
     fieldDefs: Array<any> = [];
     _items: Array<any> = [];
@@ -93,6 +109,8 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
     private resetNavigation() {
         this.showNavigation = false;
         this.navControls    = undefined;
+        this.infScroll      = false;
+        this.onDemandLoad   = false;
     }
 
     private enableBasicNavigation() {
@@ -118,6 +136,14 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
         this.navControls = NAVIGATION_TYPE.NONE;
         this.showNavigation = false;
     }
+    enableInfiniteScroll() {
+        this.infScroll = true;
+    }
+
+    enableOnDemandLoad() {
+        this.onDemandLoad = true;
+        this.showNavigation = true;
+    }
 
     /**
      * Sets Navigation type for the list.
@@ -142,6 +168,79 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
             case NAVIGATION_TYPE.NONE :
                 this.setNavigationTypeNone();
                 break;
+            case NAVIGATION_TYPE.SCROLL:
+                this.enableInfiniteScroll();
+                break;
+            case NAVIGATION_TYPE.ONDEMAND:
+                this.enableOnDemandLoad();
+                break;
+        }
+    }
+
+    private _fetchNextOnScroll() {
+        setTimeout(() => {
+            this.dataNavigator.navigatePage('next');
+        });
+    }
+
+    private bindScrollEvt() {
+        const $el = $(this.$element),
+            $ul = $el.find('> ul'),
+            $firstChild = $ul.children().first(),
+            $c = this;
+
+        let $scrollParent,
+            scrollNode,
+            lastScrollTop  = 0;
+
+        if (!$firstChild.length) {
+            return;
+        }
+
+        $scrollParent = $firstChild.scrollParent(false);
+
+        if ($scrollParent[0] === document) {
+            scrollNode = document.body;
+        } else {
+            scrollNode = $scrollParent[0];
+        }
+
+        // has scroll
+        if (scrollNode.scrollHeight > scrollNode.clientHeight) {
+            $scrollParent
+                .each(function () {
+                    //scrollTop property is 0 or undefined for body in IE, safari.
+                    lastScrollTop = this === document ? (this.body.scrollTop || $(window).scrollTop()) : this.scrollTop;
+                })
+                .off('scroll.scroll_evt')
+                .on('scroll.scroll_evt', function (evt) {
+                    let target = evt.target,
+                        clientHeight,
+                        totalHeight,
+                        scrollTop;
+                    //scrollingElement is undefined for IE, safari. use body as target Element
+                    target =  target === document ? (target.scrollingElement || document.body) : target;
+
+                    clientHeight = target.clientHeight;
+                    totalHeight  = target.scrollHeight;
+                    scrollTop    = target === document.body ? $(window).scrollTop() : target.scrollTop;
+
+                    if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
+                        $(this).off('scroll.scroll_evt');
+                        $c._fetchNextOnScroll();
+                    }
+
+                    lastScrollTop = scrollTop;
+                });
+            $ul.off('wheel.scroll_evt');
+        } else {
+            // if there is no scrollable element register wheel event on ul element
+            $ul.on('wheel.scroll_evt', function (e) {
+                if (e.originalEvent.deltaY > 0) {
+                    $ul.off('wheel.scroll_evt');
+                    $c._fetchNextOnScroll();
+                }
+            });
         }
     }
 
@@ -151,7 +250,36 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
      * @param newVal
      */
     private updateFieldDefs(newVal: Array<any>) {
-        this.fieldDefs = newVal;
+        if (this.infScroll || this.onDemandLoad) {
+            if (!isDefined(this.fieldDefs)) {
+                this.fieldDefs = [];
+            }
+
+            if (this.dataNavigator.isFirstPage()) {
+                this.fieldDefs.length = 0;
+            }
+
+            _.forEach(newVal, (item) => {
+                this.fieldDefs.push(item);
+            });
+
+            setTimeout(() => {
+                //Functionality of On-Demand and Scroll will be same except we don't attach scroll events
+                if (this.fieldDefs.length && !this.onDemandLoad) {
+                    this.bindScrollEvt();
+                }
+            }, 100);
+        } else {
+            this.fieldDefs = newVal;
+        }
+        if (this.orderby) {
+            this.fieldDefs = getOrderedDataSet(this.fieldDefs, this.orderby);
+        }
+        if (!this.fieldDefs.length) {
+            this.noDataFound = true;
+            this.selecteditem = undefined;
+        }
+        $appDigest();
         this.listItems.setDirty();
     }
 
@@ -217,10 +345,12 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
     }
 
     private onDataSetChange(newVal) {
-        if (this.navigation !== 'None' && !this.dataNavigatorWatched) {
-            this.setupDataSource();
-        } else {
-            this.onDataChange(newVal);
+        if (!this.dataNavigatorWatched) {
+            if (this.navigation !== 'None') {
+                this.setupDataSource();
+            } else {
+                this.onDataChange(newVal);
+            }
         }
     }
 
@@ -279,7 +409,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
             if (!this.multiselect) {
                 this.clearItems();
             }
-            $listItem.isActive = isSelect ? false : true;
+            $listItem.isActive = !isSelect;
             this.setItem($listItem);
         }
     }
@@ -327,6 +457,61 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
         });
     }
 
+    private configureDnD() {
+        const $el = $(this.$element),
+            $ulEle = $el.find('.app-livelist-container'),
+            $is = this;
+        $ulEle.sortable({
+            'appendTo'    : 'body',
+            'containment' : $ulEle,
+            'delay'       : 100,
+            'opacity'     : 0.8,
+            'helper'      : 'clone',
+            'zIndex'      : 1050,
+            'tolerance'   : 'pointer',
+            'start'       : function (evt, ui) {
+                ui.placeholder.height(ui.item.height());
+                $(this).data('oldIndex', ui.item.index());
+            },
+            'update'      : function (evt, ui) {
+                let changedItem,
+                    newIndex,
+                    oldIndex,
+                    draggedItem,
+                    $dragEl,
+                    minIndex,
+                    maxIndex,
+                    data;
+
+                data        = $is.fieldDefs;
+                $dragEl     = $(this);
+                newIndex    = ui.item.index();
+                oldIndex    = $dragEl.data('oldIndex');
+
+                minIndex    = _.min([newIndex, oldIndex]);
+                maxIndex    = _.max([newIndex, oldIndex]);
+                $is.reorderProps.minIndex = _.min([minIndex, $is.reorderProps.minIndex]);
+                $is.reorderProps.maxIndex = _.max([maxIndex, $is.reorderProps.maxIndex]);
+
+                draggedItem = _.pullAt(data, oldIndex)[0];
+                data.splice(newIndex, 0, draggedItem);
+                // cancel the sort even. as the data model is changed Angular will render the list.
+                $ulEle.sortable("cancel");
+                changedItem = {
+                    oldIndex: oldIndex,
+                    newIndex: newIndex,
+                    item: data[newIndex]
+                };
+                $dragEl.removeData('oldIndex');
+                setTimeout(() => {
+                    $is.listItems.setDirty();
+                });
+                $appDigest();
+            }
+        });
+        $el.find('.app-livelist-container').droppable({'accept': '.app-list-item'});
+    }
+
     /*================================  PUBLIC METHODS  ====================================*/
 
     onPropertyChange(key, newVal, oldVal?) {
@@ -337,6 +522,9 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
 
             case 'navigation':
                 this.onNavigationTypeChange(newVal);
+                if (this.dataNavigator) {
+                    this.dataNavigator.navigationClass = this.paginationclass;
+                }
                 break;
         }
         $appDigest();
@@ -375,5 +563,8 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.setupHandlers();
+        if (this.enablereorder) {
+           this.configureDnD();
+        }
     }
 }
