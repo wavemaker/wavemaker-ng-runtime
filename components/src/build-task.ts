@@ -47,6 +47,7 @@ export * from './widgets/picture/picture.build';
 export * from './widgets/prefab/prefab.build';
 export * from './widgets/radioset/radioset.build';
 export * from './widgets/rating/rating.build';
+export * from './widgets/rich-text-editor/rich-text-editor.build';
 export * from './widgets/right-panel/right-panel.build';
 export * from './widgets/select/select.build';
 export * from './widgets/slider/slider.build';
