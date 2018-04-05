@@ -4,7 +4,7 @@ import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
-import { $appDigest } from '@wm/utils';
+import { $appDigest, removeClass } from '@wm/utils';
 import { getVariableName, performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 
@@ -82,10 +82,22 @@ export class FormComponent extends BaseComponent implements ParentForm {
     getPrevDataValues: Function;
     setPrevformFields: Function;
     setPrimaryKey: () => {};
+    dialogId: string;
 
     private operationType;
     private variable;
-    private isLayoutDialog;
+    private _isLayoutDialog;
+
+    set isLayoutDialog(nv) {
+        if (nv) {
+            removeClass(this.$element, 'panel app-panel liveform-inline');
+        }
+        this._isLayoutDialog = nv;
+    }
+
+    get isLayoutDialog() {
+        return this._isLayoutDialog;
+    }
 
     @HostBinding('autocomplete') autocomplete: boolean;
     @HostBinding('action') action: string;
@@ -214,6 +226,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
 
         styler(this.$element, this);
 
+        this.dialogId = elRef.nativeElement.getAttribute('dialogId');
         this.ngForm = fb.group({});
         this.elScope = this;
         this.resetForm = this.reset.bind(this);

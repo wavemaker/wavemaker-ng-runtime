@@ -1,4 +1,4 @@
-<div class="panel-heading" *ngIf="title || subheading || iconclass">
+<div class="panel-heading" *ngIf="!isLayoutDialog && (title || subheading || iconclass)">
     <h3 class="panel-title">
         <div class="pull-left">
             <i class="app-icon panel-icon" [ngClass]="iconclass" *ngIf="iconclass"></i>
@@ -9,12 +9,12 @@
         </div>
     </h3>
 </div>
-<div class="form-body panel-body">
+<div class="panel-body" [ngClass]="{'form-elements': isLayoutDialog, 'form-body': !isLayoutDialog}">
     <p wmMessage *ngIf="statusMessage.caption" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
-    <div class="form-elements">
+    <div [ngClass]="{'form-elements': !isLayoutDialog, 'form-content': isLayoutDialog}">
         <ng-content></ng-content>
     </div>
-    <div class="basic-btn-grp form-action panel-footer clearfix">
+    <div class="basic-btn-grp form-action panel-footer clearfix" [ngClass]="{'modal-footer': isLayoutDialog}">
         <button *ngFor="let btn of buttonArray" wmButton name="{{btn.key}}" caption.bind="$implicit.displayName" class.bind="$implicit.class" iconclass.bind="$implicit.iconclass"
                 (click)="callEvent(btn.action)" type.bind="$implicit.type" hint.bind="$implicit.title" shortcutkey.bind="$implicit.shortcutkey" disabled.bind="$implicit.disabled"
                 tabindex.bind="btnField.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>

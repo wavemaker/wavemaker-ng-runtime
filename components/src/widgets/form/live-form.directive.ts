@@ -4,6 +4,7 @@ import { FormComponent } from './form.component';
 import { $appDigest, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/utils';
 import { performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
+import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../pipes/custom-pipes';
 
 declare const _, moment;
@@ -24,7 +25,7 @@ const getValidTime = val => {
 })
 export class LiveFormDirective {
 
-    constructor(@Self() @Inject(FormComponent) private form, public datePipe: ToDatePipe) {
+    constructor(@Self() @Inject(FormComponent) private form, public datePipe: ToDatePipe, private dialogService: DialogService) {
         form.edit = this.edit.bind(this);
         form.update = this.edit.bind(this);
         form.cancel = this.cancel.bind(this);
@@ -287,9 +288,9 @@ export class LiveFormDirective {
             this.form.getPrevDataValues();
         }
         this.form.isUpdateMode = false;
-        // if (this.form.isLayoutDialog) {
-        //     DialogService.hideDialog($scope._dialogid);
-        // }
+        if (this.form.isLayoutDialog) {
+             this.dialogService.closeDialog(this.form.dialogId);
+        }
     }
 
     new() {

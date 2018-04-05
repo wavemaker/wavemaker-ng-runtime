@@ -5,6 +5,7 @@ import { registerProps } from './live-table.props';
 import { FormComponent } from '../form/form.component';
 import { TableComponent } from '../table/table.component';
 import { getClonedObject, isDefined } from '@wm/utils';
+import { DialogService } from '../dialog/dialog.service';
 
 declare const _;
 declare const moment;
@@ -43,7 +44,25 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
 
         this.form.new();
 
-        // TODO: Layout Dialog
+        if (this.isLayoutDialog) {
+            this.toggleDialogVisibility(true);
+        }
+    }
+
+    toggleDialogVisibility(flag) {
+        const dialogId = this.form.dialogId;
+        if (flag) {
+            this.dialogService.openDialog(dialogId);
+        } else {
+            this.dialogService.closeDialog(dialogId);
+        }
+    }
+
+    onPropertyChange(key, nv) {
+        if (key === 'formlayout' && nv === 'dialog') {
+            this.isLayoutDialog = true;
+            this.form.isLayoutDialog = true;
+        }
     }
 
     updateRow(row, eventName) {
@@ -56,7 +75,9 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
         this.form.isSelected = true;
         this.form.edit();
 
-        // TODO: Layout Dialog
+        if (this.isLayoutDialog) {
+            this.toggleDialogVisibility(true);
+        }
     }
 
     onSelectedItemChange(newValue) {
@@ -126,7 +147,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
                     this.form.edit();
                 }
             } else {
-                // DialogService.hideDialog(scope.gridform._dialogid);
+                this.toggleDialogVisibility(false);
             }
         }
     }
@@ -140,7 +161,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
         this.table.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private dialogService: DialogService) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
     }
