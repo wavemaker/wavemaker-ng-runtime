@@ -3,7 +3,7 @@ import { BaseComponent } from '../base/base.component';
 import { registerProps } from './checkbox.props';
 import { styler } from '../../utils/styler';
 import { toggleClass } from '@wm/utils';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { invokeEventHandler, getControlValueAccessor } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
@@ -12,7 +12,8 @@ registerProps();
 
 @Component({
     selector: '[wmCheckbox]',
-    templateUrl: './checkbox.component.html'
+    templateUrl: './checkbox.component.html',
+    providers: [getControlValueAccessor(CheckboxComponent)]
 })
 export class CheckboxComponent  extends BaseComponent implements OnInit {
 
@@ -45,6 +46,7 @@ export class CheckboxComponent  extends BaseComponent implements OnInit {
         } else {
             this.model = false;
         }
+        this._onChange(this.datavalue);
     }
 
     onPropertyChange(key, nv, ov) {
@@ -63,6 +65,8 @@ export class CheckboxComponent  extends BaseComponent implements OnInit {
     }
 
     onChange($event) {
+        this._onTouched();
+        this._onChange(this.datavalue);
         $event.stopPropagation();
         invokeEventHandler(this, 'change', {$event: $event, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
     }

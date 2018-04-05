@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@ang
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { BaseComponent } from '../base/base.component';
-import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
 import { getClonedObject } from '@wm/utils';
 import { getOrderedDataSet } from '../../utils/form-utils';
 import { registerProps } from './search.props';
@@ -24,8 +24,9 @@ registerProps();
  *
  */
 @Component({
-  selector: '[wmSearch]',
-  templateUrl: './search.component.html'
+    selector: '[wmSearch]',
+    templateUrl: './search.component.html',
+    providers: [getControlValueAccessor(SearchComponent)]
 })
 export class SearchComponent extends BaseComponent implements OnInit {
 
@@ -42,6 +43,38 @@ export class SearchComponent extends BaseComponent implements OnInit {
      */
     private proxyDatavalue;
     private _datavalue;
+    /**
+     * The result of the search input when dropdown is open
+     */
+    result: any;
+    /**
+     * The current page of the result set
+     */
+    private page = 0;
+    /**
+     * Private property to map the formatted dataset based on the collection
+     */
+    private formattedDataSet;
+    /**
+     * Private property to map the dataSource observable to the typeahead
+     */
+    dataSource: Observable<any>;
+    /**
+     * Private property to map the queryModel value
+     */
+    queryModel: string;
+    /**
+     * Private property to get the complete model object of the selected item
+     */
+    private selectedItem;
+    /**
+     * Private property to map the itemsList prepared from the dataset
+     */
+    private itemsList: any;
+    /**
+     * Private property to flag the loading status of the items
+     */
+    private _loadingItems;
     private _dataset;
     /**
      * The dataset property to set the search results
@@ -57,6 +90,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
     get datavalue() {
         return this.proxyDatavalue;
     }
+
     /**
      * The default value to be assigned on the search input
      */
@@ -89,7 +123,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
                         // convert display-label-value to string, as ui.typeahead expects only strings
                         itemValue.wmDisplayLabel = getEvaluatedData(eachItem, {displayexpression: this.displaylabel});
                         // to save all the image urls
-                        itemValue.wmImgSrc   = getEvaluatedData(eachItem, {displayexpression: this.displayimagesrc});
+                        itemValue.wmImgSrc = getEvaluatedData(eachItem, {displayexpression: this.displayimagesrc});
                         itemValue.wmImgWidth = this.imagewidth;
                     }
                 });
@@ -131,12 +165,13 @@ export class SearchComponent extends BaseComponent implements OnInit {
             if (!_.isEmpty(model)) {
                 model = model[0];
                 this.selectedItem = getClonedObject(model);
-                this.proxyDatavalue = (this.datafield && this.datafield !== ALL_FIELDS) ? (this.selectedItem  && _.get(this.selectedItem, this.datafield)) : this.selectedItem;
+                this.proxyDatavalue = (this.datafield && this.datafield !== ALL_FIELDS) ? (this.selectedItem && _.get(this.selectedItem, this.datafield)) : this.selectedItem;
                 this.queryModel = getEvaluatedData(model, {displayexpression: this.displaylabel});
             } else {
                 this.selectedItem = this.proxyDatavalue = this.queryModel = undefined;
             }
         }
+        this._onChange(this.datavalue);
         $appDigest();
     }
 
@@ -148,53 +183,23 @@ export class SearchComponent extends BaseComponent implements OnInit {
         this.queryModel = newVal;
         $appDigest();
     }
-    /**
-     * The result of the search input when dropdown is open
-     */
-    result: any;
-    /**
-     * The current page of the result set
-     */
-    private page = 0;
-    /**
-     * Private property to map the formatted dataset based on the collection
-     */
-    private formattedDataSet;
-    /**
-     * Private property to map the dataSource observable to the typeahead
-     */
-    dataSource: Observable<any>;
-    /**
-     * Private property to map the queryModel value
-     */
-    queryModel: string;
-    /**
-     * Private property to get the complete model object of the selected item
-     */
-    private selectedItem;
-    /**
-     * Private property to map the itemsList prepared from the dataset
-     */
-    private itemsList: any;
-    /**
-     * Private property to flag the loading status of the items
-     */
-    private _loadingItems;
 
     constructor(inj: Injector, elRef: ElementRef, private cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
     }
+
     /**
      * Private method to get the the dataobj by the datafield
      */
     private getDataObjbyDataField(matchValue) {
         return _.filter(this.dataset, (item) => {
-           if (item[this.datafield] === matchValue) {
-               return true;
-           }
+            if (item[this.datafield] === matchValue) {
+                return true;
+            }
         });
     }
+
     /**
      * Private method to get the unique objects by the data field
      */
@@ -216,6 +221,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
             return !!_.trim(_.get(obj, dataField)) && _.trim(obj.wmDisplayLabel);
         });
     }
+
     /**
      * Private method to filter the search fields based on the search inputs, returns ScalableObservable instance with the data
      */
@@ -238,6 +244,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
         this.updateResult(result);
         return Observable.of(this.getUniqObjsByDataField(result, this.datafield, this.displaylabel, true));
     }
+
     /**
      * Private method to update the result and change the datavalue if results are empty
      */
@@ -246,13 +253,16 @@ export class SearchComponent extends BaseComponent implements OnInit {
         if (!matchedItems || _.isEmpty(matchedItems)) {
             this.proxyDatavalue = undefined;
         }
+        this._onChange(this.datavalue);
         this.result = (this.datafield === ALL_FIELDS || !this.datafield) ? matchedItems : _.map(matchedItems, this.datafield);
         $appDigest();
     }
+
     /**
      * Private method wrapper to map the selectedValue to onSelect, onSubmit Events
      */
     private onTypeAheadSelect($event: TypeaheadMatch | any) {
+        this._onTouched();
         $event = $event || <TypeaheadMatch>{};
 
         let $item = getClonedObject($event.item);
@@ -272,13 +282,15 @@ export class SearchComponent extends BaseComponent implements OnInit {
 
         delete $event.item;
         // set selected item on widget's exposed property
-        this.proxyDatavalue = (this.datafield && this.datafield !== ALL_FIELDS) ? ($item  && _.get($item, this.datafield)) : $item;
+        this.proxyDatavalue = (this.datafield && this.datafield !== ALL_FIELDS) ? ($item && _.get($item, this.datafield)) : $item;
         this.queryModel = $label;
-        this.result     = [];
+        this.result = [];
         // call user 'onSubmit & onSelect' fn
         invokeEventHandler(this, 'select', {$event, newVal: this.proxyDatavalue});
         invokeEventHandler(this, 'submit', {$event});
+        this._onChange(this.datavalue);
     }
+
     /**
      * Private method to change the loading status of the flag
      */

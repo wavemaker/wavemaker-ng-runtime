@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/cor
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './slider.props';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-slider slider';
 const WIDGET_CONFIG = {widgetType: 'wm-slider', hostClass: DEFAULT_CLS};
@@ -11,7 +11,8 @@ registerProps();
 
 @Component({
     selector: '[wmSlider]',
-    templateUrl: './slider.component.html'
+    templateUrl: './slider.component.html',
+    providers: [getControlValueAccessor(SliderComponent)]
 })
 export class SliderComponent extends BaseComponent {
 
@@ -26,5 +27,7 @@ export class SliderComponent extends BaseComponent {
     onChange($event) {
         invokeEventHandler(this, 'change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
         this.oldVal = this.datavalue;
+        this._onTouched();
+        this._onChange(this.datavalue);
     }
 }

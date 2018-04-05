@@ -4,6 +4,7 @@ import { styler } from '../../utils/styler';
 import { registerProps } from './radioset.props';
 import { assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../utils/form-utils';
 import { $appDigest, switchClass } from '@wm/utils';
+import { getControlValueAccessor } from '../../utils/widget-utils';
 
 declare const _;
 
@@ -14,7 +15,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmRadioset]',
-    templateUrl: './radioset.component.html'
+    templateUrl: './radioset.component.html',
+    providers: [getControlValueAccessor(RadiosetComponent)]
 })
 export class RadiosetComponent extends BaseComponent {
     class = '';
@@ -50,6 +52,7 @@ export class RadiosetComponent extends BaseComponent {
         this.__model = val;
         this.modelProxy = updatedCheckedValues(this.displayOptions, val, this.modelProxy, this.usekeys);
         this.displayValue = setCheckedAndDisplayValues(this.displayOptions, this.modelProxy);
+        this._onChange(this.datavalue);
     }
 
     /**
@@ -109,6 +112,7 @@ export class RadiosetComponent extends BaseComponent {
      * On click of the option, update the datavalue
      */
     _onRadioLabelClick($event, radioOption) {
+        this._onTouched();
         if (this.disabled || this.readonly) {
             return;
         }
