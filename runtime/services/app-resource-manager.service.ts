@@ -6,7 +6,7 @@ import { SecurityService } from '@wm/security';
 export class AppResourceManagerService {
 
     get(url, pageName?): string | any {
-        return this.$http.get(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+        return this.$http.get(url)
             .catch(e => {
                 if (e.status === 401) {
                     this.securityService.handle401(pageName);
