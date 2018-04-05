@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '@wm/http';
-import { SecurityService } from './security.service';
+import { SecurityService } from '@wm/security';
 
 @Injectable()
 export class AppResourceManagerService {

@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { VariableFactory } from '../factory/variable.factory';
 import { OAuthService } from '@wm/oAuth';
 import { BaseAction } from '../model/base-action';
+import { SecurityService } from '@wm/security';
 
 @Injectable()
 export class VariablesService {
@@ -18,13 +19,15 @@ export class VariablesService {
                 private metadataService: MetadataService,
                 private routerService: Router,
                 private toasterService: ToastrService,
-                private oAuthService: OAuthService) {
+                private oAuthService: OAuthService,
+                private securityService: SecurityService) {
         // set external dependencies
         setDependency('http', this.httpService);
         setDependency('metadata', this.metadataService);
         setDependency('router', this.routerService);
         setDependency('toaster', this.toasterService);
         setDependency('oAuth', this.oAuthService);
+        setDependency('security', this.securityService);
     }
 
     register(page: string, variablesJson: any, scope: any) {

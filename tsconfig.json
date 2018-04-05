@@ -9,7 +9,8 @@
             "@wm/variables": [ "variables" ],
             "@wm/http": [ "http-service" ],
             "@wm/runtime": ["runtime"],
-            "@wm/transpiler": ["transpiler"]
+            "@wm/transpiler": ["transpiler"],
+            "@wm/security": ["security"]
         },
         "outDir": "./dist/out-tsc",
         "sourceMap": false,

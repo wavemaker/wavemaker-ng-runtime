@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
-import { SecurityService } from '../services/security.service';
+import { SecurityService } from '@wm/security';
 
 @Injectable()
 export class SecurityConfigResolve implements Resolve<any> {

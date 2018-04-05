@@ -1,14 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import {HttpService} from '@wm/http';
+import { triggerFn } from '@wm/utils';
 
 declare const _WM_APP_PROPERTIES, _;
 
 @Injectable()
 export class SecurityService {
     config;
+    lastLoggedinUser;
+    loggedinUser;
 
-    constructor(private httpClient: HttpClient, private routerService: Router, private activatedRoute: ActivatedRoute) {}
+    constructor(private httpClient: HttpClient,
+                private $http: HttpService,
+                private routerService: Router,
+                private activatedRoute: ActivatedRoute) {}
 
     isLoaded() {
         return this.config ? true : false;
@@ -22,6 +29,7 @@ export class SecurityService {
         return new Promise((resolve, reject) => {
             this.httpClient.get('./services/security/info').toPromise().then((response) => {
                 this.config = response;
+                this.loggedinUser = this.config.userInfo;
                 resolve(response);
             });
         });
@@ -165,5 +173,67 @@ export class SecurityService {
                     break;
             }
         }
+    }
+
+    appLogin(params, successCallback, failureCallback) {
+        console.log('...logging in now...');
+        var rememberme = _.isUndefined(params.rememberme) ? false : params.rememberme,
+            loginParams = ['username', 'password', 'rememberme'],
+            customParams = '',
+            self = this;
+
+        // process extra data if passed. TODO[VIBHU], this logic needs validation
+        _.each(params, function (value, name) {
+            if (!_.includes(loginParams, name)) {
+                customParams += '&' + encodeURIComponent(name) + '=' + encodeURIComponent(value);
+            }
+        });
+
+        return this.$http.send({
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            url: 'j_spring_security_check',
+            'data'   : 'j_username=' + encodeURIComponent(params.username) +
+            '&j_password=' + encodeURIComponent(params.password) +
+            '&remember-me=' + rememberme +
+            customParams
+        }).then(function (response) {
+            // const config = this.get();
+            // var xsrfCookieValue = response[CONSTANTS.XSRF_COOKIE_NAME];
+            //
+            // //override the default xsrf cookie name and xsrf header names with WaveMaker specific values
+            // if (xsrfCookieValue) {
+            //     if (CONSTANTS.hasCordova) {
+            //         localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, xsrfCookieValue || '');
+            //     }
+            //     $http.defaults.xsrfCookieName = CONSTANTS.XSRF_COOKIE_NAME;
+            //     $http.defaults.xsrfHeaderName = config.csrfHeaderName;
+            // }
+            // After the successful login in device, this function triggers the pending onLoginCallbacks.
+
+            triggerFn(successCallback, response);
+        }, failureCallback);
+    }
+
+    /**
+     * Updates the security config in SecurityService by making a fresh call to the API
+     * If app.variables not loaded, will load them and the related dependencies
+     * Updates the loggedInUser with the fresh user info
+     * @returns {promise|*}
+     */
+    resetSecurityConfig() {
+        return this.load().then(function () {
+            // metadataService.load(undefined, true).then(function() {
+                // if (!appVariablesLoaded) {
+                //     initAppVariablesAndDependencies().
+                //     then(deferred.resolve, deferred.resolve);
+                // } else {
+                //     updateLoggedInUserVariable().
+                //     then(deferred.resolve, deferred.resolve);
+                // }
+            // });
+        });
     }
 }

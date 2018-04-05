@@ -21,7 +21,6 @@ import { AppResourceManagerService } from './services/app-resource-manager.servi
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
-import { SecurityService } from './services/security.service';
 import { HttpServiceModule } from '@wm/http';
 import { OAuthModule } from '@wm/oAuth';
 
@@ -75,7 +74,6 @@ const routes = [
         I18nResolve,
         AppResourceManagerService,
         PrefabManagerService,
-        SecurityService,
         SecurityConfigResolve,
         DecimalPipe,
         DatePipe

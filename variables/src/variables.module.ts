@@ -7,6 +7,7 @@ import { HttpServiceModule } from '@wm/http';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { OAuthModule } from '@wm/oAuth';
+import { SecurityModule } from '@wm/security';
 @NgModule({
     imports: [
         CommonModule,
@@ -14,6 +15,7 @@ import { OAuthModule } from '@wm/oAuth';
         HttpClientModule,
         HttpServiceModule,
         OAuthModule,
+        SecurityModule,
         BrowserAnimationsModule
     ],
     declarations: [],

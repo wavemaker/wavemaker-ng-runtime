@@ -2,6 +2,7 @@ export const CONSTANTS = {
     hasCordova: false,
     isWaveLens: false,
     isStudioMode: false,
+    isRunMode: true,
     XSRF_COOKIE_NAME: 'wm_xsrf_token'
 };
 export const VARIABLE_CONSTANTS = {

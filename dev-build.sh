@@ -120,6 +120,16 @@ then
 fi
 echo -e "${Green}Built oAuth ${White}\n"
 
+########## Security
+echo -e "${Cyan}Building Security ${White}"
+$ROLLUP -c ./security/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building Security ${White}\n"
+    exit 1
+fi
+echo -e "${Green}Built Security ${White}\n"
+
 ########## variables
 echo -e "${Cyan}Building Variables ${White}"
 $ROLLUP -c ./variables/rollup.config.js --silent
@@ -148,6 +158,7 @@ $UGLIFYJS ./dist/tmp/wm-utils.umd.js \
     ./dist/tmp/wm-components.umd.js \
     ./dist/tmp/http-service.umd.js \
     ./dist/tmp/oAuth.umd.js \
+    ./dist/tmp/wm-security.umd.js \
     ./dist/tmp/wm-variables.umd.js \
     ./dist/tmp/wm-runtime.umd.js -o \
     ./dist/bundles/wmapp/scripts/wm-loader.min.js -b

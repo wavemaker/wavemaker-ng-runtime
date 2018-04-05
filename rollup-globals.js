@@ -16,6 +16,7 @@ export default {
     '@wm/variables': 'wm.variables',
     '@wm/http': 'wm.http',
     '@wm/oAuth': 'wm.oAuth',
+    '@wm/security': 'wm.security',
     'ngx-bootstrap': 'ngxBootstrap',
     'ngx-bootstrap/pagination': 'ngxBootstrap',
     'ngx-color-picker': 'zef.ngxColorPicker',

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { RenderUtilsService } from '../services/render-utils.service';
 import { MetadataService } from '@wm/variables';
-import { SecurityService } from '../services/security.service';
+import { SecurityService } from '@wm/security';
 import { App } from '../services/app.service';
 
 @Component({
