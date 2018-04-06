@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './switch.props';
 import { $appDigest, isEqualWithFields, setCSS } from '@wm/utils';
 import { getOrderedDataSet } from '../../utils/form-utils';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _, $;
 
@@ -32,7 +32,7 @@ registerProps();
     templateUrl: './switch.component.html',
     providers: [getControlValueAccessor(SwitchComponent)]
 })
-export class SwitchComponent extends BaseComponent {
+export class SwitchComponent extends BaseFormComponent {
 
     _model;
     datafield;
@@ -171,7 +171,7 @@ export class SwitchComponent extends BaseComponent {
         setTimeout(() => {
             this.updateHighlighter(true);
         }, 130);
-        this._onChange(val);
+        this.invokeOnChange(val);
     }
 
     private selectOptAtIndex($index) {
@@ -191,7 +191,7 @@ export class SwitchComponent extends BaseComponent {
 
     selectOpt($event, $index) {
 
-        this._onTouched();
+        this.invokeOnTouched();
         $event.preventDefault();
 
         if (this.disabled) {

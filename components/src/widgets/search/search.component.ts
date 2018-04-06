@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
-import { BaseComponent } from '../base/base.component';
 import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
 import { getClonedObject } from '@wm/utils';
 import { getOrderedDataSet } from '../../utils/form-utils';
 import { registerProps } from './search.props';
 import { $appDigest } from '@wm/utils';
 import { styler } from '../../utils/styler';
+import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _;
 
@@ -28,7 +28,7 @@ registerProps();
     templateUrl: './search.component.html',
     providers: [getControlValueAccessor(SearchComponent)]
 })
-export class SearchComponent extends BaseComponent implements OnInit {
+export class SearchComponent extends BaseFormComponent implements OnInit {
 
     displaylabel;
     datafield;
@@ -171,7 +171,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
                 this.selectedItem = this.proxyDatavalue = this.queryModel = undefined;
             }
         }
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
         $appDigest();
     }
 
@@ -253,7 +253,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
         if (!matchedItems || _.isEmpty(matchedItems)) {
             this.proxyDatavalue = undefined;
         }
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
         this.result = (this.datafield === ALL_FIELDS || !this.datafield) ? matchedItems : _.map(matchedItems, this.datafield);
         $appDigest();
     }
@@ -262,7 +262,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
      * Private method wrapper to map the selectedValue to onSelect, onSubmit Events
      */
     private onTypeAheadSelect($event: TypeaheadMatch | any) {
-        this._onTouched();
+        this.invokeOnTouched();
         $event = $event || <TypeaheadMatch>{};
 
         let $item = getClonedObject($event.item);
@@ -288,7 +288,7 @@ export class SearchComponent extends BaseComponent implements OnInit {
         // call user 'onSubmit & onSelect' fn
         invokeEventHandler(this, 'select', {$event, newVal: this.proxyDatavalue});
         invokeEventHandler(this, 'submit', {$event});
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
     }
 
     /**

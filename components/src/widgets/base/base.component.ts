@@ -2,11 +2,10 @@ import { ChangeDetectorRef, ElementRef, OnDestroy, OnInit } from '@angular/core'
 import { addClass, debounce } from '@wm/utils';
 import { initWidget } from '../../utils/init-widget';
 import { Subject } from 'rxjs/Subject';
-import { ControlValueAccessor } from '@angular/forms';
 
 const noop = () => {};
 
-export class BaseComponent implements OnDestroy, OnInit, ControlValueAccessor {
+export class BaseComponent implements OnDestroy, OnInit {
     $element: HTMLElement;
     widgetType: string;
     widget: any;
@@ -71,20 +70,5 @@ export class BaseComponent implements OnDestroy, OnInit, ControlValueAccessor {
 
     ngOnInit() {
         this.init();
-    }
-
-    protected _onChange: any = () => {};
-    protected _onTouched: any = () => {};
-
-    registerOnChange(fn) {
-        this._onChange = fn;
-    }
-
-    registerOnTouched(fn) {
-        this._onTouched = fn;
-    }
-
-    writeValue(value) {
-        this.datavalue = value;
     }
 }

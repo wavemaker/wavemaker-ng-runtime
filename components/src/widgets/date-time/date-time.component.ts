@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
 import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/utils';
-import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './date-time.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { BaseFormComponent } from '../base/base-form.component';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -17,7 +17,7 @@ registerProps();
     templateUrl: './date-time.component.html',
     providers: [getControlValueAccessor(DatetimeComponent)]
 })
-export class DatetimeComponent extends BaseComponent {
+export class DatetimeComponent extends BaseFormComponent {
     /**
      * This property sets the widget to readonly mode
      */
@@ -69,7 +69,7 @@ export class DatetimeComponent extends BaseComponent {
         } else {
             this.dateModel = this.timeModel = this.proxyModel = this.timestamp = this.formattedModel = undefined;
         }
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
         $appDigest();
     }
     private timeinterval: any;
@@ -171,7 +171,7 @@ export class DatetimeComponent extends BaseComponent {
     }
     onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
-        this._onTouched();
+        this.invokeOnTouched();
     }
     /**
      * This is an internal method to update the model
@@ -180,7 +180,7 @@ export class DatetimeComponent extends BaseComponent {
         if (!newVal) {
             invokeEventHandler(this, 'change', {$event: newVal, newVal: undefined, oldVal: this.proxyModel});
             this.proxyModel = undefined;
-            this._onChange(this.datavalue);
+            this.invokeOnChange(this.datavalue);
             return;
         }
         const dateObj = this.getDateObj(newVal);
@@ -202,7 +202,7 @@ export class DatetimeComponent extends BaseComponent {
             this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
         }
         this.formattedModel = getFormattedDate(this.proxyModel, this.datepattern);
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
         $appDigest();
     }
     /**

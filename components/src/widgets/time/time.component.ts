@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
 import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/utils';
 import { styler } from '../../utils/styler';
 import { registerProps } from './time.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { BaseFormComponent } from '../base/base-form.component';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
@@ -22,7 +22,7 @@ registerProps();
     templateUrl: './time.component.html',
     providers: [getControlValueAccessor(TimeComponent)]
 })
-export class TimeComponent extends BaseComponent implements OnDestroy {
+export class TimeComponent extends BaseFormComponent implements OnDestroy {
     /**
      * This property sets the widget to readonly mode
      */
@@ -70,7 +70,7 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
             this.clearTimeInterval();
             this.isCurrentTime = false;
         }
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
         $appDigest();
     }
 
@@ -144,8 +144,8 @@ export class TimeComponent extends BaseComponent implements OnDestroy {
         } else {
             this.proxyModel = this.formattedModel = this.timestamp = undefined;
         }
-        this._onTouched();
-        this._onChange(this.datavalue);
+        this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue);
     }
     /**
      * This is an internal method to get the date object from the input received

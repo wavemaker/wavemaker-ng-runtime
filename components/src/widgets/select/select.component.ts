@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './select.props';
 import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../utils/form-utils';
 import { removeAttr, setAttr } from '@wm/utils';
 import { invokeEventHandler, getControlValueAccessor } from '../../utils/widget-utils';
+import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _;
 
@@ -17,7 +17,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
     templateUrl: './select.component.html',
     providers: [getControlValueAccessor(SelectComponent)]
 })
-export class SelectComponent extends BaseComponent implements OnInit {
+export class SelectComponent extends BaseFormComponent implements OnInit {
 
     public readonly;
     public multiple;
@@ -47,7 +47,7 @@ export class SelectComponent extends BaseComponent implements OnInit {
         model = updatedCheckedValues(this.displayOptions, val, this.modelProxy, this.usekeys);
         this.modelProxy = _.isArray(model) ? model : [model];
         this.displayValue = setCheckedAndDisplayValues(this.displayOptions, this.modelProxy);
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
     }
 
     get datavalue() {
@@ -81,7 +81,7 @@ export class SelectComponent extends BaseComponent implements OnInit {
             return;
         }
         this.assignModelValue();
-        this._onTouched();
+        this.invokeOnTouched();
         invokeEventHandler(this, 'change', {$event, newVal: this.datavalue, oldVal: this.oldValue});
         this.oldValue = this.datavalue;
     }

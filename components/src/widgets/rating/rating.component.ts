@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
 import { $appDigest, generateGUId, getClonedObject, setCSS } from '@wm/utils';
 import { styler } from '../../utils/styler';
 import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../utils/widget-utils';
 import { registerProps } from './rating.props';
+import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _;
 
@@ -27,7 +27,7 @@ const DEFAULT_RATING = 5;
     templateUrl: './rating.component.html',
     providers: [getControlValueAccessor(RatingComponent)]
 })
-export class RatingComponent extends BaseComponent implements OnInit {
+export class RatingComponent extends BaseFormComponent implements OnInit {
     _model_;
     /**
      * A placeholder is text to show in the editor when there is no value.
@@ -232,8 +232,8 @@ export class RatingComponent extends BaseComponent implements OnInit {
             _datavalue = this.selectedRatingValue;
         }
         this.datavalue = this._model_ = _datavalue;
-        this._onChange(this._model_);
-        this._onTouched();
+        this.invokeOnChange(this._model_);
+        this.invokeOnTouched();
     }
 
     getActiveElements($event, rate) {

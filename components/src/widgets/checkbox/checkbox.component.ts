@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './checkbox.props';
 import { styler } from '../../utils/styler';
 import { toggleClass } from '@wm/utils';
 import { invokeEventHandler, getControlValueAccessor } from '../../utils/widget-utils';
+import { BaseFormComponent } from '../base/base-form.component';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
@@ -15,7 +15,7 @@ registerProps();
     templateUrl: './checkbox.component.html',
     providers: [getControlValueAccessor(CheckboxComponent)]
 })
-export class CheckboxComponent  extends BaseComponent implements OnInit {
+export class CheckboxComponent  extends BaseFormComponent implements OnInit {
 
     model: boolean;
     /**
@@ -46,7 +46,7 @@ export class CheckboxComponent  extends BaseComponent implements OnInit {
         } else {
             this.model = false;
         }
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
     }
 
     onPropertyChange(key, nv, ov) {
@@ -65,8 +65,8 @@ export class CheckboxComponent  extends BaseComponent implements OnInit {
     }
 
     onChange($event) {
-        this._onTouched();
-        this._onChange(this.datavalue);
+        this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue);
         $event.stopPropagation();
         invokeEventHandler(this, 'change', {$event: $event, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
     }

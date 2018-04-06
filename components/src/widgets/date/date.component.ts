@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
 import { getFormattedDate } from '@wm/utils';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './date.props';
 import { styler } from '../../utils/styler';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { BaseFormComponent } from '../base/base-form.component';
 
 registerProps();
 
@@ -28,7 +28,7 @@ const getDateObj = (value?: string): Date => {
     templateUrl: './date.component.html',
     providers: [getControlValueAccessor(DateComponent)]
 })
-export class DateComponent extends BaseComponent {
+export class DateComponent extends BaseFormComponent {
     /**
      * This is an internal property used to map it to the widget
      */
@@ -63,7 +63,7 @@ export class DateComponent extends BaseComponent {
     };
 
     onDatePickerOpen() {
-        this._onTouched();
+        this.invokeOnTouched();
     }
     /**
      * This is an internal method triggered when the date selection changes
@@ -77,7 +77,7 @@ export class DateComponent extends BaseComponent {
         } else {
             this.formattedModel = this.datavalue = undefined;
         }
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
     }
 
     // sets the dataValue and computes the display model values
@@ -90,7 +90,7 @@ export class DateComponent extends BaseComponent {
         } else {
             this._datavalue = this.proxyModel = this.formattedModel = this.datavalue = undefined;
         }
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
     }
 
     get isDisabled(): boolean {

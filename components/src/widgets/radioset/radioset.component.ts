@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './radioset.props';
 import { assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../utils/form-utils';
 import { $appDigest, switchClass } from '@wm/utils';
 import { getControlValueAccessor } from '../../utils/widget-utils';
+import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _;
 
@@ -18,7 +18,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
     templateUrl: './radioset.component.html',
     providers: [getControlValueAccessor(RadiosetComponent)]
 })
-export class RadiosetComponent extends BaseComponent {
+export class RadiosetComponent extends BaseFormComponent {
     class = '';
     width;
     height;
@@ -52,7 +52,7 @@ export class RadiosetComponent extends BaseComponent {
         this.__model = val;
         this.modelProxy = updatedCheckedValues(this.displayOptions, val, this.modelProxy, this.usekeys);
         this.displayValue = setCheckedAndDisplayValues(this.displayOptions, this.modelProxy);
-        this._onChange(this.datavalue);
+        this.invokeOnChange(this.datavalue);
     }
 
     /**
@@ -112,7 +112,7 @@ export class RadiosetComponent extends BaseComponent {
      * On click of the option, update the datavalue
      */
     _onRadioLabelClick($event, radioOption) {
-        this._onTouched();
+        this.invokeOnTouched();
         if (this.disabled || this.readonly) {
             return;
         }
