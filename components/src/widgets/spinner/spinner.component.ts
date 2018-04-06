@@ -26,7 +26,7 @@ export class SpinnerComponent extends BaseComponent {
     /**
      * Property to map the animation class to the widget
      */
-    animation: string;
+    animation: string = '';
     /**
      * Internal property to map the proper sanitised `caption` property
      */
@@ -50,7 +50,7 @@ export class SpinnerComponent extends BaseComponent {
                 if (newVal === 'spin') {
                     this.animation = 'fa-spin';
                 } else {
-                    this.animation = newVal;
+                    this.animation = newVal || '';
                 }
                 break;
             case 'caption':

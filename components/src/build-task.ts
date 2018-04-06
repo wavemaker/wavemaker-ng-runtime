@@ -3,6 +3,7 @@ export * from './widgets/audio/audio.build';
 export * from './widgets/button-group/button-group.build';
 export * from './widgets/button/button.build';
 export * from './widgets/calendar/calendar.build';
+export * from './widgets/chart/chart.build';
 export * from './widgets/checkbox/checkbox.build';
 export * from './widgets/color-picker/color-picker.build';
 export * from './widgets/container/container.build';

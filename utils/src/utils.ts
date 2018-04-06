@@ -123,6 +123,67 @@ export const encodeUrlParams = (url: string): string => {
     return url;
 };
 
+/* capitalize the first-letter of the string passed */
+export const initCaps = name => {
+    if (!name) {
+        return '';
+    }
+    return name.charAt(0).toUpperCase() + name.substring(1);
+};
+
+/* convert camelCase string to a space separated string */
+export const spaceSeparate = name => {
+    if (name === name.toUpperCase()) {
+        return name;
+    }
+    return name.replace(REGEX.SNAKE_CASE, function (letter, pos) {
+        return (pos ? ' ' : '') + letter;
+    });
+};
+
+/*Replace the character at a particular index*/
+export const replaceAt = (string, index, character) => string.substr(0, index) + character + string.substr(index + character.length);
+
+/*Replace '.' with space and capitalize the next letter*/
+export const periodSeparate = name => {
+    let dotIndex;
+    dotIndex = name.indexOf('.');
+    if (dotIndex !== -1) {
+        name = replaceAt(name, dotIndex + 1, name.charAt(dotIndex + 1).toUpperCase());
+        name = replaceAt(name, dotIndex, ' ');
+    }
+    return name;
+};
+
+export const prettifyLabel = label => {
+    label = _.camelCase(label);
+    /*capitalize the initial Letter*/
+    label = initCaps(label);
+    /*Convert camel case words to separated words*/
+    label = spaceSeparate(label);
+    /*Replace '.' with space and capitalize the next letter*/
+    label = periodSeparate(label);
+    return label;
+};
+
+/*Accepts an array or a string separated with symbol and returns prettified result*/
+export const prettifyLabels = (names, separator?) => {
+    let modifiedNames,
+        namesArray = [],
+        isArray    = _.isArray(names);
+    separator = separator || ',';
+
+    if (!isArray) {
+        namesArray = _.split(names, separator);
+    }
+
+    modifiedNames = _.map(namesArray, prettifyLabel);
+    if (isArray) {
+        return modifiedNames;
+    }
+    return modifiedNames.join(separator);
+};
+
 /**
  * this method checks if a insecure content request is being made
  */
