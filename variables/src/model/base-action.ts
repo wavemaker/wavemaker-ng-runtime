@@ -1,8 +1,4 @@
-import { VariableManagerFactory } from '../factory/variable-manager.factory';
-
-const  getManager = () => {
-    return VariableManagerFactory.get('Action');
-};
+import DatasetUtil from '../util/dataset-util';
 
 export abstract class BaseAction {
 
@@ -15,42 +11,53 @@ export abstract class BaseAction {
     dataBinding: any;
 
     getData() {
-        return getManager().getData(this);
+        return this.dataSet;
     }
 
     setData(dataSet: any) {
-        return getManager().setData(this, dataSet);
+        if (DatasetUtil.isValidDataset(dataSet)) {
+            this.dataSet = dataSet;
+        }
+        return this.dataSet;
     }
 
     getValue(key: string, index: number) {
-        return getManager().getValue(this, key, index);
+        return DatasetUtil.getValue(this.dataSet, key, index);
     }
 
     setValue(key: string, value: any) {
-        return getManager().setValue(this, key, value);
+        return DatasetUtil.setValue(this.dataSet, key, value);
     }
 
     getItem(index: number) {
-        return getManager().getItem(this, index);
+        return DatasetUtil.getItem(this.dataSet, index);
     }
 
-    setItem(index: number, value: any) {
-        return getManager().setItem(this, index, value);
+    /**
+     *
+     * @param index, a number in ideal case
+     *        it can be the object to be replaced by the passed value
+     * @param value
+     * @returns {any}
+     */
+    setItem(index: any, value: any) {
+        return DatasetUtil.setItem(this.dataSet, index, value);
     }
 
     addItem(value: any, index: number) {
-        return getManager().addItem(this, value, index);
+        return DatasetUtil.addItem(this.dataSet, value, index);
     }
 
-    removeItem(index: number, exactMatch: boolean) {
-        return getManager().removeItem(this, index, exactMatch);
+    removeItem(index: any, exactMatch: boolean) {
+        return DatasetUtil.removeItem(this.dataSet, index, exactMatch);
     }
 
     clearData() {
-        return getManager().clearData(this);
+        this.dataSet = DatasetUtil.getValidDataset();
+        return this.dataSet;
     }
 
     getCount() {
-        return getManager().getCount(this);
+        return DatasetUtil.getCount(this.dataSet);
     }
 }

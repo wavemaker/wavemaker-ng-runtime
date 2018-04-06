@@ -1,10 +1,10 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
+import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 
 export class ModelVariable extends BaseVariable {
 
     type: any;
-    isList: boolean;
     saveInPhonegap: any;
 
     constructor(variable: any) {
@@ -13,6 +13,7 @@ export class ModelVariable extends BaseVariable {
     }
 
     init() {
-        VariableManagerFactory.get(this.category).initBinding(this, 'dataBinding', 'dataSet');
+        VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.MODEL)
+            .initBinding(this, 'dataBinding', 'dataSet');
     }
 }

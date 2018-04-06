@@ -1,8 +1,4 @@
-import { VariableManagerFactory } from '../factory/variable-manager.factory';
-
-const  getManager = () => {
-    return VariableManagerFactory.get('Variable');
-};
+import DatasetUtil from '../util/dataset-util';
 
 export abstract class BaseVariable {
 
@@ -11,46 +7,59 @@ export abstract class BaseVariable {
     name: string;
     owner: string;
     category: string;
+    isList: boolean;
     dataSet: any;
     dataBinding: any;
 
     getData() {
-        return getManager().getData(this);
+        return this.dataSet;
     }
 
     setData(dataSet: any) {
-        return getManager().setData(this, dataSet);
+        if (DatasetUtil.isValidDataset(dataSet, this.isList)) {
+            this.dataSet = dataSet;
+        }
+        return this.dataSet;
     }
 
     getValue(key: string, index: number) {
-        return getManager().getValue(this, key, index);
+        return DatasetUtil.getValue(this.dataSet, key, index, this.isList);
     }
 
     setValue(key: string, value: any) {
-        return getManager().setValue(this, key, value);
+        return DatasetUtil.setValue(this.dataSet, key, value, this.isList);
     }
 
     getItem(index: number) {
-        return getManager().getItem(this, index);
+        return DatasetUtil.getItem(this.dataSet, index, this.isList);
     }
 
-    setItem(index: number, value: any) {
-        return getManager().setItem(this, index, value);
+    /**
+     *
+     * @param index, a number in ideal case
+     *        it can be the object to be replaced by the passed value
+     * @param value
+     * @returns {any}
+     */
+    setItem(index: any, value: any) {
+        return DatasetUtil.setItem(this.dataSet, index, value, this.isList);
     }
 
     addItem(value: any, index: number) {
-        return getManager().addItem(this, value, index);
+        return DatasetUtil.addItem(this.dataSet, value, index, this.isList);
     }
 
-    removeItem(index: number, exactMatch: boolean) {
-        return getManager().removeItem(this, index, exactMatch);
+    removeItem(index: any, exactMatch: boolean) {
+        return DatasetUtil.removeItem(this.dataSet, index, exactMatch);
     }
 
     clearData() {
-        return getManager().clearData(this);
+        this.dataSet = DatasetUtil.getValidDataset(this.isList);
+        return this.dataSet;
     }
 
     getCount() {
-        return getManager().getCount(this);
+        return DatasetUtil.getCount(this.dataSet, this.isList);
     }
+
 }
