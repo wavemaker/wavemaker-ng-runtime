@@ -11,72 +11,72 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
     const fieldName = attrs.get('key') || attrs.get('name');
     const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" formControlName="${fieldName}"`;
     switch (widgetType) {
-        case 'number':
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" >`;
-            break;
-        case 'text':
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}">`;
-            break;
-        case 'password':
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password">`;
-            break;
-        case 'select':
-            tmpl = `<div wmSelect ${defaultTmpl} #formWidget></div>`;
+        case 'autocomplete':
+        case 'typeahead':
+            tmpl = `<div wmSearch ${defaultTmpl} #formWidget></div>`;
             break;
         case 'checkbox':
             tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'toggle':
-            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget type="toggle"></div>`;
-            break;
         case 'checkboxset':
             // tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'radioset':
-            tmpl = `<div wmRadioset ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'slider':
-            tmpl = `<div wmSlider ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'colorpicker':
-            tmpl = `<div wmColorPicker ${defaultTmpl} #formWidget></div>`;
             break;
         case 'chips':
             /*TODO*/
             break;
-        case 'richtext':
-            /*TODO*/
-            break;
-        case 'textarea':
-            tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" ngModel></texarea>`;
-            break;
-        case 'upload':
-            /*TODO*/
-            break;
-        case 'date':
-            tmpl = `<div wmDate ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'time':
-            tmpl = `<div wmTime ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'datetime':
-            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'timestamp':
-            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'rating':
-            tmpl = `<div wmRating ${defaultTmpl} #formWidget></div>`;
-            break;
-        case 'switch':
-            tmpl = `<div wmSwitch ${defaultTmpl} #formWidget></div>`;
+        case 'colorpicker':
+            tmpl = `<div wmColorPicker ${defaultTmpl} #formWidget></div>`;
             break;
         case 'currency':
             tmpl = `<div wmCurrency ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'typeahead':
-        case 'autocomplete':
-            tmpl = `<div wmSearch ${defaultTmpl} #formWidget></div>`;
+        case 'date':
+            tmpl = `<div wmDate ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'datetime':
+            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'number':
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" >`;
+            break;
+        case 'password':
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password">`;
+            break;
+        case 'radioset':
+            tmpl = `<div wmRadioset ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'rating':
+            tmpl = `<div wmRating ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'richtext':
+            /*TODO*/
+            break;
+        case 'select':
+            tmpl = `<div wmSelect ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'toggle':
+            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget type="toggle"></div>`;
+            break;
+        case 'slider':
+            tmpl = `<div wmSlider ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'switch':
+            tmpl = `<div wmSwitch ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'text':
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}">`;
+            break;
+        case 'textarea':
+            tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" ngModel></texarea>`;
+            break;
+        case 'time':
+            tmpl = `<div wmTime ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'timestamp':
+            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
+            break;
+        case 'upload':
+            /*TODO*/
             break;
         default:
             tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText">`;

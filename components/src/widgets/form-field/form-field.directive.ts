@@ -10,9 +10,7 @@ import { fetchRelatedFieldData, getFormVariable, ALLFIELDS, getDistinctValuesFor
 import { getDefaultViewModeWidget } from '../../utils/live-utils';
 declare const _;
 
-registerProps();
-
-const WIDGET_CONFIG = {widgetType: 'wm-form-field', hostClass: ''};
+const DEFAULT_CLS = '';
 
 @Directive({
     selector: '[wmFormField]',
@@ -22,8 +20,9 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
 
     @ContentChild('formWidget') formWidget;
 
-    private _validators = [];
-    private applyProps = new Set();
+    private _validators;
+    private applyProps;
+    private fb;
 
     ngForm: FormGroup;
     name: string;
@@ -34,20 +33,31 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     target: string;
     binding: string;
     widgettype: string;
-    class = '';
+    class;
     primarykey;
     required;
     show;
     type;
     isDataSetBound;
     viewmodewidget;
+    binddataset;
+    form;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
-                @Optional() public form: ParentForm, private fb: FormBuilder,
-                @Attribute('dataset.bind') public binddataset) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-
-        styler(this.$element, this);
+                @Optional() form: ParentForm, fb: FormBuilder,
+                @Attribute('dataset.bind') binddataset,
+                @Attribute('widgettype') _widgetType) {
+        const WIDGET_CONFIG = {widgetType: _widgetType || 'text', hostClass: DEFAULT_CLS};
+        super(WIDGET_CONFIG, inj, elRef, cdr, new Promise(res => {
+            registerProps(_widgetType);
+            res();
+        }));
+        this._validators = [];
+        this.applyProps = new Set();
+        this.class = '';
+        this.binddataset = binddataset;
+        this.form = form;
+        this.fb = fb;
     }
 
     evaluateExpr(object, displayExpr) {
@@ -147,6 +157,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         super.ngOnInit();
         this.ngForm = this.form.ngForm;
         this.ngForm.addControl(this.key || this.name , this.createControl());
+        styler(this.$element, this);
     }
 
     ngAfterContentInit() {
