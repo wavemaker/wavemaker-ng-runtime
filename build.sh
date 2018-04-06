@@ -125,9 +125,13 @@ then
         ./node_modules/jquery-ui/ui/disable-selection.js \
         ./node_modules/jquery-ui/ui/version.js \
         ./node_modules/jquery-ui/ui/widget.js \
+        ./node_modules/jquery-ui/ui/scroll-parent.js \
         ./node_modules/jquery-ui/ui/plugin.js \
+        ./node_modules/jquery-ui/ui/data.js \
         ./node_modules/jquery-ui/ui/widgets/mouse.js \
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
+        ./node_modules/jquery-ui/ui/widgets/sortable.js \
+        ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./components/src/widgets/table/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
 
