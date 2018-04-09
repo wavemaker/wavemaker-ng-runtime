@@ -287,5 +287,6 @@ export const $rootScope = {
         deployedUrl: './',
         id: 'temp_id'
     },
-    projectName: 'test_project_name'
+    projectName: 'test_project_name',
+    isApplicationType: true
 };

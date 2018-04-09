@@ -1,4 +1,5 @@
 declare const _;
+
 import { BaseActionManager } from './base-action.manager';
 import { initiateCallback, routerService, securityService } from '../../util/variable/variables.utils';
 import { triggerFn } from '@wm/utils';
@@ -42,7 +43,7 @@ export class LoginActionManager extends BaseActionManager {
             return;
         }
 
-        //Triggering 'onBeforeUpdate' and considering
+        // Triggering 'onBeforeUpdate' and considering
         output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, params);
         if (_.isObject(output)) {
             params = output;
@@ -52,14 +53,15 @@ export class LoginActionManager extends BaseActionManager {
         }
         // $rootScope.$emit('toggle-variable-state', variable, true);
 
-        variable.promise = securityService.appLogin(params).then(function (response) {
+        variable.promise = securityService.appLogin(params, function (response) {
+            response = response.body;
             // $rootScope.$emit('toggle-variable-state', variable, false);
-            var redirectUrl = response && response.url ? response.url : 'index.html',
+            let redirectUrl = response && response.url ? response.url : 'index.html';
                 // appManager = Utils.getService("AppManager"),
-                lastLoggedinUser = securityService.getLastLoggedInUser();
-            //Closing login dialog after successful login
+                // lastLoggedinUser = securityService.getLastLoggedInUser();
+            // Closing login dialog after successful login
             // DialogService.close('CommonLoginDialog');
-            if (!CONSTANTS.isRunMode) {
+            if (CONSTANTS.isStudioMode) {
                 return;
             }
             /*
@@ -74,7 +76,7 @@ export class LoginActionManager extends BaseActionManager {
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, _.get(config, 'userInfo'));
 
                 // get redirectTo page from URL and remove it from URL
-                var redirectPage = this.securityService.getCurrentRouteQueryParam('redirectTo');
+                const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo');
 
                 /* handle navigation if defaultSuccessHandler on variable is true */
                 if (variable.useDefaultSuccessHandler) {
@@ -92,16 +94,18 @@ export class LoginActionManager extends BaseActionManager {
                     }
                     // if redirectPage found in url, case of re-login on session timeout
                     if (redirectPage && _.isString(redirectPage)) {
-                        if (!lastLoggedinUser || lastLoggedinUser === params.username) {
+                        // Todo[Shubham] last logged in user
+                        // if (!lastLoggedinUser || lastLoggedinUser === params.username) {
                             // if first time login OR same user re-logging in, navigate to provided redirectPage
                             routerService.navigate([`/${redirectPage}`]);
-                        } else {
+                        /*} else {
                             // else, re-load the app, navigation will be taken care in wmbootstrap.js
                             routerService.reload();
-                        }
-                    } else if (options.mode === 'dialog' && lastLoggedinUser !== params.username) {
+                        }*/
+                    }/*Todo[Shbham] else if (options.mode === 'dialog' && lastLoggedinUser !== params.username) {*/
+                     else if (options.mode === 'dialog') {
                         /* else, re-load the app, navigation will be taken care in wmbootstrap.js' */
-                        routerService.reload();
+                        // routerService.reload();
                     } else if (options.mode !== 'dialog') {
                         securityService.navigateOnLogin();
                     }
@@ -109,10 +113,10 @@ export class LoginActionManager extends BaseActionManager {
             });
         }, function (errorMsg) {
             // $rootScope.$emit('toggle-variable-state', variable, false);
-            errorMsg = errorMsg || "Invalid credentials.";
+            errorMsg = errorMsg || 'Invalid credentials.';
             /* if in RUN mode, trigger error events associated with the variable */
             if (CONSTANTS.isRunMode) {
-                initiateCallback("onError", variable, errorMsg);
+                initiateCallback('onError', variable, errorMsg);
             }
             triggerFn(error, errorMsg);
         });

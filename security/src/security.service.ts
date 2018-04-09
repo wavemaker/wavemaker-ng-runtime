@@ -1,21 +1,32 @@
 import { Injectable } from '@angular/core';
+import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import {HttpService} from '@wm/http';
+import { HttpService } from '@wm/http';
 import { triggerFn } from '@wm/utils';
 
 declare const _WM_APP_PROPERTIES, _;
+
+// Todo[Shubham]: Move below constants to a common file
+const XSRF_COOKIE_NAME = 'wm_xsrf_token',
+    hasCordova = false,
+    isApplicationType = true;
 
 @Injectable()
 export class SecurityService {
     config;
     lastLoggedinUser;
     loggedinUser;
+    requestQueue;
+    lastUser;
+    landingPageName;
 
     constructor(private httpClient: HttpClient,
                 private $http: HttpService,
                 private routerService: Router,
-                private activatedRoute: ActivatedRoute) {}
+                private activatedRoute: ActivatedRoute,
+                private _location: Location) {
+    }
 
     isLoaded() {
         return this.config ? true : false;
@@ -35,22 +46,191 @@ export class SecurityService {
         });
     }
 
-    getCurrentRoutePage() {
-        let page;
-        this.activatedRoute.paramMap
-            .switchMap((params) =>
-                page = params.get('pageName'));
-        return page;
+    /**
+     * gets the security config from the deployed app (backend call)
+     * @param success
+     * @param error
+     */
+    getWebConfig(success, error) {
+        if (this.get()) {
+            // if already fetched, return it
+            triggerFn(success, this.get());
+            return;
+        }
+        this.$http.send({
+            target: 'Security',
+            action: 'getConfig'
+        }).then(function (config) {
+            this.config = config;
+            triggerFn(success, this.config);
+        }, error);
     }
 
+    /**
+     * Returns security config
+     * @param successCallback
+     * @param failureCallback
+     */
+    getConfig(successCallback, failureCallback) {
+        function invokeQueuedCallbacks(id, method, data) {
+            _.forEach(this.requestQueue[id], function (fn) {
+                triggerFn(fn[method], data);
+            });
+            this.requestQueue[id] = null;
+        }
+
+        function onSuccess(config) {
+            config.homePage = _WM_APP_PROPERTIES.homePage;
+            if (config.userInfo) {
+                // Backend returns landingPage instead of homePage, hence this statement(for consistency)
+                // config.userInfo.homePage = config.userInfo.landingPage;
+            }
+            this.config = config;
+            this.loggedInUser = config.userInfo;
+            this.lastUser = this.loggedInUser;
+            invokeQueuedCallbacks('config', 'success', this.get());
+        }
+
+        function onError(error) {
+            /*if ($rootScope.isMobileApplicationType) {
+             this.config = {
+             'securityEnabled': false,
+             'authenticated': false,
+             'homePage': _WM_APP_PROPERTIES.homePage,
+             'userInfo': null,
+             'login': null
+             };
+             invokeQueuedCallbacks('config', 'success', this.get());
+             } else {*/
+            invokeQueuedCallbacks('config', 'error', error);
+            //}
+        }
+
+        if (this.get()) {
+            // if already fetched, return it
+            triggerFn(successCallback, this.get());
+            return;
+        }
+
+        // Queue check, if same queue is already in progress, do not send another request
+        this.requestQueue.config = this.requestQueue.config || [];
+        this.requestQueue.config.push({
+            success: successCallback,
+            error: failureCallback
+        });
+        if (this.requestQueue.config.length > 1) {
+            return;
+        }
+
+        if (!hasCordova) {
+            // for web project, return config returned from backend API call.
+            this.getWebConfig(onSuccess, onError);
+        }
+        /* else {
+         /!*
+         * for mobile app, first get the mobile config (saved in the apk)
+         * - if security not enabled, just return mobile config (no backend call required)
+         * - else, get Web config (will be  the same API hit for login) and merge the config with _mobileconfig
+         *!/
+         getMobileConfig(function (mobileconfig) {
+         if (!mobileconfig.securityEnabled) {
+         onSuccess(mobileconfig);
+         } else {
+         getWebConfig(function (config) {
+         config = mergeWebAndMobileConfig(config);
+         onSuccess(config);
+         }, function () {onSuccess(mobileconfig); });
+         }
+         }, onError);
+         }*/
+    }
+
+    /**
+     * Returns the current page name
+     * @returns {string}
+     */
+    getCurrentRoutePage() {
+        return this._location.path().substr(1);
+    }
+
+    /**
+     * Returns Query params for specified param name in current Route
+     * @param paramName, the param name whose query param value is to be retrieved
+     * @returns {any}
+     */
     getCurrentRouteQueryParam(paramName) {
         let paramVal;
-        this.activatedRoute.queryParamMap
-            .switchMap((params) =>
-                paramVal = params.get(paramName));
+        this.activatedRoute.queryParams.subscribe(params => {
+            paramVal = params[paramName];
+        });
         return paramVal;
     }
 
+    /**
+     * Loads the App page as follows:
+     * Security disabled:
+     *      - Home page
+     * Security enabled:
+     *      - User is logged in, respective landing page is loaded
+     *      - Not logged in:
+     *          - Home page is public, loads the home page
+     *          - Home page not public, Login page(in config) is loaded
+     * @param forcePageLoad
+     * @returns {Promise<T>}
+     */
+    loadPageByUserRole(forcePageLoad) {
+        let page;
+        return new Promise((resolve, reject) => {
+
+            if (!isApplicationType) {
+                if (this.getCurrentRoutePage() === '/') {
+                    this._location.path(_WM_APP_PROPERTIES.homePage);
+                }
+                resolve();
+            } else {
+                this.getConfig((config) => {
+                    /* $rs.isSecurityEnabled   = config.securityEnabled;
+                     $rs.isUserAuthenticated = config.authenticated;*/
+                    if (config.securityEnabled && config.authenticated) {
+                        page = config.userInfo.landingPage || _WM_APP_PROPERTIES.homePage;
+                        /*$rs.userRoles = config.userInfo.userRoles;*/
+                        // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
+                        if (this.isXsrfEnabled()) {
+                            // this.$http.defaults.xsrfCookieName = XSRF_COOKIE;
+                            // this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;
+                        }
+                    } else {
+                        page = config.homePage;
+                    }
+                    if (this.getCurrentRoutePage() === '/' || forcePageLoad) {
+                        // Reload the page when current page and post login landing page are same
+                        if (this.getCurrentRoutePage() === '/' + page) {
+                            // this._location.reload();
+                        }
+                        // this._location.path(page);
+                        this.routerService.navigate([`/${page}`]);
+                    }
+                    this.landingPageName = page;
+                    resolve();
+                }, resolve);
+            }
+        });
+    }
+
+    /**
+     * Navigates to the current user's homePage based on the config in SecurityService
+     * Assumption is the SecurityService is updated with the latest security config before making call to this function
+     */
+    navigateOnLogin() {
+        this.loadPageByUserRole(true);
+    }
+
+    /**
+     * Gets the page which needs to be redirected to on successful login
+     * @param config,
+     * @param page, page name for redirection
+     * @returns {any|string}
+     */
     getRedirectPage(config, page?) {
         const homePage = _WM_APP_PROPERTIES.homePage,
             loginPage = _.get(config, 'loginConfig.pageName');
@@ -176,11 +356,10 @@ export class SecurityService {
     }
 
     appLogin(params, successCallback, failureCallback) {
-        console.log('...logging in now...');
-        var rememberme = _.isUndefined(params.rememberme) ? false : params.rememberme,
+        const rememberme = _.isUndefined(params.rememberme) ? false : params.rememberme,
             loginParams = ['username', 'password', 'rememberme'],
-            customParams = '',
             self = this;
+        let customParams = '';
 
         // process extra data if passed. TODO[VIBHU], this logic needs validation
         _.each(params, function (value, name) {
@@ -191,11 +370,11 @@ export class SecurityService {
 
         return this.$http.send({
             method: 'POST',
-            headers:{
+            headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             url: 'j_spring_security_check',
-            'data'   : 'j_username=' + encodeURIComponent(params.username) +
+            'data': 'j_username=' + encodeURIComponent(params.username) +
             '&j_password=' + encodeURIComponent(params.password) +
             '&remember-me=' + rememberme +
             customParams
@@ -208,8 +387,8 @@ export class SecurityService {
             //     if (CONSTANTS.hasCordova) {
             //         localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, xsrfCookieValue || '');
             //     }
-            //     $http.defaults.xsrfCookieName = CONSTANTS.XSRF_COOKIE_NAME;
-            //     $http.defaults.xsrfHeaderName = config.csrfHeaderName;
+            //     this.$http.defaults.xsrfCookieName = CONSTANTS.XSRF_COOKIE_NAME;
+            //     this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;
             // }
             // After the successful login in device, this function triggers the pending onLoginCallbacks.
 
@@ -235,5 +414,27 @@ export class SecurityService {
                 // }
             // });
         });
+    }
+
+    /**
+     * Checks and return the cookie
+     * @param name, cookie key
+     * @returns {string}
+     */
+    getCookieByName(name) {
+        // Todo: Shubham Implement cookie native js
+        return 'cookie';
+    }
+
+    /**
+     * This function returns the cookieValue if xsrf is enabled.
+     * In device, xsrf cookie is stored in localStorage.
+     * @returns xsrf cookie value
+     */
+    isXsrfEnabled() {
+        if (hasCordova) {
+            return localStorage.getItem(XSRF_COOKIE_NAME);
+        }
+        return this.getCookieByName(XSRF_COOKIE_NAME);
     }
 }
