@@ -404,7 +404,7 @@ const processSuccessResponse = (response, variable, options, success) => {
         if (!CONSTANTS.isStudioMode) {
             /* process next requests in the queue */
             variable.canUpdate = true;
-            $queue.process(variable);
+            $queue.process(variable, invoke);
         }
 
         // EVENT: ON_CAN_UPDATE
@@ -432,7 +432,7 @@ const processErrorResponse = (variable, errMsg, errorCB, xhrObj?, skipNotificati
     if (!CONSTANTS.isStudioMode) {
         /* process next requests in the queue */
         variable.canUpdate = true;
-        $queue.process(variable);
+        $queue.process(variable, invoke);
 
         // EVENT: ON_CAN_UPDATE
         initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, xhrObj);
@@ -452,42 +452,40 @@ const handleRequestMetaError = (info, variable, errorCB, options) => {
     }
 };
 
-const _invoke = (variable, options, success, error) => {
-    const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
-    const operationInfo = getMethodInfo(variable, inputFields, {});
-    const requestParams = constructRequestParams(variable, operationInfo, inputFields);
-
-    // check errors
-    if (requestParams.error) {
-        handleRequestMetaError(requestParams, variable, error, options);
-        return;
-    }
-    if (operationInfo && _.isArray(operationInfo.produces) && _.includes(operationInfo.produces, WS_CONSTANTS.CONTENT_TYPES.OCTET_STREAM)) {
-        return simulateFileDownload(requestParams, variable.dataBinding.file || variable.name, variable.dataBinding.exportType, function () {
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, null, null, null);
-            $queue.process(variable);
-            triggerFn(success);
-        }, function () {
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null, null, null);
-            triggerFn(error);
-        });
-    }
-
-    // make the call
-    return makeCall(requestParams).then(function (response) {
-        processSuccessResponse(response.body, variable, options, success);
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
-    }, function (e) {
-        processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
-    });
-};
-
 export const invoke = (variable, options, success, error) => {
     options = options || {};
-    options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
-    return $queue.submit(variable).then(function () {
-        return _invoke(variable, options, success, error);
-    }, error);
+    $queue.has(variable, function () {
+        options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
+        $queue.push(variable, {options: options, success: success, error: error});
+    }, function () {
+        const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
+        const operationInfo = getMethodInfo(variable, inputFields, {});
+        const requestParams = constructRequestParams(variable, operationInfo, inputFields);
+
+        // check errors
+        if (requestParams.error) {
+            handleRequestMetaError(requestParams, variable, error, options);
+            return;
+        }
+        if (operationInfo && _.isArray(operationInfo.produces) && _.includes(operationInfo.produces, WS_CONSTANTS.CONTENT_TYPES.OCTET_STREAM)) {
+            return simulateFileDownload(requestParams, variable.dataBinding.file || variable.name, variable.dataBinding.exportType, function () {
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, null, null, null);
+                $queue.process(variable, invoke);
+                triggerFn(success);
+            }, function () {
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null, null, null);
+                triggerFn(error);
+            });
+        }
+
+        // make the call
+        return makeCall(requestParams).then(function (response) {
+            processSuccessResponse(response.body, variable, options, success);
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
+        }, function (e) {
+            processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
+        });
+    });
 };
 
 export const setInput = (variable, key, val, options) => {

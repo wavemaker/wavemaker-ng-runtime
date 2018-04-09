@@ -2,108 +2,117 @@ import { triggerFn } from '@wm/utils';
 
 declare const _;
 
-class InflightQueue {
-    requestsQueue = new Map();
+const variableActive = new Map(),
+    inFlightQueue = new Map();
 
-    /**
-     * pushes the process against a variable in its queue
-     * @param variable
-     * @param {{resolve: (value?: any) => void; reject: (reason?: any) => void}} param2
-     * the resolve callback will be called on
-     */
-    private addToQueue(variable: any, param2: {resolve: (value?: (any)) => void; reject: (reason?: any) => void}) {
-        if(this.requestsQueue.has(variable)) {
-            this.requestsQueue.get(variable).push(param2);
-        } else {
-            let processes = [];
-            processes.push({resolve: param2.resolve, reject: param2.reject, active: false});
-            this.requestsQueue.set(variable, processes);
-        }
+/**
+ * this function checks if the passed variable is already inFlight
+ * If it is:
+ *  fnExists callback is executed
+ *  NOTE: the push method should be called inside this method to push the calls into the queue
+ * if not:
+ *  the active flag against that variable is set.
+ *  and the fnNotExists callback is executed
+ * @param variable
+ * @param fnExists
+ * @param fnNotExists
+ */
+const has = (variable, fnExists, fnNotExists) => {
+    if (variableActive.has(variable)) {
+        fnExists();
+    } else {
+        variableActive.set(variable, true);
+        fnNotExists();
     }
+};
 
-    /**
-     * Calls the reject method against the passed process
-     * @param process
-     */
-    private rejectProcess(process: any) {
-        process.reject('Process rejected in the queue. Check the "Inflight behavior" for more info.');
+/**
+ * clears the maps against a variable
+ * @param variable
+ */
+const clear = (variable) => {
+    inFlightQueue.delete(variable);
+    variableActive.delete(variable);
+};
+
+/**
+ * marks the active flag in the map against the variable
+ * if it is set, the variable is inFlight
+ * @param variable
+ * @param state
+ */
+const toggleState = (variable, state) => {
+    if (state) {
+        variableActive.set(variable, state);
+    } else {
+        variableActive.delete(variable);
     }
+};
 
-    /**
-     * clears the queue against a variable
-     * @param variable
-     */
-    private clear = (variable) => {
-        this.requestsQueue.delete(variable);
-    };
+/**
+ * Trigger error handler before discarding queued requests
+ * @param requestQueue
+ */
+const triggerError = (requestQueue) => {
+    _.forEach(requestQueue, function (requestObj) {
+        triggerFn(requestObj && requestObj.error);
+    });
+};
 
-    /**
-     * executes the n/w calls for a specified variable pushed in its respective queue (pushed while it was inFlight)
-     * @param variable
-     */
-    process(variable: any) {
-        const processes: [any] = this.requestsQueue.get(variable);
-        let nextProcess;
-
-        // process request queue for the variable only if it is not empty
-        if (!processes || !processes.length) {
-            this.clear(variable);
-            return;
-        }
-
-        // If only one item in queue
-        if (processes.length === 1) {
-            nextProcess = processes[0];
-            if (nextProcess.active) {
-                this.clear(variable);
-            } else {
-                nextProcess.active = true;
-                nextProcess.resolve();
-            }
-            return;
-        }
-
-        switch (variable.inFlightBehavior) {
-            case 'executeLast':
-                for (let i = 0; i < processes.length - 2; i++) {
-                    this.rejectProcess(processes[i]);
-                }
-                processes.splice(0, processes.length - 1);
-                this.process(variable);
-                break;
-            case 'executeAll':
-                nextProcess = processes.splice(0, 1)[0];
-                if (nextProcess.active) {
-                    nextProcess = processes.splice(0, 1)[0];
-                }
-                nextProcess.active = true;
-                nextProcess.resolve();
-                break;
-            default:
-                for (let i = 0; i < processes.length - 1; i++) {
-                    this.rejectProcess(processes[i]);
-                }
-                this.clear(variable);
-                break;
-        }
-    };
-
-    /**
-     * initializes the queue against a variable and makes the first process call
-     * If already initialized and a process in queue is in progress, the queue is not processed.
-     * To process the next item in the queue, the process method has to be called from the caller.
-     * @param variable
-     * @returns {Promise<any>}
-     */
-    submit(variable: any) {
-        return new Promise((resolve, reject) => {
-            this.addToQueue(variable, {resolve: resolve, reject: reject});
-
-            if (this.requestsQueue.get(variable).length === 1) {
-                this.process(variable);
-            }
-        });
+/**
+ * executes the n/w calls for a specified variable pushed in its respective queue (pushed while it was inFlight)
+ * @param variable
+ * @param handler
+ * @param options
+ */
+const process = (variable, handler, options?) => {
+    const requestQueue = inFlightQueue.get(variable);
+    // process request queue for the variable only if it is not empty
+    if (!requestQueue || !requestQueue.length) {
+        clear(variable);
+        return;
     }
-}
+    toggleState(variable, false);
+    const inFlightBehavior = _.get(options, 'inFlightBehavior') || variable.inFlightBehavior;
+    let requestObj;
 
-export const $queue = new InflightQueue();
+    switch (inFlightBehavior) {
+        case 'executeLast':
+            requestObj = requestQueue.pop();
+            triggerError(requestQueue);
+            handler(requestObj.variable, requestObj.options, requestObj.success, requestObj.error);
+            clear(variable);
+            break;
+        case 'executeAll':
+            requestObj = requestQueue.splice(0, 1).pop();
+            handler(requestObj.variable, requestObj.options, requestObj.success, requestObj.error);
+            break;
+        default:
+            triggerError(requestQueue);
+            clear(variable);
+            break;
+    }
+};
+
+/**
+ * pushes the n/w call config in the queue against the variable
+ * The config should contain
+ *  - options, expected config options in the handler callback
+ *  - success, callback
+ *  - error, callback
+ * @param variable
+ * @param config
+ */
+const push = (variable, config) => {
+    if (!inFlightQueue.has(variable)) {
+        inFlightQueue.set(variable, []);
+    }
+    config.variable = variable;
+    inFlightQueue.get(variable).push(config);
+};
+
+export const $queue = {
+    has: has,
+    push: push,
+    process: process
+};
