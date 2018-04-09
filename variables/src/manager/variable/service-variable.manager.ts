@@ -4,7 +4,7 @@ import { BaseVariableManager } from './base-variable.manager';
 export class ServiceVariableManager extends BaseVariableManager {
 
     invoke(variable, options, success, error) {
-        SVUtils.invoke(variable, options, success, error);
+        return SVUtils.invoke(variable, options, success, error);
     }
 
     setInput(variable, key, val, options) {

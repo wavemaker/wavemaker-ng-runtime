@@ -458,7 +458,7 @@ function _getTableData(variable, options, success, error) {
         _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
 
         /* process next requests in the queue */
-        $queue.process(variable, _getTableData, options);
+        $queue.process(variable);
         // }, null, false);
     };
 
@@ -466,7 +466,7 @@ function _getTableData(variable, options, success, error) {
     //  EVENT: ON_BEFORE_UPDATE
     output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
     if (output === false) {
-        $queue.process(variable, _getTableData, options);
+        $queue.process(variable);
         // $rootScope.$emit('toggle-variable-state', variable, false);
         triggerFn(error);
         return;
@@ -539,7 +539,7 @@ function _getTableData(variable, options, success, error) {
             _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
         }
         /* process next requests in the queue */
-        $queue.process(variable, _getTableData, options);
+        $queue.process(variable);
         /* if callback function is provided, send the data to the callback */
         triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
     }, function (errorMsg, details, xhrObj) {
@@ -627,7 +627,7 @@ function doCUD(action, variable, options, success, error) {
     clonedFields = getClonedObject(inputFields);
     output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
     if (output === false) {
-        $queue.process(variable, doCUD, options);
+        $queue.process(variable);
         // $rootScope.$emit('toggle-variable-state', variable, false);
         triggerFn(error);
         return;
@@ -796,7 +796,7 @@ function doCUD(action, variable, options, success, error) {
         'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
     }).then(function (response, xhrObj) {
         response = response.body;
-        $queue.process(variable, doCUD, options);
+        $queue.process(variable);
         /* if error received on making call, call error callback */
         if (response && response.error) {
             // EVENT: ON_RESULT
@@ -849,49 +849,26 @@ function doCUD(action, variable, options, success, error) {
 
 export const listRecords = function (variable, options, success, error) {
     options = options || {};
-    $queue.has(variable, function () {
-        if (variable.operation === 'read') {
-            options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
-        } else {
-            options.inputFields = options.row || getClonedObject(variable.inputFields);
-        }
-        $queue.push(variable, {options: options, success: success, error: error});
-    }, function () {
-        _getTableData(variable, options, success, error);
-    });
+    options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
+    return $queue.submit(variable).then(_getTableData.bind(undefined, variable, options, success, error), error);
 };
 
 export const insertRecord = (variable, options, success, error) => {
     options = options || {};
-    $queue.has(variable, function () {
-        if (variable.operation === 'read') {
-            options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
-        } else {
-            options.inputFields = options.row || getClonedObject(variable.inputFields);
-        }
-        $queue.push(variable, {options: options, success: success, error: error});
-    }, function () {
-        doCUD('insertTableData', variable, options, success, error);
-    });
+    options.inputFields = options.row || getClonedObject(variable.inputFields);
+    return $queue.submit(variable).then(doCUD.bind(undefined, 'insertTableData', variable, options, success, error));
 };
 
 export const updateRecord = (variable, options, success, error) => {
     options = options || {};
-    $queue.has(variable, function () {
-        $queue.push(variable, {options: options, success: success, error: error});
-    }, function () {
-        doCUD('updateTableData', variable, options, success, error);
-    });
+    options.inputFields = options.row || getClonedObject(variable.inputFields);
+    $queue.submit(variable).then(doCUD.bind(undefined, 'updateTableData', variable, options, success, error));
 };
 
 export const deleteRecord = (variable, options, success, error) => {
     options = options || {};
-    options = options || {};
-    $queue.has(variable, function () {
-        $queue.push(variable, {options: options, success: success, error: error});
-    }, function () {
-        doCUD('deleteTableData', variable, options, success, error);
-    });
+    options.inputFields = options.row || getClonedObject(variable.inputFields);
+    $queue.submit(variable).then(doCUD.bind(undefined, 'deleteTableData', variable, options, success, error));
 };
 
 export const download = (variable, options) => {
