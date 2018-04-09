@@ -1,16 +1,47 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+import { DataSource, IDataSource } from '../../data-source';
 
-const  getManager = () => {
+const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.LIVE);
 };
 
-export class LiveVariable extends ApiAwareVariable {
+export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     constructor(variable: any) {
         super();
         Object.assign(this as any, variable);
+    }
+
+    execute(operation, options) {
+        return new Promise((resolve, reject) => {
+            switch (operation) {
+                case DataSource.OPERATION.LIST_RECORD :
+                    this.listRecords(options, (response, propsMap, pagingOptions) => {
+                        resolve({response, propsMap, pagingOptions});
+                    }, reject);
+                    break;
+                case DataSource.OPERATION.UPDATE_RECORD :
+                    this.updateRecord(options, resolve, reject);
+                    break;
+                case DataSource.OPERATION.INSERT_RECORD :
+                    this.insertRecord(options, resolve, reject);
+                    break;
+                case DataSource.OPERATION.DELETE_RECORD :
+                    this.deleteRecord(options, resolve, reject);
+                    break;
+                case DataSource.OPERATION.INVOKE :
+                    this.invoke(options, resolve, reject);
+                    break;
+                case DataSource.OPERATION.UPDATE :
+                    this.update(options, resolve, reject);
+                    break;
+                default :
+                    reject(`${operation} operation is not supported on this data source`);
+                    break;
+            }
+        });
     }
 
     listRecords(options?, success?, error?) {

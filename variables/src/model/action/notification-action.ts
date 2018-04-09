@@ -1,18 +1,35 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseAction } from '../base-action';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+import { DataSource, IDataSource } from '../../data-source';
 
-const  getManager = () => {
+const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.NOTIFICATION);
 };
 
-export class NotificationAction extends BaseAction {
+export class NotificationAction extends BaseAction implements IDataSource {
 
     message: string;
 
     constructor(variable: any) {
         super();
         Object.assign(this as any, variable);
+    }
+
+    execute(operation, options) {
+        return new Promise((resolve, reject) => {
+            switch (operation) {
+                case DataSource.OPERATION.INVOKE :
+                    this.invoke(options, resolve, reject);
+                    break;
+                case DataSource.OPERATION.NOTIFY :
+                    this.notify(options, resolve, reject);
+                    break;
+                default :
+                    reject(`${operation} operation is not supported on this data source`);
+                    break;
+            }
+        });
     }
 
     notify(options, success, error) {
