@@ -13,6 +13,7 @@ export abstract class ApiAwareVariable extends BaseVariable {
     autoUpdate: boolean;
     inFlightBehavior: boolean;
     transformationRequired: boolean;
+    canUpdate: boolean;
 
     onBeforeUpdate: string;
     onResult: string;
