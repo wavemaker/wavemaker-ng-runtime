@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['actions', PROP_STRING],
-                ['badgetype', PROP_STRING],
+                ['badgetype', {value: 'default', ...PROP_STRING}],
                 ['badgevalue', PROP_STRING],
                 ['class', PROP_STRING],
                 ['closable', PROP_BOOLEAN],
@@ -15,7 +15,9 @@ export const registerProps = () => {
                 ['content', PROP_STRING_NOTIFY],
                 ['datafield', PROP_STRING],
                 ['enablefullscreen', PROP_BOOLEAN],
-                ['expanded', PROP_BOOLEAN_NOTIFY],
+                ['expanded', {value: true, ...PROP_BOOLEAN_NOTIFY}],
+                ['expandicon', PROP_STRING],
+                ['collapseicon', PROP_STRING],
                 ['fullscreen', PROP_BOOLEAN_NOTIFY],
                 ['helpClass', PROP_STRING],
                 ['helptext', PROP_STRING],
