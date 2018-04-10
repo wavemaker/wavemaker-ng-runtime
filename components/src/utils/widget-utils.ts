@@ -149,6 +149,7 @@ export const invokeEventHandler = (component, eventName, args?) => {
 
     if (fn) {
         args.widget = args.widget || component.widget;
+        // TODO: Add return functionality such that return value will be consumed by the component
         fn(args);
     }
 };

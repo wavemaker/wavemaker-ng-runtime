@@ -14,6 +14,7 @@ import { AudioComponent } from './widgets/audio/audio.component';
 import { ButtonComponent } from './widgets/button/button.component';
 import { ButtonGroupDirective } from './widgets/button-group/button-group.directive';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
+import { ChartComponent } from './widgets/chart/chart.component';
 import { CheckboxComponent } from './widgets/checkbox/checkbox.component';
 import { ColorPickerComponent } from './widgets/color-picker/color-picker.component';
 import { ConfirmDialogComponent } from './widgets/dialog/confirm-dialog/confirm-dialog.component';
@@ -92,6 +93,7 @@ const wmComponents = [
     ButtonComponent,
     ButtonGroupDirective,
     CalendarComponent,
+    ChartComponent,
     CheckboxComponent,
     ColorPickerComponent,
     ConfirmDialogComponent,

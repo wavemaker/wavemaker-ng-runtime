@@ -1,0 +1,14 @@
+<div class="panel-heading" *ngIf="title">
+    <h3 class="panel-title">
+        <div class="pull-left"><i class="app-icon panel-icon {{iconclass}}" [class.ng-hide]="!iconclass"></i></div>
+        <div class="heading" [innerText]="title"></div>
+        <div class="description" *ngIf="subheading" [innerText]="subheading"></div>
+    </h3>
+</div>
+<div class="app-chart-inner" [ngClass]="{'loading':isLoadInProgress, 'panel-body': title}">
+    <svg></svg>
+    <div class="wm-content-info readonly-wrapper" *ngIf="showContentLoadError && showNoDataMsg">
+        <p class="wm-message" [title]="hintMsg" [ngClass]="{'error': invalidConfig}" [innerText]="errMsg"></p>
+    </div>
+    <div wmSpinner show.bind="isLoadInProgress" caption.bind="loadingdatamsg"></div>
+</div>
