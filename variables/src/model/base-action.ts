@@ -60,4 +60,7 @@ export abstract class BaseAction {
     getCount() {
         return DatasetUtil.getCount(this.dataSet);
     }
+
+    init() {
+    }
 }

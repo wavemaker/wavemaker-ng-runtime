@@ -10,6 +10,8 @@ interface AppInternals {
 
 @Injectable()
 export class App {
+    Variables:any;
+    Actions:any;
     onAppVariablesReady = noop;
     onSessionTimeout = noop;
     onPageReady = noop;

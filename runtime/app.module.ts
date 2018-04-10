@@ -23,10 +23,12 @@ import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { HttpServiceModule } from '@wm/http';
 import { OAuthModule } from '@wm/oAuth';
+import { AppVariablesResolve } from './resolves/app-variables.resolve';
 
 const resolve = {
     securityConfig: SecurityConfigResolve,
     metadata: MetadataResolve,
+    appVariables: AppVariablesResolve,
     appJS: AppJSResolve,
     i18n: I18nResolve
 };
@@ -70,6 +72,7 @@ const routes = [
         MetadataResolve,
         App,
         AppJSResolve,
+        AppVariablesResolve,
         I18nService,
         I18nResolve,
         AppResourceManagerService,

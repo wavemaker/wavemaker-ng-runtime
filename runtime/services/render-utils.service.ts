@@ -66,12 +66,12 @@ const getDynamicModule = component => {
     return DynamicModule;
 };
 
-const registerVariablesAndActions = (inj: Injector, identifier: string, variables: any, instance: any) => {
+const registerVariablesAndActions = (inj: Injector, identifier: string, variables: any, instance: any, app?: any) => {
     const variablesService = inj.get(VariablesService);
 
     const $variables = variablesService.register(identifier, variables, instance);
-    instance.Variables = $variables.Variables;
-    instance.Actions = $variables.Actions;
+    instance.Variables = Object.assign({}, app.Variables, $variables.Variables);
+    instance.Actions = Object.assign({}, app.Actions, $variables.Actions);
 };
 
 const _decodeURIComponent = str => {
@@ -160,7 +160,7 @@ export class RenderUtilsService {
         const postConstructFn = (pageInstance, inj) => {
             this.defineI18nProps(pageInstance);
             pageInstance.Widgets = {};
-            registerVariablesAndActions(inj, pageName, variables, pageInstance);
+            registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
 
             execScript(script, `page-${pageName}`, 'Page', pageInstance, this.app, inj);
 
@@ -187,7 +187,7 @@ export class RenderUtilsService {
         const postConstructFn = (partialInstance, inj) => {
             this.defineI18nProps(partialInstance);
             partialInstance.Widgets = {};
-            registerVariablesAndActions(inj, partialName, variables, partialInstance);
+            registerVariablesAndActions(inj, partialName, variables, partialInstance, this.app);
 
             execScript(script, `partial-${partialName}`, 'Partial', partialInstance, this.app, inj);
 
