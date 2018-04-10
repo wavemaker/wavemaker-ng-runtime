@@ -204,7 +204,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      */
     private _invoke (variable: ServiceVariable, options: any, success: Function, error: Function) {
         const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
-        const operationInfo = this.getMethodInfo(variable, inputFields, {});
+        const operationInfo = this.getMethodInfo(variable, inputFields, options);
         const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields),
             _this = this;
 

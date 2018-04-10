@@ -66,12 +66,26 @@ const processAttr = attr => {
     return [attr.name, value];
 };
 
+export const getDataSource = (dataSetExpr: string): string => {
+    const parts = dataSetExpr.split('.');
+    if (parts[0] === 'Variables' || parts[0] === 'Widgets') {
+        return `${parts[0]}.${parts[1]}`;
+    }
+};
+
 const getAttrMap = attrs => {
     const attrMap = new Map<string, string>();
     attrs.forEach(attr => {
         const [attrName, attrValue] = processAttr(attr);
         attrMap.set(attrName, attrValue);
     });
+
+    if (attrMap.get('dataset.bind')) {
+        const dataSource = getDataSource(attrMap.get('dataset.bind'));
+        if (dataSource) {
+            attrMap.set('datasource.bind', dataSource);
+        }
+    }
 
     return attrMap;
 };

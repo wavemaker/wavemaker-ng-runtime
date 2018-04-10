@@ -1,13 +1,17 @@
-import {isDataSetWidget} from './widget-utils';
+import { isDataSetWidget } from './widget-utils';
+import { DataSource_Operation } from '../../../variables/src/data-source';
 
 declare const _;
 
-export const ALLFIELDS = 'All Fields';
+const noop = () => {};
 
-const VARIABLE_CATEGORY = {
-    'LIVE': 'wm.LiveVariable',
-    'SERVICE': 'wm.ServiceVariable'
-};
+export enum Live_Operations {
+    INSERT = 'insert',
+    UPDATE = 'update',
+    DELETE = 'delete'
+}
+
+export const ALLFIELDS = 'All Fields';
 
 export const LIVE_CONSTANTS = {
     'EMPTY_KEY'     : 'EMPTY_NULL_FILTER',
@@ -19,7 +23,7 @@ export const LIVE_CONSTANTS = {
     'EMPTY'         : 'empty'
 };
 
-export function getVariableName(binddataset: string) {
+export function getDataSource(binddataset: string, parent: any) {
     let variableName,
         isBoundToVariable;
     const parts = binddataset.split('.');
@@ -30,21 +34,7 @@ export function getVariableName(binddataset: string) {
         variableName = parts[1];
     }
     // TODO: Do it for bind widgets
-    return variableName;
-}
-
-export function isVariablePaginated(variable) {
-    const varCategory = getVariableCategory(variable);
-
-    if (varCategory === VARIABLE_CATEGORY.LIVE || (varCategory === VARIABLE_CATEGORY.SERVICE && variable.controller === 'QueryExecution')) {
-        return true;
-    }
-
-    return false;
-}
-
-export function getVariableCategory(variable) {
-    return variable && variable.category;
+    return parent && parent.Variables[variableName];
 }
 
 function onSuccess(response, res, rej) {
@@ -56,62 +46,52 @@ function onSuccess(response, res, rej) {
 }
 
 
-export function performDataOperation(variable, requestData, options): Promise<any> {
-    const varCategory = getVariableCategory(variable);
-
+export function performDataOperation(dataSource, requestData, options): Promise<any> {
     return new Promise((res, rej) => {
-        if (varCategory === VARIABLE_CATEGORY.LIVE) {
+        if (dataSource.execute(DataSource_Operation.SUPPORTS_CRUD)) {
             let fn;
             const operationType = options.operationType;
             switch (operationType) {
-                case 'update':
-                    fn = 'updateRecord';
+                case Live_Operations.UPDATE:
+                    fn = DataSource_Operation.UPDATE_RECORD;
                     break;
-                case 'insert':
-                    fn = 'insertRecord';
+                case Live_Operations.INSERT:
+                    fn = DataSource_Operation.INSERT_RECORD;
                     break;
-                case 'delete':
-                    fn = 'deleteRecord';
+                case  Live_Operations.DELETE:
+                    fn = DataSource_Operation.DELETE_RECORD;
                     break;
             }
-            variable[fn](requestData, response => onSuccess(response, res, rej), rej);
-        } else if (varCategory === VARIABLE_CATEGORY.SERVICE) {
-            variable.setInput(requestData);
-            variable.update({
+            dataSource.execute(fn, requestData).then(response => onSuccess(response, res, rej), rej);
+        } else if (dataSource.execute(DataSource_Operation.IS_API_AWARE)) {
+            dataSource.execute(DataSource_Operation.SET_INPUT, requestData);
+            dataSource.execute(DataSource_Operation.INVOKE, {
                 'skipNotification': true
-            }, res, rej);
+            }).then(res, rej);
         }
     });
 }
 
-export function refreshVariable(variable, options): Promise<any> {
-    const varCategory = getVariableCategory(variable);
-
+export function refreshDataSource(dataSource, options): Promise<any> {
     return new Promise((res, rej) => {
-        if (varCategory === VARIABLE_CATEGORY.LIVE) {
-            variable.listRecords({
-                // 'filterFields' : filterFields,
-                // 'orderBy'      : sortOptions,
-                'page': options.page || 1
-            }, res, rej);
-        }
+        dataSource.execute(DataSource_Operation.LIST_RECORDS, {
+            // 'filterFields' : filterFields,
+            // 'orderBy'      : sortOptions,
+            'page': options.page || 1
+        }).then(res, rej);
     });
 }
 
-export function getFormVariable(form) {
-    return form.parent.Variables[getVariableName(form.binddataset)];
-}
-
-export function fetchRelatedFieldData(variable, formField, options) {
+export function fetchRelatedFieldData(dataSource, formField, options) {
     let primaryKeys;
     let displayField;
     const relatedField = options.relatedField;
     const datafield = options.datafield;
 
-    if (!variable) {
+    if (!dataSource) {
         return;
     }
-    primaryKeys = variable.getRelatedTablePrimaryKeys(relatedField);
+    primaryKeys = dataSource.execute(DataSource_Operation.GET_RELATED_PRIMARY_KEYS, relatedField);
     formField.datafield = datafield;
     formField._primaryKey = _.isEmpty(primaryKeys) ? undefined : primaryKeys[0];
     formField.compareby = primaryKeys && primaryKeys.join(',');
@@ -120,16 +100,17 @@ export function fetchRelatedFieldData(variable, formField, options) {
     formField.displayfield = displayField = (formField.displayfield || displayField || formField._primaryKey);
     // TODO: For autocomplete widget, set the dataset and  related field. Autocomplete widget will make the call to get related data
 
-    variable.getRelatedTableData(relatedField, {
+    dataSource.execute(DataSource_Operation.GET_RELATED_TABLE_DATA, {
+        relatedField,
         'pagesize': formField.limit,
         'orderBy': formField.orderby ? _.replace(formField.orderby, /:/g, ' ') : '',
-    }, response => {
+    }).then(response => {
         formField.dataset = response;
         formField.displayfield = formField.displayfield || _.head(_.keys(_.get(response, '[0]')));
-    });
+    }, noop);
 }
 
-function getDistinctFieldProperties(variable, formField) {
+function getDistinctFieldProperties(dataSource, formField) {
     const props: any = {};
     let fieldColumn;
     if (formField['is-related']) {
@@ -138,7 +119,7 @@ function getDistinctFieldProperties(variable, formField) {
         props.distinctField = fieldColumn;
         props.aliasColumn   = fieldColumn.replace('.', '$'); // For related fields, In response . is replaced by $
     } else {
-        props.tableName     = variable.propertiesMap.entityName;
+        props.tableName     = dataSource.execute(DataSource_Operation.GET_ENTITY_NAME);
         fieldColumn         = formField.field || formField.key;
         props.distinctField = fieldColumn;
         props.aliasColumn   = fieldColumn;
@@ -146,18 +127,18 @@ function getDistinctFieldProperties(variable, formField) {
     return props;
 }
 
-function getDistinctValues(variable, formField, widget, callBack) {
+function getDistinctValues(dataSource, formField, widget, callBack) {
     let props;
 
     if (isDataSetWidget(formField[widget]) && (!formField.isDataSetBound || widget === 'filterwidget')) {
-        props = getDistinctFieldProperties(variable, formField);
-        variable.getDistinctDataByFields({
+        props = getDistinctFieldProperties(dataSource, formField);
+        dataSource.execute(DataSource_Operation.GET_DISTINCT_DATA_BY_FIELDS, {
             'fields'        : props.distinctField,
             'entityName'    : props.tableName,
             'pagesize'      : formField.limit
-        }, data => {
+        }).then(data => {
             callBack(formField, data, props.aliasColumn);
-        });
+        }, noop);
     }
 }
 
@@ -191,12 +172,12 @@ function setFieldDataSet(formField, data, options?) {
     setDataFields(formField, options);
 }
 
-export function getDistinctValuesForField(variable, formField, options?) {
-    if (!variable || getVariableCategory(variable) !== VARIABLE_CATEGORY.LIVE || !formField || formField.isDataSetBound) {
+export function getDistinctValuesForField(dataSource, formField, options?) {
+    if (!dataSource || !formField || formField.isDataSetBound) {
         return;
     }
     // TODO: For autocomplete widget, widget will fetch the data. Set properties on the widget itself. Other widgets, fetch the data.
-    getDistinctValues(variable, formField, options.widget, (field, data, aliasColumn) => setFieldDataSet(field, data, {
+    getDistinctValues(dataSource, formField, options.widget, (field, data, aliasColumn) => setFieldDataSet(field, data, {
         aliasColumn: aliasColumn,
         widget: options.widget,
         isEnableEmptyFilter: options.isEnableEmptyFilter

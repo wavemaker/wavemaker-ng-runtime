@@ -1,8 +1,9 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+import { DataSource_Operation, IDataSource } from '../../data-source';
 
-export class ModelVariable extends BaseVariable {
+export class ModelVariable extends BaseVariable implements IDataSource {
 
     type: any;
     saveInPhonegap: any;
@@ -15,5 +16,17 @@ export class ModelVariable extends BaseVariable {
     init() {
         VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.MODEL)
             .initBinding(this, 'dataBinding', 'dataSet');
+    }
+
+    execute(operation) {
+        if (operation === DataSource_Operation.IS_API_AWARE) {
+            return false;
+        }
+        if (operation === DataSource_Operation.SUPPORTS_CRUD) {
+            return false;
+        }
+        if (operation === DataSource_Operation.IS_PAGEABLE) {
+            return false;
+        }
     }
 }

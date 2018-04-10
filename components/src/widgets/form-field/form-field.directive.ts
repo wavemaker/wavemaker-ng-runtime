@@ -6,7 +6,7 @@ import { registerProps } from './form-field.props';
 import { FormBuilder,  FormGroup, Validators } from '@angular/forms';
 import { toBoolean } from '@wm/utils';
 import { getEvaluatedData, isDataSetWidget } from '../../utils/widget-utils';
-import { fetchRelatedFieldData, getFormVariable, ALLFIELDS, getDistinctValuesForField } from '../../utils/data-utils';
+import { fetchRelatedFieldData, ALLFIELDS, getDistinctValuesForField } from '../../utils/data-utils';
 import { getDefaultViewModeWidget } from '../../utils/live-utils';
 declare const _;
 
@@ -58,6 +58,26 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         this.binddataset = binddataset;
         this.form = form;
         this.fb = fb;
+
+        if (this.binddataset) {
+            this.isDataSetBound = true;
+        }
+
+        if (this.form.isLiveForm && isDataSetWidget(_widgetType)) {
+            this.form.dataSourceChange$.subscribe(nv => this.onFormDataSourceChange(nv));
+        }
+    }
+
+    onFormDataSourceChange(dataSource) {
+        if (this['is-related']) {
+            this.isDataSetBound = true;
+            fetchRelatedFieldData(dataSource, this.widget, {
+                relatedField: this.key,
+                datafield: ALLFIELDS
+            });
+        } else {
+            getDistinctValuesForField(dataSource, this.widget, {widget: 'widgettype'});
+        }
     }
 
     evaluateExpr(object, displayExpr) {
@@ -171,20 +191,6 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         this.key = this.key || this.target || this.binding || this.name;
         this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
         this.form.registerFormFields(this.widget);
-
-        if (this.binddataset) {
-            this.isDataSetBound = true;
-        } else if (isDataSetWidget(this.widgettype)) {
-            if (this['is-related']) {
-                this.isDataSetBound = true;
-                fetchRelatedFieldData(getFormVariable(this.form), this.widget, {
-                    relatedField: this.key,
-                    datafield: ALLFIELDS
-                });
-            } else {
-                getDistinctValuesForField(getFormVariable(this.form), this.widget, {widget: 'widgettype'});
-            }
-        }
     }
 }
 

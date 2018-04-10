@@ -2,10 +2,11 @@ import { Directive, Inject, Self } from '@angular/core';
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
 import { $appDigest, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/utils';
-import { performDataOperation } from '../../utils/data-utils';
+import { Live_Operations, performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../pipes/custom-pipes';
+import { DataSource_Operation } from '../../../../variables/src/data-source';
 
 declare const _, moment;
 
@@ -68,7 +69,7 @@ export class LiveFormDirective {
         this.form.constructDataObject();
     }
 
-    onVariableUpdate(response, newForm, updateMode) {
+    onDataSourceUpdate(response, newForm, updateMode) {
         if (newForm) {
             this.form.new();
         } else {
@@ -90,7 +91,7 @@ export class LiveFormDirective {
     }
 
     getDataObject() {
-        if (this.form.operationType === 'insert') {
+        if (this.form.operationType === Live_Operations.INSERT) {
             return {};
         }
         if (isDefined(this.form.prevDataObject) && !isEmptyObject(this.form.prevDataObject)) {
@@ -158,11 +159,12 @@ export class LiveFormDirective {
         }
     }
 
-    findOperationType(variable) {
-        let operation,
-            isPrimary = false;
-        if (variable && variable.operation && variable.operation !== 'read') {
-            return variable.operation;
+    findOperationType(dataSource) {
+        let operation;
+        let isPrimary = false;
+        const sourceOperation = dataSource.execute(DataSource_Operation.GET_OPERATION_TYPE);
+        if (sourceOperation && sourceOperation !== 'read') {
+            return sourceOperation;
         }
         /*If OperationType is not set then based on the formdata object return the operation type,
             this case occurs only if the form is outside a livegrid*/
@@ -171,7 +173,7 @@ export class LiveFormDirective {
             /*If only one column is primary key*/
             if (this.form.primaryKey.length === 1) {
                 if (this.form.formdata[this.form.primaryKey[0]]) {
-                    operation = 'update';
+                    operation = Live_Operations.UPDATE;
                 }
                 /*If only no column is primary key*/
             } else if (this.form.primaryKey.length === 0) {
@@ -181,7 +183,7 @@ export class LiveFormDirective {
                     }
                 });
                 if (isPrimary) {
-                    operation = 'update';
+                    operation = Live_Operations.UPDATE;
                 }
                 /*If multiple columns are primary key*/
             } else {
@@ -191,11 +193,11 @@ export class LiveFormDirective {
                     }
                 });
                 if (isPrimary) {
-                    operation = 'update';
+                    operation = Live_Operations.UPDATE;
                 }
             }
         }
-        return operation || 'insert';
+        return operation || Live_Operations.INSERT;
     }
 
     getPrevDataValues() {
@@ -253,7 +255,7 @@ export class LiveFormDirective {
 
         this.setReadonlyFields();
         this.form.isUpdateMode = true;
-        this.form.operationType = 'update';
+        this.form.operationType = Live_Operations.UPDATE;
 
         $appDigest();
     }
@@ -305,12 +307,12 @@ export class LiveFormDirective {
         this.form.setPrevDataValues();
         this.form.constructDataObject();
         this.form.isUpdateMode = true;
-        this.form.operationType = 'insert';
+        this.form.operationType = Live_Operations.INSERT;
     }
 
     delete(callBackFn) {
         this.form.resetFormState();
-        this.form.operationType = 'delete';
+        this.form.operationType = Live_Operations.DELETE;
         this.form.prevDataObject = getClonedObject(this.form.rowdata || {});
         this.form.formSave(undefined, undefined, undefined, callBackFn);
     }
@@ -327,7 +329,7 @@ export class LiveFormDirective {
     save(event?, updateMode?, newForm?, callBackFn?) {
         let data, prevData, requestData, operationType, isValid;
 
-        operationType = this.form.operationType = this.form.operationType || this.findOperationType(this.form.variable);
+        operationType = this.form.operationType = this.form.operationType || this.findOperationType(this.form.datasource);
 
         // Disable the form submit if form is in invalid state.
         if (this.form.validateFieldsOnSubmit()) {
@@ -353,7 +355,7 @@ export class LiveFormDirective {
         }
 
         // If operation is update, form is not touched and current data and previous data is same, Show no changes detected message
-        if (this.form.operationType === 'update' && this.form.ngform && this.form.ngform.pristine &&
+        if (this.form.operationType === Live_Operations.UPDATE && this.form.ngform && this.form.ngform.pristine &&
                 (this.form.isSelected && _.isEqual(data, prevData))) {
             this.form.toggleMessage(true, 'No changes detected', 'info', '');
             return;
@@ -367,18 +369,18 @@ export class LiveFormDirective {
             'skipNotification': true
         };
 
-        if (operationType === 'update') {
+        if (operationType === Live_Operations.UPDATE) {
             requestData.rowData = this.form.rowdata || this.form.formdata;
             requestData.prevData = prevData;
         }
 
-        performDataOperation(this.form.variable, requestData, {
+        performDataOperation(this.form.datasource, requestData, {
             operationType: operationType
         }).then((response) => {
-            const msg = operationType === 'insert' ? this.form.insertmessage : (operationType === 'update' ?
+            const msg = operationType === Live_Operations.INSERT ? this.form.insertmessage : (operationType === Live_Operations.UPDATE ?
                 this.form.updatemessage : this.form.deletemessage);
 
-            if (operationType === 'delete') {
+            if (operationType === Live_Operations.DELETE) {
                 this.form.onResult(requestData.row, true, event);
                 this.form.emptyDataModel();
                 this.form.prevDataValues = [];
@@ -393,10 +395,10 @@ export class LiveFormDirective {
                 this.form._liveTableParent.onResult(operationType, response, newForm, updateMode);
             } else {
                 /*get updated data without refreshing page*/
-                this.form.variable.invoke({
+                this.form.datasource.execute(DataSource_Operation.LIST_RECORDS, {
                     'skipToggleState': true
                 });
-                this.onVariableUpdate(response, newForm, updateMode);
+                this.onDataSourceUpdate(response, newForm, updateMode);
             }
         }, (error) => {
             this.form.onResult(error, false, event);

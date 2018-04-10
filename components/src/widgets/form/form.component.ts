@@ -1,11 +1,12 @@
-import { Attribute, ChangeDetectorRef, Component, ElementRef, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
+import { Attribute, ChangeDetectorRef, Component, ElementRef, forwardRef, HostBinding, HostListener, Injector, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Subject } from 'rxjs/Subject';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
 import { $appDigest, removeClass } from '@wm/utils';
-import { getVariableName, performDataOperation } from '../../utils/data-utils';
+import { performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 
 declare const _;
@@ -33,7 +34,7 @@ const getWidgetConfig = isLiveForm => isLiveForm !== null ? LIVE_WIDGET_CONFIG :
     templateUrl: './form.component.html',
     providers: [{ provide: ParentForm, useExisting: forwardRef(() => FormComponent) }]
 })
-export class FormComponent extends BaseComponent implements ParentForm {
+export class FormComponent extends BaseComponent implements ParentForm, OnDestroy {
 
     captionAlignClass: string;
     validationtype: string;
@@ -50,6 +51,8 @@ export class FormComponent extends BaseComponent implements ParentForm {
     formfields = {};
     buttonArray = [];
     dataoutput;
+    dataSourceChange = new Subject();
+    dataSourceChange$ = this.dataSourceChange.asObservable();
     formdata;
     rowdata;
     isSelected;
@@ -65,6 +68,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
     primaryKey;
     postmessage;
     _liveTableParent;
+    isLiveForm;
     resetForm: Function;
     // Live Form Methods
     edit: Function;
@@ -83,9 +87,9 @@ export class FormComponent extends BaseComponent implements ParentForm {
     setPrevformFields: Function;
     setPrimaryKey: () => {};
     dialogId: string;
+    datasource;
 
     private operationType;
-    private variable;
     private _isLayoutDialog;
 
     set isLayoutDialog(nv) {
@@ -103,7 +107,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
     @HostBinding('action') action: string;
 
     @HostListener('submit', ['$event']) submit($event) {
-        if (this.isLiveForm !== null) {
+        if (this.isLiveForm) {
             this.formSave($event);
             return;
         }
@@ -173,6 +177,9 @@ export class FormComponent extends BaseComponent implements ParentForm {
                     this.isUpdateMode = false;
                 }
                 break;
+            case 'datasource':
+                this.dataSourceChange.next(this.datasource);
+                break;
         }
     }
 
@@ -221,7 +228,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
                 @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
                 @Attribute('submit.event') public onSubmitEvt,
                 @Attribute('dataset.bind') public binddataset,
-                @Attribute('wmLiveForm') public isLiveForm) {
+                @Attribute('wmLiveForm') isLiveForm) {
         super(getWidgetConfig(isLiveForm), inj, elRef, cdr);
 
         styler(this.$element, this);
@@ -230,8 +237,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
         this.ngForm = fb.group({});
         this.elScope = this;
         this.resetForm = this.reset.bind(this);
-
-        this.variable = this.parent.Variables[getVariableName(this.binddataset)];
+        this.isLiveForm = isLiveForm !== null;
     }
 
     registerFormFields(formField) {
@@ -305,7 +311,7 @@ export class FormComponent extends BaseComponent implements ParentForm {
 
     submitForm($event) {
         let formData, template, params;
-        const formVariable = this.variable;
+        const dataSource = this.datasource;
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
             return;
@@ -321,11 +327,11 @@ export class FormComponent extends BaseComponent implements ParentForm {
             return;
         }
 
-        if (this.onSubmitEvt && formVariable) {
+        if (this.onSubmitEvt || dataSource) {
             // If on submit is there execute it and if it returns true do service variable invoke else return
             // If its a service variable call setInput and assign form data and invoke the service
-            if (formVariable) {
-                performDataOperation(formVariable, formData, {})
+            if (dataSource) {
+                performDataOperation(dataSource, formData, {})
                     .then((data) => {
                         this.toggleMessage(true, this.postmessage, 'success');
                         this.onResult(data, true, $event);
@@ -351,5 +357,9 @@ export class FormComponent extends BaseComponent implements ParentForm {
         if (event) {
             this[event.substring(0, event.indexOf('('))]();
         }
+    }
+
+    ngOnDestroy() {
+        this.dataSourceChange.complete();
     }
 }
