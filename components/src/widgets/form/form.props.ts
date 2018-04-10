@@ -9,6 +9,7 @@ const propsMap = new Map(
         ['captionwidth', {value: 'xs-12 sm-3 md-3 lg-3', ...PROP_STRING_NOTIFY}],
         ['class', PROP_STRING],
         ['dataset', PROP_STRING],
+        ['datasource', PROP_STRING_NOTIFY],
         ['enctype', PROP_STRING],
         ['errormessage', {value: 'An error occured. Please try again!', ...PROP_STRING}],
         ['formdata', PROP_STRING_NOTIFY],

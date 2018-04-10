@@ -1,7 +1,7 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource, IDataSource } from '../../data-source';
+import { DataSource_Operation, IDataSource } from '../../data-source';
 
 const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.LIVE);
@@ -9,33 +9,59 @@ const getManager = () => {
 
 export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
+    propertiesMap;
+
     constructor(variable: any) {
         super();
         Object.assign(this as any, variable);
     }
 
     execute(operation, options) {
+        if (operation === DataSource_Operation.IS_API_AWARE) {
+            return true;
+        }
+        if (operation === DataSource_Operation.SUPPORTS_CRUD) {
+            return true;
+        }
+        if (operation === DataSource_Operation.IS_PAGEABLE) {
+            return true;
+        }
+        if (operation === DataSource_Operation.GET_OPERATION_TYPE) {
+            return this.operation;
+        }
+        if (operation === DataSource_Operation.GET_RELATED_PRIMARY_KEYS) {
+            return this.getRelatedTablePrimaryKeys(options);
+        }
+        if (operation === DataSource_Operation.GET_ENTITY_NAME) {
+            return this.propertiesMap.entityName;
+        }
         return new Promise((resolve, reject) => {
             switch (operation) {
-                case DataSource.OPERATION.LIST_RECORD :
-                    this.listRecords(options, (response, propsMap, pagingOptions) => {
-                        resolve({response, propsMap, pagingOptions});
+                case DataSource_Operation.LIST_RECORDS :
+                    this.listRecords(options, (data, propertiesMap, pagingOptions) => {
+                        resolve({data, propertiesMap, pagingOptions});
                     }, reject);
                     break;
-                case DataSource.OPERATION.UPDATE_RECORD :
+                case DataSource_Operation.UPDATE_RECORD :
                     this.updateRecord(options, resolve, reject);
                     break;
-                case DataSource.OPERATION.INSERT_RECORD :
+                case DataSource_Operation.INSERT_RECORD :
                     this.insertRecord(options, resolve, reject);
                     break;
-                case DataSource.OPERATION.DELETE_RECORD :
+                case DataSource_Operation.DELETE_RECORD :
                     this.deleteRecord(options, resolve, reject);
                     break;
-                case DataSource.OPERATION.INVOKE :
+                case DataSource_Operation.INVOKE :
                     this.invoke(options, resolve, reject);
                     break;
-                case DataSource.OPERATION.UPDATE :
+                case DataSource_Operation.UPDATE :
                     this.update(options, resolve, reject);
+                    break;
+                case DataSource_Operation.GET_RELATED_TABLE_DATA:
+                    this.getRelatedTableData(options.relatedField, options, resolve, reject);
+                    break;
+                case DataSource_Operation.GET_DISTINCT_DATA_BY_FIELDS:
+                    this.getDistinctDataByFields(options, resolve, reject);
                     break;
                 default :
                     reject(`${operation} operation is not supported on this data source`);

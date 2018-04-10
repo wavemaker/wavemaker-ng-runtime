@@ -4,10 +4,10 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { styler } from '../../utils/styler';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './table.props';
-import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, triggerFn } from '@wm/utils';
+import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, triggerFn, isPageable } from '@wm/utils';
 import { getRowOperationsColumn } from '../../utils/live-utils';
 import { Subject } from 'rxjs/Subject';
-import { getVariableName, refreshVariable } from '../../utils/data-utils';
+import { refreshDataSource } from '../../utils/data-utils';
 
 declare const _;
 declare const moment;
@@ -48,6 +48,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     @ViewChild('rowActionsContainer', {read: ViewContainerRef}) rowActionsContainer: ViewContainerRef;
 
     datagridElement;
+    datasource;
     editmode;
     enablecolumnselection;
     enablesort = true;
@@ -76,7 +77,6 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     showrowindex;
     subheading;
     title;
-    variable;
 
     selectedItemChange = new Subject();
     selectedItemChange$ = this.selectedItemChange.asObservable();
@@ -572,6 +572,9 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
                 this.__fullData = this.dataset;
 
                 this.dataNavigator.widget.maxResults = this.pagesize || 5;
+                this.dataNavigator.pagingOptions = {
+                    maxResults: this.pagesize || 5
+                };
                 this.dataNavigator.setBindDataSet(this.binddataset, this.parent);
             }
         }
@@ -615,6 +618,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
 
     watchVariableDataSet(newVal) {
         let result;
+        let _isPageable;
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
         if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
             return;
@@ -637,6 +641,12 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         /*Return if data is invalid.*/
         if (!this.isDataValid()) {
             return;
+        }
+
+        /*If the data is a pageable object, then display the content.*/
+        if (_.isObject(newVal) && isPageable(newVal)) {
+            newVal = newVal.content;
+            _isPageable = true;
         }
 
         // If value is empty or in studio mode, dont enable the navigation
@@ -904,7 +914,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
     }
 
     updateVariable(row?, callBack?) {
-        const variable = this.variable;
+        const dataSource = this.datasource;
         // TODO: Filter
         // if (this.isBoundToFilter) {
         //     //If grid is bound to filter, call the apply fiter and update filter options
@@ -914,8 +924,8 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         //     this.Widgets[this.widgetName].fetchDistinctValues();
         //     return;
         // }
-        if (variable && !this.shownavigation) {
-            refreshVariable(variable, {
+        if (dataSource && !this.shownavigation) {
+            refreshDataSource(dataSource, {
                 page: 1
             }).then(() => {
                 this.selectItemOnSuccess(row, true, callBack);
@@ -934,7 +944,5 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
                 @Attribute('dataset.bind') public binddataset) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
-
-        this.variable = this.parent.Variables[getVariableName(this.binddataset)];
     }
 }

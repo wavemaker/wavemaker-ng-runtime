@@ -3,9 +3,10 @@ import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { $watch, isDefined, isPageable, switchClass, triggerFn } from '@wm/utils';
 import { registerProps } from './pagination.props';
-import { getVariableCategory, getVariableName, isVariablePaginated } from '../../utils/data-utils';
+import { getDataSource } from '../../utils/data-utils';
 import { getOrderByExpr, invokeEventHandler } from '../../utils/widget-utils';
 import { getWatchIdentifier } from '../../utils/init-widget';
+import { DataSource_Operation } from '../../../../variables/src/data-source';
 
 declare const _;
 
@@ -45,6 +46,7 @@ export class PaginationComponent extends BaseComponent {
     @Output() resultEmitter: EventEmitter<any> = new EventEmitter();
     @Output() maxResultsEmitter: EventEmitter<any> = new EventEmitter();
 
+    datasource;
     maxResults;
     navigationsize;
     showrecordcount;
@@ -84,14 +86,12 @@ export class PaginationComponent extends BaseComponent {
     result;
     __fullData;
     dataset;
-    variable;
     pagingOptions;
     isBoundToFilter;
     filterFields;
     sortOptions;
     binddataset;
     widgetName;
-    variableName;
 
     setResult(result) {
         // TODO: Emit event only if result is changed
@@ -170,14 +170,8 @@ export class PaginationComponent extends BaseComponent {
     }
 
     /*Function to check if the variable bound to the data-navigator has paging.*/
-    isVariableHasPaging() {
-        const dataSet = this.dataset;
-
-        if (isVariablePaginated(this.variable)) {
-            return true;
-        }
-
-        return (_.isObject(dataSet) && (dataSet.pagingOptions || isPageable(dataSet)));
+    isDataSourceHasPaging() {
+        return this.datasource.execute(DataSource_Operation.IS_PAGEABLE);
     }
 
     // Set the result for client side pagination
@@ -188,12 +182,12 @@ export class PaginationComponent extends BaseComponent {
             startIndex;
         dataSize = _.isArray(newVal) ? newVal.length : (newVal.data ? newVal.data.length : _.isEmpty(newVal) ? 0 : 1);
         maxResults = (this.pagingOptions && this.pagingOptions.maxResults) || dataSize;
-        // For static variable, keep the current page. For other variables without pagination reset the page to 1
 
-        if (getVariableCategory(this.variable) === 'wm.Variable') {
-            currentPage = this.dn.currentPage || 1;
-        } else {
+        // For static variable, keep the current page. For other variables without pagination reset the page to 1
+        if (this.datasource.execute(DataSource_Operation.IS_API_AWARE)) {
             currentPage = 1;
+        } else {
+            currentPage = this.dn.currentPage || 1;
         }
 
         this.setDefaultPagingValues(dataSize, maxResults, currentPage);
@@ -208,29 +202,25 @@ export class PaginationComponent extends BaseComponent {
         let dataSize,
             maxResults,
             currentPage,
-            variable;
+            dataSource;
         let variableOptions: any = {};
         // Store the data in __fullData. This is used for client side searching witvah out modifying the actual dataset.
         this.__fullData = newVal;
         this.isBoundToFilter = undefined;
         /*Check for sanity*/
         if (this.binddataset) {
-
             if (newVal) {
                 if (newVal.isBoundToFilter && newVal.widgetName) {
                     this.isBoundToFilter = true;
                     this.widgetName = newVal.widgetName;
-                } else if (newVal.variableName) {
-                    this.variableName = newVal.variableName;
-                    this.variable = this.parent[this.variableName];
                 }
             }
 
-            variable        = this.variable || {};
-            variableOptions = variable._options || {};
+            dataSource = this.datasource || {};
+            variableOptions = dataSource._options || {};
             /*Check for number of elements in the data set*/
             if (newVal) {
-                if (this.isVariableHasPaging()) {
+                if (this.isDataSourceHasPaging()) {
                     /*If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.*/
                     this.filterFields = variableOptions.filterFields || {};
                     this.sortOptions = variableOptions.orderBy || (_.isArray(newVal.sort) ? getOrderByExpr(newVal.sort) : '');
@@ -325,49 +315,37 @@ export class PaginationComponent extends BaseComponent {
             startIndex;
         // TODO: Handle Filter
 
-        if (this.isVariableHasPaging()) {
-            if (getVariableCategory(this.variable) === 'wm.LiveVariable') {
-                // Invoke the function to get the data corresponding to the specific page
-                this.variable.update({
-                    'page': this.dn.currentPage,
-                    'filterFields': this.filterFields,
-                    'orderBy': this.sortOptions,
-                    'matchMode': 'anywhere'
-                }, (response, propertiesMap, pagingOptions) => {
+        if (this.isDataSourceHasPaging()) {
+            this.datasource.execute(DataSource_Operation.LIST_RECORDS, {
+                'page': this.dn.currentPage,
+                'filterFields': this.filterFields,
+                'orderBy': this.sortOptions,
+                'matchMode': 'anywhere'
+            }).then(response => {
+                if (response && response.hasOwnProperty('propertiesMap') && response.hasOwnProperty('pagingOptions')) {
                     // Update the 'result' in the scope so that widgets bound to the data-navigator are updated
                     this.setResult({
-                        'data': response,
-                        'propertiesMap': propertiesMap,
-                        'pagingOptions': pagingOptions,
+                        'data': response.data,
+                        'propertiesMap': response.propertiesMap,
+                        'pagingOptions': response.pagingOptions,
                         'filterFields': this.filterFields,
                         'orderBy': this.sortOptions,
-                        'variableName': this.variableName
                     });
                     // Update the paging options and invoke the function to re-calculate the paging values.
-                    this.dataSize = pagingOptions.dataSize;
-                    this.maxResults = pagingOptions.maxResults;
+                    this.dataSize = response.pagingOptions.dataSize;
+                    this.maxResults = response.pagingOptions.maxResults;
                     this.calculatePagingValues();
-                    // Invoke the 'onPageDataReady' function
-                    this.onPageDataReady(event, response, callback);
-                }, (error) => {
-                    // If error is undefined, do not show any message as this may be discarded request
-                    if (error) {
-                        // TODO: Handle Error
-                        // wmToaster.show('error', 'ERROR', 'Unable to get data of page -' + this.dn.currentPage + ':' + error);
-                    }
-                });
-            } else if (isPageable(this.dataset)) {
-                /*Invoke the function to get the data corresponding to the specific page.*/
-                this.variable.update({
-                    'page': this.dn.currentPage,
-                    'filterFields': this.filterFields,
-                    'orderBy': this.sortOptions,
-                    'matchMode': 'anywhere'
-                }, (response) => {
+                } else {
                     this.setResult(response);
                     this.onPageDataReady(event, response, callback);
-                });
-            }
+                }
+            }, error => {
+                // If error is undefined, do not show any message as this may be discarded request
+                if (error) {
+                    // TODO: Handle Error
+                    // wmToaster.show('error', 'ERROR', 'Unable to get data of page -' + this.dn.currentPage + ':' + error);
+                }
+            });
         } else {
             startIndex = (this.dn.currentPage - 1) * this.maxResults;
             data = _.isArray(this.__fullData) ? this.__fullData.slice(startIndex, startIndex + this.maxResults) : this.__fullData;
@@ -457,7 +435,7 @@ export class PaginationComponent extends BaseComponent {
     setBindDataSet(binddataset, parent) {
         this.binddataset = binddataset;
         this.destroy$.subscribe($watch(binddataset, parent, {}, nv => this.widget.dataset = nv, getWatchIdentifier(this.widgetId, 'dataset')));
-        this.variable = parent.Variables[getVariableName(binddataset)];
+        this.datasource = getDataSource(binddataset, parent);
     }
 
     onPropertyChange(key: string, nv, ov) {
