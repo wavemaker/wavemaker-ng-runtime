@@ -1,3 +1,4 @@
+
 declare const _;
 
 import { findValueOf, getBlob, getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/utils';
@@ -6,6 +7,7 @@ import { ServiceVariableUtils } from '../../util/variable/service-variable.utils
 import { $queue } from '../../util/inflight-queue';
 import { BaseVariableManager } from './base-variable.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
+import { setInput } from './../../util/variable/variables.utils';
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 
@@ -242,37 +244,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     }
 
     public setInput(variable, key, val, options) {
-        let targetObj = variable.dataBinding,
-            keys,
-            lastKey,
-            paramObj = {};
-        if (_.isObject(options)) {
-            switch (options.type) {
-                case 'file':
-                    val = getBlob(val, options.contentType);
-                    break;
-                case 'number':
-                    val = _.isNumber(val) ? val : parseInt(val, 10);
-                    break;
-            }
-        }
-        if (_.isObject(key)) {
-            paramObj = key;
-        } else if (key.indexOf('.') > -1) {
-            keys = key.split('.');
-            lastKey = keys.pop();
-            // Finding the object based on the key
-            targetObj = findValueOf(targetObj, keys.join('.'), true);
-            key = lastKey;
-            paramObj[key] = val;
-        } else {
-            paramObj[key] = val;
-        }
-
-        _.forEach(paramObj, function (paramVal, paramKey) {
-            targetObj[paramKey] = paramVal;
-        });
-        return variable.dataBinding;
+        return setInput(variable.dataBinding, key, val, options);
     }
 
     public cancel(variable) {

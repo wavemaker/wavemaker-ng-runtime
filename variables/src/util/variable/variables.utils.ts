@@ -1,4 +1,4 @@
-import { $parseEvent, $watch, findValueOf, getClonedObject, stringStartsWith, triggerFn } from '@wm/utils';
+import { $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/utils';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
 declare const window, _, $;
@@ -140,11 +140,11 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
     fn(variable._context, {$event: variable, $scope: data});
 };
 
-function triggerOnTimeout(success) {
+const triggerOnTimeout = (success) => {
     setTimeout(() => { triggerFn(success); }, 500);
-}
+};
 
-function downloadFilefromResponse(response, headerFn, success, error) {
+const downloadFilefromResponse = (response, headerFn, success, error) => {
     // check for a filename
     let filename = '',
         filenameRegex,
@@ -211,9 +211,9 @@ function downloadFilefromResponse(response, headerFn, success, error) {
 
         setTimeout(() => { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
     }
-}
+};
 
-function getService(serviceName) {
+const getService = (serviceName) => {
     if (!serviceName) {
         return;
     }
@@ -231,19 +231,23 @@ function getService(serviceName) {
      return undefined;
      }
      }*/
-}
+};
 
-// Construct the form data params from the URL
-function setParamsFromURL(queryParams, params) {
+/**
+ * Construct the form data params from the URL
+ * @param queryParams
+ * @param params
+ */
+const setParamsFromURL = (queryParams, params) => {
     queryParams = _.split(queryParams, '&');
     _.forEach(queryParams, function (param) {
         param = _.split(param, '=');
         params[param[0]] = decodeURIComponent(_.join(_.slice(param, 1), '='));
     });
-}
+};
 
-// Todo, Shubham, Implement Download through I frame
 /**
+ * [Todo: Shubham], Implement Download through I frame
  * Simulates file download in an app through creating and submitting a hidden form in DOM.
  * The action will be initiated through a Service Variable
  *
@@ -261,7 +265,7 @@ function setParamsFromURL(queryParams, params) {
  * @param variable: the variable that is called from user action
  * @param requestParams object consisting the info to construct the XHR request for the service
  */
-function downloadThroughIframe(requestParams, success) {
+const downloadThroughIframe = (requestParams, success) => {
     // Todo: SHubham: URL contains '//' in between which should be handled at the URL formation only
     if (requestParams.url[1] === '/' && requestParams.url[2] === '/') {
         requestParams.url = requestParams.url.slice(0, 1) + requestParams.url.slice(2);
@@ -320,9 +324,17 @@ function downloadThroughIframe(requestParams, success) {
         formEl.submit();
         triggerFn(success);
     }, 100);
-}
+};
 
-function downloadThroughAnchor(config, success, error) {
+/**
+ * Makes an XHR call against the config
+ * the response is converted into a blob url, which is assigned to the src attribute of an anchor element with download=true
+ * a click is simulated on the anchor to download the file
+ * @param config
+ * @param success
+ * @param error
+ */
+const downloadThroughAnchor = (config, success, error) => {
     const url     = config.url,
         method  = config.method,
         data    = config.dataParams || config.data,
@@ -350,9 +362,16 @@ function downloadThroughAnchor(config, success, error) {
         triggerFn(error);
         console.log('error', err);
     });
-}
+};
 
-function getModifiedFileName(fileName, exportFormat) {
+/**
+ * appends a timestamp on the passed filename to prevent caching
+ * returns the modified file name
+ * @param fileName
+ * @param exportFormat
+ * @returns {string}
+ */
+const getModifiedFileName = (fileName, exportFormat) => {
     let fileExtension;
     const currentTimestamp = Date.now();
 
@@ -363,53 +382,23 @@ function getModifiedFileName(fileName, exportFormat) {
         fileName = _.replace(fileName, fileExtension, '');
     }
     return fileName + '_' + currentTimestamp + fileExtension;
-}
+};
 
-function getCookieByName(name) {
+const getCookieByName = (name) => {
     // Todo: Shubham Implement cookie native js
     return 'cookie';
-}
+};
 
 /**
  * This function returns the cookieValue if xsrf is enabled.
  * In device, xsrf cookie is stored in localStorage.
  * @returns xsrf cookie value
  */
-function isXsrfEnabled() {
+const isXsrfEnabled = () => {
     if (CONSTANTS.hasCordova) {
         return localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
     }
     return false;
-}
-
-/* returns true if HTML5 File API is available else false*/
-export const isFileUploadSupported = () => {
-    return (window.File && window.FileReader && window.FileList && window.Blob);
-};
-
-export const getEvaluatedOrderBy = (varOrder, optionsOrder) => {
-    let optionFields,
-        varOrderBy;
-    // If options order by is not defined, return variable order
-    if (!optionsOrder || _.element.isEmptyObject(optionsOrder)) {
-        return varOrder;
-    }
-    // If variable order by is not defined, return options order
-    if (!varOrder) {
-        return optionsOrder;
-    }
-    // If both are present, combine the options order and variable order, with options order as precedence
-    varOrder     = _.split(varOrder, ',');
-    optionsOrder = _.split(optionsOrder, ',');
-    optionFields = _.map(optionsOrder, function (order) {
-        return _.split(_.trim(order), ' ')[0];
-    });
-    // If a field is present in both options and variable, remove the variable orderby
-    _.remove(varOrder, function (orderBy) {
-        return _.includes(optionFields, _.split(_.trim(orderBy), ' ')[0]);
-    });
-    varOrderBy = varOrder.length ? ',' + _.join(varOrder, ',') : '';
-    return _.join(optionsOrder, ',') + varOrderBy;
 };
 
 /**
@@ -590,7 +579,18 @@ const processBindObject = (obj, scope, root, variable) => {
     }
 };
 
-export const processBinding = (variable: any, $scope: any, bindSource?: string, bindTarget?: string) => {
+//*********************************************************** PUBLIC ***********************************************************//
+
+/**
+ * Initializes watchers for binding expressions configured in the variable
+ * @param variable
+ * @param context, scope context in which the variable exists
+ * @param {string} bindSource,  the field in variable where the databindings are configured
+ *                              for most variables, it will be 'dataBinding', hence default fallback is to 'dataBinding'
+ *                              for some it can be 'dataSet' and hence will be passed as param
+ * @param {string} bindTarget, the object field in variable where the computed bindings will be set
+ */
+export const processBinding = (variable: any, context: any, bindSource?: string, bindTarget?: string) => {
     bindSource = bindSource || 'dataBinding';
     bindTarget = bindTarget || 'dataBinding';
 
@@ -605,10 +605,25 @@ export const processBinding = (variable: any, $scope: any, bindSource?: string, 
         if (variable.category === 'wm.Variable' && node.target === 'dataBinding') {
             node.target = 'dataSet';
         }
-        processBindObject(node, $scope, bindTarget, variable);
+        processBindObject(node, context, bindTarget, variable);
     });
 };
 
+/**
+ * Downloads a file in the browser.
+ * Two methods to do so, namely:
+ * 1. downloadThroughAnchor, called if
+ *      - if a header is to be passed
+ *      OR
+ *      - if security is ON and XSRF token is to be sent as well
+ * NOTE: This method does not work with Safari version 10.0 and below
+ *
+ * 2. downloadThroughIframe
+ *      - this method works across browsers and uses an iframe to downlad the file.
+ * @param requestParams request params object
+ * @param fileName name for the downloaded file via cordova file transfer in device
+ * @param exportFormat downloaded file format
+ */
 export const simulateFileDownload = (requestParams, fileName, exportFormat, success, error) => {
     /*success and error callbacks are executed incase of downloadThroughAnchor
      Due to technical limitation cannot be executed incase of iframe*/
@@ -619,4 +634,95 @@ export const simulateFileDownload = (requestParams, fileName, exportFormat, succ
     } else {
         downloadThroughIframe(requestParams, success);
     }
+};
+
+/**
+ * sets the value against passed key on the "inputFields" object in the variable
+ * @param targetObj: the object in which the key, value is to be set
+ * @param variable
+ * @param key: can be:
+ *  - a string e.g. "username"
+ *  - an object, e.g. {"username": "john", "ssn": "11111"}
+ * @param val
+ * - if key is string, the value against it (for that data type)
+ * - if key is object, not required
+ * @param options
+ * @returns {any}
+ */
+export const setInput = (targetObj: any, key: any, val: any, options: any) => {
+    targetObj = targetObj || {};
+    let keys,
+        lastKey,
+        paramObj = {};
+
+    // content type check
+    if (_.isObject(options)) {
+        switch (options.type) {
+            case 'file':
+                val = getBlob(val, options.contentType);
+                break;
+            case 'number':
+                val = _.isNumber(val) ? val : parseInt(val, 10);
+                break;
+        }
+    }
+
+    if (_.isObject(key)) {
+        // check if the passed parameter is an object itself
+        paramObj = key;
+    } else if (key.indexOf('.') > -1) {
+        // check for '.' in key e.g. 'employee.department'
+        keys = key.split('.');
+        lastKey = keys.pop();
+        // Finding the object based on the key
+        targetObj = findValueOf(targetObj, keys.join('.'), true);
+        key = lastKey;
+        paramObj[key] = val;
+    } else {
+        paramObj[key] = val;
+    }
+
+    _.forEach(paramObj, function (paramVal, paramKey) {
+        targetObj[paramKey] = paramVal;
+    });
+    return targetObj;
+};
+
+/**
+ * returns true if HTML5 File API is available else false
+ * @returns {{prototype: Blob; new(blobParts?: any[], options?: BlobPropertyBag): Blob}}
+ */
+export const isFileUploadSupported = () => {
+    return (window.File && window.FileReader && window.FileList && window.Blob);
+};
+
+/**
+ *
+ * @param varOrder
+ * @param optionsOrder
+ * @returns {any}
+ */
+export const getEvaluatedOrderBy = (varOrder, optionsOrder) => {
+    let optionFields,
+        varOrderBy;
+    // If options order by is not defined, return variable order
+    if (!optionsOrder || _.element.isEmptyObject(optionsOrder)) {
+        return varOrder;
+    }
+    // If variable order by is not defined, return options order
+    if (!varOrder) {
+        return optionsOrder;
+    }
+    // If both are present, combine the options order and variable order, with options order as precedence
+    varOrder     = _.split(varOrder, ',');
+    optionsOrder = _.split(optionsOrder, ',');
+    optionFields = _.map(optionsOrder, function (order) {
+        return _.split(_.trim(order), ' ')[0];
+    });
+    // If a field is present in both options and variable, remove the variable orderby
+    _.remove(varOrder, function (orderBy) {
+        return _.includes(optionFields, _.split(_.trim(orderBy), ' ')[0]);
+    });
+    varOrderBy = varOrder.length ? ',' + _.join(varOrder, ',') : '';
+    return _.join(optionsOrder, ',') + varOrderBy;
 };
