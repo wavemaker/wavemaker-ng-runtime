@@ -17,57 +17,55 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     }
 
     execute(operation, options) {
-        if (operation === DataSource.Operation.IS_API_AWARE) {
-            return true;
+        let returnVal;
+        switch (operation) {
+            case DataSource.Operation.IS_API_AWARE:
+                returnVal = true;
+                break;
+            case DataSource.Operation.SUPPORTS_CRUD:
+                returnVal = true;
+                break;
+            case DataSource.Operation.IS_PAGEABLE:
+                returnVal = true;
+                break;
+            case DataSource.Operation.GET_OPERATION_TYPE:
+                returnVal = this.operation;
+                break;
+            case DataSource.Operation.GET_RELATED_PRIMARY_KEYS:
+                returnVal = this.getRelatedTablePrimaryKeys(options);
+                break;
+            case DataSource.Operation.GET_ENTITY_NAME:
+                returnVal = this.propertiesMap.entityName;
+                break;
+            case DataSource.Operation.LIST_RECORDS:
+                returnVal = this.listRecords(options);
+                break;
+            case DataSource.Operation.UPDATE_RECORD :
+                returnVal = this.updateRecord(options);
+                break;
+            case DataSource.Operation.INSERT_RECORD :
+                returnVal = this.insertRecord(options);
+                break;
+            case DataSource.Operation.DELETE_RECORD :
+                returnVal = this.deleteRecord(options);
+                break;
+            case DataSource.Operation.INVOKE :
+                returnVal = this.invoke(options);
+                break;
+            case DataSource.Operation.UPDATE :
+                returnVal = this.update(options);
+                break;
+            case DataSource.Operation.GET_RELATED_TABLE_DATA:
+                returnVal = this.getRelatedTableData(options.relatedField, options);
+                break;
+            case DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS:
+                returnVal = this.getDistinctDataByFields(options);
+                break;
+            default:
+                returnVal = {};
+                break;
         }
-        if (operation === DataSource.Operation.SUPPORTS_CRUD) {
-            return true;
-        }
-        if (operation === DataSource.Operation.IS_PAGEABLE) {
-            return true;
-        }
-        if (operation === DataSource.Operation.GET_OPERATION_TYPE) {
-            return this.operation;
-        }
-        if (operation === DataSource.Operation.GET_RELATED_PRIMARY_KEYS) {
-            return this.getRelatedTablePrimaryKeys(options);
-        }
-        if (operation === DataSource.Operation.GET_ENTITY_NAME) {
-            return this.propertiesMap.entityName;
-        }
-        return new Promise((resolve, reject) => {
-            switch (operation) {
-                case DataSource.Operation.LIST_RECORDS :
-                    this.listRecords(options, (data, propertiesMap, pagingOptions) => {
-                        resolve({data, propertiesMap, pagingOptions});
-                    }, reject);
-                    break;
-                case DataSource.Operation.UPDATE_RECORD :
-                    this.updateRecord(options, resolve, reject);
-                    break;
-                case DataSource.Operation.INSERT_RECORD :
-                    this.insertRecord(options, resolve, reject);
-                    break;
-                case DataSource.Operation.DELETE_RECORD :
-                    this.deleteRecord(options, resolve, reject);
-                    break;
-                case DataSource.Operation.INVOKE :
-                    this.invoke(options, resolve, reject);
-                    break;
-                case DataSource.Operation.UPDATE :
-                    this.update(options, resolve, reject);
-                    break;
-                case DataSource.Operation.GET_RELATED_TABLE_DATA:
-                    this.getRelatedTableData(options.relatedField, options, resolve, reject);
-                    break;
-                case DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS:
-                    this.getDistinctDataByFields(options, resolve, reject);
-                    break;
-                default :
-                    reject(`${operation} operation is not supported on this data source`);
-                    break;
-            }
-        });
+        return returnVal;
     }
 
     listRecords(options?, success?, error?) {
@@ -115,12 +113,12 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
         return getManager().getRelatedTablePrimaryKeys(this, columnName);
     }
 
-    getRelatedTableData(columnName, options, success, error) {
-        getManager().getRelatedTableData(this, columnName, options, success, error);
+    getRelatedTableData(columnName, options, success?, error?) {
+        return getManager().getRelatedTableData(this, columnName, options, success, error);
     }
 
-    getDistinctDataByFields(options, success, error) {
-        getManager().getDistinctDataByFields(this, options, success, error);
+    getDistinctDataByFields(options, success?, error?) {
+        return getManager().getDistinctDataByFields(this, options, success, error);
     }
 
     // legacy method

@@ -16,41 +16,41 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
     }
 
     execute(operation, options) {
-        if (operation === DataSource.Operation.IS_API_AWARE) {
-            return true;
+        let returnVal;
+        switch (operation) {
+            case DataSource.Operation.IS_API_AWARE:
+                returnVal = true;
+                break;
+            case DataSource.Operation.SUPPORTS_CRUD:
+                returnVal = false;
+                break;
+            case DataSource.Operation.IS_PAGEABLE:
+                returnVal = (this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || isPageable(this.dataSet));
+                break;
+            case DataSource.Operation.SET_INPUT:
+                returnVal = this.setInput(options);
+                break;
+            case DataSource.Operation.LIST_RECORDS:
+                returnVal = this.invoke(options);
+                break;
+            case DataSource.Operation.INVOKE :
+                returnVal = this.invoke(options);
+                break;
+            case DataSource.Operation.UPDATE :
+                returnVal = this.update(options);
+                break;
+            default :
+                returnVal = {};
+                break;
         }
-        if (operation === DataSource.Operation.SUPPORTS_CRUD) {
-            return false;
-        }
-        if (operation === DataSource.Operation.IS_PAGEABLE) {
-            return this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || isPageable(this.dataSet);
-        }
-        if (operation === DataSource.Operation.SET_INPUT) {
-            return this.setInput(options);
-        }
-        return new Promise((resolve, reject) => {
-            switch (operation) {
-                case DataSource.Operation.LIST_RECORDS:
-                    this.invoke(options, resolve, reject);
-                    break;
-                case DataSource.Operation.INVOKE :
-                    this.invoke(options, resolve, reject);
-                    break;
-                case DataSource.Operation.UPDATE :
-                    this.update(options, resolve, reject);
-                    break;
-                default :
-                    reject(`${operation} operation is not supported on this data source`);
-                    break;
-            }
-        });
+        return returnVal;
     }
 
     invoke(options?, success?, error?) {
         return getManager().invoke(this, options, success, error);
     }
 
-    update(options, success, error) {
+    update(options, success?, error?) {
         return getManager().invoke(this, options, success, error);
     }
 

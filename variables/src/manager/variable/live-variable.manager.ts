@@ -123,7 +123,7 @@ export class LiveVariableManager extends BaseVariableManager {
                 variable.canUpdate = true;
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
             }
-            return Promise.resolve(response);
+            return Promise.resolve({data: dataObj.data, propertiesMap: variable.propertiesMap, pagingOptions: dataObj.pagingOptions});
         }, function (errorMsg, details, xhrObj) {
             _this.setVariableOptions(variable, options);
             _this.handleError(variable, error, errorMsg, options);
@@ -146,7 +146,7 @@ export class LiveVariableManager extends BaseVariableManager {
                 }, function(err) {
                     $queue.process(variable);
                     return Promise.reject(err);
-                })
+                });
         }, error);
     }
 
@@ -352,7 +352,7 @@ export class LiveVariableManager extends BaseVariableManager {
         query         = query ? ('q=' + query) : '';
         action        = 'searchTableDataWithQuery';
         orderBy       = _.isEmpty(options.orderBy) ? '' : 'sort=' + options.orderBy;
-        LVService[action]({
+        return LVService[action]({
             'projectID'     : projectID,
             'service'       : variable._prefabName ? '' : 'services',
             'dataModelName' : variable.liveSource,
@@ -369,8 +369,10 @@ export class LiveVariableManager extends BaseVariableManager {
             * equality does not work. So, removing the self related columns to acheive the quality*/
             const data = _.map(response.content, o => _.omit(o, selfRelatedCols));
             triggerFn(success, data, undefined, response ? {'dataSize': response.totalElements, 'maxResults': response.size, 'currentPage': response.number + 1} : {});
+            return Promise.resolve(data);
         }, (errMsg) => {
             triggerFn(error, errMsg);
+            return Promise.reject(errMsg);
         });
     }
 
@@ -398,7 +400,7 @@ export class LiveVariableManager extends BaseVariableManager {
         sort = options.sort ||  requestData.groupByFields[0] + ' asc';
         sort = sort ? 'sort=' + sort : '';
 
-        LVService[dbOperation]({
+        return LVService[dbOperation]({
             'projectID'     : projectID,
             'service'       : variable._prefabName ? '' : 'services',
             'dataModelName' : variable.liveSource,
@@ -411,9 +413,13 @@ export class LiveVariableManager extends BaseVariableManager {
         }).then(response => {
             if ((response && response.error) || !response) {
                 triggerFn(error, response.error);
-                return;
+                return Promise.reject(response.error);
             }
             triggerFn(success, response.body);
-        }, errorMsg => triggerFn(error, errorMsg));
+            return Promise.resolve(response.body);
+        }, errorMsg => {
+            triggerFn(error, errorMsg);
+            return Promise.reject(errorMsg);
+        });
     }
 }

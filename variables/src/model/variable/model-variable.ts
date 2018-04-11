@@ -19,14 +19,20 @@ export class ModelVariable extends BaseVariable implements IDataSource {
     }
 
     execute(operation) {
-        if (operation === DataSource.Operation.IS_API_AWARE) {
-            return false;
+        let returnVal;
+        switch (operation) {
+            case DataSource.Operation.IS_API_AWARE:
+                returnVal = false;
+                break;
+            case DataSource.Operation.SUPPORTS_CRUD:
+                returnVal = false;
+                break;
+            case DataSource.Operation.IS_PAGEABLE:
+                returnVal = false;
+                break;
+            default:
+                returnVal = {};
         }
-        if (operation === DataSource.Operation.SUPPORTS_CRUD) {
-            return false;
-        }
-        if (operation === DataSource.Operation.IS_PAGEABLE) {
-            return false;
-        }
+        return returnVal;
     }
 }
