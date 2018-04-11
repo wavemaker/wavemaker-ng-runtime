@@ -9,7 +9,7 @@ import { PipeProvider } from './services/pipe-provider.service';
 import { WmComponentsModule } from '@wm/components';
 import { RenderUtilsService } from './services/render-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 import { VariablesModule } from '@wm/variables';
 
@@ -24,6 +24,8 @@ import { I18nResolve } from './resolves/i18n.resolve';
 import { HttpServiceModule } from '@wm/http';
 import { OAuthModule } from '@wm/oAuth';
 import { AppVariablesResolve } from './resolves/app-variables.resolve';
+
+declare const _WM_APP_PROPERTIES;
 
 const resolve = {
     securityConfig: SecurityConfigResolve,
@@ -64,7 +66,11 @@ const routes = [
         RouterModule,
         HttpClientModule,
         HttpServiceModule,
-        RouterModule.forRoot(routes, {useHash: true})
+        RouterModule.forRoot(routes, {useHash: true}),
+        HttpClientXsrfModule.withOptions({
+            cookieName: 'wm_xsrf_token',
+            headerName: _WM_APP_PROPERTIES.xsrf_header_name
+        })
     ],
     providers: [
         PipeProvider,

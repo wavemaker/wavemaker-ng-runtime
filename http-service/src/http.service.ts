@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpXsrfTokenExtractor } from '@angular/common/http';
 
 declare const _;
 
 @Injectable()
 export class HttpService {
-    httpClient: HttpClient;
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
 
-    constructor(httpClient: HttpClient) {
-        this.httpClient = httpClient;
-    }
+    constructor(private httpClient: HttpClient) {}
 
     send(options: any) {
         let reqHeaders = new HttpHeaders(),
