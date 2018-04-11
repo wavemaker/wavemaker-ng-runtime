@@ -242,12 +242,12 @@ echo -e "${Green}Built runtime ${White}\n"
 echo -e "${Cyan}Bundling wm-loader ${White}"
 $UGLIFYJS ./dist/tmp/wm-utils.umd.js \
     ./dist/tmp/wm-transpiler.umd.js \
-    ./dist/tmp/wm-components.build-task.umd.js \
-    ./dist/tmp/wm-components.umd.js \
     ./dist/tmp/http-service.umd.js \
     ./dist/tmp/oAuth.umd.js \
     ./dist/tmp/wm-security.umd.js \
     ./dist/tmp/wm-variables.umd.js \
+    ./dist/tmp/wm-components.build-task.umd.js \
+    ./dist/tmp/wm-components.umd.js \
     ./dist/tmp/wm-runtime.umd.js -o \
     ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 if [ "$?" != "0" ]

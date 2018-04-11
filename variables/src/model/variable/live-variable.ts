@@ -1,7 +1,7 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource_Operation, IDataSource } from '../../data-source';
+import { DataSource, IDataSource } from '../../data-source';
 
 const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.LIVE);
@@ -17,50 +17,50 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     }
 
     execute(operation, options) {
-        if (operation === DataSource_Operation.IS_API_AWARE) {
+        if (operation === DataSource.Operation.IS_API_AWARE) {
             return true;
         }
-        if (operation === DataSource_Operation.SUPPORTS_CRUD) {
+        if (operation === DataSource.Operation.SUPPORTS_CRUD) {
             return true;
         }
-        if (operation === DataSource_Operation.IS_PAGEABLE) {
+        if (operation === DataSource.Operation.IS_PAGEABLE) {
             return true;
         }
-        if (operation === DataSource_Operation.GET_OPERATION_TYPE) {
+        if (operation === DataSource.Operation.GET_OPERATION_TYPE) {
             return this.operation;
         }
-        if (operation === DataSource_Operation.GET_RELATED_PRIMARY_KEYS) {
+        if (operation === DataSource.Operation.GET_RELATED_PRIMARY_KEYS) {
             return this.getRelatedTablePrimaryKeys(options);
         }
-        if (operation === DataSource_Operation.GET_ENTITY_NAME) {
+        if (operation === DataSource.Operation.GET_ENTITY_NAME) {
             return this.propertiesMap.entityName;
         }
         return new Promise((resolve, reject) => {
             switch (operation) {
-                case DataSource_Operation.LIST_RECORDS :
+                case DataSource.Operation.LIST_RECORDS :
                     this.listRecords(options, (data, propertiesMap, pagingOptions) => {
                         resolve({data, propertiesMap, pagingOptions});
                     }, reject);
                     break;
-                case DataSource_Operation.UPDATE_RECORD :
+                case DataSource.Operation.UPDATE_RECORD :
                     this.updateRecord(options, resolve, reject);
                     break;
-                case DataSource_Operation.INSERT_RECORD :
+                case DataSource.Operation.INSERT_RECORD :
                     this.insertRecord(options, resolve, reject);
                     break;
-                case DataSource_Operation.DELETE_RECORD :
+                case DataSource.Operation.DELETE_RECORD :
                     this.deleteRecord(options, resolve, reject);
                     break;
-                case DataSource_Operation.INVOKE :
+                case DataSource.Operation.INVOKE :
                     this.invoke(options, resolve, reject);
                     break;
-                case DataSource_Operation.UPDATE :
+                case DataSource.Operation.UPDATE :
                     this.update(options, resolve, reject);
                     break;
-                case DataSource_Operation.GET_RELATED_TABLE_DATA:
+                case DataSource.Operation.GET_RELATED_TABLE_DATA:
                     this.getRelatedTableData(options.relatedField, options, resolve, reject);
                     break;
-                case DataSource_Operation.GET_DISTINCT_DATA_BY_FIELDS:
+                case DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS:
                     this.getDistinctDataByFields(options, resolve, reject);
                     break;
                 default :

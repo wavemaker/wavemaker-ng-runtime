@@ -6,7 +6,7 @@ import { registerProps } from './pagination.props';
 import { getDataSource } from '../../utils/data-utils';
 import { getOrderByExpr, invokeEventHandler } from '../../utils/widget-utils';
 import { getWatchIdentifier } from '../../utils/init-widget';
-import { DataSource_Operation } from '../../../../variables/src/data-source';
+import { DataSource } from '@wm/variables';
 
 declare const _;
 
@@ -171,7 +171,7 @@ export class PaginationComponent extends BaseComponent {
 
     /*Function to check if the variable bound to the data-navigator has paging.*/
     isDataSourceHasPaging() {
-        return this.datasource.execute(DataSource_Operation.IS_PAGEABLE);
+        return this.datasource.execute(DataSource.Operation.IS_PAGEABLE);
     }
 
     // Set the result for client side pagination
@@ -184,7 +184,7 @@ export class PaginationComponent extends BaseComponent {
         maxResults = (this.pagingOptions && this.pagingOptions.maxResults) || dataSize;
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
-        if (this.datasource.execute(DataSource_Operation.IS_API_AWARE)) {
+        if (this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
             currentPage = 1;
         } else {
             currentPage = this.dn.currentPage || 1;
@@ -316,7 +316,7 @@ export class PaginationComponent extends BaseComponent {
         // TODO: Handle Filter
 
         if (this.isDataSourceHasPaging()) {
-            this.datasource.execute(DataSource_Operation.LIST_RECORDS, {
+            this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                 'page': this.dn.currentPage,
                 'filterFields': this.filterFields,
                 'orderBy': this.sortOptions,

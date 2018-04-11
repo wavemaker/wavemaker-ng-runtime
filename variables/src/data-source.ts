@@ -1,8 +1,8 @@
 export class IDataSource {
-    execute: (operation: DataSource_Operation, options?: any) => boolean | string | Promise<any>;
+    execute: (operation: Operation, options?: any) => boolean | string | Promise<any>;
 }
 
-export enum DataSource_Operation {
+enum Operation {
     LIST_RECORDS = 'listRecords',
     UPDATE_RECORD = 'updateRecord',
     INSERT_RECORD = 'insertRecord',
@@ -20,3 +20,7 @@ export enum DataSource_Operation {
     GET_RELATED_TABLE_DATA = 'getRelatedTableData',
     GET_DISTINCT_DATA_BY_FIELDS = 'getDistinctDataByFields'
 }
+
+export const DataSource = {
+    Operation
+};

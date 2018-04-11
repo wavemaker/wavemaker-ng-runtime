@@ -1,7 +1,7 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource_Operation, IDataSource } from '../../data-source';
+import { DataSource, IDataSource } from '../../data-source';
 
 export class ModelVariable extends BaseVariable implements IDataSource {
 
@@ -19,13 +19,13 @@ export class ModelVariable extends BaseVariable implements IDataSource {
     }
 
     execute(operation) {
-        if (operation === DataSource_Operation.IS_API_AWARE) {
+        if (operation === DataSource.Operation.IS_API_AWARE) {
             return false;
         }
-        if (operation === DataSource_Operation.SUPPORTS_CRUD) {
+        if (operation === DataSource.Operation.SUPPORTS_CRUD) {
             return false;
         }
-        if (operation === DataSource_Operation.IS_PAGEABLE) {
+        if (operation === DataSource.Operation.IS_PAGEABLE) {
             return false;
         }
     }

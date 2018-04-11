@@ -6,7 +6,7 @@ import { Live_Operations, performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../pipes/custom-pipes';
-import { DataSource_Operation } from '../../../../variables/src/data-source';
+import { DataSource } from '@wm/variables';
 
 declare const _, moment;
 
@@ -162,7 +162,7 @@ export class LiveFormDirective {
     findOperationType(dataSource) {
         let operation;
         let isPrimary = false;
-        const sourceOperation = dataSource.execute(DataSource_Operation.GET_OPERATION_TYPE);
+        const sourceOperation = dataSource.execute(DataSource.Operation.GET_OPERATION_TYPE);
         if (sourceOperation && sourceOperation !== 'read') {
             return sourceOperation;
         }
@@ -395,7 +395,7 @@ export class LiveFormDirective {
                 this.form._liveTableParent.onResult(operationType, response, newForm, updateMode);
             } else {
                 /*get updated data without refreshing page*/
-                this.form.datasource.execute(DataSource_Operation.LIST_RECORDS, {
+                this.form.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                     'skipToggleState': true
                 });
                 this.onDataSourceUpdate(response, newForm, updateMode);

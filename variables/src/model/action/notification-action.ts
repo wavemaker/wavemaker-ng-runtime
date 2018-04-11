@@ -1,7 +1,7 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseAction } from '../base-action';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource_Operation, IDataSource } from '../../data-source';
+import { DataSource, IDataSource } from '../../data-source';
 
 const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.NOTIFICATION);
@@ -19,10 +19,10 @@ export class NotificationAction extends BaseAction implements IDataSource {
     execute(operation, options) {
         return new Promise((resolve, reject) => {
             switch (operation) {
-                case DataSource_Operation.INVOKE :
+                case DataSource.Operation.INVOKE :
                     this.invoke(options, resolve, reject);
                     break;
-                case DataSource_Operation.NOTIFY :
+                case DataSource.Operation.NOTIFY :
                     this.notify(options, resolve, reject);
                     break;
                 default :
