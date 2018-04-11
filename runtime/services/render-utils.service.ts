@@ -66,12 +66,23 @@ const getDynamicModule = component => {
     return DynamicModule;
 };
 
-const registerVariablesAndActions = (inj: Injector, identifier: string, variables: any, instance: any, app?: any) => {
+const registerVariablesAndActions = (inj: Injector, identifier: string, variables: any, pageInstance: any, appInstance?: any) => {
     const variablesService = inj.get(VariablesService);
 
-    const $variables = variablesService.register(identifier, variables, instance);
-    instance.Variables = Object.assign({}, app.Variables, $variables.Variables);
-    instance.Actions = Object.assign({}, app.Actions, $variables.Actions);
+    // get variables and actions instances for the page
+    const pageVariables = variablesService.register(identifier, variables, pageInstance);
+
+    // create namespace for Variables nad Actions on page/partial, which inherits the Variables and Actions from App instance
+    pageInstance.Variables = Object.create(appInstance.Variables);
+    pageInstance.Actions = Object.create(appInstance.Actions);
+
+    // assign all the page variables to the pageInstance
+    Object.entries(pageVariables.Variables).forEach(([name, variable]) => {
+        pageInstance.Variables[name] = variable;
+    });
+    Object.entries(pageVariables.Actions).forEach(([name, action]) => {
+        pageInstance.Actions[name] = action;
+    });
 };
 
 const _decodeURIComponent = str => {
