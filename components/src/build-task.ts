@@ -1,3 +1,5 @@
+export * from './widgets/accordion/accordion.build';
+export * from './widgets/accordion/accordion-pane/accordion-pane.build';
 export * from './widgets/anchor/anchor.build';
 export * from './widgets/audio/audio.build';
 export * from './widgets/button-group/button-group.build';

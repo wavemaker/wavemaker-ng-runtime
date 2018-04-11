@@ -18,11 +18,17 @@ export class AccordionDirective extends BaseComponent {
     activePane: any;
     paneIndex = 0;
     closeothers;
+    expandicon;
+    collapseicon;
+    defaultpaneindex;
 
     register(paneScope) {
         this.panes.push(paneScope);
         paneScope.paneId = this.paneIndex;
         this.paneIndex++;
+        if (paneScope.paneId === this.defaultpaneindex) {
+            paneScope.expandPane();
+        }
     }
 
     closeOthers() {
@@ -40,7 +46,9 @@ export class AccordionDirective extends BaseComponent {
         switch (key) {
             case 'defaultpaneindex':
                 this.activePane = this.panes[nv || 0];
-                this.activePane.expandPane();
+                if (this.activePane) {
+                    this.activePane.expandPane();
+                }
                 break;
         }
     }
