@@ -1,9 +1,10 @@
 declare const _;
 
-import { BaseActionManager } from './base-action.manager';
-import { initiateCallback, routerService, securityService } from '../../util/variable/variables.utils';
 import { triggerFn } from '@wm/utils';
+
+import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+import { initiateCallback, routerService, securityService } from '../../util/variable/variables.utils';
 
 export class LoginActionManager extends BaseActionManager {
     login(variable, options, success, error) {
@@ -26,8 +27,8 @@ export class LoginActionManager extends BaseActionManager {
             // TODO[VIBHU]: check if this logic is required
             if (loginInfo.hasOwnProperty(paramKey) &&
                 (loginInfo[paramKey] === '' || loginInfo[paramKey] === undefined) &&
-                paramKey !== "rememberme") {
-                errMsg = "Please provide " + paramKey + ".";
+                paramKey !== 'rememberme') {
+                errMsg = 'Please provide ' + paramKey + '.';
                 break;
             }
             params[paramKey] = loginInfo[paramKey];
@@ -38,7 +39,7 @@ export class LoginActionManager extends BaseActionManager {
             /* if in RUN mode, trigger error events associated with the variable */
             if (CONSTANTS.isRunMode) {
                 triggerFn(error, errMsg);
-                initiateCallback("onError", variable, errMsg);
+                initiateCallback('onError', variable, errMsg);
             }
             return;
         }
@@ -111,14 +112,14 @@ export class LoginActionManager extends BaseActionManager {
                     }
                 }
             });
-        }, function (errorMsg) {
+        }, function (errorMsg, errorDetails, xhrObj) {
             // $rootScope.$emit('toggle-variable-state', variable, false);
             errorMsg = errorMsg || 'Invalid credentials.';
             /* if in RUN mode, trigger error events associated with the variable */
             if (CONSTANTS.isRunMode) {
-                initiateCallback('onError', variable, errorMsg);
+                initiateCallback('onError', variable, errorMsg, xhrObj);
             }
-            triggerFn(error, errorMsg);
+            triggerFn(error, errorMsg, xhrObj);
         });
     }
 }

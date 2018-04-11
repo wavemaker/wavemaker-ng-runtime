@@ -378,23 +378,35 @@ export class SecurityService {
             '&j_password=' + encodeURIComponent(params.password) +
             '&remember-me=' + rememberme +
             customParams
-        }).then(function (response) {
-            // const config = this.get();
-            // var xsrfCookieValue = response[CONSTANTS.XSRF_COOKIE_NAME];
-            //
-            // //override the default xsrf cookie name and xsrf header names with WaveMaker specific values
-            // if (xsrfCookieValue) {
-            //     if (CONSTANTS.hasCordova) {
-            //         localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, xsrfCookieValue || '');
-            //     }
-            //     this.$http.defaults.xsrfCookieName = CONSTANTS.XSRF_COOKIE_NAME;
-            //     this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;
-            // }
+        }).then((response) => {
+            const config = this.get(),
+                xsrfCookieValue = response[XSRF_COOKIE_NAME];
+
+            // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
+            if (xsrfCookieValue) {
+                if (hasCordova) {
+                    localStorage.setItem(XSRF_COOKIE_NAME, xsrfCookieValue || '');
+                }
+                /*this.$http.defaults.xsrfCookieName = XSRF_COOKIE_NAME;
+                this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;*/
+            }
             // After the successful login in device, this function triggers the pending onLoginCallbacks.
 
             triggerFn(successCallback, response);
         }, failureCallback);
     }
+
+    /**
+     * The API is used to check if the user is authenticated in the RUN mode.
+     *
+     * @param {function} successCallback to be called on success
+     * @param {function} failureCallback to be called on failure
+     */
+    isAuthenticated (successCallback, failureCallback) {
+    this.getConfig(function (config) {
+        triggerFn(successCallback, config.authenticated);
+    }, failureCallback);
+}
 
     /**
      * Updates the security config in SecurityService by making a fresh call to the API
@@ -415,6 +427,29 @@ export class SecurityService {
             // });
         });
     }
+
+    /**
+     * The API is used to logout of the app.
+     *
+     * @param {function} successCallback to be called on success
+     * @param {function} failureCallback to be called on failure
+     */
+    appLogout(successCallback, failureCallback) {
+    return this.$http.send({
+        target: 'Security',
+        url: 'j_spring_security_logout',
+        method: 'POST',
+        responseType : 'text',
+        byPassResult: true
+    }).then((response) => {
+        _.set(this.get(), 'authenticated', false);
+        _.set(this.get(), 'userInfo', null);
+        /*if (CONSTANTS.hasCordova) {
+            localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, '');
+        }*/
+        triggerFn(successCallback, response);
+    }, failureCallback);
+}
 
     /**
      * Checks and return the cookie

@@ -3,7 +3,7 @@ import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 
 const  getManager = () => {
-    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.LOGIN);
+    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.LOGOUT);
 };
 
 export class LogoutAction extends BaseAction {
@@ -17,11 +17,11 @@ export class LogoutAction extends BaseAction {
         Object.assign(this, variable);
     }
 
-    logout(options, success, error){
+    logout(options, success, error) {
         getManager().logout(this, options, success, error);
     }
 
-    invoke(options, success, error){
+    invoke(options, success, error) {
         this.logout(options, success, error);
     }
 
