@@ -12,10 +12,11 @@
     </h3>
     <div class="panel-actions">
         <span class="label label-{{badgetype}}">{{badgevalue}}</span>
+        <!-- TODO: add locale support for widgets
+                title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"-->
         <button type="button"
                 class="app-icon wi panel-action"
-                title="{{$root.appLocale.LABEL_COLLAPSE}}/{{$root.appLocale.LABEL_EXPAND}}"
-                [ngClass]="isActive ? 'wi-minus': 'wi-plus'">
+                [ngClass]="toggleIconClass">
         </button>
     </div>
 </div>

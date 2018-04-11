@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, Injector, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, forwardRef, Inject, Injector, OnInit, Output } from '@angular/core';
 import { BaseComponent } from '../../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../../utils/styler';
 import { registerProps } from './accordion-pane.props';
@@ -8,17 +8,23 @@ import { invokeEventHandler } from '../../../utils/widget-utils';
 
 registerProps();
 
+declare const _;
+
 const DEFAULT_CLS = 'app-accordion-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
 
 
 @Component({
     selector: 'div[wmAccordionPane]',
-    templateUrl: './accordion-pane.component.html'
+    templateUrl: './accordion-pane.component.html',
+    providers: [
+        {provide: '@Widget', useExisting: forwardRef(() => AccordionPaneComponent)}
+    ]
 })
-export class AccordionPaneComponent extends BaseComponent implements AfterViewInit {
-    isActive;
+export class AccordionPaneComponent extends BaseComponent implements OnInit {
+    isActive: boolean = false;
     paneId;
+    $lazyload: Function = _.noop;
 
     @Output() collapse = new EventEmitter();
     @Output() expand = new EventEmitter();
@@ -34,10 +40,18 @@ export class AccordionPaneComponent extends BaseComponent implements AfterViewIn
             this.parentAccordion.activePane = this;
             invokeEventHandler(this, 'expand', {$event});
             this.parentAccordion.closeOthers();
+            this.$lazyload();
         }
 
         this.isActive = !this.isActive;
         $appDigest();
+    }
+
+    get toggleIconClass() {
+        if (this.isActive) {
+            return this.parentAccordion && this.parentAccordion.expandicon;
+        }
+        return this.parentAccordion && this.parentAccordion.collapseicon;
     }
 
     expandPane($event) {
@@ -52,6 +66,18 @@ export class AccordionPaneComponent extends BaseComponent implements AfterViewIn
         }
     }
 
+    onPropertyChange(key, nv, ov) {
+        switch (key) {
+            case 'content':
+                if (this.isActive) {
+                    setTimeout(() => {
+                        this.$lazyload();
+                    }, 80);
+                }
+                break;
+        }
+    }
+
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Inject('@AccordionParent') private parentAccordion: AccordionDirective) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
@@ -61,7 +87,8 @@ export class AccordionPaneComponent extends BaseComponent implements AfterViewIn
         removeAttr(this.$element, 'title');
     }
 
-    ngAfterViewInit() {
-        this.parentAccordion.register(this);
+    ngOnInit() {
+      super.ngOnInit();
+      this.parentAccordion.register(this);
     }
 }
