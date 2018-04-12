@@ -1,12 +1,12 @@
 import { getValidJSON, triggerFn } from '@wm/utils';
 
 import { BaseActionManager } from './base-action.manager';
-import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { initiateCallback, securityService } from './../../util/variable/variables.utils';
+import { routerService } from '../../util/variable/variables.utils';
 
 export class LogoutActionManager extends BaseActionManager {
     logout(variable, options, success, error) {
-        const variableEvents = VARIABLE_CONSTANTS.EVENTS;
         let handleError,
             redirectPage,
             output;
@@ -29,7 +29,9 @@ export class LogoutActionManager extends BaseActionManager {
         securityService.isAuthenticated(function (isAuthenticated) {
             // $rootScope.$emit('toggle-variable-state', variable, false);
             if (isAuthenticated) {
-                variable.promise = securityService.appLogout(function (redirectUrl) {
+                variable.promise = securityService.appLogout(function (response) {
+                    let redirectUrl = response.body;
+                    redirectUrl = getValidJSON(redirectUrl);
                     // Reset Security Config.
                     // $rootScope.isUserAuthenticated = false;
                     securityService.resetSecurityConfig().
@@ -41,8 +43,7 @@ export class LogoutActionManager extends BaseActionManager {
                     });
 
                     // In case of CAS response will be the redirectUrl
-                    redirectUrl = getValidJSON(redirectUrl);
-                    if (redirectUrl) {
+                    if (redirectUrl && redirectUrl.result) {
                         window.location.href = redirectUrl.result;
                     } else if (variable.useDefaultSuccessHandler) {
                         redirectPage = variable.redirectTo;
@@ -50,7 +51,7 @@ export class LogoutActionManager extends BaseActionManager {
                         if (!redirectPage || redirectPage === 'login.html' || redirectPage === 'index.html') {
                             redirectPage = '';
                         }
-                        // $location.url(redirectPage);
+                        routerService.navigate([`/${redirectPage}`]);
                         setTimeout(function () {
                             // reloading in timeout as, firefox and safari are not updating the url before reload(WMS-7887)
                             window.location.reload();
