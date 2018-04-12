@@ -176,6 +176,7 @@ export class RenderUtilsService {
             execScript(script, `page-${pageName}`, 'Page', pageInstance, this.app, inj);
 
             pageInstance.App = this.app;
+            pageInstance.App.Widgets = Object.create(pageInstance.Widgets);
 
             monitorFragments(pageInstance, parseEndPromise, () => {
                 (pageInstance.onReady || noop)();
