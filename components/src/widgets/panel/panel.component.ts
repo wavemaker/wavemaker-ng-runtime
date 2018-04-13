@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ContentChildren, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './panel.props';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { setCSS, toggleClass } from '@wm/utils';
 import { getImageUrl, invokeEventHandler } from '../../utils/widget-utils';
+import { RedrawableDirective } from '../redraw/redrawable.directive';
 
 registerProps();
 
@@ -48,6 +49,8 @@ export class PanelComponent extends BaseComponent implements OnInit {
     @ViewChild('panelHeading') private $panelHeader: ElementRef;
     @ViewChild('panelContent') private $panelContent: ElementRef;
 
+    @ContentChildren(RedrawableDirective, {descendants: true}) redrawableComponents;
+
     /**
      * Method: togglePanel
      * @param $event
@@ -61,6 +64,11 @@ export class PanelComponent extends BaseComponent implements OnInit {
             }
             this.expanded = !this.expanded;
             this.$lazyload();
+            setTimeout(() => {
+                if (this.redrawableComponents) {
+                    this.redrawableComponents.forEach(c => c.redraw());
+                }
+            }, 100);
         }
     }
 

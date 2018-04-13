@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostBinding, Injector } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/utils';
 
@@ -10,6 +10,7 @@ import {
     postPlotChartProcess
 } from './chart.utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
+import { IRedrawableComponent } from '../redraw/redrawable.interface';
 
 registerProps();
 
@@ -95,9 +96,12 @@ const angle = d => {
 
 @Component({
     selector: 'div[wmChart]',
-    templateUrl: './chart.component.html'
+    templateUrl: './chart.component.html',
+    providers: [
+        {provide: '@Widget', useExisting: forwardRef(() => ChartComponent)}
+    ]
 })
-export class ChartComponent extends BaseComponent implements AfterViewInit {
+export class ChartComponent extends BaseComponent implements AfterViewInit, IRedrawableComponent {
     xaxisdatakey;
     yaxisdatakey;
     groupby;

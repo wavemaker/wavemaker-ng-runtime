@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-chart', (): BuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmChart class="app-chart" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmChart class="app-chart" redrawable ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
