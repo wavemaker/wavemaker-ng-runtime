@@ -65,10 +65,11 @@ export class DatetimeComponent extends BaseFormComponent {
             this.dateModel = this.dateModel || this.getDateObj(newVal);
             this.timeModel = this.timeModel || this.getDateObj(newVal);
             this.proxyModel = this.getDateObj(newVal);
-            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern);
+            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern) || '';
             this.timestamp = this.proxyModel.valueOf();
         } else {
-            this.dateModel = this.timeModel = this.proxyModel = this.timestamp = this.formattedModel = undefined;
+            this.formattedModel = '';
+            this.dateModel = this.timeModel = this.proxyModel = this.timestamp = undefined;
         }
         this.invokeOnChange(this.datavalue);
         $appDigest();
@@ -89,7 +90,7 @@ export class DatetimeComponent extends BaseFormComponent {
     /**
      * This is an internal property used to map the formattedModel to the date display
      */
-    private formattedModel: string;
+    private formattedModel: string = '';
     /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
      */
@@ -202,7 +203,7 @@ export class DatetimeComponent extends BaseFormComponent {
             }
             this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
         }
-        this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern);
+        this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern) || '';
         this.invokeOnChange(this.datavalue);
         $appDigest();
     }

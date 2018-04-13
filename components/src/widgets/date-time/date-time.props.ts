@@ -5,7 +5,7 @@ export const dateTimeProps = new Map(
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
-        ['datepattern', {value: 'YYYY-MM-DD hh:mm:ss a', ...PROP_STRING_NOTIFY}],
+        ['datepattern', {value: 'yyyy-MM-dd hh:mm:ss a', ...PROP_STRING_NOTIFY}],
         ['disabled', PROP_BOOLEAN],
         ['excludedays', PROP_STRING],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
@@ -26,7 +26,6 @@ export const dateTimeProps = new Map(
         ['showseconds', {value: false, ...PROP_BOOLEAN}],
         ['showweeks', PROP_BOOLEAN_NOTIFY],
         ['tabindex', PROP_NUMBER],
-        ['timepattern', {value: 'hh:mm a', ...PROP_STRING}],
         ['timestamp', PROP_STRING]
     ]
 );

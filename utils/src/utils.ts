@@ -282,7 +282,7 @@ export function triggerFn(fn, ...argmnts) {
  */
 export const getFormattedDate = (datePipe, dateObj, format: string): any => {
     if (!dateObj) {
-        return;
+        return undefined;
     }
     if (format === 'timestamp') {
         return moment(dateObj).valueOf();

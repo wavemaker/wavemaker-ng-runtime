@@ -63,11 +63,12 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
                 this.isCurrentTime = false;
             }
             if (this.timepattern) {
-                this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.timepattern);
+                this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.timepattern) || '';
             }
             this.timestamp = this.proxyModel.valueOf();
         } else {
-            this.proxyModel = this.formattedModel = this.timestamp = undefined;
+            this.formattedModel = '';
+            this.proxyModel = this.timestamp = undefined;
             this.clearTimeInterval();
             this.isCurrentTime = false;
         }
@@ -140,10 +141,11 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
         invokeEventHandler(this, 'change', {newVal, oldVal: this.proxyModel});
         if (newVal) {
             this.proxyModel = newVal;
-            this.formattedModel = getFormattedDate(this.datePipe, newVal, this.timepattern);
+            this.formattedModel = getFormattedDate(this.datePipe, newVal, this.timepattern) || '';
             this.timestamp = this.proxyModel.valueOf();
         } else {
-            this.proxyModel = this.formattedModel = this.timestamp = undefined;
+            this.formattedModel = '';
+            this.proxyModel = this.timestamp = undefined;
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);

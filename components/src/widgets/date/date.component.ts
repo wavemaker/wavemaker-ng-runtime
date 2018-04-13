@@ -45,7 +45,7 @@ export class DateComponent extends BaseFormComponent {
     /**
      * This is an internal property used to map the formattedModel to the date display
      */
-    private formattedModel: string;
+    private formattedModel: string = '';
 
     private datePattern;
 
@@ -73,10 +73,11 @@ export class DateComponent extends BaseFormComponent {
         invokeEventHandler(this, 'change', {$event: newVal, newVal, oldVal: this.datavalue});
         this.proxyModel = newVal;
         if (newVal) {
-            this.formattedModel = getFormattedDate(this.datePipe, newVal, this.datePattern);
+            this.formattedModel = getFormattedDate(this.datePipe, newVal, this.datePattern) || '';
             this.datavalue = getFormattedDate(this.datePipe, this.proxyModel, this.outputFormat);
         } else {
-            this.formattedModel = this.datavalue = undefined;
+            this.formattedModel = '';
+            this.datavalue = undefined;
         }
         this.invokeOnChange(this.datavalue);
     }
@@ -86,10 +87,11 @@ export class DateComponent extends BaseFormComponent {
         if (newVal) {
             this._datavalue = newVal;
             this.proxyModel = getDateObj(newVal);
-            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datePattern);
+            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datePattern) || '';
             this.datavalue = getFormattedDate(this.datePipe, this.proxyModel, this.outputFormat);
         } else {
-            this._datavalue = this.proxyModel = this.formattedModel = this.datavalue = undefined;
+            this.formattedModel = '';
+            this._datavalue = this.proxyModel = this.datavalue = undefined;
         }
         this.invokeOnChange(this.datavalue);
     }

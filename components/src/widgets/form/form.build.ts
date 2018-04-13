@@ -64,9 +64,9 @@ const buildTask = (isLiveForm?): BuildTaskDef => {
         },
         post: (attrs) => {
             if (attrs.get('formlayout') === 'dialog') {
-                return '</form></div></div>'
+                return '</form></div></div>';
             }
-            return `</${tagName}>`
+            return `</${tagName}>`;
         },
         provide: (attrs, shared) => {
             const provider = new Map();

@@ -15,6 +15,7 @@ export const dateProps = new Map(
         ['outputformat', {value: 'yyyy-MM-dd', ...PROP_STRING_NOTIFY}],
         ['placeholder', {value: 'Select Date', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN_NOTIFY],
+        ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', PROP_BOOLEAN],
         ['showbuttonbar', {value: true, ...PROP_BOOLEAN}],
