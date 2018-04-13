@@ -4,6 +4,7 @@ import { styler } from '../../utils/styler';
 import { registerProps } from './time.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 import { BaseFormComponent } from '../base/base-form.component';
+import { ToDatePipe } from '../../pipes/custom-pipes';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
@@ -45,7 +46,7 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
     outputformat: string;
 
     get datavalue(): any {
-        return getFormattedDate(this.proxyModel, this.outputformat);
+        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
     }
     /**
      * This property sets the default value for the time selection
@@ -62,7 +63,7 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
                 this.isCurrentTime = false;
             }
             if (this.timepattern) {
-                this.formattedModel = getFormattedDate(this.proxyModel, this.timepattern);
+                this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.timepattern);
             }
             this.timestamp = this.proxyModel.valueOf();
         } else {
@@ -123,7 +124,7 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
         }, 350);
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, public datePipe: ToDatePipe) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
         styler(this.$element, this);
@@ -139,7 +140,7 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
         invokeEventHandler(this, 'change', {newVal, oldVal: this.proxyModel});
         if (newVal) {
             this.proxyModel = newVal;
-            this.formattedModel = getFormattedDate(newVal, this.timepattern);
+            this.formattedModel = getFormattedDate(this.datePipe, newVal, this.timepattern);
             this.timestamp = this.proxyModel.valueOf();
         } else {
             this.proxyModel = this.formattedModel = this.timestamp = undefined;

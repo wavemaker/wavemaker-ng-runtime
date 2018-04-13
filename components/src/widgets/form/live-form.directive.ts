@@ -143,10 +143,9 @@ export class LiveFormDirective {
             }
         });
         if (!isPreviousData) {
-            // element = getFormElement();
             // Set the values of the widgets inside the live form (other than form fields) in form data
-            // LiveWidgetUtils.setFormWidgetsValues($scope, element, dataObject);
-            this.form.dataoutput = dataObject;
+            this.form.dataoutput = {...this.form.ngForm.value, ...dataObject};
+            return this.form.dataoutput;
         }
         return dataObject;
     }
@@ -336,7 +335,7 @@ export class LiveFormDirective {
             return;
         }
 
-        data = this.form.constructDataObject();
+        data = getClonedObject(this.form.constructDataObject());
         prevData = this.form.prevformFields ? this.form.constructDataObject(true) : data;
 
         try {

@@ -4,6 +4,7 @@ import { registerProps } from './date.props';
 import { styler } from '../../utils/styler';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 import { BaseFormComponent } from '../base/base-form.component';
+import { ToDatePipe } from '../../pipes/custom-pipes';
 
 registerProps();
 
@@ -72,8 +73,8 @@ export class DateComponent extends BaseFormComponent {
         invokeEventHandler(this, 'change', {$event: newVal, newVal, oldVal: this.datavalue});
         this.proxyModel = newVal;
         if (newVal) {
-            this.formattedModel = getFormattedDate(newVal, this.datePattern);
-            this.datavalue = getFormattedDate(this.proxyModel, this.outputFormat);
+            this.formattedModel = getFormattedDate(this.datePipe, newVal, this.datePattern);
+            this.datavalue = getFormattedDate(this.datePipe, this.proxyModel, this.outputFormat);
         } else {
             this.formattedModel = this.datavalue = undefined;
         }
@@ -85,8 +86,8 @@ export class DateComponent extends BaseFormComponent {
         if (newVal) {
             this._datavalue = newVal;
             this.proxyModel = getDateObj(newVal);
-            this.formattedModel = getFormattedDate(this.proxyModel, this.datePattern);
-            this.datavalue = getFormattedDate(this.proxyModel, this.outputFormat);
+            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datePattern);
+            this.datavalue = getFormattedDate(this.datePipe, this.proxyModel, this.outputFormat);
         } else {
             this._datavalue = this.proxyModel = this.formattedModel = this.datavalue = undefined;
         }
@@ -122,7 +123,7 @@ export class DateComponent extends BaseFormComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, public datePipe: ToDatePipe) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         styler(this.$element, this);
     }

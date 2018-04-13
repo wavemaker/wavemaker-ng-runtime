@@ -4,6 +4,7 @@ import { styler } from '../../utils/styler';
 import { registerProps } from './date-time.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 import { BaseFormComponent } from '../base/base-form.component';
+import { ToDatePipe } from '../../pipes/custom-pipes';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -45,7 +46,7 @@ export class DatetimeComponent extends BaseFormComponent {
     private outputFormat;
 
     get datavalue(): any {
-        return getFormattedDate(this.proxyModel, this.outputformat);
+        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
     }
     /**
      * This property sets the default value for the date selection
@@ -64,7 +65,7 @@ export class DatetimeComponent extends BaseFormComponent {
             this.dateModel = this.dateModel || this.getDateObj(newVal);
             this.timeModel = this.timeModel || this.getDateObj(newVal);
             this.proxyModel = this.getDateObj(newVal);
-            this.formattedModel = getFormattedDate(this.proxyModel, this.datepattern);
+            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern);
             this.timestamp = this.proxyModel.valueOf();
         } else {
             this.dateModel = this.timeModel = this.proxyModel = this.timestamp = this.formattedModel = undefined;
@@ -201,7 +202,7 @@ export class DatetimeComponent extends BaseFormComponent {
             }
             this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
         }
-        this.formattedModel = getFormattedDate(this.proxyModel, this.datepattern);
+        this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern);
         this.invokeOnChange(this.datavalue);
         $appDigest();
     }
@@ -216,7 +217,7 @@ export class DatetimeComponent extends BaseFormComponent {
         return dateObj;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, public datePipe: ToDatePipe) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
         this.destroy$.subscribe(() => {
             this.clearTimeInterval();

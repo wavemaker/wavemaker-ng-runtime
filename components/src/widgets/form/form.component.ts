@@ -5,7 +5,7 @@ import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
-import { $appDigest, removeClass } from '@wm/utils';
+import { $appDigest, getClonedObject, removeClass } from '@wm/utils';
 import { performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 
@@ -235,6 +235,11 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
 
         this.dialogId = elRef.nativeElement.getAttribute('dialogId');
         this.ngForm = fb.group({});
+        this.ngForm.valueChanges
+            .debounceTime(500)
+            .subscribe(() => {
+                this.updateDataOutput();
+            });
         this.elScope = this;
         this.resetForm = this.reset.bind(this);
         this.isLiveForm = isLiveForm !== null;
@@ -273,8 +278,12 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
                 formData[fieldTarget[0]][fieldTarget[1]] = fieldValue;
             }
         });
-        this.dataoutput = formData;
-        return formData;
+        this.dataoutput = {...this.ngForm.value, ...formData};
+        return this.dataoutput;
+    }
+
+    updateDataOutput() {
+        this.constructDataObject();
     }
 
     setDefaultValues(rowData) {
@@ -319,7 +328,7 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
 
         this.resetFormState();
 
-        formData = this.constructDataObject();
+        formData = getClonedObject(this.constructDataObject());
 
         params = {$event: event, $formData: formData, $data: formData};
 

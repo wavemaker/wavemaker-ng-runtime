@@ -27,12 +27,20 @@ export class TextDirective extends BaseComponent {
     @HostBinding('attr.placeholder') placeholder: string;
     @HostBinding('attr.pattern') regexp: string;
     @HostBinding('attr.step') step: number;
-    @HostBinding('value') datavalue: any = '';
     @HostBinding() disabled: boolean;
     @HostBinding() required: boolean;
     @HostBinding() readonly: boolean;
     @HostBinding() autofocus: boolean;
     @HostBinding() autocomplete: boolean;
+
+    private _datavalue;
+    @HostBinding('value')
+    get datavalue() {
+        return this._datavalue || '';
+    }
+    set datavalue(val) {
+        this._datavalue = val;
+    }
 
     @HostListener('ngModelChange', ['$event'])
     onNgModelChange(event: Event) {

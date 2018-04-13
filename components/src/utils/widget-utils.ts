@@ -1,10 +1,12 @@
 import { encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith } from '@wm/utils';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { forwardRef } from '@angular/core';
+import { FormWidgetType } from './enums';
 
 declare const _;
 
-const DATASET_WIDGETS = new Set(['select', 'checkboxset', 'radioset', 'switch', 'autocomplete', 'chips', 'typeahead', 'rating']);
+const DATASET_WIDGETS = new Set([FormWidgetType.SELECT, FormWidgetType.CHECKBOXSET, FormWidgetType.RADIOSET,
+    FormWidgetType.SWITCH, FormWidgetType.AUTOCOMPLETE, FormWidgetType.CHIPS, FormWidgetType.TYPEAHEAD, FormWidgetType.RATING]);
 /**
  * Returns the parsed, updated bound expression
  * if the expression is $[data[$i][firstName]] + '--' + $[lastName] + '--' + $['@ID@']

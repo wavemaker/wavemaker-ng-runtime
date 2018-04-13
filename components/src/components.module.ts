@@ -35,6 +35,7 @@ import { HtmlDirective } from './widgets/html/html.directive';
 import { IconComponent } from './widgets/icon/icon.component';
 import { IframeComponent } from './widgets/iframe/iframe.component';
 import { IframeDialogComponent } from './widgets/dialog/iframe-dialog/iframe-dialog.component';
+import { FormWidgetDirective } from './widgets/form/form-widget.directive';
 import { LabelDirective } from './widgets/label/label.directive';
 import { LayoutGridColumnComponent } from './widgets/layout-grid/layout-grid-column/layout-grid-column.component';
 import { LayoutgridDirective } from './widgets/layout-grid/layout-grid.directive';
@@ -114,6 +115,7 @@ const wmComponents = [
     IconComponent,
     IframeComponent,
     IframeDialogComponent,
+    FormWidgetDirective,
     LabelDirective,
     LayoutGridColumnComponent,
     LayoutgridDirective,

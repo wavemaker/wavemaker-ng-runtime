@@ -2,6 +2,7 @@ import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 import { idMaker } from '@wm/utils';
 import { ALLFIELDS } from '../../utils/data-utils';
 import { isDataSetWidget } from '../../utils/widget-utils';
+import { FormWidgetType } from '../../utils/enums';
 
 const tagName = 'div';
 const idGen = idMaker('formfield_');
@@ -11,71 +12,71 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
     const fieldName = attrs.get('key') || attrs.get('name');
     const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" formControlName="${fieldName}"`;
     switch (widgetType) {
-        case 'autocomplete':
-        case 'typeahead':
+        case FormWidgetType.AUTOCOMPLETE:
+        case FormWidgetType.TYPEAHEAD:
             tmpl = `<div wmSearch ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'checkbox':
+        case FormWidgetType.CHECKBOX:
             tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'checkboxset':
+        case FormWidgetType.CHECKBOXSET:
             // tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'chips':
+        case FormWidgetType.CHIPS:
             /*TODO*/
             break;
-        case 'colorpicker':
+        case FormWidgetType.COLORPICKER:
             tmpl = `<div wmColorPicker ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'currency':
+        case FormWidgetType.CURRENCY:
             tmpl = `<div wmCurrency ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'date':
+        case FormWidgetType.DATE:
             tmpl = `<div wmDate ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'datetime':
+        case FormWidgetType.DATETIME:
             tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'number':
+        case FormWidgetType.NUMBER:
             tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" >`;
             break;
-        case 'password':
+        case FormWidgetType.PASSWORD:
             tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password">`;
             break;
-        case 'radioset':
+        case FormWidgetType.RADIOSET:
             tmpl = `<div wmRadioset ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'rating':
+        case FormWidgetType.RATING:
             tmpl = `<div wmRating ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'richtext':
+        case FormWidgetType.RICHTEXT:
             /*TODO*/
             break;
-        case 'select':
+        case FormWidgetType.SELECT:
             tmpl = `<div wmSelect ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'toggle':
+        case FormWidgetType.TOGGLE:
             tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget type="toggle"></div>`;
             break;
-        case 'slider':
+        case FormWidgetType.SLIDER:
             tmpl = `<div wmSlider ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'switch':
+        case FormWidgetType.SWITCH:
             tmpl = `<div wmSwitch ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'text':
+        case FormWidgetType.TEXT:
             tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}">`;
             break;
-        case 'textarea':
+        case FormWidgetType.TEXTAREA:
             tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" ngModel></texarea>`;
             break;
-        case 'time':
+        case FormWidgetType.TIME:
             tmpl = `<div wmTime ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'timestamp':
+        case FormWidgetType.TIMESTAMP:
             tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
             break;
-        case 'upload':
+        case FormWidgetType.UPLOAD:
             /*TODO*/
             break;
         default:
@@ -114,7 +115,7 @@ register('wm-form-field', (): BuildTaskDef => {
             const counter = idGen.next().value;
             const parent = parentForm || parentLiveForm;
             const pCounter = parent.get('form_reference');
-            const widgetType = attrs.get('widget');
+            const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             attrs.delete('widget');
             shared.set('counter', counter);
             return `<${tagName} data-role="form-field" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" [class.hidden]="!${counter}.show" ${getAttrMarkup(attrs)}>

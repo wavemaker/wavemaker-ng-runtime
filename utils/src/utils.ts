@@ -280,14 +280,14 @@ export function triggerFn(fn, ...argmnts) {
 /**
  * This method is used to get the formatted date
  */
-export const getFormattedDate = (dateObj, format: string): any => {
+export const getFormattedDate = (datePipe, dateObj, format: string): any => {
     if (!dateObj) {
         return;
     }
     if (format === 'timestamp') {
         return moment(dateObj).valueOf();
     }
-    return moment(dateObj).format(format);
+    return datePipe.transform(dateObj, format);
 };
 
 export const addEventListener = (_element: Element, excludeElement: Element, eventType, successCB, life: EVENT_LIFE) => {

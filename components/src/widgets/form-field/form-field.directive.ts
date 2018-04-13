@@ -47,7 +47,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
                 @Optional() form: ParentForm, fb: FormBuilder,
                 @Attribute('dataset.bind') binddataset,
                 @Attribute('widgettype') _widgetType) {
-        const WIDGET_CONFIG = {widgetType: _widgetType || 'text', hostClass: DEFAULT_CLS};
+        const WIDGET_CONFIG = {widgetType: _widgetType, hostClass: DEFAULT_CLS};
         super(WIDGET_CONFIG, inj, elRef, cdr, new Promise(res => {
             registerProps(_widgetType);
             res();

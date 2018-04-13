@@ -1,11 +1,48 @@
-import { getAttrMarkup, register } from '@wm/transpiler';
+import { Element, Attribute } from '@angular/compiler';
+import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 import { idMaker } from '@wm/utils';
 
 const tagName = 'form';
 const idGen = idMaker('form_');
 
-const buildTask = (isLiveForm?) => {
+const formWidgets = new Set([
+    'wm-text',
+    'wm-textarea',
+    'wm-checkbox',
+    'wm-slider',
+    'wm-richtexteditor',
+    'wm-currency',
+    'wm-switch',
+    'wm-select',
+    'wm-checkboxset',
+    'wm-radioset',
+    'wm-date',
+    'wm-time',
+    'wm-timestamp',
+    'wm-upload',
+    'wm-rating',
+    'wm-datetime',
+    'wm-search',
+    'wm-chips',
+    'wm-colorpicker'
+]);
+
+const addFormControlName = (children = []) => {
+    children.forEach(childNode => {
+        if (formWidgets.has(childNode.name)) {
+            console.log(childNode.name);
+            childNode.attrs.push(new Attribute('formControlName', childNode.attrs.find((attr) => attr.name = 'name').value, <any>1, <any>1));
+            childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1));
+        }
+        addFormControlName(childNode.children);
+    });
+};
+
+const buildTask = (isLiveForm?): BuildTaskDef => {
     return {
+        template: (node: Element) => {
+            addFormControlName(node.children);
+        },
         pre: (attrs, shared) => {
             const counter = idGen.next().value;
             attrs.set('dialogId', 'liveformdialog-' + attrs.get('name') + '-' + counter);
@@ -15,7 +52,7 @@ const buildTask = (isLiveForm?) => {
                         [ngClass]="${counter}.captionAlignClass" ${tmpl}>`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {
-                let dialogAttrsMap = new Map<string, string>();
+                const dialogAttrsMap = new Map<string, string>();
                 dialogAttrsMap.set('title', attrs.get('title'));
                 dialogAttrsMap.set('iconclass', attrs.get('iconclass'));
                 dialogAttrsMap.set('width', attrs.get('width'));

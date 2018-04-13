@@ -14,32 +14,33 @@ import { sliderProps } from '../slider/slider.props';
 import { switchProps } from '../switch/switch.props';
 import { textareaProps } from '../textarea/textarea.props';
 import { timeProps} from '../time/time.props';
+import { FormWidgetType } from '../../utils/enums';
 
 const widgetPropsMap = new Map(
     [
-        ['autocomplete', searchProps],
-        ['checkbox', checkboxProps],
-        // TODO: ['checkboxset', checkboxsetProps],
-        // TODO: ['chips', chipsProps],
-        ['colorpicker', colorPickerProps],
-        ['currency', currencyProps],
-        ['date', dateProps],
-        ['datetime', dateTimeProps],
-        ['number', textProps],
-        ['password', textProps],
-        ['radioset', radiosetProps],
-        ['rating', ratingProps],
-        ['richtext', richTextProps],
-        ['select', selectProps],
-        ['slider', sliderProps],
-        ['switch', switchProps],
-        ['text', textProps],
-        ['textarea', textareaProps],
-        ['time', timeProps],
-        ['timestamp', dateTimeProps],
-        ['toggle', checkboxProps],
-        ['typeahead', searchProps],
-        // TODO: ['upload', uploadProps]
+        [FormWidgetType.AUTOCOMPLETE, searchProps],
+        [FormWidgetType.CHECKBOX, checkboxProps],
+        // TODO: [FormWidgetType.CHECKBOXSET, checkboxsetProps],
+        // TODO: [FormWidgetType.CHIPS, chipsProps],
+        [FormWidgetType.COLORPICKER, colorPickerProps],
+        [FormWidgetType.CURRENCY, currencyProps],
+        [FormWidgetType.DATE, dateProps],
+        [FormWidgetType.DATETIME, dateTimeProps],
+        [FormWidgetType.NUMBER, textProps],
+        [FormWidgetType.PASSWORD, textProps],
+        [FormWidgetType.RADIOSET, radiosetProps],
+        [FormWidgetType.RATING, ratingProps],
+        [FormWidgetType.RICHTEXT, richTextProps],
+        [FormWidgetType.SELECT, selectProps],
+        [FormWidgetType.SLIDER, sliderProps],
+        [FormWidgetType.SWITCH, switchProps],
+        [FormWidgetType.TEXT, textProps],
+        [FormWidgetType.TEXTAREA, textareaProps],
+        [FormWidgetType.TIME, timeProps],
+        [FormWidgetType.TIMESTAMP, dateTimeProps],
+        [FormWidgetType.TOGGLE, checkboxProps],
+        [FormWidgetType.TYPEAHEAD, searchProps],
+        // TODO: [FormWidgetType.UPLOAD, uploadProps]
     ]
 );
 export const registerProps = (widgetType) => {
