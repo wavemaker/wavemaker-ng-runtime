@@ -69,8 +69,10 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
     postmessage;
     _liveTableParent;
     isLiveForm;
+    updateMode;
     resetForm: Function;
     // Live Form Methods
+    clearData: Function;
     edit: Function;
     update: Function;
     new: Function;
@@ -78,10 +80,12 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
     formCancel: Function;
     delete: Function;
     formSave: Function;
+    findOperationType: Function;
     save: Function;
     saveAndNew: Function;
     saveAndView: Function;
     emptyDataModel: Function;
+    setDefaultValues: Function;
     setPrevDataValues: Function;
     getPrevDataValues: Function;
     setPrevformFields: Function;
@@ -168,14 +172,15 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
                 break;
             case 'formdata':
             case 'rowdata':
-                this.setDefaultValues(newVal);
+                this.setFormData(newVal);
                 break;
             case 'defaultmode':
                 if (newVal && newVal === 'Edit') {
-                    this.isUpdateMode = true;
+                    this.updateMode = true;
                 } else {
-                    this.isUpdateMode = false;
+                    this.updateMode = false;
                 }
+                this.isUpdateMode = this.updateMode;
                 break;
             case 'datasource':
                 this.dataSourceChange.next(this.datasource);
@@ -286,7 +291,7 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
         this.constructDataObject();
     }
 
-    setDefaultValues(rowData) {
+    setFormData(rowData) {
         if (!this.formFields || _.isEmpty(this.formFields)) {
             return;
         }
@@ -360,6 +365,15 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
         }
     }
 
+    showButtons(position) {
+        return _.some(this.buttonArray, btn => {
+            return _.includes(btn.position, position) && btn.updateMode === this.isUpdateMode;
+        });
+    }
+
+    get mode() {
+        return this.operationType || this.findOperationType();
+    }
 
     callEvent(event) {
         // TODO: Change logic to handle all scenarios

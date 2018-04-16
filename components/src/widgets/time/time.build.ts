@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-time', (): BuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmTime ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmTime ${getAttrMarkup(attrs)} role="input">`,
         post: () => `</${tagName}>`
     };
 });

@@ -1,3 +1,4 @@
+import { FormWidgetType } from '@wm/utils';
 import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
 import { textProps } from '../text/text.props';
 import { searchProps } from '../search/search.props';
@@ -14,7 +15,6 @@ import { sliderProps } from '../slider/slider.props';
 import { switchProps } from '../switch/switch.props';
 import { textareaProps } from '../textarea/textarea.props';
 import { timeProps} from '../time/time.props';
-import { FormWidgetType } from '../../utils/enums';
 
 const widgetPropsMap = new Map(
     [
@@ -46,6 +46,7 @@ const widgetPropsMap = new Map(
 export const registerProps = (widgetType) => {
     const propsMap = new Map(
         [
+            ['defaultvalue', PROP_STRING_NOTIFY],
             ['displayname', PROP_STRING],
             ['hint', PROP_STRING],
             ['key', PROP_STRING],

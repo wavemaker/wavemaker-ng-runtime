@@ -4,10 +4,10 @@ import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './form-field.props';
 import { FormBuilder,  FormGroup, Validators } from '@angular/forms';
-import { toBoolean } from '@wm/utils';
+import { isDefined, toBoolean } from '@wm/utils';
 import { getEvaluatedData, isDataSetWidget } from '../../utils/widget-utils';
 import { fetchRelatedFieldData, ALLFIELDS, getDistinctValuesForField } from '../../utils/data-utils';
-import { getDefaultViewModeWidget } from '../../utils/live-utils';
+import { getDefaultViewModeWidget, parseValueByType } from '../../utils/live-utils';
 declare const _;
 
 const DEFAULT_CLS = '';
@@ -26,15 +26,18 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
 
     ngForm: FormGroup;
     name: string;
+    defaultvalue;
     displayexpression;
     displayfield;
     displaylabel;
+    generator;
     key: string;
     target: string;
     binding: string;
     widgettype: string;
     class;
     primarykey;
+    readonly;
     required;
     show;
     type;
@@ -110,6 +113,33 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         return value;
     }
 
+    setDefaultValue() {
+        // In Edit, do  not set default values
+        if (this.form.operationType === 'update') {
+            return;
+        }
+        const defaultValue = this.defaultvalue;
+        // Set the default value only if it exists.
+        if (isDefined(defaultValue) && defaultValue !== null && defaultValue !== '' && defaultValue !== 'null') {
+            this.value = parseValueByType(defaultValue, this.type, this.widgettype);
+        } else {
+            this.value = undefined;
+        }
+        // TODO: Blob
+        // if (field.type === 'blob') {
+        //     // Create the accepts string from file type and extensions
+        //     fileType = field.filetype ? this.filetypes[field.filetype] : '';
+        //     field.permitted = fileType + (field.extensions ? (fileType ? ',' : '') + field.extensions : '');
+        // }
+        /*If the field is primary but is assigned set readonly false.
+         Assigned is where the user inputs the value while a new entry.
+         This is not editable(in update mode) once entry is successful*/
+        if (this.readonly && this['primary-key'] && this.generator === 'assigned') {
+            this.widget.readonly = false;
+        }
+        this.form.setPrevDataValues();
+    }
+
     private setRequired() {
         if (this.required && this.show) {
             this._validators.push(Validators.required);
@@ -132,6 +162,13 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         this.formWidget.widget[key] = newVal;
 
         switch (key) {
+            case 'defaultvalue':
+                if (this.form.isLiveForm) {
+                    this.setDefaultValue();
+                } else {
+                    this.value = parseValueByType(newVal, undefined, this.widgettype);
+                }
+                break;
             case 'required':
                 this.setRequired();
                 break;

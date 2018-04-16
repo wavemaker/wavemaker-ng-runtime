@@ -1,4 +1,4 @@
-<div [(ngModel)]="_model_" (focus)="onFocus($event)" ngDefaultControl>
+<div [(ngModel)]="_model_" (focus)="onFocus($event)" ngDefaultControl role="input">
     <div *ngIf="!readonly" class="rating-style">
         <label [ngClass]="{active : rate.value <= selectedRatingValue}"
                [ngStyle]="{'font-size' :iconsize, color: rate.value <= selectedRatingValue && iconcolor}"

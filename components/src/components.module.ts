@@ -83,7 +83,7 @@ import { TimeComponent } from './widgets/time/time.component';
 import { TopNavDirective } from './widgets/top-nav/top-nav.directive';
 import { TreeDirective } from './widgets/tree/tree.directive';
 import { VideoComponent } from './widgets/video/video.component';
-import { NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
+import { FilterPipe, NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 
 const wmComponents = [
     AccordionDirective,
@@ -166,7 +166,7 @@ const wmComponents = [
 ];
 
 const PIPES = [
-    ToDatePipe,
+    ToDatePipe, FilterPipe,
     ToNumberPipe, ToCurrencyPipe, PrefixPipe,
     SuffixPipe, TimeFromNowPipe, NumberToStringPipe, StringToNumberPipe
 ];
@@ -188,7 +188,8 @@ const PIPES = [
     exports: [...wmComponents, ...PIPES],
     providers: [
         DialogService,
-        ToDatePipe
+        ToDatePipe,
+        FilterPipe
     ],
     entryComponents: [
         MenuComponent,

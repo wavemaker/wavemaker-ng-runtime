@@ -33,6 +33,18 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
         'onRowDelete': this.deleteRow
     };
 
+    focusFirstInput() {
+        const $firstInput = $(this.form.$element).find('[role="input"]:first');
+        $firstInput.focus();
+        $firstInput.select();
+    }
+
+    onDialogOpen() {
+        setTimeout(() => {
+            this.focusFirstInput();
+        }, 100);
+    }
+
     deleteRow(row, callBackFn?) {
         this.form.widget.rowdata = row;
         this.form.delete(callBackFn);
@@ -53,6 +65,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
         const dialogId = this.form.dialogId;
         if (flag) {
             this.dialogService.openDialog(dialogId);
+            this.onDialogOpen();
         } else {
             this.dialogService.closeDialog(dialogId);
         }
@@ -76,6 +89,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
         this.form.edit();
 
         if (this.isLayoutDialog) {
+            this.form.isUpdateMode = (eventName === 'dblclick') ? this.form.updateMode : true;
             this.toggleDialogVisibility(true);
         }
     }
@@ -107,7 +121,14 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
         } else {
             this.form.isSelected = false;
             this.form.widget.rowdata = '';
-            // this.form.clearData();
+            this.form.clearData();
+        }
+    }
+
+    onCancel() {
+        this.form.isUpdateMode = false;
+        if (this.isLayoutDialog) {
+            this.toggleDialogVisibility(false);
         }
     }
 
@@ -152,13 +173,34 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
         }
     }
 
+    showErrorMessage() {
+        // TODO: wmToaster.show('error', 'ERROR', $rs.appLocale.LABEL_ACCESS_DENIED);
+    }
 
     ngAfterContentInit() {
-        this.form._liveTableParent = this;
-        this.table._liveTableParent = this;
-        this.table.datagridElement.datatable('option', this.tableOptions);
+        if (this.form) {
+            this.form._liveTableParent = this;
+        }
+        if (this.table) {
+            this.table._liveTableParent = this;
+            this.table.datagridElement.datatable('option', this.tableOptions);
 
-        this.table.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));
+            this.table.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));
+
+            if (!this.form) {
+                this.table.datagridElement.datatable('option', {
+                    'beforeRowUpdate' : () => {
+                        this.showErrorMessage();
+                    },
+                    'beforeRowDelete' : () => {
+                        this.showErrorMessage();
+                    },
+                    'beforeRowInsert' : () => {
+                        this.showErrorMessage();
+                    }
+                });
+            }
+        }
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private dialogService: DialogService) {

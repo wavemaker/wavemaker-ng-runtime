@@ -50,9 +50,9 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             disabled: this.disabled || 'false',
             tabindex: this.tabindex ? +this.tabindex : undefined,
             iconname: this.iconname,
-            type: this.type || 'type',
+            type: this.type || 'button',
             updateMode: this['update-mode'] === true || this['update-mode'] === 'true',
-            position: this.position
+            position: this.position || 'footer'
         };
     }
 

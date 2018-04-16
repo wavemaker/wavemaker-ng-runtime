@@ -1,3 +1,5 @@
+import { isNumberType, FormWidgetType, DataType } from '@wm/utils';
+
 declare const _;
 
 const  VIEW_MODE_OPTIONS = {
@@ -85,3 +87,34 @@ export const getDefaultViewModeWidget = widget => {
     return VIEW_MODE_OPTIONS.LABEL;
 };
 
+const parseBooleanValue = value => {
+    if (value === 'true') {
+        return true;
+    }
+    if (value === 'false') {
+        return false;
+    }
+    if (/^\d+$/.test(value)) { // Check if the value is a string of number type like '123'
+        return +value;
+    }
+    return value;
+};
+
+export const parseValueByType = (value, type, widget) => {
+    if (widget) {
+        if (widget === FormWidgetType.NUMBER || widget === FormWidgetType.SLIDER || widget === FormWidgetType.CURRENCY) {
+            return isNaN(Number(value)) ? null : Number(value);
+        }
+        if (widget === FormWidgetType.CHECKBOX || widget === FormWidgetType.TOGGLE) {
+            return parseBooleanValue(value);
+        }
+        return value;
+    }
+    if (isNumberType(type)) {
+        return isNaN(Number(value)) ? null : Number(value);
+    }
+    if (type === DataType.BOOLEAN) {
+        return parseBooleanValue(value);
+    }
+    return value;
+};

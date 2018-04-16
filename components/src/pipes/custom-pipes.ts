@@ -112,3 +112,17 @@ export class StringToNumberPipe implements PipeTransform {
         return Number(data) || undefined;
     }
 }
+
+@Pipe({
+    name: 'filter'
+})
+export class FilterPipe implements PipeTransform {
+    transform(data: any[], field: string, value: any) {
+        if (!data) {
+            return [];
+        }
+        return _.filter(data, item => {
+            return _.includes(item[field], value);
+        });
+    }
+}

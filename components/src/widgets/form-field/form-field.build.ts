@@ -1,8 +1,7 @@
 import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { idMaker } from '@wm/utils';
+import { idMaker, FormWidgetType } from '@wm/utils';
 import { ALLFIELDS } from '../../utils/data-utils';
 import { isDataSetWidget } from '../../utils/widget-utils';
-import { FormWidgetType } from '../../utils/enums';
 
 const tagName = 'div';
 const idGen = idMaker('formfield_');
@@ -14,10 +13,10 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmSearch ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.CHECKBOX:
-            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
             // tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
@@ -26,25 +25,25 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
             /*TODO*/
             break;
         case FormWidgetType.COLORPICKER:
-            tmpl = `<div wmColorPicker ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmColorPicker ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmCurrency ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmDate ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" >`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" role="input">`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password">`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password" role="input">`;
             break;
         case FormWidgetType.RADIOSET:
-            tmpl = `<div wmRadioset ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmRadioset ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.RATING:
             tmpl = `<div wmRating ${defaultTmpl} #formWidget></div>`;
@@ -56,31 +55,31 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
             tmpl = `<div wmSelect ${defaultTmpl} #formWidget></div>`;
             break;
         case FormWidgetType.TOGGLE:
-            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget type="toggle"></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget type="toggle"  role="input"></div>`;
             break;
         case FormWidgetType.SLIDER:
-            tmpl = `<div wmSlider ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmSlider ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.SWITCH:
-            tmpl = `<div wmSwitch ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmSwitch ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}">`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}" ngModel role="input">`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" ngModel></texarea>`;
+            tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" ngModel role="input"></texarea>`;
             break;
         case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmTime ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
-            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.UPLOAD:
             /*TODO*/
             break;
         default:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText">`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" role="input">`;
             break;
     }
     return tmpl;
@@ -90,17 +89,17 @@ const getCaptionByWidget = (attrs, widgetType, counter) => {
     if (attrs.get('is-related') === 'true') {
         return `${counter}.getDisplayExpr()`;
     }
-    if (widgetType === 'password') {
+    if (widgetType === FormWidgetType.PASSWORD) {
         return '\'********\'';
     }
     let caption = `${counter}.value`;
-    if (widgetType === 'datetime' || widgetType === 'timestamp') {
+    if (widgetType === FormWidgetType.DATETIME || widgetType === FormWidgetType.TIMESTAMP) {
         caption += ` | toDate:${counter}.datepattern || 'yyyy-MM-dd hh:mm:ss a'`;
-    } else if (widgetType === 'time') {
+    } else if (widgetType === FormWidgetType.TIME) {
         caption += ` | toDate:${counter}.timepattern || 'hh:mm a'`;
-    } else if (widgetType === 'date') {
+    } else if (widgetType === FormWidgetType.DATE) {
         caption += ` | toDate:${counter}.datepattern ||  'yyyy-MMM-dd'`;
-    } else if (widgetType === 'rating' || widgetType === 'upload') {
+    } else if (widgetType === FormWidgetType.RATING || widgetType === FormWidgetType.UPLOAD) {
         caption = '';
     } else if (isDataSetWidget(widgetType) && attrs.get('datafield') === ALLFIELDS) {
         return `${counter}.getDisplayExpr()`;

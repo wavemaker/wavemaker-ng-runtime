@@ -30,7 +30,6 @@ const formWidgets = new Set([
 const addFormControlName = (children = []) => {
     children.forEach(childNode => {
         if (formWidgets.has(childNode.name)) {
-            console.log(childNode.name);
             childNode.attrs.push(new Attribute('formControlName', childNode.attrs.find((attr) => attr.name = 'name').value, <any>1, <any>1));
             childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1));
         }
@@ -44,23 +43,26 @@ const buildTask = (isLiveForm?): BuildTaskDef => {
             addFormControlName(node.children);
         },
         pre: (attrs, shared) => {
+            let tmpl;
             const counter = idGen.next().value;
             attrs.set('dialogId', 'liveformdialog-' + attrs.get('name') + '-' + counter);
-            const tmpl = getAttrMarkup(attrs);
             const liveFormAttr = isLiveForm ? 'wmLiveForm' : '';
             const liveFormTmpl = `<${tagName} wmForm ${liveFormAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngForm" [noValidate]="${counter}.validationtype !== 'html'"
-                        [ngClass]="${counter}.captionAlignClass" ${tmpl}>`;
+                        [ngClass]="${counter}.captionAlignClass"`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {
                 const dialogAttrsMap = new Map<string, string>();
                 dialogAttrsMap.set('title', attrs.get('title'));
                 dialogAttrsMap.set('iconclass', attrs.get('iconclass'));
                 dialogAttrsMap.set('width', attrs.get('width'));
+                attrs.set('width', '100%');
+                tmpl = getAttrMarkup(attrs);
                 return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog">
-                            <div wmDialog class="app-liveform-dialog" name="${attrs.get('dialogId')}" ${getAttrMarkup(dialogAttrsMap)} modal="true" width.bind="dialogWidth">
-                        ${liveFormTmpl}`;
+                            <div wmDialog class="app-liveform-dialog" name="${attrs.get('dialogId')}" ${getAttrMarkup(dialogAttrsMap)} modal="true">
+                        ${liveFormTmpl} ${tmpl}>`;
             }
-            return liveFormTmpl;
+            tmpl = getAttrMarkup(attrs);
+            return `${liveFormTmpl} ${tmpl}>`;
         },
         post: (attrs) => {
             if (attrs.get('formlayout') === 'dialog') {

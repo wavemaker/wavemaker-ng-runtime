@@ -1,3 +1,5 @@
+import { DataType } from './enums';
+
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
 declare const document;
@@ -33,7 +35,7 @@ const REGEX = {
 },
     compareBySeparator = ':';
 
-const NUMBER_TYPES = ['int', 'integer', 'float', 'double', 'long', 'short', 'byte', 'big_integer', 'big_decimal'];
+const NUMBER_TYPES = ['int', DataType.INTEGER, DataType.FLOAT, DataType.DOUBLE, DataType.LONG, DataType.SHORT, DataType.BYTE, DataType.BIG_INTEGER, DataType.BIG_DECIMAL];
 
 export const enum EVENT_LIFE {ONCE, WINDOW}
 
@@ -448,11 +450,11 @@ export const findValueOf = (obj, key, create?) => {
 export const extractType = (typeRef: string): string => {
     let type;
     if (!typeRef) {
-        return 'string';
+        return DataType.STRING;
     }
     type = typeRef && typeRef.substring(typeRef.lastIndexOf('.') + 1);
     type = type && type.toLowerCase();
-    type = type === 'localdatetime' ? 'datetime' : type;
+    type = type === DataType.LOCALDATETIME ? DataType.DATETIME : type;
     return type;
 };
 
@@ -512,10 +514,10 @@ const _formatDate = (dateValue, type) => {
         }
         epoch = dateValue && moment(dateValue).valueOf();
     }
-    if (type === 'timestamp') {
+    if (type === DataType.TIMESTAMP) {
         return epoch;
     }
-    if (type === 'time' && !epoch) {
+    if (type === DataType.TIME && !epoch) {
         epoch = moment(new Date().toDateString() + ' ' + dateValue).valueOf();
     }
     return dateValue; // && $filter('date')(epoch, getDateTimeFormatForType(type));
@@ -539,7 +541,7 @@ export const isDateTimeType = type => {
     if (_.includes(type, '.')) {
         type = _.toLower(extractType(type));
     }
-    return _.includes(['date', 'time', 'timestamp', 'datetime', 'localdatetime'], type);
+    return _.includes([DataType.DATE, DataType.TIME, DataType.TIMESTAMP, DataType.DATETIME, DataType.LOCALDATETIME], type);
 };
 
 /*  This function returns date object. If val is undefined it returns invalid date */

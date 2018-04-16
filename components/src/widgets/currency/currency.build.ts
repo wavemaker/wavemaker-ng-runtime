@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-currency', (): BuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmCurrency ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmCurrency ${getAttrMarkup(attrs)} role="input">`,
         post: () => `</${tagName}>`
     };
 });

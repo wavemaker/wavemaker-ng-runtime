@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-colorpicker', (): BuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmColorPicker ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmColorPicker ${getAttrMarkup(attrs)} role="input">`,
         post: () => `</${tagName}>`
     };
 });

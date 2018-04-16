@@ -1,7 +1,6 @@
-import { encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith } from '@wm/utils';
+import { encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith, FormWidgetType } from '@wm/utils';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { forwardRef } from '@angular/core';
-import { FormWidgetType } from './enums';
 
 declare const _;
 

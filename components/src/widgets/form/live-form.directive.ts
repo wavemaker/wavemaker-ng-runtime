@@ -1,7 +1,7 @@
 import { Directive, Inject, Self } from '@angular/core';
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
-import { $appDigest, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/utils';
+import {$appDigest, DataType, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject} from '@wm/utils';
 import { Live_Operations, performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';
@@ -12,7 +12,7 @@ declare const _, moment;
 
 registerLiveFormProps();
 
-const isTimeType = field => field.widget === 'time' || (field.type === 'time' && !field.widget);
+const isTimeType = field => field.widget === DataType.TIME || (field.type === DataType.TIME && !field.widget);
 const getValidTime = val => {
     if (val) {
         const date = (new Date()).toDateString();
@@ -42,13 +42,25 @@ export class LiveFormDirective {
         form.setPrimaryKey = this.setPrimaryKey.bind(this);
         form.setPrevformFields = this.setPrevformFields.bind(this);
         form.constructDataObject = this.constructDataObject.bind(this);
-        form.changeDataObject = this.setDefaultValues.bind(this);
-        form.setDefaultValues = this.setDefaultValues.bind(this);
+        form.changeDataObject = this.setFormData.bind(this);
+        form.setFormData = this.setFormData.bind(this);
         form.saveAndNew = this.saveAndNew.bind(this);
         form.saveAndView = this.saveAndView.bind(this);
+        form.setDefaultValues = this.setDefaultValues.bind(this);
+        form.findOperationType = this.findOperationType.bind(this);
+        form.clearData = this.clearData.bind(this);
     }
 
-    setDefaultValues(dataObj) {
+    setDefaultValues() {
+        if (!this.form.formFields) {
+            return;
+        }
+        this.form.formFields.forEach(field => {
+            field.setDefaultValue();
+        });
+    }
+
+    setFormData(dataObj) {
         if (!this.form.formFields || !dataObj) {
             return;
         }
@@ -56,7 +68,7 @@ export class LiveFormDirective {
             const value = _.get(dataObj, field.key || field.name);
             if (isTimeType(field)) {
                 field.value = getValidTime(value);
-            } else if (field.type === 'blob') {
+            } else if (field.type === DataType.BLOB) {
                 // resetFileUploadWidget(formField, true);
                 // formField.href  = $scope.getBlobURL(dataObj, formField.key, value);
                 // formField.value = value;
@@ -73,7 +85,7 @@ export class LiveFormDirective {
         if (newForm) {
             this.form.new();
         } else {
-            this.form.setDefaultValues(response);
+            this.form.setFormData(response);
         }
         this.form.isUpdateMode = isDefined(updateMode) ? updateMode : true;
     }
@@ -117,7 +129,7 @@ export class LiveFormDirective {
             if ((field.widget && isDateTimeType(field.widget)) || isDateTimeType(field.type)) {
                 if (field.value) {
                     dateTime = getValidDateObject(field.value);
-                    if (field.outputformat === 'timestamp' || field.type === 'timestamp') {
+                    if (field.outputformat === DataType.TIMESTAMP || field.type === DataType.TIMESTAMP) {
                         fieldValue = field.value ? dateTime.getTime() : null;
                     } else if (field.outputformat) {
                         fieldValue = this.datePipe.transform(dateTime, field.outputformat);
@@ -127,9 +139,9 @@ export class LiveFormDirective {
                 } else {
                     fieldValue = undefined;
                 }
-            } else if (field.type === 'blob') {
+            } else if (field.type === DataType.BLOB) {
                 fieldValue = _.get(document.forms, [formName, fieldName + '_formWidget', 'files', 0]);
-            } else if (field.type === 'list') {
+            } else if (field.type === DataType.LIST) {
                 fieldValue = field.value || undefined;
             } else {
                 fieldValue = field.value;
@@ -158,10 +170,10 @@ export class LiveFormDirective {
         }
     }
 
-    findOperationType(dataSource) {
+    findOperationType() {
         let operation;
         let isPrimary = false;
-        const sourceOperation = dataSource.execute(DataSource.Operation.GET_OPERATION_TYPE);
+        const sourceOperation = this.form.datasource.execute(DataSource.Operation.GET_OPERATION_TYPE);
         if (sourceOperation && sourceOperation !== 'read') {
             return sourceOperation;
         }
@@ -229,6 +241,13 @@ export class LiveFormDirective {
         });
     }
 
+    clearData() {
+        this.form.toggleMessage(false);
+        if (this.form.formFields && this.form.formFields.length > 0) {
+            this.emptyDataModel();
+        }
+    }
+
     setReadonlyFields() {
         if (!this.form.formFields) {
             return;
@@ -244,6 +263,8 @@ export class LiveFormDirective {
         this.form.resetFormState();
         this.form.clearMessage();
 
+        this.form.operationType = Live_Operations.UPDATE;
+
         if (!this.form.isLayoutDialog) {
             if (this.form.isSelected) {
                 this.form.setPrevformFields();
@@ -254,7 +275,6 @@ export class LiveFormDirective {
 
         this.setReadonlyFields();
         this.form.isUpdateMode = true;
-        this.form.operationType = Live_Operations.UPDATE;
 
         $appDigest();
     }
@@ -266,7 +286,7 @@ export class LiveFormDirective {
         // resetFormFields(formEle);
         if (_.isArray(this.form.formFields)) {
             this.form.formFields.forEach((field) => {
-                if (field.type === 'blob') {
+                if (field.type === DataType.BLOB) { // TODO: blob and autocomplete
                     // resetFileUploadWidget(field, true);
                     // field.href = $scope.getBlobURL(prevDataValues, field.key, field.value);
                 }
@@ -292,10 +312,14 @@ export class LiveFormDirective {
         if (this.form.isLayoutDialog) {
              this.dialogService.closeDialog(this.form.dialogId);
         }
+        if (this.form._liveTableParent) {
+            this.form._liveTableParent.onCancel();
+        }
     }
 
     new() {
         this.form.resetFormState();
+        this.form.operationType = Live_Operations.INSERT;
         this.form.clearMessage();
         if (this.form.isSelected && !this.form.isLayoutDialog) {
             this.form.setPrevformFields();
@@ -303,10 +327,10 @@ export class LiveFormDirective {
         if (this.form.formFields && this.form.formFields.length > 0) {
             this.form.emptyDataModel();
         }
+        this.setDefaultValues();
         this.form.setPrevDataValues();
         this.form.constructDataObject();
         this.form.isUpdateMode = true;
-        this.form.operationType = Live_Operations.INSERT;
     }
 
     delete(callBackFn) {
@@ -328,7 +352,7 @@ export class LiveFormDirective {
     save(event?, updateMode?, newForm?, callBackFn?) {
         let data, prevData, requestData, operationType, isValid;
 
-        operationType = this.form.operationType = this.form.operationType || this.findOperationType(this.form.datasource);
+        operationType = this.form.operationType = this.form.operationType || this.findOperationType();
 
         // Disable the form submit if form is in invalid state.
         if (this.form.validateFieldsOnSubmit()) {
@@ -356,7 +380,7 @@ export class LiveFormDirective {
         // If operation is update, form is not touched and current data and previous data is same, Show no changes detected message
         if (this.form.operationType === Live_Operations.UPDATE && this.form.ngform && this.form.ngform.pristine &&
                 (this.form.isSelected && _.isEqual(data, prevData))) {
-            this.form.toggleMessage(true, 'No changes detected', 'info', '');
+            this.form.toggleMessage(true, 'No changes detected', 'info', ''); // TODO: Locale
             return;
         }
 

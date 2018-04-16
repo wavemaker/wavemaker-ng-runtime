@@ -1,4 +1,4 @@
-<div class="panel-heading" *ngIf="!isLayoutDialog && (title || subheading || iconclass)">
+<div class="panel-heading" *ngIf="!isLayoutDialog && (title || subheading || iconclass || showButtons('header'))">
     <h3 class="panel-title">
         <div class="pull-left">
             <i class="app-icon panel-icon" [ngClass]="iconclass" *ngIf="iconclass"></i>
@@ -7,6 +7,11 @@
             <div class="heading" [textContent]="title"></div>
             <div class="description" [textContent]="subheading"></div>
         </div>
+        <div class="form-action panel-actions basic-btn-grp">
+            <button *ngFor="let btn of buttonArray | filter : 'position' : 'header'" wmButton name="{{btn.key}}" caption.bind="$implicit.displayName" class.bind="$implicit.class" iconclass.bind="$implicit.iconclass"
+                    (click)="callEvent(btn.action)" type.bind="$implicit.type" hint.bind="$implicit.title" shortcutkey.bind="$implicit.shortcutkey" disabled.bind="$implicit.disabled"
+                    tabindex.bind="btnField.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+        </div>
     </h3>
 </div>
 <div class="panel-body" [ngClass]="{'form-elements': isLayoutDialog, 'form-body': !isLayoutDialog}">
@@ -14,8 +19,8 @@
     <div [ngClass]="{'form-elements': !isLayoutDialog, 'form-content': isLayoutDialog}">
         <ng-content></ng-content>
     </div>
-    <div class="basic-btn-grp form-action panel-footer clearfix" [ngClass]="{'modal-footer': isLayoutDialog}">
-        <button *ngFor="let btn of buttonArray" wmButton name="{{btn.key}}" caption.bind="$implicit.displayName" class.bind="$implicit.class" iconclass.bind="$implicit.iconclass"
+    <div class="basic-btn-grp form-action panel-footer clearfix" [ngClass]="{'modal-footer': isLayoutDialog}" *ngIf="showButtons('footer')">
+        <button *ngFor="let btn of buttonArray | filter : 'position' : 'footer'" wmButton name="{{btn.key}}" caption.bind="$implicit.displayName" class.bind="$implicit.class" iconclass.bind="$implicit.iconclass"
                 (click)="callEvent(btn.action)" type.bind="$implicit.type" hint.bind="$implicit.title" shortcutkey.bind="$implicit.shortcutkey" disabled.bind="$implicit.disabled"
                 tabindex.bind="btnField.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
     </div>
