@@ -8,6 +8,7 @@ export * from './widgets/calendar/calendar.build';
 export * from './widgets/chart/chart.build';
 export * from './widgets/checkbox/checkbox.build';
 export * from './widgets/color-picker/color-picker.build';
+export * from './widgets/composite/composite.build';
 export * from './widgets/container/container.build';
 export * from './widgets/content/content.build';
 export * from './widgets/currency/currency.build';

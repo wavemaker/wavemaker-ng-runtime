@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
 import { styler } from '../../utils/styler';
 import { registerProps } from './radioset.props';
 import { assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../utils/form-utils';
@@ -16,7 +16,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 @Component({
     selector: '[wmRadioset]',
     templateUrl: './radioset.component.html',
-    providers: [getControlValueAccessor(RadiosetComponent)]
+    providers: [getControlValueAccessor(RadiosetComponent), {
+        provide: '@Widget', useExisting: forwardRef(() => RadiosetComponent)
+    }]
 })
 export class RadiosetComponent extends BaseFormComponent {
     class = '';

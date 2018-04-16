@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
 import { registerProps } from './currency.props';
 import { styler } from '../../utils/styler';
 import { CONSTANTS_CURRENCY } from '@wm/utils';
@@ -13,7 +13,9 @@ registerProps();
 @Component({
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html',
-    providers: [getControlValueAccessor(CurrencyComponent)]
+    providers: [getControlValueAccessor(CurrencyComponent), {
+        provide: '@Widget', useExisting: forwardRef(() => CurrencyComponent)
+    }]
 })
 export class CurrencyComponent extends BaseFormComponent implements OnInit {
     currency: string;

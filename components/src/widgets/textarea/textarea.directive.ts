@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, HostBinding, HostListener, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './textarea.props';
@@ -10,7 +10,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-textarea', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmTextarea]',
-    exportAs: 'wmTextarea'
+    exportAs: 'wmTextarea',
+    providers: [{
+        provide: '@Widget', useExisting: forwardRef(() => TextareaDirective)
+    }]
 })
 export class TextareaDirective extends BaseComponent {
 
