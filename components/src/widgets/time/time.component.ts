@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnDestroy } from '@angular/core';
 import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/utils';
 import { styler } from '../../utils/styler';
 import { registerProps } from './time.props';
@@ -21,7 +21,9 @@ registerProps();
 @Component({
     selector: '[wmTime]',
     templateUrl: './time.component.html',
-    providers: [getControlValueAccessor(TimeComponent)]
+    providers: [getControlValueAccessor(TimeComponent), {
+        provide: '@Widget', useExisting: forwardRef(() => TimeComponent)
+    }]
 })
 export class TimeComponent extends BaseFormComponent implements OnDestroy {
     /**

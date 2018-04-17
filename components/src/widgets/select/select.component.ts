@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
 import { styler } from '../../utils/styler';
 import { registerProps } from './select.props';
 import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../utils/form-utils';
@@ -15,7 +15,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 @Component({
     selector: '[wmSelect]',
     templateUrl: './select.component.html',
-    providers: [getControlValueAccessor(SelectComponent)]
+    providers: [getControlValueAccessor(SelectComponent), {
+        provide: '@Widget', useExisting: forwardRef(() => SelectComponent)
+    }]
 })
 export class SelectComponent extends BaseFormComponent implements OnInit {
 

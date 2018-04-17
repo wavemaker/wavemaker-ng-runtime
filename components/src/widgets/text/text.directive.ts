@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, ElementRef, HostBinding, HostListener, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
 import { addClass } from '@wm/utils';
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
@@ -12,7 +12,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-text', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmText]',
-    exportAs: 'wmText'
+    exportAs: 'wmText',
+    providers: [{
+        provide: '@Widget', useExisting: forwardRef(() => TextDirective)
+    }]
 })
 export class TextDirective extends BaseComponent {
 

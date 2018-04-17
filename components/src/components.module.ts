@@ -17,6 +17,7 @@ import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { ChartComponent } from './widgets/chart/chart.component';
 import { CheckboxComponent } from './widgets/checkbox/checkbox.component';
 import { ColorPickerComponent } from './widgets/color-picker/color-picker.component';
+import { CompositeComponent } from './widgets/composite/composite.component';
 import { ConfirmDialogComponent } from './widgets/dialog/confirm-dialog/confirm-dialog.component';
 import { ContainerDirective } from './widgets/container/container.directive';
 import { ContentComponent } from './widgets/content/content.component';
@@ -97,6 +98,7 @@ const wmComponents = [
     ChartComponent,
     CheckboxComponent,
     ColorPickerComponent,
+    CompositeComponent,
     ConfirmDialogComponent,
     ContainerDirective,
     ContentComponent,

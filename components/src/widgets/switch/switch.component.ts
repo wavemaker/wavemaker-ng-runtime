@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
 import { styler } from '../../utils/styler';
 import { registerProps } from './switch.props';
 import { $appDigest, isEqualWithFields, setCSS } from '@wm/utils';
@@ -30,7 +30,9 @@ registerProps();
 @Component({
     selector: 'div[wmSwitch]',
     templateUrl: './switch.component.html',
-    providers: [getControlValueAccessor(SwitchComponent)]
+    providers: [getControlValueAccessor(SwitchComponent), {
+        provide: '@Widget', useExisting: forwardRef(() => SwitchComponent)
+    }]
 })
 export class SwitchComponent extends BaseFormComponent {
 

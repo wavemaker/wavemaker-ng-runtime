@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
 import { registerProps } from './checkbox.props';
 import { styler } from '../../utils/styler';
 import { toggleClass } from '@wm/utils';
@@ -13,7 +13,9 @@ registerProps();
 @Component({
     selector: '[wmCheckbox]',
     templateUrl: './checkbox.component.html',
-    providers: [getControlValueAccessor(CheckboxComponent)]
+    providers: [getControlValueAccessor(CheckboxComponent), {
+        provide: '@Widget', useExisting: forwardRef(() => CheckboxComponent)
+    }]
 })
 export class CheckboxComponent  extends BaseFormComponent implements OnInit {
 

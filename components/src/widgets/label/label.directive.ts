@@ -1,5 +1,7 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
+
 import { setProperty, toggleClass } from '@wm/utils';
+
 import { BaseComponent } from '../base/base.component';
 import { styler } from '../../utils/styler';
 import { registerProps } from './label.props';
@@ -10,7 +12,8 @@ const DEFAULT_CLS = 'app-label';
 const WIDGET_CONFIG = {widgetType: 'wm-label', hostClass: DEFAULT_CLS};
 
 @Directive({
-    selector: '[wmLabel]'
+    selector: '[wmLabel]',
+    providers: [{provide: '@Widget', useExisting: forwardRef(() => LabelDirective)}]
 })
 export class LabelDirective extends BaseComponent {
 
