@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { registerProps } from './calendar.props';
 import { getClonedObject, getSessionStorageItem } from '@wm/utils';
 import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
+import { IRedrawableComponent } from '../redraw/redrawable.interface';
 
 declare const _, $, moment;
 
@@ -89,9 +90,12 @@ registerProps();
 
 @Component({
     selector: '[wmCalendar]',
-    templateUrl: './calendar.component.html'
+    templateUrl: './calendar.component.html',
+    providers: [
+        {provide: '@Widget', useExisting: forwardRef(() => CalendarComponent)}
+    ]
 })
-export class CalendarComponent extends BaseComponent implements AfterViewInit, OnInit {
+export class CalendarComponent extends BaseComponent implements AfterViewInit, OnInit, IRedrawableComponent {
     /**
      * The calendar element reference
      */
@@ -563,5 +567,9 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
             return;
         }
         this.$fullCalendar.fullCalendar(operationType, argumentKey, argumentValue);
+    }
+
+    redraw() {
+        this.updateCalendarOptions('render');
     }
 }

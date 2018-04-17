@@ -1,10 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, forwardRef, Inject, Injector, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, forwardRef, Inject, Injector, OnInit, Output } from '@angular/core';
+
+import { $appDigest, removeAttr } from '@wm/utils';
+
 import { BaseComponent } from '../../base/base.component';
 import { APPLY_STYLES_TYPE, styler } from '../../../utils/styler';
 import { registerProps } from './accordion-pane.props';
-import { $appDigest, removeAttr } from '@wm/utils';
 import { AccordionDirective } from '../accordion.component';
 import { invokeEventHandler } from '../../../utils/widget-utils';
+import { RedrawableDirective } from '../../redraw/redrawable.directive';
 
 registerProps();
 
@@ -29,6 +32,8 @@ export class AccordionPaneComponent extends BaseComponent implements OnInit {
     @Output() collapse = new EventEmitter();
     @Output() expand = new EventEmitter();
 
+    @ContentChildren(RedrawableDirective, {descendants: true}) redrawableComponents;
+
     togglePane($event) {
         if (this.isActive) {
             invokeEventHandler(this, 'collapse', {$event});
@@ -41,6 +46,11 @@ export class AccordionPaneComponent extends BaseComponent implements OnInit {
             invokeEventHandler(this, 'expand', {$event});
             this.parentAccordion.closeOthers();
             this.$lazyload();
+            setTimeout(() => {
+                if (this.redrawableComponents) {
+                    this.redrawableComponents.forEach(c => c.redraw());
+                }
+            }, 100);
         }
 
         this.isActive = !this.isActive;

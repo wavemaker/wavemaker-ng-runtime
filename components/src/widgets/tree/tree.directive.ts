@@ -1,9 +1,13 @@
-import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
+import { Attribute, ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
+
+import { $parseEvent, $parseExpr, getClonedObject } from '@wm/utils';
+
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './tree.props';
 import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
-import { $parseEvent, $parseExpr, getClonedObject } from '@wm/utils';
 import { getOrderedDataSet } from '../../utils/form-utils';
+import { IRedrawableComponent } from '../redraw/redrawable.interface';
+
 const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
 
 registerProps();
@@ -44,9 +48,12 @@ const ICON_CLASSES = {
 };
 
 @Directive({
-    selector: 'div[wmTree]'
+    selector: 'div[wmTree]',
+    providers: [
+        {provide: '@Widget', useExisting: forwardRef(() => TreeDirective)}
+    ]
 })
-export class TreeDirective extends BaseComponent {
+export class TreeDirective extends BaseComponent implements IRedrawableComponent {
     datavalue: any;
     treeicons: string;
     nodeid: any;

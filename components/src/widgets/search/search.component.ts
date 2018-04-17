@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+
+import { $appDigest, getClonedObject } from '@wm/utils';
+
 import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
-import { getClonedObject } from '@wm/utils';
 import { getOrderedDataSet } from '../../utils/form-utils';
 import { registerProps } from './search.props';
-import { $appDigest } from '@wm/utils';
 import { styler } from '../../utils/styler';
 import { BaseFormComponent } from '../base/base-form.component';
 
