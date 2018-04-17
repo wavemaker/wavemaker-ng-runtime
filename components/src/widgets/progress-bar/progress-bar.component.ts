@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+
+import { $appDigest } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './progress-bar.props';
-import { styler } from '../../utils/styler';
-import { $appDigest } from '@wm/utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 
 registerProps();
@@ -16,7 +19,7 @@ const getDecimalCount = val => {
     val = val || '9';
     val = val.replace(/\%$/, '');
 
-    let n = val.lastIndexOf('.');
+    const n = val.lastIndexOf('.');
 
     return (n === -1) ? 0 : (val.length - n - 1);
 };
@@ -140,7 +143,7 @@ export class ProgressBarComponent extends BaseComponent {
         } else {
             this.progressDisplayValue = 0;
         }
-        const displayFormatAttr = this.$element.getAttribute('displayformat');
+        const displayFormatAttr = this.nativeElement.getAttribute('displayformat');
         // support for old projects having percentage/ absolute displayformat
         if (displayFormatAttr !== 'ABSOLUTE') {
             this.progressDisplayValue = this.progressDisplayValue.toFixed(getDecimalCount(this.displayformat));
@@ -209,8 +212,8 @@ export class ProgressBarComponent extends BaseComponent {
         $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, private cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

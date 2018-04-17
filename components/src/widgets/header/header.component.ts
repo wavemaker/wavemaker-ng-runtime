@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './header.props';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
 
 registerProps();
 
@@ -20,6 +20,6 @@ export class HeaderComponent extends BaseComponent {
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(WIDGET_CONFIG, inj, elRef, cdr);
 
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

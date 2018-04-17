@@ -1,8 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+
+import { IStylableComponent } from '../base/framework/types';
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './rich-text-editor.props';
 import { invokeEventHandler } from '../../utils/widget-utils';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
@@ -26,7 +28,7 @@ declare const _, $;
     selector: 'div[wmRichTextEditor]',
     templateUrl: './rich-text-editor.component.html'
 })
-export class RichTextEditorComponent extends BaseComponent implements OnInit {
+export class RichTextEditorComponent extends BaseComponent implements OnInit, OnDestroy {
 
     $richTextEditor;
     $hiddenInputEle;
@@ -78,9 +80,9 @@ export class RichTextEditorComponent extends BaseComponent implements OnInit {
         return this.htmlcontent;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_INFO, inj, elRef, cdr);
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER, ['height'])
+    constructor(inj: Injector) {
+        super(inj, WIDGET_INFO);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER, ['height']);
     }
 
     onPropertyChange(key, nv, ov?) {
@@ -143,8 +145,8 @@ export class RichTextEditorComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        this.$richTextEditor = $(this.$element.querySelector('[richTextEditor]'));
-        this.$hiddenInputEle = $(this.$element.querySelector('input.model-holder.ng-hide'));
+        this.$richTextEditor = $(this.nativeElement.querySelector('[richTextEditor]'));
+        this.$hiddenInputEle = $(this.nativeElement.querySelector('input.model-holder.ng-hide'));
         this.initEditor();
     }
 

@@ -1,4 +1,4 @@
-import { register, PROP_STRING, PROP_STRING_NOTIFY, PROP_NUMBER_NOTIFY } from '../../utils/widget-props';
+import { register, PROP_STRING, PROP_STRING_NOTIFY, PROP_NUMBER_NOTIFY } from '../base/framework/widget-props';
 
 export const registerProps = () => {
     register(

@@ -1,8 +1,11 @@
-import { ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
+
 import { BaseComponent } from './base.component';
+import { IWidgetConfig } from './framework/types';
 
 export abstract class BaseFormComponent extends BaseComponent implements ControlValueAccessor {
+    protected datavalue;
+
     private _onChange: any = () => {};
     private _onTouched: any = () => {};
 
@@ -26,7 +29,7 @@ export abstract class BaseFormComponent extends BaseComponent implements Control
         this._onTouched();
     }
 
-    constructor (widgetConfig: {widgetType, hostClass}, inj: any, $host: ElementRef, cdr: ChangeDetectorRef, propsReady?: Promise<void>) {
-        super(widgetConfig, inj, $host, cdr, propsReady);
+    constructor (inj: any, widgetConfig: IWidgetConfig) {
+        super(inj, widgetConfig);
     }
 }

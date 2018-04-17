@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
+import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER, PROP_STRING_NOTIFY, register } from '../base/framework/widget-props';
 
 export const richTextProps = new Map(
     [

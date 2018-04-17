@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-layoutgrid', (): BuildTaskDef => {
+register('wm-layoutgrid', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmLayoutGrid ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

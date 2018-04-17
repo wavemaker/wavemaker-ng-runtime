@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-checkbox', (): BuildTaskDef => {
+register('wm-checkbox', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmCheckbox role="input" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

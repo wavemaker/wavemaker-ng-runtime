@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'footer';
 
-register('wm-footer', (): BuildTaskDef => {
+register('wm-footer', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmFooter partialContainer data-role="page-footer" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

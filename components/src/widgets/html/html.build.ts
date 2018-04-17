@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-html', (): BuildTaskDef => {
+register('wm-html', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmHtml ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

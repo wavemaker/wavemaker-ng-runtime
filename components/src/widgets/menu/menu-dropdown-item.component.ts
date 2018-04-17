@@ -1,5 +1,6 @@
 import { Component, Input, ElementRef, ViewContainerRef, SkipSelf, Optional, ComponentFactoryResolver, forwardRef, AfterViewInit, ViewChild, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { MenuComponent, MenuParent } from './menu.component';
 import { MenuDropdownComponent } from './menu-dropdown.component';
 

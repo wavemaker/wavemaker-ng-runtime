@@ -1,4 +1,4 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 import { Element } from '@angular/compiler';
 
 const wmlistTag = 'wm-list';
@@ -7,7 +7,7 @@ const wmListTemplateTag = 'wm-listtemplate';
 const listTemplateTagName = 'ng-template';
 const dataSetKey = 'dataset';
 
-register(wmlistTag, (): BuildTaskDef => {
+register(wmlistTag, (): IBuildTaskDef => {
         return {
             pre: (attrs) => {
                 const tmpl = getAttrMarkup(attrs);
@@ -47,7 +47,7 @@ register(wmlistTag, (): BuildTaskDef => {
     }
 );
 
-register(wmListTemplateTag, (): BuildTaskDef => {
+register(wmListTemplateTag, (): IBuildTaskDef => {
     return {
         pre: () => `<${listTemplateTagName} #listTemplate let-item>`,
         post: () => `</${listTemplateTagName}>`

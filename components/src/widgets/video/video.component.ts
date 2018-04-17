@@ -1,10 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
+
+import { getResourceURL, insertAfter, isString, removeAttr, setAttr } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './video.props';
-import { styler } from '../../utils/styler';
-import { getResourceURL, insertAfter, removeAttr, setAttr } from '@wm/utils';
 import { getImageUrl } from '../../utils/widget-utils';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 
 const DEFAULT_CLS = 'app-video';
@@ -35,13 +38,13 @@ export class VideoComponent extends BaseComponent {
     subtitlelang;
 
     isValidResource(value) {
-        return value && typeof value === 'string' && value.indexOf('Variables') === -1;
+        return value && isString(value);
     }
 
     onPropertyChange(key, newVal, oldVal) {
         switch (key) {
             case 'videoposter':
-                const $video = this.$element.querySelector('video');
+                const $video = this.nativeElement.querySelector('video');
                 if (!newVal) {
                     removeAttr($video, 'poster');
                 } else {
@@ -50,33 +53,33 @@ export class VideoComponent extends BaseComponent {
                 break;
             case 'mp4format':
                 if (this.isValidResource(newVal)) {
-                    this.mp4videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
+                    this.mp4videoUrl = newVal;
                 }
                 break;
             case 'oggformat':
                 if (this.isValidResource(newVal)) {
-                    this.oggvideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
+                    this.oggvideoUrl = newVal;
                 }
                 break;
             case 'webmformat':
                 if (this.isValidResource(newVal)) {
-                    this.webmvideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
+                    this.webmvideoUrl = newVal;
                 }
                 break;
             case 'subtitlesource':
                 if (this.isValidResource(newVal)) {
-                    const $track = this.$element.querySelector('track');
+                    const $track = this.nativeElement.querySelector('track');
                     if ($track) {
                         $track.remove();
                     }
-                    insertAfter(getTrack(this.subtitlelang, getResourceURL(newVal)), this.$element.querySelector('video'));
+                    insertAfter(getTrack(this.subtitlelang, getResourceURL(newVal)), this.nativeElement.querySelector('video'));
                 }
                 break;
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

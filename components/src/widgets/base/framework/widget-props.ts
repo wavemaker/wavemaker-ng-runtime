@@ -1,12 +1,11 @@
+// map of widgetSubType vs WidgetProps
 const widgetProps = new Map<string, Map<string, any>>();
 
-export const getWidgetPropsByType = (widgetType: string): Map<string, any> => {
-    return widgetProps.get(widgetType);
-};
+// returns the widgetPropsMap associated with the given identifier
+export const getWidgetPropsByType = (identifier: string): Map<string, any> => widgetProps.get(identifier);
 
-export const register = (widgetType, props) => {
-    widgetProps.set(widgetType, props);
-};
+// register the widgetProps with the given identifier
+export const register = (identifier: string, props: Map<string, any>) => widgetProps.set(identifier, props);
 
 export enum PROP_TYPE {
     BOOLEAN = 1,
@@ -20,4 +19,3 @@ export const PROP_NUMBER: any = {type: PROP_TYPE.NUMBER};
 export const PROP_NUMBER_NOTIFY: any = {type: PROP_TYPE.NUMBER, notify: true};
 export const PROP_BOOLEAN: any = {type: PROP_TYPE.BOOLEAN, notify: true};
 export const PROP_BOOLEAN_NOTIFY: any = {type: PROP_TYPE.BOOLEAN, notify: true};
-

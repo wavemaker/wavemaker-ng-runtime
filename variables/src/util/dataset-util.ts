@@ -93,7 +93,7 @@ export default class DatasetUtil {
 
         if (_.isObject(i)) {
             index = _.findIndex(dataSet, i);
-            //When exactMatch property is set to true delete only when every property values are same*/
+            // When exactMatch property is set to true delete only when every property values are same*/
             if (index > -1 && (!exactMatch || (exactMatch && _.isEqual(dataSet[index], i)))) {
                 dataSet.splice(index, 1);
             }

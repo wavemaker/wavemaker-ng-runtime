@@ -1,10 +1,11 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { idMaker, FormWidgetType } from '@wm/utils';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { FormWidgetType, IDGenerator } from '@wm/utils';
+
 import { ALLFIELDS } from '../../utils/data-utils';
 import { isDataSetWidget } from '../../utils/widget-utils';
 
 const tagName = 'div';
-const idGen = idMaker('formfield_');
+const idGen = new IDGenerator('formfield_');
 
 const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
     let tmpl;
@@ -107,7 +108,7 @@ const getCaptionByWidget = (attrs, widgetType, counter) => {
     return caption;
 };
 
-register('wm-form-field', (): BuildTaskDef => {
+register('wm-form-field', (): IBuildTaskDef => {
     return {
         requires: ['wm-form', 'wm-liveform'],
         pre: (attrs, shared, parentForm, parentLiveForm) => {

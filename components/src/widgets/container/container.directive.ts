@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
+import { Directive, forwardRef, Injector } from '@angular/core';
+
+import { addClass } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './container.props';
-import { addClass } from '@wm/utils';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 
 registerProps();
 
@@ -17,10 +20,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-container', hostClass: DEFAULT_CLS};
 })
 export class ContainerDirective extends BaseComponent {
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        addClass(this.$element, DEFAULT_CLS);
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
+        addClass(this.nativeElement, DEFAULT_CLS);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

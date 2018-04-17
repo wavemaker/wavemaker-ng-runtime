@@ -1,13 +1,17 @@
-import { ElementRef, Injector, Directive, Optional, ChangeDetectorRef, OnInit, AfterContentInit, ContentChild, Attribute } from '@angular/core';
-import { ParentForm } from '../form/form.component';
-import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
-import { registerProps } from './form-field.props';
-import { FormBuilder,  FormGroup, Validators } from '@angular/forms';
+import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { isDefined, toBoolean } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseComponent } from '../base/base.component';
+import { ParentForm } from '../form/form.component';
+import { registerProps } from './form-field.props';
 import { getEvaluatedData, isDataSetWidget } from '../../utils/widget-utils';
-import { fetchRelatedFieldData, ALLFIELDS, getDistinctValuesForField } from '../../utils/data-utils';
+import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField } from '../../utils/data-utils';
 import { getDefaultViewModeWidget, parseValueByType } from '../../utils/live-utils';
+
 declare const _;
 
 const DEFAULT_CLS = '';
@@ -46,15 +50,20 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
     binddataset;
     form;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
-                @Optional() form: ParentForm, fb: FormBuilder,
-                @Attribute('dataset.bind') binddataset,
-                @Attribute('widgettype') _widgetType) {
+    constructor(
+        inj: Injector,
+        @Optional() form: ParentForm,
+        fb: FormBuilder,
+        @Attribute('dataset.bind') binddataset,
+        @Attribute('widgettype') _widgetType
+    ) {
+
         const WIDGET_CONFIG = {widgetType: _widgetType, hostClass: DEFAULT_CLS};
-        super(WIDGET_CONFIG, inj, elRef, cdr, new Promise(res => {
-            registerProps(_widgetType);
-            res();
-        }));
+
+        registerProps(_widgetType);
+
+        super(inj, WIDGET_CONFIG);
+
         this._validators = [];
         this.applyProps = new Set();
         this.class = '';
@@ -214,7 +223,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         super.ngOnInit();
         this.ngForm = this.form.ngForm;
         this.ngForm.addControl(this.key || this.name , this.createControl());
-        styler(this.$element, this);
+        styler(this.$element, this as IStylableComponent);
     }
 
     ngAfterContentInit() {

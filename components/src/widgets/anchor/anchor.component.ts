@@ -1,7 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector } from '@angular/core';
+import { Component, HostBinding, Injector } from '@angular/core';
+
 import { encodeUrl, setAttr } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
+
 import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
 import { registerProps } from './anchor.props';
 
 registerProps();
@@ -14,31 +18,31 @@ const WIDGET_CONFIG = {widgetType: 'wm-anchor', hostClass: DEFAULT_CLS};
     templateUrl: './anchor.component.html'
 })
 export class AnchorComponent extends BaseComponent {
-    encodeurl;
+    public encodeurl;
 
+    @HostBinding('target') target: string;
     @HostBinding('attr.tabindex') tabindex: number;
     @HostBinding('attr.accesskey') shortcutkey: string;
-    @HostBinding('target') target: string;
     @HostBinding('attr.icon-position') iconposition: string;
 
-    onPropertyChange(key, nv, ov?) {
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+
+        setAttr(this.nativeElement, 'href', 'javascript:void(0)');
+
+        styler(this.nativeElement, this as IStylableComponent);
+    }
+
+    onPropertyChange(key: string, nv: any) {
         if (key === 'hyperlink') {
             if (this.encodeurl) {
                 nv = encodeUrl(nv);
             }
-            /* if hyperlink starts with 'www.' append '//' in the beginning */
+            // if hyperlink starts with 'www.' append '//' in the beginning
             if (nv.startsWith(nv, 'www.')) {
                 nv = `//${nv}`;
             }
-            setAttr(this.$element, 'href', nv);
+            setAttr(this.nativeElement, 'href', nv);
         }
-    }
-
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-
-        setAttr(this.$element, 'href', 'javascript:void(0)');
-
-        styler(this.$element, this);
     }
 }

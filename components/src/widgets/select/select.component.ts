@@ -1,10 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
-import { styler } from '../../utils/styler';
+import { Component, forwardRef, Injector, OnInit } from '@angular/core';
+
+import { removeAttr, setAttr } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { BaseFormComponent } from '../base/base-form.component';
+import { styler } from '../base/framework/styler';
 import { registerProps } from './select.props';
 import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../utils/form-utils';
-import { removeAttr, setAttr } from '@wm/utils';
-import { invokeEventHandler, getControlValueAccessor } from '../../utils/widget-utils';
-import { BaseFormComponent } from '../base/base-form.component';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 
 declare const _;
 
@@ -143,12 +146,12 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     ngOnInit() {
         super.ngOnInit();
-        styler(<HTMLElement>this.$element.children[0], this);
+        styler(this.nativeElement.children[0] as HTMLElement, this as IStylableComponent);
     }
 }

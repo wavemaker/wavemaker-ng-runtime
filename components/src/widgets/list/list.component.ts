@@ -1,10 +1,11 @@
-import { Component, Injector, ChangeDetectorRef,
-    ContentChild, ElementRef, ViewChild, ViewChildren, QueryList, Attribute,
-    TemplateRef, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+
+import { $appDigest, isDefined, isObject } from '@wm/utils';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './list.props';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
-import { isDefined, isObject, $appDigest } from '@wm/utils';
 import { NAVIGATION_TYPE } from '../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
@@ -89,12 +90,14 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
         $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
-                @Attribute('itemclass.bind') public binditemclass,
-                @Attribute('disableitem.bind') public binddisableitem,
-                @Attribute('dataset.bind') public binddataset) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
+    constructor(
+        inj: Injector,
+        @Attribute('itemclass.bind') public binditemclass,
+        @Attribute('disableitem.bind') public binddisableitem,
+        @Attribute('dataset.bind') public binddataset
+    ) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.SHELL);
     }
 
     /**
@@ -184,7 +187,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
     }
 
     private bindScrollEvt() {
-        const $el = $(this.$element),
+        const $el = $(this.nativeElement),
             $ul = $el.find('> ul'),
             $firstChild = $ul.children().first(),
             $c = this;
@@ -209,7 +212,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
         if (scrollNode.scrollHeight > scrollNode.clientHeight) {
             $scrollParent
                 .each(function () {
-                    //scrollTop property is 0 or undefined for body in IE, safari.
+                    // scrollTop property is 0 or undefined for body in IE, safari.
                     lastScrollTop = this === document ? (this.body.scrollTop || $(window).scrollTop()) : this.scrollTop;
                 })
                 .off('scroll.scroll_evt')
@@ -218,7 +221,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
                         clientHeight,
                         totalHeight,
                         scrollTop;
-                    //scrollingElement is undefined for IE, safari. use body as target Element
+                    // scrollingElement is undefined for IE, safari. use body as target Element
                     target =  target === document ? (target.scrollingElement || document.body) : target;
 
                     clientHeight = target.clientHeight;
@@ -264,7 +267,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
             });
 
             setTimeout(() => {
-                //Functionality of On-Demand and Scroll will be same except we don't attach scroll events
+                // Functionality of On-Demand and Scroll will be same except we don't attach scroll events
                 if (this.fieldDefs.length && !this.onDemandLoad) {
                     this.bindScrollEvt();
                 }
@@ -341,7 +344,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
         });
 
         dataNavigator.maxResults = this.pagesize || 5;
-        this.dataNavigator.setBindDataSet(this.binddataset, this.parent);
+        this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent);
     }
 
     private onDataSetChange(newVal) {
@@ -458,7 +461,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
     }
 
     private configureDnD() {
-        const $el = $(this.$element),
+        const $el = $(this.nativeElement),
             $ulEle = $el.find('.app-livelist-container'),
             $is = this;
         $ulEle.sortable({

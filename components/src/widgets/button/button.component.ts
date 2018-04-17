@@ -1,12 +1,15 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector } from '@angular/core';
+import { Component, HostBinding, Injector } from '@angular/core';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent, IWidgetConfig } from '../base/framework/types';
+
 import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
 import { registerProps } from './button.props';
 
 registerProps();
 
 const DEFAULT_CLS = 'btn app-button';
-const WIDGET_CONFIG = {widgetType: 'wm-button', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-button', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: 'button[wmButton]',
@@ -20,9 +23,8 @@ export class ButtonComponent extends BaseComponent {
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

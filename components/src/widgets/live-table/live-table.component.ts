@@ -1,10 +1,13 @@
 import { AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
-import { styler } from '../../utils/styler';
+
+import { getClonedObject, isDefined } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './live-table.props';
 import { FormComponent } from '../form/form.component';
 import { TableComponent } from '../table/table.component';
-import { getClonedObject, isDefined } from '@wm/utils';
 import { DialogService } from '../dialog/dialog.service';
 
 declare const _;
@@ -204,7 +207,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
     }
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private dialogService: DialogService) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

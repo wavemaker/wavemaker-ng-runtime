@@ -1,6 +1,8 @@
-import { ChangeDetectorRef, Directive, ElementRef, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
+import { Directive, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
 import { registerProps } from './textarea.props';
 
 registerProps();
@@ -32,9 +34,9 @@ export class TextareaDirective extends BaseComponent {
         this.datavalue = event;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

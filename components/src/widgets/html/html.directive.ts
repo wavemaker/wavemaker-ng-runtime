@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
+
+import { setCSS } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './html.props';
-import { styler } from '../../utils/styler';
-import { setCSS } from '@wm/utils';
 
 const DEFAULT_CLS = 'app-html-container';
 const WIDGET_CONFIG = {widgetType: 'wm-html', hostClass: DEFAULT_CLS};
@@ -14,20 +17,20 @@ registerProps();
 })
 export class HtmlDirective extends BaseComponent {
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 
     onStyleChange(key, newVal, oldVal) {
         if (key === 'height') {
-            setCSS(this.$element, 'overflow', newVal ? 'auto' : '');
+            setCSS(this.nativeElement, 'overflow', newVal ? 'auto' : '');
         }
     }
 
     onPropertyChange(key, newVal) {
         if (key === 'content') {
-            this.$element.innerHTML = newVal;
+            this.nativeElement.innerHTML = newVal;
         }
     }
 }

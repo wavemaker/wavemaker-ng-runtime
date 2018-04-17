@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'nav';
 
-register('wm-pagination', (): BuildTaskDef => {
+register('wm-pagination', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmPagination data-identifier="pagination" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

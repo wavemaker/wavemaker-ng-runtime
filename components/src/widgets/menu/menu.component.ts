@@ -1,11 +1,15 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnDestroy, OnInit } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { registerProps } from './menu.props';
-import { styler } from '../../utils/styler';
-import { getOrderedDataSet } from '../../utils/form-utils';
-import { $appDigest, addClass, findValueOf, isObject, removeClass, validateAccessRoles } from '@wm/utils';
-import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
+import { Component, forwardRef, Injector, OnDestroy, OnInit } from '@angular/core';
+
 import { Subject } from 'rxjs/Subject';
+
+import { $appDigest, addClass, findValueOf, isObject, removeClass, validateAccessRoles } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseComponent } from '../base/base.component';
+import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
+import { registerProps } from './menu.props';
+import { getOrderedDataSet } from '../../utils/form-utils';
 
 registerProps();
 
@@ -76,9 +80,9 @@ export class MenuComponent extends BaseComponent implements MenuParent, OnInit, 
 
     select = new Subject();
 
-    constructor(inj: Injector, elRef: ElementRef, public cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 
     onPropertyChange(key, newVal, oldVal?) {
@@ -91,22 +95,22 @@ export class MenuComponent extends BaseComponent implements MenuParent, OnInit, 
             case 'menuposition':
                 switch (newVal) {
                     case POSITION.DOWN_RIGHT:
-                        removeClass(this.$element, 'dropup');
+                        removeClass(this.nativeElement, 'dropup');
                         this.menualign = PULL_LEFT;
                         this.menuCaret = CARET_DOWN_CLS;
                         break;
                     case POSITION.DOWN_LEFT:
-                        removeClass(this.$element, 'dropup');
+                        removeClass(this.nativeElement, 'dropup');
                         this.menualign = PULL_RIGHT;
                         this.menuCaret = CARET_DOWN_CLS;
                         break;
                     case POSITION.UP_LEFT:
-                        addClass(this.$element, 'dropup');
+                        addClass(this.nativeElement, 'dropup');
                         this.menualign = PULL_RIGHT;
                         this.menuCaret = CARET_UP_CLS;
                         break;
                     case POSITION.UP_RIGHT:
-                        addClass(this.$element, 'dropup');
+                        addClass(this.nativeElement, 'dropup');
                         this.menualign = PULL_LEFT;
                         this.menuCaret = CARET_UP_CLS;
                         break;
@@ -177,6 +181,6 @@ export class MenuComponent extends BaseComponent implements MenuParent, OnInit, 
         if (this._ngOnInit) {
             this._ngOnInit();
         }
-        this.destroy$.subscribe(() => this.select.complete());
+        this.registerDestroyListener(() => this.select.complete());
     }
 }

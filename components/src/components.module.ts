@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BsDatepickerModule, BsDropdownModule, TimepickerModule, ProgressbarModule, TypeaheadModule, ModalModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
+
 import { DialogService } from './widgets/dialog/dialog.service';
 
 import { AccordionDirective } from './widgets/accordion/accordion.component';
@@ -28,7 +29,7 @@ import { DialogActionsComponent } from './widgets/dialog/dialog-actions/dialog-a
 import { DialogComponent } from './widgets/dialog/dialog.component';
 import { DialogHeaderComponent } from './widgets/dialog/dialog-header/dialog-header.component';
 import { FooterDirective } from './widgets/footer/footer.directive';
-import { FormActionDirective} from './widgets/form/form-action/form-action.directive';
+import { FormActionDirective } from './widgets/form/form-action/form-action.directive';
 import { FormComponent } from './widgets/form/form.component';
 import { FormFieldDirective } from './widgets/form-field/form-field.directive';
 import { HeaderComponent } from './widgets/header/header.component';
@@ -68,6 +69,8 @@ import { RatingComponent } from './widgets/rating/rating.component';
 import { RedrawableDirective } from './widgets/redraw/redrawable.directive';
 import { RichTextEditorComponent } from './widgets/rich-text-editor/rich-text-editor.component';
 import { RightPanelComponent } from './widgets/right-panel/right-panel.component';
+import { SafeHtmlDirective } from './directives/safe-html.directive';
+import { SafeSrcDirective } from './directives/safe-src.directive';
 import { SearchComponent } from './widgets/search/search.component';
 import { SelectComponent } from './widgets/select/select.component';
 import { SliderComponent } from './widgets/slider/slider.component';
@@ -150,6 +153,8 @@ const wmComponents = [
     RedrawableDirective,
     RichTextEditorComponent,
     RightPanelComponent,
+    SafeHtmlDirective,
+    SafeSrcDirective,
     SearchComponent,
     SelectComponent,
     SliderComponent,

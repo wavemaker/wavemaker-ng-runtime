@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
-import { registerProps } from './accordion.props';
+import { Directive, forwardRef, Injector } from '@angular/core';
+
 import { $appDigest } from '@wm/utils';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseComponent } from '../base/base.component';
+import { registerProps } from './accordion.props';
 
 registerProps();
 
@@ -27,7 +30,7 @@ export class AccordionDirective extends BaseComponent {
         paneScope.paneId = this.paneIndex;
         this.paneIndex++;
         if (paneScope.paneId === this.defaultpaneindex) {
-            paneScope.expandPane();
+            paneScope.expandPane(); // Todo - Nikhilesh
         }
     }
 
@@ -47,15 +50,15 @@ export class AccordionDirective extends BaseComponent {
             case 'defaultpaneindex':
                 this.activePane = this.panes[nv || 0];
                 if (this.activePane) {
-                    this.activePane.expandPane();
+                    this.activePane.expandPane(); // Todo - Nikhilesh
                 }
                 break;
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(this.$element, this as IStylableComponent, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 }

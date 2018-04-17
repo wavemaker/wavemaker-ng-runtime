@@ -1,8 +1,9 @@
 import { BaseComponent } from '../base/base.component';
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
+import { Component, Injector } from '@angular/core';
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
 import { getImageUrl } from '../../utils/widget-utils';
 import { registerProps } from './navbar.props';
+import { IStylableComponent } from '../base/framework/types';
 
 registerProps();
 
@@ -45,9 +46,9 @@ export class NavbarComponent extends BaseComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
-        this.$navbarContent = $(this.$element).children().find('> #collapse-content');
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        this.$navbarContent = $(this.nativeElement).children().find('> #collapse-content');
     }
 }

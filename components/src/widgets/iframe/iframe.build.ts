@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-iframe', (): BuildTaskDef => {
+register('wm-iframe', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmIframe ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

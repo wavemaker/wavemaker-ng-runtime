@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-colorpicker', (): BuildTaskDef => {
+register('wm-colorpicker', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmColorPicker ${getAttrMarkup(attrs)} role="input">`,
         post: () => `</${tagName}>`

@@ -1,13 +1,15 @@
-import { debounce, idMaker } from './utils';
+import { IDGenerator } from '@wm/utils';
+
+import { debounce } from './utils';
 import { $parseExpr } from './expression-parser';
 
 declare const _;
 
 const registry = new Map<string, any>();
 
-const idGen = idMaker('watch-id-');
+const watchIdGenerator = new IDGenerator('watch-id-');
 
-export const $watch = (expr, $scope, $locals, listener, identifier = idGen.next().value) => {
+export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid()) => {
     const fn = $parseExpr(expr);
 
     registry.set(identifier, {

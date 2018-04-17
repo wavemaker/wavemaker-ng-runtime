@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register, PROP_BOOLEAN_NOTIFY } from '../../utils/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register, PROP_BOOLEAN_NOTIFY } from '../base/framework/widget-props';
 
 export const selectProps = new Map(
     [

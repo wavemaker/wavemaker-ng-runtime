@@ -1,10 +1,13 @@
-import { ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { registerProps } from './dialog.props';
+import { Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseComponent } from '../base/base.component';
 import { DialogService } from './dialog.service';
 import { DialogActionsComponent } from './dialog-actions/dialog-actions.component';
+import { registerProps } from './dialog.props';
 
 declare const $;
 
@@ -37,9 +40,14 @@ export class DialogComponent extends BaseComponent implements OnInit {
 
     @ContentChild(DialogActionsComponent) dialogActionsComponent;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, public modalService: BsModalService, private dialogService: DialogService) {
-        super(WIDGET_INFO, inj, elRef, cdr);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER, ['width']);
+    constructor(inj: Injector, public modalService: BsModalService, private dialogService: DialogService) {
+        super(inj, WIDGET_INFO);
+        styler(
+            this.nativeElement,
+            this as IStylableComponent,
+            APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER,
+            ['width']
+        );
     }
 
     onBeforeDialogOpen() {
@@ -65,7 +73,7 @@ export class DialogComponent extends BaseComponent implements OnInit {
         switch (key) {
             case 'width':
                 if (nv) {
-                    $(this.$element).closest('.modal-dialog').css('width', nv);
+                    $(this.nativeElement).closest('.modal-dialog').css('width', nv);
                 }
                 break;
             case 'height':

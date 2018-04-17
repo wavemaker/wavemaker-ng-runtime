@@ -1,8 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
-import { styler } from '../../utils/styler';
+import { Component, forwardRef, Injector } from '@angular/core';
+
+import { styler } from '../base/framework/styler';
+import { BaseFormComponent } from '../base/base-form.component';
+import { IStylableComponent } from '../base/framework/types';
 import { registerProps } from './slider.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
-import { BaseFormComponent } from '../base/base-form.component';
 
 const DEFAULT_CLS = 'app-slider slider';
 const WIDGET_CONFIG = {widgetType: 'wm-slider', hostClass: DEFAULT_CLS};
@@ -21,9 +23,9 @@ export class SliderComponent extends BaseFormComponent {
     oldVal;
     datavalue;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 
     onChange($event) {

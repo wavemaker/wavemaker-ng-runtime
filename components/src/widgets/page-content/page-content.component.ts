@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+
+import { switchClass } from '@wm/utils';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './page-content.props';
-import { switchClass } from '@wm/utils';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 
 registerProps();
 
@@ -17,13 +20,13 @@ export class PageContentComponent extends BaseComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
-            switchClass(this.$element, `col-md-${nv} col-sm-${nv}`, `col-md-${ov} col-sm-${ov}`);
+            switchClass(this.nativeElement, `col-md-${nv} col-sm-${nv}`, `col-md-${ov} col-sm-${ov}`);
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

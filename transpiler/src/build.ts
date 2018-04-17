@@ -5,6 +5,13 @@ import {
     Comment
 } from '@angular/compiler';
 
+import { isString } from '@wm/utils';
+
+interface IProviderInfo {
+    nodeName: string;
+    provide: Map<string, any>;
+}
+
 const BIND_REG_EX = /^\s*bind:(.*)$/g;
 
 const OVERRIDES = {
@@ -30,8 +37,6 @@ const quoteAttr = v => {
 const registry = new Map<string, any>();
 const htmlParser = new HtmlParser();
 const ignoreComments = true;
-
-const isString = s => typeof s === 'string';
 
 const empty = () => '';
 
@@ -102,12 +107,12 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
     return attrMarkup;
 };
 
-const getRequiredProviders = (nodeDef, providers) => {
+const getRequiredProviders = (nodeDef: IBuildTaskDef, providers: Array<IProviderInfo>) => {
     if (!nodeDef.requires) {
         return;
     }
 
-    let requires = nodeDef.requires;
+    let requires = nodeDef.requires as any;
 
     if (isString(requires)) {
         requires = [requires];
@@ -117,7 +122,13 @@ const getRequiredProviders = (nodeDef, providers) => {
         return;
     }
 
-    return requires.map(require => providers.get(require));
+    return requires.map(require => {
+        for (let i = providers.length - 1; i >= 0; i-- ) {
+            if (providers[i].nodeName === require) {
+                return providers[i].nodeName;
+            }
+        }
+    });
 };
 
 const DIMENSION_PROPS = ['padding', 'borderwidth', 'margin'];
@@ -179,7 +190,7 @@ const processDimensionAttributes = attrMap => {
     });
 };
 
-const processNode = (node, providers?) => {
+const processNode = (node, providers?: Array<IProviderInfo>) => {
     const nodeDef = registry.get(node.name);
 
     let pre, post, template;
@@ -196,12 +207,13 @@ const processNode = (node, providers?) => {
     let shared;
 
     if (!providers) {
-        providers = new Map<string, Map<string, string>>();
+        providers = [];
     }
 
     const isElementType = node instanceof Element;
 
     if (isElementType) {
+        let provideInfo: IProviderInfo;
         attrMap = getAttrMap(node.attrs);
 
         processDimensionAttributes(attrMap);
@@ -212,7 +224,11 @@ const processNode = (node, providers?) => {
             template(node, shared, ...requiredProviders);
             markup = (<any>pre)(attrMap, shared, ...requiredProviders);
             if (nodeDef.provide) {
-                providers.set(node.name, nodeDef.provide(attrMap, shared, ...requiredProviders));
+                provideInfo = {
+                    nodeName: node.name,
+                    provide: nodeDef.provide(attrMap, shared, ...requiredProviders)
+                };
+                providers.push(provideInfo);
             }
         } else {
             markup = `<${node.name} ${getAttrMarkup(attrMap)}>`;
@@ -221,7 +237,9 @@ const processNode = (node, providers?) => {
         node.children.forEach(child => markup += processNode(child, providers));
 
         if (nodeDef) {
-            providers.delete(node.name);
+            if (provideInfo) {
+                providers.splice(providers.indexOf(provideInfo), 1);
+            }
             markup += (<any>post)(attrMap, shared, ...requiredProviders);
         } else {
             if (node.endSourceSpan) {
@@ -257,9 +275,9 @@ export const transpile = (markup: string = '') => {
     return output;
 };
 
-export const register = (nodeName: string, nodeDefFn: () => BuildTaskDef) => registry.set(nodeName, nodeDefFn());
+export const register = (nodeName: string, nodeDefFn: () => IBuildTaskDef) => registry.set(nodeName, nodeDefFn());
 
-export interface BuildTaskDef {
+export interface IBuildTaskDef {
     requires?: string | Array<string>;
     template?: (node: Element | Text | Comment, shared?: Map<any, any>, ...requires: Array<Map<any, any>>) => void;
     pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;

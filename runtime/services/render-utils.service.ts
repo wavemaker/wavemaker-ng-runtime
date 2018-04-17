@@ -1,17 +1,19 @@
 import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, ViewContainerRef } from '@angular/core';
-import { WmComponentsModule } from '@wm/components';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
+import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+import { WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
+import { getValidJSON } from '@wm/utils';
+
 import { App } from './app.service';
-import { ActivatedRoute } from '@angular/router';
+import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
-import { CommonModule } from '@angular/common';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
 import { I18nService } from './i18n.service';
-import { getValidJSON } from '@wm/utils';
 
 const scriptCache = new Map<string, Function>();
 const noop = (...args) => {};
@@ -236,7 +238,7 @@ export class RenderUtilsService {
             prefabInstance.App = this.app;
             containerWidget.onPropertyChange = prefabInstance.onPropertyChange;
             containerWidget.onStyleChange = prefabInstance.onPropertyChange;
-            prefabInstance.$element = containerWidget.$element;
+            prefabInstance.element = containerWidget.element;
 
             onReadyPromise.then(() => (prefabInstance.onReady || noop)());
         };

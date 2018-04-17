@@ -1,10 +1,13 @@
-import { AfterViewInit, ChangeDetectorRef, ComponentFactoryResolver, Directive, ElementRef, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ComponentFactoryResolver, Directive, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { addClass, isObject, validateAccessRoles } from '@wm/utils';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './nav.props';
-import { addClass, isObject, validateAccessRoles } from '@wm/utils';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { invokeEventHandler, isActiveNavItem } from '../../utils/widget-utils';
-import { Router } from '@angular/router';
 import { getOrderedDataSet } from '../../utils/form-utils';
 import { MenuComponent } from '../menu/menu.component';
 
@@ -72,7 +75,7 @@ export class NavDirective extends BaseComponent implements AfterViewInit, OnInit
     }
 
     constructNav() {
-        const $el = $(this.$element);
+        const $el = $(this.nativeElement);
         $el.empty();
         // destroy the previously created dynamic menu components
         this.destroyMenuComponents();
@@ -173,10 +176,10 @@ export class NavDirective extends BaseComponent implements AfterViewInit, OnInit
                 } else if (nv === 'navbar') {
                     _cls = 'navbar-nav';
                 }
-                addClass(this.$element, _cls);
+                addClass(this.nativeElement, _cls);
                 break;
             case 'layout':
-                addClass(this.$element, `nav-${nv}`);
+                addClass(this.nativeElement, `nav-${nv}`);
                 break;
             case 'dataset':
                 this.nodes = this.getNodes();
@@ -192,19 +195,19 @@ export class NavDirective extends BaseComponent implements AfterViewInit, OnInit
         }
     }
 
-    constructor(private inj: Injector,
-                elRef: ElementRef,
-                cdr: ChangeDetectorRef,
-                private route: Router,
-                private vcr: ViewContainerRef,
-                private componentFactoryResolver: ComponentFactoryResolver) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
-        this.destroy$.subscribe(() => this.destroyMenuComponents());
+    constructor(
+        private inj: Injector,
+        private route: Router,
+        private vcr: ViewContainerRef,
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        this.registerDestroyListener(() => this.destroyMenuComponents());
     }
 
     ngAfterViewInit() {
-        const $el = $(this.$element);
+        const $el = $(this.nativeElement);
         /* Element on select functionality */
         $el.on('click.on-select', '.app-anchor', (e) => {
             const $target    = $(e.target),

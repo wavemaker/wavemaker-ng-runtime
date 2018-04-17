@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-container', (): BuildTaskDef => {
+register('wm-container', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmContainer partialContainer ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

@@ -1,9 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
-import { registerProps } from './checkbox.props';
-import { styler } from '../../utils/styler';
+import { Component, forwardRef, Injector, OnInit } from '@angular/core';
+
 import { toggleClass } from '@wm/utils';
-import { invokeEventHandler, getControlValueAccessor } from '../../utils/widget-utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { registerProps } from './checkbox.props';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
@@ -43,7 +46,7 @@ export class CheckboxComponent  extends BaseFormComponent implements OnInit {
     }
 
     set datavalue(value: boolean | string) {
-        if ((this.checkedvalue  && this.checkedvalue === value) || value === true) {
+        if ((this.checkedvalue && this.checkedvalue === value) || value === true) {
             this.model = true;
         } else {
             this.model = false;
@@ -53,17 +56,17 @@ export class CheckboxComponent  extends BaseFormComponent implements OnInit {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'type') {
-            toggleClass(this.$element, 'app-toggle', nv === 'toggle');
+            toggleClass(this.nativeElement, 'app-toggle', nv === 'toggle');
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.$element.querySelector('label'), this);
+        styler(this.nativeElement.querySelector('label'), this as IStylableComponent);
     }
 
     onChange($event) {

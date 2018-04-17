@@ -76,6 +76,10 @@ export const setAttr = ($node: HTMLElement, attrName: string, val: any) => {
     invokeLater(() => $node.setAttribute(attrName, val));
 };
 
+export const setHtml = (node: HTMLElement, html: string) => {
+    invokeLater(() => node.innerHTML = html);
+};
+
 export const removeAttr = ($node: HTMLElement, attrName: string) => {
     invokeLater(() => $node.removeAttribute(attrName));
 };

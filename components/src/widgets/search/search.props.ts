@@ -1,4 +1,4 @@
-import { PROP_STRING, PROP_STRING_NOTIFY, register, PROP_NUMBER, PROP_BOOLEAN } from '../../utils/widget-props';
+import { PROP_STRING, PROP_STRING_NOTIFY, register, PROP_NUMBER, PROP_BOOLEAN } from '../base/framework/widget-props';
 
 export const searchProps = new Map(
     [

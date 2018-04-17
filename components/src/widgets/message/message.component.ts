@@ -1,9 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
+import { Component, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+
+import { $appDigest, addClass, removeClass } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
+import { BaseComponent } from '../base/base.component';
 import { registerProps } from './message.props';
-import { addClass, removeClass } from '@wm/utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 
 const DEFAULT_CLS = 'alert app-message';
@@ -29,7 +32,7 @@ export class MessageComponent extends BaseComponent {
     }
 
     onMessageTypeChange(newVal) {
-        removeClass(this.$element, this.messageClass);
+        removeClass(this.nativeElement, this.messageClass);
         switch (newVal) {
             case 'success':
                 this.messageClass = 'alert-success';
@@ -53,7 +56,7 @@ export class MessageComponent extends BaseComponent {
                 this.messageIconClass = 'fa fa-spinner fa-spin';
                 break;
         }
-        addClass(this.$element, this.messageClass);
+        addClass(this.nativeElement, this.messageClass);
         this.type = newVal;
     }
 
@@ -85,11 +88,11 @@ export class MessageComponent extends BaseComponent {
             this.messageContent = this.sanitize.bypassSecurityTrustHtml(caption) || this.messageContent;
             this.type = type || this.type;
         }
-        this.$digest();
+        $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitize: DomSanitizer) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector, private sanitize: DomSanitizer) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

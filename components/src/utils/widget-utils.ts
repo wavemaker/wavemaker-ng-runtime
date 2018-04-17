@@ -228,3 +228,5 @@ export const NAVIGATION_TYPE = {
     'PAGER'    : 'Pager',
     'SCROLL'   : 'Scroll'
 };
+
+export const getWatchIdentifier = (...args) => args.join('_');

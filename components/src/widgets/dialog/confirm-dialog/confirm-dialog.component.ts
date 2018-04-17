@@ -1,10 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { BaseComponent } from '../../base/base.component';
-import { registerProps } from './confirm-dialog.props';
-import { APPLY_STYLES_TYPE, styler } from '../../../utils/styler';
+import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
+
+import { IStylableComponent } from '../../base/framework/types';
+import { APPLY_STYLES_TYPE, styler } from '../../base/framework/styler';
+import { BaseComponent } from '../../base/base.component';
 import { invokeEventHandler } from '../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
+import { registerProps } from './confirm-dialog.props';
 
 const WIDGET_INFO = {widgetType: 'wm-confirmdialog', hostClass: ''};
 
@@ -40,11 +42,20 @@ export class ConfirmDialogComponent extends BaseComponent implements OnInit {
 
     @ViewChild('confirmModal') dialogTemplate: TemplateRef<any>;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private modalService: BsModalService, private dialogService: DialogService) {
-        super(WIDGET_INFO, inj, elRef, cdr);
+    constructor(inj: Injector, private modalService: BsModalService, private dialogService: DialogService) {
+        super(inj, WIDGET_INFO);
         // TODO: Get the modal element reference
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER, ['height', 'width']);
-        styler(this.$element.querySelector('.app-dialog-body.modal-body') as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(
+            this.nativeElement,
+            this as IStylableComponent,
+            APPLY_STYLES_TYPE.CONTAINER,
+            ['height', 'width']
+        );
+        styler(
+            this.nativeElement.querySelector('.app-dialog-body.modal-body') as HTMLElement,
+            this as IStylableComponent,
+            APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER
+        );
     }
 
     onBeforeDialogOpen() {
@@ -77,7 +88,7 @@ export class ConfirmDialogComponent extends BaseComponent implements OnInit {
         switch (key) {
             case 'width':
                 if (nv) {
-                    $(this.$element).closest('.modal-dialog').css('width', nv);
+                    $(this.nativeElement).closest('.modal-dialog').css('width', nv);
                 }
                 break;
             case 'height':

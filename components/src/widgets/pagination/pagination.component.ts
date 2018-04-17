@@ -1,12 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
+import { Component, EventEmitter, Injector, Output } from '@angular/core';
+
 import { $watch, isDefined, isPageable, switchClass, triggerFn } from '@wm/utils';
+
+import { BaseComponent } from '../base/base.component';
 import { registerProps } from './pagination.props';
 import { getDataSource } from '../../utils/data-utils';
-import { getOrderByExpr, invokeEventHandler } from '../../utils/widget-utils';
-import { getWatchIdentifier } from '../../utils/init-widget';
+import { getOrderByExpr, getWatchIdentifier, invokeEventHandler } from '../../utils/widget-utils';
 import { DataSource } from '@wm/variables';
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 
 declare const _;
 
@@ -434,7 +436,7 @@ export class PaginationComponent extends BaseComponent {
 
     setBindDataSet(binddataset, parent) {
         this.binddataset = binddataset;
-        this.destroy$.subscribe($watch(binddataset, parent, {}, nv => this.widget.dataset = nv, getWatchIdentifier(this.widgetId, 'dataset')));
+        this.registerDestroyListener($watch(binddataset, parent, {}, nv => this.widget.dataset = nv, getWatchIdentifier(this.widgetId, 'dataset')));
         this.datasource = getDataSource(binddataset, parent);
     }
 
@@ -464,8 +466,8 @@ export class PaginationComponent extends BaseComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.$element, this as IStylableComponent);
     }
 }

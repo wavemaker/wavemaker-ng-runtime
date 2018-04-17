@@ -1,7 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ContentChildren, ElementRef, Injector } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './login.props';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 import { TextDirective } from '../text/text.directive';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
 import { ButtonComponent } from '../button/button.component';
@@ -37,27 +39,27 @@ export class LoginComponent extends BaseComponent implements AfterViewInit {
 
     errormessage: any;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_INFO, inj, elRef, cdr);
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_INFO);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
     }
 
     initLoginButtonActions() {
-        this.loginButtonCmp.$element.addEventListener('click', event => {
+        this.loginButtonCmp.nativeElement.addEventListener('click', event => {
             this.loginDetails = {
                 username: this.usernameCmp.datavalue,
                 password: this.passwordCmp.datavalue,
                 rememberme: this.rememberMeCmp.datavalue
             };
-            if (!(<HTMLFormElement>this.usernameCmp.$element).checkValidity() || !(<HTMLFormElement>this.passwordCmp.$element).checkValidity()) {
+            if (!(<HTMLFormElement>this.usernameCmp.nativeElement).checkValidity() || !(<HTMLFormElement>this.passwordCmp.nativeElement).checkValidity()) {
                 return;
             }
-            if (this.$element.hasAttribute('submit.event') || this.loginButtonCmp.$element.hasAttribute('click.event')) {
+            if (this.nativeElement.hasAttribute('submit.event') || this.loginButtonCmp.nativeElement.hasAttribute('click.event')) {
                 // TODO: Check if it is a variable or any other action event
                 invokeEventHandler(this, 'click');
                 invokeEventHandler(this, 'submit');
             } else {
-                this.parent.Variables.loginAction.login({loginInfo: this.loginDetails}, this.onSuccess, this.onError);
+                this.viewParent.Variables.loginAction.login({loginInfo: this.loginDetails}, this.onSuccess, this.onError);
             }
         });
     }
@@ -69,7 +71,7 @@ export class LoginComponent extends BaseComponent implements AfterViewInit {
     onError(error?) {
         this.loginMessage = {
             type: 'error',
-            caption: this.errormessage || error || this.parent.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
+            caption: this.errormessage || error || this.viewParent.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
             show: true
         };
         invokeEventHandler(this, 'error');
@@ -77,7 +79,7 @@ export class LoginComponent extends BaseComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.textInputComponents._results.forEach(cmp => {
-            let elementType = cmp.$element.getAttribute('name');
+            const elementType = cmp.element.getAttribute('name');
             switch (elementType) {
                 case 'usernametext':
                     this.usernameCmp = cmp;
@@ -89,13 +91,13 @@ export class LoginComponent extends BaseComponent implements AfterViewInit {
         });
 
         this.checkboxCmp._results.forEach(cmp => {
-            if (cmp.$element.getAttribute('name') === 'remembermecheck') {
+            if (cmp.element.getAttribute('name') === 'remembermecheck') {
                 this.rememberMeCmp = cmp;
             }
         });
 
         this.buttonComponents._results.forEach(cmp => {
-            if (cmp.$element.getAttribute('name') === 'loginButton' || _.includes(cmp.$element.classList, 'app-login-button')) {
+            if (cmp.element.getAttribute('name') === 'loginButton' || _.includes(cmp.element.classList, 'app-login-button')) {
                 if (this.loginButtonCmp) {
                     return;
                 }

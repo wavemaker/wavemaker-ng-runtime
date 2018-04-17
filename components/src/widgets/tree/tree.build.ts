@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-tree', (): BuildTaskDef => {
+register('wm-tree', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmTree redrawable ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
+
+import { switchClass, toggleClass } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './left-panel.props';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
-import { switchClass, toggleClass } from '@wm/utils';
 
 registerProps();
 
@@ -20,16 +23,16 @@ export class LeftPanelComponent extends BaseComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
-            switchClass(this.$element, `col-md-${nv} col-sm-${nv}`, ov ? `col-md-${ov} col-sm-${ov}` : '');
+            switchClass(this.nativeElement, `col-md-${nv} col-sm-${nv}`, ov ? `col-md-${ov} col-sm-${ov}` : '');
         } else if (key === 'expanded') {
-            toggleClass(this.$element, 'left-panel-expanded', nv);
-            toggleClass(this.$element, 'left-panel-collapsed', !nv);
+            toggleClass(this.nativeElement, 'left-panel-expanded', nv);
+            toggleClass(this.nativeElement, 'left-panel-collapsed', !nv);
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, private cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

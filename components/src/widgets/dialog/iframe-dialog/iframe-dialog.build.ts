@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-iframedialog', (): BuildTaskDef => {
+register('wm-iframedialog', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmIframeDialog ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

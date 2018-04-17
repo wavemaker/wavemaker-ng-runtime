@@ -1,6 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
+
 import { $appDigest, generateGUId, getClonedObject, setCSS } from '@wm/utils';
-import { styler } from '../../utils/styler';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../utils/widget-utils';
 import { registerProps } from './rating.props';
 import { BaseFormComponent } from '../base/base-form.component';
@@ -245,10 +248,10 @@ export class RatingComponent extends BaseFormComponent implements OnInit {
         $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         this._id = generateGUId();
-        styler(this.$element, this);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 
     onDatasetChange() {
@@ -278,7 +281,11 @@ export class RatingComponent extends BaseFormComponent implements OnInit {
             starWidth = 0.925,
             maxValue = parseInt(this.selectOptions.length || this.maxvalue, 10) || DEFAULT_RATING;
 
-        setCSS(<HTMLElement>this.$element.querySelector('.ratings-container'), 'width', (starWidth * maxValue) + 'em');
+        setCSS(
+            this.nativeElement.querySelector('.ratings-container') as HTMLElement,
+            'width',
+            (starWidth * maxValue) + 'em'
+        );
 
         if (this.datavalue === undefined || this.datavalue === '' || this.datavalue === null) {
             return 0;
@@ -320,12 +327,12 @@ export class RatingComponent extends BaseFormComponent implements OnInit {
 
     onMouseleave($event, rate) {
         this.caption = this.getCaption();
-        this.$digest();
+        $appDigest();
     }
 
     onMouseenter($event, rate) {
         this.caption = this.getCaption(rate);
-        this.$digest();
+        $appDigest();
     }
 
     ngOnInit() {

@@ -1,12 +1,16 @@
-import { AfterContentInit, Attribute, ChangeDetectorRef, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+
+import { Subject } from 'rxjs/Subject';
+
+import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, isPageable, triggerFn } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
+import { BaseComponent } from '../base/base.component';
 import { provideTheParent, TableParent } from './parent';
 import { PaginationComponent } from '../pagination/pagination.component';
-import { styler } from '../../utils/styler';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './table.props';
-import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, triggerFn, isPageable } from '@wm/utils';
 import { getRowOperationsColumn } from '../../utils/live-utils';
-import { Subject } from 'rxjs/Subject';
 import { refreshDataSource } from '../../utils/data-utils';
 
 declare const _;
@@ -195,7 +199,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         getCompiledTemplate: () => {
             // TODO: Demo code. Need to change
             this.rowActionsContainer.createEmbeddedView(this.rowActionsTmpl);
-            return $(this.$element).find('.row__actions')[0];
+            return $(this.nativeElement).find('.row__actions')[0];
         },
         compileTemplateInGridScope: () => {
         },
@@ -575,7 +579,7 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
                 this.dataNavigator.pagingOptions = {
                     maxResults: this.pagesize || 5
                 };
-                this.dataNavigator.setBindDataSet(this.binddataset, this.parent);
+                this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent);
             }
         }
     }
@@ -940,9 +944,8 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef,
-                @Attribute('dataset.bind') public binddataset) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector, @Attribute('dataset.bind') public binddataset) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

@@ -1,10 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
-import { styler } from '../../utils/styler';
+import { Component, forwardRef, Injector } from '@angular/core';
+
+import { $appDigest, switchClass } from '@wm/utils';
+
+import { BaseFormComponent } from '../base/base-form.component';
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
 import { registerProps } from './radioset.props';
 import { assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../utils/form-utils';
-import { $appDigest, switchClass } from '@wm/utils';
 import { getControlValueAccessor } from '../../utils/widget-utils';
-import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _;
 
@@ -158,8 +161,8 @@ export class RadiosetComponent extends BaseFormComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.$element, this as IStylableComponent);
     }
 }

@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-table-column', (): BuildTaskDef => {
+register('wm-table-column', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmTableColumn ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

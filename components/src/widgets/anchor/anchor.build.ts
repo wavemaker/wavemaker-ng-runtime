@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'a';
 
-register('wm-anchor', (): BuildTaskDef => {
+register('wm-anchor', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmAnchor role="button" data-identifier="anchor" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

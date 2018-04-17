@@ -1,7 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+
+import { styler } from '../base/framework/styler';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { registerProps } from './spinner.props';
 import { getBackGroundImageUrl } from '../../utils/widget-utils';
 
@@ -36,9 +38,9 @@ export class SpinnerComponent extends BaseComponent {
 
     private showCaption = true;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector, private sanitizer: DomSanitizer) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 
     onPropertyChange(key, newVal, oldVal) {

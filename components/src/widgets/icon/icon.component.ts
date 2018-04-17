@@ -1,7 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './icon.props';
-import { styler } from '../../utils/styler';
 
 registerProps();
 
@@ -14,9 +16,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-icon', hostClass: DEFAULT_CLS};
 })
 export class IconComponent extends BaseComponent {
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

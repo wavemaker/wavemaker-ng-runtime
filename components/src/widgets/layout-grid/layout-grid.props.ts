@@ -1,4 +1,4 @@
-import { register, PROP_STRING, PROP_BOOLEAN } from '../../utils/widget-props';
+import { register, PROP_STRING, PROP_BOOLEAN } from '../base/framework/widget-props';
 
 export const registerProps = () => {
     register(

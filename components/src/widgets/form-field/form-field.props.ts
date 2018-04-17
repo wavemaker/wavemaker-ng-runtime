@@ -1,5 +1,6 @@
 import { FormWidgetType } from '@wm/utils';
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../utils/widget-props';
+
+import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../base/framework/widget-props';
 import { textProps } from '../text/text.props';
 import { searchProps } from '../search/search.props';
 import { checkboxProps } from '../checkbox/checkbox.props';
@@ -17,7 +18,7 @@ import { textareaProps } from '../textarea/textarea.props';
 import { timeProps} from '../time/time.props';
 
 const widgetPropsMap = new Map(
-    [
+[
         [FormWidgetType.AUTOCOMPLETE, searchProps],
         [FormWidgetType.CHECKBOX, checkboxProps],
         // TODO: [FormWidgetType.CHECKBOXSET, checkboxsetProps],

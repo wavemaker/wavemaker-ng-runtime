@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BaseComponent } from '../base/base.component';
+
 import { encodeUrl, isInsecureContentRequest } from '@wm/utils';
-import { styler } from '../../utils/styler';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseComponent } from '../base/base.component';
 import { registerProps } from './iframe.props';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
@@ -29,9 +32,9 @@ export class IframeComponent extends BaseComponent {
      */
     private showContentLoadError = false;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector, private sanitizer: DomSanitizer) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 
     onIframeSrcChange(newVal) {
@@ -46,10 +49,7 @@ export class IframeComponent extends BaseComponent {
             }
             this.baseurl = newVal;
             this._iframesrc = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
-            setTimeout(() => {
-                this.showIframe = true;
-                this.$digest();
-            }, 200);
+            setTimeout(() => this.showIframe = true, 200);
         }
     }
 

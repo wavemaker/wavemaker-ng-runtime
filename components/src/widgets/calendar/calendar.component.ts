@@ -1,8 +1,11 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
-import { registerProps } from './calendar.props';
+import { AfterViewInit, Component, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
+
 import { getClonedObject, getSessionStorageItem } from '@wm/utils';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseComponent } from '../base/base.component';
+import { registerProps } from './calendar.props';
 import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
 import { IRedrawableComponent } from '../redraw/redrawable.interface';
 
@@ -385,7 +388,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
 
     // to calculate the height for the event limit and parsing the value when it is percentage based.
     private calculateHeight(height): number {
-        const $parent = $(this.$element).parent(),
+        const $parent = $(this.nativeElement).parent(),
             elHeight = height || '650px';
 
         let parentHeight = $parent.css('height'),
@@ -470,13 +473,13 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
         return eventSource;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER, ['height']);
     }
 
     onStyleChange(key, newVal, oldVal?) {

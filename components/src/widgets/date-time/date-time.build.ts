@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-datetime', (): BuildTaskDef => {
+register('wm-datetime', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmDateTime ${getAttrMarkup(attrs)} role="input">`,
         post: () => `</${tagName}>`

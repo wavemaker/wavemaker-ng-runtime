@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Component, ContentChildren, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, ContentChildren, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
+
+import { setCSS, toggleClass } from '@wm/utils';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './panel.props';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
-import { setCSS, toggleClass } from '@wm/utils';
 import { getImageUrl, invokeEventHandler } from '../../utils/widget-utils';
 import { RedrawableDirective } from '../redraw/redrawable.directive';
 
@@ -15,9 +18,6 @@ const DEFAULT_TOGGLE_ICON = {'collapse': 'wi-plus', 'expand': 'wi-minus'};
 
 declare const _, $;
 
-/**
- * This is Panel Component
- */
 @Component({
     selector: '[wmPanel]',
     templateUrl: './panel.component.html',
@@ -25,9 +25,7 @@ declare const _, $;
         {provide: '@Widget', useExisting: forwardRef(() => PanelComponent)}
     ]
 })
-/**
- *
- */
+
 export class PanelComponent extends BaseComponent implements OnInit {
     iconurl: string;
     iconclass: string;
@@ -51,10 +49,6 @@ export class PanelComponent extends BaseComponent implements OnInit {
 
     @ContentChildren(RedrawableDirective, {descendants: true}) redrawableComponents;
 
-    /**
-     * Method: togglePanel
-     * @param $event
-     */
     togglePanel($event) {
         if (this.collapsible) {
             if (this.expanded) {
@@ -72,21 +66,13 @@ export class PanelComponent extends BaseComponent implements OnInit {
         }
     }
 
-    /**
-     * returns the tcon class when expand/collapse operations are performed
-     * @returns {any}
-     */
     get toggleIconClass() {
         if (this.expanded) {
-            return this.expandicon || DEFAULT_TOGGLE_ICON.expand
+            return this.expandicon || DEFAULT_TOGGLE_ICON.expand;
         }
         return this.collapseicon || DEFAULT_TOGGLE_ICON.collapse;
     }
 
-    /**
-     * Method: toggleFullScreen
-     * @param $event
-     */
     toggleFullScreen($event) {
         if (this.enablefullscreen) {
             if (this.fullscreen) {
@@ -103,27 +89,16 @@ export class PanelComponent extends BaseComponent implements OnInit {
         this._toggleFullScreen();
     }
 
-    /**
-     * Method: toggleHelp
-     */
     toggleHelp() {
         this.helpClass = this.helpClass ? null : 'show-help';
         toggleClass(this.$element, 'show-help', !!this.helpClass);
     }
 
-    /**
-     * Method: closePanel
-     * @param $event
-     */
     closePanel($event) {
         this.show = false;
         invokeEventHandler(this, 'close', {$event});
     }
 
-    /**
-     * method: _toggleFullScreen
-     * @private
-     */
     private _toggleFullScreen() {
         const headerHeight = this.$panelHeader.nativeElement.offsetHeight,
             $footer = <HTMLElement>this.$element.querySelector('.panel-footer'),
@@ -141,20 +116,10 @@ export class PanelComponent extends BaseComponent implements OnInit {
         setCSS($content, 'height', inlineHeight);
     }
 
-    /**
-     * method: showHeader
-     * @returns {string | boolean}
-     */
     get showHeader() {
         return this.iconurl || this.iconclass || this.collapsible || this.actions || this.title || this.subheading || this.enablefullscreen;
     }
 
-    /**
-     * method: onPropertyChange
-     * @param key
-     * @param nv
-     * @param ov
-     */
     onPropertyChange(key, nv, ov?) {
         switch (key) {
             case 'iconurl':
@@ -173,22 +138,13 @@ export class PanelComponent extends BaseComponent implements OnInit {
         }
     }
 
-    /**
-     * Constructor
-     * @param {Injector} inj
-     * @param {ElementRef} elRef
-     * @param {ChangeDetectorRef} cdr
-     */
-    constructor(inj: Injector, elRef: ElementRef, private cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.$element, this as IStylableComponent, APPLY_STYLES_TYPE.SHELL);
     }
 
-    /**
-     * ngOnInit
-     */
     ngOnInit() {
-        styler(this.$panelContent.nativeElement.children[0], this, APPLY_STYLES_TYPE.INNER_SHELL);
+        styler(this.$panelContent.nativeElement.children[0], this as IStylableComponent, APPLY_STYLES_TYPE.INNER_SHELL);
         this.hideFooter = !this.$element.querySelector('[wmPanelFooter]');
         super.ngOnInit();
     }

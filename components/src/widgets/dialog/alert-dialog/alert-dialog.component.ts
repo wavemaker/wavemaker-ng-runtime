@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
+
 import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './alert-dialog.props';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 import { invokeEventHandler } from '../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
 
@@ -39,8 +40,8 @@ export class AlertDialogComponent extends BaseComponent implements OnInit {
 
     @ViewChild('alertModal') dialogTemplate: TemplateRef<any>;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private modalService: BsModalService, private dialogService: DialogService) {
-        super(WIDGET_INFO, inj, elRef, cdr);
+    constructor(inj: Injector, private modalService: BsModalService, private dialogService: DialogService) {
+        super(inj, WIDGET_INFO);
     }
 
     onBeforeDialogOpen() {
@@ -68,7 +69,7 @@ export class AlertDialogComponent extends BaseComponent implements OnInit {
         switch (key) {
             case 'width':
                 if (nv) {
-                    $(this.$element).closest('.modal-dialog').css('width', nv);
+                    $(this.nativeElement).closest('.modal-dialog').css('width', nv);
                 }
                 break;
             case 'height':

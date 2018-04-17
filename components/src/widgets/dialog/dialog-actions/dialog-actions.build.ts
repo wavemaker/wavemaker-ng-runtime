@@ -1,8 +1,8 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-dialogactions', (): BuildTaskDef => {
+register('wm-dialogactions', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmDialogActions data-identfier="actions" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

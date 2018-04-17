@@ -1,9 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
+
 import { getFormattedDate } from '@wm/utils';
-import { registerProps } from './date.props';
-import { styler } from '../../utils/styler';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
+import { registerProps } from './date.props';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
 import { ToDatePipe } from '../../pipes/custom-pipes';
 
 registerProps();
@@ -127,8 +130,8 @@ export class DateComponent extends BaseFormComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, public datePipe: ToDatePipe) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector, public datePipe: ToDatePipe) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.$element, this as IStylableComponent);
     }
 }

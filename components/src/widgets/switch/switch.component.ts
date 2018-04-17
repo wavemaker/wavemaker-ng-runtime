@@ -1,10 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
-import { styler } from '../../utils/styler';
-import { registerProps } from './switch.props';
+import { Component, forwardRef, Injector } from '@angular/core';
+
 import { $appDigest, isEqualWithFields, setCSS } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseFormComponent } from '../base/base-form.component';
+import { registerProps } from './switch.props';
 import { getOrderedDataSet } from '../../utils/form-utils';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
-import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _, $;
 
@@ -59,9 +62,9 @@ export class SwitchComponent extends BaseFormComponent {
         return this._model_;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector, ) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 
     onPropertyChange(key, newVal, oldVal) {
@@ -74,7 +77,7 @@ export class SwitchComponent extends BaseFormComponent {
 
     onStyleChange(key, newVal, oldVal) {
         if (key === 'height') {
-            setCSS(this.$element, 'overflow', newVal ? 'auto' : '');
+            setCSS(this.nativeElement, 'overflow', newVal ? 'auto' : '');
         }
     }
 
@@ -135,7 +138,7 @@ export class SwitchComponent extends BaseFormComponent {
 
         if (options.length) {
             this.btnwidth = (100 / options.length);
-            setCSS(this.$element.querySelector('.app-switch-overlay') as HTMLElement, 'width', this.btnwidth + '%');
+            setCSS(this.nativeElement.querySelector('.app-switch-overlay') as HTMLElement, 'width', this.btnwidth + '%');
         }
 
         this.options = options;
@@ -147,7 +150,7 @@ export class SwitchComponent extends BaseFormComponent {
     }
 
     private updateHighlighter(skipAnimation?) {
-        const handler = $(this.$element).find('span.app-switch-overlay');
+        const handler = $(this.nativeElement).find('span.app-switch-overlay');
         let left,
             index = this.selected.index;
         if (index === undefined || index === null) {

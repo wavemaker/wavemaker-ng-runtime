@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
+
+import { setProperty } from '@wm/utils';
+
+import { APPLY_STYLES_TYPE, styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './tile.props';
-import { setProperty } from '@wm/utils';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
 
 registerProps();
 
@@ -17,15 +20,15 @@ export class TileDirective extends BaseComponent {
     onPropertyChange(key, nv, ov?) {
         switch (key) {
             case 'caption':
-                setProperty(this.$element, 'textContent', nv);
+                setProperty(this.nativeElement, 'textContent', nv);
                 break;
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
     }
 
 }

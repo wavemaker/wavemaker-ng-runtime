@@ -1,9 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
+
 import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/utils';
-import { styler } from '../../utils/styler';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './date-time.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
-import { BaseFormComponent } from '../base/base-form.component';
 import { ToDatePipe } from '../../pipes/custom-pipes';
 
 const DEFAULT_CLS = 'app-datetime input-group';
@@ -220,12 +223,10 @@ export class DatetimeComponent extends BaseFormComponent {
         return dateObj;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, public datePipe: ToDatePipe) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        this.destroy$.subscribe(() => {
-            this.clearTimeInterval();
-        });
-        styler(this.$element, this);
+    constructor(inj: Injector, public datePipe: ToDatePipe) {
+        super(inj, WIDGET_CONFIG);
+        this.registerDestroyListener(() => this.clearTimeInterval());
+        styler(this.$element, this as IStylableComponent);
     }
 
     onPropertyChange(key, newVal, oldVal) {

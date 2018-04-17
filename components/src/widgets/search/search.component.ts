@@ -1,14 +1,15 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { $appDigest, getClonedObject } from '@wm/utils';
 
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
+import { BaseFormComponent } from '../base/base-form.component';
 import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
 import { getOrderedDataSet } from '../../utils/form-utils';
 import { registerProps } from './search.props';
-import { styler } from '../../utils/styler';
-import { BaseFormComponent } from '../base/base-form.component';
 
 declare const _;
 
@@ -185,9 +186,9 @@ export class SearchComponent extends BaseFormComponent implements OnInit {
         $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, private cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-        styler(this.$element, this);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.$element, this as IStylableComponent);
     }
 
     /**

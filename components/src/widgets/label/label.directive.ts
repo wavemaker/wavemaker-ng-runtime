@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
+import { Directive, forwardRef, Injector } from '@angular/core';
 
 import { setProperty, toggleClass } from '@wm/utils';
 
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
 import { registerProps } from './label.props';
 
 registerProps();
@@ -17,19 +18,19 @@ const WIDGET_CONFIG = {widgetType: 'wm-label', hostClass: DEFAULT_CLS};
 })
 export class LabelDirective extends BaseComponent {
 
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+
+        styler(this.nativeElement, this as IStylableComponent);
+    }
+
     onPropertyChange(key, nv, ov?) {
         switch (key) {
             case 'caption':
-                setProperty(this.$element, 'textContent', nv);
+                setProperty(this.nativeElement, 'textContent', nv);
                 break;
             case 'required':
-                toggleClass(this.$element, 'required', nv);
+                toggleClass(this.nativeElement, 'required', nv);
         }
-    }
-
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
-
-        styler(this.$element, this);
     }
 }

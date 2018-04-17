@@ -1,8 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
+
+import { isString } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
+
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './audio.props';
-import { styler } from '../../utils/styler';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
 
 const DEFAULT_CLS = 'app-audio';
 const WIDGET_CONFIG = {widgetType: 'wm-audio', hostClass: DEFAULT_CLS};
@@ -17,21 +23,17 @@ export class AudioComponent extends BaseComponent {
 
     mp3audioUrl: SafeResourceUrl = '';
 
-    isValidResource(value) {
-        return value && typeof value === 'string' && value.indexOf('Variables') === -1;
-    }
-
     onPropertyChange(key, newVal, oldVal) {
         if (key === 'mp3format') {
-            if (this.isValidResource(newVal)) {
-                this.mp3audioUrl = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
+            if (newVal && isString(newVal)) {
+                this.mp3audioUrl = newVal;
             }
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

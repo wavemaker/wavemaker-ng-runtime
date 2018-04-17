@@ -1,11 +1,15 @@
-import { Attribute, ChangeDetectorRef, Component, ElementRef, forwardRef, HostBinding, HostListener, Injector, OnDestroy } from '@angular/core';
+import { Attribute, Component, forwardRef, HostBinding, HostListener, Injector, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
 import { Subject } from 'rxjs/Subject';
+
+import { $appDigest, getClonedObject, removeClass } from '@wm/utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseComponent } from '../base/base.component';
-import { styler } from '../../utils/styler';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../utils/live-utils';
-import { $appDigest, getClonedObject, removeClass } from '@wm/utils';
 import { performDataOperation } from '../../utils/data-utils';
 import { invokeEventHandler } from '../../utils/widget-utils';
 
@@ -229,16 +233,19 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
         $appDigest();
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private fb: FormBuilder,
-                @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
-                @Attribute('submit.event') public onSubmitEvt,
-                @Attribute('dataset.bind') public binddataset,
-                @Attribute('wmLiveForm') isLiveForm) {
-        super(getWidgetConfig(isLiveForm), inj, elRef, cdr);
+    constructor(
+        inj: Injector,
+        private fb: FormBuilder,
+        @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
+        @Attribute('submit.event') public onSubmitEvt,
+        @Attribute('dataset.bind') public binddataset,
+        @Attribute('wmLiveForm') isLiveForm
+    ) {
+        super(inj, getWidgetConfig(isLiveForm));
 
-        styler(this.$element, this);
+        styler(this.nativeElement, this as IStylableComponent);
 
-        this.dialogId = elRef.nativeElement.getAttribute('dialogId');
+        this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngForm = fb.group({});
         this.ngForm.valueChanges
             .debounceTime(500)
@@ -383,6 +390,7 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
     }
 
     ngOnDestroy() {
+        super.ngOnDestroy();
         this.dataSourceChange.complete();
     }
 }

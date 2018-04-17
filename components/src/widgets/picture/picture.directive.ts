@@ -1,8 +1,11 @@
-import { ChangeDetectorRef, Directive, ElementRef, HostBinding, Injector } from '@angular/core';
+import { Directive, HostBinding, Injector } from '@angular/core';
+
+import { addClass, setAttr, setCSSObj } from '@wm/utils';
+
+import { IStylableComponent } from '../base/framework/types';
+import { styler } from '../base/framework/styler';
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './picture.props';
-import { addClass, setAttr, setCSSObj } from '@wm/utils';
-import { styler } from '../../utils/styler';
 import { getImageUrl } from '../../utils/widget-utils';
 
 registerProps();
@@ -36,27 +39,27 @@ export class PictureDirective extends BaseComponent {
         // ng src will not get updated if the image url is empty. So add dummy value
         // The "blank" image will get a source of //:0 which won't cause a missing image icon to appear
         const imageSource = getImageUrl(newVal, this.encodeurl, this.pictureplaceholder);
-        setAttr(this.$element, 'src', imageSource);
+        setAttr(this.nativeElement, 'src', imageSource);
     }
 
     onPropertyChange(key, newVal, oldVal) {
         switch (key) {
             case 'animation':
-                addClass(this.$element, 'animation ' + newVal);
+                addClass(this.nativeElement, 'animation ' + newVal);
                 break;
             case 'pictureaspect':
                 switch (newVal) {
                     case 'None':
-                        setCSSObj(this.$element, {width: this.width, height: this.height});
+                        setCSSObj(this.nativeElement, {width: this.width, height: this.height});
                         break;
                     case 'H':
-                        setCSSObj(this.$element, {width: '100%', height: ''});
+                        setCSSObj(this.nativeElement, {width: '100%', height: ''});
                         break;
                     case 'V':
-                        setCSSObj(this.$element, {width: '', height: '100%'});
+                        setCSSObj(this.nativeElement, {width: '', height: '100%'});
                         break;
                     case 'Both':
-                        setCSSObj(this.$element, {width: '100%', height: '100%'});
+                        setCSSObj(this.nativeElement, {width: '100%', height: '100%'});
                         break;
                 }
                 break;
@@ -70,14 +73,14 @@ export class PictureDirective extends BaseComponent {
                 this.imgClass = DEFAULT_CLS + ' img-' + newVal;
                 break;
             case 'hint':
-                setAttr(this.$element, 'alt', newVal);
+                setAttr(this.nativeElement, 'alt', newVal);
                 break;
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this);
+        styler(this.nativeElement, this as IStylableComponent);
     }
 }

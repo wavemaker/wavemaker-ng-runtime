@@ -1,9 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector, OnInit } from '@angular/core';
-import { registerProps } from './currency.props';
-import { styler } from '../../utils/styler';
+import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 import { CONSTANTS_CURRENCY } from '@wm/utils';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+
+import { styler } from '../base/framework/styler';
+import { IStylableComponent } from '../base/framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
+import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { registerProps } from './currency.props';
 
 const DEFAULT_CLS = 'input-group app-currency';
 const WIDGET_CONFIG = {widgetType: 'wm-currency', hostClass: DEFAULT_CLS};
@@ -21,13 +23,13 @@ export class CurrencyComponent extends BaseFormComponent implements OnInit {
     currency: string;
     oldVal;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.$element.querySelector('input'), this);
+        styler(this.nativeElement.querySelector('input'), this as IStylableComponent);
     }
 
     get currencysymbol() {

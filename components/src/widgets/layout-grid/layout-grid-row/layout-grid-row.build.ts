@@ -1,4 +1,4 @@
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 import { Attribute, Element } from '@angular/compiler';
 
 const tagName = 'div';
@@ -6,7 +6,7 @@ const colWidth = 'columnwidth';
 
 const getAttr = (attrs: Array<Attribute>, name: string): Attribute => attrs.filter(attr => attr.name === name)[0];
 
-register('wm-gridrow', (): BuildTaskDef => {
+register('wm-gridrow', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
             const gridCols = node.children;

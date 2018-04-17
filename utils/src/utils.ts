@@ -53,22 +53,12 @@ export const debounce = (fn: Function, wait: number = 50) => {
     };
 };
 
-export function* idMaker(token) {
-    let id = 1;
-    while (1) {
-        yield `${token}${id++}`;
-    }
-}
-
 function isIE11 () {
     return navigator.appVersion.indexOf('Trident/') > -1;
 }
-function isIE9 () {
-    return navigator.appVersion.indexOf('MSIE 9') > -1;
-}
 
 export const isIE = () => {
-    return isIE9() || isIE11() || navigator.userAgent.indexOf('MSIE') > -1;
+    return isIE11() || navigator.userAgent.indexOf('MSIE') > -1;
 };
 
 /**
@@ -706,3 +696,7 @@ export const getSessionStorageItem = key => {
         return item[key];
     }
 };
+
+export const noop = (...args) => {};
+
+export const isString = v => typeof v === 'string';

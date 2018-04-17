@@ -1,13 +1,14 @@
-import { ChangeDetectorRef, Component, ContentChildren, ElementRef, EventEmitter, forwardRef, Inject, Injector, OnInit, Output } from '@angular/core';
+import { Component, ContentChildren, EventEmitter, forwardRef, Inject, Injector, OnInit, Output } from '@angular/core';
 
 import { $appDigest, removeAttr } from '@wm/utils';
 
+import { APPLY_STYLES_TYPE, styler } from '../../base/framework/styler';
+import { IStylableComponent } from '../../base/framework/types';
 import { BaseComponent } from '../../base/base.component';
-import { APPLY_STYLES_TYPE, styler } from '../../../utils/styler';
+import { RedrawableDirective } from '../../redraw/redrawable.directive';
 import { registerProps } from './accordion-pane.props';
 import { AccordionDirective } from '../accordion.component';
 import { invokeEventHandler } from '../../../utils/widget-utils';
-import { RedrawableDirective } from '../../redraw/redrawable.directive';
 
 registerProps();
 
@@ -82,17 +83,17 @@ export class AccordionPaneComponent extends BaseComponent implements OnInit {
                 if (this.isActive) {
                     setTimeout(() => {
                         this.$lazyload();
-                    }, 80);
+                    }, 100);
                 }
                 break;
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Inject('@AccordionParent') private parentAccordion: AccordionDirective) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector, @Inject('@AccordionParent') private parentAccordion: AccordionDirective) {
+        super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
-        styler(<HTMLElement>this.$element.querySelector('.panel-body'), this, APPLY_STYLES_TYPE.INNER_SHELL);
+        styler(this.$element, this as IStylableComponent, APPLY_STYLES_TYPE.SHELL);
+        styler(<HTMLElement>this.$element.querySelector('.panel-body'), this as IStylableComponent, APPLY_STYLES_TYPE.INNER_SHELL);
 
         removeAttr(this.$element, 'title');
     }

@@ -1,6 +1,6 @@
-import { Attribute, ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
+import { Attribute, Directive, forwardRef, Injector } from '@angular/core';
 
-import { $parseEvent, $parseExpr, getClonedObject } from '@wm/utils';
+import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/utils';
 
 import { BaseComponent } from '../base/base.component';
 import { registerProps } from './tree.props';
@@ -68,8 +68,8 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
     nodeicon;
     nodechildren;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('datavalue.bind') private binddatavalue, @Attribute('nodeid.bind') private bindnodeid) {
-        super(WIDGET_INFO, inj, elRef, cdr);
+    constructor(inj: Injector, @Attribute('datavalue.bind') private binddatavalue, @Attribute('nodeid.bind') private bindnodeid) {
+        super(inj, WIDGET_INFO);
         this.bindEvents();
     }
 
@@ -174,7 +174,7 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
     }
 
     private changeTreeIcons(nv, ov) {
-        const $el = $(this.$element);
+        const $el = $(this.nativeElement);
         nv = nv || defaultTreeIconClass;
         ov = ov || defaultTreeIconClass;
         $el.find('i.expanded').removeClass(ICON_CLASSES[ov].expanded).addClass(ICON_CLASSES[nv].expanded);
@@ -182,7 +182,7 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
     }
 
     private toggleExpandCollapseNode($event, $i, $li) {
-        let treeIcons = ICON_CLASSES[this.treeicons || defaultTreeIconClass],
+        const treeIcons = ICON_CLASSES[this.treeicons || defaultTreeIconClass],
             eventParams = {
                 '$event'  : $event
             };
@@ -199,13 +199,13 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
     }
 
     private _renderTree(forceRender?) {
-        let levels = +this.$element.getAttribute('levels') || 0,
+        let levels = +this.nativeElement.getAttribute('levels') || 0,
             docFrag,
             $li,
             $liPath,
             data,
             path = '',
-        $el = $(this.$element);
+        $el = $(this.nativeElement);
 
         $el.empty();
 
@@ -243,7 +243,7 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
             this.selecteditem.path = path;
 
             invokeEventHandler(this, 'select', {$event: undefined, $item: data, $path: path});
-            this.$digest();
+            $appDigest();
         }
     }
 
@@ -271,7 +271,7 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
 
     private selectNode(evt, value) {
         let target = evt && $(evt.target),
-            $el = $(this.$element),
+            $el = $(this.nativeElement),
             $li = _.isObject(value) ? value : $el.find('li[id="' + value + '"]:first'),
             data,
             path = '',
@@ -285,7 +285,7 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
         data = $li.data('nodedata');
         nodeAction = data[this.nodeaction || 'action'];
 
-        // if the selectNode is initiated by click event then use the element target from event
+        // if the selectNode is initiated by click event then use the nativeElement target from event
         $liPath = target ? target.parents('.app-tree li') : $li.find('> span.title').parents('.app-tree li');
 
         // construct the path of the node
@@ -295,9 +295,9 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
                 path = '/' + current + path;
             });
 
-        // expand the current node till the parent level which is collapsed
+        // expand the current node till the viewParent level which is collapsed
         let that = this;
-        $li.parentsUntil($el, 'li.parent-node.collapsed')
+        $li.parentsUntil($el, 'li.viewParent-node.collapsed')
             .each(function () {
                 let $current = $(this),
                     $i       = $current.children('i.collapsed');
@@ -322,11 +322,11 @@ export class TreeDirective extends BaseComponent implements IRedrawableComponent
         }
 
         invokeEventHandler(this, 'select', {$event: evt, $item: data, $path: path});
-        this.$digest();
+        $appDigest();
     }
-    // click event is added on the host element
+    // click event is added on the host nativeElement
     private bindEvents() {
-        $(this.$element).on('click', (evt) => {
+        $(this.nativeElement).on('click', (evt) => {
             let target = $(evt.target),
                 li     = target.closest('li'),
                 $i     = target.is('i') ? target : target.siblings('i.collapsed,i.expanded');

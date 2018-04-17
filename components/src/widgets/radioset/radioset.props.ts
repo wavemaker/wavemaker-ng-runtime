@@ -1,4 +1,4 @@
-import { PROP_STRING, register, PROP_STRING_NOTIFY, PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER } from '../../utils/widget-props';
+import { PROP_STRING, register, PROP_STRING_NOTIFY, PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER } from '../base/framework/widget-props';
 
 export const radiosetProps = new Map(
     [
