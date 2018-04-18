@@ -3,11 +3,10 @@ import { Component, forwardRef, Injector } from '@angular/core';
 import { $appDigest, switchClass } from '@wm/utils';
 
 import { BaseFormComponent } from '../base/base-form.component';
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { registerProps } from './radioset.props';
-import { assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../utils/form-utils';
-import { getControlValueAccessor } from '../../utils/widget-utils';
+import { assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../../utils/form-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -163,6 +162,6 @@ export class RadiosetComponent extends BaseFormComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this as IStylableComponent);
+        styler(this.$element, this);
     }
 }

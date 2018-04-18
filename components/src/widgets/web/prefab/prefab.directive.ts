@@ -1,9 +1,8 @@
 import { Attribute, ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
 
-import { IStylableComponent } from '../../framework/types';
+import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';
 import { PROP_TYPE, register } from '../../framework/widget-props';
-import { BaseComponent } from '../base/base.component';
 
 const DEFAULT_CLS = 'app-prefab';
 
@@ -15,7 +14,7 @@ const registeredPropsSet = new Set<string>();
         {provide: '@Widget', useExisting: forwardRef(() => PrefabDirective)}
     ]
 })
-export class PrefabDirective extends BaseComponent {
+export class PrefabDirective extends StylableComponent {
 
     widgetType: string;
     prefabName: string;
@@ -55,11 +54,10 @@ export class PrefabDirective extends BaseComponent {
         const WIDGET_CONFIG = {widgetType, hostClass: DEFAULT_CLS};
 
         super(inj, WIDGET_CONFIG, new Promise(res => this.propsReady = res));
-        this.nativeElement = elRef.nativeElement;
 
         this.prefabName = prefabName;
         this.widgetType = widgetType;
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

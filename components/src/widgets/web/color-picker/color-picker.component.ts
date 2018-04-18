@@ -1,10 +1,9 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './color-picker.props';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
 const WIDGET_CONFIG = {widgetType: 'wm-colorpicker', hostClass: DEFAULT_CLS};
@@ -24,7 +23,7 @@ export class ColorPickerComponent extends BaseFormComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this as IStylableComponent);
+        styler(this.$element, this);
     }
 
     onChange($event) {

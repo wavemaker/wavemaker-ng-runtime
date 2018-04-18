@@ -1,10 +1,11 @@
 import { Injector, Input, HostListener, HostBinding, Directive } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
-import { Subject } from 'rxjs/Subject';
-import { ListComponent } from './list.component';
-import { idMaker, $watch } from '@wm/utils';
 
-const idGen = idMaker('widget-id-');
+import { Subject } from 'rxjs/Subject';
+
+import { $watch } from '@wm/utils';
+
+import { ListComponent } from './list.component';
 
 @Directive({
     selector: '[wmListItem]',
@@ -31,16 +32,14 @@ export class ListItemDirective {
     }
 
     registerWatches(expression: string, callback) {
-        const $locals =  (<any>this.inj).view.context,
-            widgetId = idGen.next().value;
-        this.destroy$.subscribe($watch(expression, this, $locals, callback, widgetId));
+        const $locals =  (<any>this.inj).view.context;
+
+        this.destroy$.subscribe($watch(expression, this, $locals, callback));
     }
 
     itemClassWatcher($list) {
         if ($list.binditemclass) {
-            this.registerWatches($list.binditemclass, nv => {
-                this.itemClass = nv || '';
-            });
+            this.registerWatches($list.binditemclass, nv => this.itemClass = nv || '');
         } else {
             this.itemClass = $list.itemclass;
         }
@@ -48,9 +47,7 @@ export class ListItemDirective {
 
     disableItemWatcher($list: ListComponent) {
         if ($list.binddisableitem) {
-            this.registerWatches($list.binddisableitem, nv => {
-                this.disableItem = nv || false;
-            });
+            this.registerWatches($list.binddisableitem, nv => this.disableItem = nv || false);
         } else {
             this.disableItem = $list.disableitem || false;
         }

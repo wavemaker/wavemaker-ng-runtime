@@ -4,8 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { encodeUrl, isInsecureContentRequest } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './iframe.props';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
@@ -17,7 +16,7 @@ registerProps();
     selector: '[wmIframe]',
     templateUrl: './iframe.component.html'
 })
-export class IframeComponent extends BaseComponent {
+export class IframeComponent extends StylableComponent {
 
     _iframesrc: any;
 
@@ -34,7 +33,7 @@ export class IframeComponent extends BaseComponent {
 
     constructor(inj: Injector, private sanitizer: DomSanitizer) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onIframeSrcChange(newVal) {

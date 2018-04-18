@@ -1,4 +1,4 @@
-function* idMaker(token) {
+function* idGenerator(token) {
     let id = 1;
     while (1) {
         yield `${token}${id++}`;
@@ -6,10 +6,10 @@ function* idMaker(token) {
 }
 
 export class IDGenerator {
-    private generator: Iterator;
+    private generator: Iterator<any>;
 
-    constructor(private key: string) {
-        this.generator = idMaker(key);
+    constructor(key: string) {
+        this.generator = idGenerator(key);
     }
 
     public nextUid(): string {

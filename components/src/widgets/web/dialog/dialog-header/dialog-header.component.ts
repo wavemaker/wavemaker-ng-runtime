@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, HostBinding, Injector } from '@angular/core';
+import { Component, HostBinding, Injector } from '@angular/core';
+
 import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './dialog-header.props';
 import { DialogService } from '../dialog.service';
@@ -15,8 +16,8 @@ export class DialogHeaderComponent extends BaseComponent {
 
     @HostBinding('attr.title') hint: string;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private dialogService: DialogService) {
-        super(WIDGET_INFO, inj, elRef, cdr);
+    constructor(inj: Injector, private dialogService: DialogService) {
+        super(inj, WIDGET_INFO);
     }
 
     _iconclass;

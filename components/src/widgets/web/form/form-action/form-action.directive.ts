@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, Injector, OnInit, Optional } from '@angular/core';
+
 import { ParentForm } from '../form.component';
 import { registerProps } from './form-action.props';
-import { BaseComponent } from '../../base/base.component';
+import { StylableComponent } from '../../base/stylable.component';
 
 declare const _;
 
@@ -12,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 @Directive({
     selector: '[wmFormAction]'
 })
-export class FormActionDirective extends BaseComponent implements OnInit {
+export class FormActionDirective extends StylableComponent implements OnInit {
     accessroles;
     action;
     binding;
@@ -32,8 +33,8 @@ export class FormActionDirective extends BaseComponent implements OnInit {
 
     public buttonDef;
 
-    constructor(@Optional() public _parentForm: ParentForm, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector, @Optional() public _parentForm: ParentForm) {
+        super(inj, WIDGET_CONFIG);
     }
 
     populateAction() {

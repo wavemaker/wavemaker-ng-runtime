@@ -3,10 +3,9 @@ import { Component, ContentChildren, ElementRef, forwardRef, Injector, OnInit, V
 import { setCSS, toggleClass } from '@wm/utils';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './panel.props';
-import { getImageUrl, invokeEventHandler } from '../../utils/widget-utils';
+import { getImageUrl, invokeEventHandler } from '../../../utils/widget-utils';
 import { RedrawableDirective } from '../redraw/redrawable.directive';
 
 registerProps();
@@ -26,7 +25,7 @@ declare const _, $;
     ]
 })
 
-export class PanelComponent extends BaseComponent implements OnInit {
+export class PanelComponent extends StylableComponent implements OnInit {
     iconurl: string;
     iconclass: string;
     actions: string;
@@ -140,11 +139,11 @@ export class PanelComponent extends BaseComponent implements OnInit {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this as IStylableComponent, APPLY_STYLES_TYPE.SHELL);
+        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
     }
 
     ngOnInit() {
-        styler(this.$panelContent.nativeElement.children[0], this as IStylableComponent, APPLY_STYLES_TYPE.INNER_SHELL);
+        styler(this.$panelContent.nativeElement.children[0], this, APPLY_STYLES_TYPE.INNER_SHELL);
         this.hideFooter = !this.$element.querySelector('[wmPanelFooter]');
         super.ngOnInit();
     }

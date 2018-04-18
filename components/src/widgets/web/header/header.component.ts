@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
-import { registerProps } from './header.props';
+import { Component, forwardRef, Injector } from '@angular/core';
+
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { StylableComponent } from '../base/stylable.component';
+import { registerProps } from './header.props';
 
 registerProps();
 
@@ -15,10 +16,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-header', hostClass: DEFAULT_CLS};
         {provide: '@Widget', useExisting: forwardRef(() => HeaderComponent)}
     ]
 })
-export class HeaderComponent extends BaseComponent {
+export class HeaderComponent extends StylableComponent {
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }

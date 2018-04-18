@@ -1,9 +1,9 @@
-import { BaseComponent } from '../base/base.component';
 import { Component, Injector } from '@angular/core';
+
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { getImageUrl } from '../../utils/widget-utils';
+import { StylableComponent } from '../base/stylable.component';
+import { getImageUrl } from '../../../utils/widget-utils';
 import { registerProps } from './navbar.props';
-import { IStylableComponent } from '../../framework/types';
 
 registerProps();
 
@@ -16,7 +16,7 @@ declare const _, $;
     selector: '[wmNavbar]',
     templateUrl: './navbar.component.html'
 })
-export class NavbarComponent extends BaseComponent {
+export class NavbarComponent extends StylableComponent {
     imagesrc;
 
     $navbarContent;
@@ -48,7 +48,7 @@ export class NavbarComponent extends BaseComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$navbarContent = $(this.nativeElement).children().find('> #collapse-content');
     }
 }

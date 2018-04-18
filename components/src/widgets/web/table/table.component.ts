@@ -4,14 +4,13 @@ import { Subject } from 'rxjs/Subject';
 
 import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, isPageable, triggerFn } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { provideTheParent, TableParent } from './parent';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
-import { getRowOperationsColumn } from '../../utils/live-utils';
-import { refreshDataSource } from '../../utils/data-utils';
+import { getRowOperationsColumn } from '../../../utils/live-utils';
+import { refreshDataSource } from '../../../utils/data-utils';
 
 declare const _;
 declare const moment;
@@ -44,7 +43,7 @@ const rowOperations = {
     templateUrl: './table.component.html',
     providers: [provideTheParent(TableParent, TableComponent)]
 })
-export class TableComponent extends BaseComponent implements TableParent, AfterContentInit {
+export class TableComponent extends StylableComponent implements TableParent, AfterContentInit {
 
     @ViewChild(PaginationComponent) dataNavigator;
     @ViewChild('datagridElement') private _tableElement: ElementRef;
@@ -946,6 +945,6 @@ export class TableComponent extends BaseComponent implements TableParent, AfterC
 
     constructor(inj: Injector, @Attribute('dataset.bind') public binddataset) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

@@ -2,9 +2,8 @@ import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 import { CONSTANTS_CURRENCY } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
 import { registerProps } from './currency.props';
 
 const DEFAULT_CLS = 'input-group app-currency';
@@ -29,7 +28,7 @@ export class CurrencyComponent extends BaseFormComponent implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.nativeElement.querySelector('input'), this as IStylableComponent);
+        styler(this.nativeElement.querySelector('input'), this);
     }
 
     get currencysymbol() {

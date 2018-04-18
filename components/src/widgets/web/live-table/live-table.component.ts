@@ -3,12 +3,11 @@ import { AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRe
 import { getClonedObject, isDefined } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './live-table.props';
 import { FormComponent } from '../form/form.component';
 import { TableComponent } from '../table/table.component';
 import { DialogService } from '../dialog/dialog.service';
+import { StylableComponent } from '../base/stylable.component';
 
 declare const _;
 declare const moment;
@@ -23,7 +22,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
     selector: '[wmLiveTable]',
     templateUrl: './live-table.component.html'
 })
-export class LiveTableComponent extends BaseComponent implements AfterContentInit {
+export class LiveTableComponent extends StylableComponent implements AfterContentInit {
 
     @ContentChild(FormComponent) form: FormComponent;
     @ContentChild(TableComponent) table: TableComponent;
@@ -49,13 +48,13 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
     }
 
     deleteRow(row, callBackFn?) {
-        this.form.widget.rowdata = row;
+        this.form.getWidget().rowdata = row;
         this.form.delete(callBackFn);
     }
 
     addNewRow() {
         this.form.isSelected = true;
-        this.form.widget.rowdata = '';
+        this.form.getWidget().rowdata = '';
 
         this.form.new();
 
@@ -87,7 +86,7 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
             return;
         }
 
-        this.form.widget.rowdata = row;
+        this.form.getWidget().rowdata = row;
         this.form.isSelected = true;
         this.form.edit();
 
@@ -116,14 +115,14 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
                 rowData = newValue[newValue.length - 1];
             }
 
-            this.form.widget.rowdata = getClonedObject(rowData);
+            this.form.getWidget().rowdata = getClonedObject(rowData);
             /*If the form is already in update mode, call the form update function*/
             if (this.form.isUpdateMode) {
                 this.form.edit();
             }
         } else {
             this.form.isSelected = false;
-            this.form.widget.rowdata = '';
+            this.form.getWidget().rowdata = '';
             this.form.clearData();
         }
     }
@@ -208,6 +207,6 @@ export class LiveTableComponent extends BaseComponent implements AfterContentIni
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private dialogService: DialogService) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

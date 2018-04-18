@@ -1,26 +1,61 @@
 import { Injectable, TemplateRef } from '@angular/core';
-import { invokeEventHandler } from '../../utils/widget-utils';
+
 import { BsModalService } from 'ngx-bootstrap';
 
-declare const $;
+import { invokeEventHandler } from '../../../utils/widget-utils';
 
 @Injectable()
 export class DialogService {
-    private dialogInstances = {};
 
-    private dialogIDCount = 0;
+    private dialogInstances: any = {};
 
-    getDialogInstance(dialogId) {
-        return this.dialogInstances[dialogId] || {};
-    }
+    private dialogIDCount: number = 0;
 
-    registerDialog(dialogId: string, component) {
+    constructor(private modalService: BsModalService) {}
+
+    public registerDialog(dialogId: string, component) {
         if (!dialogId) {
             dialogId = String(++this.dialogIDCount);
         }
         this.dialogInstances[dialogId] = component;
         this.assignInitMethods(component);
         return dialogId;
+    }
+
+    public openDialog(dialogId: string, dialogParams?: any) {
+        if (!this.dialogInstances[dialogId]) {
+            return;
+        }
+        Object.assign(this.dialogInstances[dialogId], dialogParams);
+        this.dialogInstances[dialogId].open();
+    }
+
+    public closeDialog(dialogId: string) {
+        if (!this.dialogInstances[dialogId]) {
+            return;
+        }
+        this.dialogInstances[dialogId].close();
+    }
+
+    // Opens the dialog from the template reference provided
+    public openDialogFromTemplate(component, dialogId: string, template: TemplateRef<any>, dialogOptions?) {
+        if (this.dialogInstances[dialogId] || !dialogId || !template) {
+            return;
+        }
+        this.dialogInstances[dialogId] = component;
+        component.bsModalRef = this.modalService.show(template, dialogOptions);
+        if (!component.close) {
+            component.close = () => {
+                component.bsModalRef.hide();
+                if (dialogOptions.onClose) {
+                    dialogOptions.onClose();
+                }
+            };
+        }
+    }
+
+    public getDialogInstance(dialogId) {
+        return this.dialogInstances[dialogId] || {};
     }
 
     private assignInitMethods(component) {
@@ -39,38 +74,4 @@ export class DialogService {
             invokeEventHandler(component, 'close');
         };
     }
-
-    openDialog(dialogId: string, dialogParams?: any) {
-        if (!this.dialogInstances[dialogId]) {
-            return;
-        }
-        Object.assign(this.dialogInstances[dialogId], dialogParams);
-        this.dialogInstances[dialogId].open();
-    }
-
-    closeDialog(dialogId: string) {
-        if (!this.dialogInstances[dialogId]) {
-            return;
-        }
-        this.dialogInstances[dialogId].close();
-    }
-
-    // Opens the dialog from the template reference provided
-    openDialogFromTemplate(component, dialogId: string, template: TemplateRef<any>, dialogOptions?) {
-        if (this.dialogInstances[dialogId] || !dialogId || !template) {
-            return;
-        }
-        this.dialogInstances[dialogId] = component;
-        component.bsModalRef = this.modalService.show(template, dialogOptions);
-        if (!component.close) {
-            component.close = () => {
-                component.bsModalRef.hide();
-                if (dialogOptions.onClose) {
-                    dialogOptions.onClose();
-                }
-            };
-        }
-    }
-
-    constructor(private modalService: BsModalService) {}
 }

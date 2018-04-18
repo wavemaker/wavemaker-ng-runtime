@@ -2,11 +2,10 @@ import { Directive, HostBinding, Injector } from '@angular/core';
 
 import { addClass, setAttr, setCSSObj } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './picture.props';
-import { getImageUrl } from '../../utils/widget-utils';
+import { getImageUrl } from '../../../utils/widget-utils';
+import { StylableComponent } from '../base/stylable.component';
 
 registerProps();
 
@@ -16,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-picture', hostClass: DEFAULT_CLS};
 @Directive({
     'selector': '[wmPicture]'
 })
-export class PictureDirective extends BaseComponent {
+export class PictureDirective extends StylableComponent {
 
     encodeurl;
     picturesource;
@@ -81,6 +80,6 @@ export class PictureDirective extends BaseComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

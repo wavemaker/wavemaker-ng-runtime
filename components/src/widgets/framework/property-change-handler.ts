@@ -2,8 +2,8 @@ import { $appDigest, $unwatch, isChangeFromWatch, isObject, setAttr, switchClass
 
 import { BaseComponent } from '../web/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
-import { getWatchIdentifier } from '../../../utils/widget-utils';
 import { isStyle } from './styler';
+import { getWatchIdentifier } from '../../utils/widget-utils';
 
 // set of boolean attrs
 const BOOLEAN_ATTRS = new Set([

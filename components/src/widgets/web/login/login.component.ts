@@ -1,13 +1,12 @@
 import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './login.props';
 import { TextDirective } from '../text/text.directive';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
 import { ButtonComponent } from '../button/button.component';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { invokeEventHandler } from '../../../utils/widget-utils';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
@@ -19,7 +18,7 @@ declare const _, $;
     selector: 'div[wmLogin]',
     templateUrl: './login.component.html'
 })
-export class LoginComponent extends BaseComponent implements AfterViewInit {
+export class LoginComponent extends StylableComponent implements AfterViewInit {
 
     usernameCmp: TextDirective;
 
@@ -41,25 +40,25 @@ export class LoginComponent extends BaseComponent implements AfterViewInit {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_INFO);
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
     initLoginButtonActions() {
-        this.loginButtonCmp.nativeElement.addEventListener('click', event => {
+        this.loginButtonCmp.getNativeElement().addEventListener('click', event => {
             this.loginDetails = {
                 username: this.usernameCmp.datavalue,
                 password: this.passwordCmp.datavalue,
                 rememberme: this.rememberMeCmp.datavalue
             };
-            if (!(<HTMLFormElement>this.usernameCmp.nativeElement).checkValidity() || !(<HTMLFormElement>this.passwordCmp.nativeElement).checkValidity()) {
+            if (!(<HTMLFormElement>this.usernameCmp.getNativeElement()).checkValidity() || !(<HTMLFormElement>this.passwordCmp.getNativeElement()).checkValidity()) {
                 return;
             }
-            if (this.nativeElement.hasAttribute('submit.event') || this.loginButtonCmp.nativeElement.hasAttribute('click.event')) {
+            if (this.nativeElement.hasAttribute('submit.event') || this.loginButtonCmp.getNativeElement().hasAttribute('click.event')) {
                 // TODO: Check if it is a variable or any other action event
                 invokeEventHandler(this, 'click');
                 invokeEventHandler(this, 'submit');
             } else {
-                this.viewParent.Variables.loginAction.login({loginInfo: this.loginDetails}, this.onSuccess, this.onError);
+                this.pageComponent.Variables.loginAction.login({loginInfo: this.loginDetails}, this.onSuccess, this.onError);
             }
         });
     }
@@ -71,7 +70,7 @@ export class LoginComponent extends BaseComponent implements AfterViewInit {
     onError(error?) {
         this.loginMessage = {
             type: 'error',
-            caption: this.errormessage || error || this.viewParent.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
+            caption: this.errormessage || error || this.pageComponent.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
             show: true
         };
         invokeEventHandler(this, 'error');

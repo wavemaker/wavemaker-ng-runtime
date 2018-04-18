@@ -2,9 +2,8 @@ import { Component, forwardRef, Injector } from '@angular/core';
 
 import { switchClass, toggleClass } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './left-panel.props';
 
 registerProps();
@@ -19,7 +18,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-left-panel', hostClass: DEFAULT_CLS};
         {provide: '@Widget', useExisting: forwardRef(() => LeftPanelComponent)}
     ]
 })
-export class LeftPanelComponent extends BaseComponent {
+export class LeftPanelComponent extends StylableComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
@@ -33,6 +32,6 @@ export class LeftPanelComponent extends BaseComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

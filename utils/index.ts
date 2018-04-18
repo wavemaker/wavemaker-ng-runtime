@@ -4,4 +4,4 @@ export * from './src/enums';
 export * from './src/expression-parser';
 export * from './src/utils';
 export * from './src/watcher';
-export * from './src/id-maker';
+export * from './src/id-generator';

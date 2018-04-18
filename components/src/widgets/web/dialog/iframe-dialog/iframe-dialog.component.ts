@@ -2,11 +2,10 @@ import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/co
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IStylableComponent } from '../../../framework/types';
-import { invokeEventHandler } from '../../../utils/widget-utils';
-import { BaseComponent } from '../../base/base.component';
+import { invokeEventHandler } from '../../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
 import { registerProps } from './iframe-dialog.props';
+import { StylableComponent } from '../../base/stylable.component';
 
 const WIDGET_INFO = {widgetType: 'wm-iframedialog', hostClass: ''};
 
@@ -20,7 +19,7 @@ declare const _, $;
     selector: 'div[wmIframeDialog]',
     templateUrl: './iframe-dialog.component.html'
 })
-export class IframeDialogComponent extends BaseComponent implements OnInit {
+export class IframeDialogComponent extends StylableComponent implements OnInit {
 
     bsModalRef: BsModalRef;
     isOpen;
@@ -44,7 +43,7 @@ export class IframeDialogComponent extends BaseComponent implements OnInit {
     constructor(inj: Injector, private modalService: BsModalService, private dialogService: DialogService) {
         super(inj, WIDGET_INFO);
 
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.SHELL, ['height', 'width']);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL, ['height', 'width']);
         // styler(this.nativeElement.querySelector('.app-dialog-body.modal-body'), this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 

@@ -3,12 +3,10 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 
 import { getResourceURL, insertAfter, isString, removeAttr, setAttr } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
+import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './video.props';
-import { getImageUrl } from '../../utils/widget-utils';
-
+import { getImageUrl } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-video';
 const WIDGET_CONFIG = {widgetType: 'wm-video', hostClass: DEFAULT_CLS};
@@ -29,7 +27,7 @@ registerProps();
     selector: '[wmVideo]',
     templateUrl: './video.component.html'
 })
-export class VideoComponent extends BaseComponent {
+export class VideoComponent extends StylableComponent {
 
     mp4videoUrl: SafeResourceUrl = '';
     webmvideoUrl: SafeResourceUrl = '';
@@ -80,6 +78,6 @@ export class VideoComponent extends BaseComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

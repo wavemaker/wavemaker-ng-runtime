@@ -1,14 +1,13 @@
 import { AfterViewInit, ComponentFactoryResolver, Directive, Injector, OnInit, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { addClass, isObject, validateAccessRoles } from '@wm/utils';
+import { $appDigest, addClass, isObject, validateAccessRoles } from '@wm/utils';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './nav.props';
-import { invokeEventHandler, isActiveNavItem } from '../../utils/widget-utils';
-import { getOrderedDataSet } from '../../utils/form-utils';
+import { invokeEventHandler, isActiveNavItem } from '../../../utils/widget-utils';
+import { getOrderedDataSet } from '../../../utils/form-utils';
 import { MenuComponent } from '../menu/menu.component';
 
 registerProps();
@@ -21,7 +20,7 @@ declare const _, $;
 @Directive({
     selector: '[wmNav]'
 })
-export class NavDirective extends BaseComponent implements AfterViewInit, OnInit {
+export class NavDirective extends StylableComponent implements AfterViewInit, OnInit {
 
     _nodes;
     nodes;
@@ -132,13 +131,13 @@ export class NavDirective extends BaseComponent implements AfterViewInit, OnInit
                                 iconclass: itemClass || ''
                             });
                             // set the values on the proxy instance so the onPropertyChange will be triggered
-                            menuCmpIns.widget.dataset = this._nodes[index];
-                            menuCmpIns.widget.autoclose = this.autoclose;
+                            menuCmpIns.getWidget().dataset = this._nodes[index];
+                            menuCmpIns.getWidget().autoclose = this.autoclose;
                             // subscribe to the select event in the menu widget to notify the nav directive
                             menuCmpIns.select.asObservable().subscribe((e: any) => {
                                 this._onMenuItemSelect(e.$event, e.$item);
                             });
-                            menuCmpIns.$digest();
+                            $appDigest();
                             this.menuComponents.push(newMenuCmp);
                         };
                         $li.append(newMenuCmp.location.nativeElement);
@@ -196,13 +195,13 @@ export class NavDirective extends BaseComponent implements AfterViewInit, OnInit
     }
 
     constructor(
-        private inj: Injector,
+        inj: Injector,
         private route: Router,
         private vcr: ViewContainerRef,
         private componentFactoryResolver: ComponentFactoryResolver
     ) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.registerDestroyListener(() => this.destroyMenuComponents());
     }
 
@@ -235,9 +234,5 @@ export class NavDirective extends BaseComponent implements AfterViewInit, OnInit
                 }
             }
         });
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }

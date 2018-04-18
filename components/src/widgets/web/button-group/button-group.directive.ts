@@ -1,8 +1,7 @@
 import { Directive, HostBinding, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './button-group.props';
 
 registerProps();
@@ -13,13 +12,13 @@ const WIDGET_CONFIG = {widgetType: 'wm-buttongroup', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmButtonGroup]'
 })
-export class ButtonGroupDirective extends BaseComponent {
+export class ButtonGroupDirective extends StylableComponent {
 
     @HostBinding('class.btn-group-vertical') vertical: boolean;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

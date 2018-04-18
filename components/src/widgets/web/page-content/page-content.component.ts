@@ -3,9 +3,8 @@ import { Component, Injector } from '@angular/core';
 import { switchClass } from '@wm/utils';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './page-content.props';
+import { StylableComponent } from '../base/stylable.component';
 
 registerProps();
 
@@ -16,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
     selector: '[wmPageContent]',
     templateUrl: './page-content.component.html'
 })
-export class PageContentComponent extends BaseComponent {
+export class PageContentComponent extends StylableComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
@@ -27,6 +26,6 @@ export class PageContentComponent extends BaseComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

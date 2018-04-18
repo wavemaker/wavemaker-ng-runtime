@@ -4,11 +4,10 @@ import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { $appDigest, getClonedObject } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { BaseFormComponent } from '../base/base-form.component';
-import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
-import { getOrderedDataSet } from '../../utils/form-utils';
+import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
+import { getOrderedDataSet } from '../../../utils/form-utils';
 import { registerProps } from './search.props';
 
 declare const _;
@@ -188,7 +187,7 @@ export class SearchComponent extends BaseFormComponent implements OnInit {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this as IStylableComponent);
+        styler(this.$element, this);
     }
 
     /**

@@ -4,9 +4,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { isString } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './audio.props';
 
 
@@ -19,7 +17,7 @@ registerProps();
     selector: '[wmAudio]',
     templateUrl: './audio.component.html'
 })
-export class AudioComponent extends BaseComponent {
+export class AudioComponent extends StylableComponent {
 
     mp3audioUrl: SafeResourceUrl = '';
 
@@ -34,6 +32,6 @@ export class AudioComponent extends BaseComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

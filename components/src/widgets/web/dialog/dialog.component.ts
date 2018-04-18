@@ -3,11 +3,10 @@ import { Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } fro
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
 import { DialogService } from './dialog.service';
 import { DialogActionsComponent } from './dialog-actions/dialog-actions.component';
 import { registerProps } from './dialog.props';
+import { StylableComponent } from '../base/stylable.component';
 
 declare const $;
 
@@ -19,7 +18,7 @@ registerProps();
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html'
 })
-export class DialogComponent extends BaseComponent implements OnInit {
+export class DialogComponent extends StylableComponent implements OnInit {
 
     dialogId: any;
     dialogWidth: any;
@@ -44,7 +43,7 @@ export class DialogComponent extends BaseComponent implements OnInit {
         super(inj, WIDGET_INFO);
         styler(
             this.nativeElement,
-            this as IStylableComponent,
+            this,
             APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER,
             ['width']
         );

@@ -3,8 +3,7 @@ import { Component, Injector } from '@angular/core';
 import { switchClass } from '@wm/utils';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IStylableComponent } from '../../../framework/types';
-import { BaseComponent } from '../../base/base.component';
+import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './layout-grid-column.props';
 
 registerProps();
@@ -16,12 +15,12 @@ const WIDGET_CONFIG = {widgetType: 'wm-gridcolumn', hostClass: DEFAULT_CLS};
     selector: '[wmLayoutGridColumn]',
     templateUrl: './layout-grid-column.component.html'
 })
-export class LayoutGridColumnComponent extends BaseComponent {
+export class LayoutGridColumnComponent extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
     onPropertyChange(key, nv, ov?) {

@@ -3,9 +3,8 @@ import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 import { toggleClass } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
 import { registerProps } from './checkbox.props';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
@@ -66,7 +65,7 @@ export class CheckboxComponent  extends BaseFormComponent implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.nativeElement.querySelector('label'), this as IStylableComponent);
+        styler(this.nativeElement.querySelector('label'), this);
     }
 
     onChange($event) {

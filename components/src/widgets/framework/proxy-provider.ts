@@ -3,11 +3,10 @@
  */
 export class ProxyProvider {
     public static create(instance: any, proxyHandler: any) {
-        const revocable = Proxy.revocable(this as any, proxyHandler);
+        const revocable = Proxy.revocable(instance, proxyHandler);
         if (instance.registerDestroyListener) {
             instance.registerDestroyListener(() => revocable.revoke());
         }
         return revocable.proxy;
     }
 }
-

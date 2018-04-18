@@ -3,11 +3,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { $appDigest, addClass, removeClass } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './message.props';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { invokeEventHandler } from '../../../utils/widget-utils';
+import { StylableComponent } from '../base/stylable.component';
 
 const DEFAULT_CLS = 'alert app-message';
 const WIDGET_CONFIG = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
@@ -18,7 +17,7 @@ registerProps();
     selector: '[wmMessage]',
     templateUrl: './message.component.html'
 })
-export class MessageComponent extends BaseComponent {
+export class MessageComponent extends StylableComponent {
 
     messageClass = '';
     messageContent;
@@ -93,6 +92,6 @@ export class MessageComponent extends BaseComponent {
 
     constructor(inj: Injector, private sanitize: DomSanitizer) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

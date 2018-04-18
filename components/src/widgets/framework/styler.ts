@@ -1,7 +1,7 @@
 import { setCSS } from '@wm/utils';
 
-import { getBackGroundImageUrl } from '../../../utils/widget-utils';
-import { IStylableComponent } from './types';
+import { getBackGroundImageUrl } from '../../utils/widget-utils';
+import { StylableComponent } from '../web/base/stylable.component';
 
 export enum APPLY_STYLES_TYPE {
     CONTAINER,
@@ -83,7 +83,7 @@ const MAP_SCROLLABLE_CONTAINER_TYPE_IGNORE_LIST = {
 };
 
 
-export function styler($node: HTMLElement, component: IStylableComponent, type?: APPLY_STYLES_TYPE, skipList?: Array<string>) {
+export function styler($node: HTMLElement, component: StylableComponent, type?: APPLY_STYLES_TYPE, skipList?: Array<string>) {
     // apply init styles;
     const skipListMap = Object.create(null);
     if (skipList) {

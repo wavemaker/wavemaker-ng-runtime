@@ -5,11 +5,10 @@ import { Subject } from 'rxjs/Subject';
 import { $appDigest, addClass, findValueOf, isObject, removeClass, validateAccessRoles } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
-import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
+import { StylableComponent } from '../base/stylable.component';
+import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
 import { registerProps } from './menu.props';
-import { getOrderedDataSet } from '../../utils/form-utils';
+import { getOrderedDataSet } from '../../../utils/form-utils';
 
 registerProps();
 
@@ -53,7 +52,7 @@ const PULL_RIGHT = 'pull-right';
     templateUrl: './menu.component.html',
     providers: [{provide: MenuParent, useExisting: forwardRef(() => MenuComponent)}]
 })
-export class MenuComponent extends BaseComponent implements MenuParent, OnInit, OnDestroy {
+export class MenuComponent extends StylableComponent implements MenuParent, OnInit, OnDestroy {
 
     orderby;
     userrole;
@@ -82,7 +81,7 @@ export class MenuComponent extends BaseComponent implements MenuParent, OnInit, 
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onPropertyChange(key, newVal, oldVal?) {

@@ -7,12 +7,12 @@ import { $parseEvent, $watch, addClass, isDefined, noop, setAttr } from '@wm/uti
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
 import { proxyHandler } from '../../framework/property-change-handler';
-import { IWidgetConfig } from '../../framework/types';
+import { ChangeListener, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
 import { COMPONENT_HOST_EVENTS } from '../../framework/constants';
 import { ProxyProvider } from '../../framework/proxy-provider';
-import { getWatchIdentifier } from '../../utils/widget-utils';
-import { CUSTOM_EVT_KEY } from '../../utils/decorators';
+import { getWatchIdentifier } from '../../../utils/widget-utils';
+import { CUSTOM_EVT_KEY } from '../../../utils/decorators';
 
 declare const $;
 
@@ -120,8 +120,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         setAttr(this.nativeElement, 'widget-id', this.widgetId);
 
         // register default property change handler and style change handler
-        this.registerStyleChangeListener(this.onStyleChange);
-        this.registerPropertyChangeListener(this.onPropertyChange);
+        this.registerStyleChangeListener(this.onStyleChange, this);
+        this.registerPropertyChangeListener(this.onPropertyChange, this);
 
         // if the initPromise is provided, wait till the promise is resolved to proceed with the widget initialization
         if (!initPromise) {
@@ -159,16 +159,25 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         this.propertyChange.next({key, nv, ov});
     }
 
-    public registerStyleChangeListener(fn: Function) {
+    public registerStyleChangeListener(fn: ChangeListener, ctx?: any) {
+        if (ctx) {
+            fn = fn.bind(ctx);
+        }
         this.styleChange$.subscribe(({key, nv, ov}) => fn(key, nv, ov));
     }
 
-    public registerPropertyChangeListener(fn: Function) {
+    public registerPropertyChangeListener(fn: ChangeListener, ctx?: any) {
+        if (ctx) {
+            fn = fn.bind(ctx);
+        }
         this.propertyChange$.subscribe(({key, nv, ov}) => fn(key, nv, ov));
     }
 
-    public registerDestroyListener(fn: Function) {
-        this.destroy$.subscribe(fn);
+    public registerDestroyListener(fn: Function, ctx?: any) {
+        if (ctx) {
+            fn = fn.bind(ctx);
+        }
+        this.destroy$.subscribe(() => fn);
     }
 
     public getEventHandler(eventName: string): Function {

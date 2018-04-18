@@ -3,13 +3,12 @@ import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, Injector
 import { $appDigest, isDefined, isObject } from '@wm/utils';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './list.props';
-import { NAVIGATION_TYPE } from '../../utils/widget-utils';
+import { NAVIGATION_TYPE } from '../../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
-import { getOrderedDataSet } from '../../utils/form-utils';
+import { getOrderedDataSet } from '../../../utils/form-utils';
 
 declare const _;
 declare const $;
@@ -23,7 +22,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
     selector: 'div[wmList]',
     templateUrl: './list.component.html'
 })
-export class ListComponent extends BaseComponent implements AfterViewInit {
+export class ListComponent extends StylableComponent implements AfterViewInit {
 
     // ToDo: itemsPerRow should be dynamically generated.
     private itemsPerRowClass: string = 'col-xs-12 col-sm-12 col-md-12 col-lg-12';
@@ -97,7 +96,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.SHELL);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
     }
 
     /**
@@ -105,7 +104,7 @@ export class ListComponent extends BaseComponent implements AfterViewInit {
      * @param {number} index value of the list item
      * @returns {number} index.
      */
-    private listTrackByFn(index: number):number {
+    private listTrackByFn(index: number): number {
         return index;
     }
 

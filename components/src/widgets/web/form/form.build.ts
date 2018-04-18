@@ -1,9 +1,10 @@
-import { Element, Attribute } from '@angular/compiler';
-import { BuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { idMaker } from '@wm/utils';
+import { Attribute, Element } from '@angular/compiler';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { IDGenerator } from '@wm/utils';
+
 
 const tagName = 'form';
-const idGen = idMaker('form_');
+const idGen = new IDGenerator('form_');
 
 const formWidgets = new Set([
     'wm-text',
@@ -37,14 +38,14 @@ const addFormControlName = (children = []) => {
     });
 };
 
-const buildTask = (isLiveForm?): BuildTaskDef => {
+const buildTask = (isLiveForm?): IBuildTaskDef => {
     return {
         template: (node: Element) => {
             addFormControlName(node.children);
         },
         pre: (attrs, shared) => {
             let tmpl;
-            const counter = idGen.next().value;
+            const counter = idGen.nextUid();
             attrs.set('dialogId', 'liveformdialog-' + attrs.get('name') + '-' + counter);
             const liveFormAttr = isLiveForm ? 'wmLiveForm' : '';
             const liveFormTmpl = `<${tagName} wmForm ${liveFormAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngForm" [noValidate]="${counter}.validationtype !== 'html'"

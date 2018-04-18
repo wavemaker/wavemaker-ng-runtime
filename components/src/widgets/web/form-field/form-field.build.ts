@@ -1,8 +1,8 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { FormWidgetType, IDGenerator } from '@wm/utils';
 
-import { ALLFIELDS } from '../../utils/data-utils';
-import { isDataSetWidget } from '../../utils/widget-utils';
+import { ALLFIELDS } from '../../../utils/data-utils';
+import { isDataSetWidget } from '../../../utils/widget-utils';
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
@@ -112,7 +112,7 @@ register('wm-form-field', (): IBuildTaskDef => {
     return {
         requires: ['wm-form', 'wm-liveform'],
         pre: (attrs, shared, parentForm, parentLiveForm) => {
-            const counter = idGen.next().value;
+            const counter = idGen.nextUid();
             const parent = parentForm || parentLiveForm;
             const pCounter = parent.get('form_reference');
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;

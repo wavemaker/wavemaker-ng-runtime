@@ -4,10 +4,9 @@ import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/
 
 import { BaseFormComponent } from '../base/base-form.component';
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
 import { registerProps } from './time.props';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
-import { ToDatePipe } from '../../pipes/custom-pipes';
+import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
@@ -133,7 +132,7 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
     constructor(inj: Injector, public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
         /**
          * Destroy the timer once the date widget is gone
          */

@@ -1,9 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ContentChildren, ElementRef, Injector } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
 
 import { addClass, removeClass } from '@wm/utils';
 
-import { BaseComponent } from '../base/base.component';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
+import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './composite.props';
 
 const HOST_CLS = 'form-group app-composite-widget clearfix';
@@ -21,7 +21,7 @@ const CAPTION_POSITION = {
     selector: 'div[wmComposite]',
     template: '<ng-content></ng-content>'
 })
-export class CompositeComponent extends BaseComponent implements AfterViewInit {
+export class CompositeComponent extends StylableComponent implements AfterViewInit {
 
     // this is the reference to the component refs inside the composite
     @ContentChildren('@Widget', {descendants: true}) componentRefs;
@@ -47,8 +47,8 @@ export class CompositeComponent extends BaseComponent implements AfterViewInit {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

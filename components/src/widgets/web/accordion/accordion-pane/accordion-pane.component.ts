@@ -3,12 +3,11 @@ import { Component, ContentChildren, EventEmitter, forwardRef, Inject, Injector,
 import { $appDigest, removeAttr } from '@wm/utils';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IStylableComponent } from '../../../framework/types';
-import { BaseComponent } from '../../base/base.component';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';
 import { registerProps } from './accordion-pane.props';
 import { AccordionDirective } from '../accordion.component';
-import { invokeEventHandler } from '../../../utils/widget-utils';
+import { invokeEventHandler } from '../../../../utils/widget-utils';
+import { StylableComponent } from '../../base/stylable.component';
 
 registerProps();
 
@@ -25,7 +24,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
         {provide: '@Widget', useExisting: forwardRef(() => AccordionPaneComponent)}
     ]
 })
-export class AccordionPaneComponent extends BaseComponent implements OnInit {
+export class AccordionPaneComponent extends StylableComponent implements OnInit {
     isActive: boolean = false;
     paneId;
     $lazyload: Function = _.noop;
@@ -92,8 +91,8 @@ export class AccordionPaneComponent extends BaseComponent implements OnInit {
     constructor(inj: Injector, @Inject('@AccordionParent') private parentAccordion: AccordionDirective) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this as IStylableComponent, APPLY_STYLES_TYPE.SHELL);
-        styler(<HTMLElement>this.$element.querySelector('.panel-body'), this as IStylableComponent, APPLY_STYLES_TYPE.INNER_SHELL);
+        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
+        styler(<HTMLElement>this.$element.querySelector('.panel-body'), this, APPLY_STYLES_TYPE.INNER_SHELL);
 
         removeAttr(this.$element, 'title');
     }

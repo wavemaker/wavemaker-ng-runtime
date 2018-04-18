@@ -3,8 +3,7 @@ import { Directive, Injector } from '@angular/core';
 import { setCSS } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './html.props';
 
 const DEFAULT_CLS = 'app-html-container';
@@ -15,11 +14,11 @@ registerProps();
 @Directive({
     selector: '[wmHtml]'
 })
-export class HtmlDirective extends BaseComponent {
+export class HtmlDirective extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onStyleChange(key, newVal, oldVal) {

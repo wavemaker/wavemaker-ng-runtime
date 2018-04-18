@@ -1,4 +1,4 @@
-import { IDGenerator } from '@wm/utils';
+import { IDGenerator } from './id-generator';
 
 import { debounce } from './utils';
 import { $parseExpr } from './expression-parser';

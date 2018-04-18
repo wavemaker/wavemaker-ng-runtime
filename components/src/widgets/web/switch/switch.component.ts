@@ -3,11 +3,10 @@ import { Component, forwardRef, Injector } from '@angular/core';
 import { $appDigest, isEqualWithFields, setCSS } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './switch.props';
-import { getOrderedDataSet } from '../../utils/form-utils';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { getOrderedDataSet } from '../../../utils/form-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
 
 declare const _, $;
 
@@ -64,7 +63,7 @@ export class SwitchComponent extends BaseFormComponent {
 
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onPropertyChange(key, newVal, oldVal) {

@@ -4,13 +4,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { isDefined, toBoolean } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
 import { ParentForm } from '../form/form.component';
 import { registerProps } from './form-field.props';
-import { getEvaluatedData, isDataSetWidget } from '../../utils/widget-utils';
-import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField } from '../../utils/data-utils';
-import { getDefaultViewModeWidget, parseValueByType } from '../../utils/live-utils';
+import { getEvaluatedData, isDataSetWidget } from '../../../utils/widget-utils';
+import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField } from '../../../utils/data-utils';
+import { getDefaultViewModeWidget, parseValueByType } from '../../../utils/live-utils';
+import { StylableComponent } from '../base/stylable.component';
 
 declare const _;
 
@@ -20,7 +19,7 @@ const DEFAULT_CLS = '';
     selector: '[wmFormField]',
     exportAs: 'wmFormField'
 })
-export class FormFieldDirective extends BaseComponent implements OnInit, AfterContentInit {
+export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
 
     @ContentChild('formWidget') formWidget;
 
@@ -223,7 +222,7 @@ export class FormFieldDirective extends BaseComponent implements OnInit, AfterCo
         super.ngOnInit();
         this.ngForm = this.form.ngForm;
         this.ngForm.addControl(this.key || this.name , this.createControl());
-        styler(this.$element, this as IStylableComponent);
+        styler(this.$element, this);
     }
 
     ngAfterContentInit() {

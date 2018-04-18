@@ -2,10 +2,9 @@ import { Component, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
-import { IStylableComponent } from '../../framework/types';
 import { registerProps } from './spinner.props';
-import { getBackGroundImageUrl } from '../../utils/widget-utils';
+import { getBackGroundImageUrl } from '../../../utils/widget-utils';
+import { StylableComponent } from '../base/stylable.component';
 
 declare const _;
 
@@ -18,7 +17,7 @@ registerProps();
     selector: '[wmSpinner]',
     templateUrl: './spinner.component.html'
 })
-export class SpinnerComponent extends BaseComponent {
+export class SpinnerComponent extends StylableComponent {
 
     iconclass = 'fa fa-spinner';
     /**
@@ -40,7 +39,7 @@ export class SpinnerComponent extends BaseComponent {
 
     constructor(inj: Injector, private sanitizer: DomSanitizer) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onPropertyChange(key, newVal, oldVal) {

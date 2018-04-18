@@ -2,11 +2,10 @@ import { Directive, forwardRef, HostBinding, HostListener, Injector } from '@ang
 
 import { addClass } from '@wm/utils';
 
-import { BaseComponent } from '../base/base.component';
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './text.props';
-import { Event } from '../../utils/decorators';
+import { Event } from '../../../utils/decorators';
 
 registerProps();
 
@@ -20,7 +19,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-text', hostClass: DEFAULT_CLS};
         provide: '@Widget', useExisting: forwardRef(() => TextDirective)
     }]
 })
-export class TextDirective extends BaseComponent {
+export class TextDirective extends StylableComponent {
 
     _oldVal;
 
@@ -69,12 +68,11 @@ export class TextDirective extends BaseComponent {
         return super.shouldRegisterHostEvent(eventName);
     }
 
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
         addClass(this.nativeElement, DEFAULT_CLS);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }
 

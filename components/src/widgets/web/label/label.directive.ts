@@ -2,10 +2,9 @@ import { Directive, forwardRef, Injector } from '@angular/core';
 
 import { setProperty, toggleClass } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './label.props';
+import { StylableComponent } from '../base/stylable.component';
 
 registerProps();
 
@@ -16,12 +15,12 @@ const WIDGET_CONFIG = {widgetType: 'wm-label', hostClass: DEFAULT_CLS};
     selector: '[wmLabel]',
     providers: [{provide: '@Widget', useExisting: forwardRef(() => LabelDirective)}]
 })
-export class LabelDirective extends BaseComponent {
+export class LabelDirective extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onPropertyChange(key, nv, ov?) {

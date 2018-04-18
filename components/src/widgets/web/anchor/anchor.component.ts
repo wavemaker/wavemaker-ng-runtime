@@ -2,11 +2,10 @@ import { Component, HostBinding, Injector } from '@angular/core';
 
 import { encodeUrl, setAttr } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
-
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './anchor.props';
+
 
 registerProps();
 
@@ -17,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-anchor', hostClass: DEFAULT_CLS};
     selector: 'a[wmAnchor]',
     templateUrl: './anchor.component.html'
 })
-export class AnchorComponent extends BaseComponent {
+export class AnchorComponent extends StylableComponent {
     public encodeurl;
 
     @HostBinding('target') target: string;
@@ -30,7 +29,7 @@ export class AnchorComponent extends BaseComponent {
 
         setAttr(this.nativeElement, 'href', 'javascript:void(0)');
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onPropertyChange(key: string, nv: any) {

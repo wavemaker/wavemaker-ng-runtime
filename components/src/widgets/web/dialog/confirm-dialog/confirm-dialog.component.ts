@@ -1,12 +1,11 @@
 import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
-import { IStylableComponent } from '../../../framework/types';
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { BaseComponent } from '../../base/base.component';
-import { invokeEventHandler } from '../../../utils/widget-utils';
+import { invokeEventHandler } from '../../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
 import { registerProps } from './confirm-dialog.props';
+import { StylableComponent } from '../../base/stylable.component';
 
 const WIDGET_INFO = {widgetType: 'wm-confirmdialog', hostClass: ''};
 
@@ -20,7 +19,7 @@ declare const _, $;
     selector: 'div[wmConfirmDialog]',
     templateUrl: './confirm-dialog.component.html'
 })
-export class ConfirmDialogComponent extends BaseComponent implements OnInit {
+export class ConfirmDialogComponent extends StylableComponent implements OnInit {
 
     bsModalRef: BsModalRef;
     isOpen;
@@ -47,13 +46,13 @@ export class ConfirmDialogComponent extends BaseComponent implements OnInit {
         // TODO: Get the modal element reference
         styler(
             this.nativeElement,
-            this as IStylableComponent,
+            this,
             APPLY_STYLES_TYPE.CONTAINER,
             ['height', 'width']
         );
         styler(
             this.nativeElement.querySelector('.app-dialog-body.modal-body') as HTMLElement,
-            this as IStylableComponent,
+            this,
             APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER
         );
     }

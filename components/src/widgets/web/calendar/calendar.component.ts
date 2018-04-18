@@ -3,11 +3,10 @@ import { AfterViewInit, Component, ElementRef, forwardRef, Injector, OnInit, Vie
 import { getClonedObject, getSessionStorageItem } from '@wm/utils';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './calendar.props';
-import { getEvaluatedData, invokeEventHandler } from '../../utils/widget-utils';
+import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
 import { IRedrawableComponent } from '../redraw/redrawable.interface';
+import { StylableComponent } from '../base/stylable.component';
 
 declare const _, $, moment;
 
@@ -98,7 +97,7 @@ registerProps();
         {provide: '@Widget', useExisting: forwardRef(() => CalendarComponent)}
     ]
 })
-export class CalendarComponent extends BaseComponent implements AfterViewInit, OnInit, IRedrawableComponent {
+export class CalendarComponent extends StylableComponent implements AfterViewInit, OnInit, IRedrawableComponent {
     /**
      * The calendar element reference
      */
@@ -479,7 +478,7 @@ export class CalendarComponent extends BaseComponent implements AfterViewInit, O
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER, ['height']);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
     }
 
     onStyleChange(key, newVal, oldVal?) {

@@ -2,12 +2,11 @@ import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 
 import { removeAttr, setAttr } from '@wm/utils';
 
-import { IStylableComponent } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { styler } from '../../framework/styler';
 import { registerProps } from './select.props';
-import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../utils/form-utils';
-import { getControlValueAccessor, invokeEventHandler } from '../../utils/widget-utils';
+import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../../utils/form-utils';
+import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -152,6 +151,6 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.nativeElement.children[0] as HTMLElement, this as IStylableComponent);
+        styler(this.nativeElement.children[0] as HTMLElement, this);
     }
 }

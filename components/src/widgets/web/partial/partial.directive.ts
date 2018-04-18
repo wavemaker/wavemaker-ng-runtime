@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
+import { Directive, Injector } from '@angular/core';
+
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './partial.props';
 
 registerProps();
@@ -10,8 +11,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmPartial]'
 })
-export class PartialDirective extends BaseComponent {
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+export class PartialDirective extends StylableComponent {
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 }

@@ -2,10 +2,10 @@ import { Directive, Inject, Self } from '@angular/core';
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
 import {$appDigest, DataType, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject} from '@wm/utils';
-import { Live_Operations, performDataOperation } from '../../utils/data-utils';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { Live_Operations, performDataOperation } from '../../../utils/data-utils';
+import { invokeEventHandler } from '../../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';
-import { ToDatePipe } from '../../pipes/custom-pipes';
+import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { DataSource } from '@wm/variables';
 
 declare const _, moment;

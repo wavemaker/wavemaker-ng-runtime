@@ -1,9 +1,8 @@
 import { ControlValueAccessor } from '@angular/forms';
 
-import { BaseComponent } from './base.component';
-import { IWidgetConfig } from '../../framework/types';
+import { StylableComponent } from './stylable.component';
 
-export abstract class BaseFormComponent extends BaseComponent implements ControlValueAccessor {
+export abstract class BaseFormComponent extends StylableComponent implements ControlValueAccessor {
     protected datavalue;
 
     private _onChange: any = () => {};
@@ -27,9 +26,5 @@ export abstract class BaseFormComponent extends BaseComponent implements Control
 
     protected invokeOnTouched() {
         this._onTouched();
-    }
-
-    constructor (inj: any, widgetConfig: IWidgetConfig) {
-        super(inj, widgetConfig);
     }
 }

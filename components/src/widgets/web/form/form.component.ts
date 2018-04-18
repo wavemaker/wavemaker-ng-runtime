@@ -6,12 +6,11 @@ import { Subject } from 'rxjs/Subject';
 import { $appDigest, getClonedObject, removeClass } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
-import { getFieldLayoutConfig } from '../../utils/live-utils';
-import { performDataOperation } from '../../utils/data-utils';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { getFieldLayoutConfig } from '../../../utils/live-utils';
+import { performDataOperation } from '../../../utils/data-utils';
+import { invokeEventHandler } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -38,7 +37,7 @@ const getWidgetConfig = isLiveForm => isLiveForm !== null ? LIVE_WIDGET_CONFIG :
     templateUrl: './form.component.html',
     providers: [{ provide: ParentForm, useExisting: forwardRef(() => FormComponent) }]
 })
-export class FormComponent extends BaseComponent implements ParentForm, OnDestroy {
+export class FormComponent extends StylableComponent implements ParentForm, OnDestroy {
 
     captionAlignClass: string;
     validationtype: string;
@@ -243,7 +242,7 @@ export class FormComponent extends BaseComponent implements ParentForm, OnDestro
     ) {
         super(inj, getWidgetConfig(isLiveForm));
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
 
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngForm = fb.group({});

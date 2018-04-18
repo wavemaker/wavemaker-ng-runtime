@@ -1,9 +1,7 @@
 import { Component, Injector } from '@angular/core';
 
-import { IStylableComponent } from '../../framework/types';
 import { styler } from '../../framework/styler';
-
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './content.props';
 
 registerProps();
@@ -15,11 +13,11 @@ const WIDGET_CONFIG = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};
     selector: '[wmContent]',
     templateUrl: './content.component.html'
 })
-export class ContentComponent extends BaseComponent {
+export class ContentComponent extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

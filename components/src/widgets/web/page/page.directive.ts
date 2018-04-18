@@ -1,7 +1,9 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { BaseComponent } from '../base/base.component';
+
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './page.props';
+
 
 registerProps();
 
@@ -11,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmPage]'
 })
-export class PageDirective extends BaseComponent {
+export class PageDirective extends StylableComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'pagetitle') {
@@ -19,7 +21,7 @@ export class PageDirective extends BaseComponent {
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private titleService: Title) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector, private titleService: Title) {
+        super(inj, WIDGET_CONFIG);
     }
 }

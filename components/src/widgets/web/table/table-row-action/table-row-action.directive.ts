@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, Injector, OnInit, Optional } from '@angular/core';
+
+import { BaseComponent } from '../../base/base.component';
 import { TableParent } from '../parent';
 import { registerProps } from './table-row-action.props';
-import { BaseComponent } from '../../base/base.component';
 
 declare const _;
 
@@ -26,9 +27,11 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
 
     public buttonDef;
 
-    constructor(@Optional() public _tableParent: TableParent,
-                inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(
+        inj: Injector,
+        @Optional() public _tableParent: TableParent,
+    ) {
+        super(inj, WIDGET_CONFIG);
     }
 
     populateAction() {

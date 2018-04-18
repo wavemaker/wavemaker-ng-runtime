@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Directive, ElementRef, Injector, OnInit, Optional } from '@angular/core';
-import { TableGroupParent, TableParent } from '../parent';
-import { setHeaderConfigForTable } from '../../../utils/live-utils';
-import { registerProps } from './table-column.props';
+import { Directive, Injector, OnInit, Optional } from '@angular/core';
+
 import { BaseComponent } from '../../base/base.component';
+import { TableGroupParent, TableParent } from '../parent';
+import { setHeaderConfigForTable } from '../../../../utils/live-utils';
+import { registerProps } from './table-column.props';
 
 declare const _;
 
@@ -43,10 +44,12 @@ export class TableColumnDirective extends BaseComponent implements OnInit {
 
     public fieldDef;
 
-    constructor(@Optional() public _tableParent: TableParent,
-                @Optional() public _groupParent: TableGroupParent,
-                inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(
+        inj: Injector,
+        @Optional() public _tableParent: TableParent,
+        @Optional() public _groupParent: TableGroupParent,
+    ) {
+        super(inj, WIDGET_CONFIG);
     }
 
     getStyleDef() {

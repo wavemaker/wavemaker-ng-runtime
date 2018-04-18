@@ -1,15 +1,12 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, HostBinding, Injector } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/utils';
 
-import { BaseComponent } from '../base/base.component';
-import { APPLY_STYLES_TYPE, styler } from '../../utils/styler';
+import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './chart.props';
-import {
-    allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType,
-    postPlotChartProcess
-} from './chart.utils';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
+import { invokeEventHandler } from '../../../utils/widget-utils';
 import { IRedrawableComponent } from '../redraw/redrawable.interface';
 
 registerProps();
@@ -23,7 +20,7 @@ const options = {
     },
     NONE = 'none',
     advanceDataProps = ['aggregation', 'aggregationcolumn', 'groupby', 'orderby'],
-    //XPaths to get actual data of data points in charts
+    // XPaths to get actual data of data points in charts
     chartDataPointXpath = {
         'Column'         : 'rect.nv-bar',
         'Bar'            : 'g.nv-bar',
@@ -34,7 +31,7 @@ const options = {
         'Donut'          : '.nv-pieChart .nv-slice path',
         'Bubble'         : '.nv-scatterChart .nv-point-paths path'
     },
-    //all properties of the chart
+    // all properties of the chart
     allOptions = ['bubblesize', 'shape'],
     styleProps = {
         'fontunit'      : 'font-size',
@@ -62,7 +59,7 @@ const getBooleanValue = val => {
         return false;
     }
     return val;
-}
+};
 
 // returns orderby columns and their orders in two separate arrays
 const getLodashOrderByFormat = orderby => {
@@ -80,7 +77,7 @@ const getLodashOrderByFormat = orderby => {
     };
 };
 
-//Replacing the '.' by the '$' because '.' is not supported in the alias names
+// Replacing the '.' by the '$' because '.' is not supported in the alias names
 const getValidAliasName = aliasName => aliasName ? aliasName.replace(/\./g, '$') : null;
 
 // Applying the font related styles for the chart
@@ -101,7 +98,7 @@ const angle = d => {
         {provide: '@Widget', useExisting: forwardRef(() => ChartComponent)}
     ]
 })
-export class ChartComponent extends BaseComponent implements AfterViewInit, IRedrawableComponent {
+export class ChartComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
     xaxisdatakey;
     yaxisdatakey;
     groupby;
@@ -245,7 +242,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
             minValues.push(_.minBy(data.values, function (dataObject) { return dataObject.y || dataObject[1]; }));
             maxValues.push(_.maxBy(data.values, function (dataObject) { return dataObject.y || dataObject[1]; }));
         });
-        //Gets the least and highest values among all the min and max values of respective series of data
+        // Gets the least and highest values among all the min and max values of respective series of data
         yValues.min = _.minBy(minValues, dataObject => dataObject.y || dataObject[1]);
         yValues.max = _.maxBy(maxValues, dataObject => dataObject.y || dataObject[1]);
         return yValues;
@@ -256,7 +253,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         return (values.length === 1 && values[0] === undefined) ? [] : values;
     }
 
-    //Returns the single data point based on the type of the data chart accepts
+    // Returns the single data point based on the type of the data chart accepts
     valueFinder(dataObj, xKey, yKey, index?, shape?) {
         let xVal = this.getxAxisVal(dataObj, xKey, index),
             value = _.get(dataObj, yKey),
@@ -267,7 +264,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         if (isChartDataJSON(this.type)) {
             dataPoint.x = xVal;
             dataPoint.y = yVal;
-            //only Bubble chart has the third dimension
+            // only Bubble chart has the third dimension
             if (isBubbleChart(this.type)) {
                 dataPoint.size = size;
                 dataPoint.shape = shape || 'circle';
@@ -275,7 +272,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         } else if (isChartDataArray(this.type)) {
             dataPoint = [xVal, yVal];
         }
-        //Adding actual unwrapped data to chart data to use at the time of selected data point of chart event
+        // Adding actual unwrapped data to chart data to use at the time of selected data point of chart event
         dataPoint._dataObj = dataObj;
         return dataPoint;
     }
@@ -294,7 +291,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         this.sampleData = getSampleData(this);
         // scope variables used to keep the actual key values for x-axis
         this.xDataKeyArr = [];
-        //Plotting the chart with sample data when the chart dataset is not bound
+        // Plotting the chart with sample data when the chart dataset is not bound
         if (!this.binddataset) {
             this.xDataKeyArr = getDateList();
             return this.sampleData;
@@ -358,7 +355,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
             queryResponse = _.orderBy(queryResponse, orderByDetails.columns, orderByDetails.orders);
         }
         queryResponse = _.groupBy(queryResponse, groupingColumn);
-        //In case of area chart all the series data should be of same length
+        // In case of area chart all the series data should be of same length
         if (_isAreaChart) {
             maxLength = _.max(_.map(queryResponse, obj => obj.length));
         }
@@ -400,7 +397,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
                     }
                     return true;
                 });
-                //Constructing the groupby expression
+                // Constructing the groupby expression
                 if (visualGroupingColumn) {
                     columns.push(visualGroupingColumn);
                 }
@@ -456,14 +453,14 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
             sortExpr = _.replace(this.orderby, /:/g, ' ');
             columns = _.uniq(_.concat(columns, groupByFields, [this.aggregationcolumn]));
             orderByColumns = getLodashOrderByFormat(this.orderby).columns;
-            //If the orderby column is chosen either in groupby or orderby then replace . with $ for that column
+            // If the orderby column is chosen either in groupby or orderby then replace . with $ for that column
             _.forEach(_.intersection(columns, orderByColumns), col => {
                 colAlias = getValidAliasName(col);
                 sortExpr = _.replace(sortExpr, col, colAlias);
             });
         }
         if (this.isAggregationEnabled()) {
-            //Send the group by in the aggregations api only if aggregation is also chosen
+            // Send the group by in the aggregations api only if aggregation is also chosen
             data.groupByFields = groupByFields;
             data.aggregations =  [
                 {
@@ -614,8 +611,8 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
                 stringColumn = columns[i].fieldName;
             }
         }
-        //Other than bubble chart x: string type y: number type
-        //Bubble chart x: number type y: number type
+        // Other than bubble chart x: string type y: number type
+        // Bubble chart x: number type y: number type
         if (stringColumn && defaultColumns.length > 0 && !isBubbleChart(this.type)) {
             temp = defaultColumns[0];
             defaultColumns[0] = stringColumn;
@@ -625,7 +622,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         return defaultColumns;
     }
 
-    //Call user defined javascript function when user links it to click event of the widget.
+    // Call user defined javascript function when user links it to click event of the widget.
     attachClickEvent() {
         let dataObj;
         d3.select('#wmChart' + this.$id + ' svg').selectAll(chartDataPointXpath[this.type]).style('pointer-events', 'all')
@@ -728,8 +725,8 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
 
     // prepares and configures the chart properties
     configureChart(datum) {
-        //Copy the data only in case of pie chart with default data
-        //Reason : when multiple pie charts are bound to same data, first chart theme will be applied to all charts
+        // Copy the data only in case of pie chart with default data
+        // Reason : when multiple pie charts are bound to same data, first chart theme will be applied to all charts
         let chartData = datum,
             xDomainValues,
             yDomainValues,
@@ -768,10 +765,10 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
     plotChart() {
         let datum = [];
         let element = $(this.$element);
-        //call user-transformed function
+        // call user-transformed function
         this.chartData = (invokeEventHandler(this, 'transform')) || this.chartData;
 
-        //Getting the order by data only in run mode. The order by applies for all the charts other than pie and donut charts
+        // Getting the order by data only in run mode. The order by applies for all the charts other than pie and donut charts
         if (this.isVisuallyGrouped && !isPieType(this.type)) {
             datum = this.chartData;
         } else {
@@ -782,12 +779,12 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
             return;
         }
         if (this.clearCanvas) {
-            //empty svg to add-new chart
+            // empty svg to add-new chart
             element.find('svg').replaceWith('<svg></svg>');
             this.clearCanvas = false;
         }
 
-        //In case of invalid axis show no data available message
+        // In case of invalid axis show no data available message
         if (!this.isValidAxis()) {
             datum = [];
         }
@@ -803,7 +800,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
     }
     // TODO: Need way to figure out if the datasource is a live source
     get isLiveVariable() {
-        //setting the flag for the live variable in the scope for the checks
+        // setting the flag for the live variable in the scope for the checks
         let variableObj = this.datasource;
         return variableObj && variableObj.category === 'wm.LiveVariable';
     }
@@ -835,8 +832,8 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
     // sets the default x and y axis options
     setDefaultAxisOptions() {
         let defaultColumns = this.getDefaultColumns();
-        //If we get the valid default columns then assign them as the x and y axis
-        //In case of service variable we may not get the valid columns because we cannot know the datatypes
+        // If we get the valid default columns then assign them as the x and y axis
+        // In case of service variable we may not get the valid columns because we cannot know the datatypes
         this.xaxisdatakey = defaultColumns[0] || null;
         this.yaxisdatakey = defaultColumns[1] || null;
     }
@@ -853,34 +850,34 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         var newOptions;
         switch (prop) {
             case 'xaxisdatakey':
-                //If group by enabled, columns chosen in groupby will be populated in x axis options
+                // If group by enabled, columns chosen in groupby will be populated in x axis options
                 if (this.isGroupByEnabled()) {
                     newOptions = groupByColumns;
                 }
                 break;
             case 'yaxisdatakey':
-                //If aggregation by enabled, columns chosen in aggregation will be populated in y axis options
+                // If aggregation by enabled, columns chosen in aggregation will be populated in y axis options
                 if (this.isAggregationEnabled()) {
                     newOptions = aggColumns;
                 } else if (this.isLiveVariable) {
-                    //In case of live variable populating only numeric columns
+                    // In case of live variable populating only numeric columns
                     newOptions = this.numericColumns;
                 }
                 break;
             case 'groupby':
-                //Filtering only non primary key columns
+                // Filtering only non primary key columns
                 if (this.isLiveVariable && this.nonPrimaryColumns && this.nonPrimaryColumns.length) {
                     newOptions = this.nonPrimaryColumns;
                 }
                 break;
             case 'aggregationcolumn':
-                //Set the 'aggregationColumn' to show all keys in case of aggregation function is count or to numeric keys in all other cases.
+                // Set the 'aggregationColumn' to show all keys in case of aggregation function is count or to numeric keys in all other cases.
                 if (this.isLiveVariable && this.isAggregationEnabled() && this.aggregation !== 'count') {
                     newOptions = this.numericColumns;
                 }
                 break;
             case 'orderby':
-                //Set the 'aggregationColumn' to show all keys in case of aggregation function is count or to numeric keys in all other cases.
+                // Set the 'aggregationColumn' to show all keys in case of aggregation function is count or to numeric keys in all other cases.
                 if (this.isLiveVariable && this.isAggregationEnabled()) {
                     newOptions = _.uniq(_.concat(groupByColumns, aggColumns));
                 }
@@ -895,25 +892,25 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         return newOptions || fields || this.axisoptions;
     }
 
-    //Function that iterates through all the columns and then fetching the numeric and non primary columns among them
+    // Function that iterates through all the columns and then fetching the numeric and non primary columns among them
     setNumericandNonPrimaryColumns() {
         let columns,
             type;
         this.numericColumns = [];
         this.nonPrimaryColumns = [];
-        //Fetching all the columns
+        // Fetching all the columns
         if (this.dataset && this.dataset.propertiesMap) {
-            columns = [];// TODO: fetchPropertiesMapColumns(scope.dataset.propertiesMap);
+            columns = []; // TODO: fetchPropertiesMapColumns(scope.dataset.propertiesMap);
         }
 
         if (columns) {
-            //Iterating through all the columns and fetching the numeric and non primary key columns
+            // Iterating through all the columns and fetching the numeric and non primary key columns
             _.forEach(Object.keys(columns), (key) => {
                 type = columns[key].type;
                 if (isNumberType(type)) {
                     this.numericColumns.push(key);
                 }
-                //Hiding only table's primary key
+                // Hiding only table's primary key
                 if (columns[key].isRelatedPk === 'true' || !columns[key].isPrimaryKey) {
                     this.nonPrimaryColumns.push(key);
                 }
@@ -923,20 +920,20 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         }
     }
 
-    //plot the chart
+    // plot the chart
     handleDataSet(newVal) {
         this.errMsg = '';
         newVal = newVal.data || newVal;
-        //Resetting the flag to false when the binding was removed
+        // Resetting the flag to false when the binding was removed
         if (!newVal && !this.binddataset) {
             this.isVisuallyGrouped = false;
             this.axisoptions = null;
         }
 
-        //liveVariables contain data in 'data' property' of the variable
+        // liveVariables contain data in 'data' property' of the variable
         this.chartData = this.isLiveVariable ? newVal && (newVal.data || '') : (newVal && newVal.dataValue === '' && _.keys(newVal).length === 1) ? '' : newVal;
 
-        //if the data returned is an object make it an array of object
+        // if the data returned is an object make it an array of object
         if (!_.isArray(this.chartData) && _.isObject(this.chartData)) {
             this.chartData = [this.chartData];
         }
@@ -1004,20 +1001,20 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         }
     }
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(WIDGET_CONFIG, inj, elRef, cdr);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
-        //generate unique id for the component
+        // generate unique id for the component
         this.$id = this.$element.getAttribute('name') || Math.random();
-        //remove title attribute as the element on hover shows you the hint through-out the element
+        // remove title attribute as the element on hover shows you the hint through-out the element
         removeAttr(this.$element, 'title');
         this.chartReady = false;
         this.binddataset = this.$element.getAttribute('dataset.bind');
     }
 
     ngAfterViewInit() {
-        //For old projects
+        // For old projects
         if (!_.includes(['outside', 'inside', 'hide'], this.showlabels)) {
             this.showlabels        = getBooleanValue(this.showlabels);
             this.showlabelsoutside = getBooleanValue(this.showlabelsoutside);
@@ -1025,7 +1022,7 @@ export class ChartComponent extends BaseComponent implements AfterViewInit, IRed
         }
 
         if (!this.theme) {
-            //Default theme for pie/donut is Azure and for other it is Terrestrial
+            // Default theme for pie/donut is Azure and for other it is Terrestrial
             this.theme = isPieType(this.type) ? 'Azure' : 'Terrestrial';
         }
 

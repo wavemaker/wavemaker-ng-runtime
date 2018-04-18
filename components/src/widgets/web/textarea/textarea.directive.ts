@@ -1,9 +1,8 @@
 import { Directive, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './textarea.props';
+import { StylableComponent } from '../base/stylable.component';
 
 registerProps();
 
@@ -17,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-textarea', hostClass: DEFAULT_CLS};
         provide: '@Widget', useExisting: forwardRef(() => TextareaDirective)
     }]
 })
-export class TextareaDirective extends BaseComponent {
+export class TextareaDirective extends StylableComponent {
 
     @HostBinding('attr.tabindex') tabindex: number;
     @HostBinding('attr.accesskey') shortcutkey: string;
@@ -37,6 +36,6 @@ export class TextareaDirective extends BaseComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

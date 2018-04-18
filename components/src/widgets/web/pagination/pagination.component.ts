@@ -1,14 +1,13 @@
 import { Component, EventEmitter, Injector, Output } from '@angular/core';
 
 import { $watch, isDefined, isPageable, switchClass, triggerFn } from '@wm/utils';
-
-import { BaseComponent } from '../base/base.component';
-import { registerProps } from './pagination.props';
-import { getDataSource } from '../../utils/data-utils';
-import { getOrderByExpr, getWatchIdentifier, invokeEventHandler } from '../../utils/widget-utils';
 import { DataSource } from '@wm/variables';
+
+import { registerProps } from './pagination.props';
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
+import { StylableComponent } from '../base/stylable.component';
+import { getOrderByExpr, getWatchIdentifier, invokeEventHandler } from '../../../utils/widget-utils';
+import { getDataSource } from '../../../utils/data-utils';
 
 declare const _;
 
@@ -43,7 +42,7 @@ const sizeClasses = {
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html'
 })
-export class PaginationComponent extends BaseComponent {
+export class PaginationComponent extends StylableComponent {
 
     @Output() resultEmitter: EventEmitter<any> = new EventEmitter();
     @Output() maxResultsEmitter: EventEmitter<any> = new EventEmitter();
@@ -468,6 +467,6 @@ export class PaginationComponent extends BaseComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this as IStylableComponent);
+        styler(this.$element, this);
     }
 }

@@ -7,8 +7,8 @@ import { setHtml } from '@wm/utils';
     selector: '[safeHtml]'
 })
 export class SafeHtmlDirective {
-    @Input() safeHtml;
-    set(html) {
+    @Input()
+    set safeHtml(html) {
         setHtml(this.el.nativeElement, this.domSanitizer.sanitize(SecurityContext.HTML, html));
     }
 

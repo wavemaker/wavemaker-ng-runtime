@@ -1,10 +1,9 @@
 import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 
-import { IStylableComponent } from '../../framework/types';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './rich-text-editor.props';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { invokeEventHandler } from '../../../utils/widget-utils';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
@@ -28,7 +27,7 @@ declare const _, $;
     selector: 'div[wmRichTextEditor]',
     templateUrl: './rich-text-editor.component.html'
 })
-export class RichTextEditorComponent extends BaseComponent implements OnInit, OnDestroy {
+export class RichTextEditorComponent extends StylableComponent implements OnInit, OnDestroy {
 
     $richTextEditor;
     $hiddenInputEle;
@@ -82,7 +81,7 @@ export class RichTextEditorComponent extends BaseComponent implements OnInit, On
 
     constructor(inj: Injector) {
         super(inj, WIDGET_INFO);
-        styler(this.nativeElement, this as IStylableComponent, APPLY_STYLES_TYPE.CONTAINER, ['height']);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
     }
 
     onPropertyChange(key, nv, ov?) {

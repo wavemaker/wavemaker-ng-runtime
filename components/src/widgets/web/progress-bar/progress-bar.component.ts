@@ -3,10 +3,9 @@ import { Component, Injector } from '@angular/core';
 import { $appDigest } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
 import { registerProps } from './progress-bar.props';
-import { invokeEventHandler } from '../../utils/widget-utils';
+import { invokeEventHandler } from '../../../utils/widget-utils';
+import { StylableComponent } from '../base/stylable.component';
 
 registerProps();
 
@@ -43,7 +42,7 @@ const areValuesValid = (max, min) => {
     selector: '[wmProgressBar]',
     templateUrl: './progress-bar.component.html'
 })
-export class ProgressBarComponent extends BaseComponent {
+export class ProgressBarComponent extends StylableComponent {
 
 
     isStriped: boolean = true;
@@ -214,6 +213,6 @@ export class ProgressBarComponent extends BaseComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

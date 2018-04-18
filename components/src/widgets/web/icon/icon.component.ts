@@ -1,8 +1,7 @@
 import { Component, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { BaseComponent } from '../base/base.component';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './icon.props';
 
 registerProps();
@@ -14,11 +13,11 @@ const WIDGET_CONFIG = {widgetType: 'wm-icon', hostClass: DEFAULT_CLS};
     selector: '[wmIcon]',
     templateUrl: './icon.component.html'
 })
-export class IconComponent extends BaseComponent {
+export class IconComponent extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 }

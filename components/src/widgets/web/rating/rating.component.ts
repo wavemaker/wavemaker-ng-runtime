@@ -3,8 +3,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { $appDigest, generateGUId, getClonedObject, setCSS } from '@wm/utils';
 
 import { styler } from '../../framework/styler';
-import { IStylableComponent } from '../../framework/types';
-import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../utils/widget-utils';
+import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../../utils/widget-utils';
 import { registerProps } from './rating.props';
 import { BaseFormComponent } from '../base/base-form.component';
 
@@ -251,7 +250,7 @@ export class RatingComponent extends BaseFormComponent implements OnInit {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         this._id = generateGUId();
-        styler(this.nativeElement, this as IStylableComponent);
+        styler(this.nativeElement, this);
     }
 
     onDatasetChange() {
