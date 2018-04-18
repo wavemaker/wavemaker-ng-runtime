@@ -134,7 +134,7 @@ then
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
-        ./components/src/widgets/table/datatable.js \
+        ./components/src/widgets/web/table/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
 
     if [ "$?" != "0" ]
