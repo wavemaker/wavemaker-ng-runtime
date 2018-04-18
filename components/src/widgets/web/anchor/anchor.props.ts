@@ -5,7 +5,6 @@ export const registerProps = () => {
         'wm-anchor',
         new Map(
             [
-                ['animation', PROP_STRING],
                 ['badgevalue', PROP_STRING],
                 ['caption', {value: 'link', ...PROP_STRING}],
                 ['class', PROP_STRING],
@@ -22,7 +21,6 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
                 ['show', PROP_BOOLEAN],
-                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['tabindex', PROP_NUMBER],
                 ['target', PROP_STRING]
             ]

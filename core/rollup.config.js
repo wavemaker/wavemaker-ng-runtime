@@ -6,6 +6,6 @@ export default {
         file: './dist/tmp/wm-core.umd.js',
         format: 'umd'
     },
-    name: 'wm.utils',
+    name: 'wm.core',
     globals: rollupGlobals
 };

@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-buttongroup', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmButtonGroup role="input" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmButtonGroup role="group" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

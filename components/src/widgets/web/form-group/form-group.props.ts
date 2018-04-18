@@ -1,0 +1,14 @@
+import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+
+export const registerProps = () => {
+    register(
+        'wm-form-group',
+        new Map(
+            [
+                ['captionposition', PROP_STRING_NOTIFY],
+                ['required', PROP_BOOLEAN_NOTIFY],
+                ['show', PROP_BOOLEAN]
+            ]
+        )
+    );
+};

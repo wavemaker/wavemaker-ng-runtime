@@ -2,9 +2,9 @@ import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-composite', (): IBuildTaskDef => {
+register('wm-form-group', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmComposite role="input" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmFormGroup role="group" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
