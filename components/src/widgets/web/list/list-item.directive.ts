@@ -3,7 +3,7 @@ import { NgForOfContext } from '@angular/common';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $watch } from '@wm/utils';
+import { $watch } from '@wm/core';
 
 import { ListComponent } from './list.component';
 

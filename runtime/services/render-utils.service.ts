@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
-import { getValidJSON } from '@wm/utils';
+import { getValidJSON } from '@wm/core';
 
 import { App } from './app.service';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';

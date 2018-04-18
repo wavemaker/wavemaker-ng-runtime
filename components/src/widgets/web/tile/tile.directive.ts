@@ -1,6 +1,6 @@
 import { Directive, Injector } from '@angular/core';
 
-import { setProperty } from '@wm/utils';
+import { setProperty } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

@@ -2,7 +2,7 @@ import { ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $parseEvent, $watch, addClass, isDefined, noop, setAttr } from '@wm/utils';
+import { $parseEvent, $watch, addClass, isDefined, noop, setAttr } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';

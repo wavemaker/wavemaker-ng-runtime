@@ -9,7 +9,7 @@ export default {
     '@angular/platform-browser': 'ng.platformBrowser',
     '@angular/platform-browser/animations': 'ng.platformBrowser.animations',
     '@angular/router': 'ng.router',
-    '@wm/utils': 'wm.utils',
+    '@wm/core': 'wm.core',
     '@wm/transpiler': 'wm.transpiler',
     '@wm/components': 'wm.components',
     '@wm/runtime': 'wm.runtime',

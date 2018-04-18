@@ -1,4 +1,4 @@
-import { triggerFn } from '@wm/utils';
+import { triggerFn } from '@wm/core';
 
 declare const _;
 

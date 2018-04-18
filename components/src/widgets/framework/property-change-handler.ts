@@ -1,4 +1,4 @@
-import { $appDigest, $unwatch, isChangeFromWatch, isObject, setAttr, switchClass, toBoolean } from '@wm/utils';
+import { $appDigest, $unwatch, isChangeFromWatch, isObject, setAttr, switchClass, toBoolean } from '@wm/core';
 
 import { BaseComponent } from '../web/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';

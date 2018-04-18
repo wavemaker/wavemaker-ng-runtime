@@ -1,7 +1,7 @@
 import { Directive, ElementRef, Input, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { setProperty } from '@wm/utils';
+import { setProperty } from '@wm/core';
 
 @Directive({
     selector: '[safeSrc]'

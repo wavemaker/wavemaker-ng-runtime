@@ -1,6 +1,6 @@
 import { Component, ContentChildren, EventEmitter, forwardRef, Inject, Injector, OnInit, Output } from '@angular/core';
 
-import { $appDigest, removeAttr } from '@wm/utils';
+import { $appDigest, removeAttr } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';

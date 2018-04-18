@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
-import { $appDigest, isDefined, isObject } from '@wm/utils';
+import { $appDigest, isDefined, isObject } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

@@ -1,6 +1,6 @@
 import { Directive, forwardRef, Injector } from '@angular/core';
 
-import { setProperty, toggleClass } from '@wm/utils';
+import { setProperty, toggleClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './label.props';

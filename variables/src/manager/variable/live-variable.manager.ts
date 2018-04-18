@@ -1,4 +1,4 @@
-import {getClonedObject, triggerFn} from '@wm/utils';
+import {getClonedObject, triggerFn} from '@wm/core';
 
 import { BaseVariableManager } from './base-variable.manager';
 import { setInput, initiateCallback } from '../../util/variable/variables.utils';

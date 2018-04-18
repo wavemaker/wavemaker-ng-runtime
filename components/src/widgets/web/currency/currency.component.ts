@@ -1,5 +1,5 @@
 import { Component, forwardRef, Injector, OnInit } from '@angular/core';
-import { CONSTANTS_CURRENCY } from '@wm/utils';
+import { CONSTANTS_CURRENCY } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { BaseFormComponent } from '../base/base-form.component';

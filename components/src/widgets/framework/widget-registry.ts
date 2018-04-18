@@ -1,4 +1,4 @@
-import { isDefined } from '@wm/utils';
+import { isDefined } from '@wm/core';
 
 /**
  * Widget Registry

@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
-import { getResourceURL, insertAfter, isString, removeAttr, setAttr } from '@wm/utils';
+import { getResourceURL, insertAfter, isString, removeAttr, setAttr } from '@wm/core';
 
 import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';

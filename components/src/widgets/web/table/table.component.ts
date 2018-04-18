@@ -2,7 +2,7 @@ import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateR
 
 import { Subject } from 'rxjs/Subject';
 
-import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, isPageable, triggerFn } from '@wm/utils';
+import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, isPageable, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

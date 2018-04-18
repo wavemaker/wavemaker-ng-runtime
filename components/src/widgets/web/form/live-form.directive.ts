@@ -1,7 +1,7 @@
 import { Directive, Inject, Self } from '@angular/core';
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
-import {$appDigest, DataType, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject} from '@wm/utils';
+import {$appDigest, DataType, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject} from '@wm/core';
 import { Live_Operations, performDataOperation } from '../../../utils/data-utils';
 import { invokeEventHandler } from '../../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';

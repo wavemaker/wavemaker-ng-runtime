@@ -1,5 +1,5 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
-import { FormWidgetType, IDGenerator } from '@wm/utils';
+import { FormWidgetType, IDGenerator } from '@wm/core';
 
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { isDataSetWidget } from '../../../utils/widget-utils';

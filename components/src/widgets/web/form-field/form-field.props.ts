@@ -1,4 +1,4 @@
-import { FormWidgetType } from '@wm/utils';
+import { FormWidgetType } from '@wm/core';
 
 import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
 import { textProps } from '../text/text.props';

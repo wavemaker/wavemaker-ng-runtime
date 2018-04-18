@@ -1,6 +1,6 @@
 import { Component, HostBinding, Injector } from '@angular/core';
 
-import { encodeUrl, setAttr } from '@wm/utils';
+import { encodeUrl, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

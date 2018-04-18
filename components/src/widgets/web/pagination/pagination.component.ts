@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Injector, Output } from '@angular/core';
 
-import { $watch, isDefined, isPageable, switchClass, triggerFn } from '@wm/utils';
+import { $watch, isDefined, isPageable, switchClass, triggerFn } from '@wm/core';
 import { DataSource } from '@wm/variables';
 
 import { registerProps } from './pagination.props';

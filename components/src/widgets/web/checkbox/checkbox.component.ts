@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 
-import { toggleClass } from '@wm/utils';
+import { toggleClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { BaseFormComponent } from '../base/base-form.component';

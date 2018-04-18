@@ -1,7 +1,7 @@
 
 declare const _;
 
-import { findValueOf, getBlob, getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/utils';
+import { findValueOf, getBlob, getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/core';
 import { ServiceVariable } from '../../model/variable/service-variable';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 import { $queue } from '../../util/inflight-queue';

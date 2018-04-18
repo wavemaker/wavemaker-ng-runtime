@@ -1,4 +1,4 @@
-import { $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/utils';
+import { $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
 declare const window, _, $;

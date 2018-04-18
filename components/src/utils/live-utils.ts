@@ -1,4 +1,4 @@
-import { isNumberType, FormWidgetType, DataType } from '@wm/utils';
+import { isNumberType, FormWidgetType, DataType } from '@wm/core';
 
 declare const _;
 

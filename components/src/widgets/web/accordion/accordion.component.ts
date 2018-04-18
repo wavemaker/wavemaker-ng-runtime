@@ -1,6 +1,6 @@
 import { Directive, forwardRef, Injector } from '@angular/core';
 
-import { $appDigest } from '@wm/utils';
+import { $appDigest } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './accordion.props';

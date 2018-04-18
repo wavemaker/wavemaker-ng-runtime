@@ -1,7 +1,7 @@
 import { AfterViewInit, ComponentFactoryResolver, Directive, Injector, OnInit, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $appDigest, addClass, isObject, validateAccessRoles } from '@wm/utils';
+import { $appDigest, addClass, isObject, validateAccessRoles } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

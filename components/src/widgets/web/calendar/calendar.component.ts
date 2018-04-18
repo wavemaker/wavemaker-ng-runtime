@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { getClonedObject, getSessionStorageItem } from '@wm/utils';
+import { getClonedObject, getSessionStorageItem } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './calendar.props';

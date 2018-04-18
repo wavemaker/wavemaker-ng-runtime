@@ -1,6 +1,6 @@
 import { Attribute, Element } from '@angular/compiler';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
-import { IDGenerator } from '@wm/utils';
+import { IDGenerator } from '@wm/core';
 
 
 const tagName = 'form';

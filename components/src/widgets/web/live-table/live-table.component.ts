@@ -1,6 +1,6 @@
 import { AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
 
-import { getClonedObject, isDefined } from '@wm/utils';
+import { getClonedObject, isDefined } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './live-table.props';

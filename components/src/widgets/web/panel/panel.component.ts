@@ -1,6 +1,6 @@
 import { Component, ContentChildren, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { setCSS, toggleClass } from '@wm/utils';
+import { setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

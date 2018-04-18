@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 
-import { removeAttr, setAttr } from '@wm/utils';
+import { removeAttr, setAttr } from '@wm/core';
 
 import { BaseFormComponent } from '../base/base-form.component';
 import { styler } from '../../framework/styler';

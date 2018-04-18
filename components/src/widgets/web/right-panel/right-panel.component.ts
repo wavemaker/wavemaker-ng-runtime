@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
-import { switchClass } from '@wm/utils';
+import { switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

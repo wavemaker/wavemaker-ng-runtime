@@ -61,15 +61,15 @@ mkdir ./dist/tmp
 
 ##################################### bundle wm-loader
 
-########## utils
-echo -e "${Cyan}Building utils ${White}"
-$ROLLUP -c ./utils/rollup.config.js --silent
+########## core
+echo -e "${Cyan}Building core ${White}"
+$ROLLUP -c ./core/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building utils ${White}\n"
+    echo -e "${Red}Error in building core ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built utils ${White}\n"
+echo -e "${Green}Built core ${White}\n"
 
 ########## transpiler
 echo -e "${Cyan}Building transpiler ${White}"
@@ -152,7 +152,7 @@ echo -e "${Green}Built runtime ${White}\n"
 
 ########## final bundle
 echo -e "${Cyan}Bundling wm-loader ${White}"
-$UGLIFYJS ./dist/tmp/wm-utils.umd.js \
+$UGLIFYJS ./dist/tmp/wm-core.umd.js \
     ./dist/tmp/wm-transpiler.umd.js \
     ./dist/tmp/http-service.umd.js \
     ./dist/tmp/oAuth.umd.js \

@@ -1,5 +1,5 @@
 declare const _;
-import { getClonedObject } from '@wm/utils';
+import { getClonedObject } from '@wm/core';
 import { VARIABLE_URLS } from '../../constants/variables.constants';
 import { httpService, simulateFileDownload } from './variables.utils';
 

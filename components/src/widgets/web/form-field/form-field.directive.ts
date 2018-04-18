@@ -1,7 +1,7 @@
 import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { isDefined, toBoolean } from '@wm/utils';
+import { isDefined, toBoolean } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { ParentForm } from '../form/form.component';

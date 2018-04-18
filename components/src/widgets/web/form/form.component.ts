@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, getClonedObject, removeClass } from '@wm/utils';
+import { $appDigest, getClonedObject, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

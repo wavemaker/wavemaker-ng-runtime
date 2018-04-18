@@ -1,6 +1,6 @@
 declare const _;
 
-import { triggerFn } from '@wm/utils';
+import { triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';

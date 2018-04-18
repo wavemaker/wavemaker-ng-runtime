@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector, OnDestroy } from '@angular/core';
 
-import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/utils';
+import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/core';
 
 import { BaseFormComponent } from '../base/base-form.component';
 import { styler } from '../../framework/styler';

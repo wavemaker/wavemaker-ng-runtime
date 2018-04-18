@@ -2,7 +2,7 @@ import { Component, forwardRef, Injector, OnDestroy, OnInit } from '@angular/cor
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, addClass, findValueOf, isObject, removeClass, validateAccessRoles } from '@wm/utils';
+import { $appDigest, addClass, findValueOf, isObject, removeClass, validateAccessRoles } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

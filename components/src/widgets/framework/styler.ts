@@ -1,4 +1,4 @@
-import { setCSS } from '@wm/utils';
+import { setCSS } from '@wm/core';
 
 import { getBackGroundImageUrl } from '../../utils/widget-utils';
 import { StylableComponent } from '../web/base/stylable.component';

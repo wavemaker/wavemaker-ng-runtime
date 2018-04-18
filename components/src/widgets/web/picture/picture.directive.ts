@@ -1,6 +1,6 @@
 import { Directive, HostBinding, Injector } from '@angular/core';
 
-import { addClass, setAttr, setCSSObj } from '@wm/utils';
+import { addClass, setAttr, setCSSObj } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './picture.props';

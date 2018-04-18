@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
-import { isString } from '@wm/utils';
+import { isString } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

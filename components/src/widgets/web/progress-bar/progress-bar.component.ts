@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 
-import { $appDigest } from '@wm/utils';
+import { $appDigest } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './progress-bar.props';

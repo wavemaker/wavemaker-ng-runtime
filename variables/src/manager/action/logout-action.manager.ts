@@ -1,4 +1,4 @@
-import { getValidJSON, triggerFn } from '@wm/utils';
+import { getValidJSON, triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';

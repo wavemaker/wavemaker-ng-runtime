@@ -1,4 +1,4 @@
-import { isEmptyObject, prettifyLabels } from '@wm/utils';
+import { isEmptyObject, prettifyLabels } from '@wm/core';
 
 declare const _, $, d3, nv;
 

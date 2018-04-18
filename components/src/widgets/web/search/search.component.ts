@@ -2,7 +2,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { $appDigest, getClonedObject } from '@wm/utils';
+import { $appDigest, getClonedObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { BaseFormComponent } from '../base/base-form.component';

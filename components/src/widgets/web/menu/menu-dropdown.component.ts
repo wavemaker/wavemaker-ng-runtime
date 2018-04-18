@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, HostListener, Input, Optional, SkipSelf } from '@angular/core';
 
-import { addClass, removeClass } from '@wm/utils';
+import { addClass, removeClass } from '@wm/core';
 
 import { MenuParent } from './menu.component';
 

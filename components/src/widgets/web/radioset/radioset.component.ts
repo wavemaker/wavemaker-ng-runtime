@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
-import { $appDigest, switchClass } from '@wm/utils';
+import { $appDigest, switchClass } from '@wm/core';
 
 import { BaseFormComponent } from '../base/base-form.component';
 import { styler } from '../../framework/styler';

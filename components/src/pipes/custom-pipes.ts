@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { CONSTANTS_CURRENCY, isDefined } from '@wm/utils';
+import { CONSTANTS_CURRENCY, isDefined } from '@wm/core';
 
 declare const moment, _, $;
 

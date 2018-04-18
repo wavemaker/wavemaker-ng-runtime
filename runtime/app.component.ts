@@ -1,6 +1,6 @@
 import { ApplicationRef, Component, DoCheck } from '@angular/core';
 import { PipeProvider } from './services/pipe-provider.service';
-import { $invokeWatchers, _WM_APP_PROJECT, setAppRef, setPipeProvider } from '@wm/utils';
+import { $invokeWatchers, _WM_APP_PROJECT, setAppRef, setPipeProvider } from '@wm/core';
 import { DialogService } from '@wm/components';
 import { OAuthService } from '@wm/oAuth';
 

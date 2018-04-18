@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { $appDigest, addClass, removeClass } from '@wm/utils';
+import { $appDigest, addClass, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './message.props';

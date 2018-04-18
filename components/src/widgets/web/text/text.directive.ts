@@ -1,6 +1,6 @@
 import { Directive, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
 
-import { addClass } from '@wm/utils';
+import { addClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

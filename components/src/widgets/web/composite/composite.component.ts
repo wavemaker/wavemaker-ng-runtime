@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
 
-import { addClass, removeClass } from '@wm/utils';
+import { addClass, removeClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

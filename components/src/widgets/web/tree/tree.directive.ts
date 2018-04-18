@@ -1,6 +1,6 @@
 import { Attribute, Directive, forwardRef, Injector } from '@angular/core';
 
-import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/utils';
+import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
 import { registerProps } from './tree.props';
 import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';

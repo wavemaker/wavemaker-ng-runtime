@@ -5,7 +5,7 @@ import {
     Comment
 } from '@angular/compiler';
 
-import { isString } from '@wm/utils';
+import { isString } from '@wm/core';
 
 interface IProviderInfo {
     nodeName: string;

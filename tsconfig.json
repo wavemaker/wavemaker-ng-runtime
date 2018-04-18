@@ -3,7 +3,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@wm/utils": [ "utils" ],
+            "@wm/core": [ "core" ],
             "@wm/oAuth": [ "oAuth" ],
             "@wm/components": [ "components" ],
             "@wm/variables": [ "variables" ],

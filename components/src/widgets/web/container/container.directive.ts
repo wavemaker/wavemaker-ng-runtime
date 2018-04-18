@@ -1,6 +1,6 @@
 import { Directive, forwardRef, Injector } from '@angular/core';
 
-import { addClass } from '@wm/utils';
+import { addClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './container.props';

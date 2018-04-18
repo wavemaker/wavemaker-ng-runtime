@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 
-import { $appDigest, generateGUId, getClonedObject, setCSS } from '@wm/utils';
+import { $appDigest, generateGUId, getClonedObject, setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../../utils/widget-utils';

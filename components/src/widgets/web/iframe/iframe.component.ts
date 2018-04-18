@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { encodeUrl, isInsecureContentRequest } from '@wm/utils';
+import { encodeUrl, isInsecureContentRequest } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';

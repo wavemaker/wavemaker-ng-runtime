@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
-import { getFormattedDate } from '@wm/utils';
+import { getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { BaseFormComponent } from '../base/base-form.component';

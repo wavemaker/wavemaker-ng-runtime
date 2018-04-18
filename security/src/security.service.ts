@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '@wm/http';
-import { triggerFn } from '@wm/utils';
+import { triggerFn } from '@wm/core';
 
 declare const _WM_APP_PROPERTIES, _;
 

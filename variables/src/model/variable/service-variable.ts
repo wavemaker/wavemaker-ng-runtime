@@ -1,4 +1,4 @@
-import { isPageable } from '@wm/utils';
+import { isPageable } from '@wm/core';
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';

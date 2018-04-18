@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, forwardRef, HostBinding, Injector } from '@angular/core';
 
-import { getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/utils';
+import { getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
