@@ -662,9 +662,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         let chartSvg,
             pieLabels,
             pieGroups,
-            angleArray,
-            styleObj = {},
-            element = $(this.$element);
+            angleArray;
+        const styleObj = {};
+        const element = this.$element;
 
         postPlotChartProcess(this);
 
@@ -730,9 +730,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         let chartData = datum,
             xDomainValues,
             yDomainValues,
-            chart,
-            yformatOptions: any = {},
-            element = $(this.$element);
+            chart;
+        const yformatOptions: any = {};
+        const element = this.$element;
 
         if (datum.length > 0) {
             if (isAxisDomainValid(this, 'x')) {
@@ -764,7 +764,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     // Plotting the chart with set of the properties set to it
     plotChart() {
         let datum = [];
-        let element = $(this.$element);
+        const element = this.$element;
         // call user-transformed function
         this.chartData = (invokeEventHandler(this, 'transform')) || this.chartData;
 
@@ -801,17 +801,17 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     // TODO: Need way to figure out if the datasource is a live source
     get isLiveVariable() {
         // setting the flag for the live variable in the scope for the checks
-        let variableObj = this.datasource;
+        const variableObj = this.datasource;
         return variableObj && variableObj.category === 'wm.LiveVariable';
     }
 
     plotChartProxy() {
-        let element = this.$element;
+        const element = this.nativeElement;
         this.showContentLoadError = false;
         this.invalidConfig = false;
         // Checking if x and y axis are chosen
         this.isLoadInProgress = true;
-        let groupingDetails = this.getGroupingDetails();
+        const groupingDetails = this.getGroupingDetails();
         // If aggregation/group by/order by properties have been set, then get the aggregated data and plot the result in the chart.
         // TODO: datasource for live variable detection
         if (this.binddataset && this.isLiveVariable && (this.filterFields || this.isDataFilteringEnabled())) {
@@ -986,8 +986,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     }
 
     onStyleChange(key, newVal, oldVal) {
-        let styleObj = {};
-        switch(key) {
+        const styleObj = {};
+        switch (key) {
             case 'fontsize':
             case 'fontunit':
             case 'color':
@@ -1003,14 +1003,14 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
         // generate unique id for the component
-        this.$id = this.$element.getAttribute('name') || Math.random();
+        this.$id = this.nativeElement.getAttribute('name') || Math.random();
         // remove title attribute as the element on hover shows you the hint through-out the element
-        removeAttr(this.$element, 'title');
+        removeAttr(this.nativeElement, 'title');
         this.chartReady = false;
-        this.binddataset = this.$element.getAttribute('dataset.bind');
+        this.binddataset = this.nativeElement.getAttribute('dataset.bind');
     }
 
     ngAfterViewInit() {
@@ -1026,9 +1026,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             this.theme = isPieType(this.type) ? 'Azure' : 'Terrestrial';
         }
 
-        this.$element.setAttribute('id', 'wmChart' + this.$id);
+        this.nativeElement.setAttribute('id', 'wmChart' + this.$id);
         // When there is not value binding, then plot the chart with sample data
-        if (!this.binddataset && !this.$element.getAttribute('scopedataset')) {
+        if (!this.binddataset && !this.nativeElement.getAttribute('scopedataset')) {
             this._plotChartProxy();
         }
     }

@@ -101,7 +101,7 @@ export class FormComponent extends StylableComponent implements ParentForm, OnDe
 
     set isLayoutDialog(nv) {
         if (nv) {
-            removeClass(this.$element, 'panel app-panel liveform-inline');
+            removeClass(this.nativeElement, 'panel app-panel liveform-inline');
         }
         this._isLayoutDialog = nv;
     }

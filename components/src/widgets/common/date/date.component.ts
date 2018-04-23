@@ -131,6 +131,6 @@ export class DateComponent extends BaseFormComponent {
 
     constructor(inj: Injector, public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this);
+        styler(this.nativeElement, this);
     }
 }

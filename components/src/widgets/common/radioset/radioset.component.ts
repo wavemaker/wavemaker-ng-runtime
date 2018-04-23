@@ -155,13 +155,13 @@ export class RadiosetComponent extends BaseFormComponent {
                 this._model_ = nv;
                 break;
             case 'layout':
-                switchClass(this.$element, nv, ov);
+                switchClass(this.nativeElement, nv, ov);
                 break;
         }
     }
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this);
+        styler(this.nativeElement, this);
     }
 }

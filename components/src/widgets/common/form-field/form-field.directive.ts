@@ -7,7 +7,7 @@ import { styler } from '../../framework/styler';
 import { ParentForm } from '../form/form.component';
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, isDataSetWidget } from '../../../utils/widget-utils';
-import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField , applyFilterOnField} from '../../../utils/data-utils';
+import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField , applyFilterOnField } from '../../../utils/data-utils';
 import { getDefaultViewModeWidget, parseValueByType } from '../../../utils/live-utils';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -227,7 +227,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         super.ngOnInit();
         this.ngForm = this.form.ngForm;
         this.ngForm.addControl(this.key || this.name , this.createControl());
-        styler(this.$element, this);
+        styler(this.nativeElement, this);
 
         if (this.form.isLiveForm) {
             this._control.valueChanges

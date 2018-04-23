@@ -91,10 +91,10 @@ export class AccordionPaneComponent extends StylableComponent implements OnInit 
     constructor(inj: Injector, @Inject('@AccordionParent') private parentAccordion: AccordionDirective) {
         super(inj, WIDGET_CONFIG);
 
-        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
         styler(<HTMLElement>this.$element.querySelector('.panel-body'), this, APPLY_STYLES_TYPE.INNER_SHELL);
 
-        removeAttr(this.$element, 'title');
+        removeAttr(this.nativeElement, 'title');
     }
 
     ngOnInit() {

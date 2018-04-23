@@ -31,7 +31,7 @@ export class FormGroupDirective extends StylableComponent implements AfterViewIn
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this, APPLY_STYLES_TYPE.CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
     /**
@@ -43,7 +43,7 @@ export class FormGroupDirective extends StylableComponent implements AfterViewIn
     onPropertyChange(key, newVal, oldVal) {
         switch (key) {
             case 'captionposition':
-                switchClass(this.$element, CAPTION_POSITION[newVal], CAPTION_POSITION[oldVal]);
+                switchClass(this.nativeElement, CAPTION_POSITION[newVal], CAPTION_POSITION[oldVal]);
                 break;
             case 'required':
                 this.required = newVal;

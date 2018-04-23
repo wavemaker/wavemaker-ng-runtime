@@ -467,6 +467,6 @@ export class PaginationComponent extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this);
+        styler(this.nativeElement, this);
     }
 }

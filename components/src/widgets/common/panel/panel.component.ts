@@ -76,10 +76,10 @@ export class PanelComponent extends StylableComponent implements OnInit {
         if (this.enablefullscreen) {
             if (this.fullscreen) {
                 invokeEventHandler(this, 'exitfullscreen', {$event});
-                toggleClass(this.$element, 'fullscreen', false);
+                toggleClass(this.nativeElement, 'fullscreen', false);
             } else {
                 invokeEventHandler(this, 'fullscreen', {$event});
-                toggleClass(this.$element, 'fullscreen', true);
+                toggleClass(this.nativeElement, 'fullscreen', true);
             }
 
             this.fullscreen = !this.fullscreen;
@@ -90,7 +90,7 @@ export class PanelComponent extends StylableComponent implements OnInit {
 
     toggleHelp() {
         this.helpClass = this.helpClass ? null : 'show-help';
-        toggleClass(this.$element, 'show-help', !!this.helpClass);
+        toggleClass(this.nativeElement, 'show-help', !!this.helpClass);
     }
 
     closePanel($event) {
@@ -100,7 +100,7 @@ export class PanelComponent extends StylableComponent implements OnInit {
 
     private _toggleFullScreen() {
         const headerHeight = this.$panelHeader.nativeElement.offsetHeight,
-            $footer = <HTMLElement>this.$element.querySelector('.panel-footer'),
+            $footer = <HTMLElement>this.nativeElement.querySelector('.panel-footer'),
             $content = this.$panelContent.nativeElement.children[0],
             vwHeight = $(window).height();
 
@@ -139,12 +139,12 @@ export class PanelComponent extends StylableComponent implements OnInit {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SHELL);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
     }
 
     ngOnInit() {
         styler(this.$panelContent.nativeElement.children[0], this, APPLY_STYLES_TYPE.INNER_SHELL);
-        this.hideFooter = !this.$element.querySelector('[wmPanelFooter]');
+        this.hideFooter = !this.nativeElement.querySelector('[wmPanelFooter]');
         super.ngOnInit();
     }
 }

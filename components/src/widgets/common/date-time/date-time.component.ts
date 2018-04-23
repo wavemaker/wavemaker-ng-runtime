@@ -168,7 +168,7 @@ export class DatetimeComponent extends BaseFormComponent {
      */
     private addClickListener(value) {
         setTimeout(() => {
-            const dropdownElement = this.$element.querySelector('.dropdown-menu');
+            const dropdownElement = this.nativeElement.querySelector('.dropdown-menu');
             const bodyElement = document.querySelector('body');
             addEventListener(bodyElement, dropdownElement, 'click', () => {
                 this.toggleTimePicker(false);
@@ -225,7 +225,7 @@ export class DatetimeComponent extends BaseFormComponent {
     constructor(inj: Injector, public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
-        styler(this.$element, this);
+        styler(this.nativeElement, this);
     }
 
     onPropertyChange(key, newVal, oldVal) {

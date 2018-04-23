@@ -187,7 +187,7 @@ export class SearchComponent extends BaseFormComponent implements OnInit {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this);
+        styler(this.nativeElement, this);
     }
 
     /**

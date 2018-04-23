@@ -23,7 +23,7 @@ export class ColorPickerComponent extends BaseFormComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this);
+        styler(this.nativeElement, this);
     }
 
     onChange($event) {
