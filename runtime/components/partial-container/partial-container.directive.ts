@@ -31,7 +31,7 @@ export class PartialContainerDirective {
 
         (this.inj as any).view.component._registerFragment();
 
-        componentInstance.propertyChange$.subscribe(({key, nv, ov}) => {
+        componentInstance.registerPropertyChangeListener((key, nv, ov) => {
             if (key === 'content') {
                 if (componentInstance.$lazyload) {
                     componentInstance.$lazyload = () => {

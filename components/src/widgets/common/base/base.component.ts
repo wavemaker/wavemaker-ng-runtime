@@ -61,19 +61,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
      * Style change subject and observable
      */
     private readonly styleChange = new Subject();
-    private readonly styleChange$ = this.styleChange.asObservable();
 
     /**
      * Property change subject and observable
      */
     private readonly propertyChange = new Subject();
-    private readonly propertyChange$ = this.propertyChange.asObservable();
 
     /**
      * Component destroy subject and observable
      */
     private readonly destroy = new Subject();
-    private readonly destroy$ = this.destroy.asObservable();
 
     /**
      * Map of event handler callbacks
@@ -162,21 +159,21 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         if (ctx) {
             fn = fn.bind(ctx);
         }
-        this.styleChange$.subscribe(({key, nv, ov}) => fn(key, nv, ov));
+        this.styleChange.subscribe(({key, nv, ov}) => fn(key, nv, ov));
     }
 
     public registerPropertyChangeListener(fn: ChangeListener, ctx?: any) {
         if (ctx) {
             fn = fn.bind(ctx);
         }
-        this.propertyChange$.subscribe(({key, nv, ov}) => fn(key, nv, ov));
+        this.propertyChange.subscribe(({key, nv, ov}) => fn(key, nv, ov));
     }
 
     public registerDestroyListener(fn: Function, ctx?: any) {
         if (ctx) {
             fn = fn.bind(ctx);
         }
-        this.destroy$.subscribe(() => fn);
+        this.destroy.subscribe(() => fn);
     }
 
     public getEventHandler(eventName: string): Function {
@@ -214,7 +211,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
      * Register the widget with the widgetRegistry
      */
     protected registerWidget(widgetName: string) {
-        this.registerDestroyListener(register(this.widget, this.widgetId, widgetName));
+        this.registerDestroyListener(register(this.widget, this.pageComponent, this.widgetId, widgetName));
     }
 
     // TODO [Vinay] - re-visit; remove @Event.

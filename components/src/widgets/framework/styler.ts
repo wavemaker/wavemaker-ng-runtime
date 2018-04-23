@@ -1,7 +1,7 @@
 import { setCSS } from '@wm/core';
 
 import { getBackGroundImageUrl } from '../../utils/widget-utils';
-import { StylableComponent } from '../web/base/stylable.component';
+import { StylableComponent } from '../common/base/stylable.component';
 
 export enum APPLY_STYLES_TYPE {
     CONTAINER,

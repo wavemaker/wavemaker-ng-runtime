@@ -1,7 +1,8 @@
-import { Directive, ElementRef, Input, SecurityContext } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Directive, ElementRef, Input } from '@angular/core';
 
 import { setHtml } from '@wm/core';
+
+import { SANITIZE_AS, SanitizePipe } from '../pipes/sanitize.pipe';
 
 @Directive({
     selector: '[safeHtml]'
@@ -9,8 +10,8 @@ import { setHtml } from '@wm/core';
 export class SafeHtmlDirective {
     @Input()
     set safeHtml(html) {
-        setHtml(this.el.nativeElement, this.domSanitizer.sanitize(SecurityContext.HTML, html));
+        setHtml(this.el.nativeElement, this.sanitize.transform(html, SANITIZE_AS.HTML));
     }
 
-    constructor(private domSanitizer: DomSanitizer, private el: ElementRef) {}
+    constructor(private sanitize: SanitizePipe, private el: ElementRef) {}
 }

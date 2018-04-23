@@ -1,7 +1,7 @@
-import { Directive, ElementRef, Input, SecurityContext } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Directive, ElementRef, Input } from '@angular/core';
 
 import { setProperty } from '@wm/core';
+import { SANITIZE_AS, SanitizePipe } from '../pipes/sanitize.pipe';
 
 @Directive({
     selector: '[safeSrc]'
@@ -9,8 +9,8 @@ import { setProperty } from '@wm/core';
 export class SafeSrcDirective {
     @Input() safeSrc;
     set(resourceUrl) {
-        setProperty(this.el.nativeElement, 'src', this.domSanitizer.sanitize(SecurityContext.RESOURCE_URL, resourceUrl));
+        setProperty(this.el.nativeElement, 'src', this.sanitize.transform(resourceUrl, SANITIZE_AS.HTML));
     }
 
-    constructor(private domSanitizer: DomSanitizer, private el: ElementRef) {}
+    constructor(private sanitize: SanitizePipe, private el: ElementRef) {}
 }

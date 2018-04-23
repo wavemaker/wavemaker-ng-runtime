@@ -9,4 +9,12 @@ register('wm-form-group', (): IBuildTaskDef => {
     };
 });
 
+// Todo[Vinay] remove this after the migration
+register('wm-composite', (): IBuildTaskDef => {
+    return {
+        pre: attrs => `<${tagName} wmFormGroup role="group" ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
+    };
+});
+
 export default () => {};

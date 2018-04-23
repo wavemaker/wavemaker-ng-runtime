@@ -1,6 +1,6 @@
 import { $appDigest, $unwatch, isChangeFromWatch, isObject, setAttr, switchClass, toBoolean } from '@wm/core';
 
-import { BaseComponent } from '../web/base/base.component';
+import { BaseComponent } from '../common/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
 import { isStyle } from './styler';
 import { getWatchIdentifier } from '../../utils/widget-utils';

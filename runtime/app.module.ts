@@ -3,15 +3,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+
+import { WmComponentsModule } from '@wm/components';
+import { VariablesModule } from '@wm/variables';
 
 import { AppComponent } from './app.component';
 import { PipeProvider } from './services/pipe-provider.service';
-import { WmComponentsModule } from '@wm/components';
 import { RenderUtilsService } from './services/render-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
-import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
-import { VariablesModule } from '@wm/variables';
 
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
