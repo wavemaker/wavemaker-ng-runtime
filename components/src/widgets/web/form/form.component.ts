@@ -248,9 +248,7 @@ export class FormComponent extends StylableComponent implements ParentForm, OnDe
         this.ngForm = fb.group({});
         this.ngForm.valueChanges
             .debounceTime(500)
-            .subscribe(() => {
-                this.updateDataOutput();
-            });
+            .subscribe(this.updateDataOutput.bind(this));
         this.elScope = this;
         this.resetForm = this.reset.bind(this);
         this.isLiveForm = isLiveForm !== null;

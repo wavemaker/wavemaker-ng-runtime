@@ -1,5 +1,7 @@
-import { isDataSetWidget } from './widget-utils';
 import { DataSource } from '@wm/variables';
+import { FormWidgetType, isDefined, MatchMode } from '@wm/core';
+
+import { isDataSetWidget } from './widget-utils';
 
 declare const _;
 
@@ -23,6 +25,11 @@ export const LIVE_CONSTANTS = {
     'EMPTY'         : 'empty'
 };
 
+// Returns true if widget is autocomplete or chips
+function isSearchWidgetType(widget) {
+    return _.includes([FormWidgetType.AUTOCOMPLETE, FormWidgetType.TYPEAHEAD, FormWidgetType.CHIPS], widget);
+}
+
 export function getDataSource(binddataset: string, parent: any) {
     let variableName,
         isBoundToVariable;
@@ -44,7 +51,6 @@ function onSuccess(response, res, rej) {
         res(response);
     }
 }
-
 
 export function performDataOperation(dataSource, requestData, options): Promise<any> {
     return new Promise((res, rej) => {
@@ -82,6 +88,22 @@ export function refreshDataSource(dataSource, options): Promise<any> {
     });
 }
 
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.fetchRelatedFieldData
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * This function fetches the data for the related field in live form/ grid
+ *
+ * @param {object} columnDef field definition
+ * @param {string} relatedField related field name
+ * @param {string} datafield Datafield to be set on widget
+ * @param {string} widget Type of the widget
+ * @param {object} elScope element scope
+ * @param {object} parentScope live form// grid scope
+ */
 export function fetchRelatedFieldData(dataSource, formField, options) {
     let primaryKeys;
     let displayField;
@@ -110,6 +132,19 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
     }, noop);
 }
 
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.LiveWidgetUtils#getDistinctFieldProperties
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Returns the properties required for dataset widgets
+ *
+ * @param {object} variable variable for the widget
+ * @param {object} formField definition of the column/ field
+ *
+ */
 function getDistinctFieldProperties(dataSource, formField) {
     const props: any = {};
     let fieldColumn;
@@ -127,6 +162,21 @@ function getDistinctFieldProperties(dataSource, formField) {
     return props;
 }
 
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.LiveWidgetUtils#getDistinctValues
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Returns the distinct values for a field
+ *
+ * @param {object} formField definition of the column/ field
+ * @param {string} widget widget property on the field
+ * @param {object} variable variable for the widget
+ * @param {function} callBack Function to be executed after fetching results
+ *
+ */
 function getDistinctValues(dataSource, formField, widget, callBack) {
     let props;
 
@@ -142,12 +192,29 @@ function getDistinctValues(dataSource, formField, widget, callBack) {
     }
 }
 
+// Set the data field properties on dataset widgets
 function setDataFields(formField, options?) {
     // TODO: For search widget, set search key and display label
     formField.datafield    = LIVE_CONSTANTS.LABEL_KEY;
     formField.displayfield = LIVE_CONSTANTS.LABEL_VALUE;
 }
 
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.LiveWidgetUtils#setFieldDataSet
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Function to set the dataSet on the fields
+ *
+ * @param {object} formField definition of the column/ field
+ * @param {object} data data returned from the server
+ * @param {string} aliasColumn column field name
+ * @param {string} widget widget property on the field
+ * @param {boolean} isEnableEmptyFilter is null or empty values allowed on filter
+ *
+ */
 function setFieldDataSet(formField, data, options?) {
     const emptySupportWidgets = ['select', 'radioset'];
     const emptyOption         = {};
@@ -168,10 +235,25 @@ function setFieldDataSet(formField, data, options?) {
             dataSet.push(option);
         }
     });
-    formField.dataset = dataSet;
     setDataFields(formField, options);
+    formField.dataset = dataSet;
 }
 
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.LiveWidgetUtils#getDistinctValuesForField
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Function to fetch the distinct values for a field
+ *
+ * @param {object} scope scope of the widget
+ * @param {object} formFields definitions of the column/ field
+ * @param {string} widget widget property on the field
+ * @param {boolean} isEnableEmptyFilter is null or empty values allowed on filter
+ *
+ */
 export function getDistinctValuesForField(dataSource, formField, options?) {
     if (!dataSource || !formField || formField.isDataSetBound) {
         return;
@@ -182,4 +264,164 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
         widget: options.widget,
         isEnableEmptyFilter: options.isEnableEmptyFilter
     }));
+}
+
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.getRangeFieldValue
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Function to get the field value for range
+ *
+ * @param {string} minValue min value selected
+ * @param {string} maxValue max value selected
+ */
+function getRangeFieldValue(minValue, maxValue) {
+    let fieldValue;
+    if (isDefined(minValue) && isDefined(maxValue)) {
+        fieldValue = [minValue, maxValue];
+    } else if (isDefined(minValue)) {
+        fieldValue = minValue;
+    } else if (isDefined(maxValue)) {
+        fieldValue = maxValue;
+    }
+    return fieldValue;
+}
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.getRangeMatchMode
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Function to get the match mode for range
+ *
+ * @param {string} minValue min value selected
+ * @param {string} maxValue max value selected
+ */
+function getRangeMatchMode(minValue, maxValue) {
+    let matchMode;
+    // If two values exists, then it is between. Otherwise, greater or lesser
+    if (isDefined(minValue) && isDefined(maxValue)) {
+        matchMode = MatchMode.BETWEEN;
+    } else if (isDefined(minValue)) {
+        matchMode = MatchMode.GREATER;
+    } else if (isDefined(maxValue)) {
+        matchMode = MatchMode.LESSER;
+    }
+    return matchMode;
+}
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.getEnableEmptyFilter
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * This function checks if enable filter options is set on live filter
+ *
+ * @param {object} enableemptyfilter empty filter options
+ */
+function getEnableEmptyFilter(enableemptyfilter) {
+    return enableemptyfilter && _.intersection(enableemptyfilter.split(','), LIVE_CONSTANTS.NULL_EMPTY).length > 0;
+}
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.getEmptyMatchMode
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Function to get the match mode based on the filter selected
+ *
+ * @param {object} enableemptyfilter empty filter options
+ */
+function getEmptyMatchMode(enableemptyfilter) {
+    let matchMode;
+    const emptyFilterOptions = _.split(enableemptyfilter, ',');
+    if (_.intersection(emptyFilterOptions, LIVE_CONSTANTS.NULL_EMPTY).length === 2) {
+        matchMode = MatchMode.NULLOREMPTY;
+    } else if (_.includes(emptyFilterOptions, LIVE_CONSTANTS.NULL)) {
+        matchMode = MatchMode.NULL;
+    } else if (_.includes(emptyFilterOptions, LIVE_CONSTANTS.EMPTY)) {
+        matchMode = MatchMode.EMPTY;
+    }
+    return matchMode;
+}
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.applyFilterOnField
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Function to get the updated values when filter on field is changed
+ *
+ * @param {object} $scope scope of the filter field/form field
+ * @param {object} filterDef filter/form definition of the field
+ * @param {boolean} isFirst boolean value to check if this method is called on load
+ */
+export function applyFilterOnField(dataSource, filterDef, formFields, newVal, options: any = {}) {
+    const fieldName      = filterDef.field || filterDef.key;
+    const filterOnFields = _.filter(formFields, {'filter-on': fieldName});
+
+    newVal = isDefined(newVal) ? newVal : ((filterDef.isRange ? getRangeFieldValue(filterDef.minValue, filterDef.maxValue) : filterDef.value));
+    if (!dataSource || (options.isFirst && (_.isUndefined(newVal) || newVal === ''))) {
+        return;
+    }
+    // Loop over the fields for which the current field is filter on field
+    _.forEach(filterOnFields, filterField => {
+        const filterKey    = filterField.field || filterField.key;
+        const lookUpField  = filterDef.lookupField || filterDef._primaryKey;
+        const filterWidget = filterField.editWidgetType || filterField.widgettype;
+        let filterFields = {};
+        let filterOn     = filterField['filter-on'];
+        let filterVal;
+        let fieldColumn;
+        let matchMode;
+        if (!isDataSetWidget(filterWidget) || filterField.isDataSetBound || filterOn === filterKey) {
+            return;
+        }
+        // For related fields, add lookupfield for query generation
+        if (filterDef && filterDef.isRelated) {
+            filterOn += '.' +  lookUpField;
+        }
+        if (isDefined(newVal)) {
+            if (filterDef.isRange) {
+                matchMode = getRangeMatchMode(filterDef.minValue, filterDef.maxValue);
+            } else if (getEnableEmptyFilter(options.enableemptyfilter) && newVal === LIVE_CONSTANTS.EMPTY_KEY) {
+                matchMode = getEmptyMatchMode(options.enableemptyfilter);
+            } else {
+                matchMode = MatchMode.EQUALS;
+            }
+            filterVal = (_.isObject(newVal) && !_.isArray(newVal)) ? newVal[lookUpField] : newVal;
+            filterFields[filterOn] = {
+                'value'     : filterVal,
+                'matchMode' : matchMode
+            };
+        } else {
+            filterFields = {};
+        }
+        fieldColumn = filterKey;
+
+        // TODO: handle search widget
+        if (isSearchWidgetType(filterWidget) && filterField.dataoptions) {
+            filterField.dataoptions.filterFields = filterFields;
+        } else {
+            console.log(fieldColumn, ' filter on field');
+            dataSource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
+                'fields'        : fieldColumn,
+                'filterFields'  : filterFields,
+                'pagesize'      : filterField.limit
+            }).then(data => {
+                setFieldDataSet(filterField, data, {
+                    aliasColumn: fieldColumn,
+                    widget: 'widget',
+                    isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
+                });
+            }, noop);
+        }
+    });
 }

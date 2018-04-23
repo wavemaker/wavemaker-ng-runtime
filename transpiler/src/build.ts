@@ -125,7 +125,7 @@ const getRequiredProviders = (nodeDef: IBuildTaskDef, providers: Array<IProvider
     return requires.map(require => {
         for (let i = providers.length - 1; i >= 0; i-- ) {
             if (providers[i].nodeName === require) {
-                return providers[i].nodeName;
+                return providers[i].provide;
             }
         }
     });

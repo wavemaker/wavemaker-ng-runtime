@@ -315,6 +315,7 @@ export class LiveFormDirective {
         if (this.form._liveTableParent) {
             this.form._liveTableParent.onCancel();
         }
+        $appDigest();
     }
 
     new() {

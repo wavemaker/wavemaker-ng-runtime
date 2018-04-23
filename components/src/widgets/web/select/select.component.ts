@@ -117,7 +117,7 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
         if (this.multiple) {
             this._model_ = assignModelForMultiSelect(this.displayOptions, this.datafield, this.modelProxy, this._model_, this._isChangedManually);
         } else {
-            this._model_ = assignModelForSelected(this.displayOptions, this._model_, this.modelProxy && this.modelProxy[0],
+            this._model_ = assignModelForSelected(this.displayOptions, this._model_, _.isArray(this.modelProxy) ? this.modelProxy[0] : this.modelProxy,
                 this.datafield, this._isChangedManually);
         }
     }
@@ -126,9 +126,9 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
         switch (key) {
             case 'readonly':
                 if (nv) {
-                    setAttr(this.$element, 'readonly', true);
+                    setAttr(this.nativeElement, 'readonly', true);
                 } else {
-                    removeAttr(this.$element, 'readonly');
+                    removeAttr(this.nativeElement, 'readonly');
                 }
                 break;
             case 'dataset':

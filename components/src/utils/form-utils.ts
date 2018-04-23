@@ -1,3 +1,5 @@
+import { isDefined } from '@wm/core';
+
 import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 
 declare const _;
@@ -160,7 +162,7 @@ export const extractDisplayOptions = (dataSet: any, options: DataSetProps): any[
  * This function finds the displayOption whose key is equal to the value and sets the isChecked flag for that displayOptions.
  */
 export const updateCheckedValue = (value: any, displayOptions: any[]) => {
-    const checkedDisplayOption = _.find(displayOptions, function (dataObj) {
+    const checkedDisplayOption = _.find(displayOptions, dataObj => {
         return _.toString(dataObj.key) === _.toString(value);
     });
     // set the isChecked flag for selected radioset value.
@@ -250,13 +252,13 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
         return _modelProxy;
     }
 
-    if (!_.isUndefined(displayOptions) && !usekeys) {
+    if (isDefined(displayOptions) && displayOptions.length && !usekeys) {
         // set the filterField depending on whether displayOptions contain 'dataObject', if not set filterField to 'key'
         filterField = _.get(displayOptions[0], 'dataObject') ? 'dataObject' : 'key';
         if (_.isArray(model)) {
             _modelProxy = [];
             model.forEach(modelVal => {
-                selectedOption = _.find(displayOptions, function (obj) {
+                selectedOption = _.find(displayOptions, obj => {
                     if (filterField === 'dataObject') {
                         return _.isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(modelVal)));
                     }
@@ -268,7 +270,7 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
             });
         } else {
             _modelProxy = undefined;
-            selectedOption = _.find(displayOptions, function (obj) {
+            selectedOption = _.find(displayOptions, obj => {
                 if (filterField === 'dataObject') {
                     return _.isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(model)));
                 }

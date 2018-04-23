@@ -7,7 +7,7 @@ import { styler } from '../../framework/styler';
 import { ParentForm } from '../form/form.component';
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, isDataSetWidget } from '../../../utils/widget-utils';
-import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField } from '../../../utils/data-utils';
+import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField , applyFilterOnField} from '../../../utils/data-utils';
 import { getDefaultViewModeWidget, parseValueByType } from '../../../utils/live-utils';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -88,6 +88,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             });
         } else {
             getDistinctValuesForField(dataSource, this.widget, {widget: 'widgettype'});
+            applyFilterOnField(dataSource, this.widget, this.form.formFields, this.value, {isFirst: true});
         }
     }
 
@@ -218,11 +219,21 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         return this.fb.control('', this._validators);
     }
 
+    onValueChange(val) {
+        applyFilterOnField(this.form.datasource, this.widget, this.form.formFields, val);
+    }
+
     ngOnInit() {
         super.ngOnInit();
         this.ngForm = this.form.ngForm;
         this.ngForm.addControl(this.key || this.name , this.createControl());
         styler(this.$element, this);
+
+        if (this.form.isLiveForm) {
+            this._control.valueChanges
+                .debounceTime(500)
+                .subscribe(this.onValueChange.bind(this));
+        }
     }
 
     ngAfterContentInit() {

@@ -46,3 +46,13 @@ export enum DataType {
     CLOB = 'clob',
     BLOB = 'blob'
 }
+
+export enum MatchMode {
+    BETWEEN = 'between',
+    GREATER = 'greaterthanequal',
+    LESSER = 'lessthanequal',
+    NULL = 'null',
+    EMPTY = 'empty',
+    NULLOREMPTY = 'nullorempty',
+    EQUALS = 'exact'
+}

@@ -38,10 +38,10 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
             tmpl = `<div wmDateTime ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" [(ngModel)]="${counter}.datavalue" role="input">`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password" role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password" [(ngModel)]="${counter}.datavalue" role="input">`;
             break;
         case FormWidgetType.RADIOSET:
             tmpl = `<div wmRadioset ${defaultTmpl} #formWidget role="input"></div>`;
@@ -65,10 +65,10 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
             tmpl = `<div wmSwitch ${defaultTmpl} #formWidget role="input"></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}" ngModel role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}" [(ngModel)]="${counter}.datavalue" role="input">`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" ngModel role="input"></texarea>`;
+            tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" [(ngModel)]="${counter}.datavalue" role="input"></textarea>`;
             break;
         case FormWidgetType.TIME:
             tmpl = `<div wmTime ${defaultTmpl} #formWidget role="input"></div>`;
@@ -80,7 +80,7 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
             /*TODO*/
             break;
         default:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" [(ngModel)]="${counter}.datavalue"  role="input">`;
             break;
     }
     return tmpl;

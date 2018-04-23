@@ -28,11 +28,6 @@ export class TextareaDirective extends StylableComponent {
     @HostBinding() readonly: boolean;
     @HostBinding() autofocus: boolean;
 
-    @HostListener('ngModelChange', ['$event'])
-    onChange(event: Event) {
-        this.datavalue = event;
-    }
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

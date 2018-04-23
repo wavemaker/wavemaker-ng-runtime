@@ -26,8 +26,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     /**
      * jQuery nativeElement reference of the component root
      */
-    public readonly $element;
-    get () {
+    public get $element() {
         return $(this.nativeElement);
     }
 

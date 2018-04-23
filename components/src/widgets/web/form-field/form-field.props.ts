@@ -53,7 +53,6 @@ export const registerProps = (widgetType) => {
             ['key', PROP_STRING],
             ['name', PROP_STRING],
             ['primary-key', PROP_STRING_NOTIFY],
-            ['show', PROP_BOOLEAN],
             ['validationmessage', PROP_STRING],
             ['viewmodewidget', PROP_STRING],
             ['widgettype', PROP_STRING]

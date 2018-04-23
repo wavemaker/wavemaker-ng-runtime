@@ -6,6 +6,8 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './form-group.props';
 
+declare const $;
+
 const HOST_CLS = 'form-group app-form-group-widget clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-form-group', hostClass: HOST_CLS};
 

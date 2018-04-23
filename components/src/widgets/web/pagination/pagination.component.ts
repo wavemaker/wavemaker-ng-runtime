@@ -455,7 +455,7 @@ export class PaginationComponent extends StylableComponent {
                 this.updateNavSize();
                 break;
             case 'navigationalign':
-                switchClass(this.$element, `text-${nv}`, `text-${ov}`);
+                switchClass(this.nativeElement, `text-${nv}`, `text-${ov}`);
                 break;
             case 'maxsize':
             case 'maxResults':

@@ -61,7 +61,7 @@ const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv:
         setAttr(el, 'name', nv);
     } else if (key === 'show') {
         nv = parseValue(key, nv, PROP_TYPE.BOOLEAN);
-        component.getNativeElement().hidden = nv;
+        component.getNativeElement().hidden = !nv;
     } else if (key === 'hint') {
         setAttr(el, 'title', nv);
     }
