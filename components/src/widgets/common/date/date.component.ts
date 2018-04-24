@@ -3,6 +3,7 @@ import { Component, forwardRef, Injector } from '@angular/core';
 import { getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './date.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
@@ -29,9 +30,10 @@ const getDateObj = (value?: string): Date => {
 @Component({
     selector: '[wmDate]',
     templateUrl: './date.component.html',
-    providers: [getControlValueAccessor(DateComponent), {
-        provide: '@Widget', useExisting: forwardRef(() => DateComponent)
-    }]
+    providers: [
+        getControlValueAccessor(DateComponent),
+        {provide: WidgetRef, useExisting: forwardRef(() => DateComponent)}
+    ]
 })
 export class DateComponent extends BaseFormComponent {
     /**

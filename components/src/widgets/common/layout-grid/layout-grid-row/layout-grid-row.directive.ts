@@ -1,6 +1,7 @@
-import { Directive, Injector } from '@angular/core';
+import { Directive, forwardRef, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
+import { WidgetRef } from '../../../framework/types';
 import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './layout-grid-row.props';
 
@@ -10,7 +11,10 @@ const DEFAULT_CLS = 'app-grid-row clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-layout-grid-row', hostClass: DEFAULT_CLS};
 
 @Directive({
-    selector: '[wmLayoutGridRow]'
+    selector: '[wmLayoutGridRow]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => LayoutGridRowDirective)}
+    ]
 })
 export class LayoutGridRowDirective extends StylableComponent {
 

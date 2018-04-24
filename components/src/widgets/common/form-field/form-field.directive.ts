@@ -1,13 +1,13 @@
-import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, Directive, forwardRef, Inject, Injector, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { isDefined, toBoolean } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { ParentForm } from '../form/form.component';
+import { WidgetRef, FormRef } from '../../framework/types';
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, isDataSetWidget } from '../../../utils/widget-utils';
-import { ALLFIELDS, fetchRelatedFieldData, getDistinctValuesForField , applyFilterOnField } from '../../../utils/data-utils';
+import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField } from '../../../utils/data-utils';
 import { getDefaultViewModeWidget, parseValueByType } from '../../../utils/live-utils';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -17,7 +17,10 @@ const DEFAULT_CLS = '';
 
 @Directive({
     selector: '[wmFormField]',
-    exportAs: 'wmFormField'
+    exportAs: 'wmFormField',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => FormFieldDirective)}
+    ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
 
@@ -51,7 +54,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     constructor(
         inj: Injector,
-        @Optional() form: ParentForm,
+        @Optional() form: FormRef,
         fb: FormBuilder,
         @Attribute('dataset.bind') binddataset,
         @Attribute('widgettype') _widgetType

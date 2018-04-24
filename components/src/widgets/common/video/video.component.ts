@@ -1,83 +1,59 @@
-import { Component, Injector } from '@angular/core';
-import { SafeResourceUrl } from '@angular/platform-browser';
+import { Component, forwardRef, Injector } from '@angular/core';
 
-import { getResourceURL, insertAfter, isString, removeAttr, setAttr } from '@wm/core';
+import { appendNode, createElement, removeNode } from '@wm/core';
 
-import { StylableComponent } from '../base/stylable.component';
+import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
+import { DISPLAY_TYPE } from '../../framework/constants';
+import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './video.props';
-import { getImageUrl } from '../../../utils/widget-utils';
+import { SANITIZE_AS, SanitizePipe } from '../../../pipes/sanitize.pipe';
 
 const DEFAULT_CLS = 'app-video';
-const WIDGET_CONFIG = {widgetType: 'wm-video', hostClass: DEFAULT_CLS};
-
-const getTrack = (subtitleLang, trackSource) => {
-    const track = document.createElement('track');
-    setAttr(track, 'kind', 'subtitles');
-    setAttr(track, 'label', subtitleLang);
-    setAttr(track, 'srclang', subtitleLang);
-    setAttr(track, 'src', trackSource);
-    setAttr(track, 'default', '');
-    return track;
+const WIDGET_CONFIG = {
+    widgetType: 'wm-video',
+    hostClass: DEFAULT_CLS,
+    displayType: DISPLAY_TYPE.INLINE_BLOCK
 };
 
 registerProps();
 
 @Component({
     selector: '[wmVideo]',
-    templateUrl: './video.component.html'
+    templateUrl: './video.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => VideoComponent)}
+    ]
 })
 export class VideoComponent extends StylableComponent {
 
-    mp4videoUrl: SafeResourceUrl = '';
-    webmvideoUrl: SafeResourceUrl = '';
-    oggvideoUrl: SafeResourceUrl = '';
-    videoposter;
-    subtitlelang;
+    /**
+     * subtitle language property eg: en
+     */
+    public subtitlelang: string = 'en';
 
-    isValidResource(value) {
-        return value && isString(value);
-    }
-
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'videoposter':
-                const $video = this.nativeElement.querySelector('video');
-                if (!newVal) {
-                    removeAttr($video, 'poster');
-                } else {
-                    setAttr($video, 'poster', getImageUrl(newVal));
-                }
-                break;
-            case 'mp4format':
-                if (this.isValidResource(newVal)) {
-                    this.mp4videoUrl = newVal;
-                }
-                break;
-            case 'oggformat':
-                if (this.isValidResource(newVal)) {
-                    this.oggvideoUrl = newVal;
-                }
-                break;
-            case 'webmformat':
-                if (this.isValidResource(newVal)) {
-                    this.webmvideoUrl = newVal;
-                }
-                break;
-            case 'subtitlesource':
-                if (this.isValidResource(newVal)) {
-                    const $track = this.nativeElement.querySelector('track');
-                    if ($track) {
-                        $track.remove();
-                    }
-                    insertAfter(getTrack(this.subtitlelang, getResourceURL(newVal)), this.nativeElement.querySelector('video'));
-                }
-                break;
-        }
-    }
-
-    constructor(inj: Injector) {
+    constructor(inj: Injector, private sanitize: SanitizePipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    // DO NOT use ngIf binding for the track. As of v6.0.Beta7 there is an error creating a void track node
+    onPropertyChange(key: string, nv: string) {
+        if (key === 'subtitlesource') {
+            let track: HTMLElement = this.nativeElement.querySelector('track');
+            if (track) {
+                removeNode(track, true);
+            }
+
+            track = createElement('track', {
+                kind: 'subtitles',
+                label: this.subtitlelang,
+                srclang: this.subtitlelang,
+                src: this.sanitize.transform(nv, SANITIZE_AS.RESOURCE),
+                default: ''
+            }, true);
+
+            appendNode(track, this.nativeElement.querySelector('video'));
+        }
     }
 }

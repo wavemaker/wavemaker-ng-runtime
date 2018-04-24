@@ -5,7 +5,6 @@ export const registerProps = () => {
         'wm-button',
         new Map(
             [
-                ['animation', PROP_STRING],
                 ['badgevalue', PROP_STRING],
                 ['caption', PROP_STRING],
                 ['class', {value: 'btn-default', ...PROP_STRING}],
@@ -21,7 +20,6 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
                 ['show', PROP_BOOLEAN],
-                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['tabindex', PROP_NUMBER],
                 ['type', PROP_STRING]
             ]

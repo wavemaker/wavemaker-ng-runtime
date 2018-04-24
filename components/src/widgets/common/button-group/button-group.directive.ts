@@ -1,6 +1,7 @@
-import { Directive, HostBinding, Injector } from '@angular/core';
+import { Directive, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './button-group.props';
 
@@ -10,7 +11,10 @@ const DEFAULT_CLS = 'btn-group app-button-group';
 const WIDGET_CONFIG = {widgetType: 'wm-buttongroup', hostClass: DEFAULT_CLS};
 
 @Directive({
-    selector: '[wmButtonGroup]'
+    selector: '[wmButtonGroup]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => ButtonGroupDirective)}
+    ]
 })
 export class ButtonGroupDirective extends StylableComponent {
 

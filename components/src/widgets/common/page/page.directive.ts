@@ -1,6 +1,7 @@
-import { Directive, Injector } from '@angular/core';
+import { Directive, forwardRef, Injector } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './page.props';
 
@@ -11,7 +12,10 @@ const DEFAULT_CLS = 'app-page container';
 const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
 
 @Directive({
-    selector: '[wmPage]'
+    selector: '[wmPage]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => PageDirective)}
+    ]
 })
 export class PageDirective extends StylableComponent {
 

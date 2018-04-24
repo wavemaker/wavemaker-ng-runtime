@@ -1,7 +1,8 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 
 import { $appDigest, generateGUId, getClonedObject, setCSS } from '@wm/core';
 
+import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../../utils/widget-utils';
 import { registerProps } from './rating.props';
@@ -27,7 +28,10 @@ const DEFAULT_RATING = 5;
 @Component({
     selector: '[wmRating]',
     templateUrl: './rating.component.html',
-    providers: [getControlValueAccessor(RatingComponent)]
+    providers: [
+        getControlValueAccessor(RatingComponent),
+        {provide: WidgetRef, useExisting: forwardRef(() => RatingComponent)}
+    ]
 })
 export class RatingComponent extends BaseFormComponent implements OnInit {
     _model_;

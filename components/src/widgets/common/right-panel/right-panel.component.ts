@@ -2,6 +2,7 @@ import { Component, forwardRef, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
+import { WidgetRef } from '../../framework/types';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './right-panel.props';
@@ -15,14 +16,14 @@ const WIDGET_CONFIG = {widgetType: 'wm-right-panel', hostClass: DEFAULT_CLS};
     selector: '[wmRightPanel]',
     templateUrl: './right-panel.component.html',
     providers: [
-        {provide: '@Widget', useExisting: forwardRef(() => RightPanelComponent)}
+        {provide: WidgetRef, useExisting: forwardRef(() => RightPanelComponent)}
     ]
 })
 export class RightPanelComponent extends StylableComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
-            switchClass(this.nativeElement, `col-md-${nv} col-sm-${nv}`, ov ? `col-md-${ov} col-sm-${ov}` : '');
+            switchClass(this.nativeElement, `col-sm-${nv}`, ov ? ` col-sm-${ov}` : '');
         }
     }
 

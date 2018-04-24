@@ -1,7 +1,8 @@
-import { Component, Input, ElementRef, ViewContainerRef, SkipSelf, Optional, ComponentFactoryResolver, forwardRef, AfterViewInit, ViewChild, HostListener, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ComponentFactoryResolver, ElementRef, HostListener, Inject, Input, OnDestroy, Optional, SkipSelf, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { MenuComponent, MenuParent } from './menu.component';
+import { MenuRef } from '../../framework/types';
+import { MenuComponent } from './menu.component';
 import { MenuDropdownComponent } from './menu-dropdown.component';
 
 const openLink = (link: string, target: string) => {
@@ -19,9 +20,8 @@ declare const $, _;
 @Component({
     selector: 'li[wmMenuDropdownItem]',
     templateUrl: './menu-dropdown-item.component.html',
-    providers: [{provide: MenuParent, useExisting: forwardRef(() => MenuComponent)}]
 })
-export class MenuDropdownItemComponent implements MenuParent, AfterViewInit, OnDestroy {
+export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
 
     @Input() item;
 
@@ -48,7 +48,7 @@ export class MenuDropdownItemComponent implements MenuParent, AfterViewInit, OnD
                 private vcr: ViewContainerRef,
                 private element: ElementRef,
                 private route: Router,
-                @SkipSelf() @Optional() private parent: MenuParent) {}
+                @SkipSelf() @Optional() @Inject(MenuRef) private parent: MenuComponent) {}
 
     ngOnDestroy() {
         if (this.childMenuDropdownComponent) {

@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { $appDigest, addClass, removeClass } from '@wm/core';
@@ -7,6 +7,7 @@ import { styler } from '../../framework/styler';
 import { registerProps } from './message.props';
 import { invokeEventHandler } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
+import { WidgetRef } from '../../framework/types';
 
 const DEFAULT_CLS = 'alert app-message';
 const WIDGET_CONFIG = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
@@ -15,7 +16,10 @@ registerProps();
 
 @Component({
     selector: '[wmMessage]',
-    templateUrl: './message.component.html'
+    templateUrl: './message.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => MessageComponent)}
+    ]
 })
 export class MessageComponent extends StylableComponent {
 

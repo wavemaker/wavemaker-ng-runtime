@@ -1,9 +1,7 @@
-import { Component, Injector } from '@angular/core';
-import { SafeResourceUrl } from '@angular/platform-browser';
-
-import { isString } from '@wm/core';
+import { Component, forwardRef, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './audio.props';
 
@@ -15,19 +13,12 @@ registerProps();
 
 @Component({
     selector: '[wmAudio]',
-    templateUrl: './audio.component.html'
+    templateUrl: './audio.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => AudioComponent)}
+    ]
 })
 export class AudioComponent extends StylableComponent {
-
-    mp3audioUrl: SafeResourceUrl = '';
-
-    onPropertyChange(key, newVal, oldVal) {
-        if (key === 'mp3format') {
-            if (newVal && isString(newVal)) {
-                this.mp3audioUrl = newVal;
-            }
-        }
-    }
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

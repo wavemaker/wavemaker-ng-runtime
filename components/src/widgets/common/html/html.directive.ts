@@ -1,8 +1,9 @@
-import { Directive, Injector } from '@angular/core';
+import { Directive, forwardRef, Injector } from '@angular/core';
 
 import { setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './html.props';
 
@@ -12,7 +13,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-html', hostClass: DEFAULT_CLS};
 registerProps();
 
 @Directive({
-    selector: '[wmHtml]'
+    selector: '[wmHtml]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => HtmlDirective)}
+    ]
 })
 export class HtmlDirective extends StylableComponent {
 

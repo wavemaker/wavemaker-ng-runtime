@@ -1,13 +1,15 @@
 import { Directive, ElementRef, Inject, Self, ViewContainerRef } from '@angular/core';
 import { PrefabManagerService } from '../../services/prefab-manager.service';
 
+import { WidgetRef } from '@wm/components';
+
 @Directive({
     selector: '[wmPrefab][prefabname]'
 })
 export class PrefabDirective {
 
     constructor(
-        @Self() @Inject('@Widget') public componentInstance,
+        @Self() @Inject(WidgetRef) public componentInstance,
         public prefabManager: PrefabManagerService,
         public vcRef: ViewContainerRef,
         public elRef: ElementRef

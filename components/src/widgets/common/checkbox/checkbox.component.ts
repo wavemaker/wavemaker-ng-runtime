@@ -3,6 +3,7 @@ import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 import { toggleClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
 import { registerProps } from './checkbox.props';
@@ -15,9 +16,10 @@ registerProps();
 @Component({
     selector: '[wmCheckbox]',
     templateUrl: './checkbox.component.html',
-    providers: [getControlValueAccessor(CheckboxComponent), {
-        provide: '@Widget', useExisting: forwardRef(() => CheckboxComponent)
-    }]
+    providers: [
+        getControlValueAccessor(CheckboxComponent),
+        {provide: WidgetRef, useExisting: forwardRef(() => CheckboxComponent)}
+    ]
 })
 export class CheckboxComponent  extends BaseFormComponent implements OnInit {
 

@@ -3,6 +3,7 @@ import { Component, ContentChildren, EventEmitter, forwardRef, Inject, Injector,
 import { $appDigest, removeAttr } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
+import { AccordionRef, WidgetRef } from '../../../framework/types';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';
 import { registerProps } from './accordion-pane.props';
 import { AccordionDirective } from '../accordion.component';
@@ -21,7 +22,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
     selector: 'div[wmAccordionPane]',
     templateUrl: './accordion-pane.component.html',
     providers: [
-        {provide: '@Widget', useExisting: forwardRef(() => AccordionPaneComponent)}
+        {provide: WidgetRef, useExisting: forwardRef(() => AccordionPaneComponent)}
     ]
 })
 export class AccordionPaneComponent extends StylableComponent implements OnInit {
@@ -88,7 +89,7 @@ export class AccordionPaneComponent extends StylableComponent implements OnInit 
         }
     }
 
-    constructor(inj: Injector, @Inject('@AccordionParent') private parentAccordion: AccordionDirective) {
+    constructor(inj: Injector, @Inject(AccordionRef) private parentAccordion: AccordionDirective) {
         super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);

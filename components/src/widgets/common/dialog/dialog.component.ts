@@ -1,8 +1,9 @@
-import { Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { DialogService } from './dialog.service';
 import { DialogActionsComponent } from './dialog-actions/dialog-actions.component';
 import { registerProps } from './dialog.props';
@@ -16,7 +17,10 @@ registerProps();
 
 @Component({
     selector: 'div[wmDialog]',
-    templateUrl: './dialog.component.html'
+    templateUrl: './dialog.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => DialogComponent)}
+    ]
 })
 export class DialogComponent extends StylableComponent implements OnInit {
 

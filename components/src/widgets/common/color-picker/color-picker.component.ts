@@ -1,6 +1,7 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './color-picker.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
@@ -13,9 +14,10 @@ registerProps();
 @Component({
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html',
-    providers: [getControlValueAccessor(ColorPickerComponent), {
-        provide: '@Widget', useExisting: forwardRef(() => ColorPickerComponent)
-    }]
+    providers: [
+        getControlValueAccessor(ColorPickerComponent),
+        {provide: WidgetRef, useExisting: forwardRef(() => ColorPickerComponent)}
+    ]
 })
 export class ColorPickerComponent extends BaseFormComponent {
 
@@ -33,3 +35,5 @@ export class ColorPickerComponent extends BaseFormComponent {
         this.invokeOnChange(this.datavalue);
     }
 }
+
+ // Todo - Vinay -- Events

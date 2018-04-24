@@ -1,6 +1,7 @@
-import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { Component, forwardRef, Injector, OnDestroy, OnInit } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './rich-text-editor.props';
 import { invokeEventHandler } from '../../../utils/widget-utils';
@@ -25,7 +26,10 @@ declare const _, $;
 
 @Component({
     selector: 'div[wmRichTextEditor]',
-    templateUrl: './rich-text-editor.component.html'
+    templateUrl: './rich-text-editor.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => RichTextEditorComponent)}
+    ]
 })
 export class RichTextEditorComponent extends StylableComponent implements OnInit, OnDestroy {
 

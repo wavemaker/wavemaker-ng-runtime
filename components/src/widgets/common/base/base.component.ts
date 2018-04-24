@@ -9,7 +9,7 @@ import { register } from '../../framework/widget-registry';
 import { proxyHandler } from '../../framework/property-change-handler';
 import { ChangeListener, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
-import { COMPONENT_HOST_EVENTS } from '../../framework/constants';
+import { COMPONENT_HOST_EVENTS, DISPLAY_TYPE } from '../../framework/constants';
 import { ProxyProvider } from '../../framework/proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
 import { CUSTOM_EVT_KEY } from '../../../utils/decorators';
@@ -96,6 +96,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
      */
     private readonly delayedInit: boolean;
 
+    /**
+     * Display type of the component. eg, block(Default), inline-block, inline etc
+     */
+    private displayType: string;
+
     protected constructor(
         private inj: Injector,
         config: IWidgetConfig,
@@ -106,6 +111,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         this.widgetType = config.widgetType;
         this.widgetSubType = config.widgetSubType || config.widgetType;
         this.pageComponent = (inj as any).view.component;
+        this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
         this.context = (inj as any).view.context;
         this.widget = ProxyProvider.create(this, proxyHandler);
         if (config.hostClass) {
@@ -178,6 +184,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
 
     public getEventHandler(eventName: string): Function {
         return this.eventHandlers.get(eventName) || noop;
+    }
+
+    public getDisplayType(): string {
+        return this.displayType;
     }
 
     /**

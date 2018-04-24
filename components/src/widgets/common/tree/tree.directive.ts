@@ -2,10 +2,10 @@ import { Attribute, Directive, forwardRef, Injector } from '@angular/core';
 
 import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
+import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 import { registerProps } from './tree.props';
 import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
-import { IRedrawableComponent } from '../redraw/redrawable.interface';
 import { StylableComponent } from '../base/stylable.component';
 
 const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
@@ -50,7 +50,7 @@ const ICON_CLASSES = {
 @Directive({
     selector: 'div[wmTree]',
     providers: [
-        {provide: '@Widget', useExisting: forwardRef(() => TreeDirective)}
+        {provide: WidgetRef, useExisting: forwardRef(() => TreeDirective)}
     ]
 })
 export class TreeDirective extends StylableComponent implements IRedrawableComponent {

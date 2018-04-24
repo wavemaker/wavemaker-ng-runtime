@@ -1,8 +1,9 @@
-import { Directive, HostBinding, Injector } from '@angular/core';
+import { Directive, forwardRef, HostBinding, Injector } from '@angular/core';
 
-import { addClass, setAttr, setCSSObj } from '@wm/core';
+import { addClass, setAttr, setCSSFromObj } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { registerProps } from './picture.props';
 import { getImageUrl } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
@@ -13,7 +14,10 @@ const DEFAULT_CLS = 'app-picture';
 const WIDGET_CONFIG = {widgetType: 'wm-picture', hostClass: DEFAULT_CLS};
 
 @Directive({
-    'selector': '[wmPicture]'
+    selector: '[wmPicture]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => PictureDirective)}
+    ]
 })
 export class PictureDirective extends StylableComponent {
 
@@ -49,16 +53,16 @@ export class PictureDirective extends StylableComponent {
             case 'pictureaspect':
                 switch (newVal) {
                     case 'None':
-                        setCSSObj(this.nativeElement, {width: this.width, height: this.height});
+                        setCSSFromObj(this.nativeElement, {width: this.width, height: this.height});
                         break;
                     case 'H':
-                        setCSSObj(this.nativeElement, {width: '100%', height: ''});
+                        setCSSFromObj(this.nativeElement, {width: '100%', height: ''});
                         break;
                     case 'V':
-                        setCSSObj(this.nativeElement, {width: '', height: '100%'});
+                        setCSSFromObj(this.nativeElement, {width: '', height: '100%'});
                         break;
                     case 'Both':
-                        setCSSObj(this.nativeElement, {width: '100%', height: '100%'});
+                        setCSSFromObj(this.nativeElement, {width: '100%', height: '100%'});
                         break;
                 }
                 break;

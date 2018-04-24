@@ -1,10 +1,11 @@
-import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
-import { registerProps } from './alert-dialog.props';
+import { WidgetRef } from '../../../framework/types';
 import { invokeEventHandler } from '../../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
 import { StylableComponent } from '../../base/stylable.component';
+import { registerProps } from './alert-dialog.props';
 
 const WIDGET_INFO = {widgetType: 'wm-alertdialog', hostClass: ''};
 
@@ -16,7 +17,10 @@ declare const _, $;
 
 @Component({
     selector: 'div[wmAlertDialog]',
-    templateUrl: './alert-dialog.component.html'
+    templateUrl: './alert-dialog.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => AlertDialogComponent)}
+    ]
 })
 export class AlertDialogComponent extends StylableComponent implements OnInit {
 

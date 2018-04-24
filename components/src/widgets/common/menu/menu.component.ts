@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { $appDigest, addClass, findValueOf, isObject, removeClass, validateAccessRoles } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { MenuRef, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
 import { registerProps } from './menu.props';
@@ -13,25 +14,6 @@ import { getOrderedDataSet } from '../../../utils/form-utils';
 registerProps();
 
 declare const $, _;
-
-// Marker class, used as an interface
-export abstract class MenuParent {
-    itemaction?: string;
-    linktarget?: string;
-    animateitems?: string;
-    menuposition?: string;
-    menulayout?: string;
-    menualign?: string;
-    onSelect?;
-    animateClass?;
-}
-
-// Helper method to provide the current component instance in the name of a `parentType`.
-// The `parentType` defaults to `Parent` when omitting the second parameter.
-export const provideParent =
-    (component: any, parentType?: any) => {
-        return { provide: parentType || MenuParent, useExisting: forwardRef(() => component) };
-    };
 
 const POSITION = {
     DOWN_RIGHT: 'down,right',
@@ -50,9 +32,12 @@ const PULL_RIGHT = 'pull-right';
 @Component({
     selector: '[wmMenu]',
     templateUrl: './menu.component.html',
-    providers: [{provide: MenuParent, useExisting: forwardRef(() => MenuComponent)}]
+    providers: [
+        {provide: MenuRef, useExisting: forwardRef(() => MenuComponent)},
+        {provide: WidgetRef, useExisting: forwardRef(() => MenuComponent)}
+    ]
 })
-export class MenuComponent extends StylableComponent implements MenuParent, OnInit, OnDestroy {
+export class MenuComponent extends StylableComponent implements OnInit, OnDestroy {
 
     orderby;
     userrole;

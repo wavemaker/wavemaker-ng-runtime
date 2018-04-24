@@ -3,6 +3,7 @@ import { Directive, forwardRef, HostBinding, HostListener, Injector } from '@ang
 import { addClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './text.props';
 import { Event } from '../../../utils/decorators';
@@ -15,9 +16,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-text', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmText]',
     exportAs: 'wmText',
-    providers: [{
-        provide: '@Widget', useExisting: forwardRef(() => TextDirective)
-    }]
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => TextDirective)}
+    ]
 })
 export class TextDirective extends StylableComponent {
 

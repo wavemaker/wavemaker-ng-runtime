@@ -2,6 +2,7 @@ import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 import { CONSTANTS_CURRENCY } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
 import { registerProps } from './currency.props';
@@ -15,7 +16,7 @@ registerProps();
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html',
     providers: [getControlValueAccessor(CurrencyComponent), {
-        provide: '@Widget', useExisting: forwardRef(() => CurrencyComponent)
+        provide: WidgetRef, useExisting: forwardRef(() => CurrencyComponent)
     }]
 })
 export class CurrencyComponent extends BaseFormComponent implements OnInit {

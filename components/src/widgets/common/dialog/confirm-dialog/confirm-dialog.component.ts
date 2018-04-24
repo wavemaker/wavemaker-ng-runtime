@@ -1,7 +1,8 @@
-import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
+import { WidgetRef } from '../../../framework/types';
 import { invokeEventHandler } from '../../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
 import { registerProps } from './confirm-dialog.props';
@@ -17,7 +18,10 @@ declare const _, $;
 
 @Component({
     selector: 'div[wmConfirmDialog]',
-    templateUrl: './confirm-dialog.component.html'
+    templateUrl: './confirm-dialog.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => ConfirmDialogComponent)}
+    ]
 })
 export class ConfirmDialogComponent extends StylableComponent implements OnInit {
 

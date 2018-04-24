@@ -6,6 +6,7 @@ import { Subject } from 'rxjs/Subject';
 import { $appDigest, getClonedObject, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { FormRef, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../../utils/live-utils';
@@ -19,25 +20,17 @@ registerFormProps();
 const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-form'};
 const LIVE_WIDGET_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
 
-
-export abstract class ParentForm {
-    ngForm: any;
-
-    abstract registerFormFields(formField);
-
-    abstract registerActions(formAction);
-
-    abstract setPrimaryKey(fieldName);
-}
-
 const getWidgetConfig = isLiveForm => isLiveForm !== null ? LIVE_WIDGET_CONFIG : WIDGET_CONFIG;
 
 @Component({
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
-    providers: [{ provide: ParentForm, useExisting: forwardRef(() => FormComponent) }]
+    providers: [
+        {provide: FormRef, useExisting: forwardRef(() => FormComponent)},
+        {provide: WidgetRef, useExisting: forwardRef(() => FormComponent)}
+    ]
 })
-export class FormComponent extends StylableComponent implements ParentForm, OnDestroy {
+export class FormComponent extends StylableComponent implements OnDestroy {
 
     captionAlignClass: string;
     validationtype: string;

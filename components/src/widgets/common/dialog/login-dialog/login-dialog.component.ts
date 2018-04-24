@@ -1,8 +1,9 @@
-import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
+import { WidgetRef } from '../../../framework/types';
 import { registerProps } from './login-dialog.props';
 import { invokeEventHandler } from '../../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
@@ -18,9 +19,12 @@ declare const _, $;
 
 @Component({
     selector: 'div[wmLoginDialog]',
-    templateUrl: './login-dialog.component.html'
+    templateUrl: './login-dialog.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => LoginDialogComponent)}
+    ]
 })
-export class PartialDialogComponent extends StylableComponent implements OnInit {
+export class LoginDialogComponent extends StylableComponent implements OnInit {
 
     bsModalRef: BsModalRef;
     isOpen;

@@ -3,6 +3,7 @@ import { Component, ContentChildren, ElementRef, forwardRef, Injector, OnInit, V
 import { setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './panel.props';
 import { getImageUrl, invokeEventHandler } from '../../../utils/widget-utils';
@@ -21,7 +22,7 @@ declare const _, $;
     selector: '[wmPanel]',
     templateUrl: './panel.component.html',
     providers: [
-        {provide: '@Widget', useExisting: forwardRef(() => PanelComponent)}
+        {provide: WidgetRef, useExisting: forwardRef(() => PanelComponent)}
     ]
 })
 

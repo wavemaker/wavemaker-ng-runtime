@@ -1,6 +1,7 @@
 import { Directive, forwardRef, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './footer.props';
 
@@ -12,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-footer', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmFooter]',
     providers: [
-        {provide: '@Widget', useExisting: forwardRef(() => FooterDirective)}
+        {provide: WidgetRef, useExisting: forwardRef(() => FooterDirective)}
     ]
 })
 export class FooterDirective extends StylableComponent {
@@ -23,3 +24,6 @@ export class FooterDirective extends StylableComponent {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }
+
+// Todo - Vinay -- layout for mobile
+// element.scope().layout.footer = true;

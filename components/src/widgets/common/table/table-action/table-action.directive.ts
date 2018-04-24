@@ -1,7 +1,7 @@
-import { Directive, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
 
+import { WidgetRef, TableRef } from '../../../framework/types';
 import { StylableComponent } from '../../base/stylable.component';
-import { TableParent } from '../parent';
 import { registerProps } from './table-action.props';
 
 declare const _;
@@ -11,7 +11,10 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 
 @Directive({
-    selector: '[wmTableAction]'
+    selector: '[wmTableAction]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => TableActionDirective)}
+    ]
 })
 export class TableActionDirective extends StylableComponent implements OnInit {
     accessroles;
@@ -31,7 +34,7 @@ export class TableActionDirective extends StylableComponent implements OnInit {
 
     public buttonDef;
 
-    constructor(inj: Injector, @Optional() public _tableParent: TableParent) {
+    constructor(inj: Injector, @Optional() public _tableParent: TableRef) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -56,6 +59,6 @@ export class TableActionDirective extends StylableComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
-        this._tableParent.registerActions(this.buttonDef);
+        (this._tableParent as any).registerActions(this.buttonDef);
     }
 }

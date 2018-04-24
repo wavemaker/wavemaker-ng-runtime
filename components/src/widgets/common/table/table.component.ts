@@ -1,12 +1,12 @@
-import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, forwardRef, Injector, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
 import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, isPageable, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { TableRef, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
-import { provideTheParent, TableParent } from './parent';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { getRowOperationsColumn } from '../../../utils/live-utils';
@@ -41,9 +41,12 @@ const rowOperations = {
 @Component({
     selector: '[wmTable]',
     templateUrl: './table.component.html',
-    providers: [provideTheParent(TableParent, TableComponent)]
+    providers: [
+        {provide: TableRef, useExisting: forwardRef(() => TableComponent)},
+        {provide: WidgetRef, useExisting: forwardRef(() => TableComponent)}
+    ]
 })
-export class TableComponent extends StylableComponent implements TableParent, AfterContentInit {
+export class TableComponent extends StylableComponent implements AfterContentInit {
 
     @ViewChild(PaginationComponent) dataNavigator;
     @ViewChild('datagridElement') private _tableElement: ElementRef;

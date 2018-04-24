@@ -1,8 +1,9 @@
-import { Component, Injector } from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { registerProps } from './page-content.props';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -13,7 +14,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmPageContent]',
-    templateUrl: './page-content.component.html'
+    templateUrl: './page-content.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => PageContentComponent)}
+    ]
 })
 export class PageContentComponent extends StylableComponent {
 

@@ -1,18 +1,26 @@
-import { Component, HostBinding, Injector } from '@angular/core';
+import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-
+import { WidgetRef } from '../../framework/types';
 import { registerProps } from './button.props';
 import { StylableComponent } from '../base/stylable.component';
+import { DISPLAY_TYPE } from '../../framework/constants';
 
 registerProps();
 
 const DEFAULT_CLS = 'btn app-button';
-const WIDGET_CONFIG = {widgetType: 'wm-button', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = {
+    widgetType: 'wm-button',
+    hostClass: DEFAULT_CLS,
+    displayType: DISPLAY_TYPE.INLINE_BLOCK
+};
 
 @Component({
     selector: 'button[wmButton]',
-    templateUrl: './button.component.html'
+    templateUrl: './button.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => ButtonComponent)}
+    ]
 })
 export class ButtonComponent extends StylableComponent {
 

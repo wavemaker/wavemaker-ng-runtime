@@ -1,8 +1,9 @@
-import { AfterViewInit, ContentChildren, Directive, Injector } from '@angular/core';
+import { AfterViewInit, ContentChildren, Directive, forwardRef, Injector } from '@angular/core';
 
 import { setAttr, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './form-group.props';
 
@@ -20,12 +21,15 @@ const CAPTION_POSITION = {
 };
 
 @Directive({
-    selector: 'div[wmFormGroup]'
+    selector: 'div[wmFormGroup]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => FormGroupDirective)}
+    ]
 })
 export class FormGroupDirective extends StylableComponent implements AfterViewInit {
 
     // this is the reference to the component refs inside the form-group
-    @ContentChildren('@Widget', {descendants: true}) componentRefs;
+    @ContentChildren(WidgetRef, {descendants: true}) componentRefs;
 
     public required: boolean;
 

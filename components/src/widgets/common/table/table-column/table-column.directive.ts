@@ -1,7 +1,7 @@
-import { Directive, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
 
+import { WidgetRef, TableColumnGroupRef, TableRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
-import { TableGroupParent, TableParent } from '../parent';
 import { setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
 
@@ -12,7 +12,10 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 @Directive({
-    selector: '[wmTableColumn]'
+    selector: '[wmTableColumn]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => TableColumnDirective)}
+    ]
 })
 export class TableColumnDirective extends BaseComponent implements OnInit {
 
@@ -46,8 +49,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit {
 
     constructor(
         inj: Injector,
-        @Optional() public _tableParent: TableParent,
-        @Optional() public _groupParent: TableGroupParent,
+        @Optional() public _tableParent: TableRef,
+        @Optional() public _groupParent: TableColumnGroupRef,
     ) {
         super(inj, WIDGET_CONFIG);
     }
@@ -88,10 +91,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateFieldDef();
-        this._tableParent.registerColumns(this.fieldDef);
-        setHeaderConfigForTable(this._tableParent.headerConfig, {
+        (this._tableParent as any).registerColumns(this.fieldDef);
+        setHeaderConfigForTable((this._tableParent as any).headerConfig, {
             field: this.fieldDef.field,
             displayName: this.fieldDef.displayName
-        }, this._groupParent && this._groupParent.name);
+        }, this._groupParent && (this._groupParent as any).name);
     }
 }

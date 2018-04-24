@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Injector, Output } from '@angular/core';
+import { Component, EventEmitter, forwardRef, Injector, Output } from '@angular/core';
 
 import { $watch, isDefined, isPageable, switchClass, triggerFn } from '@wm/core';
 import { DataSource } from '@wm/variables';
 
 import { registerProps } from './pagination.props';
+import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { getOrderByExpr, getWatchIdentifier, invokeEventHandler } from '../../../utils/widget-utils';
@@ -40,7 +41,10 @@ const sizeClasses = {
  */
 @Component({
     selector: '[wmPagination]',
-    templateUrl: './pagination.component.html'
+    templateUrl: './pagination.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => PaginationComponent)}
+    ]
 })
 export class PaginationComponent extends StylableComponent {
 

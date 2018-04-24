@@ -37,6 +37,7 @@ import { HtmlDirective } from './widgets/common/html/html.directive';
 import { IconComponent } from './widgets/common/icon/icon.component';
 import { IframeComponent } from './widgets/common/iframe/iframe.component';
 import { IframeDialogComponent } from './widgets/common/dialog/iframe-dialog/iframe-dialog.component';
+import { ImagePipe } from './pipes/image.pipe';
 import { FormWidgetDirective } from './widgets/common/form/form-widget.directive';
 import { LabelDirective } from './widgets/common/label/label.directive';
 import { LayoutGridColumnComponent } from './widgets/common/layout-grid/layout-grid-column/layout-grid-column.component';
@@ -48,6 +49,7 @@ import { ListItemDirective } from './widgets/common/list/list-item.directive';
 import { LiveFormDirective } from './widgets/common/form/live-form.directive';
 import { LiveTableComponent } from './widgets/common/live-table/live-table.component';
 import { LoginComponent } from './widgets/common/login/login.component';
+import { LoginDialogComponent } from './widgets/common/dialog/login-dialog/login-dialog.component';
 import { MenuComponent } from './widgets/common/menu/menu.component';
 import { MenuDropdownComponent } from './widgets/common/menu/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './widgets/common/menu/menu-dropdown-item.component';
@@ -69,10 +71,9 @@ import { RatingComponent } from './widgets/common/rating/rating.component';
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
 import { RichTextEditorComponent } from './widgets/common/rich-text-editor/rich-text-editor.component';
 import { RightPanelComponent } from './widgets/common/right-panel/right-panel.component';
-import { SafeHtmlDirective } from './directives/safe-html.directive';
-import { SafeSrcDirective } from './directives/safe-src.directive';
 import { SearchComponent } from './widgets/common/search/search.component';
 import { SelectComponent } from './widgets/common/select/select.component';
+import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SliderComponent } from './widgets/common/slider/slider.component';
 import { SpinnerComponent } from './widgets/common/spinner/spinner.component';
 import { SwitchComponent } from './widgets/common/switch/switch.component';
@@ -133,6 +134,7 @@ const wmComponents = [
     LiveFormDirective,
     LiveTableComponent,
     LoginComponent,
+    LoginDialogComponent,
     MenuComponent,
     MenuDropdownComponent,
     MenuDropdownItemComponent,
@@ -154,10 +156,9 @@ const wmComponents = [
     RedrawableDirective,
     RichTextEditorComponent,
     RightPanelComponent,
-    SafeHtmlDirective,
-    SafeSrcDirective,
     SearchComponent,
     SelectComponent,
+    ShowInDeviceDirective,
     SliderComponent,
     SpinnerComponent,
     SwitchComponent,
@@ -176,10 +177,17 @@ const wmComponents = [
 ];
 
 const PIPES = [
-    ToDatePipe, FilterPipe,
-    ToNumberPipe, ToCurrencyPipe, PrefixPipe,
-    SuffixPipe, TimeFromNowPipe, NumberToStringPipe, StringToNumberPipe,
-    SanitizePipe
+    ToDatePipe,
+    FilterPipe,
+    ToNumberPipe,
+    ToCurrencyPipe,
+    PrefixPipe,
+    SuffixPipe,
+    TimeFromNowPipe,
+    NumberToStringPipe,
+    StringToNumberPipe,
+    SanitizePipe,
+    ImagePipe
 ];
 
 @NgModule({
@@ -201,7 +209,8 @@ const PIPES = [
         DialogService,
         ToDatePipe,
         FilterPipe,
-        SanitizePipe
+        SanitizePipe,
+        ImagePipe
     ],
     entryComponents: [
         MenuComponent,

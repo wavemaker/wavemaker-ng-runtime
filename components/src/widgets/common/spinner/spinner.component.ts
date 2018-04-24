@@ -1,7 +1,8 @@
-import { Component, Injector } from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { registerProps } from './spinner.props';
 import { getBackGroundImageUrl } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
@@ -15,7 +16,10 @@ registerProps();
 
 @Component({
     selector: '[wmSpinner]',
-    templateUrl: './spinner.component.html'
+    templateUrl: './spinner.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => SpinnerComponent)}
+    ]
 })
 export class SpinnerComponent extends StylableComponent {
 

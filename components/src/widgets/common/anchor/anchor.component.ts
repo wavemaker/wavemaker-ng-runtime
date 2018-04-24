@@ -1,8 +1,9 @@
-import { Component, HostBinding, Injector } from '@angular/core';
+import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { encodeUrl, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './anchor.props';
 
@@ -14,7 +15,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-anchor', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: 'a[wmAnchor]',
-    templateUrl: './anchor.component.html'
+    templateUrl: './anchor.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => AnchorComponent)}
+    ]
 })
 export class AnchorComponent extends StylableComponent {
     public encodeurl;

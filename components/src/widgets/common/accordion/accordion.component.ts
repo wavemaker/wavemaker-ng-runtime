@@ -3,6 +3,7 @@ import { Directive, forwardRef, Injector } from '@angular/core';
 import { $appDigest } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { AccordionRef, WidgetRef } from '../../framework/types';
 import { registerProps } from './accordion.props';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -13,7 +14,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-accordion', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: 'div[wmAccordion]',
-    providers: [{provide: '@AccordionParent', useExisting: forwardRef(() => AccordionDirective)}]
+    providers: [
+        {provide: AccordionRef, useExisting: forwardRef(() => AccordionDirective)},
+        {provide: WidgetRef, useExisting: forwardRef(() => AccordionDirective)}
+    ]
 })
 export class AccordionDirective extends StylableComponent {
     panes: any = [];

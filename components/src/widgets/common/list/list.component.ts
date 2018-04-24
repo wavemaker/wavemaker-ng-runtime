@@ -1,8 +1,9 @@
-import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, forwardRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
 import { $appDigest, isDefined, isObject } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './list.props';
 import { NAVIGATION_TYPE } from '../../../utils/widget-utils';
@@ -20,7 +21,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: 'div[wmList]',
-    templateUrl: './list.component.html'
+    templateUrl: './list.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => ListComponent)}
+    ]
 })
 export class ListComponent extends StylableComponent implements AfterViewInit {
 

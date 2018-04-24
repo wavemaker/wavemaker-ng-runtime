@@ -1,8 +1,9 @@
-import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
+import { WidgetRef } from '../../../framework/types';
 import { registerProps } from './partial-dialog.props';
 import { invokeEventHandler } from '../../../../utils/widget-utils';
 import { DialogService } from '../dialog.service';
@@ -18,7 +19,10 @@ declare const _, $;
 
 @Component({
     selector: 'div[wmPartialDialog]',
-    templateUrl: './partial-dialog.component.html'
+    templateUrl: './partial-dialog.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => PartialDialogComponent)}
+    ]
 })
 export class PartialDialogComponent extends StylableComponent implements OnInit {
 

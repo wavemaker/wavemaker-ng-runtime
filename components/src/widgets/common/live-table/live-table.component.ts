@@ -1,8 +1,9 @@
-import { AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
+import { AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, forwardRef, Injector } from '@angular/core';
 
 import { getClonedObject, isDefined } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { registerProps } from './live-table.props';
 import { FormComponent } from '../form/form.component';
 import { TableComponent } from '../table/table.component';
@@ -20,7 +21,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmLiveTable]',
-    templateUrl: './live-table.component.html'
+    templateUrl: './live-table.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => LiveTableComponent)}
+    ]
 })
 export class LiveTableComponent extends StylableComponent implements AfterContentInit {
 

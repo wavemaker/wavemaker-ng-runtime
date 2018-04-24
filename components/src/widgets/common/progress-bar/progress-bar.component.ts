@@ -1,8 +1,9 @@
-import { Component, Injector } from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
 
 import { $appDigest } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { registerProps } from './progress-bar.props';
 import { invokeEventHandler } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
@@ -40,7 +41,10 @@ const areValuesValid = (max, min) => {
 
 @Component({
     selector: '[wmProgressBar]',
-    templateUrl: './progress-bar.component.html'
+    templateUrl: './progress-bar.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => ProgressBarComponent)}
+    ]
 })
 export class ProgressBarComponent extends StylableComponent {
 

@@ -1,8 +1,8 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, forwardRef, HostListener, Input, Optional, SkipSelf } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, Optional } from '@angular/core';
 
 import { addClass, removeClass } from '@wm/core';
 
-import { MenuParent } from './menu.component';
+import { MenuRef } from '../../framework/types';
 
 declare const $, _;
 
@@ -35,10 +35,9 @@ const DEFAULT_CLS = 'dropdown-menu';
 
 @Component({
     selector: 'ul[wmMenuDropdown]',
-    templateUrl: './menu-dropdown.component.html',
-    providers: [{provide: MenuParent, useExisting: forwardRef(() => MenuDropdownComponent)}]
+    templateUrl: './menu-dropdown.component.html'
 })
-export class MenuDropdownComponent implements MenuParent, AfterViewInit {
+export class MenuDropdownComponent implements AfterViewInit {
     animation;
     _animateClass = '';
     animateitems;
@@ -86,7 +85,7 @@ export class MenuDropdownComponent implements MenuParent, AfterViewInit {
 
     @Input() items;
 
-    constructor(private el: ElementRef, @SkipSelf() @Optional() private parentMenu: MenuParent, public cdr: ChangeDetectorRef) {
+    constructor(private el: ElementRef, @Inject(MenuRef) @Optional() private parentMenu, public cdr: ChangeDetectorRef) {
         this.$el = el.nativeElement;
         addClass(this.$el, DEFAULT_CLS);
     }

@@ -1,7 +1,7 @@
-import { Directive, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
 
+import { TableRef, WidgetRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
-import { TableParent } from '../parent';
 import { registerProps } from './table-row-action.props';
 
 declare const _;
@@ -10,7 +10,10 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
 
 @Directive({
-    selector: '[wmTableRowAction]'
+    selector: '[wmTableRowAction]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => TableRowActionDirective)}
+    ]
 })
 export class TableRowActionDirective extends BaseComponent implements OnInit {
     accessroles;
@@ -29,7 +32,7 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
 
     constructor(
         inj: Injector,
-        @Optional() public _tableParent: TableParent,
+        @Optional() public _tableParent: TableRef,
     ) {
         super(inj, WIDGET_CONFIG);
     }
@@ -52,6 +55,6 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
-        this._tableParent.registerRowActions(this.buttonDef);
+        (this._tableParent as any).registerRowActions(this.buttonDef);
     }
 }

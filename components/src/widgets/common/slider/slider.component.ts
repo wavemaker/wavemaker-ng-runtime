@@ -1,6 +1,7 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './slider.props';
 import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
@@ -13,9 +14,10 @@ registerProps();
 @Component({
     selector: '[wmSlider]',
     templateUrl: './slider.component.html',
-    providers: [getControlValueAccessor(SliderComponent), {
-        provide: '@Widget', useExisting: forwardRef(() => SliderComponent)
-    }]
+    providers: [
+        getControlValueAccessor(SliderComponent),
+        {provide: WidgetRef, useExisting: forwardRef(() => SliderComponent)}
+    ]
 })
 export class SliderComponent extends BaseFormComponent {
 

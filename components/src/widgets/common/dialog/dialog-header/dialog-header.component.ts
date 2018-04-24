@@ -1,5 +1,6 @@
-import { Component, HostBinding, Injector } from '@angular/core';
+import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
 
+import { WidgetRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './dialog-header.props';
 import { DialogService } from '../dialog.service';
@@ -10,7 +11,10 @@ registerProps();
 
 @Component({
     selector: 'div[wmDialogHeader]',
-    templateUrl: './dialog-header.component.html'
+    templateUrl: './dialog-header.component.html',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => DialogHeaderComponent)}
+    ]
 })
 export class DialogHeaderComponent extends BaseComponent {
 

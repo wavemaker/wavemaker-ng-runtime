@@ -1,8 +1,9 @@
-import { Directive, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
 
-import { ParentForm } from '../form.component';
+import { WidgetRef } from '../../../framework/types';
 import { registerProps } from './form-action.props';
 import { StylableComponent } from '../../base/stylable.component';
+import { FormRef } from '@wm/components';
 
 declare const _;
 
@@ -11,7 +12,10 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 
 @Directive({
-    selector: '[wmFormAction]'
+    selector: '[wmFormAction]',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => FormActionDirective)}
+    ]
 })
 export class FormActionDirective extends StylableComponent implements OnInit {
     accessroles;
@@ -33,7 +37,7 @@ export class FormActionDirective extends StylableComponent implements OnInit {
 
     public buttonDef;
 
-    constructor(inj: Injector, @Optional() public _parentForm: ParentForm) {
+    constructor(inj: Injector, @Optional() public _parentForm: FormRef) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -60,6 +64,6 @@ export class FormActionDirective extends StylableComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
-        this._parentForm.registerActions(this.buttonDef);
+        (this._parentForm as any).registerActions(this.buttonDef);
     }
 }

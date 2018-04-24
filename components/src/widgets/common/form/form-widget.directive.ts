@@ -1,6 +1,6 @@
-import { Directive, Optional, OnInit, Attribute } from '@angular/core';
-import { ParentForm } from './form.component';
+import { Directive, Optional, OnInit, Attribute, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormRef } from '../../framework/types';
 
 @Directive({
     selector: '[wmFormWidget]'
@@ -9,9 +9,11 @@ export class FormWidgetDirective implements OnInit {
 
     ngForm: FormGroup;
 
-    constructor(@Optional() public form: ParentForm, public fb: FormBuilder,
-                @Attribute('name') public name,
-                @Attribute('key') public key) {
+    constructor(
+        @Optional() @Inject(FormRef) public form,
+        public fb: FormBuilder,
+        @Attribute('name') public name,
+        @Attribute('key') public key) {
     }
 
     get _control() {

@@ -2,8 +2,9 @@ import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 
 import { removeAttr, setAttr } from '@wm/core';
 
-import { BaseFormComponent } from '../base/base-form.component';
+import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
+import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './select.props';
 import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../../utils/form-utils';
 import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
@@ -17,9 +18,10 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 @Component({
     selector: '[wmSelect]',
     templateUrl: './select.component.html',
-    providers: [getControlValueAccessor(SelectComponent), {
-        provide: '@Widget', useExisting: forwardRef(() => SelectComponent)
-    }]
+    providers: [
+        getControlValueAccessor(SelectComponent),
+        {provide: WidgetRef, useExisting: forwardRef(() => SelectComponent)}
+    ]
 })
 export class SelectComponent extends BaseFormComponent implements OnInit {
 

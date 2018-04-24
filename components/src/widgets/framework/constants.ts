@@ -5,3 +5,9 @@
 export const COMPONENT_HOST_EVENTS = new Set(['click', 'dblclick', 'mouseenter', 'mouseleave', 'mouseout', 'mouseover', 'focus', 'blur', 'keydown', 'keypress', 'keyup']);
 
 // TODO: Implement touch events for the mobile
+
+export const DISPLAY_TYPE = {
+    BLOCK: 'block',
+    INLINE_BLOCK: 'inline-block',
+    INLINE: 'inline'
+};

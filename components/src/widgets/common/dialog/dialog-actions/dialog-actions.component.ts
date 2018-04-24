@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, forwardRef, Injector } from '@angular/core';
 
+import { WidgetRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { DialogService } from '../dialog.service';
 import { ButtonComponent } from '../../button/button.component';
@@ -13,7 +14,10 @@ declare const _;
 
 @Component({
     selector: 'div[wmDialogActions]',
-    template: '<ng-content></ng-content>'
+    template: '<ng-content></ng-content>',
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => DialogActionsComponent)}
+    ]
 })
 export class DialogActionsComponent extends BaseComponent implements AfterViewInit {
 

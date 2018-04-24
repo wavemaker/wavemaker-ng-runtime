@@ -1,6 +1,7 @@
-import { Directive, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
+import { Directive, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { registerProps } from './textarea.props';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -12,9 +13,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-textarea', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmTextarea]',
     exportAs: 'wmTextarea',
-    providers: [{
-        provide: '@Widget', useExisting: forwardRef(() => TextareaDirective)
-    }]
+    providers: [
+        {provide: WidgetRef, useExisting: forwardRef(() => TextareaDirective)}
+    ]
 })
 export class TextareaDirective extends StylableComponent {
 

@@ -3,11 +3,11 @@ import { AfterViewInit, Component, forwardRef, HostBinding, Injector } from '@an
 import { getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
 import { invokeEventHandler } from '../../../utils/widget-utils';
-import { IRedrawableComponent } from '../redraw/redrawable.interface';
 
 registerProps();
 
@@ -95,7 +95,7 @@ const angle = d => {
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
     providers: [
-        {provide: '@Widget', useExisting: forwardRef(() => ChartComponent)}
+        {provide: WidgetRef, useExisting: forwardRef(() => ChartComponent)}
     ]
 })
 export class ChartComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
@@ -176,10 +176,10 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         other than integer unlike the column and bar.It is a nvd3 issue. Inorder to
         support that this is a fix*/
     getxAxisVal(dataObj, xKey, index) {
-        let value = _.get(dataObj, xKey);
-        //If x axis is other than number type then add indexes
+        const value = _.get(dataObj, xKey);
+        // If x axis is other than number type then add indexes
         if (isLineTypeChart(this.type) && !isNumberType(this.xAxisDataType)) {
-            //Verification to get the unique data keys
+            // Verification to get the unique data keys
             this.xDataKeyArr.push(value);
             return index;
         }
@@ -191,7 +191,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         if (!datum) {
             return;
         }
-        let xValues: any = {};
+        const xValues: any = {};
         /*
          compute the min x value
          eg: When data has objects
@@ -217,7 +217,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // Getting the min and max values among all the y values
     getYMinMaxValues(datum) {
-        let yValues: any = {},
+        const yValues: any = {},
             minValues = [],
             maxValues = [];
         if (!datum) {

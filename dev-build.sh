@@ -44,7 +44,6 @@ fi
 echo -e "${Green}Done with ngc compilation ${White}\n"
 
 
-
 ################################ inline-templates
 
 echo -e "${Cyan}Copy and inline html files ${White}"

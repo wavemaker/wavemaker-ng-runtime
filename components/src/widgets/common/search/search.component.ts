@@ -1,10 +1,11 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, forwardRef, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { $appDigest, getClonedObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
@@ -27,7 +28,10 @@ registerProps();
 @Component({
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
-    providers: [getControlValueAccessor(SearchComponent)]
+    providers: [
+        getControlValueAccessor(SearchComponent),
+        {provide: WidgetRef, useExisting: forwardRef(() => SearchComponent)}
+    ]
 })
 export class SearchComponent extends BaseFormComponent implements OnInit {
 

@@ -1,4 +1,7 @@
 import { Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
+
+import { WidgetRef } from '@wm/components';
+
 import { RenderUtilsService } from '../../services/render-utils.service';
 
 declare const _;
@@ -22,7 +25,7 @@ export class PartialContainerDirective {
     }
 
     constructor(
-        @Self() @Inject('@Widget') public componentInstance,
+        @Self() @Inject(WidgetRef) public componentInstance,
         public renderUtils: RenderUtilsService,
         public vcRef: ViewContainerRef,
         public elRef: ElementRef,
