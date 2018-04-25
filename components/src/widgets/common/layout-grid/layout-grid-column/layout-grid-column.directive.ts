@@ -1,6 +1,6 @@
 import { Attribute, Directive, forwardRef, Injector } from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import { setCSS, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../../framework/types';
@@ -28,7 +28,7 @@ export class LayoutGridColumnDirective extends StylableComponent {
 
         // if the height is provided set the overflow to auto
         if (height) {
-            this.overflow = 'auto';
+            setCSS(this.nativeElement, 'overflow', 'auto');
         }
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
