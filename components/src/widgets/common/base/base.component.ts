@@ -1,4 +1,5 @@
 import { ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
+import { EventManager } from '@angular/platform-browser';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -101,6 +102,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
      */
     private displayType: string;
 
+    /**
+     * EventManger to add/remove events
+     */
+    protected readonly eventManager: EventManager;
+
     protected constructor(
         private inj: Injector,
         config: IWidgetConfig,
@@ -114,6 +120,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
         this.context = (inj as any).view.context;
         this.widget = ProxyProvider.create(this, proxyHandler);
+        this.eventManager = inj.get(EventManager);
+
         if (config.hostClass) {
             addClass(this.nativeElement, config.hostClass);
         }
@@ -224,11 +232,19 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         this.registerDestroyListener(register(this.widget, this.pageComponent, this.widgetId, widgetName));
     }
 
-    // TODO [Vinay] - re-visit; remove @Event.
+    /**
+     * parse the event expression and save reference to the function inside eventHandlers map
+     * If the component provides a override for an event through @Event decorator invoke that
+     * else invoke the resolved function
+     *
+     * @param {string} eventName
+     * @param {string} expr
+     */
     protected processEventAttr(eventName: string, expr: string) {
         let fn = $parseEvent(expr);
+        const locals = {widget: this.widget, $event: undefined};
 
-        fn = fn.bind(undefined, this.pageComponent);
+        fn = fn.bind(undefined, this.pageComponent, locals);
 
         let meta = Object.getOwnPropertyDescriptor(this.constructor, CUSTOM_EVT_KEY) || {};
         meta = (<any>meta).value || {};
@@ -236,8 +252,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         this.eventHandlers.set(eventName, fn);
 
         if (this.shouldRegisterHostEvent(eventName)) {
-            const locals = {widget: this.widget, $event: undefined};
-            this.nativeElement.addEventListener(eventName, e => {
+            this.eventManager.addEventListener(this.nativeElement, eventName, e => {
                 locals.$event = e;
                 if (meta[eventName]) {
                     meta[eventName].call(this, fn, locals);

@@ -1,4 +1,4 @@
-<img data-identifier="img" class="anchor-image-icon" [src]="iconsrc" *ngIf="iconsrc" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
+<img data-identifier="img" class="anchor-image-icon" [src]="iconsrc | image" *ngIf="iconsrc" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
 <i class="app-icon {{iconclass}}" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}" *ngIf="iconclass"></i>
 <span class="anchor-caption" [innerHTML]="caption | sanitize:'html'"></span>
 <span *ngIf="badgevalue" class="badge pull-right" [textContent]="badgevalue"></span>

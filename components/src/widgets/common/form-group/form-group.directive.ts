@@ -3,14 +3,17 @@ import { AfterViewInit, ContentChildren, Directive, forwardRef, Injector } from 
 import { setAttr, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './form-group.props';
 
 declare const $;
 
-const HOST_CLS = 'form-group app-form-group-widget clearfix';
-const WIDGET_CONFIG = {widgetType: 'wm-form-group', hostClass: HOST_CLS};
+const DEFAULT_CLS = 'form-group app-composite-widget clearfix';
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-form-group',
+    hostClass: DEFAULT_CLS
+};
 
 registerProps();
 
@@ -67,9 +70,6 @@ export class FormGroupDirective extends StylableComponent implements AfterViewIn
         }
     }
 
-    /**
-     * this method is invoked after the view init - invoked by angular as per life cycle
-     */
     ngAfterViewInit() {
         const labelEl = this.nativeElement.querySelectorAll('label.control-label'),
             inputEl = this.nativeElement.querySelectorAll('input, select, textarea');

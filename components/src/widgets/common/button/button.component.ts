@@ -1,15 +1,15 @@
 import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { DISPLAY_TYPE } from '../../framework/constants';
 import { registerProps } from './button.props';
 import { StylableComponent } from '../base/stylable.component';
-import { DISPLAY_TYPE } from '../../framework/constants';
 
 registerProps();
 
 const DEFAULT_CLS = 'btn app-button';
-const WIDGET_CONFIG = {
+const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-button',
     hostClass: DEFAULT_CLS,
     displayType: DISPLAY_TYPE.INLINE_BLOCK

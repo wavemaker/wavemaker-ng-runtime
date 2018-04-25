@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['autoplay', PROP_BOOLEAN],
+                ['class', PROP_STRING],
                 ['controls', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
                 ['loop', PROP_BOOLEAN],
@@ -14,7 +15,6 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['oggformat', PROP_STRING],
                 ['show', PROP_BOOLEAN],
-                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['subtitlelang', {value: 'en', ...PROP_STRING_NOTIFY}],
                 ['subtitlesource', PROP_STRING_NOTIFY],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],

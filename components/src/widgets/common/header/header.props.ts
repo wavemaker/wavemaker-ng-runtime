@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['name', PROP_STRING],
+                ['class', PROP_STRING],
                 ['content', PROP_STRING_NOTIFY]
             ]
         )

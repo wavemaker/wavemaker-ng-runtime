@@ -1,4 +1,4 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Directive, forwardRef, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
@@ -12,14 +12,13 @@ registerProps();
 const DEFAULT_CLS = 'app-page-content app-content-column';
 const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 
-@Component({
+@Directive({
     selector: '[wmPageContent]',
-    templateUrl: './page-content.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => PageContentComponent)}
+        {provide: WidgetRef, useExisting: forwardRef(() => PageContentDirective)}
     ]
 })
-export class PageContentComponent extends StylableComponent {
+export class PageContentDirective extends StylableComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {

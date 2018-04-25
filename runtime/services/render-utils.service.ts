@@ -188,7 +188,7 @@ export class RenderUtilsService {
             this.route.queryParams.subscribe(params => pageInstance.pageParams = params);
         };
 
-        this.renderResource(`app-page-${pageName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
+        return this.renderResource(`app-page-${pageName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
             .then(() => parseEndResolveFn());
     }
 
@@ -218,7 +218,7 @@ export class RenderUtilsService {
             this.route.queryParams.subscribe(params => partialInstance.pageParams = params);
         };
 
-        this.renderResource(`app-partial-${partialName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
+        return this.renderResource(`app-partial-${partialName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
             .then(() => parseEndResolveFn());
     }
 
@@ -243,7 +243,7 @@ export class RenderUtilsService {
             onReadyPromise.then(() => (prefabInstance.onReady || noop)());
         };
 
-        this.renderResource(`app-prefab-${prefabName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
+        return this.renderResource(`app-prefab-${prefabName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
             .then(onReadyResolveFn);
     }
 }

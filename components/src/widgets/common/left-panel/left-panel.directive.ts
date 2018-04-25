@@ -1,25 +1,27 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Directive, forwardRef, Injector } from '@angular/core';
 
 import { switchClass, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { WidgetRef, IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './left-panel.props';
 
 registerProps();
 
 const DEFAULT_CLS = 'app-left-panel';
-const WIDGET_CONFIG = {widgetType: 'wm-left-panel', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-left-panel',
+    hostClass: DEFAULT_CLS
+};
 
-@Component({
+@Directive({
     selector: '[wmLeftPanel]',
-    templateUrl: './left-panel.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => LeftPanelComponent)}
+        {provide: WidgetRef, useExisting: forwardRef(() => LeftPanelDirective)}
     ]
 })
-export class LeftPanelComponent extends StylableComponent {
+export class LeftPanelDirective extends StylableComponent {
 
     onPropertyChange(key, nv, ov) {
         if (key === 'columnwidth') {
@@ -38,4 +40,5 @@ export class LeftPanelComponent extends StylableComponent {
 }
 
 
-//Todo vinay -- incomplete.. animations.
+// Todo vinay -- incomplete.. animations.
+// Todo DeviceView

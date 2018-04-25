@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+
 import { getImageUrl } from '../utils/widget-utils';
 
 @Pipe({

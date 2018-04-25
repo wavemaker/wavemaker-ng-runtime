@@ -134,6 +134,7 @@ then
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
+        ./node_modules/hammerjs/hammer.min.js \
         ./components/src/widgets/common/table/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
 

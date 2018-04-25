@@ -3,7 +3,8 @@ import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
 import { encodeUrl, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { DISPLAY_TYPE } from '../../framework/constants';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './anchor.props';
 
@@ -11,7 +12,11 @@ import { registerProps } from './anchor.props';
 registerProps();
 
 const DEFAULT_CLS = 'app-anchor';
-const WIDGET_CONFIG = {widgetType: 'wm-anchor', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-anchor',
+    hostClass: DEFAULT_CLS,
+    displayType: DISPLAY_TYPE.INLINE
+};
 
 @Component({
     selector: 'a[wmAnchor]',
@@ -49,5 +54,3 @@ export class AnchorComponent extends StylableComponent {
         }
     }
 }
-
-// Todo -vinay imageSrc

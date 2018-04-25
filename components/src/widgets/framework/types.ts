@@ -3,7 +3,6 @@ export interface IWidgetConfig {
     widgetSubType?: string;
     hostClass?: string;
     displayType?: string;
-    [k: string]: any;
 }
 
 export interface IRedrawableComponent {

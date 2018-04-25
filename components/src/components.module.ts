@@ -43,7 +43,7 @@ import { LabelDirective } from './widgets/common/label/label.directive';
 import { LayoutGridColumnComponent } from './widgets/common/layout-grid/layout-grid-column/layout-grid-column.component';
 import { LayoutgridDirective } from './widgets/common/layout-grid/layout-grid.directive';
 import { LayoutGridRowDirective } from './widgets/common/layout-grid/layout-grid-row/layout-grid-row.directive';
-import { LeftPanelComponent } from './widgets/common/left-panel/left-panel.component';
+import { LeftPanelDirective } from './widgets/common/left-panel/left-panel.directive';
 import { ListComponent } from './widgets/common/list/list.component';
 import { ListItemDirective } from './widgets/common/list/list-item.directive';
 import { LiveFormDirective } from './widgets/common/form/live-form.directive';
@@ -57,7 +57,7 @@ import { MessageComponent } from './widgets/common/message/message.component';
 import { NavbarComponent } from './widgets/common/navbar/navbar.component';
 import { NavDirective } from './widgets/common/nav/nav.directive';
 import { NavItemDirective } from './widgets/common/nav-item/nav-item.directive';
-import { PageContentComponent } from './widgets/common/page-content/page-content.component';
+import { PageContentDirective } from './widgets/common/page-content/page-content.directive';
 import { PageDirective } from './widgets/common/page/page.directive';
 import { PaginationComponent } from './widgets/common/pagination/pagination.component';
 import { PanelComponent } from './widgets/common/panel/panel.component';
@@ -70,7 +70,7 @@ import { RadiosetComponent } from './widgets/common/radioset/radioset.component'
 import { RatingComponent } from './widgets/common/rating/rating.component';
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
 import { RichTextEditorComponent } from './widgets/common/rich-text-editor/rich-text-editor.component';
-import { RightPanelComponent } from './widgets/common/right-panel/right-panel.component';
+import { RightPanelDirective } from './widgets/common/right-panel/right-panel.directive';
 import { SearchComponent } from './widgets/common/search/search.component';
 import { SelectComponent } from './widgets/common/select/select.component';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
@@ -128,7 +128,7 @@ const wmComponents = [
     LayoutGridColumnComponent,
     LayoutgridDirective,
     LayoutGridRowDirective,
-    LeftPanelComponent,
+    LeftPanelDirective,
     ListComponent,
     ListItemDirective,
     LiveFormDirective,
@@ -142,7 +142,7 @@ const wmComponents = [
     NavbarComponent,
     NavDirective,
     NavItemDirective,
-    PageContentComponent,
+    PageContentDirective,
     PageDirective,
     PaginationComponent,
     PanelComponent,
@@ -155,7 +155,7 @@ const wmComponents = [
     RatingComponent,
     RedrawableDirective,
     RichTextEditorComponent,
-    RightPanelComponent,
+    RightPanelDirective,
     SearchComponent,
     SelectComponent,
     ShowInDeviceDirective,

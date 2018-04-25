@@ -15,13 +15,17 @@ export class PartialContainerDirective {
     }
 
     renderPartial(nv, vcRef, componentInstance) {
-        this.renderUtils.renderPartial(
+        return this.renderUtils.renderPartial(
             nv,
             vcRef,
             this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement,
             componentInstance,
             () => (this.inj as any).view.component._resolveFragment()
         );
+    }
+
+    onLoadSuccess() {
+        this.componentInstance.getEventHandler('load')
     }
 
     constructor(
@@ -38,11 +42,12 @@ export class PartialContainerDirective {
             if (key === 'content') {
                 if (componentInstance.$lazyload) {
                     componentInstance.$lazyload = () => {
-                        this.renderPartial(nv, vcRef, componentInstance);
+                        this.renderPartial(nv, vcRef, componentInstance)
+                            .then(this.onLoadSuccess);
                         componentInstance.$lazyload = _.noop;
                     };
                 } else {
-                    this.renderPartial(nv, vcRef, componentInstance);
+                    this.renderPartial(nv, vcRef, componentInstance).then(this.onLoadSuccess);
                 }
             }
         });

@@ -5,7 +5,6 @@ export const registerProps = () => {
         'wm-label',
         new Map(
             [
-                ['animation', PROP_STRING],
                 ['caption', {value: 'Label', ...PROP_STRING_NOTIFY}],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_STRING],
@@ -13,7 +12,6 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['required', PROP_BOOLEAN],
                 ['show', PROP_BOOLEAN],
-                ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
             ]
         )
     );

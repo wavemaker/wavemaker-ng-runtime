@@ -3,14 +3,19 @@ import { Directive, forwardRef, Injector } from '@angular/core';
 import { setProperty, toggleClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { registerProps } from './label.props';
 import { StylableComponent } from '../base/stylable.component';
+import { DISPLAY_TYPE } from '../../framework/constants';
 
 registerProps();
 
 const DEFAULT_CLS = 'app-label';
-const WIDGET_CONFIG = {widgetType: 'wm-label', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-label',
+    hostClass: DEFAULT_CLS,
+    displayType: DISPLAY_TYPE.INLINE_BLOCK
+};
 
 @Directive({
     selector: '[wmLabel]',
