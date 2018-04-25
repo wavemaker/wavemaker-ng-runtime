@@ -1,4 +1,4 @@
-import { PROP_STRING, register, PROP_STRING_NOTIFY, PROP_BOOLEAN } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER_NOTIFY, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['class', PROP_STRING],
                 ['name', PROP_STRING],
-                ['columnwidth', PROP_STRING_NOTIFY],
+                ['columnwidth', PROP_NUMBER_NOTIFY],
                 ['show', PROP_BOOLEAN],
             ]
         )

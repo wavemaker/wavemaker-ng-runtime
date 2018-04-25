@@ -40,7 +40,7 @@ import { IframeDialogComponent } from './widgets/common/dialog/iframe-dialog/ifr
 import { ImagePipe } from './pipes/image.pipe';
 import { FormWidgetDirective } from './widgets/common/form/form-widget.directive';
 import { LabelDirective } from './widgets/common/label/label.directive';
-import { LayoutGridColumnComponent } from './widgets/common/layout-grid/layout-grid-column/layout-grid-column.component';
+import { LayoutGridColumnDirective } from './widgets/common/layout-grid/layout-grid-column/layout-grid-column.directive';
 import { LayoutgridDirective } from './widgets/common/layout-grid/layout-grid.directive';
 import { LayoutGridRowDirective } from './widgets/common/layout-grid/layout-grid-row/layout-grid-row.directive';
 import { LeftPanelDirective } from './widgets/common/left-panel/left-panel.directive';
@@ -125,7 +125,7 @@ const wmComponents = [
     IframeDialogComponent,
     FormWidgetDirective,
     LabelDirective,
-    LayoutGridColumnComponent,
+    LayoutGridColumnDirective,
     LayoutgridDirective,
     LayoutGridRowDirective,
     LeftPanelDirective,
