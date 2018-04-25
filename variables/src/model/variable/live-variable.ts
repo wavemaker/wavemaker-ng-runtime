@@ -9,6 +9,7 @@ const getManager = () => {
 
 export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
+    matchMode;
     propertiesMap;
 
     constructor(variable: any) {
@@ -60,6 +61,18 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
                 break;
             case DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS:
                 returnVal = this.getDistinctDataByFields(options);
+                break;
+            case DataSource.Operation.GET_MATCH_MODE:
+                returnVal = this.matchMode;
+                break;
+            case DataSource.Operation.DOWNLOAD:
+                returnVal = this.download(options);
+                break;
+            case DataSource.Operation.GET_NAME:
+                returnVal = this.name;
+                break;
+            case DataSource.Operation.GET_PROPERTIES_MAP:
+                returnVal = this.propertiesMap;
                 break;
             default:
                 returnVal = {};

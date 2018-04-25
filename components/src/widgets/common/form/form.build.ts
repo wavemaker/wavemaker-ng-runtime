@@ -38,7 +38,7 @@ const addFormControlName = (children = []) => {
     });
 };
 
-const buildTask = (isLiveForm?): IBuildTaskDef => {
+const buildTask = (directiveAttr = ''): IBuildTaskDef => {
     return {
         template: (node: Element) => {
             addFormControlName(node.children);
@@ -46,12 +46,11 @@ const buildTask = (isLiveForm?): IBuildTaskDef => {
         pre: (attrs, shared) => {
             let tmpl;
             const counter = idGen.nextUid();
-            attrs.set('dialogId', 'liveformdialog-' + attrs.get('name') + '-' + counter);
-            const liveFormAttr = isLiveForm ? 'wmLiveForm' : '';
-            const liveFormTmpl = `<${tagName} wmForm ${liveFormAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngForm" [noValidate]="${counter}.validationtype !== 'html'"
+            const liveFormTmpl = `<${tagName} wmForm ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngForm" [noValidate]="${counter}.validationtype !== 'html'"
                         [ngClass]="${counter}.captionAlignClass"`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {
+                attrs.set('dialogId', 'liveformdialog-' + attrs.get('name') + '-' + counter);
                 const dialogAttrsMap = new Map<string, string>();
                 dialogAttrsMap.set('title', attrs.get('title'));
                 dialogAttrsMap.set('iconclass', attrs.get('iconclass'));
@@ -80,6 +79,7 @@ const buildTask = (isLiveForm?): IBuildTaskDef => {
 };
 
 register('wm-form', buildTask);
-register('wm-liveform', () => buildTask(true));
+register('wm-liveform', () => buildTask('wmLiveForm'));
+register('wm-livefilter', () => buildTask('wmLiveFilter'));
 
 export default () => {};

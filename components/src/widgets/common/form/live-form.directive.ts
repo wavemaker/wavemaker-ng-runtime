@@ -36,17 +36,13 @@ export class LiveFormDirective {
         form.delete = this.delete.bind(this);
         form.save = this.save.bind(this);
         form.formSave = this.save.bind(this);
-        form.emptyDataModel = this.emptyDataModel.bind(this);
         form.setPrevDataValues = this.setPrevDataValues.bind(this);
-        form.getPrevDataValues = this.getPrevDataValues.bind(this);
         form.setPrimaryKey = this.setPrimaryKey.bind(this);
-        form.setPrevformFields = this.setPrevformFields.bind(this);
         form.constructDataObject = this.constructDataObject.bind(this);
         form.changeDataObject = this.setFormData.bind(this);
         form.setFormData = this.setFormData.bind(this);
         form.saveAndNew = this.saveAndNew.bind(this);
         form.saveAndView = this.saveAndView.bind(this);
-        form.setDefaultValues = this.setDefaultValues.bind(this);
         form.findOperationType = this.findOperationType.bind(this);
         form.clearData = this.clearData.bind(this);
     }
@@ -267,7 +263,7 @@ export class LiveFormDirective {
 
         if (!this.form.isLayoutDialog) {
             if (this.form.isSelected) {
-                this.form.setPrevformFields();
+                this.setPrevformFields();
                 this.form.setPrevDataValues();
             }
             this.form.prevDataObject = getClonedObject(this.form.rowdata || {});
@@ -282,7 +278,7 @@ export class LiveFormDirective {
     reset() {
         // var formEle = getFormElement(),
         this.form.resetFormState();
-        this.form.getPrevDataValues();
+        this.getPrevDataValues();
         // resetFormFields(formEle);
         if (_.isArray(this.form.formFields)) {
             this.form.formFields.forEach((field) => {
@@ -306,7 +302,7 @@ export class LiveFormDirective {
         this.form.reset();
         /*Show the previous selected data*/
         if (this.form.isSelected) {
-            this.form.getPrevDataValues();
+            this.getPrevDataValues();
         }
         this.form.isUpdateMode = false;
         if (this.form.isLayoutDialog) {
@@ -323,10 +319,10 @@ export class LiveFormDirective {
         this.form.operationType = Live_Operations.INSERT;
         this.form.clearMessage();
         if (this.form.isSelected && !this.form.isLayoutDialog) {
-            this.form.setPrevformFields();
+            this.setPrevformFields();
         }
         if (this.form.formFields && this.form.formFields.length > 0) {
-            this.form.emptyDataModel();
+            this.emptyDataModel();
         }
         this.setDefaultValues();
         this.form.setPrevDataValues();
@@ -406,7 +402,7 @@ export class LiveFormDirective {
 
             if (operationType === Live_Operations.DELETE) {
                 this.form.onResult(requestData.row, true, event);
-                this.form.emptyDataModel();
+                this.emptyDataModel();
                 this.form.prevDataValues = [];
                 this.form.isSelected = false;
             } else {

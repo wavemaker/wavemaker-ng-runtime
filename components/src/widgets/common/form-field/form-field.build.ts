@@ -7,83 +7,96 @@ import { isDataSetWidget } from '../../../utils/widget-utils';
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
 
-const getWidgetTemplate = (attrs, widgetType, counter, pCounter) => {
+const getWidgetTemplate = (attrs, widgetType, counter, pCounter, isMaxWidget?) => {
     let tmpl;
     const fieldName = attrs.get('key') || attrs.get('name');
-    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" formControlName="${fieldName}"`;
+    const formControl = isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
+    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl}`;
+    const tmplRef = isMaxWidget ? `#formWidgetMax` : `#formWidget`;
+    const ngModelTmpl = isMaxWidget ? `[(ngModel)]="${counter}.maxValue"` : `[(ngModel)]="${counter}.datavalue"`;
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmSearch ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.CHECKBOX:
-            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
-            // tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget></div>`;
+            // tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.CHIPS:
             /*TODO*/
             break;
         case FormWidgetType.COLORPICKER:
-            tmpl = `<div wmColorPicker ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmColorPicker ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmCurrency ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmDate ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="number" [(ngModel)]="${counter}.datavalue" role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="number" ${ngModelTmpl} role="input">`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="password" [(ngModel)]="${counter}.datavalue" role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="password" ${ngModelTmpl} role="input">`;
             break;
         case FormWidgetType.RADIOSET:
-            tmpl = `<div wmRadioset ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmRadioset ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.RATING:
-            tmpl = `<div wmRating ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmRating ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.RICHTEXT:
             /*TODO*/
             break;
         case FormWidgetType.SELECT:
-            tmpl = `<div wmSelect ${defaultTmpl} #formWidget></div>`;
+            tmpl = `<div wmSelect ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.TOGGLE:
-            tmpl = `<div wmCheckbox ${defaultTmpl} #formWidget type="toggle"  role="input"></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef} type="toggle"  role="input"></div>`;
             break;
         case FormWidgetType.SLIDER:
-            tmpl = `<div wmSlider ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmSlider ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.SWITCH:
-            tmpl = `<div wmSwitch ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmSwitch ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" type="${attrs.get('inputtype')}" [(ngModel)]="${counter}.datavalue" role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} role="input">`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<textarea wmTextarea ${defaultTmpl} #formWidget="wmTextarea" [(ngModel)]="${counter}.datavalue" role="input"></textarea>`;
+            tmpl = `<textarea wmTextarea ${defaultTmpl} ${tmplRef}="wmTextarea" ${ngModelTmpl} role="input"></textarea>`;
             break;
         case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
-            tmpl = `<div wmDateTime ${defaultTmpl} #formWidget role="input"></div>`;
+            tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.UPLOAD:
             /*TODO*/
             break;
         default:
-            tmpl = `<input wmText ${defaultTmpl} #formWidget="wmText" [(ngModel)]="${counter}.datavalue"  role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} role="input">`;
             break;
     }
     return tmpl;
+};
+
+
+const getTemplate = (attrs, widgetType, counter, pCounter) => {
+        if (attrs.get('is-range') !== 'true') {
+            return getWidgetTemplate(attrs, widgetType, counter, pCounter);
+        }
+        // TODO: Handle mobile case
+        return `<div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, counter, pCounter)}</div>
+                <div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, counter, pCounter, true)}</div>`;
 };
 
 const getCaptionByWidget = (attrs, widgetType, counter) => {
@@ -108,17 +121,21 @@ const getCaptionByWidget = (attrs, widgetType, counter) => {
     return caption;
 };
 
-register('wm-form-field', (): IBuildTaskDef => {
+const registerFormField = (isFormField): IBuildTaskDef => {
     return {
-        requires: ['wm-form', 'wm-liveform'],
-        pre: (attrs, shared, parentForm, parentLiveForm) => {
+        requires: ['wm-form', 'wm-liveform', 'wm-livefilter'],
+        pre: (attrs, shared, parentForm, parentLiveForm, parentFilter) => {
             const counter = idGen.nextUid();
-            const parent = parentForm || parentLiveForm;
+            const parent = parentForm || parentLiveForm || parentFilter;
             const pCounter = parent.get('form_reference');
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
+            const dataRole = isFormField ? 'form-field' : 'filter-field';
+            const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
+                                   class="help-block text-danger"
+                                   [textContent]="${counter}.validationmessage"></p>` : '';
             attrs.delete('widget');
             shared.set('counter', counter);
-            return `<${tagName} data-role="form-field" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" [class.hidden]="!${counter}.show" ${getAttrMarkup(attrs)}>
+            return `<${tagName} data-role="${dataRole}" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" [class.hidden]="!${counter}.show" ${getAttrMarkup(attrs)}>
                         <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="${widgetType}">
                             <label *ngIf="${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
@@ -126,12 +143,10 @@ register('wm-form-field', (): IBuildTaskDef => {
                             <div [ngClass]="[${pCounter}._widgetClass, ${counter}.class]">
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
-                                ${getWidgetTemplate(attrs, widgetType, counter, pCounter)}
+                                ${getTemplate(attrs, widgetType, counter, pCounter)}
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>
-                                <p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
-                                   class="help-block text-danger"
-                                   [textContent]="${counter}.validationmessage"></p>
+                                ${validationMsg}
                             </div>
                         </div>`;
         },
@@ -142,6 +157,9 @@ register('wm-form-field', (): IBuildTaskDef => {
             return provider;
         }
     };
-});
+};
+
+register('wm-form-field', registerFormField.bind(this, true));
+register('wm-filter-field', registerFormField.bind(this, false));
 
 export default () => {};

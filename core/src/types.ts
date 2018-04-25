@@ -18,7 +18,11 @@ enum Operation {
     GET_ENTITY_NAME = 'getEntityName',
     SET_INPUT = 'setinput',
     GET_RELATED_TABLE_DATA = 'getRelatedTableData',
-    GET_DISTINCT_DATA_BY_FIELDS = 'getDistinctDataByFields'
+    GET_DISTINCT_DATA_BY_FIELDS = 'getDistinctDataByFields',
+    GET_MATCH_MODE = 'getMatchMode',
+    DOWNLOAD = 'download',
+    GET_NAME = 'getName',
+    GET_PROPERTIES_MAP = 'getPropertiesMap'
 }
 
 export const DataSource = {

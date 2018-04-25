@@ -39,6 +39,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     @ViewChildren(ListItemDirective) listItems: QueryList<ListItemDirective>;
 
     navControls;
+    datasource;
     disableitem;
     navigation;
     navigationalign;
@@ -347,7 +348,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         });
 
         dataNavigator.maxResults = this.pagesize || 5;
-        this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent);
+        this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent, this.datasource);
     }
 
     private onDataSetChange(newVal) {
