@@ -6,6 +6,8 @@ const colWidth = 'columnwidth';
 
 const getAttr = (attrs: Array<Attribute>, name: string): Attribute => attrs.filter(attr => attr.name === name)[0];
 
+
+// Todo - Vinay -- Move this logic to migration
 register('wm-gridrow', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {

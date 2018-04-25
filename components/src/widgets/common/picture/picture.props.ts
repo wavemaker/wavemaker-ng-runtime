@@ -5,8 +5,6 @@ export const registerProps = () => {
         'wm-picture',
         new Map(
             [
-                ['animation', PROP_STRING],
-                ['disabled', PROP_BOOLEAN],
                 ['encodeurl', PROP_STRING_NOTIFY],
                 ['hint', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],

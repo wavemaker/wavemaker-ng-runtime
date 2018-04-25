@@ -1,16 +1,15 @@
-import { register, PROP_STRING, PROP_STRING_NOTIFY, PROP_BOOLEAN } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-icon',
         new Map(
             [
-                ['animation', PROP_STRING],
-                ['caption', PROP_STRING_NOTIFY],
+                ['caption', PROP_STRING],
                 ['hint', PROP_STRING],
-                ['iconclass', PROP_STRING_NOTIFY],
-                ['iconposition', PROP_STRING_NOTIFY],
-                ['iconsize', PROP_STRING_NOTIFY],
+                ['iconclass', {value: 'wi wi-star-border', ...PROP_STRING}],
+                ['iconposition', {value: 'left', ...PROP_STRING}],
+                ['iconsize', PROP_STRING],
                 ['iconurl', PROP_STRING],
                 ['name', PROP_STRING],
                 ['show', PROP_BOOLEAN]

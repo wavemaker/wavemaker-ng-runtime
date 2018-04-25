@@ -1,14 +1,17 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './icon.props';
 
 registerProps();
 
 const DEFAULT_CLS = 'app-icon-wrapper';
-const WIDGET_CONFIG = {widgetType: 'wm-icon', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-icon',
+    hostClass: DEFAULT_CLS
+};
 
 @Component({
     selector: '[wmIcon]',
@@ -18,6 +21,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-icon', hostClass: DEFAULT_CLS};
     ]
 })
 export class IconComponent extends StylableComponent {
+
+    @HostBinding('attr.icon-position') iconposition: string;
+    @HostBinding('style.fontSize') iconsize: string;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
