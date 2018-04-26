@@ -3,14 +3,17 @@ import { Directive, forwardRef, Injector } from '@angular/core';
 import { addClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { registerProps } from './container.props';
 import { StylableComponent } from '../base/stylable.component';
 
 registerProps();
 
 const DEFAULT_CLS = 'app-container';
-const WIDGET_CONFIG = {widgetType: 'wm-container', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-container',
+    hostClass: DEFAULT_CLS
+};
 
 @Directive({
     selector: '[wmContainer]',
@@ -20,6 +23,13 @@ const WIDGET_CONFIG = {widgetType: 'wm-container', hostClass: DEFAULT_CLS};
 })
 export class ContainerDirective extends StylableComponent {
 
+    shouldRegisterHostEvent(eventName) {
+        if (eventName === 'enterkeypress') {
+            return true;
+        }
+        return super.shouldRegisterHostEvent(eventName);
+    }
+
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
@@ -27,3 +37,5 @@ export class ContainerDirective extends StylableComponent {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }
+
+// Todo - Bandhavya smoothScroll

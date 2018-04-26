@@ -10,10 +10,9 @@ import { register } from '../../framework/widget-registry';
 import { proxyHandler } from '../../framework/property-change-handler';
 import { ChangeListener, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
-import { COMPONENT_HOST_EVENTS, DISPLAY_TYPE } from '../../framework/constants';
+import { COMPONENT_HOST_EVENTS, DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
 import { ProxyProvider } from '../../framework/proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
-import { CUSTOM_EVT_KEY } from '../../../utils/decorators';
 
 declare const $;
 
@@ -108,7 +107,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     protected readonly eventManager: EventManager;
 
     protected constructor(
-        private inj: Injector,
+        protected inj: Injector,
         config: IWidgetConfig,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
@@ -233,6 +232,24 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     }
 
     /**
+     * override the
+     */
+    protected getMappedEventName(eventName) {
+        return EVENTS_MAP.get(eventName) || eventName;
+    }
+
+    /**
+     * invoke the event handler
+     * Components can override this method to execute custom logic before invoking the user callback
+     */
+    protected handleEvent(eventName: string, fn: Function, locals: any) {
+        this.eventManager.addEventListener(this.nativeElement, eventName, e => {
+            locals.$event = e;
+            fn(locals);
+        });
+    }
+
+    /**
      * parse the event expression and save reference to the function inside eventHandlers map
      * If the component provides a override for an event through @Event decorator invoke that
      * else invoke the resolved function
@@ -246,20 +263,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
 
         fn = fn.bind(undefined, this.pageComponent, locals);
 
-        let meta = Object.getOwnPropertyDescriptor(this.constructor, CUSTOM_EVT_KEY) || {};
-        meta = (<any>meta).value || {};
-
         this.eventHandlers.set(eventName, fn);
 
         if (this.shouldRegisterHostEvent(eventName)) {
-            this.eventManager.addEventListener(this.nativeElement, eventName, e => {
-                locals.$event = e;
-                if (meta[eventName]) {
-                    meta[eventName].call(this, fn, locals);
-                } else {
-                    (<Function>fn)(locals);
-                }
-            });
+            this.handleEvent(this.getMappedEventName(eventName), fn, locals);
         }
     }
 

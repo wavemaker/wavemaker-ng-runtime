@@ -1,15 +1,21 @@
 import { Component, forwardRef, Injector } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import { encodeUrl, isInsecureContentRequest } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './iframe.props';
+import { SANITIZE_AS, SanitizePipe } from '../../../pipes/sanitize.pipe';
+import { SafeResourceUrl } from '@angular/platform-browser';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
-const WIDGET_CONFIG = {widgetType: 'wm-iframe', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-iframe',
+    hostClass: DEFAULT_CLS
+};
+
+class AppLocale {}
 
 registerProps();
 
@@ -22,47 +28,58 @@ registerProps();
 })
 export class IframeComponent extends StylableComponent {
 
-    _iframesrc: any;
+    private _iframesrc: SafeResourceUrl;
 
-    private baseurl: string;
+    public iframesrc: string;
 
-    showIframe;
+    private errorMsg: string;
 
-    encodeurl: boolean;
+    private hintMsg: string;
+
+    public encodeurl: boolean;
 
     /**
-     * this property member is set to true when the content request url doesnt match windows protocol
+     * this property member is set to true when the content request url doesn't match windows protocol
      */
     private showContentLoadError = false;
 
-    constructor(inj: Injector, private sanitizer: DomSanitizer) {
+    constructor(inj: Injector, private sanitizePipe: SanitizePipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 
-    onIframeSrcChange(newVal) {
-        if (isInsecureContentRequest(newVal)) {
-            this.showContentLoadError = true;
-            this._iframesrc = '';
-            return;
-        }
-        if (typeof newVal === 'string' && this._iframesrc !== newVal) {
+    protected computeIframeSrc() {
+        this.showContentLoadError = false;
+        this._iframesrc = undefined;
+
+        if (this.iframesrc) {
+            let url = this.iframesrc;
             if (this.encodeurl) {
-                newVal = encodeUrl(newVal);
+                url = encodeUrl(this.iframesrc);
             }
-            this.baseurl = newVal;
-            this._iframesrc = this.sanitizer.bypassSecurityTrustResourceUrl(newVal);
-            setTimeout(() => this.showIframe = true, 200);
+
+            const trustedUrl = this.sanitizePipe.transform(url, SANITIZE_AS.RESOURCE);
+
+            if (isInsecureContentRequest(url)) {
+                this.showContentLoadError = true;
+
+                // Todo - Vinay Provide AppLocale in Core
+                const appLocale = this.inj.get(AppLocale) as any;
+
+                this.errorMsg = `${appLocale.MESSAGE_ERROR_CONTENT_DISPLAY} ${this.iframesrc}`;
+                this.hintMsg = `${appLocale.MESSAGE_ERROR_CONTENT_DISPLAY} ${this.iframesrc}`;
+            }
+
+            // iframe dialog opening was not instant without the delay
+            setTimeout(() => this._iframesrc = trustedUrl, 100);
         }
     }
 
     onPropertyChange(key, newVal, oldVal) {
         switch (key) {
             case 'iframesrc':
-                this.onIframeSrcChange(newVal);
-                break;
             case 'encodeurl':
-                this.onIframeSrcChange(this.baseurl);
+                this.computeIframeSrc();
                 break;
         }
     }

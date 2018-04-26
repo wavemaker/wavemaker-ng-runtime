@@ -1,4 +1,4 @@
-import { Directive, forwardRef, HostBinding, HostListener, Injector } from '@angular/core';
+import { Directive, forwardRef, HostBinding, Injector } from '@angular/core';
 
 import { addClass } from '@wm/core';
 
@@ -40,12 +40,21 @@ export class TextDirective extends StylableComponent {
     @HostBinding() autofocus: boolean;
     @HostBinding() autocomplete: boolean;
 
-    @Event('change')
     onChange(fn, locals) {
         locals.newVal = this.datavalue;
         locals.oldVal = this._oldVal;
-        fn(locals);
+
         this._oldVal = this.datavalue;
+    }
+
+    handleEvent(eventName: string, fn: Function, locals: any) {
+        if (eventName === 'change') {
+            super.handleEvent(eventName, () => {
+                this.onChange(fn, locals);
+            }, locals);
+        } else {
+            super.handleEvent(eventName, fn, locals);
+        }
     }
 
     shouldRegisterHostEvent(eventName: string) {

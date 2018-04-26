@@ -3,10 +3,11 @@
         marginheight="0"
         marginwidth="0"
         frameborder="0"
+        [name]="name"
         [src]="_iframesrc"
-        *ngIf="!showContentLoadError && showIframe"
+        *ngIf="!showContentLoadError && _iframesrc"
         seamless="seamless">
 </iframe>
 <div [ngClass]="['wm-content-info readonly-wrapper', class]" *ngIf="showContentLoadError">
-    <p class="wm-message" [title]="hintMsg" [innerHTML]="errMsg"></p>
+    <p class="wm-message" [title]="hintMsg" [textContent]="errMsg"></p>
 </div>
