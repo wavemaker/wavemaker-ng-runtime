@@ -7,7 +7,6 @@ import { registerProps } from './login.props';
 import { TextDirective } from '../text/text.directive';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
 import { ButtonComponent } from '../button/button.component';
-import { invokeEventHandler } from '../../../utils/widget-utils';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
@@ -59,8 +58,8 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
             }
             if (this.nativeElement.hasAttribute('submit.event') || this.loginButtonCmp.getNativeElement().hasAttribute('click.event')) {
                 // TODO: Check if it is a variable or any other action event
-                invokeEventHandler(this, 'click');
-                invokeEventHandler(this, 'submit');
+                this.invokeEventCallback('click');
+                this.invokeEventCallback('submit');
             } else {
                 this.pageComponent.Variables.loginAction.login({loginInfo: this.loginDetails}, this.onSuccess, this.onError);
             }
@@ -68,7 +67,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     }
 
     onSuccess() {
-        invokeEventHandler(this, 'success');
+        this.invokeEventCallback('success');
     }
 
     onError(error?) {
@@ -77,7 +76,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
             caption: this.errormessage || error || this.pageComponent.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
             show: true
         };
-        invokeEventHandler(this, 'error');
+        this.invokeEventCallback('error');
     }
 
     ngAfterViewInit() {

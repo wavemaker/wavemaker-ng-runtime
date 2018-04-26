@@ -4,7 +4,7 @@ import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
 import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 import { registerProps } from './tree.props';
-import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
+import { getEvaluatedData } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -190,11 +190,11 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         if ($i.hasClass('collapsed')) {
             $i.removeClass('collapsed ' + treeIcons.collapsed).addClass('expanded ' + treeIcons.expanded);
             $li.removeClass('collapsed').addClass('expanded');
-            invokeEventHandler(this, 'expand', eventParams);
+            this.invokeEventCallback('expand', eventParams);
         } else if ($i.hasClass('expanded')) {
             $i.removeClass('expanded ' + treeIcons.expanded).addClass('collapsed ' + treeIcons.collapsed);
             $li.removeClass('expanded').addClass('collapsed');
-            invokeEventHandler(this, 'collapse', eventParams);
+            this.invokeEventCallback('collapse', eventParams);
         }
     }
 
@@ -242,7 +242,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             this.selecteditem = getClonedObject(data) || {};
             this.selecteditem.path = path;
 
-            invokeEventHandler(this, 'select', {$event: undefined, $item: data, $path: path});
+            this.invokeEventCallback('select', {$event: undefined, $item: data, $path: path});
             $appDigest();
         }
     }
@@ -321,7 +321,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             $parseEvent(nodeAction)(this);
         }
 
-        invokeEventHandler(this, 'select', {$event: evt, $item: data, $path: path});
+        this.invokeEventCallback('select', {$event: evt, $item: data, $path: path});
         $appDigest();
     }
     // click event is added on the host nativeElement

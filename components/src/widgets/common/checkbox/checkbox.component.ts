@@ -5,7 +5,7 @@ import { toggleClass } from '@wm/core';
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { registerProps } from './checkbox.props';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
@@ -74,6 +74,6 @@ export class CheckboxComponent  extends BaseFormComponent implements OnInit {
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);
         $event.stopPropagation();
-        invokeEventHandler(this, 'change', {$event: $event, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
+        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
     }
 }

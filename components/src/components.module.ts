@@ -17,6 +17,7 @@ import { ButtonGroupDirective } from './widgets/common/button-group/button-group
 import { CalendarComponent } from './widgets/common/calendar/calendar.component';
 import { ChartComponent } from './widgets/common/chart/chart.component';
 import { CheckboxComponent } from './widgets/common/checkbox/checkbox.component';
+import { CheckboxsetComponent } from './widgets/common/checkboxset/checkboxset.component';
 import { ColorPickerComponent } from './widgets/common/color-picker/color-picker.component';
 import { FormGroupDirective } from './widgets/common/form-group/form-group.directive';
 import { ConfirmDialogComponent } from './widgets/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -110,6 +111,7 @@ const wmComponents = [
     ContainerDirective,
     ContentComponent,
     CurrencyComponent,
+    CheckboxsetComponent,
     DateComponent,
     DatetimeComponent,
     DialogComponent,

@@ -1,6 +1,6 @@
-import { PROP_STRING, register, PROP_STRING_NOTIFY, PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER } from '../../framework/widget-props';
+import {PROP_STRING, register, PROP_STRING_NOTIFY, PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER} from '../../framework/widget-props';
 
-export const radiosetProps = new Map(
+export const checkboxsetProps = new Map(
     [
         ['class', PROP_STRING],
         ['datafield', PROP_STRING_NOTIFY],
@@ -10,12 +10,13 @@ export const radiosetProps = new Map(
         ['displayexpression', PROP_STRING_NOTIFY],
         ['displayfield', PROP_STRING_NOTIFY],
         ['itemclass', {value: '', ...PROP_STRING}],
+        ['listclass', {value: '', ...PROP_STRING}],
         ['layout', {value: 'stacked', ...PROP_STRING_NOTIFY}],
         ['name', PROP_STRING],
         ['orderby', PROP_STRING_NOTIFY],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
-        ['selectedvalue', PROP_STRING_NOTIFY],
+        ['selectedvalues', PROP_STRING_NOTIFY],
         ['show', PROP_BOOLEAN],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['usekeys', PROP_BOOLEAN_NOTIFY],
@@ -26,7 +27,7 @@ export const radiosetProps = new Map(
 
 export const registerProps = () => {
     register(
-        'wm-radioset',
-        radiosetProps
+        'wm-checkboxset',
+        checkboxsetProps
     );
 };

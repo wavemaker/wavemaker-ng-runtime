@@ -5,8 +5,8 @@ const tagName = 'div';
 register('wm-form-group', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmFormGroup role="group" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
-    };
+    post: () => `</${tagName}>`
+};
 });
 
 // Todo[Vinay] remove this after the migration

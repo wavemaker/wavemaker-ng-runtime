@@ -7,7 +7,7 @@ import { $appDigest, addClass, findValueOf, isObject, removeClass, validateAcces
 import { styler } from '../../framework/styler';
 import { MenuRef, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
-import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
+import { getEvaluatedData } from '../../../utils/widget-utils';
 import { registerProps } from './menu.props';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 
@@ -156,7 +156,7 @@ export class MenuComponent extends StylableComponent implements OnInit, OnDestro
     onSelect(args) {
         // emit the values to the subscribers as menu is also used as a dynamic component
         this.select.next(args);
-        invokeEventHandler(this, 'change', args);
+        this.invokeEventCallback('change', args);
     }
 
     ngOnInit() {

@@ -6,7 +6,7 @@ import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './date.props';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 registerProps();
@@ -76,7 +76,7 @@ export class DateComponent extends BaseFormComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
-        invokeEventHandler(this, 'change', {$event: newVal, newVal, oldVal: this.datavalue});
+        this.invokeEventCallback('change', {$event: newVal, newVal, oldVal: this.datavalue});
         this.proxyModel = newVal;
         if (newVal) {
             this.formattedModel = getFormattedDate(this.datePipe, newVal, this.datePattern) || '';

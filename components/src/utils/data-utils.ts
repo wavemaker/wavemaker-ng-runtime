@@ -202,7 +202,7 @@ function setDataFields(formField, options?) {
  *
  */
 function setFieldDataSet(formField, data, options?) {
-    const emptySupportWidgets = ['select', 'radioset'];
+    const emptySupportWidgets = [FormWidgetType.SELECT, FormWidgetType.RADIOSET, FormWidgetType.CHECKBOXSET];
     const emptyOption         = {};
     const dataSet = [];
     if (options.isEnableEmptyFilter && _.includes(emptySupportWidgets, formField[options.widget]) &&

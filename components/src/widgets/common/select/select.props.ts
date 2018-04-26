@@ -11,7 +11,7 @@ export const selectProps = new Map(
         ['displayexpression', PROP_STRING_NOTIFY],
         ['displayfield', PROP_STRING_NOTIFY],
         ['hint', PROP_STRING],
-        ['multiple', PROP_BOOLEAN_NOTIFY],
+        ['multiple', {value: false, ...PROP_BOOLEAN_NOTIFY}],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Enter text', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN],

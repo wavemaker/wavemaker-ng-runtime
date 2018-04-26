@@ -4,7 +4,7 @@ import { CONSTANTS_CURRENCY } from '@wm/core';
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { registerProps } from './currency.props';
 
 const DEFAULT_CLS = 'input-group app-currency';
@@ -37,7 +37,7 @@ export class CurrencyComponent extends BaseFormComponent implements OnInit {
     }
 
     onChange($event) {
-        invokeEventHandler(this, 'change', {$event, newVal: $event, oldVal: this.oldVal});
+        this.invokeEventCallback('change', {$event, newVal: $event, oldVal: this.oldVal});
         this.oldVal = $event;
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);

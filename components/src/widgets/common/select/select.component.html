@@ -3,9 +3,9 @@
   [disabled]="disabled"
   [required]="required"
   [tabindex]="tabindex"
-  [(ngModel)]="modelProxy"
+  [(ngModel)]="_modelProxy"
   [multiple]="multiple"
-  (change)="onSelectValueChange($event, this.modelProxy)"
+  (change)="onSelectValueChange($event)"
   >
     <option selected [ngValue]="undefined" *ngIf="placeholder">{{placeholder}}</option>
     <option

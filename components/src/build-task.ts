@@ -7,6 +7,7 @@ export * from './widgets/common/button/button.build';
 export * from './widgets/common/calendar/calendar.build';
 export * from './widgets/common/chart/chart.build';
 export * from './widgets/common/checkbox/checkbox.build';
+export * from './widgets/common/checkboxset/checkboxset.build';
 export * from './widgets/common/color-picker/color-picker.build';
 export * from './widgets/common/form-group/form-group.build';
 export * from './widgets/common/container/container.build';

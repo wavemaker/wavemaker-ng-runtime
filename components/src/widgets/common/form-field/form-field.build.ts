@@ -23,7 +23,7 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter, isMaxWidget?) =
             tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
-            // tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmCheckboxset ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.CHIPS:
             /*TODO*/

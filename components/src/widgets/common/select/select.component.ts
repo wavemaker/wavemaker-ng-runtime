@@ -6,8 +6,8 @@ import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './select.props';
-import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, setCheckedAndDisplayValues, updatedCheckedValues } from '../../../utils/form-utils';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, getDisplayValues, updatedCheckedValues } from '../../../utils/form-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -23,11 +23,15 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
         {provide: WidgetRef, useExisting: forwardRef(() => SelectComponent)}
     ]
 })
+
 export class SelectComponent extends BaseFormComponent implements OnInit {
+
+    class = '';
+    required;
+    tabindex;
 
     public readonly;
     public multiple;
-    public displayOptions: any[];
     private ALLFIELDS = 'All Fields';
     private _isChangedManually = false;
     public displayValue: string;
@@ -38,21 +42,26 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
     public usekeys: boolean;
     public orderby: string;
     public placeholder: string;
-    public modelProxy: any;
+    public disabled;
 
     private __model;
+    public _modelProxy: any[] = [];
+    private _dataVal;
     private oldValue;
+    public _displayOptions: any[] = [];
 
     get _model_() {
         return this.__model;
     }
 
-    set _model_(val) {
-        let model;
+    set _model_(val: any) {
         this.__model = val;
-        model = updatedCheckedValues(this.displayOptions, val, this.modelProxy, this.usekeys);
-        this.modelProxy = _.isArray(model) ? model : [model];
-        this.displayValue = setCheckedAndDisplayValues(this.displayOptions, this.modelProxy);
+        if (this.displayOptions.length) {
+            updatedCheckedValues(this.displayOptions, val, this.modelProxy, this.usekeys, (_modelProxy) => {
+                this.modelProxy = _modelProxy;
+                this.displayValue = getDisplayValues(this.displayOptions);
+            });
+        }
         this.invokeOnChange(this.datavalue);
     }
 
@@ -60,16 +69,38 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
         return this._model_;
     }
 
-    set datavalue(val: any) {
-        if (this.multiple) {
-            this._model_ = [val];
-        } else {
+        set datavalue(val: any) {
             this._model_ = val;
         }
+        get displayOptions() {
+            return this._displayOptions;
+        }
+        set displayOptions(val: any) {
+            this._displayOptions = val;
+        }
+        get modelProxy() {
+            return this.multiple ? this._modelProxy : this._modelProxy[0];
+        }
+        set modelProxy(val: any) {
+            this._modelProxy = _.isArray(val) ? val : [val];
+        }
+        private updateValues(modelObj) {
+            this._dataVal = modelObj._dataVal;
+            this._model_ = modelObj.model;
+        }
 
-    }
+        /**
+         * function to assign the values to the model variable based on the selectedvalue as provided
+         */
+        private assignModelValue() {
+            if (this.multiple) {
+                assignModelForMultiSelect(this.displayOptions, this.datafield, this.modelProxy, this._model_, this._isChangedManually, this._dataVal, this.updateValues.bind(this));
+            } else {
+                assignModelForSelected(this.displayOptions, this._model_, this.modelProxy, this.datafield, this._isChangedManually, this._dataVal, this.updateValues.bind(this));
+            }
+        }
 
-    onSelectValueChange($event, selectedValue) {
+    onSelectValueChange($event) {
         this._isChangedManually = true;
         let prevSelectedOption;
         const dataField = this.datafield;
@@ -88,9 +119,25 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
         }
         this.assignModelValue();
         this.invokeOnTouched();
-        invokeEventHandler(this, 'change', {$event, newVal: this.datavalue, oldVal: this.oldValue});
+        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
         this.oldValue = this.datavalue;
     }
+
+        private onResult(displayOptions) {
+            this.displayOptions = displayOptions;
+            // Use _dataVal as model when the displayOptions are updated i.e. when latest dataset is retrieved
+            if (this.displayOptions.length && !_.isNull(this._model_) && this._model_ !== ''
+                && (_.isUndefined(this._model_) || !this._model_.length)) {
+                this._model_ = this._dataVal;
+            }
+            if (this.displayOptions.length) {
+                updatedCheckedValues(this.displayOptions, this._model_, this.modelProxy, this.usekeys, _modelProxy => {
+                    this.modelProxy = _modelProxy;
+                    this.displayValue = getDisplayValues(this.displayOptions);
+                    this.assignModelValue();
+                });
+            }
+        }
 
     /**
      * This function parses the dataset and extracts the displayOptions from parsed dataset.
@@ -98,30 +145,13 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
      */
     private constructDisplayOptions() {
         this.displayOptions = [];
-        this.displayOptions = extractDisplayOptions(this.dataset, {
+        extractDisplayOptions(this.dataset, {
             'datafield': this.datafield,
             'displayfield': this.displayfield,
             'displayexpression': this.displayexpression,
             'usekeys': this.usekeys,
             'orderby': this.orderby
-        });
-
-        this.modelProxy = updatedCheckedValues(this.displayOptions, this._model_, this.modelProxy, this.usekeys);
-        this.displayValue = setCheckedAndDisplayValues(this.displayOptions, this.modelProxy);
-
-        this.assignModelValue();
-    }
-
-    /**
-     * function to assign the values to the model variable based on the selectedvalue as provided
-     */
-    private assignModelValue() {
-        if (this.multiple) {
-            this._model_ = assignModelForMultiSelect(this.displayOptions, this.datafield, this.modelProxy, this._model_, this._isChangedManually);
-        } else {
-            this._model_ = assignModelForSelected(this.displayOptions, this._model_, _.isArray(this.modelProxy) ? this.modelProxy[0] : this.modelProxy,
-                this.datafield, this._isChangedManually);
-        }
+        }, this.onResult.bind(this));
     }
 
     onPropertyChange(key, nv, ov?) {
@@ -143,6 +173,9 @@ export class SelectComponent extends BaseFormComponent implements OnInit {
                 break;
             case 'datavalue':
                 this.datavalue = nv;
+                break;
+            case 'multiple':
+                this.modelProxy = nv ? [] : '';
                 break;
         }
     }

@@ -7,7 +7,7 @@ import { registerProps } from './pagination.props';
 import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
-import { getOrderByExpr, getWatchIdentifier, invokeEventHandler } from '../../../utils/widget-utils';
+import { getOrderByExpr, getWatchIdentifier } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -331,7 +331,7 @@ export class PaginationComponent extends StylableComponent {
 
     invokeSetRecord(event, data) {
         // Trigger the event handler if exists.
-        invokeEventHandler(this, 'setrecord', {$event: event, $data: data, $index: this.dn.currentPage});
+        this.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage});
     }
 
     /*Function to validate the page input.
@@ -366,12 +366,12 @@ export class PaginationComponent extends StylableComponent {
     pageChanged(event: any) {
         this.dn.currentPage = event && event.page;
         this.goToPage();
-        invokeEventHandler(this, 'paginationchange', {$event: undefined, $index: this.dn.currentPage});
+        this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
     }
 
     /*Function to navigate to the respective pages.*/
     navigatePage(index, event, isRefresh, callback) {
-        invokeEventHandler(this, 'paginationchange', {$event: undefined, $index: this.dn.currentPage});
+        this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
 
         // Convert the current page to a valid page number.
         this.dn.currentPage = +this.dn.currentPage;

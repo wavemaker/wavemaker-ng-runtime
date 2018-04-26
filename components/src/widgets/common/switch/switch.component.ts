@@ -7,7 +7,7 @@ import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './switch.props';
 import { getOrderedDataSet } from '../../../utils/form-utils';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 
 declare const _, $;
 
@@ -215,7 +215,7 @@ export class SwitchComponent extends BaseFormComponent {
 
         this.selectOptAtIndex($index);
 
-        invokeEventHandler(this, 'change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
+        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
 
         this.oldVal = this.datavalue;
 

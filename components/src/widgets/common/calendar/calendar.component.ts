@@ -5,7 +5,7 @@ import { getClonedObject, getSessionStorageItem } from '@wm/core';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 import { registerProps } from './calendar.props';
-import { getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
+import { getEvaluatedData } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
 
 declare const _, $, moment;
@@ -302,7 +302,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
      * Private property to proxy the onEventdrop
      */
     private onEventdropProxy(event, delta, revertFunc, jsEvent, ui, view) {
-        invokeEventHandler(this, 'eventdrop', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
+        this.invokeEventCallback('eventdrop', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
     }
     /**
      * Private property to proxy the onSelect
@@ -310,13 +310,13 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
     private onSelectProxy(start, end, jsEvent, view) {
         this.selecteddates = {start: getUTCDateTime(start), end: getUTCDateTime(end)};
         this.selecteddata = this.setSelectedData(start, end);
-        invokeEventHandler(this, 'select', {start: start.valueOf(), end: end.valueOf(), view, selecteddata: this.selecteddata});
+        this.invokeEventCallback('select', {start: start.valueOf(), end: end.valueOf(), view, selecteddata: this.selecteddata});
     }
     /**
      * Private property to proxy the onEventresize
      */
     private onEventresizeProxy(event, delta, revertFunc, jsEvent, ui, view) {
-        invokeEventHandler(this, 'eventresize', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
+        this.invokeEventCallback('eventresize', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
     }
     /**
      * Private property to proxy the onEventChangeStart
@@ -328,7 +328,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
      * Private property to proxy the onEventclick
      */
     private eventClickProxy(event, jsEvent, view) {
-        invokeEventHandler(this, 'eventclick', {jsEvent, event, view});
+        this.invokeEventCallback('eventclick', {jsEvent, event, view});
     }
     /**
      * Private property to proxy the onEventrender
@@ -337,7 +337,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
-        invokeEventHandler(this, 'eventrender', {jsEvent, event, view});
+        this.invokeEventCallback('eventrender', {jsEvent, event, view});
     }
     /**
      * Private property to proxy the viewrender
@@ -347,7 +347,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
-        invokeEventHandler(this, 'viewrender', {view});
+        this.invokeEventCallback('viewrender', {view});
     }
     /**
      * Private property to update the calendar header options once the controls changes
@@ -413,7 +413,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
             start: moment(this._model_).valueOf(),
             end  : moment(this._model_).endOf('day').valueOf()
         };
-        invokeEventHandler(this, 'eventrender', {$data: this.eventData});
+        this.invokeEventCallback('eventrender', {$data: this.eventData});
     }
 
     /**

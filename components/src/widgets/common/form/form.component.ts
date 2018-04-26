@@ -11,7 +11,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../../utils/live-utils';
 import { performDataOperation } from '../../../utils/data-utils';
-import { invokeEventHandler } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -197,13 +196,13 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     onResult(data, status, event?) {
         const params = {$event: event, $data: data};
         // whether service call success or failure call this method
-        invokeEventHandler(this, 'result', params);
+        this.invokeEventCallback('result', params);
         if (status) {
             // if service call is success call this method
-            invokeEventHandler(this, 'success', params);
+            this.invokeEventCallback('success', params);
         } else {
             // if service call fails call this method
-            invokeEventHandler(this, 'error', params);
+            this.invokeEventCallback('error', params);
         }
     }
 
@@ -346,7 +345,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
         params = {$event: event, $formData: formData, $data: formData};
 
-        if (this.onBeforeSubmitEvt && invokeEventHandler(this, 'beforesubmit', params)) {
+        if (this.onBeforeSubmitEvt && this.invokeEventCallback('beforesubmit', params)) {
             return;
         }
 
@@ -358,15 +357,15 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                     .then((data) => {
                         this.toggleMessage(true, this.postmessage, 'success');
                         this.onResult(data, true, $event);
-                        invokeEventHandler(this, 'submit', params);
+                        this.invokeEventCallback('submit', params);
                     }, (errMsg) => {
                         template = this.errormessage || errMsg;
                         this.toggleMessage(true, template, 'error');
                         this.onResult(errMsg, false, $event);
-                        invokeEventHandler(this, 'submit', params);
+                        this.invokeEventCallback('submit', params);
                     });
             } else {
-                invokeEventHandler(this, 'submit', params);
+                this.invokeEventCallback('submit', params);
                 this.onResult({}, true, $event);
             }
         } else {

@@ -1,6 +1,6 @@
-import { isDefined } from '@wm/core';
+import {isDefined} from '@wm/core';
 
-import { getEvaluatedData, getObjValueByKey } from './widget-utils';
+import {getEvaluatedData, getObjValueByKey} from './widget-utils';
 
 declare const _;
 
@@ -37,6 +37,10 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
     let objectKeys = [],
         key,
         value;
+
+    // TODO: remove check for data property
+    dataSet = dataSet.hasOwnProperty('data') ? dataSet.data : dataSet;
+    dataSet = getOrderedDataSet(dataSet, options.orderby);
 
     const useKeys = options.usekeys,
         dataField = options.datafield,
@@ -135,12 +139,12 @@ export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
  * This function parses the dataset and extracts the displayOptions from parsed dataset.
  * displayOption will contain datafield as key, displayfield as value.
  */
-export const extractDisplayOptions = (dataSet: any, options: DataSetProps): any[] => {
+export const extractDisplayOptions = (dataSet: any, options: DataSetProps, callback?: (options: any) => void): any[] => {
     let newDataSet,
         displayOptions = [];
 
     if (!dataSet) {
-        return [];
+        return;
     }
     newDataSet = getOrderedDataSet(dataSet, options.orderby);
 
@@ -155,7 +159,7 @@ export const extractDisplayOptions = (dataSet: any, options: DataSetProps): any[
         return _.isUndefined(opt.key) || _.isNull(opt.key);
     });
 
-    return displayOptions;
+    callback(displayOptions);
 };
 
 /**
@@ -165,10 +169,6 @@ export const updateCheckedValue = (value: any, displayOptions: any[]) => {
     const checkedDisplayOption = _.find(displayOptions, dataObj => {
         return _.toString(dataObj.key) === _.toString(value);
     });
-    // set the isChecked flag for selected radioset value.
-    if (checkedDisplayOption) {
-        checkedDisplayOption.isChecked = true;
-    }
     return checkedDisplayOption;
 };
 
@@ -177,25 +177,36 @@ export const updateCheckedValue = (value: any, displayOptions: any[]) => {
  * If datafield is ALLFIELDS, modelProxy is 0, then model will be retrieved from dataObject in displayOptions
  * If datafield is other than ALLFIELDS, the modelProxy and model will be retrieved from key in displayOptions
  */
-export const assignModelForSelected = (displayOptions: any[], model: any, modelProxy: any, datafield: string, _isChangedManually: boolean) => {
+export const assignModelForSelected = (displayOptions: any[], model: any, modelProxy: any, datafield: string, _isChangedManually: boolean, _dataVal: any, callback?: (obj: any) => void) => {
     let selectedOption,
         _model_;
     const selectedValue = modelProxy;
 
     // ModelProxy is undefined, then update the _dataVal which can be used when latest dataset is obtained.
     if (!_isChangedManually && _.isUndefined(selectedValue) && !_.isUndefined(model)) {
+        _dataVal = _model_;
         _model_ = selectedValue;
     } else if (_.isNull(selectedValue)) { // key can never be null, so return model as undefined.
         _model_ = selectedValue;
-    } else if (datafield === ALLFIELDS) {
+    } else {
         selectedOption = _.find(displayOptions, {key: selectedValue});
         if (selectedOption) {
-            _model_ = selectedOption.dataObject;
+            selectedOption.isChecked = true;
         }
-    } else {
-        _model_ = selectedValue;
+
+        if (selectedOption && datafield === ALLFIELDS) {
+            _model_ = selectedOption.dataObject;
+            selectedOption.isChecked = true;
+        } else {
+            _model_ = selectedValue;
+        }
     }
-    return _model_;
+
+    // clear _dataVal when model is defined.
+    if (!_.isUndefined(_model_) && !_.isUndefined(_dataVal)) {
+        _dataVal = undefined;
+    }
+    callback({'_dataVal': _dataVal, 'model': _model_});
 };
 
 /**
@@ -203,33 +214,43 @@ export const assignModelForSelected = (displayOptions: any[], model: any, modelP
  * If datafield is ALLFIELDS, modelProxy is 0, then model will be retrieved from dataObject in displayOptions
  * If datafield is other than ALLFIELDS, the modelProxy and model will be retrieved from key in displayOptions
  */
-export const assignModelForMultiSelect = (displayOptions: any, datafield: any, modelProxy: any, _model_: any, _isChangedManually: boolean) => {
-    let selectedOption,
-        datavalue;
+export const assignModelForMultiSelect = (displayOptions: any, datafield: any, modelProxy: any, _model_: any, _isChangedManually: boolean, _dataVal: any, callback?: (obj: any) => void) => {
+    let selectedOption;
     const selectedCheckboxValue = modelProxy;
 
     // ModelProxy is undefined or [] , then update the _dataVal which can be used when latest dataset is obtained.
     if (!_isChangedManually && !_.isUndefined(_model_) && (_.isUndefined(selectedCheckboxValue) || (_.isArray(selectedCheckboxValue) && !selectedCheckboxValue.length))) {
-        datavalue = selectedCheckboxValue;
+        _dataVal = _model_;
+        _model_ = selectedCheckboxValue;
+
+        // todo remove this prop.
+        // this._ngModelOldVal = _dataVal;
     } else if (selectedCheckboxValue) {
         _model_ = [];
         selectedCheckboxValue.forEach(value => {
-            if (datafield === 'All Fields') {
-                selectedOption = _.find(displayOptions, {key: value});
+            selectedOption = _.find(displayOptions, {key: value});
+            if (selectedOption) {
+                selectedOption.isChecked = true;
+            }
+            if (selectedOption && datafield === 'All Fields') {
                 _model_.push(selectedOption.dataObject);
             } else {
                 _model_.push(value);
             }
         });
-
-        return _model_;
     }
+
+    // clear _dataVal when model is defined.
+    if (_model_ && _model_.length && !_.isUndefined(_dataVal)) {
+        _dataVal = undefined;
+    }
+    callback({'_dataVal': _dataVal, 'model': _model_});
 };
 
 /**
  * function to update the checked values, which selects/ de-selects the values in radioset/ checkboxset
  */
-export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelProxy: any, usekeys: boolean) => {
+export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelProxy: any, usekeys: boolean, callback?: (modelProxy: any) => void) => {
     const model = _model_;
     let _modelProxy,
         selectedOption,
@@ -249,7 +270,8 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
         } else {
             _modelProxy = undefined;
         }
-        return _modelProxy;
+        callback(_modelProxy);
+        return;
     }
 
     if (isDefined(displayOptions) && displayOptions.length && !usekeys) {
@@ -265,6 +287,7 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
                     return _.toString(obj[filterField]) === _.toString(modelVal);
                 });
                 if (selectedOption) {
+                    selectedOption.isChecked = true;
                     _modelProxy.push(selectedOption.key);
                 }
             });
@@ -277,6 +300,7 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
                 return _.toString(obj[filterField]) === _.toString(model);
             });
             if (selectedOption) {
+                selectedOption.isChecked = true;
                 _modelProxy = selectedOption.key;
             }
         }
@@ -284,31 +308,22 @@ export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelP
         _modelProxy = model;
     }
 
-    return _modelProxy;
-
+    callback(_modelProxy);
 };
 
 /**
- * This function sets the displayValue, isChecked flag for select, radioset, checkboxset widgets.
+ * This function retrieves the displayValue from displayOptions.
  */
-export const setCheckedAndDisplayValues = (displayOptions: any[], _modelProxy: any) => {
-    let selectedOption,
-        displayValue;
+export const getDisplayValues = (displayOptions: any[]) => {
+    let displayValue;
+    const selectedOptions = _.filter(displayOptions, {'isChecked': true});
 
-    if (_.isArray(_modelProxy)) {
-        displayValue = [];
-        _modelProxy.forEach(val => {
-            selectedOption = updateCheckedValue(val, displayOptions);
-            if (selectedOption) {
-                displayValue.push(selectedOption.value);
-            }
-        });
+    if (selectedOptions.length === 1) {
+        displayValue = selectedOptions[0].value;
     } else {
-        displayValue = undefined;
-        selectedOption = updateCheckedValue(_modelProxy, displayOptions);
-        if (selectedOption) {
-            displayValue = selectedOption.value;
-        }
+        selectedOptions.forEach(option => {
+            displayValue.push(option.value);
+        });
     }
     return displayValue;
 };

@@ -4,7 +4,6 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './rich-text-editor.props';
-import { invokeEventHandler } from '../../../utils/widget-utils';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
@@ -67,7 +66,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
             },
             onChange: (contents, editable) => {
                 this.$hiddenInputEle.val(contents);
-                invokeEventHandler(this, 'change', {newVal: contents, $event: getChangeEvt()});
+                this.invokeEventCallback('change', {newVal: contents, $event: getChangeEvt()});
             }
         },
         placeholder: '',

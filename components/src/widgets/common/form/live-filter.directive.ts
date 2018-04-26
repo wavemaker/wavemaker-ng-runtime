@@ -4,7 +4,6 @@ import { DataSource } from '@wm/core';
 
 import { FormComponent } from './form.component';
 import { registerLiveFilterProps } from './form.props';
-import { invokeEventHandler } from '../../../utils/widget-utils';
 import { getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../utils/data-utils';
 
 declare const _;
@@ -137,7 +136,7 @@ export class LiveFilterDirective {
         });
         /*Perform this function for the event onBeforeservicecall*/
         try {
-            isValid = invokeEventHandler(this.form, 'beforeservicecall', {$data: dataModel});
+            isValid = this.form.invokeEventCallback(this.form, 'beforeservicecall', {$data: dataModel});
             if (isValid === false) {
                 return;
             }

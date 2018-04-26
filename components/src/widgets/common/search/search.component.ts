@@ -7,7 +7,7 @@ import { $appDigest, getClonedObject } from '@wm/core';
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
-import { getControlValueAccessor, getEvaluatedData, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor, getEvaluatedData } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 import { registerProps } from './search.props';
 
@@ -291,8 +291,8 @@ export class SearchComponent extends BaseFormComponent implements OnInit {
         this.queryModel = $label;
         this.result = [];
         // call user 'onSubmit & onSelect' fn
-        invokeEventHandler(this, 'select', {$event, newVal: this.proxyDatavalue});
-        invokeEventHandler(this, 'submit', {$event});
+        this.invokeEventCallback('select', {$event, newVal: this.proxyDatavalue});
+        this.invokeEventCallback('submit', {$event});
         this.invokeOnChange(this.datavalue);
     }
 
@@ -306,7 +306,7 @@ export class SearchComponent extends BaseFormComponent implements OnInit {
      * Private method wrappper to the keyDown event
      */
     private executeKeyDownEvent = ($event) => {
-        invokeEventHandler(this, 'keydown', {$event});
+        this.invokeEventCallback('keydown', {$event});
     }
 
     ngOnInit() {

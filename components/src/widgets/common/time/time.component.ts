@@ -6,7 +6,7 @@ import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './time.props';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
@@ -144,7 +144,7 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
      * This is an internal method used to execute the on time change functionality
      */
     private onTimeChange(newVal) {
-        invokeEventHandler(this, 'change', {newVal, oldVal: this.proxyModel});
+        this.invokeEventCallback('change', {newVal, oldVal: this.proxyModel});
         if (newVal) {
             this.proxyModel = newVal;
             this.formattedModel = getFormattedDate(this.datePipe, newVal, this.timepattern) || '';

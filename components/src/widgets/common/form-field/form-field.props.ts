@@ -6,6 +6,7 @@ import { searchProps } from '../search/search.props';
 import { checkboxProps } from '../checkbox/checkbox.props';
 import { colorPickerProps } from '../color-picker/color-picker.props';
 import { currencyProps } from '../currency/currency.props';
+import { checkboxsetProps } from '../checkboxset/checkboxset.props';
 import { dateProps } from '../date/date.props';
 import { dateTimeProps } from '../date-time/date-time.props';
 import { radiosetProps } from '../radioset/radioset.props';
@@ -21,7 +22,7 @@ const widgetPropsMap = new Map(
 [
         [FormWidgetType.AUTOCOMPLETE, searchProps],
         [FormWidgetType.CHECKBOX, checkboxProps],
-        // TODO: [FormWidgetType.CHECKBOXSET, checkboxsetProps],
+        [FormWidgetType.CHECKBOXSET, checkboxsetProps],
         // TODO: [FormWidgetType.CHIPS, chipsProps],
         [FormWidgetType.COLORPICKER, colorPickerProps],
         [FormWidgetType.CURRENCY, currencyProps],

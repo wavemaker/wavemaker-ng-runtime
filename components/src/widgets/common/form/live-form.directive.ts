@@ -5,7 +5,6 @@ import { $appDigest, DataSource, DataType, getClonedObject, getValidDateObject, 
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
 import { Live_Operations, performDataOperation } from '../../../utils/data-utils';
-import { invokeEventHandler } from '../../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 
@@ -361,7 +360,7 @@ export class LiveFormDirective {
         prevData = this.form.prevformFields ? this.form.constructDataObject(true) : data;
 
         try {
-            isValid = invokeEventHandler(this.form, 'beforeservicecall', {$event: event, $operation: this.form.operationType, $data: data});
+            isValid = this.form.invokeEventCallback(this.form, 'beforeservicecall', {$event: event, $operation: this.form.operationType, $data: data});
             if (isValid === false) {
                 return;
             }

@@ -7,7 +7,6 @@ import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
-import { invokeEventHandler } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -646,7 +645,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                         break;
                 }
                 this.selecteditem = dataObj;
-                invokeEventHandler(this, 'select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
+                this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
             });
     }
 
@@ -766,7 +765,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         let datum = [];
         const element = this.$element;
         // call user-transformed function
-        this.chartData = (invokeEventHandler(this, 'transform')) || this.chartData;
+        this.chartData = (this.invokeEventCallback('transform')) || this.chartData;
 
         // Getting the order by data only in run mode. The order by applies for all the charts other than pie and donut charts
         if (this.isVisuallyGrouped && !isPieType(this.type)) {

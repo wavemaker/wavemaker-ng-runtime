@@ -6,7 +6,7 @@ import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './date-time.props';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 const DEFAULT_CLS = 'app-datetime input-group';
@@ -186,13 +186,13 @@ export class DatetimeComponent extends BaseFormComponent {
      */
     private onModelUpdate(newVal, type?) {
         if (!newVal) {
-            invokeEventHandler(this, 'change', {$event: newVal, newVal: undefined, oldVal: this.proxyModel});
+            this.invokeEventCallback('change', {$event: newVal, newVal: undefined, oldVal: this.proxyModel});
             this.proxyModel = undefined;
             this.invokeOnChange(this.datavalue);
             return;
         }
         const dateObj = this.getDateObj(newVal);
-        invokeEventHandler(this, 'change', {$event: newVal, newVal: dateObj, oldVal: this.proxyModel});
+        this.invokeEventCallback('change', {$event: newVal, newVal: dateObj, oldVal: this.proxyModel});
         if (type === 'date') {
             this.selectedDate = dateObj.toDateString();
             if (this.isDateOpen) {

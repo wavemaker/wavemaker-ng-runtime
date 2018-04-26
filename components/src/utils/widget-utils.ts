@@ -132,31 +132,6 @@ export const isActiveNavItem = (link, routeName) => {
 
 
 /**
- * This handler will invoke the function reference passed to the event
- * @param component
- * @param eventName
- * @param args
- */
-export const invokeEventHandler = (component, eventName, args?) => {
-
-    if (!component) {
-        return;
-    }
-
-    if (!args) {
-        args = {};
-    }
-
-    const fn = component.eventHandlers.get(eventName);
-
-    if (fn) {
-        args.widget = args.widget || component.widget;
-        // TODO: Add return functionality such that return value will be consumed by the component
-        fn(args);
-    }
-};
-
-/**
  * Returns the orderBy Expression based on the 'sort 'option in pageable object
  * returned by backend
  * @param pageableObj

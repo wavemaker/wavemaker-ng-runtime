@@ -4,7 +4,7 @@ import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './slider.props';
-import { getControlValueAccessor, invokeEventHandler } from '../../../utils/widget-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-slider slider';
 const WIDGET_CONFIG = {widgetType: 'wm-slider', hostClass: DEFAULT_CLS};
@@ -30,7 +30,7 @@ export class SliderComponent extends BaseFormComponent {
     }
 
     onChange($event) {
-        invokeEventHandler(this, 'change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
+        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
         this.oldVal = this.datavalue;
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);

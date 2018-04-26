@@ -7,7 +7,7 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './nav.props';
-import { invokeEventHandler, isActiveNavItem } from '../../../utils/widget-utils';
+import { isActiveNavItem } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 import { MenuComponent } from '../menu/menu.component';
 
@@ -165,7 +165,7 @@ export class NavDirective extends StylableComponent implements AfterViewInit, On
 
     _onMenuItemSelect(e, $item) {
         this.selecteditem = $item;
-        invokeEventHandler(this, 'select', {$event: e, $item});
+        this.invokeEventCallback('select', {$event: e, $item});
     }
 
     onPropertyChange(key, nv, ov) {
@@ -220,7 +220,7 @@ export class NavDirective extends StylableComponent implements AfterViewInit, On
             $li.closest('ul.app-nav').children('li.app-nav-item').removeClass('active');
             $li.addClass('active');
             this.selecteditem = $li.data('node-data');
-            invokeEventHandler(this, 'select', {$event: e, $item: this.selecteditem});
+            this.invokeEventCallback('select', {$event: e, $item: this.selecteditem});
 
             if (this.selecteditem) {
                 itemLink   = this.selecteditem[this.itemlink] || this.selecteditem.link;
