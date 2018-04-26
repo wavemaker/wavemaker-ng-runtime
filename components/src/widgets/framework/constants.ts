@@ -30,7 +30,7 @@ export const COMPONENT_HOST_EVENTS = new Set([
 ]);
 
 export const EVENTS_MAP = new Map<string, string>([
-    ['enterkeypress', 'keypress.enter']
+    //['enterkeypress', 'keypress.enter']
 ]);
 
 // TODO: Implement touch events for the mobile

@@ -6,7 +6,6 @@ import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './text.props';
-import { Event } from '../../../utils/decorators';
 
 registerProps();
 
@@ -72,4 +71,3 @@ export class TextDirective extends StylableComponent {
         styler(this.nativeElement, this);
     }
 }
-

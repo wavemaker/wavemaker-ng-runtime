@@ -8,6 +8,6 @@
         *ngIf="!showContentLoadError && _iframesrc"
         seamless="seamless">
 </iframe>
-<div [ngClass]="['wm-content-info readonly-wrapper', class]" *ngIf="showContentLoadError">
+<div class="wm-content-info readonly-wrapper" *ngIf="showContentLoadError">
     <p class="wm-message" [title]="hintMsg" [textContent]="errMsg"></p>
 </div>

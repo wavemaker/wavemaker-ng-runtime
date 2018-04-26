@@ -90,7 +90,7 @@ import { TopNavDirective } from './widgets/common/top-nav/top-nav.directive';
 import { TreeDirective } from './widgets/common/tree/tree.directive';
 import { VideoComponent } from './widgets/common/video/video.component';
 import { FilterPipe, NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
-import { SanitizePipe } from './pipes/sanitize.pipe';
+import { TrustAsPipe } from './pipes/trust-as.pipe';
 
 const wmComponents = [
     AccordionDirective,
@@ -186,7 +186,7 @@ const PIPES = [
     TimeFromNowPipe,
     NumberToStringPipe,
     StringToNumberPipe,
-    SanitizePipe,
+    TrustAsPipe,
     ImagePipe
 ];
 
@@ -209,7 +209,7 @@ const PIPES = [
         DialogService,
         ToDatePipe,
         FilterPipe,
-        SanitizePipe,
+        TrustAsPipe,
         ImagePipe
     ],
     entryComponents: [

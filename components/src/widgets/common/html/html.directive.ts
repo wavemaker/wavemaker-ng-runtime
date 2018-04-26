@@ -1,11 +1,12 @@
-import { Attribute, Directive, forwardRef, Injector } from '@angular/core';
+import { Attribute, Directive, forwardRef, HostBinding, Injector, SecurityContext } from '@angular/core';
 
-import { setCSS } from '@wm/core';
+import { setCSS, setProperty } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './html.props';
+import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 
 const DEFAULT_CLS = 'app-html-container';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -23,7 +24,18 @@ registerProps();
 })
 export class HtmlDirective extends StylableComponent {
 
-    constructor(inj: Injector, @Attribute('height') height) {
+    public content;
+
+    @HostBinding('innerHTML')
+    get _content() {
+        return this.trustAsPipe.transform(this.content, SecurityContext.HTML);
+    }
+
+    constructor(
+        inj: Injector,
+        @Attribute('height') height: string,
+        private trustAsPipe: TrustAsPipe,
+    ) {
         super(inj, WIDGET_CONFIG);
 
         // if the height is provided set the overflow to auto

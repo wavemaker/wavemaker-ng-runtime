@@ -1,29 +1,24 @@
 import { Pipe, PipeTransform, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-export const SANITIZE_AS = {
-    RESOURCE: 'resource',
-    HTML: 'html'
-};
-
 @Pipe({
-    name: 'sanitize'
+    name: 'trustAs'
 })
-export class SanitizePipe implements PipeTransform {
+export class TrustAsPipe implements PipeTransform {
 
     constructor(private domSanitizer: DomSanitizer) {}
 
-    transform(content: string, as: string) {
+    transform(content: string, as: string | SecurityContext) {
         if (!content) {
             return;
         }
 
-        if (as === SANITIZE_AS.RESOURCE) {
+        if (as === 'resource' || as === SecurityContext.RESOURCE_URL) {
             return this.domSanitizer.bypassSecurityTrustResourceUrl(content);
         }
 
-        if (as === SANITIZE_AS.HTML) {
-            return this.domSanitizer.sanitize(SecurityContext.HTML, content);
+        if (as === 'html' || as === SecurityContext.HTML) {
+            return this.domSanitizer.bypassSecurityTrustHtml(content);
         }
     }
 }

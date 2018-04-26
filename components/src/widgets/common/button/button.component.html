@@ -1,4 +1,4 @@
 <img data-identifier="img" class="button-image-icon" [src]="iconsrc | image" *ngIf="iconsrc" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
 <i class="app-icon {{iconclass}}" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="iconclass"></i>
-<span class="btn-caption" [innerHTML]="caption | sanitize:'html'"></span>
+<span class="btn-caption" [innerHTML]="caption | trustAs:'html'"></span>
 <span *ngIf="badgevalue" class="badge pull-right" [textContent]="badgevalue"></span>

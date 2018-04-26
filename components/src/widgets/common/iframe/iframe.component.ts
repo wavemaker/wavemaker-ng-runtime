@@ -1,4 +1,4 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Component, forwardRef, Injector, SecurityContext } from '@angular/core';
 
 import { encodeUrl, isInsecureContentRequest } from '@wm/core';
 
@@ -6,7 +6,7 @@ import { styler } from '../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './iframe.props';
-import { SANITIZE_AS, SanitizePipe } from '../../../pipes/sanitize.pipe';
+import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
@@ -43,7 +43,7 @@ export class IframeComponent extends StylableComponent {
      */
     private showContentLoadError = false;
 
-    constructor(inj: Injector, private sanitizePipe: SanitizePipe) {
+    constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
@@ -58,7 +58,7 @@ export class IframeComponent extends StylableComponent {
                 url = encodeUrl(this.iframesrc);
             }
 
-            const trustedUrl = this.sanitizePipe.transform(url, SANITIZE_AS.RESOURCE);
+            const trustedUrl = this.trustAsPipe.transform(url, SecurityContext.RESOURCE_URL);
 
             if (isInsecureContentRequest(url)) {
                 this.showContentLoadError = true;

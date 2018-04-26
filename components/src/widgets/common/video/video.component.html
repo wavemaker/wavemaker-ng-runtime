@@ -1,12 +1,12 @@
 <video [preload]="videopreload"
-       [src]="mp4format | sanitize: 'resource'"
+       [src]="mp4format | trustAs: 'resource'"
        [muted]="muted"
        [poster]="videoposter | image"
        [controls]="controls"
        [loop]="loop"
        [autoplay]="autoplay">
-    <source type="video/mp4" [src]="mp4format | sanitize: 'resource'" *ngIf="mp4format">
-    <source type="video/webm" [src]="webmformat | sanitize: 'resource'" *ngIf="webmformat">
-    <source type="video/ogg" [src]="oggformat | sanitize: 'resource'" *ngIf="oggformat">
+    <source type="video/mp4" [src]="mp4format | trustAs: 'resource'" *ngIf="mp4format">
+    <source type="video/webm" [src]="webmformat | trustAs: 'resource'" *ngIf="webmformat">
+    <source type="video/ogg" [src]="oggformat | trustAs: 'resource'" *ngIf="oggformat">
     {{videosupportmessage}}
 </video>

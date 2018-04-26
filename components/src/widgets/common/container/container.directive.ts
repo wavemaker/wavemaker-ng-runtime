@@ -23,13 +23,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class ContainerDirective extends StylableComponent {
 
-    shouldRegisterHostEvent(eventName) {
-        if (eventName === 'enterkeypress') {
-            return true;
-        }
-        return super.shouldRegisterHostEvent(eventName);
-    }
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

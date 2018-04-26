@@ -1,4 +1,4 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Component, forwardRef, Injector, SecurityContext } from '@angular/core';
 
 import { appendNode, createElement, removeNode } from '@wm/core';
 
@@ -7,7 +7,7 @@ import { styler } from '../../framework/styler';
 import { DISPLAY_TYPE } from '../../framework/constants';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './video.props';
-import { SANITIZE_AS, SanitizePipe } from '../../../pipes/sanitize.pipe';
+import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 
 const DEFAULT_CLS = 'app-video';
 const WIDGET_CONFIG = {
@@ -32,7 +32,7 @@ export class VideoComponent extends StylableComponent {
      */
     public subtitlelang: string = 'en';
 
-    constructor(inj: Injector, private sanitize: SanitizePipe) {
+    constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
@@ -49,7 +49,7 @@ export class VideoComponent extends StylableComponent {
                 kind: 'subtitles',
                 label: this.subtitlelang,
                 srclang: this.subtitlelang,
-                src: this.sanitize.transform(nv, SANITIZE_AS.RESOURCE),
+                src: this.trustAsPipe.transform(nv, SecurityContext.RESOURCE_URL),
                 default: ''
             }, true);
 
