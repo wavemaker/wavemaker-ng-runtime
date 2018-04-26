@@ -32,6 +32,8 @@ export class ConfirmDialogComponent extends StylableComponent implements OnInit 
     bodyHeight: number;
     _class;
     messageclass: string;
+    onOk: Function;
+    onCancel: Function;
 
     get class () {
         return [defaultClass, this.messageclass, this._class].join(' ');
@@ -67,11 +69,17 @@ export class ConfirmDialogComponent extends StylableComponent implements OnInit 
 
     okButtonHandler() {
         invokeEventHandler(this, 'ok');
+        if (this.onOk) {
+            this.onOk();
+        }
         this.close();
     }
 
     cancelButtonHandler() {
         invokeEventHandler(this, 'cancel');
+        if (this.onCancel) {
+            this.onCancel();
+        }
         this.close();
     }
 

@@ -8,6 +8,7 @@ import { VariableFactory } from '../factory/variable.factory';
 import { OAuthService } from '@wm/oAuth';
 import { BaseAction } from '../model/base-action';
 import { SecurityService } from '@wm/security';
+import { DialogService } from '@wm/components';
 
 @Injectable()
 export class VariablesService {
@@ -20,7 +21,8 @@ export class VariablesService {
                 private routerService: Router,
                 private toasterService: ToastrService,
                 private oAuthService: OAuthService,
-                private securityService: SecurityService) {
+                private securityService: SecurityService,
+                private dialogService: DialogService) {
         // set external dependencies
         setDependency('http', this.httpService);
         setDependency('metadata', this.metadataService);
@@ -28,6 +30,7 @@ export class VariablesService {
         setDependency('toaster', this.toasterService);
         setDependency('oAuth', this.oAuthService);
         setDependency('security', this.securityService);
+        setDependency('dialog', this.dialogService);
     }
 
     register(page: string, variablesJson: any, scope: any) {

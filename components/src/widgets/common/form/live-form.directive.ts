@@ -6,7 +6,7 @@ import { Live_Operations, performDataOperation } from '../../../utils/data-utils
 import { invokeEventHandler } from '../../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { DataSource } from '@wm/variables';
+import { DataSource } from '@wm/core';
 
 declare const _, moment;
 

@@ -33,6 +33,7 @@ export class AlertDialogComponent extends StylableComponent implements OnInit {
     type: string;
     open: Function;
     close: Function;
+    onOk: Function;
 
     get class () {
         return [defaultClass, this.type, this._class].join(' ');
@@ -54,6 +55,9 @@ export class AlertDialogComponent extends StylableComponent implements OnInit {
 
     okButtonHandler() {
         invokeEventHandler(this, 'ok');
+        if (this.onOk) {
+            this.onOk();
+        }
         this.close();
     }
 

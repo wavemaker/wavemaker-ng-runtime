@@ -156,9 +156,9 @@ $UGLIFYJS ./dist/tmp/wm-core.umd.js \
     ./dist/tmp/http-service.umd.js \
     ./dist/tmp/oAuth.umd.js \
     ./dist/tmp/wm-security.umd.js \
-    ./dist/tmp/wm-variables.umd.js \
     ./dist/tmp/wm-components.build-task.umd.js \
     ./dist/tmp/wm-components.umd.js \
+    ./dist/tmp/wm-variables.umd.js \
     ./dist/tmp/wm-runtime.umd.js -o \
     ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 if [ "$?" != "0" ]
