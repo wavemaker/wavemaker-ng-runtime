@@ -11,6 +11,7 @@ export let routerService;
 export let toasterService;
 export let oauthService;
 export let securityService;
+export let dialogService;
 
 const DOT_EXPR_REX = /^\[("|')[\w\W]*(\1)\]$/,
     internalBoundNodeMap = new Map(),
@@ -100,6 +101,9 @@ export const setDependency = (type: string, ref: any) => {
             break;
         case 'security':
             securityService =  ref;
+            break;
+        case 'dialog':
+            dialogService = ref;
             break;
     }
 };

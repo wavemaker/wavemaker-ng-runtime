@@ -1,4 +1,4 @@
-import { DataSource } from '@wm/variables';
+import { DataSource } from '@wm/core';
 import { FormWidgetType, isDefined, MatchMode } from '@wm/core';
 
 import { isDataSetWidget } from './widget-utils';

@@ -2,7 +2,7 @@ import { isPageable } from '@wm/core';
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource, IDataSource } from '../../data-source';
+import { DataSource, IDataSource } from '@wm/core';
 
 const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.SERVICE);
