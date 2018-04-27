@@ -6,11 +6,14 @@
             "@wm/core": [ "core" ],
             "@wm/oAuth": [ "oAuth" ],
             "@wm/components": [ "components" ],
-            "@wm/variables": [ "variables" ],
+            "@wm/variables" : [ "variables" ],
             "@wm/http": [ "http-service" ],
             "@wm/runtime": ["runtime"],
             "@wm/transpiler": ["transpiler"],
-            "@wm/security": ["security"]
+            "@wm/security": ["security"],
+            "@wm/mobile/components": ["mobile/components"],
+            "@wm/mobile/variables": ["mobile/variables"],
+            "@wm/mobile/runtime": ["mobile/runtime"]
         },
         "outDir": "./dist/out-tsc",
         "sourceMap": false,

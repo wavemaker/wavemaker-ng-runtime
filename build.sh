@@ -39,14 +39,13 @@ fi
 
 echo -e "${Cyan}Compiling typescript files using ngc ${White}"
 $NGC -p ./runtime/tsconfig.build.json
+$NGC -p ./mobile/dummy/tsconfig.build.json
 if [ "$?" != "0" ]
 then
 	echo -e "${Red}Error while ngc ${White}\n"
 	exit 1
 fi
 echo -e "${Green}Done with ngc compilation ${White}\n"
-
-
 
 ################################ inline-templates
 
@@ -60,6 +59,7 @@ fi
 echo -e "${Green}Done with inline templates ${White}\n"
 
 mkdir -p ./dist/bundles/wmapp/scripts
+mkdir -p ./dist/bundles/wmmobile/scripts
 mkdir ./dist/tmp
 
 
@@ -97,7 +97,7 @@ then
     fi
     echo -e "${Green}Built ngx-toastr\n"
 
-    echo -e "${Cyan}Bundling libs ${White}"
+    echo -e "${Cyan}Bundling libs for wm-app ${White}"
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
         ./node_modules/zone.js/dist/zone.js \
@@ -140,11 +140,57 @@ then
 
     if [ "$?" != "0" ]
     then
-        echo -e "${Red}Error in bundling libs\n"
+        echo -e "${Red}Error in bundling libs for wm-app \n"
         exit 1
     fi
 
-    echo -e "${Green}Bundled libs\n"
+    echo -e "${Green}Bundled libs for wm-app \n"
+    echo -e "${Cyan}Bundling libs for wm-mobile ${White}"
+    $UGLIFYJS \
+        ./dist/tmp/tslib.umd.js \
+        ./node_modules/zone.js/dist/zone.js \
+        ./node_modules/rxjs/bundles/Rx.js \
+        ./node_modules/@angular/core/bundles/core.umd.js \
+        ./node_modules/@angular/animations/bundles/animations.umd.js \
+        ./node_modules/@angular/animations/bundles/animations-browser.umd.js \
+        ./node_modules/@angular/common/bundles/common.umd.js \
+        ./node_modules/@angular/compiler/bundles/compiler.umd.js \
+        ./node_modules/@angular/platform-browser/bundles/platform-browser.umd.js \
+        ./node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js \
+        ./node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js \
+        ./node_modules/@angular/common/bundles/common-http.umd.js \
+        ./node_modules/@angular/forms/bundles/forms.umd.js \
+        ./node_modules/@angular/router/bundles/router.umd.js \
+        ./dist/tmp/ngx-bootstrap.umd.js \
+        ./dist/tmp/ngx-toastr.umd.js \
+        ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
+        ./node_modules/lodash/lodash.js \
+        ./node_modules/moment/moment.js \
+        ./node_modules/x2js/x2js.js \
+        ./node_modules/d3/d3.min.js \
+        ./node_modules/nvd3/build/nv.d3.min.js \
+        ./node_modules/jquery/dist/jquery.min.js \
+        ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/summernote/dist/summernote-lite.js \
+        ./node_modules/jquery-ui/ui/disable-selection.js \
+        ./node_modules/jquery-ui/ui/version.js \
+        ./node_modules/jquery-ui/ui/widget.js \
+        ./node_modules/jquery-ui/ui/scroll-parent.js \
+        ./node_modules/jquery-ui/ui/plugin.js \
+        ./node_modules/jquery-ui/ui/data.js \
+        ./node_modules/jquery-ui/ui/widgets/mouse.js \
+        ./node_modules/jquery-ui/ui/widgets/resizable.js \
+        ./node_modules/jquery-ui/ui/widgets/sortable.js \
+        ./node_modules/jquery-ui/ui/widgets/droppable.js \
+        ./components/src/widgets/common/table/datatable.js \
+        -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b
+
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in bundling libs for wm-mobile \n"
+        exit 1
+    fi
+    echo -e "${Green}Bundled libs for wm-mobile\n"
 fi
 
 
@@ -188,7 +234,6 @@ then
     exit 1
 fi
 echo -e "${Green}Built components ${White}\n"
-
 ########## http-service
 echo -e "${Cyan}Building http-service ${White}"
 $ROLLUP -c ./http-service/rollup.config.js --silent
@@ -229,6 +274,25 @@ then
 fi
 echo -e "${Green}Built Variables ${White}\n"
 
+########## mobile components
+echo -e "${Cyan}Building dummy mobile components task ${White}"
+$ROLLUP -c ./mobile/components/rollup.wm-components.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building dummy mobile components task ${White}\n"
+    exit 1
+fi
+echo -e "${Green}Built dummy mobile components task ${White}\n"
+########## mobile runtime
+echo -e "${Cyan}Building mobile runtime ${White}"
+$ROLLUP -c ./mobile/runtime/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in bundling runtime ${White}"
+    exit 1
+fi
+echo -e "${Green}Built runtime ${White}\n"
+
 ########## runtime
 echo -e "${Cyan}Building runtime ${White}"
 $ROLLUP -c ./runtime/rollup.config.js --silent
@@ -246,9 +310,11 @@ $UGLIFYJS ./dist/tmp/wm-core.umd.js \
     ./dist/tmp/http-service.umd.js \
     ./dist/tmp/oAuth.umd.js \
     ./dist/tmp/wm-security.umd.js \
-    ./dist/tmp/wm-variables.umd.js \
     ./dist/tmp/wm-components.build-task.umd.js \
     ./dist/tmp/wm-components.umd.js \
+    ./dist/tmp/wm-variables.umd.js \
+    ./dist/tmp/mobile/wm-components.umd.js \
+    ./dist/tmp/mobile/wm-runtime.umd.js \
     ./dist/tmp/wm-runtime.umd.js -o \
     ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 if [ "$?" != "0" ]
@@ -256,7 +322,83 @@ then
     echo -e "${Red}Error in bundling wm-loader ${White}\n"
     exit 1
 fi
-echo -e "${Green}Bundled wm-loader ${White}\n"
+echo -e "${Green}Bundled wm-loader${White}\n"
+################################ ngc
+echo -e "${Cyan}Compiling typescript files for mobile using ngc ${White}"
+$NGC -p ./runtime/tsconfig.build.json
+
+################################ inline-templates
+
+echo -e "${Cyan}Copy and inline html files ${White}"
+node inline-templates.js
+if [ "$?" != "0" ]
+then
+	echo -e "${Red}Error during inline templates ${White}\n"
+	exit 1
+fi
+echo -e "${Green}Done with inline templates ${White}\n"
+
+########## mobile components
+echo -e "${Cyan}Building mobile components build task ${White}"
+$ROLLUP -c ./mobile/components/rollup.wm-components.build-task.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building mobile components build task ${White}\n"
+    exit 1
+fi
+echo -e "${Green}Built mobile components build task ${White}\n"
+
+echo -e "${Cyan}Building mobile components ${White}"
+$ROLLUP -c ./mobile/components/rollup.wm-components.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building mobile components ${White}\n"
+    exit 1
+fi
+echo -e "${Green}Built mobie components ${White}\n"
+
+########## mobile variables
+echo -e "${Cyan}Building mobile variables ${White}"
+$ROLLUP -c ./mobile/variables/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in bundling mobile variables ${White}"
+    exit 1
+fi
+echo -e "${Green}Built mobile variables ${White}\n"
+
+########## mobile runtime
+echo -e "${Cyan}Building mobile runtime ${White}"
+$ROLLUP -c ./mobile/runtime/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in bundling mobile runtime ${White}"
+    exit 1
+fi
+echo -e "${Green}Built mobile runtime ${White}\n"
+
+########## final mobile bundle
+echo -e "${Cyan}Bundling wm-mobileloader${White}"
+$UGLIFYJS ./dist/tmp/wm-core.umd.js \
+    ./dist/tmp/wm-transpiler.umd.js \
+    ./dist/tmp/http-service.umd.js \
+    ./dist/tmp/oAuth.umd.js \
+    ./dist/tmp/wm-security.umd.js \
+    ./dist/tmp/wm-components.build-task.umd.js \
+    ./dist/tmp/wm-components.umd.js \
+    ./dist/tmp/mobile/wm-components.build-task.umd.js \
+    ./dist/tmp/mobile/wm-components.umd.js \
+    ./dist/tmp/wm-variables.umd.js \
+    ./dist/tmp/mobile/wm-variables.umd.js \
+    ./dist/tmp/mobile/wm-runtime.umd.js \
+    ./dist/tmp/wm-runtime.umd.js -o \
+    ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in bundling wm-mobileloader${White}\n"
+    exit 1
+fi
+echo -e "${Green}Bundled wm-mobileloader${White}\n"
 
 echo -e "${Cyan}Cleanup tmp directory ${White}\n"
 $RIMRAF ./dist/tmp

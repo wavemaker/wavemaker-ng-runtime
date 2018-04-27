@@ -1,3 +1,4 @@
+import { DeviceVariable } from '../model/variable/device-variable';
 import { LiveVariable } from '../model/variable/live-variable';
 import { NavigationAction } from '../model/action/navigation-action';
 import { ModelVariable } from '../model/variable/model-variable';
@@ -21,6 +22,9 @@ export class VariableFactory {
                 break;
             case VARIABLE_CONSTANTS.CATEGORY.LIVE:
                 variableInstance = new LiveVariable(variable);
+                break;
+            case VARIABLE_CONSTANTS.CATEGORY.DEVICE:
+                variableInstance = new DeviceVariable(variable);
                 break;
             case VARIABLE_CONSTANTS.CATEGORY.NAVIGATION:
                 variableInstance = new NavigationAction(variable);

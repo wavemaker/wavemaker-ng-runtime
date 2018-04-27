@@ -27,6 +27,9 @@ import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { AppVariablesResolve } from './resolves/app-variables.resolve';
 
+import { WmMobileComponentsModule } from '@wm/mobile/components';
+import { MobileAppModule } from '@wm/mobile/runtime';
+
 declare const _WM_APP_PROPERTIES;
 
 const resolve = {
@@ -72,7 +75,9 @@ const routes = [
         HttpClientXsrfModule.withOptions({
             cookieName: 'wm_xsrf_token',
             headerName: _WM_APP_PROPERTIES.xsrf_header_name
-        })
+        }),
+        WmMobileComponentsModule,
+        MobileAppModule
     ],
     providers: [
         PipeProvider,

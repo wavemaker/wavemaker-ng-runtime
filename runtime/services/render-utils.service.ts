@@ -14,6 +14,7 @@ import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
 import { I18nService } from './i18n.service';
+import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 const scriptCache = new Map<string, Function>();
 const noop = (...args) => {};
@@ -59,7 +60,7 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
 const getDynamicModule = component => {
     @NgModule({
         declarations: [component],
-        imports: [WmComponentsModule, FormsModule, ReactiveFormsModule, TempModule, CommonModule],
+        imports: [WmComponentsModule, WmMobileComponentsModule, FormsModule, ReactiveFormsModule, TempModule, CommonModule],
         schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     class DynamicModule {

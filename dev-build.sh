@@ -36,6 +36,7 @@ fi
 
 echo -e "${Cyan}Compiling typescript files using ngc ${White}"
 $NGC -p ./runtime/tsconfig.build.json
+$NGC -p ./mobile/dummy/tsconfig.build.json
 if [ "$?" != "0" ]
 then
 	echo -e "${Red}Error while ngc ${White}\n"
@@ -138,7 +139,25 @@ then
     exit 1
 fi
 echo -e "${Green}Built Variables ${White}\n"
+########## mobile components
+echo -e "${Cyan}Building dummy mobile components task ${White}"
+$ROLLUP -c ./mobile/components/rollup.wm-components.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building dummy mobile components task ${White}\n"
+    exit 1
+fi
+echo -e "${Green}Built dummy mobile components task ${White}\n"
 
+########## mobile runtime
+echo -e "${Cyan}Building dummy mobile runtime ${White}"
+$ROLLUP -c ./mobile/runtime/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in bundling dummy mobile runtime ${White}"
+    exit 1
+fi
+echo -e "${Green}Built dummy mobile runtime ${White}\n"
 ########## runtime
 echo -e "${Cyan}Building runtime ${White}"
 $ROLLUP -c ./runtime/rollup.config.js --silent
@@ -159,6 +178,8 @@ $UGLIFYJS ./dist/tmp/wm-core.umd.js \
     ./dist/tmp/wm-components.build-task.umd.js \
     ./dist/tmp/wm-components.umd.js \
     ./dist/tmp/wm-variables.umd.js \
+    ./dist/tmp/mobile/wm-components.umd.js \
+    ./dist/tmp/mobile/wm-runtime.umd.js \
     ./dist/tmp/wm-runtime.umd.js -o \
     ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 if [ "$?" != "0" ]
@@ -169,13 +190,6 @@ fi
 echo -e "${Green}Bundled wm-loader ${White}\n"
 
 ##cp ./dist/tmp/wm-libs.min.js ./dist/bundles/wmapp/scripts/
-
-echo -e "${Cyan}Cleanup tmp directory ${White}\n"
-$RIMRAF ./dist/tmp
-
-echo -e "${Cyan}Cleanup out-tsc directory ${White}\n"
-$RIMRAF ./dist/out-tsc
-
 end=`date +%s`
 
 runtime=$((end-start))

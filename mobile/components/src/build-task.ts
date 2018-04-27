@@ -1,0 +1,1 @@
+export * from './widgets/widget-template/widget-template.build';
