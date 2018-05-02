@@ -25,7 +25,7 @@ export class PartialContainerDirective {
     }
 
     onLoadSuccess() {
-        this.componentInstance.getEventHandler('load')
+        this.componentInstance.invokeEventCallback('load');
     }
 
     constructor(
@@ -40,14 +40,14 @@ export class PartialContainerDirective {
 
         componentInstance.registerPropertyChangeListener((key, nv, ov) => {
             if (key === 'content') {
-                if (componentInstance.$lazyload) {
-                    componentInstance.$lazyload = () => {
+                if (componentInstance.$lazyLoad) {
+                    componentInstance.$lazyLoad = () => {
                         this.renderPartial(nv, vcRef, componentInstance)
-                            .then(this.onLoadSuccess);
-                        componentInstance.$lazyload = _.noop;
+                            .then(() => this.onLoadSuccess());
+                        componentInstance.$lazyLoad = _.noop;
                     };
                 } else {
-                    this.renderPartial(nv, vcRef, componentInstance).then(this.onLoadSuccess);
+                    this.renderPartial(nv, vcRef, componentInstance).then(() => this.onLoadSuccess());
                 }
             }
         });

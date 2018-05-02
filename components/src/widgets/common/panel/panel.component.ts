@@ -39,7 +39,7 @@ export class PanelComponent extends StylableComponent implements OnInit {
     enablefullscreen: boolean;
     fullscreen: boolean;
     height: string;
-    $lazyload: Function = _.noop;
+    $lazyLoad: Function = _.noop;
     hideFooter;
     collapseicon;
     expandicon;
@@ -57,7 +57,7 @@ export class PanelComponent extends StylableComponent implements OnInit {
                 invokeEventHandler(this, 'expand', {$event});
             }
             this.expanded = !this.expanded;
-            this.$lazyload();
+            this.$lazyLoad();
             setTimeout(() => {
                 if (this.redrawableComponents) {
                     this.redrawableComponents.forEach(c => c.redraw());
@@ -131,7 +131,7 @@ export class PanelComponent extends StylableComponent implements OnInit {
             case 'content':
                 if (this.expanded) {
                     setTimeout(() => {
-                        this.$lazyload();
+                        this.$lazyLoad();
                     }, 80);
                 }
                 break;

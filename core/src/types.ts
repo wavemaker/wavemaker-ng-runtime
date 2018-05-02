@@ -1,3 +1,5 @@
+import { InjectionToken } from '@angular/core';
+
 export class IDataSource {
     execute: (operation: Operation, options?: any) => boolean | string | Promise<any>;
 }
@@ -24,3 +26,5 @@ enum Operation {
 export const DataSource = {
     Operation
 };
+
+export const AppLocale = new InjectionToken('Application Locale Key');

@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-accordionpane', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmAccordionPane partialContainer wmNavigableElement="true" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmAccordionPane partialContainer ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

@@ -75,7 +75,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     /**
      * Map of event handler callbacks
      */
-    private eventHandlers = new Map<string, Function>();
+    private eventHandlers = new Map<string, {callback: Function, locals: any}>();
 
     /**
      * context of the widget
@@ -189,10 +189,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
         this.destroy.subscribe(() => fn);
     }
 
-    public getEventHandler(eventName: string): Function {
-        return this.eventHandlers.get(eventName) || noop;
-    }
-
     public getDisplayType(): string {
         return this.displayType;
     }
@@ -245,7 +241,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     protected handleEvent(eventName: string, fn: Function, locals: any) {
         this.eventManager.addEventListener(this.nativeElement, eventName, e => {
             locals.$event = e;
-            fn(locals);
+            fn();
         });
     }
 
@@ -263,7 +259,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
 
         fn = fn.bind(undefined, this.pageComponent, locals);
 
-        this.eventHandlers.set(eventName, fn);
+        this.eventHandlers.set(eventName, {callback: fn, locals});
 
         if (this.shouldRegisterHostEvent(eventName)) {
             this.handleEvent(this.getMappedEventName(eventName), fn, locals);
@@ -285,6 +281,18 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
                 getWatchIdentifier(this.widgetId, propName)
             )
         );
+    }
+
+    public invokeEventCallback(eventName: string, extraLocals?: any) {
+        const callbackInfo = this.eventHandlers.get(eventName);
+        if (callbackInfo) {
+            const fn = callbackInfo.callback;
+            const locals = callbackInfo.locals || {};
+
+            if (fn) {
+                fn(Object.assign(locals, extraLocals));
+            }
+        }
     }
 
     /**

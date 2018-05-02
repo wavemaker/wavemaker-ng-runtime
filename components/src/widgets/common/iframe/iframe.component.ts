@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector, SecurityContext } from '@angular/core';
 
-import { encodeUrl, isInsecureContentRequest } from '@wm/core';
+import { AppLocale, encodeUrl, isInsecureContentRequest } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../framework/types';
@@ -14,8 +14,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-iframe',
     hostClass: DEFAULT_CLS
 };
-
-class AppLocale {}
 
 registerProps();
 
@@ -63,7 +61,6 @@ export class IframeComponent extends StylableComponent {
             if (isInsecureContentRequest(url)) {
                 this.showContentLoadError = true;
 
-                // Todo - Vinay Provide AppLocale in Core
                 const appLocale = this.inj.get(AppLocale) as any;
 
                 this.errorMsg = `${appLocale.MESSAGE_ERROR_CONTENT_DISPLAY} ${this.iframesrc}`;

@@ -700,3 +700,5 @@ export const getSessionStorageItem = key => {
 export const noop = (...args) => {};
 
 export const isString = v => typeof v === 'string';
+
+export const isNumber = v => typeof v === 'number';

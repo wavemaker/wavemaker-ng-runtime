@@ -13,6 +13,9 @@ import { PipeProvider } from './services/pipe-provider.service';
 import { RenderUtilsService } from './services/render-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 
+import { AppLocale } from '@wm/core';
+import { HttpServiceModule } from '@wm/http';
+import { OAuthModule } from '@wm/oAuth';
 
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
@@ -22,8 +25,6 @@ import { AppResourceManagerService } from './services/app-resource-manager.servi
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
-import { HttpServiceModule } from '@wm/http';
-import { OAuthModule } from '@wm/oAuth';
 import { AppVariablesResolve } from './resolves/app-variables.resolve';
 
 declare const _WM_APP_PROPERTIES;
@@ -86,7 +87,8 @@ const routes = [
         PrefabManagerService,
         SecurityConfigResolve,
         DecimalPipe,
-        DatePipe
+        DatePipe,
+        {provide: AppLocale, useValue: {}} // Todo - vinay update the value
     ],
     bootstrap: [AppComponent]
 })

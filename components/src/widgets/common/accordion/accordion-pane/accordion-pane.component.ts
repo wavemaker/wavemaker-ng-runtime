@@ -1,22 +1,18 @@
-import { Component, ContentChildren, EventEmitter, forwardRef, Inject, Injector, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, forwardRef, Injector, OnInit } from '@angular/core';
 
-import { $appDigest, removeAttr } from '@wm/core';
+import { AppLocale, noop, removeAttr } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { AccordionRef, WidgetRef } from '../../../framework/types';
-import { RedrawableDirective } from '../../redraw/redrawable.directive';
+import { IWidgetConfig, WidgetRef } from '../../../framework/types';
 import { registerProps } from './accordion-pane.props';
-import { AccordionDirective } from '../accordion.component';
-import { invokeEventHandler } from '../../../../utils/widget-utils';
 import { StylableComponent } from '../../base/stylable.component';
+import { AccordionDirective } from '../accordion.component';
+import { RedrawableDirective } from '../../redraw/redrawable.directive';
 
 registerProps();
 
-declare const _;
-
 const DEFAULT_CLS = 'app-accordion-panel panel';
-const WIDGET_CONFIG = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
-
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: 'div[wmAccordionPane]',
@@ -25,81 +21,101 @@ const WIDGET_CONFIG = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
         {provide: WidgetRef, useExisting: forwardRef(() => AccordionPaneComponent)}
     ]
 })
-export class AccordionPaneComponent extends StylableComponent implements OnInit {
-    isActive: boolean = false;
-    paneId;
-    $lazyload: Function = _.noop;
+export class AccordionPaneComponent extends StylableComponent implements OnInit, AfterViewInit {
+    private isActive = false;
+    private $lazyLoad = noop;
+    private expandCollapseIconTitle: string;
 
-    @Output() collapse = new EventEmitter();
-    @Output() expand = new EventEmitter();
+    public name: string;
 
-    @ContentChildren(RedrawableDirective, {descendants: true}) redrawableComponents;
+    // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
+    @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
 
-    togglePane($event) {
-        if (this.isActive) {
-            invokeEventHandler(this, 'collapse', {$event});
-        } else {
-            /*TODO: Write method to execute all redraw methods for widgets inside the accordion*/
-            if ($event) {
-                invokeEventHandler(this.parentAccordion, 'change', {$event, newPaneIndex: this.paneId, oldPaneIndex: (this.parentAccordion.activePane && this.parentAccordion.activePane.paneId) || 0});
-            }
-            this.parentAccordion.activePane = this;
-            invokeEventHandler(this, 'expand', {$event});
-            this.parentAccordion.closeOthers();
-            this.$lazyload();
-            setTimeout(() => {
-                if (this.redrawableComponents) {
-                    this.redrawableComponents.forEach(c => c.redraw());
-                }
-            }, 100);
-        }
+    constructor(inj: Injector, private accordionRef: AccordionDirective) {
+        super(inj, WIDGET_CONFIG);
 
-        this.isActive = !this.isActive;
-        $appDigest();
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
+
+        // title property here serves the purpose of heading.
+        // remove title property as attribute
+        removeAttr(this.nativeElement, 'title');
     }
 
-    get toggleIconClass() {
+    /**
+     * handles the pane expand
+     * invoke $lazyLoad method which takes care of loading the partial when the content property is provided - lazyLoading or partial
+     * invoke redraw on the re-drawable children
+     * invoke expand callback
+     * notify parent about the change
+     * @param {Event} evt
+     */
+    public expand(evt?: Event) {
         if (this.isActive) {
-            return this.parentAccordion && this.parentAccordion.expandicon;
+            return;
         }
-        return this.parentAccordion && this.parentAccordion.collapseicon;
+        this.isActive = true;
+        this.$lazyLoad();
+        this.redrawChildren();
+        this.invokeEventCallback('expand');
+        this.notifyParent(true, evt);
     }
 
-    expandPane($event) {
+    /**
+     * handles the pane collapse
+     * invoke collapse callback
+     * notify parent about the change
+     * @param {Event} evt
+     */
+    public collapse(evt?: Event) {
         if (!this.isActive) {
-            this.togglePane($event);
+            return;
+        }
+        this.isActive = false;
+        this.invokeEventCallback('collapse');
+        this.notifyParent(false, evt);
+    }
+
+    public togglePane(evt: Event) {
+        if (this.isActive) {
+            this.collapse(evt);
+        } else {
+            this.expand(evt);
         }
     }
 
-    collapsePane($event) {
-        if (this.isActive) {
-            this.togglePane($event);
-        }
+    // Todo - Vinay externalize
+    private redrawChildren() {
+        setTimeout(() => {
+            if (this.reDrawableComponents) {
+                this.reDrawableComponents.forEach(c => c.redraw());
+            }
+        }, 100);
+    }
+
+    private notifyParent(isExpand: boolean, evt: Event) {
+        this.accordionRef.notifyChange(this, isExpand, evt);
     }
 
     onPropertyChange(key, nv, ov) {
         switch (key) {
             case 'content':
                 if (this.isActive) {
-                    setTimeout(() => {
-                        this.$lazyload();
-                    }, 100);
+                    setTimeout(() => this.$lazyLoad(), 100);
                 }
                 break;
         }
     }
 
-    constructor(inj: Injector, @Inject(AccordionRef) private parentAccordion: AccordionDirective) {
-        super(inj, WIDGET_CONFIG);
-
-        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
-        styler(<HTMLElement>this.$element.querySelector('.panel-body'), this, APPLY_STYLES_TYPE.INNER_SHELL);
-
-        removeAttr(this.nativeElement, 'title');
+    ngOnInit() {
+        const appLocale = this.inj.get(AppLocale) as any;
+        this.expandCollapseIconTitle = `${appLocale.LABEL_COLLAPSE}/${appLocale.LABEL_EXPAND}`;
     }
 
-    ngOnInit() {
-      super.ngOnInit();
-      this.parentAccordion.register(this);
+    ngAfterViewInit() {
+        styler(
+            this.nativeElement.querySelector('.panel-body') as HTMLElement,
+            this,
+            APPLY_STYLES_TYPE.INNER_SHELL
+        );
     }
 }
