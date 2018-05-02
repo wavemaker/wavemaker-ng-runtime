@@ -107,6 +107,7 @@ export class AccordionPaneComponent extends StylableComponent implements OnInit,
     }
 
     ngOnInit() {
+        super.ngOnInit();
         const appLocale = this.inj.get(AppLocale) as any;
         this.expandCollapseIconTitle = `${appLocale.LABEL_COLLAPSE}/${appLocale.LABEL_EXPAND}`;
     }

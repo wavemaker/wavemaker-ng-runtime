@@ -5,8 +5,10 @@ export const registerProps = () => {
         'wm-tile',
         new Map(
             [
-                ['show', PROP_BOOLEAN],
-                ['animation', PROP_STRING]
+                ['class', PROP_STRING],
+                ['conditionalclass', PROP_STRING],
+                ['name', PROP_STRING],
+                ['show', PROP_BOOLEAN]
             ]
         )
     );
