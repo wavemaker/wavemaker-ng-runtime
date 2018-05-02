@@ -81,7 +81,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.textInputComponents._results.forEach(cmp => {
-            const elementType = cmp.element.getAttribute('name');
+            const elementType = cmp.getNativeElement().getAttribute('name');
             switch (elementType) {
                 case 'usernametext':
                     this.usernameCmp = cmp;
@@ -93,13 +93,13 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
         });
 
         this.checkboxCmp._results.forEach(cmp => {
-            if (cmp.element.getAttribute('name') === 'remembermecheck') {
+            if (cmp.getNativeElement().getAttribute('name') === 'remembermecheck') {
                 this.rememberMeCmp = cmp;
             }
         });
 
         this.buttonComponents._results.forEach(cmp => {
-            if (cmp.element.getAttribute('name') === 'loginButton' || _.includes(cmp.element.classList, 'app-login-button')) {
+            if (cmp.getNativeElement().getAttribute('name') === 'loginButton' || _.includes(cmp.getNativeElement().classList, 'app-login-button')) {
                 if (this.loginButtonCmp) {
                     return;
                 }

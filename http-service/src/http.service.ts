@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpXsrfTokenExtractor } from '@angular/common/http';
+import { Subject } from 'rxjs/Subject';
 
 declare const _;
 
 @Injectable()
 export class HttpService {
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
+    sessionTimeoutObservable = new Subject();
 
     constructor(private httpClient: HttpClient) {}
 
@@ -47,7 +49,18 @@ export class HttpService {
 
         const req = new HttpRequest(options.method, options.url, third, fourth);
 
-        return this.httpClient.request(req).toPromise();
+        // const observable = this.httpClient.request(req);
+
+        return new Promise((resolve, reject) => {
+            this.httpClient.request(req).toPromise().then((response) => {
+                resolve(response);
+            } , (error) => {
+                if (error.status === 401) {
+                    this.on401();
+                }
+                reject(error);
+            });
+        });
     }
 
     get(url: string, options?: any) {
@@ -62,5 +75,20 @@ export class HttpService {
         options.url = url;
         options.method = 'post';
         return this.send(options);
+    }
+
+    /**
+     * registers a callback to be trigerred on session timeout
+     * @param callback
+     */
+    registerOnSessionTimeout(callback) {
+        this.sessionTimeoutObservable.asObservable().subscribe(callback)
+    }
+
+    /**
+     * trigger the registered methods on session timeout
+     */
+    on401() {
+        this.sessionTimeoutObservable.next();
     }
 }

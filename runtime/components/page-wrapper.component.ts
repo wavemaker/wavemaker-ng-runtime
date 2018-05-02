@@ -42,8 +42,9 @@ export class PageWrapperComponent implements OnInit {
             if (pageName) {
                 this.renderPage(pageName);
             } else {
-                const homePage = _WM_APP_PROPERTIES.homePage;
-                this.routerService.navigate([`/${homePage}`]);
+                this.securityService.getPageByLoggedInUser().then(page => {
+                    this.routerService.navigate([`/${page}`]);
+                });
             }
         });
     }

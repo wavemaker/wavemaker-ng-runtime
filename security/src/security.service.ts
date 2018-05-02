@@ -3,7 +3,8 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '@wm/http';
-import { triggerFn } from '@wm/core';
+import { getClonedObject, triggerFn } from '@wm/core';
+import { DialogService } from '@wm/components';
 
 declare const _WM_APP_PROPERTIES, _;
 
@@ -15,21 +16,23 @@ const XSRF_COOKIE_NAME = 'wm_xsrf_token',
 @Injectable()
 export class SecurityService {
     config;
-    lastLoggedinUser;
-    loggedinUser;
+    lastLoggedInUser;
+    loggedInUser;
     requestQueue;
-    lastUser;
-    landingPageName;
 
     constructor(private httpClient: HttpClient,
                 private $http: HttpService,
                 private routerService: Router,
                 private activatedRoute: ActivatedRoute,
-                private _location: Location) {
+                private _location: Location,
+                private dialogService: DialogService) {
+
+        // register method to invoke on session timeout
+        this.$http.registerOnSessionTimeout(this.handle401.bind(this));
     }
 
     isLoaded() {
-        return this.config ? true : false;
+        return this.config;
     }
 
     get() {
@@ -40,7 +43,8 @@ export class SecurityService {
         return new Promise((resolve, reject) => {
             this.httpClient.get('./services/security/info').toPromise().then((response) => {
                 this.config = response;
-                this.loggedinUser = this.config.userInfo;
+                this.lastLoggedInUser = getClonedObject(this.loggedInUser);
+                this.loggedInUser = this.config.userInfo;
                 resolve(response);
             });
         });
@@ -86,8 +90,8 @@ export class SecurityService {
                 // config.userInfo.homePage = config.userInfo.landingPage;
             }
             this.config = config;
+            this.lastLoggedInUser = getClonedObject(this.loggedInUser);
             this.loggedInUser = config.userInfo;
-            this.lastUser = this.loggedInUser;
             invokeQueuedCallbacks('config', 'success', this.get());
         }
 
@@ -145,6 +149,10 @@ export class SecurityService {
          }*/
     }
 
+    getLastLoggedInUsername() {
+        return this.lastLoggedInUser && this.lastLoggedInUser.userName;
+    }
+
     /**
      * Returns the current page name
      * @returns {string}
@@ -166,6 +174,39 @@ export class SecurityService {
         return paramVal;
     }
 
+    isNoPageLoaded() {
+        return !_.isEmpty(this.getCurrentRoutePage());
+    }
+
+    getPageByLoggedInUser() {
+        const that = this;
+        return new Promise((resolve) => {
+            let page;
+            if (!isApplicationType) {
+                if (that.isNoPageLoaded()) {
+                    page = _WM_APP_PROPERTIES.homePage;
+                    resolve(page);
+                }
+            } else {
+                that.getConfig((config) => {
+                    if (config.securityEnabled && config.authenticated) {
+                        page = config.userInfo.landingPage || _WM_APP_PROPERTIES.homePage;
+                        // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
+                        if (that.isXsrfEnabled()) {
+                            // this.$http.defaults.xsrfCookieName = XSRF_COOKIE;
+                            // this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;
+                        }
+                    } else {
+                        page = _WM_APP_PROPERTIES.homePage;
+                    }
+                    resolve(page);
+                }, function() {
+                    resolve(_WM_APP_PROPERTIES.homePage);
+                });
+            }
+        });
+    }
+
     /**
      * Loads the App page as follows:
      * Security disabled:
@@ -178,41 +219,16 @@ export class SecurityService {
      * @param forcePageLoad
      * @returns {Promise<T>}
      */
-    loadPageByUserRole(forcePageLoad) {
-        let page;
-        return new Promise((resolve, reject) => {
-
-            if (!isApplicationType) {
-                if (this.getCurrentRoutePage() === '/') {
-                    this._location.path(_WM_APP_PROPERTIES.homePage);
+    loadPageByUserRole(forcePageLoad?) {
+        const that = this;
+        return this.getPageByLoggedInUser().then(function(page){
+            if (that.isNoPageLoaded() || forcePageLoad) {
+                // Reload the page when current page and post login landing page are same
+                if (that.getCurrentRoutePage() === page) {
+                    window.location.reload();
+                } else {
+                    that.routerService.navigate([`/${page}`]);
                 }
-                resolve();
-            } else {
-                this.getConfig((config) => {
-                    /* $rs.isSecurityEnabled   = config.securityEnabled;
-                     $rs.isUserAuthenticated = config.authenticated;*/
-                    if (config.securityEnabled && config.authenticated) {
-                        page = config.userInfo.landingPage || _WM_APP_PROPERTIES.homePage;
-                        /*$rs.userRoles = config.userInfo.userRoles;*/
-                        // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
-                        if (this.isXsrfEnabled()) {
-                            // this.$http.defaults.xsrfCookieName = XSRF_COOKIE;
-                            // this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;
-                        }
-                    } else {
-                        page = config.homePage;
-                    }
-                    if (this.getCurrentRoutePage() === '/' || forcePageLoad) {
-                        // Reload the page when current page and post login landing page are same
-                        if (this.getCurrentRoutePage() === '/' + page) {
-                            // this._location.reload();
-                        }
-                        // this._location.path(page);
-                        this.routerService.navigate([`/${page}`]);
-                    }
-                    this.landingPageName = page;
-                    resolve();
-                }, resolve);
             }
         });
     }
@@ -263,6 +279,14 @@ export class SecurityService {
     }
 
     /**
+     * On session timeout, if the session timeout config is set to a dialog, then open login dialog
+     */
+    showLoginDialog() {
+        this.dialogService.closeAllDialogs();
+        this.dialogService.open('CommonLoginDialog');
+    }
+
+    /**
      * Handles the app when a XHR request returns 401 response
      * If no user was logged in before 401 occurred, First time Login is simulated
      * Else, a session timeout has occurred and the same is simulated
@@ -272,19 +296,21 @@ export class SecurityService {
      * @param onError error handler
      */
     handle401(page, onSuccess?, onError?) {
+        console.log('------------HITTING NEHA ME----------');
         let sessionTimeoutConfig,
             sessionTimeoutMethod,
             loginConfig,
             loginMethod,
             ssoUrl,
             pageParams;
-        const LOGIN_METHOD = {
+        const that = this,
+            LOGIN_METHOD = {
             'DIALOG' : 'DIALOG',
             'PAGE'   : 'PAGE',
             'SSO'    : 'SSO'
         };
 
-        const config = this.get();
+        const config = that.get();
         loginConfig = config.loginConfig;
         // if user found, 401 was thrown after session time
         if (config.userInfo && config.userInfo.userName) {
@@ -299,12 +325,12 @@ export class SecurityService {
                     //     _load(page, onSuccess, onError);
                     // }, WM.noop);
                 }
-                // showLoginDialog();
+                that.showLoginDialog();
             } else if (sessionTimeoutMethod === LOGIN_METHOD.PAGE) {
                 if (!page) {
-                    page = this.getCurrentRoutePage();
+                    page = that.getCurrentRoutePage();
                 }
-                this.routerService.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
+                that.routerService.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
             }
         } else {
             // if no user found, 401 was thrown for first time login
@@ -319,20 +345,20 @@ export class SecurityService {
                         //     _load(page, onSuccess, onError);
                         // }, WM.noop);
                     }
-                    // showLoginDialog();
+                    that.showLoginDialog();
                     break;
                 case LOGIN_METHOD.PAGE:
                     // do not provide redirectTo page if fetching HOME page resulted 401
                     // on app load, by default Home page is loaded
-                    page = this.getRedirectPage(config);
-                    this.routerService.navigate([loginConfig.pageName], {queryParams: {redirectTo: page}});
+                    page = that.getRedirectPage(config);
+                    that.routerService.navigate([loginConfig.pageName], {queryParams: {redirectTo: page}});
                     break;
                 case LOGIN_METHOD.SSO:
                     // do not provide redirectTo page if fetching HOME page resulted 401
                     // on app load, by default Home page is loaded
-                    page = this.getRedirectPage(config);
+                    page = that.getRedirectPage(config);
                     page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
-                    // pageParams = this.getQueryString($location.search());
+                    // pageParams = that.getQueryString($location.search());
                     pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
                     // showing a redirecting message
                     document.body.textContent = 'Redirecting to sso login...';

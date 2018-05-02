@@ -4,7 +4,7 @@ import { triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { initiateCallback, routerService, securityService } from '../../util/variable/variables.utils';
+import { initiateCallback, routerService, securityService, dialogService } from '../../util/variable/variables.utils';
 
 export class LoginActionManager extends BaseActionManager {
     login(variable, options, success, error) {
@@ -54,17 +54,13 @@ export class LoginActionManager extends BaseActionManager {
         }
         // $rootScope.$emit('toggle-variable-state', variable, true);
 
+        // get previously loggedInUser name (if any)
+        const lastLoggedInUsername = _.get(securityService.get(), 'userInfo.userName');
         variable.promise = securityService.appLogin(params, function (response) {
-            response = response.body;
             // $rootScope.$emit('toggle-variable-state', variable, false);
-            let redirectUrl = response && response.url ? response.url : 'index.html';
-                // appManager = Utils.getService("AppManager"),
-                // lastLoggedinUser = securityService.getLastLoggedInUser();
             // Closing login dialog after successful login
-            // DialogService.close('CommonLoginDialog');
-            if (CONSTANTS.isStudioMode) {
-                return;
-            }
+            dialogService.close('CommonLoginDialog');
+
             /*
              * Get fresh security config
              * Get App variables. if not loaded
@@ -76,39 +72,46 @@ export class LoginActionManager extends BaseActionManager {
 
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, _.get(config, 'userInfo'));
 
-                // get redirectTo page from URL and remove it from URL
-                const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo');
-
                 /* handle navigation if defaultSuccessHandler on variable is true */
                 if (variable.useDefaultSuccessHandler) {
                     // if first time user logging in or same user re-logging in, execute n/w calls failed before logging in
-                    // if (!lastLoggedinUser || lastLoggedinUser === params.username) {
-                    //     BaseService.executeErrorCallStack();
-                    // }
-
-                    if (CONSTANTS.hasCordova && _.includes(redirectUrl, '/')) {
-                        /*
-                         * when the application is running as a mobile application,
-                         * use the local app files instead of server files.
-                         */
-                        redirectUrl = redirectUrl.substr(redirectUrl.lastIndexOf('/') + 1);
+                    if (!lastLoggedInUsername || lastLoggedInUsername === params.username) {
+                        //BaseService.executeErrorCallStack();
                     }
-                    // if redirectPage found in url, case of re-login on session timeout
-                    if (redirectPage && _.isString(redirectPage)) {
-                        // Todo[Shubham] last logged in user
-                        // if (!lastLoggedinUser || lastLoggedinUser === params.username) {
-                            // if first time login OR same user re-logging in, navigate to provided redirectPage
+                    // get redirectTo page from URL and remove it from URL
+                    const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo');
+
+                    // first time login
+                    if (!lastLoggedInUsername) {
+                        // if redirect page found, navigate to it.
+                        if (!_.isEmpty(redirectPage)) {
                             routerService.navigate([`/${redirectPage}`]);
-                        /*} else {
-                            // else, re-load the app, navigation will be taken care in wmbootstrap.js
-                            routerService.reload();
-                        }*/
-                    }/*Todo[Shbham] else if (options.mode === 'dialog' && lastLoggedinUser !== params.username) {*/
-                     else if (options.mode === 'dialog') {
-                        /* else, re-load the app, navigation will be taken care in wmbootstrap.js' */
-                        // routerService.reload();
-                    } else if (options.mode !== 'dialog') {
-                        securityService.navigateOnLogin();
+                        } else {
+                            // simply reset the URL, route handling will take care of page redirection
+                            routerService.navigate([`/`]);
+                        }
+                    } else {
+                    // login after a session timeout
+                        // if redirect page found and same user logs in again, just navigate to redirect page
+                        if (!_.isEmpty(redirectPage)) {
+                            // same user logs in again, just redirect to the redirectPage
+                            if (lastLoggedInUsername === params.username) {
+                                routerService.navigate([`/${redirectPage}`]);
+                            } else {
+                                // different user logs in, reload the app and discard the redirectPage
+                                routerService.navigate([`/`]);
+                                window.location.reload();
+                            }
+                        } else {
+                            const securityConfig = securityService.get(),
+                                sessionTimeoutLoginMode = _.get(securityConfig, 'loginConfig.sessionTimeout.type') || 'PAGE';
+                            // if in dialog mode and a new user logs in OR login happening through page, reload the app
+                            if (lastLoggedInUsername !== params.username || sessionTimeoutLoginMode !== 'DIALOG') {
+                                routerService.navigate([`/`]);
+                                window.location.reload();
+                            }
+                        }
+
                     }
                 }
             });

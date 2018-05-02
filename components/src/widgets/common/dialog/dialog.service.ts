@@ -52,5 +52,15 @@ export class DialogService {
 
         dialogRef.close();
     }
+
+    /**
+     * closes all the opened dialogs
+     */
+    closeAllDialogs() {
+        // close all the open dialogs
+        this.dialogRefs.forEach(dialogRef => {
+            dialogRef.close();
+        });
+    }
 }
 // Todo: Vinay - accept dialogParams for openDialog method
