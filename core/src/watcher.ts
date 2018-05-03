@@ -34,7 +34,7 @@ const triggerWatchers = () => {
         if (!_.isEqual(nv, ov)) {
             changedByWatch = true;
             listener(nv, ov);
-            changedByWatch = false;
+            resetChangeFromWatch();
             watchInfo.last = nv;
         }
     });
@@ -45,6 +45,7 @@ export const setAppRef = appRef => {
 };
 
 export const isChangeFromWatch = () => changedByWatch;
+export const resetChangeFromWatch = () => changedByWatch = false;
 
 (<any>window).watchRegistry = registry;
 

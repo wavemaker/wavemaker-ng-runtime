@@ -348,6 +348,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         });
 
         dataNavigator.maxResults = this.pagesize || 5;
+        this.removePropertBinding('dataset');
         this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent, this.datasource);
     }
 
@@ -524,9 +525,16 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     onPropertyChange(key, newVal, oldVal?) {
         switch (key) {
             case  'dataset' :
+                if (!this.datasource || !newVal) {
+                    return;
+                }
                 this.onDataSetChange(newVal.data || newVal);
                 break;
-
+            case 'datasource':
+                if (this.dataset) {
+                    this.onDataSetChange(this.dataset.data || this.dataset);
+                }
+                break;
             case 'navigation':
                 this.onNavigationTypeChange(newVal);
                 if (this.dataNavigator) {

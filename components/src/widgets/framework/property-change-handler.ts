@@ -1,4 +1,4 @@
-import { $appDigest, $unwatch, isChangeFromWatch, isObject, setAttr, switchClass, toBoolean } from '@wm/core';
+import {$appDigest, $unwatch, isChangeFromWatch, isObject, resetChangeFromWatch, setAttr, switchClass, toBoolean} from '@wm/core';
 
 import { BaseComponent } from '../common/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
@@ -82,6 +82,8 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
     if (!isChangeFromWatch()) {
         $unwatch(getWatchIdentifier(widgetId, key));
     }
+
+    resetChangeFromWatch();
 
     const widgetProps = getWidgetPropsByType(component.getWidgetSubType());
     const propInfo = widgetProps.get(key);

@@ -3,7 +3,7 @@ import { EventManager } from '@angular/platform-browser';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $parseEvent, $watch, addClass, isDefined, noop, setAttr } from '@wm/core';
+import { $parseEvent, $unwatch, $watch, addClass, isDefined, setAttr } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
@@ -281,6 +281,13 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
                 getWatchIdentifier(this.widgetId, propName)
             )
         );
+    }
+
+    /**
+     * Remove watch on the bound property
+     */
+    protected removePropertBinding(propName: string) {
+        $unwatch(getWatchIdentifier(this.widgetId, propName));
     }
 
     public invokeEventCallback(eventName: string, extraLocals?: any) {
