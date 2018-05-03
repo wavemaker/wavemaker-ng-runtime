@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['hint', PROP_STRING],
                 ['name', PROP_STRING],
                 ['required', PROP_BOOLEAN],
-                ['show', PROP_BOOLEAN],
+                ['show', PROP_BOOLEAN]
             ]
         )
     );

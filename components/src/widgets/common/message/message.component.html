@@ -1,9 +1,3 @@
-<i [title]="type + 'Alert'"
-   [ngClass]="[type, 'icon', messageIconClass]"></i>
-<span [innerHtml]="messageContent"></span>
-<button title="Close"
-        type="button"
-        class="btn-transparent close"
-        [class.ng-hide]="hideclose"
-        (click)="dismiss($event)">&times;
-</button>
+<i [title]="type + 'Alert'" [ngClass]="[type, 'icon', messageIconClass]"></i>
+<span [innerHtml]="caption | trustAs: 'html'"></span>
+<button title="Close" type="button" class="btn-transparent close" [hidden]="hideclose" (click)="dismiss($event)">&times;</button>

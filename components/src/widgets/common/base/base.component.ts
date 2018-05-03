@@ -194,6 +194,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     }
 
     /**
+     * set the value on the proxy object ie, widget
+     * setting the property on the proxy will invoke the change listeners
+     * @param {string} key
+     * @param value
+     */
+    public setWidgetProperty(key: string, value: any) {
+        this.widget[key] = value;
+    }
+
+    /**
      * Generates a unique id
      * Default pattern is `widget-id-${id}`
      * Components can override this method to generate a different id eg, bar-chart-1
@@ -384,6 +394,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     ngOnDestroy() {
         this.styleChange.complete();
         this.propertyChange.complete();
+
+        this.destroy.next();
         this.destroy.complete();
     }
 }

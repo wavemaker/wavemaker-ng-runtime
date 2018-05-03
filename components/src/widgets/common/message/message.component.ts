@@ -1,16 +1,14 @@
 import { Component, forwardRef, Injector } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 
-import { $appDigest, addClass, removeClass } from '@wm/core';
+import { switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { registerProps } from './message.props';
-import { invokeEventHandler } from '../../../utils/widget-utils';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
-import { WidgetRef } from '../../framework/types';
+import { registerProps } from './message.props';
 
 const DEFAULT_CLS = 'alert app-message';
-const WIDGET_CONFIG = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
 
 registerProps();
 
@@ -24,78 +22,63 @@ registerProps();
 export class MessageComponent extends StylableComponent {
 
     messageClass = '';
-    messageContent;
     messageIconClass = '';
-    show: boolean = true;
     type: string = '';
+    caption: string;
 
-    dismiss($event) {
-        this.show = false;
-        invokeEventHandler(this, 'close', {$event, newVal: this.show});
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this);
     }
 
-    onMessageTypeChange(newVal) {
-        removeClass(this.nativeElement, this.messageClass);
-        switch (newVal) {
+    public show(caption: string, type: string) {
+        this.caption = caption;
+        this.setWidgetProperty('type', type);
+        this.setWidgetProperty('show', true);
+    }
+
+    public hide() {
+        this.setWidgetProperty('show', false);
+    }
+
+    private dismiss($event) {
+        this.hide();
+        this.invokeEventCallback('close', {$event});
+    }
+
+    private onMessageTypeChange(nv: string) {
+        let msgCls, msgIconCls;
+        switch (nv) {
             case 'success':
-                this.messageClass = 'alert-success';
-                this.messageIconClass = 'fa fa-check';
+                msgCls = 'alert-success';
+                msgIconCls = 'fa fa-check';
                 break;
             case 'error':
-                this.messageClass = 'alert-danger';
-                this.messageIconClass = 'fa fa-times-circle';
+                msgCls = 'alert-danger';
+                msgIconCls = 'fa fa-times-circle';
                 break;
             case 'warn':  /*To support old projects with type as "warn"*/
             case 'warning':
-                this.messageClass = 'alert-warning';
-                this.messageIconClass = 'fa fa-exclamation-triangle';
+                msgCls = 'alert-warning';
+                msgIconCls = 'fa fa-exclamation-triangle';
                 break;
             case 'info':
-                this.messageClass = 'alert-info';
-                this.messageIconClass = 'fa fa-info';
+                msgCls = 'alert-info';
+                msgIconCls = 'fa fa-info';
                 break;
             case 'loading':
-                this.messageClass = 'alert-info alert-loading';
-                this.messageIconClass = 'fa fa-spinner fa-spin';
+                msgCls = 'alert-info alert-loading';
+                msgIconCls = 'fa fa-spinner fa-spin';
                 break;
         }
-        addClass(this.nativeElement, this.messageClass);
-        this.type = newVal;
+        switchClass(this.nativeElement, msgCls, this.messageClass);
+        this.messageClass = msgCls;
+        this.messageIconClass = msgIconCls;
     }
 
-    onPropertyChange(key, newVal, oldVal?) {
-        switch (key) {
-            case 'caption':
-                this.messageContent =  this.sanitize.bypassSecurityTrustHtml(newVal);
-                break;
-            case 'type':
-                this.onMessageTypeChange(newVal);
-                break;
-            case 'dataset':
-                if (!Array.isArray(newVal) && typeof newVal === 'object') {
-                    this.messageContent =  this.sanitize.bypassSecurityTrustHtml(newVal.caption);
-                    this.onMessageTypeChange(newVal.type);
-                    this.show = newVal.show || true;
-                } else {
-                    this.show = false;
-                }
-                break;
+    onPropertyChange(key, nv, ov?) {
+        if (key === 'type') {
+            this.onMessageTypeChange(nv);
         }
-    }
-
-    toggle(showHide: string, caption: string, type: string) {
-        if (typeof showHide === 'undefined') {
-            this.show =  !this.show;
-        } else {
-            this.show = showHide === 'show' ?  true : false;
-            this.messageContent = this.sanitize.bypassSecurityTrustHtml(caption) || this.messageContent;
-            this.type = type || this.type;
-        }
-        $appDigest();
-    }
-
-    constructor(inj: Injector, private sanitize: DomSanitizer) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
     }
 }

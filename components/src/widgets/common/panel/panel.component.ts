@@ -3,7 +3,7 @@ import { AfterContentInit, Component, ContentChildren, ElementRef, forwardRef, I
 import { AppLocale, noop, setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './panel.props';
 import { RedrawableDirective } from '../redraw/redrawable.directive';
@@ -11,7 +11,7 @@ import { RedrawableDirective } from '../redraw/redrawable.directive';
 registerProps();
 
 const DEFAULT_CLS = 'app-panel panel';
-const WIDGET_CONFIG = {widgetType: 'wm-panel', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-panel', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmPanel]',
