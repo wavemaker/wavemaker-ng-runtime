@@ -1,12 +1,15 @@
-import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, ViewContainerRef } from '@angular/core';
+import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, OnDestroy, ViewContainerRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+
+import { Subject } from 'rxjs/Subject';
 
 import { WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
 import { getValidJSON } from '@wm/core';
+import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { App } from './app.service';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
@@ -14,7 +17,6 @@ import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
 import { I18nService } from './i18n.service';
-import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 const scriptCache = new Map<string, Function>();
 const noop = (...args) => {};
@@ -45,12 +47,27 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
         styles,
         providers
     })
-    class DynamicComponent {
+    class DynamicComponent implements OnDestroy {
         onPropertyChange;
         $element;
+        _onDestroy;
 
         constructor(inj: Injector) {
+            // create new subject and assign it to the component(page/partial/prefab) context
+            this._onDestroy = new Subject();
+
             postConstructFn(this, inj);
+        }
+
+        registerDestroyListener(fn: Function) {
+            this._onDestroy.subscribe(fn);
+        }
+
+        ngOnDestroy() {
+            // on component destroy, trigger the destroy subject on context
+            // Variables are listening to this event to trigger cancel methods on them (to abort any in progress calls)
+            this._onDestroy.next();
+            this._onDestroy.complete();
         }
     }
 

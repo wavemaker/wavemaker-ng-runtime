@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpService } from '@wm/http';
-import { setDependency } from '../util/variable/variables.utils';
-import { MetadataService } from './metadata-service/metadata.service';
+
 import { ToastrService } from 'ngx-toastr';
-import { VariableFactory } from '../factory/variable.factory';
+
+import { HttpService } from '@wm/http';
 import { OAuthService } from '@wm/oAuth';
-import { BaseAction } from '../model/base-action';
 import { SecurityService } from '@wm/security';
 import { DialogService } from '@wm/components';
+
+import { VariableFactory } from '../factory/variable.factory';
+import { BaseAction } from '../model/base-action';
+import { setDependency } from '../util/variable/variables.utils';
+import { MetadataService } from './metadata-service/metadata.service';
+
+declare const _;
 
 @Injectable()
 export class VariablesService {
@@ -33,6 +38,29 @@ export class VariablesService {
         setDependency('dialog', this.dialogService);
     }
 
+    /**
+     * loop through a collection of variables/actions
+     * trigger cancel on each (of exists)
+     * @param collection
+     */
+    bulkCancel(collection) {
+        Object.keys(collection).forEach(name => {
+            const variable = collection[name];
+            if (_.isFunction(variable.cancel)) {
+                variable.cancel();
+            }
+        });
+    }
+
+    /**
+     * Takes the raw variables and actions json as input
+     * Initialize the variable and action instances through the factory
+     * collect the variables and actions in separate maps and return the collection
+     * @param {string} page
+     * @param variablesJson
+     * @param scope
+     * @returns {{Variables: {}; Actions: {}}}
+     */
     register(page: string, variablesJson: any, scope: any) {
         const variableInstances = {
             Variables: {},
@@ -49,6 +77,14 @@ export class VariablesService {
             } else {
                 variableInstances.Variables[variableName] = varInstance;
             }
+        }
+
+        // if the context has onDestroy listener, subscribe the event and trigger cancel on all varibales
+        if (scope.registerDestroyListener) {
+            scope.registerDestroyListener(() => {
+                this.bulkCancel(variableInstances.Variables);
+                this.bulkCancel(variableInstances.Actions);
+            });
         }
 
         return variableInstances;
