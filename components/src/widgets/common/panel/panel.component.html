@@ -1,18 +1,19 @@
-<div class="panel-heading {{helpClass}}" [class.ng-hide]="!showHeader" #panelHeading>
+<div class="panel-heading {{helpClass}}" *ngIf="showHeader" #panelHeading>
     <h3 class="panel-title">
         <a href="javascript:void(0)" class="panel-toggle" (click)="togglePanel($event)">
             <div class="pull-left">
                 <i class="app-icon panel-icon {{iconclass}}" *ngIf="iconclass && !iconurl"></i>
-                <img data-identifier="img" class="panel-image-icon" [src]="iconurl" *ngIf="iconurl"
+                <img data-identifier="img" class="panel-image-icon" [src]="iconurl | image" *ngIf="iconurl"
                      [ngStyle]="{width: iconwidth ,height: iconheight, margin: iconmargin}"/>
             </div>
             <div class="pull-left">
-                <div class="heading">{{title}}</div>
-                <div class="description">{{subheading}}</div>
+                <div class="heading" [textContent]="title"></div>
+                <div class="description" [textContent]="subheading"></div>
             </div>
         </a>
         <div class="panel-actions">
             <span *ngIf="badgevalue" class="app-badge label label-{{badgetype}}">{{badgevalue}}</span>
+            <!-- Todo - Vinay re-visit once wmMenu is ready -->
             <div wmMenu
                  type="anchor"
                  class="panel-action"
@@ -27,28 +28,28 @@
                  userrole.bind="userrole"
                  itemchildren.bind="itemchildren"
                 ></div>
-            <button type="button" class="app-icon panel-action wi wi-question" title="Help" *ngIf="helptext"
+            <button type="button" class="app-icon panel-action wi wi-question" [title]="appLocale.LABEL_HELP" *ngIf="helptext"
                     (click)="toggleHelp()"></button>
-            <button type="button" class="app-icon wi panel-action {{toggleIconClass}}" *ngIf="collapsible && !fullscreen" title="Collapse/ Expand"
-               (click)="togglePanel($event);"></button>
-            <button type="button" class="app-icon wi panel-action" *ngIf="enablefullscreen"
-                    title="Fullscreen/Exit Fullscreen"
-                    [ngClass]="{'wi-fullscreen-exit': fullscreen, 'wi-fullscreen': !fullscreen}"
+            <button type="button" class="app-icon wi panel-action {{expanded ? 'wi-minus' : 'wi-plus'}}" *ngIf="collapsible" [title]="expandCollapseTitle"
+                    (click)="togglePanel($event);"></button>
+            <button type="button" class="app-icon wi panel-action {{fullscreen ? 'wi-fullscreen-exit': 'wi-fullscreen'}}" *ngIf="enablefullscreen"
+                    [title]="fullScreenTitle"
                     (click)="toggleFullScreen($event);"></button>
-            <button type="button" class="app-icon wi panel-action wi-close" title="Close" *ngIf="closable"
+            <button type="button" class="app-icon wi panel-action wi-close" title="{{appLocale.LABEL_CLOSE}}" *ngIf="closable"
                     (click)="closePanel($event)"></button>
         </div>
     </h3>
 </div>
-<div class="panel-content"  [class.ng-hide]="!expanded && !fullscreen" #panelContent>
+<div class="panel-content" [hidden]="!expanded" #panelContent>
+    <!-- Todo Bandhavya - implement smooth scroll -->
     <div class="panel-body {{helpClass}}" partial-container-target>
-        <ng-content *ngIf="expanded || fullscreen"></ng-content>
+        <ng-content></ng-content>
     </div>
     <aside class="panel-help-message {{helpClass}}">
-        <h5 class="panel-help-header">Help</h5>
-        <div class="panel-help-content" [innerHTML]="helptext"></div>
+        <h5 class="panel-help-header" [textContent]="appLocale.LABEL_HELP"></h5>
+        <div class="panel-help-content" [innerHTML]="helptext | trustAs : 'html'"></div>
     </aside>
 </div>
-<div class="app-panel-footer panel-footer clearfix" [class.ng-hide]="hideFooter || (!expanded && !fullscreen)">
+<div class="app-panel-footer panel-footer clearfix" [hidden]="hideFooter">
     <ng-content select="[wmPanelFooter]"></ng-content>
 </div>

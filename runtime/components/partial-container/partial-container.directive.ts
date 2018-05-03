@@ -1,6 +1,7 @@
 import { Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 
 import { WidgetRef } from '@wm/components';
+import { noop } from '@wm/core';
 
 import { RenderUtilsService } from '../../services/render-utils.service';
 
@@ -44,7 +45,7 @@ export class PartialContainerDirective {
                     componentInstance.$lazyLoad = () => {
                         this.renderPartial(nv, vcRef, componentInstance)
                             .then(() => this.onLoadSuccess());
-                        componentInstance.$lazyLoad = _.noop;
+                        componentInstance.$lazyLoad = noop;
                     };
                 } else {
                     this.renderPartial(nv, vcRef, componentInstance).then(() => this.onLoadSuccess());
