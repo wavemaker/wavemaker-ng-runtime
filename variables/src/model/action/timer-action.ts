@@ -3,7 +3,7 @@ import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 
 const  getManager = () => {
-    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.LOGIN);
+    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.TIMER);
 };
 
 export class TimerAction extends BaseAction {

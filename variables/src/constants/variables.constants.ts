@@ -3,7 +3,8 @@ export const CONSTANTS = {
     isWaveLens: false,
     isStudioMode: false,
     isRunMode: true,
-    XSRF_COOKIE_NAME: 'wm_xsrf_token'
+    XSRF_COOKIE_NAME: 'wm_xsrf_token',
+    DEFAULT_TIMER_DELAY: 500
 };
 export const VARIABLE_CONSTANTS = {
     CATEGORY: {
