@@ -1,11 +1,10 @@
 import { Component, forwardRef, Injector } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { registerProps } from './spinner.props';
-import { getBackGroundImageUrl } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
+import { ImagePipe } from '../../../pipes/image.pipe';
 
 declare const _;
 
@@ -23,25 +22,22 @@ registerProps();
 })
 export class SpinnerComponent extends StylableComponent {
 
-    iconclass = 'fa fa-spinner';
-    /**
-     * Internal property to map the proper sanitised resource url
-     */
+    public iconclass = '';
+    public animation = '';
     private picture: string;
-    /**
-     * Property to map the animation class to the widget
-     */
-    animation: string = '';
-    /**
-     * Internal property to map the proper sanitised `caption` property
-     */
-    private messageContent: any;
-
     private _spinnerMessages;
-
     private showCaption = true;
 
-    constructor(inj: Injector, private sanitizer: DomSanitizer) {
+    public get spinnerMessages() {
+        return this._spinnerMessages;
+    }
+
+    public set spinnerMessages(newVal) {
+        this.showCaption = _.isEmpty(newVal);
+        this._spinnerMessages = newVal;
+    }
+
+    constructor(inj: Injector, private imagePipe: ImagePipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
@@ -49,7 +45,7 @@ export class SpinnerComponent extends StylableComponent {
     onPropertyChange(key, newVal, oldVal) {
         switch (key) {
             case 'image':
-                this.picture = getBackGroundImageUrl(newVal);
+                this.picture = this.imagePipe.transform(newVal);
                 break;
             case 'animation':
                 if (newVal === 'spin') {
@@ -58,18 +54,6 @@ export class SpinnerComponent extends StylableComponent {
                     this.animation = newVal || '';
                 }
                 break;
-            case 'caption':
-                this.messageContent = this.sanitizer.bypassSecurityTrustHtml(newVal);
-                break;
         }
-    }
-
-    get spinnerMessages() {
-        return this._spinnerMessages;
-    }
-
-    set spinnerMessages(newVal) {
-        this.showCaption = _.isEmpty(newVal);
-        this._spinnerMessages = newVal;
     }
 }

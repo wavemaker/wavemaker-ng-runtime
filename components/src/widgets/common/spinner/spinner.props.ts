@@ -7,12 +7,13 @@ export const registerProps = () => {
             [
                 ['animation', PROP_STRING_NOTIFY],
                 ['caption', {value: 'Loading...', ...PROP_STRING_NOTIFY}],
-                ['iconclass', {value: 'fa fa-circle-o-notch', ...PROP_STRING}],
+                ['class', PROP_STRING],
+                ['iconclass', {value: 'fa fa-circle-o-notch fa-spin', ...PROP_STRING}],
                 ['iconsize', PROP_STRING],
                 ['image', PROP_STRING_NOTIFY],
                 ['imageheight', PROP_STRING],
                 ['imagewidth', {value: '20px', ...PROP_STRING}],
-                ['servicevariabletotrack', PROP_STRING_NOTIFY],
+                ['name', PROP_STRING],
                 ['show', PROP_BOOLEAN],
                 ['type', {value: 'icon', ...PROP_STRING}]
             ]
