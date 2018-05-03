@@ -12,7 +12,16 @@ export class TimerAction extends BaseAction {
         Object.assign(this, variable);
     }
 
+    // Backward compatible method
+    trigger(options, success, error) {
+        return getManager().trigger(this, options, success, error);
+    }
+
     invoke(options, success, error) {
-        getManager().trigger(this, options, success, error);
+        return this.trigger(options, success, error);
+    }
+
+    cancel() {
+        return getManager().cancel(this);
     }
 }

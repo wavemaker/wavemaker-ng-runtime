@@ -12,7 +12,6 @@ export class TimerActionManager extends BaseActionManager {
         const repeatTimer = variable.repeating,
             delay = variable.delay || CONSTANTS.DEFAULT_TIMER_DELAY,
             event = 'onTimerFire',
-            // callBackScope = {} || options && options.scope,
             exec = function () {
                 initiateCallback(event, variable, {});
             };
@@ -28,5 +27,18 @@ export class TimerActionManager extends BaseActionManager {
         });*/
 
         return variable._promise;
+    }
+
+    cancel(variable) {
+        let status;
+        if (isDefined(variable._promise)) {
+            if (variable.repeating) {
+                status = clearInterval(variable._promise);
+            } else {
+                status = clearTimeout(variable._promise);
+            }
+            variable._promise = undefined;
+        }
+        return status;
     }
 }
