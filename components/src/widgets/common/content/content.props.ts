@@ -1,4 +1,4 @@
-import { register, PROP_STRING, PROP_NUMBER_NOTIFY } from '../../framework/widget-props';
+import { PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['name', PROP_STRING],
-                ['columnwidth', PROP_NUMBER_NOTIFY]
+                ['class', PROP_STRING]
             ]
         )
     );

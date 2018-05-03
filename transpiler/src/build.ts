@@ -215,14 +215,17 @@ const processNode = (node, providers?: Array<IProviderInfo>) => {
 
     if (isElementType) {
         let provideInfo: IProviderInfo;
-        attrMap = getAttrMap(node.attrs);
-
-        processDimensionAttributes(attrMap);
 
         if (nodeDef) {
             requiredProviders = getRequiredProviders(nodeDef, providers);
             shared = new Map();
             template(node, shared, ...requiredProviders);
+        }
+
+        attrMap = getAttrMap(node.attrs);
+        processDimensionAttributes(attrMap);
+
+        if (nodeDef) {
             markup = (<any>pre)(attrMap, shared, ...requiredProviders);
             if (nodeDef.provide) {
                 provideInfo = {

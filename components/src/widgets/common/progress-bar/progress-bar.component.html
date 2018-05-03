@@ -1,7 +1,3 @@
-<progressbar [max]="maxvalue"
-             [value]="progressDataValue"
-             [type]="_type"
-             [class.progress-striped]="isStriped"
-             [animate]="true">
-    <label [innerHTML]="progressDisplayValue" *ngIf="showCaption"></label>
-</progressbar>
+<div class="multi-bar progress-bar {{bar.cls}}" *ngFor="let bar of data" [style.width]="bar.progressBarWidth" role="progressbar">
+    <span class="app-progress-label" [attr.data-caption-placement]="captionplacement">{{bar.displayValue}}</span>
+</div>

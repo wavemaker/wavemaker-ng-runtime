@@ -49,6 +49,7 @@ export * from './widgets/common/panel/panel.build';
 export * from './widgets/common/partial/partial.build';
 export * from './widgets/common/picture/picture.build';
 export * from './widgets/common/prefab/prefab.build';
+export * from './widgets/common/progress-bar/progress-bar.build';
 export * from './widgets/common/radioset/radioset.build';
 export * from './widgets/common/rating/rating.build';
 export * from './widgets/common/rich-text-editor/rich-text-editor.build';

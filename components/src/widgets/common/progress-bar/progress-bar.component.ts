@@ -1,20 +1,18 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Attribute, Component, forwardRef, Injector } from '@angular/core';
 
-import { $appDigest } from '@wm/core';
+import { findValueOf, isDefined, isString } from '@wm/core';
 
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
-import { registerProps } from './progress-bar.props';
-import { invokeEventHandler } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
+import { registerProps } from './progress-bar.props';
 
 registerProps();
 
-declare const _;
-
 const DEFAULT_CLS = 'progress app-progress';
-const WIDGET_CONFIG = {widgetType: 'wm-progressbar', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progressbar', hostClass: DEFAULT_CLS};
 
+// This function returns the maximum number of decimal digits allowed.
 const getDecimalCount = val => {
     val = val || '9';
     val = val.replace(/\%$/, '');
@@ -24,19 +22,34 @@ const getDecimalCount = val => {
     return (n === -1) ? 0 : (val.length - n - 1);
 };
 
-const isPercentageValue = val => {
-    if (typeof val === 'string') {
+// returns true if the given value contains '%'
+const isPercentageValue = (val): boolean => {
+    if (isString(val)) {
         val = val.trim();
         return val.charAt(val.length - 1) === '%';
     }
     return false;
 };
 
-const areValuesValid = (max, min) => {
-    if (!max || (!min && min !== 0) || (max <= min)) {
-        return false;
-    }
-    return true;
+// interface for the progress-bar info
+interface IProgressInfo {
+    cls: string;
+    progressBarWidth: string;
+    displayValue: string;
+}
+
+// map of progress-bar type and classes
+const TYPE_CLASS_MAP = {
+    'default': '',
+    'default-striped': 'progress-bar-striped',
+    'success': 'progress-bar-success',
+    'success-striped': 'progress-bar-success progress-bar-striped',
+    'info': 'progress-bar-info',
+    'info-striped': 'progress-bar-info progress-bar-striped',
+    'warning': 'progress-bar-warning',
+    'warning-striped': 'progress-bar-warning progress-bar-striped',
+    'danger': 'progress-bar-danger',
+    'danger-striped': 'progress-bar-danger progress-bar-striped'
 };
 
 @Component({
@@ -48,175 +61,103 @@ const areValuesValid = (max, min) => {
 })
 export class ProgressBarComponent extends StylableComponent {
 
+    public displayformat: string;
+    public datavalue: string;
+    public minvalue: number;
+    public maxvalue: number;
+    public type: string;
+    public dataset: Array<any>;
 
-    isStriped: boolean = true;
-    _type: string = 'success';
-    binddatavalue;
-    pollinterval;
-    _invokeInterval;
-    // boundServiceName;
-    showCaption;
-    progressDisplayValue;
-    displayformat;
-    minvalue;
-    maxvalue;
-    dataset;
-    datavalue;
-    _oldDV;
-    _newDV;
-    progressDataValue;
+    private readonly hasDataset: boolean;
 
-    onTypeChange(nv) {
-        if (nv === 'default') {
-            this._type = undefined;
-            this.isStriped = false;
-            return;
-        }
-        this.isStriped = _.includes(nv, '-striped');
-        this._type = nv && nv.replace('-striped', '');
+    // progress-bar data, ngFor in the template iterates on this
+    private data: Array<IProgressInfo> = [{
+        cls: TYPE_CLASS_MAP.default,
+        progressBarWidth: '0%',
+        displayValue: '0'
+    }];
+
+    constructor(inj: Injector, @Attribute('dataset') dataset: string, @Attribute('dataset.bind') boundDataset: string) {
+        super(inj, WIDGET_CONFIG);
+
+        // flag which determines whether dataset is provided or not
+        this.hasDataset = !!(dataset || boundDataset);
+
+        styler(this.nativeElement, this);
     }
 
-    endPolling() {
-        clearInterval(this._invokeInterval);
-    }
-
-    setupPolling() {
-        this.endPolling();
-        if (this.pollinterval) {
-            this._invokeInterval = setInterval(() => {
-                // TODO: invoke the service bound service name
-                // call the event emitter to invoke the service
-                /*this.servicesHandler.invokeService(
-                            this.boundServiceName, {},
-                            this.successHandler.bind(undefined)
-                        ); */
-            }, this.pollinterval);
+    // update the proper classes when there is a change in type
+    protected onTypeChange() {
+        if (!this.hasDataset) {
+            if (this.data[0]) {
+                this.data[0].cls = TYPE_CLASS_MAP[this.type];
+            }
         }
     }
 
-    successHandler($response) {
-        if (!this.binddatavalue) {
-            invokeEventHandler(this, 'beforeupdate', {$response});
+    // returns the formatted display value based on the provided displayformat
+    protected getFormattedDisplayVal(val: string | number): string {
+        const format = this.displayformat || '9';
+
+        val = parseFloat('' + val);
+        val = (val.toFixed(getDecimalCount(format)));
+
+        if (format.includes('%')) {
+            val = `${val}%`;
         }
+        return val;
     }
-    // TODO: binddataset will be removed as per WM10 changes, fetch service information and handle the poll functionality later
-    /*
-    set binddataset (nv) {
-        if (this._binddataset === nv) {
-            return;
-        }
 
-        this._binddataset = nv;
+    protected prepareData() {
+        // if the dataset is not provided, update the values in the default data
+        if (!this.hasDataset) {
+            let width: string | number = 0;
+            let displayVal: string | number = 0;
+            if (this.datavalue) {
+                if (isPercentageValue(this.datavalue)) {
+                    const val = (this.datavalue || '0%');
+                    width = displayVal = val;
+                } else {
+                    if (isDefined(this.datavalue)) {
+                        const denominator = (+this.maxvalue - +this.minvalue) || 1;
+                        const val = (+this.datavalue * 100) / denominator + '%';
+                        width = displayVal = val;
+                    }
+                }
+            }
+            this.data[0].displayValue = this.getFormattedDisplayVal(displayVal as string);
+            this.data[0].progressBarWidth = width as string;
 
-        this.endPolling();
-
-        if (_.isString(nv)) {
-            nv = nv.replace('bind:Variables.', '');
-            this.boundServiceName = nv.substr(0, nv.indexOf('.'));
-            this.setupPolling();
-        }
-    }
-    */
-
-    updateProgressBar(oldDV?, newDV?) {
-
-        oldDV = oldDV || this._oldDV;
-        newDV = newDV || this._newDV;
-
-        if (_.isArray(this.dataset)) {
-            return;
-        }
-
-        const isValueAPercentage = isPercentageValue(this.datavalue);
-
-        if (isValueAPercentage) {
-            oldDV = parseInt(oldDV || 0, 10);
-            newDV = parseInt(newDV || 0, 10);
-        } else if (!areValuesValid(this.maxvalue, this.minvalue)) {
-            this.endPolling();
-            return;
-        }
-
-        this.triggerCallbackFunctions(oldDV, newDV, isValueAPercentage);
-
-        if (isValueAPercentage) {
-            this.progressDisplayValue = this.datavalue || '0%';
-        } else if (typeof this.datavalue !== 'undefined') {
-            this.progressDisplayValue = this.datavalue * 100 / (this.maxvalue - this.minvalue);
         } else {
-            this.progressDisplayValue = 0;
-        }
-        const displayFormatAttr = this.nativeElement.getAttribute('displayformat');
-        // support for old projects having percentage/ absolute displayformat
-        if (displayFormatAttr !== 'ABSOLUTE') {
-            this.progressDisplayValue = this.progressDisplayValue.toFixed(getDecimalCount(this.displayformat));
-            if (_.includes(this.displayformat, '%')) {
-                this.progressDisplayValue = this.progressDisplayValue + '%';
+            // when the dataset is provided, iterate over the dataset to set the proper values in the data
+            if (this.dataset && Array.isArray(this.dataset) && this.type && this.datavalue) {
+                this.data = this.dataset.map((datum): IProgressInfo => {
+                    const val: string = findValueOf(datum, this.datavalue);
+                    let percentVal = val;
+                    if (!val.includes('%')) {
+                        percentVal = `${val}%`;
+                    }
+                    return {
+                        cls: TYPE_CLASS_MAP[findValueOf(datum, this.type)],
+                        progressBarWidth: percentVal,
+                        displayValue: this.getFormattedDisplayVal(val)
+                    };
+                });
             }
-        }
-        this.progressDataValue = newDV;
-    }
-
-    triggerCallbackFunctions(oldDV, newDV, isPercentageVal) {
-        let onStart, onComplete;
-        if (isPercentageVal) {
-            if (oldDV <= 0 && newDV > 0) {
-                onStart = true;
-            } else if (newDV >= 100) {
-                onComplete = true;
-            }
-        } else {
-            if (oldDV <= this.minvalue && newDV > this.minvalue) {
-                onStart = true;
-            } else if (newDV >= this.maxvalue) {
-                onComplete = true;
-            }
-        }
-
-        if (onStart) {
-            invokeEventHandler(this, 'start');
-        } else if (onComplete) {
-            this.endPolling();
-            invokeEventHandler(this, 'complete');
         }
     }
 
-    onPropertyChange(key, nv, ov?) {
+    onPropertyChange(key, nv, ov) {
         switch (key) {
             case 'type':
-                this.onTypeChange(nv);
-                break;
-            case 'pollinterval':
-                this.endPolling();
-                if (typeof nv === 'number') {
-                    this.setupPolling();
-                }
-                break;
-            case 'captionplacement':
-                this.showCaption = nv !== 'hidden';
+                this.onTypeChange();
                 break;
             case 'minvalue':
             case 'maxvalue':
-                this.updateProgressBar();
-                break;
             case 'datavalue':
-                this._oldDV = ov;
-                this._newDV = nv;
-                if (typeof nv === 'string' || typeof nv === 'number') {
-                    this.updateProgressBar(ov, nv);
-                }
-                break;
             case 'dataset':
-                if (_.isArray(nv)) {
-                    this.progressDataValue = nv;
-                }
+                this.prepareData();
                 break;
         }
-        $appDigest();
-    }
-
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
     }
 }

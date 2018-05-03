@@ -6,7 +6,7 @@ import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../../framework/types';
 import { registerProps } from './accordion-pane.props';
 import { StylableComponent } from '../../base/stylable.component';
-import { AccordionDirective } from '../accordion.component';
+import { AccordionDirective } from '../accordion.directive';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';
 
 registerProps();

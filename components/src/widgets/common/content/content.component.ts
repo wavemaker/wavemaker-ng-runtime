@@ -1,14 +1,14 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './content.props';
 
 registerProps();
 
 const DEFAULT_CLS = 'app-content clearfix';
-const WIDGET_CONFIG = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmContent]',

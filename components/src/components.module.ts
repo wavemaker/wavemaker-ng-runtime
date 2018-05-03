@@ -7,7 +7,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
 
 import { DialogService } from './widgets/common/dialog/dialog.service';
 
-import { AccordionDirective } from './widgets/common/accordion/accordion.component';
+import { AccordionDirective } from './widgets/common/accordion/accordion.directive';
 import { AccordionPaneComponent } from './widgets/common/accordion/accordion-pane/accordion-pane.component';
 import { AlertDialogComponent } from './widgets/common/dialog/alert-dialog/alert-dialog.component';
 import { AnchorComponent } from './widgets/common/anchor/anchor.component';
