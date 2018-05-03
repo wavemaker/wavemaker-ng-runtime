@@ -581,7 +581,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.dataNavigator.pagingOptions = {
                     maxResults: this.pagesize || 5
                 };
-                this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent);
+                this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent, this.datasource);
             }
         }
     }
@@ -675,7 +675,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     onPropertyChange(key: string, newVal) {
         switch (key) {
+            case 'datasource':
+                this.watchVariableDataSet(this.dataset);
+                break;
             case 'dataset':
+                if (!this.datasource) {
+                    return;
+                }
                 this.watchVariableDataSet(newVal);
                 break;
             case 'gridclass':

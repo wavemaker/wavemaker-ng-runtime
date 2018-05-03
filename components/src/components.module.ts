@@ -47,6 +47,7 @@ import { LeftPanelDirective } from './widgets/common/left-panel/left-panel.direc
 import { ListComponent } from './widgets/common/list/list.component';
 import { ListItemDirective } from './widgets/common/list/list-item.directive';
 import { LiveFormDirective } from './widgets/common/form/live-form.directive';
+import { LiveFilterDirective } from './widgets/common/form/live-filter.directive';
 import { LiveTableComponent } from './widgets/common/live-table/live-table.component';
 import { LoginComponent } from './widgets/common/login/login.component';
 import { LoginDialogComponent } from './widgets/common/dialog/login-dialog/login-dialog.component';
@@ -131,6 +132,7 @@ const wmComponents = [
     LeftPanelDirective,
     ListComponent,
     ListItemDirective,
+    LiveFilterDirective,
     LiveFormDirective,
     LiveTableComponent,
     LoginComponent,

@@ -30,20 +30,6 @@ function isSearchWidgetType(widget) {
     return _.includes([FormWidgetType.AUTOCOMPLETE, FormWidgetType.TYPEAHEAD, FormWidgetType.CHIPS], widget);
 }
 
-export function getDataSource(binddataset: string, parent: any) {
-    let variableName,
-        isBoundToVariable;
-    const parts = binddataset.split('.');
-
-    isBoundToVariable = _.includes(binddataset, 'Variables.');
-
-    if (isBoundToVariable) {
-        variableName = parts[1];
-    }
-    // TODO: Do it for bind widgets
-    return parent && parent.Variables[variableName];
-}
-
 function onSuccess(response, res, rej) {
     if (response.error) {
         rej(response);
@@ -149,8 +135,8 @@ function getDistinctFieldProperties(dataSource, formField) {
     const props: any = {};
     let fieldColumn;
     if (formField['is-related']) {
-        props.tableName     = formField.lookupType;
-        fieldColumn         = formField.lookupField;
+        props.tableName     = formField['lookup-type'];
+        fieldColumn         = formField['lookup-field'];
         props.distinctField = fieldColumn;
         props.aliasColumn   = fieldColumn.replace('.', '$'); // For related fields, In response . is replaced by $
     } else {
@@ -220,7 +206,7 @@ function setFieldDataSet(formField, data, options?) {
     const emptyOption         = {};
     const dataSet = [];
     if (options.isEnableEmptyFilter && _.includes(emptySupportWidgets, formField[options.widget]) &&
-        !formField.isRange && !formField.multiple) {
+        !formField['is-range'] && !formField.multiple) {
         // If empty option is selected, push an empty object in to dataSet
         emptyOption[LIVE_CONSTANTS.LABEL_KEY]   = LIVE_CONSTANTS.EMPTY_KEY;
         emptyOption[LIVE_CONSTANTS.LABEL_VALUE] = LIVE_CONSTANTS.EMPTY_VALUE;
@@ -262,7 +248,7 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
     getDistinctValues(dataSource, formField, options.widget, (field, data, aliasColumn) => setFieldDataSet(field, data, {
         aliasColumn: aliasColumn,
         widget: options.widget,
-        isEnableEmptyFilter: options.isEnableEmptyFilter
+        isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
     }));
 }
 
@@ -278,7 +264,7 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
  * @param {string} minValue min value selected
  * @param {string} maxValue max value selected
  */
-function getRangeFieldValue(minValue, maxValue) {
+export function getRangeFieldValue(minValue, maxValue) {
     let fieldValue;
     if (isDefined(minValue) && isDefined(maxValue)) {
         fieldValue = [minValue, maxValue];
@@ -301,7 +287,7 @@ function getRangeFieldValue(minValue, maxValue) {
  * @param {string} minValue min value selected
  * @param {string} maxValue max value selected
  */
-function getRangeMatchMode(minValue, maxValue) {
+export function getRangeMatchMode(minValue, maxValue) {
     let matchMode;
     // If two values exists, then it is between. Otherwise, greater or lesser
     if (isDefined(minValue) && isDefined(maxValue)) {
@@ -324,7 +310,7 @@ function getRangeMatchMode(minValue, maxValue) {
  *
  * @param {object} enableemptyfilter empty filter options
  */
-function getEnableEmptyFilter(enableemptyfilter) {
+export function getEnableEmptyFilter(enableemptyfilter) {
     return enableemptyfilter && _.intersection(enableemptyfilter.split(','), LIVE_CONSTANTS.NULL_EMPTY).length > 0;
 }
 /**
@@ -338,7 +324,7 @@ function getEnableEmptyFilter(enableemptyfilter) {
  *
  * @param {object} enableemptyfilter empty filter options
  */
-function getEmptyMatchMode(enableemptyfilter) {
+export function getEmptyMatchMode(enableemptyfilter) {
     let matchMode;
     const emptyFilterOptions = _.split(enableemptyfilter, ',');
     if (_.intersection(emptyFilterOptions, LIVE_CONSTANTS.NULL_EMPTY).length === 2) {
@@ -367,15 +353,15 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
     const fieldName      = filterDef.field || filterDef.key;
     const filterOnFields = _.filter(formFields, {'filter-on': fieldName});
 
-    newVal = isDefined(newVal) ? newVal : ((filterDef.isRange ? getRangeFieldValue(filterDef.minValue, filterDef.maxValue) : filterDef.value));
+    newVal = isDefined(newVal) ? newVal : ((filterDef['is-range'] ? getRangeFieldValue(filterDef.minValue, filterDef.maxValue) : filterDef.value));
     if (!dataSource || (options.isFirst && (_.isUndefined(newVal) || newVal === ''))) {
         return;
     }
     // Loop over the fields for which the current field is filter on field
     _.forEach(filterOnFields, filterField => {
         const filterKey    = filterField.field || filterField.key;
-        const lookUpField  = filterDef.lookupField || filterDef._primaryKey;
-        const filterWidget = filterField.editWidgetType || filterField.widgettype;
+        const lookUpField  = filterDef['lookup-field'] || filterDef._primaryKey;
+        const filterWidget = filterField['edit-widget-type'] || filterField.widgettype;
         let filterFields = {};
         let filterOn     = filterField['filter-on'];
         let filterVal;
@@ -389,7 +375,7 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
             filterOn += '.' +  lookUpField;
         }
         if (isDefined(newVal)) {
-            if (filterDef.isRange) {
+            if (filterDef['is-range']) {
                 matchMode = getRangeMatchMode(filterDef.minValue, filterDef.maxValue);
             } else if (getEnableEmptyFilter(options.enableemptyfilter) && newVal === LIVE_CONSTANTS.EMPTY_KEY) {
                 matchMode = getEmptyMatchMode(options.enableemptyfilter);
@@ -410,7 +396,6 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
         if (isSearchWidgetType(filterWidget) && filterField.dataoptions) {
             filterField.dataoptions.filterFields = filterFields;
         } else {
-            console.log(fieldColumn, ' filter on field');
             dataSource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
                 'fields'        : fieldColumn,
                 'filterFields'  : filterFields,

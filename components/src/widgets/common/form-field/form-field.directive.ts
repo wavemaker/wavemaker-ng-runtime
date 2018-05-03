@@ -25,6 +25,7 @@ const DEFAULT_CLS = '';
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
 
     @ContentChild('formWidget') formWidget;
+    @ContentChild('formWidgetMax') formWidgetMax;
 
     private _validators;
     private applyProps;
@@ -36,6 +37,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     displayexpression;
     displayfield;
     displaylabel;
+    displayname;
     generator;
     key: string;
     target: string;
@@ -51,6 +53,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     viewmodewidget;
     binddataset;
     form;
+    minValue;
+    maxValue;
 
     constructor(
         inj: Injector,
@@ -77,20 +81,23 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.isDataSetBound = true;
         }
 
-        if (this.form.isLiveForm && isDataSetWidget(_widgetType)) {
+        if ((this.form.isLiveForm || this.form.isLiveFilter) && isDataSetWidget(_widgetType)) {
             this.form.dataSourceChange$.subscribe(nv => this.onFormDataSourceChange(nv));
         }
     }
 
     onFormDataSourceChange(dataSource) {
-        if (this['is-related']) {
+        if (this['is-related'] && this.form.isLiveForm) {
             this.isDataSetBound = true;
             fetchRelatedFieldData(dataSource, this.widget, {
                 relatedField: this.key,
                 datafield: ALLFIELDS
             });
         } else {
-            getDistinctValuesForField(dataSource, this.widget, {widget: 'widgettype'});
+            getDistinctValuesForField(dataSource, this.widget, {
+                widget: 'widgettype',
+                enableemptyfilter: this.form.enableemptyfilter
+            });
             applyFilterOnField(dataSource, this.widget, this.form.formFields, this.value, {isFirst: true});
         }
     }
@@ -164,6 +171,20 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
     }
 
+    setFormWidget(key, val) {
+        setTimeout(() => {
+            this.formWidget.widget[key] = val;
+        });
+    }
+
+    setMaxFormWidget(key, val) {
+        if (this.formWidgetMax) {
+            setTimeout(() => {
+                this.formWidgetMax.widget[key] = val;
+            });
+        }
+    }
+
     onPropertyChange(key, newVal, ov?) {
 
         if (!this.formWidget) {
@@ -171,15 +192,33 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             return;
         }
 
-        this.formWidget.widget[key] = newVal;
+        this.setFormWidget(key, newVal);
+
+        if (key !== 'placeholder') {
+            this.setMaxFormWidget(key, newVal);
+        }
 
         switch (key) {
             case 'defaultvalue':
                 if (this.form.isLiveForm) {
                     this.setDefaultValue();
+                } else if (this.form.isLiveFilter) {
+                    this.minValue = newVal;
+                    this.value = newVal;
+                    this.form.filterOnDefault();
                 } else {
                     this.value = parseValueByType(newVal, undefined, this.widgettype);
                 }
+                break;
+            case 'maxdefaultvalue':
+                this.maxValue = newVal;
+                this.setMaxFormWidget('datavalue', newVal);
+                setTimeout(() => {
+                    this.form.filterOnDefault();
+                });
+                break;
+            case 'maxplaceholder':
+                this.setMaxFormWidget('placeholder', newVal);
                 break;
             case 'required':
                 this.setRequired();
@@ -192,6 +231,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 break;
             case 'show':
                 this.setRequired();
+                break;
+            case 'display-name':
+                this.displayname = newVal;
                 break;
         }
     }
@@ -223,16 +265,29 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     onValueChange(val) {
-        applyFilterOnField(this.form.datasource, this.widget, this.form.formFields, val);
+        if (isDataSetWidget(this.widgettype)) {
+            applyFilterOnField(this.form.datasource, this.widget, this.form.formFields, val);
+        }
+        if (this.form.isLiveFilter && this.form.autoupdate) {
+            this.form.filter();
+        }
     }
 
     ngOnInit() {
         super.ngOnInit();
+
+        const fieldName = this.key || this.name;
+
         this.ngForm = this.form.ngForm;
-        this.ngForm.addControl(this.key || this.name , this.createControl());
+        this.ngForm.addControl(fieldName, this.createControl());
+
+        if (this['is-range']) {
+            this.ngForm.addControl(fieldName + '_max', this.createControl());
+        }
+
         styler(this.nativeElement, this);
 
-        if (this.form.isLiveForm) {
+        if (this.form.isLiveForm || this.form.isLiveFilter) {
             this._control.valueChanges
                 .debounceTime(500)
                 .subscribe(this.onValueChange.bind(this));

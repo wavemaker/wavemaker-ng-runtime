@@ -18,9 +18,10 @@ declare const _;
 registerFormProps();
 
 const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-form'};
-const LIVE_WIDGET_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
+const LIVE_FORM_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
+const LIVE_FILTER_CONFIG = {widgetType: 'wm-livefilter', hostClass: 'panel app-panel app-livefilter clearfix liveform-inline'};
 
-const getWidgetConfig = isLiveForm => isLiveForm !== null ? LIVE_WIDGET_CONFIG : WIDGET_CONFIG;
+const getWidgetConfig = (isLiveForm, isLiveFilter) => (isLiveForm !== null ? LIVE_FORM_CONFIG : (isLiveFilter !== null ? LIVE_FILTER_CONFIG : WIDGET_CONFIG));
 
 @Component({
     selector: 'form[wmForm]',
@@ -32,11 +33,14 @@ const getWidgetConfig = isLiveForm => isLiveForm !== null ? LIVE_WIDGET_CONFIG :
 })
 export class FormComponent extends StylableComponent implements OnDestroy {
 
+    autoupdate;
     captionAlignClass: string;
     validationtype: string;
     captionalign: string;
     captionposition: string;
     captionsize;
+    collapsible: boolean;
+    expanded: boolean;
     elScope;
     _widgetClass = '';
     captionwidth: string;
@@ -47,6 +51,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     formfields = {};
     buttonArray = [];
     dataoutput;
+    datasource;
     dataSourceChange = new Subject();
     dataSourceChange$ = this.dataSourceChange.asObservable();
     formdata;
@@ -65,6 +70,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     postmessage;
     _liveTableParent;
     isLiveForm;
+    isLiveFilter;
     updateMode;
     resetForm: Function;
     // Live Form Methods
@@ -80,14 +86,18 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     save: Function;
     saveAndNew: Function;
     saveAndView: Function;
-    emptyDataModel: Function;
-    setDefaultValues: Function;
-    setPrevDataValues: Function;
-    getPrevDataValues: Function;
-    setPrevformFields: Function;
     setPrimaryKey: () => {};
+    setPrevDataValues: Function;
     dialogId: string;
-    datasource;
+    // Live Filter
+    enableemptyfilter;
+    pagesize;
+    result;
+    clearFilter: Function;
+    applyFilter: Function;
+    filter: Function;
+    filterOnDefault: Function;
+    execute: Function;
 
     private operationType;
     private _isLayoutDialog;
@@ -231,9 +241,10 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
         @Attribute('dataset.bind') public binddataset,
-        @Attribute('wmLiveForm') isLiveForm
+        @Attribute('wmLiveForm') isLiveForm,
+        @Attribute('wmLiveFilter') isLiveFilter
     ) {
-        super(inj, getWidgetConfig(isLiveForm));
+        super(inj, getWidgetConfig(isLiveForm, isLiveFilter));
 
         styler(this.nativeElement, this);
 
@@ -245,6 +256,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         this.elScope = this;
         this.resetForm = this.reset.bind(this);
         this.isLiveForm = isLiveForm !== null;
+        this.isLiveFilter = isLiveFilter !== null;
     }
 
     registerFormFields(formField) {
@@ -366,6 +378,13 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         return _.some(this.buttonArray, btn => {
             return _.includes(btn.position, position) && btn.updateMode === this.isUpdateMode;
         });
+    }
+
+    expandCollapsePanel() {
+        if (this.collapsible) {
+            // flip the active flag
+            this.expanded = !this.expanded;
+        }
     }
 
     get mode() {

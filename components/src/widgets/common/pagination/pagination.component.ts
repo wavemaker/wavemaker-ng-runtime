@@ -8,7 +8,6 @@ import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { getOrderByExpr, getWatchIdentifier, invokeEventHandler } from '../../../utils/widget-utils';
-import { getDataSource } from '../../../utils/data-utils';
 
 declare const _;
 
@@ -59,10 +58,8 @@ export class PaginationComponent extends StylableComponent {
     navcontrols = 'Basic';
     navigation;
 
-    navigationalign;
     maxsize;
     boundarylinks;
-    forceellipses;
     directionlinks;
 
     navigationClass;
@@ -92,11 +89,9 @@ export class PaginationComponent extends StylableComponent {
     __fullData;
     dataset;
     pagingOptions;
-    isBoundToFilter;
     filterFields;
     sortOptions;
     binddataset;
-    widgetName;
 
     setResult(result) {
         // TODO: Emit event only if result is changed
@@ -114,7 +109,7 @@ export class PaginationComponent extends StylableComponent {
         }
     }
 
-    /*Function to reset the paging values to default.*/
+    // Function to reset the paging values to default.
     resetPageNavigation() {
         this.pageCount = 0;
         this.dn.currentPage = 1;
@@ -211,16 +206,8 @@ export class PaginationComponent extends StylableComponent {
         let variableOptions: any = {};
         // Store the data in __fullData. This is used for client side searching witvah out modifying the actual dataset.
         this.__fullData = newVal;
-        this.isBoundToFilter = undefined;
         /*Check for sanity*/
         if (this.binddataset) {
-            if (newVal) {
-                if (newVal.isBoundToFilter && newVal.widgetName) {
-                    this.isBoundToFilter = true;
-                    this.widgetName = newVal.widgetName;
-                }
-            }
-
             dataSource = this.datasource || {};
             variableOptions = dataSource._options || {};
             /*Check for number of elements in the data set*/
@@ -318,7 +305,6 @@ export class PaginationComponent extends StylableComponent {
     getPageData(event, callback) {
         let data,
             startIndex;
-        // TODO: Handle Filter
 
         if (this.isDataSourceHasPaging()) {
             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
@@ -327,23 +313,7 @@ export class PaginationComponent extends StylableComponent {
                 'orderBy': this.sortOptions,
                 'matchMode': 'anywhere'
             }).then(response => {
-                if (response && response.hasOwnProperty('propertiesMap') && response.hasOwnProperty('pagingOptions')) {
-                    // Update the 'result' in the scope so that widgets bound to the data-navigator are updated
-                    this.setResult({
-                        'data': response.data,
-                        'propertiesMap': response.propertiesMap,
-                        'pagingOptions': response.pagingOptions,
-                        'filterFields': this.filterFields,
-                        'orderBy': this.sortOptions,
-                    });
-                    // Update the paging options and invoke the function to re-calculate the paging values.
-                    this.dataSize = response.pagingOptions.dataSize;
-                    this.maxResults = response.pagingOptions.maxResults;
-                    this.calculatePagingValues();
-                } else {
-                    this.setResult(response);
-                    this.onPageDataReady(event, response, callback);
-                }
+                this.onPageDataReady(event, response, callback);
             }, error => {
                 // If error is undefined, do not show any message as this may be discarded request
                 if (error) {
@@ -437,10 +407,10 @@ export class PaginationComponent extends StylableComponent {
         this.goToPage(event, callback);
     }
 
-    setBindDataSet(binddataset, parent) {
+    setBindDataSet(binddataset, parent, dataSource) {
         this.binddataset = binddataset;
         this.registerDestroyListener($watch(binddataset, parent, {}, nv => this.widget.dataset = nv, getWatchIdentifier(this.widgetId, 'dataset')));
-        this.datasource = getDataSource(binddataset, parent);
+        this.datasource = dataSource;
     }
 
     onPropertyChange(key: string, nv, ov) {
