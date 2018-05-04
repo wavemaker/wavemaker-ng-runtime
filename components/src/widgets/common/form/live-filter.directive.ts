@@ -67,7 +67,7 @@ export class LiveFilterDirective {
         this.form.formFields.forEach(filterField => {
             // Added check for range field
             if (!filterField.readonly && filterField.show) {
-                if (filterField.widget === FormWidgetType.AUTOCOMPLETE || filterField.widget === FormWidgetType.TYPEAHEAD) {
+                if (filterField.widgettype === FormWidgetType.AUTOCOMPLETE || filterField.widgettype === FormWidgetType.TYPEAHEAD) {
                     this.form.$element.find('div[name=' + filterField.name + '] input').val('');
                 }
                 if (filterField['is-range']) {
@@ -110,7 +110,7 @@ export class LiveFilterDirective {
             const fieldSelector = 'div[name=' + field.name + '] input';
             const $el = this.form.$element;
             let fieldEle;
-            if ((field.widget === FormWidgetType.AUTOCOMPLETE || field.widget === FormWidgetType.TYPEAHEAD) && $el) {
+            if ((field.widgettype === FormWidgetType.AUTOCOMPLETE || field.widgettype === FormWidgetType.TYPEAHEAD) && $el) {
                 fieldEle = $el.find(fieldSelector);
                 if (!field['is-range']) {
                     dataModel[field.field] = {
@@ -182,7 +182,7 @@ export class LiveFilterDirective {
                     };
                 }
             } else {
-                switch (filterField.widget) {
+                switch (filterField.widgettype) {
                     case FormWidgetType.SELECT:
                     case FormWidgetType.RADIOSET:
                         if (getEnableEmptyFilter(this.form.enableemptyfilter) && filterField._value === FILTER_CONSTANTS.EMPTY_KEY) {

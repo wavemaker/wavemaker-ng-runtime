@@ -409,7 +409,9 @@ export class PaginationComponent extends StylableComponent {
 
     setBindDataSet(binddataset, parent, dataSource) {
         this.binddataset = binddataset;
-        this.registerDestroyListener($watch(binddataset, parent, {}, nv => this.widget.dataset = nv, getWatchIdentifier(this.widgetId, 'dataset')));
+        setTimeout(() => {
+            this.registerDestroyListener($watch(binddataset, parent, {}, nv => this.widget.dataset = nv, getWatchIdentifier(this.widgetId, 'dataset')));
+        });
         this.datasource = dataSource;
     }
 

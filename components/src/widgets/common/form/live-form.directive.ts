@@ -12,7 +12,7 @@ declare const _, moment;
 
 registerLiveFormProps();
 
-const isTimeType = field => field.widget === DataType.TIME || (field.type === DataType.TIME && !field.widget);
+const isTimeType = field => field.widgettype === DataType.TIME || (field.type === DataType.TIME && !field.widgettype);
 const getValidTime = val => {
     if (val) {
         const date = (new Date()).toDateString();
@@ -122,7 +122,7 @@ export class LiveFormDirective {
 
             /*collect the values from the fields and construct the object*/
             /*Format the output of date time widgets to the given output format*/
-            if ((field.widget && isDateTimeType(field.widget)) || isDateTimeType(field.type)) {
+            if ((field.widgettype && isDateTimeType(field.widgettype)) || isDateTimeType(field.type)) {
                 if (field.value) {
                     dateTime = getValidDateObject(field.value);
                     if (field.outputformat === DataType.TIMESTAMP || field.type === DataType.TIMESTAMP) {
@@ -286,7 +286,7 @@ export class LiveFormDirective {
                     // resetFileUploadWidget(field, true);
                     // field.href = $scope.getBlobURL(prevDataValues, field.key, field.value);
                 }
-                // if (WM.isUndefined(field.value) && field.widget === 'autocomplete') { //Empty the query in case of autocomplete widget
+                // if (WM.isUndefined(field.value) && field.widgettype === 'autocomplete') { //Empty the query in case of autocomplete widget
                 //     formEle.find('div[name=' + field.name + '] input').val('');
                 // }
                 // this.applyFilterOnField(field);
