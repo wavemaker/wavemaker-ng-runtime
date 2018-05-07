@@ -1,12 +1,13 @@
 import { Directive, Inject, Self } from '@angular/core';
+
+import { $appDigest, DataSource, DataType, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
+
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
-import {$appDigest, DataType, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject} from '@wm/core';
 import { Live_Operations, performDataOperation } from '../../../utils/data-utils';
 import { invokeEventHandler } from '../../../utils/widget-utils';
 import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { DataSource } from '@wm/core';
 
 declare const _, moment;
 
@@ -306,7 +307,7 @@ export class LiveFormDirective {
         }
         this.form.isUpdateMode = false;
         if (this.form.isLayoutDialog) {
-             this.dialogService.closeDialog(this.form.dialogId);
+             this.dialogService.close(this.form.dialogId);
         }
         if (this.form._liveTableParent) {
             this.form._liveTableParent.onCancel();

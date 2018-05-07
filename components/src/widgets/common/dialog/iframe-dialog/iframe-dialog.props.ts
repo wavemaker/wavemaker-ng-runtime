@@ -1,22 +1,26 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-iframedialog',
         new Map(
             [
-                ['closable', {value: true, ...PROP_BOOLEAN_NOTIFY}],
+                ['class', PROP_STRING],
+                ['closable', {value: true, PROP_BOOLEAN}],
                 ['encodeurl', {value: false, ...PROP_BOOLEAN}],
-                ['height', {value: '400', ...PROP_STRING_NOTIFY}],
-                ['name', PROP_STRING_NOTIFY],
-                ['iconclass', {value: 'wi wi-globe', PROP_STRING}],
-                ['keyboard', {value: true, ...PROP_BOOLEAN}],
+                ['height', {value: '400px', ...PROP_STRING}],
+                ['iconclass', {value: 'wi wi-warning', PROP_STRING}],
+                ['iconheight', PROP_STRING],
+                ['iconmargin', PROP_STRING],
+                ['iconwidth', PROP_STRING],
                 ['modal', {value: false, ...PROP_BOOLEAN}],
+                ['name', PROP_STRING],
                 ['oktext', {value: 'OK', ...PROP_STRING}],
                 ['showactions', {value: true, ...PROP_BOOLEAN}],
                 ['showheader', {value: true, ...PROP_BOOLEAN}],
-                ['title', {value: 'External Content', ...PROP_STRING_NOTIFY}],
-                ['url', {value: 'https://www.bing.com', ...PROP_STRING}]
+                ['tabindex', PROP_NUMBER],
+                ['title', {value: 'External Content', ...PROP_STRING}],
+                ['url', {value: '//www.wavemaker.com', ...PROP_STRING}]
             ]
         )
     );

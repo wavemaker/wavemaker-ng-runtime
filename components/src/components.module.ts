@@ -25,8 +25,9 @@ import { ContentComponent } from './widgets/common/content/content.component';
 import { CurrencyComponent } from './widgets/common/currency/currency.component';
 import { DateComponent } from './widgets/common/date/date.component';
 import { DatetimeComponent } from './widgets/common/date-time/date-time.component';
-import { DialogActionsComponent } from './widgets/common/dialog/dialog-actions/dialog-actions.component';
 import { DialogComponent } from './widgets/common/dialog/dialog.component';
+import { DialogBodyDirective } from './widgets/common/dialog/dialog-body/dialog-body.directive';
+import { DialogFooterDirective } from './widgets/common/dialog/dialog-footer/dialog-footer.directive';
 import { DialogHeaderComponent } from './widgets/common/dialog/dialog-header/dialog-header.component';
 import { FooterDirective } from './widgets/common/footer/footer.directive';
 import { FormActionDirective } from './widgets/common/form/form-action/form-action.directive';
@@ -50,7 +51,6 @@ import { LiveFormDirective } from './widgets/common/form/live-form.directive';
 import { LiveFilterDirective } from './widgets/common/form/live-filter.directive';
 import { LiveTableComponent } from './widgets/common/live-table/live-table.component';
 import { LoginComponent } from './widgets/common/login/login.component';
-import { LoginDialogComponent } from './widgets/common/dialog/login-dialog/login-dialog.component';
 import { MenuComponent } from './widgets/common/menu/menu.component';
 import { MenuDropdownComponent } from './widgets/common/menu/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './widgets/common/menu/menu-dropdown-item.component';
@@ -112,8 +112,9 @@ const wmComponents = [
     CurrencyComponent,
     DateComponent,
     DatetimeComponent,
-    DialogActionsComponent,
     DialogComponent,
+    DialogBodyDirective,
+    DialogFooterDirective,
     DialogHeaderComponent,
     FooterDirective,
     FormActionDirective,
@@ -136,7 +137,6 @@ const wmComponents = [
     LiveFormDirective,
     LiveTableComponent,
     LoginComponent,
-    LoginDialogComponent,
     MenuComponent,
     MenuDropdownComponent,
     MenuDropdownItemComponent,

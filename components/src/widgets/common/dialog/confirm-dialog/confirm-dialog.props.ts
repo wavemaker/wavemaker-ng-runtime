@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -6,15 +6,21 @@ export const registerProps = () => {
         new Map(
             [
                 ['canceltext', {value: 'CANCEL', ...PROP_STRING}],
-                ['closable', {value: true, ...PROP_BOOLEAN_NOTIFY}],
-                ['name', PROP_STRING_NOTIFY],
-                ['iconclass', {value: 'wi wi-done', PROP_STRING}],
-                ['keyboard', {value: true, ...PROP_BOOLEAN}],
-                ['message', {value: 'I am confirm box!', ...PROP_STRING_NOTIFY}],
+                ['class', PROP_STRING],
+                ['closable', {value: true, PROP_BOOLEAN}],
+                ['iconclass', {value: 'wi wi-warning', PROP_STRING}],
+                ['iconheight', PROP_STRING],
+                ['iconmargin', PROP_STRING],
+                ['iconwidth', PROP_STRING],
+                ['message', {value: 'I am confirm box!', ...PROP_STRING}],
                 ['modal', {value: false, ...PROP_BOOLEAN}],
+                ['name', PROP_STRING],
                 ['oktext', {value: 'OK', ...PROP_STRING}],
-                ['title', {value: 'Confirm', ...PROP_STRING_NOTIFY}]
+                ['tabindex', PROP_NUMBER],
+                ['title', {value: 'Alert', ...PROP_STRING}]
             ]
         )
     );
 };
+
+

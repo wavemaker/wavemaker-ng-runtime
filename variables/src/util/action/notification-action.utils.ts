@@ -61,7 +61,7 @@ export const notify = (variable, options, success, error)  => {
             scope = options.scope.$$childTail || {};
         }*/
         dialogId = (variableOwner === VARIABLE_CONSTANTS.OWNER.APP ) ? commonPageDialogId : dialogId;
-        dialogService.openDialog(dialogId, {
+        dialogService.open(dialogId, {
             'title' : options.title || variable.dataBinding.title,
             'message' : options.message || variable.dataBinding.text,
             'oktext' : options.okButtonText || variable.dataBinding.okButtonText,

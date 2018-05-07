@@ -1,77 +1,56 @@
-import { Injectable, TemplateRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import { BsModalService } from 'ngx-bootstrap';
-
-import { invokeEventHandler } from '../../../utils/widget-utils';
+import { BaseDialog } from './base-dialog/base-dialog';
 
 @Injectable()
 export class DialogService {
 
-    private dialogInstances: any = {};
+    /**
+     * map which contains the references to all dialogs by name
+     * @type {Map<string, BaseDialog>}
+     */
+    private dialogRefs = new Map<string, BaseDialog>();
 
-    private dialogIDCount: number = 0;
+    constructor() {}
 
-    constructor(private modalService: BsModalService) {}
-
-    public registerDialog(dialogId: string, component) {
-        if (!dialogId) {
-            dialogId = String(++this.dialogIDCount);
-        }
-        this.dialogInstances[dialogId] = component;
-        this.assignInitMethods(component);
-        return dialogId;
-    }
-
-    public openDialog(dialogId: string, dialogParams?: any) {
-        if (!this.dialogInstances[dialogId]) {
+    /**
+     * Register dialog by name
+     * @param {string} name
+     * @param {BaseDialog} dialogRef
+     */
+    public register(name: string, dialogRef: BaseDialog) {
+        if (!name) {
             return;
         }
-        Object.assign(this.dialogInstances[dialogId], dialogParams);
-        this.dialogInstances[dialogId].open();
+        this.dialogRefs.set(name, dialogRef);
     }
 
-    public closeDialog(dialogId: string) {
-        if (!this.dialogInstances[dialogId]) {
+    /**
+     * Opens the dialog with the given name
+     * @param {string} name
+     */
+    public open(name: string) {
+        const dialogRef = this.dialogRefs.get(name);
+
+        if (!dialogRef) {
             return;
         }
-        this.dialogInstances[dialogId].close();
+
+        dialogRef.open();
     }
 
-    // Opens the dialog from the template reference provided
-    public openDialogFromTemplate(component, dialogId: string, template: TemplateRef<any>, dialogOptions?) {
-        if (this.dialogInstances[dialogId] || !dialogId || !template) {
+    /**
+     * closes the dialog with the given name
+     * @param {string} name
+     */
+    public close(name: string) {
+        const dialogRef = this.dialogRefs.get(name);
+
+        if (!dialogRef) {
             return;
         }
-        this.dialogInstances[dialogId] = component;
-        component.bsModalRef = this.modalService.show(template, dialogOptions);
-        if (!component.close) {
-            component.close = () => {
-                component.bsModalRef.hide();
-                if (dialogOptions.onClose) {
-                    dialogOptions.onClose();
-                }
-            };
-        }
-    }
 
-    public getDialogInstance(dialogId) {
-        return this.dialogInstances[dialogId] || {};
-    }
-
-    private assignInitMethods(component) {
-        // assign open, close methods
-        component.open = () => {
-            component.onBeforeDialogOpen();
-            component.bsModalRef = component.modalService.show(component.dialogTemplate, component.modalConfig);
-            component.isOpen = true;
-            invokeEventHandler(component, 'opened');
-        };
-
-        component.close = () => {
-            component.bsModalRef.hide();
-            component.isOpen = false;
-            invokeEventHandler(component, 'hidden');
-            invokeEventHandler(component, 'close');
-        };
+        dialogRef.close();
     }
 }
+// Todo: Vinay - accept dialogParams for openDialog method

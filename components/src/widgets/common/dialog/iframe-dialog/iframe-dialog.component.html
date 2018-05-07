@@ -1,15 +1,16 @@
-<ng-template #iframeModal>
-    <div wmDialogHeader closable.bind="closable"
-         iconclass.bind="iconclass"
-         iconwidth.bind="iconwidth"
-         iconheight.bind="iconheight"
-         iconmargin.bind="iconmargin"
-         caption.bind="title"
-         dialogId.bind="dialogId"></div>
-    <div class="app-dialog-body modal-body" [style.height.px]="bodyHeight">
+<ng-template #dialogTemplate>
+    <div wmDialogHeader [closable]="closable"
+         [iconclass]="iconclass"
+         [iconwidth]="iconwidth"
+         [iconheight]="iconheight"
+         [iconmargin]="iconmargin"
+         [heading]="title"
+         *ngIf="showheader"
+    ></div>
+    <div wmDialogBody>
         <div wmIframe encodeurl.bind="encodeurl" iframesrc.bind="url" height="100%" width="100%" hint.bind="hint"></div>
     </div>
-    <div class="app-dialog-footer modal-footer">
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="okButtonHandler()"></button>
+    <div wmDialogFooter *ngIf="showactions">
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="onOk($event)"></button>
     </div>
 </ng-template>

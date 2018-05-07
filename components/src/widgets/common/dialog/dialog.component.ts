@@ -1,17 +1,14 @@
-import { Component, ContentChild, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, ContentChild, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
+import { toBoolean } from '@wm/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
-import { DialogService } from './dialog.service';
-import { DialogActionsComponent } from './dialog-actions/dialog-actions.component';
+import { DialogRef, WidgetRef } from '../../framework/types';
 import { registerProps } from './dialog.props';
-import { StylableComponent } from '../base/stylable.component';
+import { BaseDialog } from './base-dialog/base-dialog';
 
-declare const $;
+const DIALOG_CLS = 'app-dialog modal-dialog';
 
-const WIDGET_INFO = {widgetType: 'wm-dialog', hostClass: ''};
+const WIDGET_INFO = {widgetType: 'wm-dialog'};
 
 registerProps();
 
@@ -19,78 +16,47 @@ registerProps();
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html',
     providers: [
+        {provide: DialogRef, useExisting: forwardRef(() => DialogComponent)},
         {provide: WidgetRef, useExisting: forwardRef(() => DialogComponent)}
     ]
 })
-export class DialogComponent extends StylableComponent implements OnInit {
+export class DialogComponent extends BaseDialog implements OnInit {
 
-    dialogId: any;
-    dialogWidth: any;
-    modalConfig: ModalOptions = {};
-    isOpen: boolean;
-    open: Function;
-    bodyHeight;
-    close: Function;
-    class: string;
-    /*modal reference*/
-    bsModalRef: BsModalRef;
+    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
+    @ContentChild(TemplateRef) dialogContent: TemplateRef<any>;
 
-    actiontitle;
-    actionlink;
-    contentclass;
-
-    @ViewChild('modalTemplate') dialogTemplate: TemplateRef<any>;
-
-    @ContentChild(DialogActionsComponent) dialogActionsComponent;
-
-    constructor(inj: Injector, public modalService: BsModalService, private dialogService: DialogService) {
-        super(inj, WIDGET_INFO);
-        styler(
-            this.nativeElement,
-            this,
-            APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER,
-            ['width']
+    constructor(
+        inj: Injector,
+        @Attribute('class') dialogClass: string,
+        @Attribute('modal') modal: string,
+        @Attribute('closable') closable: string,
+    ) {
+        super(
+            inj,
+            WIDGET_INFO,
+            {
+                class: `${DIALOG_CLS} ${dialogClass || ''}`,
+                backdrop: toBoolean(modal) || 'static',
+                keyboard: toBoolean(closable)
+            }
         );
     }
 
-    onBeforeDialogOpen() {
-        this.modalConfig.class =  this.class;
+    protected getTemplateRef(): TemplateRef<any> {
+        return this.dialogTemplate;
     }
 
-    onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'name':
-                this.dialogId = nv;
-                if (this.dialogActionsComponent) {
-                    this.dialogActionsComponent.dialogId = nv;
-                }
-                break;
-            case 'closable':
-                this.modalConfig.keyboard = nv;
-                this.modalConfig.backdrop = !nv ? 'static' : nv;
-                break;
+    protected processAttr(attrName: string, attrValue: string) {
+        // ignore the class attribute.
+        // Prevent the framework from setting the class on the host element.
+        if (attrName === 'class') {
+            return;
         }
-    }
-
-    onStyleChange(key, nv, ov) {
-        switch (key) {
-            case 'width':
-                if (nv) {
-                    $(this.nativeElement).closest('.modal-dialog').css('width', nv);
-                }
-                break;
-            case 'height':
-                if (nv.indexOf('%') > 0) {
-                    this.bodyHeight = (window.innerHeight * (parseInt(nv, 10) / 100) - 112);
-                } else {
-                    this.bodyHeight = parseInt('' + (nv - 112), 10);
-                }
-                break;
-        }
+        super.processAttr(attrName, attrValue);
     }
 
     ngOnInit() {
         super.ngOnInit();
-        this.dialogId = this.dialogService.registerDialog(this.dialogId, this);
+        this.register();
     }
 }

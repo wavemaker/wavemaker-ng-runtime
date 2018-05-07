@@ -1,119 +1,80 @@
-import { Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
+import { Attribute, Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { WidgetRef } from '../../../framework/types';
-import { invokeEventHandler } from '../../../../utils/widget-utils';
-import { DialogService } from '../dialog.service';
+import { toBoolean } from '@wm/core';
+
+import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './confirm-dialog.props';
-import { StylableComponent } from '../../base/stylable.component';
+import { BaseDialog } from '../base-dialog/base-dialog';
 
-const WIDGET_INFO = {widgetType: 'wm-confirmdialog', hostClass: ''};
-
-const defaultClass = 'app-dialog modal-dialog app-confirm-dialog';
+const DIALOG_CLS = 'app-dialog modal-dialog app-confirm-dialog';
+const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
 
 registerProps();
-
-declare const _, $;
 
 @Component({
     selector: 'div[wmConfirmDialog]',
     templateUrl: './confirm-dialog.component.html',
     providers: [
+        {provide: DialogRef, useExisting: forwardRef(() => ConfirmDialogComponent)},
         {provide: WidgetRef, useExisting: forwardRef(() => ConfirmDialogComponent)}
     ]
 })
-export class ConfirmDialogComponent extends StylableComponent implements OnInit {
+export class ConfirmDialogComponent extends BaseDialog implements OnInit {
 
-    bsModalRef: BsModalRef;
-    isOpen;
-    dialogId: string;
-    modalConfig: ModalOptions = {};
-    bodyHeight: number;
-    _class;
-    messageclass: string;
-    onOk: Function;
-    onCancel: Function;
+    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
 
-    get class () {
-        return [defaultClass, this.messageclass, this._class].join(' ');
-    }
-
-    set class (nv) {
-        this._class = nv;
-    }
-
-    close;
-
-    @ViewChild('confirmModal') dialogTemplate: TemplateRef<any>;
-
-    constructor(inj: Injector, private modalService: BsModalService, private dialogService: DialogService) {
-        super(inj, WIDGET_INFO);
-        // TODO: Get the modal element reference
-        styler(
-            this.nativeElement,
-            this,
-            APPLY_STYLES_TYPE.CONTAINER,
-            ['height', 'width']
-        );
-        styler(
-            this.nativeElement.querySelector('.app-dialog-body.modal-body') as HTMLElement,
-            this,
-            APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER
+    constructor(
+        inj: Injector,
+        @Attribute('class') dialogClass: string,
+        @Attribute('modal') modal: string,
+        @Attribute('closable') closable: string,
+    ) {
+        super(
+            inj,
+            WIDGET_INFO,
+            {
+                class: `${DIALOG_CLS} ${dialogClass || ''}`,
+                backdrop: toBoolean(modal) || 'static',
+                keyboard: toBoolean(closable)
+            }
         );
     }
 
-    onBeforeDialogOpen() {
-        this.modalConfig.class = this.class;
+    protected getTemplateRef(): TemplateRef<any> {
+        return this.dialogTemplate;
     }
 
-    okButtonHandler() {
-        invokeEventHandler(this, 'ok');
-        if (this.onOk) {
-            this.onOk();
+    protected processAttr(attrName: string, attrValue: string) {
+        // ignore the class attribute.
+        // Prevent the framework from setting the class on the host element.
+        if (attrName === 'class') {
+            return;
         }
+        super.processAttr(attrName, attrValue);
+    }
+
+    /**
+     * Click event handler for the ok button
+     * invokes on-ok event callback
+     * @param {Event} $event
+     */
+    onOk($event: Event) {
+        this.invokeEventCallback('ok', {$event});
         this.close();
     }
 
-    cancelButtonHandler() {
-        invokeEventHandler(this, 'cancel');
-        if (this.onCancel) {
-            this.onCancel();
-        }
+    /**
+     * Click event handler for the cancel button
+     * invokes on-cancel event callback
+     * @param {Event} $event
+     */
+    onCancel($event: Event) {
+        this.invokeEventCallback('cancel', {$event});
         this.close();
-    }
-
-    onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'name':
-                this.dialogId = nv;
-                break;
-            case 'closable':
-                this.modalConfig.keyboard = nv;
-                this.modalConfig.backdrop = !nv ? 'static' : nv;
-                break;
-        }
-    }
-
-    onStyleChange(key, nv, ov) {
-        switch (key) {
-            case 'width':
-                if (nv) {
-                    $(this.nativeElement).closest('.modal-dialog').css('width', nv);
-                }
-                break;
-            case 'height':
-                if (nv.indexOf('%') > 0) {
-                    this.bodyHeight = (window.innerHeight * (parseInt(nv, 10) / 100) - 112);
-                } else {
-                    this.bodyHeight = parseInt('' + (nv - 112), 10);
-                }
-                break;
-        }
     }
 
     ngOnInit() {
         super.ngOnInit();
-        this.dialogService.registerDialog(this.dialogId, this);
+        this.register();
     }
 }

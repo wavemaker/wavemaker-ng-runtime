@@ -1,0 +1,77 @@
+import { Injector, TemplateRef } from '@angular/core';
+
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
+
+import { IDialog, IWidgetConfig } from '../../../framework/types';
+import { DialogService } from '../dialog.service';
+import { BaseComponent } from '../../base/base.component';
+
+export abstract class BaseDialog extends BaseComponent implements IDialog {
+
+    public name: string;
+
+    private readonly dialogService: DialogService;
+    private readonly bsModal: BsModalService;
+
+    private dialogRef: BsModalRef;
+
+    private isOpened = false;
+
+    protected constructor(
+        inj: Injector,
+        widgetConfig: IWidgetConfig,
+        protected modalOptions: ModalOptions
+    ) {
+        super(inj, widgetConfig);
+        this.dialogService = inj.get(DialogService);
+        this.bsModal = inj.get(BsModalService);
+    }
+
+    /**
+     * Opens the dialog
+     * Subscribe to the onShown event emitter of bsModal and trigger on-opened event callback
+     */
+    public open() {
+        if (this.isOpened) {
+            return;
+        }
+        const subscription = this.bsModal.onShown.subscribe(() => {
+            this.invokeEventCallback('opened');
+            subscription.unsubscribe();
+        });
+        this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
+        this.isOpened = true;
+    }
+
+    /**
+     * closes the dialog
+     * invokes the on-close event callback
+     */
+    public close() {
+        if (!this.isOpened) {
+            return;
+        }
+        this.invokeEventCallback('close');
+        this.dialogRef.hide();
+    }
+
+    /**
+     * Register the dialog with the dialog service for programmatic access
+     */
+    protected register() {
+        this.dialogService.register(this.name, this);
+    }
+
+    /**
+     * subclasses of BaseDialog must implement this method to return the proper template element ref
+     * bsModal will use this refence to open the dialog
+     * @returns {TemplateRef<any>}
+     */
+    protected abstract getTemplateRef(): TemplateRef<any>;
+}
+
+// Todo:Bandhavya - handle DeviceServie.onBackButtonTap
+// DeviceService.onBackButtonTap(function () {
+// dialogCtrl._CancelButtonHandler();
+// return false;
+// });

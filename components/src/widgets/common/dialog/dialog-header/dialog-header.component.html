@@ -2,10 +2,7 @@
     <span aria-hidden="true">&times;</span>
 </button>
 <h4 class="app-dialog-title modal-title">
-    <i class="{{_iconclass}}" [style.width]="iconwidth" [style.height]="iconheight" [style.margin]="iconmargin"></i>
-    <span class="dialog-heading">{{caption}}</span>
-    <span class="dialog-sub-heading" *ngIf="subheading" [title]="subheading">{{subheading}}</span>
+    <i [ngClass]="iconclass" [ngStyle]="{width: iconwidth, height: iconheight, margin: iconmargin}"></i>
+    <span class="dialog-heading" [textContent]="heading"></span>
+    <span class="dialog-sub-heading" *ngIf="subheading" [title]="subheading" [textContent]="subheading"></span>
 </h4>
-<div class="dialog-header-action">
-    <ng-content></ng-content>
-</div>
