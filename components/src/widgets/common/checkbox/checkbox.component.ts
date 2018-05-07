@@ -33,17 +33,18 @@ export class CheckboxComponent  extends BaseFormComponent implements OnInit {
      */
     uncheckedvalue: string;
 
-    get datavalue(){
-        return this.getComputedDataValue(this.model);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
-    getComputedDataValue(modelValue) {
-        if (this.checkedvalue && modelValue) {
-            return this.checkedvalue;
-        } else if (this.uncheckedvalue && !modelValue) {
-            return this.uncheckedvalue;
-        }
-        return modelValue;
+    ngOnInit() {
+        super.ngOnInit();
+        // Apply styles on the inner label node
+        styler(this.nativeElement.querySelector('label'), this);
+    }
+
+    get datavalue(){
+        return this.getComputedDataValue(this.model);
     }
 
     set datavalue(value: boolean | string) {
@@ -55,25 +56,24 @@ export class CheckboxComponent  extends BaseFormComponent implements OnInit {
         this.invokeOnChange(this.datavalue);
     }
 
+    getComputedDataValue(modelValue) {
+        if (this.checkedvalue && modelValue) {
+            return this.checkedvalue;
+        } else if (this.uncheckedvalue && !modelValue) {
+            return this.uncheckedvalue;
+        }
+        return modelValue;
+    }
+
     onPropertyChange(key, nv, ov) {
         if (key === 'type') {
             toggleClass(this.nativeElement, 'app-toggle', nv === 'toggle');
         }
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        styler(this.nativeElement.querySelector('label'), this);
-    }
-
     onChange($event) {
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);
-        $event.stopPropagation();
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
     }
 }

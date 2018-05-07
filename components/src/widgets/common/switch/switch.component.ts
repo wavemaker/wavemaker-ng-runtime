@@ -55,17 +55,17 @@ export class SwitchComponent extends BaseFormComponent {
     private datasetType;
     private btnwidth;
 
+    constructor(inj: Injector, ) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this);
+    }
+
     set datavalue(val) {
         this._model_ = val;
     }
 
     get datavalue() {
         return this._model_;
-    }
-
-    constructor(inj: Injector, ) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
     }
 
     onPropertyChange(key, newVal, oldVal) {

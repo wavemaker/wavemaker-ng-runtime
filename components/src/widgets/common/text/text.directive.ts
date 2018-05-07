@@ -39,6 +39,12 @@ export class TextDirective extends StylableComponent {
     @HostBinding() autofocus: boolean;
     @HostBinding() autocomplete: boolean;
 
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+
+        styler(this.nativeElement, this);
+    }
+
     onChange(fn, locals) {
         locals.newVal = this.datavalue;
         locals.oldVal = this._oldVal;
@@ -62,12 +68,5 @@ export class TextDirective extends StylableComponent {
         }
 
         return super.shouldRegisterHostEvent(eventName);
-    }
-
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
-
-        addClass(this.nativeElement, DEFAULT_CLS);
-        styler(this.nativeElement, this);
     }
 }

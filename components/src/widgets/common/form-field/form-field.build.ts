@@ -7,11 +7,22 @@ import { isDataSetWidget } from '../../../utils/widget-utils';
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
 
-const getWidgetTemplate = (attrs, widgetType, counter, pCounter, isMaxWidget?) => {
+const getEventsTemplate = (attrs) => {
+    const eventAttrs = new Map();
+    attrs.forEach((value, key) => {
+       if (key.endsWith('.event')) {
+           eventAttrs.set(key, value);
+           attrs.delete(key);
+       }
+    });
+    return getAttrMarkup(eventAttrs);
+};
+
+const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isMaxWidget?) => {
     let tmpl;
     const fieldName = attrs.get('key') || attrs.get('name');
     const formControl = isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
-    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl}`;
+    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl} ${eventsTmpl}`;
     const tmplRef = isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const ngModelTmpl = isMaxWidget ? `[(ngModel)]="${counter}.maxValue"` : `[(ngModel)]="${counter}.datavalue"`;
     switch (widgetType) {
@@ -90,13 +101,13 @@ const getWidgetTemplate = (attrs, widgetType, counter, pCounter, isMaxWidget?) =
 };
 
 
-const getTemplate = (attrs, widgetType, counter, pCounter) => {
+const getTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter) => {
         if (attrs.get('is-range') !== 'true') {
-            return getWidgetTemplate(attrs, widgetType, counter, pCounter);
+            return getWidgetTemplate(attrs, widgetType, eventsTmpl, counter, pCounter);
         }
         // TODO: Handle mobile case
-        return `<div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, counter, pCounter)}</div>
-                <div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, counter, pCounter, true)}</div>`;
+        return `<div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, eventsTmpl, counter, pCounter)}</div>
+                <div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, true)}</div>`;
 };
 
 const getCaptionByWidget = (attrs, widgetType, counter) => {
@@ -133,6 +144,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
                                    class="help-block text-danger"
                                    [textContent]="${counter}.validationmessage"></p>` : '';
+            const eventsTmpl = getEventsTemplate(attrs);
             attrs.delete('widget');
             shared.set('counter', counter);
             return `<${tagName} data-role="${dataRole}" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" [class.hidden]="!${counter}.show" ${getAttrMarkup(attrs)}>
@@ -143,7 +155,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                             <div [ngClass]="[${pCounter}._widgetClass, ${counter}.class]">
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
-                                ${getTemplate(attrs, widgetType, counter, pCounter)}
+                                ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter)}
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>
                                 ${validationMsg}

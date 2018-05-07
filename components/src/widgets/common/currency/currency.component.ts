@@ -36,10 +36,11 @@ export class CurrencyComponent extends BaseFormComponent implements OnInit {
         return CONSTANTS_CURRENCY[this.currency || 'USD'].symbol;
     }
 
+    // TODO: commanalize onchange event
     onChange($event) {
-        this.invokeEventCallback('change', {$event, newVal: $event, oldVal: this.oldVal});
-        this.oldVal = $event;
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);
+        this.invokeEventCallback('change', {$event, newVal: $event, oldVal: this.oldVal});
+        this.oldVal = $event;
     }
 }

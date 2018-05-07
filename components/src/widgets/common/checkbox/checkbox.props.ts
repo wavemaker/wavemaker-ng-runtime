@@ -4,7 +4,6 @@ export const checkboxProps = new Map(
     [
         ['caption', PROP_STRING],
         ['checkedvalue', PROP_STRING],
-        ['color', PROP_STRING],
         ['datavalue', PROP_STRING_NOTIFY],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],

@@ -23,7 +23,6 @@ export class TextareaDirective extends StylableComponent {
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.maxlength') maxchars: string;
     @HostBinding('attr.placeholder') placeholder: string;
-    @HostBinding('value') datavalue: any;
     @HostBinding() disabled: boolean;
     @HostBinding() required: boolean;
     @HostBinding() readonly: boolean;
