@@ -70,10 +70,10 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     toggleDialogVisibility(flag) {
         const dialogId = this.form.dialogId;
         if (flag) {
-            this.dialogService.openDialog(dialogId);
+            this.dialogService.open(dialogId);
             this.onDialogOpen();
         } else {
-            this.dialogService.closeDialog(dialogId);
+            this.dialogService.close(dialogId);
         }
     }
 

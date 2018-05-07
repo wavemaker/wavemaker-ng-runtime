@@ -1,59 +1,31 @@
-import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
+import { Component, ElementRef, Inject, Input } from '@angular/core';
 
-import { WidgetRef } from '../../../framework/types';
-import { BaseComponent } from '../../base/base.component';
-import { registerProps } from './dialog-header.props';
-import { DialogService } from '../dialog.service';
+import { DialogRef } from '../../../framework/types';
+import { addClass } from '@wm/core';
+import { BaseDialog } from '../base-dialog/base-dialog';
 
-const WIDGET_INFO = {widgetType: 'wm-dialogheader', hostClass: 'app-dialog-header modal-header'};
-
-registerProps();
+const DEFAULT_CLS = 'app-dialog-header modal-header';
+const DEFAULT_ICON_DIMENSIONS = '21px';
 
 @Component({
     selector: 'div[wmDialogHeader]',
-    templateUrl: './dialog-header.component.html',
-    providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => DialogHeaderComponent)}
-    ]
+    templateUrl: './dialog-header.component.html'
 })
-export class DialogHeaderComponent extends BaseComponent {
+export class DialogHeaderComponent {
 
-    @HostBinding('attr.title') hint: string;
+    @Input() public iconwidth = DEFAULT_ICON_DIMENSIONS;
+    @Input() public iconheight = DEFAULT_ICON_DIMENSIONS;
+    @Input() public iconmargin: string;
+    @Input() public iconclass: string;
+    @Input() public closable = true;
+    @Input() public heading: string;
+    @Input() public subheading: string;
 
-    constructor(inj: Injector, private dialogService: DialogService) {
-        super(inj, WIDGET_INFO);
+    constructor(elRef: ElementRef, @Inject(DialogRef) private dialogRef: BaseDialog) {
+        addClass(elRef.nativeElement, DEFAULT_CLS);
     }
 
-    _iconclass;
-
-    dialogId;
-
-    private iconurl;
-
-    set iconclass(newVal) {
-        if (newVal && newVal !== '_none_') {
-            this.iconurl = '';
-            this.iconwidth = this.iconheight = this.defaultIconDimensions;
-        } else {
-            this.iconwidth = this.iconheight = '';
-        }
-        this._iconclass = newVal;
+    public closeDialog() {
+        this.dialogRef.close();
     }
-    /*This property defines the margin of the icon that is applied to the header title.*/
-    iconmargin: string;
-    /*This property defines the label caption that is applied to the header*/
-    caption: string;
-    /*This property defines the subheading for the caption property that is applied to the header.*/
-    subheading: string;
-
-    private defaultIconDimensions: string = '21px';
-    /*This property defines the width of the icon that is applied to the header title.*/
-    iconwidth: string = this.defaultIconDimensions;
-    /*This property defines the height of the icon that is applied to the header title.*/
-    iconheight: string = this.defaultIconDimensions;
-
-    closeDialog() {
-        this.dialogService.closeDialog(this.dialogId);
-    }
-
 }

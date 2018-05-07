@@ -1,96 +1,70 @@
-import { Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
+import { Attribute, Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { WidgetRef } from '../../../framework/types';
-import { invokeEventHandler } from '../../../../utils/widget-utils';
-import { DialogService } from '../dialog.service';
+import { toBoolean } from '@wm/core';
+
+import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './iframe-dialog.props';
-import { StylableComponent } from '../../base/stylable.component';
+import { BaseDialog } from '../base-dialog/base-dialog';
 
-const WIDGET_INFO = {widgetType: 'wm-iframedialog', hostClass: ''};
-
-const defaultClass = 'app-dialog modal-dialog app-iframe-dialog';
+const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
+const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
 
 registerProps();
-
-declare const _, $;
 
 @Component({
     selector: 'div[wmIframeDialog]',
     templateUrl: './iframe-dialog.component.html',
     providers: [
+        {provide: DialogRef, useExisting: forwardRef(() => IframeDialogComponent)},
         {provide: WidgetRef, useExisting: forwardRef(() => IframeDialogComponent)}
     ]
 })
-export class IframeDialogComponent extends StylableComponent implements OnInit {
+export class IframeDialogComponent extends BaseDialog implements OnInit {
 
-    bsModalRef: BsModalRef;
-    isOpen;
-    dialogId: string;
-    modalConfig: ModalOptions = {};
-    bodyHeight: number;
-    _class;
-    open: Function;
-    close: Function;
+    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
 
-    get class () {
-        return [defaultClass, this._class].join(' ');
+    constructor(
+        inj: Injector,
+        @Attribute('class') dialogClass: string,
+        @Attribute('modal') modal: string,
+        @Attribute('closable') closable: string,
+    ) {
+        super(
+            inj,
+            WIDGET_INFO,
+            {
+                class: `${DIALOG_CLS} ${dialogClass || ''}`,
+                backdrop: toBoolean(modal) || 'static',
+                keyboard: toBoolean(closable)
+            }
+        );
     }
 
-    set class (nv) {
-        this._class = nv;
+    protected getTemplateRef(): TemplateRef<any> {
+        return this.dialogTemplate;
     }
 
-    @ViewChild('iframeModal') dialogTemplate: TemplateRef<any>;
-
-    constructor(inj: Injector, private modalService: BsModalService, private dialogService: DialogService) {
-        super(inj, WIDGET_INFO);
-
-        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL, ['height', 'width']);
-        // styler(this.nativeElement.querySelector('.app-dialog-body.modal-body'), this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+    protected processAttr(attrName: string, attrValue: string) {
+        // ignore the class attribute.
+        // Prevent the framework from setting the class on the host element.
+        if (attrName === 'class') {
+            return;
+        }
+        super.processAttr(attrName, attrValue);
     }
 
-    onBeforeDialogOpen() {
-        this.modalConfig.class = this.class;
-    }
-
-    okButtonHandler() {
-        invokeEventHandler(this, 'ok');
+    /**
+     * Click event handler for the ok button
+     * invokes on-ok event callback
+     * @param {Event} $event
+     */
+    onOk($event: Event) {
+        this.invokeEventCallback('ok', {$event});
         this.close();
-    }
-
-    onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'name':
-                this.dialogId = nv;
-                break;
-            case 'closable':
-                this.modalConfig.keyboard = nv;
-                this.modalConfig.backdrop = !nv ? 'static' : nv;
-                break;
-        }
-    }
-
-    onStyleChange(key, nv, ov) {
-        switch (key) {
-            case 'width':
-                if (nv) {
-                    $(this.nativeElement).closest('.modal-dialog').css('width', nv);
-                }
-                break;
-            case 'height':
-                if (nv.indexOf('%') > 0) {
-                    this.bodyHeight = (window.innerHeight * (parseInt(nv, 10) / 100) - 112);
-                } else {
-                    this.bodyHeight = parseInt('' + (nv - 112), 10);
-                }
-                break;
-        }
     }
 
     ngOnInit() {
         super.ngOnInit();
-        this.dialogService.registerDialog(this.dialogId, this);
+        this.register();
     }
 }

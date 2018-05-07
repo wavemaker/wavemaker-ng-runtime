@@ -1,3 +1,5 @@
+import { BaseComponent } from '../common/base/base.component';
+
 export interface IWidgetConfig {
     widgetType: string;
     widgetSubType?: string;
@@ -20,3 +22,10 @@ export abstract class MenuRef {}
 export abstract class TableColumnGroupRef {}
 
 export abstract class TableRef {}
+
+export abstract class DialogRef<T extends BaseComponent> {}
+
+export interface IDialog {
+    open: () => void;
+    close: () => void;
+}

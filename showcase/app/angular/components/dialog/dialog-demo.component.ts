@@ -21,7 +21,7 @@ export class DialogDemoComponent implements OnInit {
     }
 
     onConfirmOk() {
-        this.dialogService.openDialog('alertdialog1', {oktext: 'Okay!'});
+        this.dialogService.open('alertdialog1', {oktext: 'Okay!'});
     }
 
 }

@@ -1,7 +1,7 @@
 import { Component, forwardRef, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
+import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { registerProps } from './spinner.props';
 import { StylableComponent } from '../base/stylable.component';
 import { ImagePipe } from '../../../pipes/image.pipe';
@@ -9,7 +9,7 @@ import { ImagePipe } from '../../../pipes/image.pipe';
 declare const _;
 
 const DEFAULT_CLS = 'app-spinner';
-const WIDGET_CONFIG = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};
 
 registerProps();
 

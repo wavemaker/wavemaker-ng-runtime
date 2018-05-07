@@ -37,11 +37,11 @@ export class AppComponent implements DoCheck {
     providersConfig;
 
     showOAuthDialog() {
-        this.dialogService.openDialog('oAuthLoginDialog');
+        this.dialogService.open('oAuthLoginDialog');
     }
 
     closeOAuthDialog() {
-        this.dialogService.closeDialog('oAuthLoginDialog');
+        this.dialogService.close('oAuthLoginDialog');
     }
 
     ngDoCheck() {
