@@ -93,6 +93,7 @@ import { TreeDirective } from './widgets/common/tree/tree.directive';
 import { VideoComponent } from './widgets/common/video/video.component';
 import { FilterPipe, NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
+import { WmAutocompleteDirective } from './directives/wm-autocomplete.directive';
 
 const wmComponents = [
     AccordionDirective,
@@ -177,7 +178,8 @@ const wmComponents = [
     TimeComponent,
     TopNavDirective,
     TreeDirective,
-    VideoComponent
+    VideoComponent,
+    WmAutocompleteDirective
 ];
 
 const PIPES = [

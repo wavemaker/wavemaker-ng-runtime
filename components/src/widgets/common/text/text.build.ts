@@ -8,8 +8,8 @@ register('wm-text', (): IBuildTaskDef => {
     return {
         pre: attrs => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmText #${counter}="wmText" [(ngModel)]="${counter}.datavalue" role="input"
-                        ${getUpdateOnTmpl(attrs.get('updateon'))} ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmText #${counter}="wmText" [(ngModel)]="${counter}.datavalue" role="input" ${getAttrMarkup(attrs)}
+                        [wmAutocomplete]="${counter}.autocomplete" ${getUpdateOnTmpl(attrs.get('updateon'))}>`;
         }
     };
 });

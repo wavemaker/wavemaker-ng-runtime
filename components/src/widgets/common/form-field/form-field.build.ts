@@ -79,7 +79,8 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmSwitch ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} role="input"
+                        [wmAutocomplete]="${counter}.autocomplete">`;
             break;
         case FormWidgetType.TEXTAREA:
             tmpl = `<textarea wmTextarea ${defaultTmpl} ${tmplRef}="wmTextarea" ${ngModelTmpl} role="input"></textarea>`;
@@ -94,7 +95,8 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             /*TODO*/
             break;
         default:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} role="input"
+                        [wmAutocomplete]="${counter}.autocomplete">`;
             break;
     }
     return tmpl;
