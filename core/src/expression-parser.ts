@@ -410,9 +410,9 @@ class ASTCompiler {
     }
 
     addReturnStmt(result) {
-        if (this.exprType === ExpressionType.Binding) {
+        // if (this.exprType === ExpressionType.Binding) {
             this.stmts.push(`return ${result};`);
-        }
+        // }
     }
 
     cleanup() {

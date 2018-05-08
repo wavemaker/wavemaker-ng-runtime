@@ -70,4 +70,6 @@ export * from './widgets/common/time/time.build';
 export * from './widgets/common/tree/tree.build';
 export * from './widgets/common/top-nav/top-nav.build';
 export * from './widgets/common/video/video.build';
+export * from './widgets/common/wizard/wizard.build';
+export * from './widgets/common/wizard/wizard-step/wizard-step.build';
 

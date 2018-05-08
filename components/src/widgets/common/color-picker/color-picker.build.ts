@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-colorpicker', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmColorPicker ${getAttrMarkup(attrs)} role="input">`,
+        pre: attrs => `<${tagName} wmColorPicker ${getAttrMarkup(attrs)} role="input" ngModel>`,
         post: () => `</${tagName}>`
     };
 });

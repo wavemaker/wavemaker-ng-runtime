@@ -315,7 +315,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             const locals = callbackInfo.locals || {};
 
             if (fn) {
-                fn(Object.assign(locals, extraLocals));
+                return fn(Object.assign(locals, extraLocals));
             }
         }
     }

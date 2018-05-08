@@ -2,9 +2,9 @@ import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-time', (): IBuildTaskDef => {
+register('wm-wizard', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmTime ${getAttrMarkup(attrs)} role="input" ngModel>`,
+        pre: attrs => `<${tagName} wmWizard ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

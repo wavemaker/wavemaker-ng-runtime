@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-select', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmSelect ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmSelect ${getAttrMarkup(attrs)} ngModel>`,
         post: () => `</${tagName}>`
     };
 });

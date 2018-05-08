@@ -100,6 +100,8 @@ import { TreeDirective } from './widgets/common/tree/tree.directive';
 import { VideoComponent } from './widgets/common/video/video.component';
 import { FilterPipe, NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
+import { WizardComponent } from './widgets/common/wizard/wizard.component';
+import { WizardStepDirective } from './widgets/common/wizard/wizard-step/wizard-step.directive';
 
 const wmComponents = [
     AccordionDirective,
@@ -190,7 +192,9 @@ const wmComponents = [
     TimeComponent,
     TopNavDirective,
     TreeDirective,
-    VideoComponent
+    VideoComponent,
+    WizardComponent,
+    WizardStepDirective
 ];
 
 const PIPES = [

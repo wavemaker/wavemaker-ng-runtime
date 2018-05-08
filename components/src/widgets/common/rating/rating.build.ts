@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-rating', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmRating ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmRating ${getAttrMarkup(attrs)} ngModel>`,
         post: () => `</${tagName}>`
     };
 });

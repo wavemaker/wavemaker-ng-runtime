@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-text', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmInput ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmInput ${getAttrMarkup(attrs)} ngModel>`,
         post: () => `</${tagName}>`
     };
 });

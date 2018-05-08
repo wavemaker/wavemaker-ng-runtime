@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-currency', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmCurrency ${getAttrMarkup(attrs)} role="input">`,
+        pre: attrs => `<${tagName} wmCurrency ${getAttrMarkup(attrs)} role="input" ngModel>`,
         post: () => `</${tagName}>`
     };
 });

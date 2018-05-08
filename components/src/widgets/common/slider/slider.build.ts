@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-slider', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmSlider ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmSlider ${getAttrMarkup(attrs)} ngModel>`,
         post: () => `</${tagName}>`
     };
 });
