@@ -296,7 +296,6 @@ export class SecurityService {
      * @param onError error handler
      */
     handle401(page, onSuccess?, onError?) {
-        console.log('------------HITTING NEHA ME----------');
         let sessionTimeoutConfig,
             sessionTimeoutMethod,
             loginConfig,
