@@ -4,8 +4,8 @@ import { BsModalService } from 'ngx-bootstrap';
 
 import { addClass, setCSS } from '@wm/core';
 
-import { DialogRef } from '../../../framework/types';
-import { BaseDialog } from '../base-dialog/base-dialog';
+import { DialogRef } from '../../../../framework/types';
+import { BaseDialog } from '../base-dialog';
 
 const DEFAULT_CLS = 'app-dialog-body modal-body';
 
@@ -27,7 +27,10 @@ export class DialogBodyDirective {
 
         const subscription = bsModal.onShown.subscribe(() => {
             const dialogRoot = $(elRef.nativeElement).closest('.app-dialog')[0];
-            setCSS(dialogRoot, 'width', (this.dialogRef as any).width);
+            const width = (this.dialogRef as any).width;
+            if (dialogRoot && width) {
+                setCSS(dialogRoot, 'width', width);
+            }
             subscription.unsubscribe();
         });
     }

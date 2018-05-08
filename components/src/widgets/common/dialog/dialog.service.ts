@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BaseDialog } from './base-dialog/base-dialog';
+import { BaseDialog } from './base/base-dialog';
 
 @Injectable()
 export class DialogService {

@@ -19,17 +19,17 @@ import { ChartComponent } from './widgets/common/chart/chart.component';
 import { CheckboxComponent } from './widgets/common/checkbox/checkbox.component';
 import { CheckboxsetComponent } from './widgets/common/checkboxset/checkboxset.component';
 import { ColorPickerComponent } from './widgets/common/color-picker/color-picker.component';
-import { FormGroupDirective } from './widgets/common/form-group/form-group.directive';
+import { CompositeDirective } from './widgets/common/composite/composite.directive';
 import { ConfirmDialogComponent } from './widgets/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ContainerDirective } from './widgets/common/container/container.directive';
 import { ContentComponent } from './widgets/common/content/content.component';
 import { CurrencyComponent } from './widgets/common/currency/currency.component';
 import { DateComponent } from './widgets/common/date/date.component';
 import { DatetimeComponent } from './widgets/common/date-time/date-time.component';
-import { DialogComponent } from './widgets/common/dialog/dialog.component';
-import { DialogBodyDirective } from './widgets/common/dialog/dialog-body/dialog-body.directive';
-import { DialogFooterDirective } from './widgets/common/dialog/dialog-footer/dialog-footer.directive';
-import { DialogHeaderComponent } from './widgets/common/dialog/dialog-header/dialog-header.component';
+import { DialogComponent } from './widgets/common/dialog/design-dialog/dialog.component';
+import { DialogBodyDirective } from './widgets/common/dialog/base/dialog-body/dialog-body.directive';
+import { DialogFooterDirective } from './widgets/common/dialog/base/dialog-footer/dialog-footer.directive';
+import { DialogHeaderComponent } from './widgets/common/dialog/base/dialog-header/dialog-header.component';
 import { FooterDirective } from './widgets/common/footer/footer.directive';
 import { FormActionDirective } from './widgets/common/form/form-action/form-action.directive';
 import { FormComponent } from './widgets/common/form/form.component';
@@ -106,7 +106,7 @@ const wmComponents = [
     ChartComponent,
     CheckboxComponent,
     ColorPickerComponent,
-    FormGroupDirective,
+    CompositeDirective,
     ConfirmDialogComponent,
     ContainerDirective,
     ContentComponent,

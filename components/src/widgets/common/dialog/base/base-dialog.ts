@@ -35,10 +35,21 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
         if (this.isOpened) {
             return;
         }
-        const subscription = this.bsModal.onShown.subscribe(() => {
+        const showSubscription = this.bsModal.onShown.subscribe(() => {
+
+            const hideSubscription = this.bsModal.onHidden.subscribe(() => {
+                if (!this.isOpened) {
+                    return;
+                }
+                this.isOpened = false;
+                this.invokeEventCallback('close');
+                hideSubscription.unsubscribe();
+            });
+
             this.invokeEventCallback('opened');
-            subscription.unsubscribe();
+            showSubscription.unsubscribe();
         });
+
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
         this.isOpened = true;
     }
@@ -51,7 +62,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
         if (!this.isOpened) {
             return;
         }
-        this.invokeEventCallback('close');
         this.dialogRef.hide();
     }
 

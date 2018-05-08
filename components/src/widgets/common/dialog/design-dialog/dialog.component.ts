@@ -2,9 +2,9 @@ import { Attribute, Component, ContentChild, forwardRef, Injector, OnInit, Templ
 
 import { toBoolean } from '@wm/core';
 
-import { DialogRef, WidgetRef } from '../../framework/types';
+import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './dialog.props';
-import { BaseDialog } from './base-dialog/base-dialog';
+import { BaseDialog } from '../base/base-dialog';
 
 const DIALOG_CLS = 'app-dialog modal-dialog';
 
@@ -28,9 +28,16 @@ export class DialogComponent extends BaseDialog implements OnInit {
     constructor(
         inj: Injector,
         @Attribute('class') dialogClass: string,
-        @Attribute('modal') modal: string,
-        @Attribute('closable') closable: string,
+        @Attribute('modal') modal: string | boolean,
+        @Attribute('closable') closable: string | boolean,
     ) {
+        if (modal === null || modal === undefined) {
+            modal = true;
+        }
+
+        if (closable === null || closable === undefined) {
+            closable = true;
+        }
         super(
             inj,
             WIDGET_INFO,

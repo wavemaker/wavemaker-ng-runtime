@@ -1,7 +1,7 @@
 import { Directive, forwardRef, Injector } from '@angular/core';
 
-import { IWidgetConfig, WidgetRef } from '../../../framework/types';
-import { BaseComponent } from '../../base/base.component';
+import { IWidgetConfig, WidgetRef } from '../../../../framework/types';
+import { BaseComponent } from '../../../base/base.component';
 import { registerProps } from './dialog-footer.props';
 
 const WIDGET_INFO: IWidgetConfig = {

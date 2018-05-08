@@ -5,7 +5,7 @@ import { setAttr, switchClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
-import { registerProps } from './form-group.props';
+import { registerProps } from './composite.props';
 
 declare const $;
 
@@ -26,10 +26,10 @@ const CAPTION_POSITION = {
 @Directive({
     selector: 'div[wmFormGroup]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => FormGroupDirective)}
+        {provide: WidgetRef, useExisting: forwardRef(() => CompositeDirective)}
     ]
 })
-export class FormGroupDirective extends StylableComponent implements AfterViewInit {
+export class CompositeDirective extends StylableComponent implements AfterViewInit {
 
     // this is the reference to the component refs inside the form-group
     @ContentChildren(WidgetRef, {descendants: true}) componentRefs;

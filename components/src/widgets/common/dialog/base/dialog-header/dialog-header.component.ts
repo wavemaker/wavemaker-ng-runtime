@@ -1,8 +1,9 @@
 import { Component, ElementRef, Inject, Input } from '@angular/core';
 
-import { DialogRef } from '../../../framework/types';
 import { addClass } from '@wm/core';
-import { BaseDialog } from '../base-dialog/base-dialog';
+
+import { DialogRef } from '../../../../framework/types';
+import { BaseDialog } from '../base-dialog';
 
 const DEFAULT_CLS = 'app-dialog-header modal-header';
 const DEFAULT_ICON_DIMENSIONS = '21px';

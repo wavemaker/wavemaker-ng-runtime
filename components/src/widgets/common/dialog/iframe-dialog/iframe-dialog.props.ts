@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['closable', {value: true, PROP_BOOLEAN}],
                 ['encodeurl', {value: false, ...PROP_BOOLEAN}],
                 ['height', {value: '400px', ...PROP_STRING}],
-                ['iconclass', {value: 'wi wi-warning', PROP_STRING}],
+                ['iconclass', {value: 'wi wi-globe', PROP_STRING}],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],
                 ['iconwidth', PROP_STRING],
