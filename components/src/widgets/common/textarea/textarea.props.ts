@@ -13,7 +13,8 @@ export const textareaProps = new Map(
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', PROP_BOOLEAN],
-        ['tabindex', PROP_NUMBER]
+        ['tabindex', PROP_NUMBER],
+        ['updateon', {value: 'blur', ...PROP_STRING}]
     ]
 );
 

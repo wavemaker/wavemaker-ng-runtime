@@ -19,7 +19,8 @@ export const textProps = new Map(
         ['show', PROP_BOOLEAN],
         ['step', PROP_NUMBER],
         ['tabindex', PROP_NUMBER],
-        ['type', PROP_STRING]
+        ['type', PROP_STRING],
+        ['updateon', {value: 'blur', ...PROP_STRING}]
     ]
 );
 

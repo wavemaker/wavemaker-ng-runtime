@@ -107,6 +107,16 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
      * This is an internal property used to map the main model to the time widget
      */
     private proxyModel: Date;
+
+    constructor(inj: Injector, public datePipe: ToDatePipe) {
+        super(inj, WIDGET_CONFIG);
+
+        styler(this.nativeElement, this);
+        /**
+         * Destroy the timer once the date widget is gone
+         */
+        this.registerDestroyListener(() => this.clearTimeInterval());
+    }
     /**
      * This is an internal method used to toggle the dropdown of the time widget
      */
@@ -131,15 +141,6 @@ export class TimeComponent extends BaseFormComponent implements OnDestroy {
         }, 350);
     }
 
-    constructor(inj: Injector, public datePipe: ToDatePipe) {
-        super(inj, WIDGET_CONFIG);
-
-        styler(this.nativeElement, this);
-        /**
-         * Destroy the timer once the date widget is gone
-         */
-        this.registerDestroyListener(() => this.clearTimeInterval());
-    }
     /**
      * This is an internal method used to execute the on time change functionality
      */

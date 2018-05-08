@@ -19,6 +19,7 @@ const CURRENT_DATE: string = 'CURRENT_DATE';
 /**
  * method to get the date object from the input received
  */
+// TODO: Modify this method to handle null and CURRENT_DATE
 const getDateObj = (value?: string): Date => {
     const dateObj = new Date(value);
     if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
@@ -57,7 +58,6 @@ export class DateComponent extends BaseFormComponent {
 
     private outputFormat;
 
-    datavalue;
     disabled;
     readonly;
     _datavalue;
@@ -76,6 +76,8 @@ export class DateComponent extends BaseFormComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
+        // TODO: setDataValue(newVal);
+        // TODO: Move this to last
         this.invokeEventCallback('change', {$event: newVal, newVal, oldVal: this.datavalue});
         this.proxyModel = newVal;
         if (newVal) {

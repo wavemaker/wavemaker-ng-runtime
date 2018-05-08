@@ -3,7 +3,6 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } 
 export const timeProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
-        ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
@@ -16,8 +15,6 @@ export const timeProps = new Map(
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
-        ['show', PROP_BOOLEAN],
-        ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['tabindex', PROP_NUMBER],
         ['timepattern', {value: 'hh:mm a', ...PROP_STRING}],
         ['timestamp', PROP_STRING]

@@ -55,6 +55,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     form;
     minValue;
     maxValue;
+    updateon;
 
     constructor(
         inj: Injector,
@@ -261,7 +262,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     createControl() {
-        return this.fb.control('', this._validators);
+        const updateOn = (!this.updateon || this.updateon === 'default') ? 'change' : this.updateon;
+        return this.fb.control('', {
+            validators: this._validators,
+            updateOn: updateOn
+        });
     }
 
     onValueChange(val) {
