@@ -13,7 +13,10 @@ import { StylableComponent } from '../base/stylable.component';
 
 declare const _;
 
-const DEFAULT_CLS = '';
+// Custom validator to show validation error, if setValidationMessage method is used
+const customValidatorFn = () => {
+    return { custom: true };
+};
 
 @Directive({
     selector: '[wmFormField]',
@@ -27,46 +30,57 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     @ContentChild('formWidget') formWidget;
     @ContentChild('formWidgetMax') formWidgetMax;
 
-    private _validators;
     private applyProps;
     private fb;
+    private excludeProps;
+    private _validators;
 
     ngForm: FormGroup;
-    name: string;
+    name;
     defaultvalue;
     displayexpression;
     displayfield;
     displaylabel;
     displayname;
-    excludeProps;
     generator;
-    key: string;
-    target: string;
-    binding: string;
-    widgettype: string;
+    key;
+    target;
+    binding;
+    widgettype;
     class;
     primarykey;
     readonly;
-    required;
     show;
     type;
     isDataSetBound;
     viewmodewidget;
     binddataset;
     form;
+    updateon;
+
+    // Range values
     minValue;
     maxValue;
-    updateon;
+
+    // Validation properties
+    required;
+    maxchars;
+    minvalue;
+    maxvalue;
+    regexp;
+    validationmessage;
 
     constructor(
         inj: Injector,
         @Optional() form: FormRef,
         fb: FormBuilder,
         @Attribute('dataset.bind') binddataset,
-        @Attribute('widgettype') _widgetType
+        @Attribute('widgettype') _widgetType,
+        @Attribute('name') name,
+        @Attribute('key') key,
     ) {
 
-        const WIDGET_CONFIG = {widgetType: _widgetType, hostClass: DEFAULT_CLS};
+        const WIDGET_CONFIG = {widgetType: _widgetType, hostClass: ''};
 
         registerProps(_widgetType);
 
@@ -78,6 +92,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddataset = binddataset;
         this.form = form;
         this.fb = fb;
+        this.name = name;
+        this.key = key;
         this.excludeProps = new Set(['type']);
 
         if (this.binddataset) {
@@ -162,12 +178,28 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.form.setPrevDataValues();
     }
 
-    private setRequired() {
+    private setUpValidators(customValidator?) {
+        this._validators = [];
+
         if (this.required && this.show) {
             this._validators.push(Validators.required);
-        } else {
-            this._validators = _.pull(this._validators, Validators.required);
         }
+        if (this.maxchars) {
+            this._validators.push(Validators.maxLength(this.maxchars));
+        }
+        if (this.minvalue) {
+            this._validators.push(Validators.min(this.minvalue));
+        }
+        if (this.maxvalue) {
+            this._validators.push(Validators.max(this.maxvalue));
+        }
+        if (this.regexp) {
+            this._validators.push(Validators.pattern(this.regexp));
+        }
+        if (customValidator) {
+            this._validators.push(customValidator);
+        }
+
         if (this.ngForm) {
             this._control.setValidators(this._validators);
             this._control.updateValueAndValidity();
@@ -227,16 +259,18 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 this.setMaxFormWidget('placeholder', newVal);
                 break;
             case 'required':
-                this.setRequired();
+            case 'maxchars':
+            case 'minvalue':
+            case 'maxvalue':
+            case 'regexp':
+            case 'show':
+                this.setUpValidators();
                 break;
             case 'primary-key':
                 this.primarykey = toBoolean(newVal);
                 if (this.primarykey) {
                     this.form.setPrimaryKey(this.key);
                 }
-                break;
-            case 'show':
-                this.setRequired();
                 break;
             case 'display-name':
                 this.displayname = newVal;
@@ -284,9 +318,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
     }
 
-    ngOnInit() {
-        super.ngOnInit();
+    setValidationMessage(val) {
+        this.validationmessage = val;
+        this.setUpValidators(customValidatorFn);
+    }
 
+    ngOnInit() {
         const fieldName = this.key || this.name;
 
         this.ngForm = this.form.ngForm;
@@ -296,13 +333,14 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.ngForm.addControl(fieldName + '_max', this.createControl());
         }
 
-        styler(this.nativeElement, this);
-
         if (this.form.isLiveForm || this.form.isLiveFilter) {
             this._control.valueChanges
                 .debounceTime(500)
                 .subscribe(this.onValueChange.bind(this));
         }
+
+        super.ngOnInit();
+        styler(this.nativeElement, this);
     }
 
     ngAfterContentInit() {
