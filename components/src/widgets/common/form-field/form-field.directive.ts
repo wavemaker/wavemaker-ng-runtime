@@ -38,6 +38,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     displayfield;
     displaylabel;
     displayname;
+    excludeProps;
     generator;
     key: string;
     target: string;
@@ -77,6 +78,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddataset = binddataset;
         this.form = form;
         this.fb = fb;
+        this.excludeProps = new Set(['type']);
 
         if (this.binddataset) {
             this.isDataSetBound = true;
@@ -187,6 +189,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     onPropertyChange(key, newVal, ov?) {
+        if (this.excludeProps.has(key)) {
+            return;
+        }
 
         if (!this.formWidget) {
             this.applyProps.add(key);
@@ -262,7 +267,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     createControl() {
-        const updateOn = (!this.updateon || this.updateon === 'default') ? 'change' : this.updateon;
+        let updateOn = this.updateon || 'blur';
+        updateOn = updateOn === 'default' ? 'change' : updateOn;
         return this.fb.control('', {
             validators: this._validators,
             updateOn: updateOn

@@ -25,6 +25,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
     const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl} ${eventsTmpl}`;
     const tmplRef = isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const ngModelTmpl = isMaxWidget ? `[(ngModel)]="${counter}.maxValue"` : `[(ngModel)]="${counter}.datavalue"`;
+    const autoCompleteTmpl = `[wmAutocomplete]="${counter}.autocomplete"`;
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
@@ -52,10 +53,10 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="number" ${ngModelTmpl} role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="number" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="password" ${ngModelTmpl} role="input">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="password" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
             break;
         case FormWidgetType.RADIOSET:
             tmpl = `<div wmRadioset ${defaultTmpl} ${tmplRef} role="input"></div>`;
@@ -79,8 +80,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmSwitch ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} role="input"
-                        [wmAutocomplete]="${counter}.autocomplete">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
             break;
         case FormWidgetType.TEXTAREA:
             tmpl = `<textarea wmTextarea ${defaultTmpl} ${tmplRef}="wmTextarea" ${ngModelTmpl} role="input"></textarea>`;
@@ -95,8 +95,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             /*TODO*/
             break;
         default:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} role="input"
-                        [wmAutocomplete]="${counter}.autocomplete">`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
             break;
     }
     return tmpl;

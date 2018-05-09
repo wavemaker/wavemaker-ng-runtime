@@ -8,12 +8,15 @@ import { FormRef } from '../../framework/types';
 export class FormWidgetDirective implements OnInit {
 
     ngForm: FormGroup;
+    fb;
 
     constructor(
         @Optional() @Inject(FormRef) public form,
-        public fb: FormBuilder,
+        fb: FormBuilder,
         @Attribute('name') public name,
-        @Attribute('key') public key) {
+        @Attribute('key') public key,
+        @Attribute('updateon') public updateon) {
+        this.fb = fb;
     }
 
     get _control() {
@@ -21,7 +24,11 @@ export class FormWidgetDirective implements OnInit {
     }
 
     createControl() {
-        return this.fb.control('');
+        let updateOn = this.updateon || 'blur';
+        updateOn = updateOn === 'default' ? 'change' : updateOn;
+        return this.fb.control('', {
+            updateOn: updateOn
+        });
     }
 
     ngOnInit() {

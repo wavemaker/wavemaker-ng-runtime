@@ -9,7 +9,7 @@ register('wm-textarea', (): IBuildTaskDef => {
         pre: attrs => {
             const counter = idGen.nextUid();
             return `<${tagName} wmTextarea #${counter}="wmTextarea" [(ngModel)]="${counter}.datavalue" role="input"
-                        ${getUpdateOnTmpl(attrs.get('updateon'))} ${getAttrMarkup(attrs)}>`;
+                        ${getUpdateOnTmpl(attrs.get('updateon'), attrs.get('formControlName'))} ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };
