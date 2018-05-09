@@ -17,15 +17,17 @@ import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { getPrefabMinJsonUrl } from './prefab-manager.service';
 import { I18nService } from './i18n.service';
+import { AccessrolesDirective } from '../directives/accessroles.directive';
 
 const scriptCache = new Map<string, Function>();
 const noop = (...args) => {};
 
 @NgModule({
-    declarations: [PartialContainerDirective, PrefabDirective],
+    declarations: [PartialContainerDirective, PrefabDirective, AccessrolesDirective],
     exports: [
         PartialContainerDirective,
-        PrefabDirective
+        PrefabDirective,
+        AccessrolesDirective
     ]
 })
 class TempModule {}
