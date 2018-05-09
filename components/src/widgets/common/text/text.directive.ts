@@ -37,7 +37,6 @@ export class TextDirective extends StylableComponent {
     @HostBinding() required: boolean;
     @HostBinding() readonly: boolean;
     @HostBinding() autofocus: boolean;
-    @HostBinding() autocomplete: boolean;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

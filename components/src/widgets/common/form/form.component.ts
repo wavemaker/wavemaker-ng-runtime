@@ -112,7 +112,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         return this._isLayoutDialog;
     }
 
-    @HostBinding('autocomplete') autocomplete: boolean;
     @HostBinding('action') action: string;
 
     @HostListener('submit', ['$event']) submit($event) {

@@ -2,7 +2,7 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framewor
 
 export const textProps = new Map(
     [
-        ['autocomplete', PROP_BOOLEAN],
+        ['autocomplete', {value: true, ...PROP_BOOLEAN}],
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
