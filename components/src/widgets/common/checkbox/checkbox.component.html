@@ -1,4 +1,4 @@
-<label [ngClass]="{'unchecked': !model, 'disabled': (disabled || readonly), 'required': (required && caption)}" role="button">
+<label [ngClass]="{'unchecked': isUnchecked(), 'disabled': (disabled || readonly), 'required': (required && _caption)}" role="button">
     <input focus-target
            type="checkbox"
            [(ngModel)]="model"
@@ -8,7 +8,7 @@
            [attr.accesskey]="shortcutkey"
            [tabindex]="tabindex"
            (change)="onChange($event)">
-    <span class="caption" [innerHtml]="caption"></span>
+    <span class="caption" [innerHtml]="_caption"></span>
     <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>
 </label>
 <input type="hidden" class="ng-hide model-holder" [disabled]="disabled" [value]="model">

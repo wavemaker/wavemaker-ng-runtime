@@ -2,8 +2,8 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } 
 
 export const checkboxProps = new Map(
     [
-        ['caption', PROP_STRING],
-        ['checkedvalue', PROP_STRING],
+        ['caption', PROP_STRING_NOTIFY],
+        ['checkedvalue', PROP_STRING_NOTIFY],
         ['datavalue', PROP_STRING_NOTIFY],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
@@ -14,7 +14,7 @@ export const checkboxProps = new Map(
         ['show', PROP_BOOLEAN],
         ['tabindex', PROP_NUMBER],
         ['type', PROP_STRING_NOTIFY],
-        ['uncheckedvalue', PROP_STRING],
+        ['uncheckedvalue', PROP_STRING_NOTIFY],
     ]
 );
 
