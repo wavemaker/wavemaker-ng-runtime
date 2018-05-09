@@ -57,6 +57,14 @@ const processAttr = attr => {
     const value = attr.valueSpan ? attr.value : undefined;
 
     if (overridden) {
+        /**
+         * wrap value for accessroles with ''.
+         * since accessroles is a structural directive, it will be transpiled to [accessroles]
+         * hence, the value against it should be a computed string
+         */
+        if (attr.name === 'accessroles') {
+            return [overridden, `'${value}'`]
+        }
         return [overridden, value];
     }
 
