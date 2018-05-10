@@ -33,7 +33,7 @@ import { DialogHeaderComponent } from './widgets/common/dialog/base/dialog-heade
 import { FooterDirective } from './widgets/common/footer/footer.directive';
 import { FormActionDirective } from './widgets/common/form/form-action/form-action.directive';
 import { FormComponent } from './widgets/common/form/form.component';
-import { FormFieldDirective } from './widgets/common/form-field/form-field.directive';
+import { FormFieldDirective } from './widgets/common/form/form-field/form-field.directive';
 import { HeaderComponent } from './widgets/common/header/header.component';
 import { HtmlDirective } from './widgets/common/html/html.directive';
 import { IconComponent } from './widgets/common/icon/icon.component';

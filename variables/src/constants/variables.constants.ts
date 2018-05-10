@@ -212,9 +212,8 @@ export const VARIABLE_URLS = {
     insertMultiPartTableData: {
         url: '/:service/:dataModelName/:entityName',
             method: 'POST',
-            headers: {
-            'Content-Type': undefined
-        }// ,transformRequest: WM.identity
+            headers: {}
+            // ,transformRequest: WM.identity
     },
     updateTableData: {
         url: '/:service/:dataModelName/:entityName/:id',
@@ -223,9 +222,8 @@ export const VARIABLE_URLS = {
     updateMultiPartTableData: {
         url: '/:service/:dataModelName/:entityName/:id',
             method: 'POST',
-            headers: {
-            'Content-Type': undefined
-        }// ,transformRequest: WM.identity
+            headers: {}
+            // ,transformRequest: WM.identity
     },
     deleteTableData: {
         url: '/:service/:dataModelName/:entityName/:id',
@@ -238,9 +236,8 @@ export const VARIABLE_URLS = {
     updateMultiPartCompositeTableData: {
         url: '/:service/:dataModelName/:entityName/composite-id?:id',
             method: 'POST',
-            headers: {
-            'Content-Type': undefined
-        }// , transformRequest: WM.identity
+            headers: {}
+            // , transformRequest: WM.identity
     },
     deleteCompositeTableData: {
         url: '/:service/:dataModelName/:entityName/composite-id?:id',

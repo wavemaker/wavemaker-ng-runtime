@@ -1,21 +1,27 @@
 import { AfterContentInit, Attribute, ContentChild, Directive, forwardRef, Inject, Injector, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { isDefined, toBoolean } from '@wm/core';
+import { DataType, FormWidgetType, isDefined, toBoolean } from '@wm/core';
 
-import { styler } from '../../framework/styler';
-import { WidgetRef, FormRef } from '../../framework/types';
+import { styler } from '../../../framework/styler';
+import { WidgetRef, FormRef } from '../../../framework/types';
 import { registerProps } from './form-field.props';
-import { getEvaluatedData, isDataSetWidget } from '../../../utils/widget-utils';
-import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField } from '../../../utils/data-utils';
-import { getDefaultViewModeWidget, parseValueByType } from '../../../utils/live-utils';
-import { StylableComponent } from '../base/stylable.component';
+import { getEvaluatedData, isDataSetWidget } from '../../../../utils/widget-utils';
+import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField } from '../../../../utils/data-utils';
+import { getDefaultViewModeWidget, parseValueByType } from '../../../../utils/live-utils';
+import { StylableComponent } from '../../base/stylable.component';
 
 declare const _;
 
 // Custom validator to show validation error, if setValidationMessage method is used
 const customValidatorFn = () => {
     return { custom: true };
+};
+
+const FILE_TYPES = {
+    'image' : 'image/*',
+    'video' : 'video/*',
+    'audio' : 'audio/*'
 };
 
 @Directive({
@@ -35,7 +41,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private excludeProps;
     private _validators;
 
-    ngForm: FormGroup;
+    ngform: FormGroup;
     name;
     defaultvalue;
     displayexpression;
@@ -57,6 +63,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     binddataset;
     form;
     updateon;
+    filetype;
+    extensions;
+    permitted;
 
     // Range values
     minValue;
@@ -95,6 +104,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.name = name;
         this.key = key;
         this.excludeProps = new Set(['type']);
+        this.widgettype = _widgetType;
 
         if (this.binddataset) {
             this.isDataSetBound = true;
@@ -163,12 +173,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         } else {
             this.value = undefined;
         }
-        // TODO: Blob
-        // if (field.type === 'blob') {
-        //     // Create the accepts string from file type and extensions
-        //     fileType = field.filetype ? this.filetypes[field.filetype] : '';
-        //     field.permitted = fileType + (field.extensions ? (fileType ? ',' : '') + field.extensions : '');
-        // }
         /*If the field is primary but is assigned set readonly false.
          Assigned is where the user inputs the value while a new entry.
          This is not editable(in update mode) once entry is successful*/
@@ -200,7 +204,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this._validators.push(customValidator);
         }
 
-        if (this.ngForm) {
+        if (this.ngform) {
             this._control.setValidators(this._validators);
             this._control.updateValueAndValidity();
         }
@@ -227,6 +231,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         if (!this.formWidget) {
             this.applyProps.add(key);
+            return;
+        }
+
+        if (this.widgettype === FormWidgetType.UPLOAD) {
+            if (key === 'required') {
+                this.setUpValidators();
+            }
             return;
         }
 
@@ -297,7 +308,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     get _control() {
-        return this.ngForm && this.ngForm.controls[this.key || this.name];
+        return this.ngform && this.ngform.controls[this.key || this.name];
     }
 
     createControl() {
@@ -326,11 +337,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     ngOnInit() {
         const fieldName = this.key || this.name;
 
-        this.ngForm = this.form.ngForm;
-        this.ngForm.addControl(fieldName, this.createControl());
+        this.ngform = this.form.ngform;
+        this.ngform.addControl(fieldName, this.createControl());
 
         if (this['is-range']) {
-            this.ngForm.addControl(fieldName + '_max', this.createControl());
+            this.ngform.addControl(fieldName + '_max', this.createControl());
         }
 
         if (this.form.isLiveForm || this.form.isLiveFilter) {
@@ -353,6 +364,14 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
         this.key = this.key || this.target || this.binding || this.name;
         this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
+
+        if (this.type === DataType.BLOB) {
+            let fileType;
+            // Create the accepts string from file type and extensions
+            fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
+            this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
+        }
+
         this.form.registerFormFields(this.widget);
     }
 }

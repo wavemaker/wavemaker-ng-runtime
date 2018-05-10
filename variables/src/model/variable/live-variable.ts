@@ -10,7 +10,9 @@ const getManager = () => {
 export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     matchMode;
+    liveSource;
     propertiesMap;
+    type;
 
     constructor(variable: any) {
         super();
@@ -74,6 +76,12 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.GET_PROPERTIES_MAP:
                 returnVal = this.propertiesMap;
                 break;
+            case DataSource.Operation.GET_PRIMARY_KEY:
+                returnVal = this.getPrimaryKey();
+                break;
+            case DataSource.Operation.GET_BLOB_URL:
+                returnVal = `services/${this.liveSource}/${this.type}/${options.primaryValue}/content/${options.columnName}`;
+                break;
             default:
                 returnVal = {};
                 break;
@@ -132,6 +140,10 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     getDistinctDataByFields(options, success?, error?) {
         return getManager().getDistinctDataByFields(this, options, success, error);
+    }
+
+    getPrimaryKey() {
+        return getManager().getPrimaryKey(this);
     }
 
     // legacy method

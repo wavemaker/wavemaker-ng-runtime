@@ -46,7 +46,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
         pre: (attrs, shared) => {
             let tmpl;
             const counter = idGen.nextUid();
-            const liveFormTmpl = `<${tagName} wmForm ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngForm" [noValidate]="${counter}.validationtype !== 'html'"
+            const liveFormTmpl = `<${tagName} wmForm ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                         [ngClass]="${counter}.captionAlignClass" [wmAutocomplete]="${counter}.autocomplete"`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {

@@ -309,6 +309,11 @@ export const preventCachingOf = (url) => {
     return url;
 };
 
+export const getFiles = (formName, fieldName, isList) => {
+    const files = _.get(document.forms, [formName , fieldName, 'files']);
+    return isList ? _.map(files, _.identity) : files && files[0];
+};
+
 /*Function to generate a random number*/
 function random() {
     return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);

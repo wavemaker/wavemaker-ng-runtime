@@ -440,4 +440,8 @@ export class LiveVariableManager extends BaseVariableManager {
             });
         }
     }
+
+    public getPrimaryKey(variable) {
+        return LiveVariableUtils.getPrimaryKey(variable);
+    }
 }

@@ -1,23 +1,31 @@
 import { FormWidgetType } from '@wm/core';
 
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
-import { textProps } from '../text/text.props';
-import { searchProps } from '../search/search.props';
-import { checkboxProps } from '../checkbox/checkbox.props';
-import { colorPickerProps } from '../color-picker/color-picker.props';
-import { currencyProps } from '../currency/currency.props';
-import { checkboxsetProps } from '../checkboxset/checkboxset.props';
-import { dateProps } from '../date/date.props';
-import { dateTimeProps } from '../date-time/date-time.props';
-import { radiosetProps } from '../radioset/radioset.props';
-import { ratingProps } from '../rating/rating.props';
-import { richTextProps } from '../rich-text-editor/rich-text-editor.props';
-import { selectProps } from '../select/select.props';
-import { sliderProps } from '../slider/slider.props';
-import { switchProps } from '../switch/switch.props';
-import { textareaProps } from '../textarea/textarea.props';
-import { timeProps} from '../time/time.props';
+import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { textProps } from '../../text/text.props';
+import { searchProps } from '../../search/search.props';
+import { checkboxProps } from '../../checkbox/checkbox.props';
+import { colorPickerProps } from '../../color-picker/color-picker.props';
+import { currencyProps } from '../../currency/currency.props';
+import { checkboxsetProps } from '../../checkboxset/checkboxset.props';
+import { dateProps } from '../../date/date.props';
+import { dateTimeProps } from '../../date-time/date-time.props';
+import { radiosetProps } from '../../radioset/radioset.props';
+import { ratingProps } from '../../rating/rating.props';
+import { richTextProps } from '../../rich-text-editor/rich-text-editor.props';
+import { selectProps } from '../../select/select.props';
+import { sliderProps } from '../../slider/slider.props';
+import { switchProps } from '../../switch/switch.props';
+import { textareaProps } from '../../textarea/textarea.props';
+import { timeProps} from '../../time/time.props';
 
+const uploadProps = new Map([
+    ['disabled', PROP_BOOLEAN],
+    ['extensions', PROP_STRING],
+    ['filetype', PROP_STRING],
+    ['multiple', PROP_BOOLEAN],
+    ['readonly', PROP_BOOLEAN],
+    ['required', PROP_BOOLEAN]
+]);
 const widgetPropsMap = new Map(
 [
         [FormWidgetType.AUTOCOMPLETE, searchProps],
@@ -42,7 +50,7 @@ const widgetPropsMap = new Map(
         [FormWidgetType.TIMESTAMP, dateTimeProps],
         [FormWidgetType.TOGGLE, checkboxProps],
         [FormWidgetType.TYPEAHEAD, searchProps],
-        // TODO: [FormWidgetType.UPLOAD, uploadProps]
+        [FormWidgetType.UPLOAD, uploadProps]
     ]
 );
 export const registerProps = (widgetType) => {

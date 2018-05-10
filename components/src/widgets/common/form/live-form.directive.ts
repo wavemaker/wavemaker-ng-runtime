@@ -1,6 +1,6 @@
 import { Directive, Inject, Self } from '@angular/core';
 
-import { $appDigest, DataSource, DataType, getClonedObject, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
+import { $appDigest, DataSource, DataType, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
@@ -47,6 +47,41 @@ export class LiveFormDirective {
         form.clearData = this.clearData.bind(this);
     }
 
+    getFormElement() {
+        return this.form.$element;
+    }
+
+    getBlobURL(dataObj, key, value) {
+        let href = '';
+        let primaryKeys;
+        let primaryKey;
+        if (value === null || value === undefined || !this.form.datasource) {
+            return href;
+        }
+        primaryKeys = this.form.datasource.execute(DataSource.Operation.GET_PRIMARY_KEY) || [];
+        primaryKey  = dataObj[primaryKeys[0]];
+        // TODO: Handle mobile case
+        // if (CONSTANTS.hasCordova && CONSTANTS.isRunMode) {
+        //     href += $rootScope.project.deployedUrl;
+        // }
+        href += this.form.datasource.execute(DataSource.Operation.GET_BLOB_URL, {
+            primaryValue: primaryKey,
+            columnName: key
+        });
+        href += '?' + Math.random();
+        return href;
+    }
+
+    resetFileUploadWidget(field, skipValueSet?) {
+        const $formEle = this.getFormElement();
+        $formEle.find('[name="' + field.key + '_formWidget"]').val('');
+        field._control.reset();
+        if (!skipValueSet) {
+            field.href = '';
+            field.value = null;
+        }
+    }
+
     setDefaultValues() {
         if (!this.form.formFields) {
             return;
@@ -65,13 +100,12 @@ export class LiveFormDirective {
             if (isTimeType(field)) {
                 field.value = getValidTime(value);
             } else if (field.type === DataType.BLOB) {
-                // resetFileUploadWidget(formField, true);
-                // formField.href  = $scope.getBlobURL(dataObj, formField.key, value);
-                // formField.value = value;
+                this.resetFileUploadWidget(field, true);
+                field.href  = this.getBlobURL(dataObj, field.key, value);
+                field.value = value;
             } else {
                 field.value = value;
             }
-            // this.form.applyFilterOnField(field);
         });
         this.form.setPrevDataValues();
         this.form.constructDataObject();
@@ -112,7 +146,6 @@ export class LiveFormDirective {
         const dataObject = this.getDataObject();
         const formName = this.form.name;
         let formFields;
-        // let element;
         formFields = isPreviousData ? this.form.prevformFields : this.form.formFields;
         _.forEach(formFields, field => {
             let dateTime,
@@ -136,7 +169,7 @@ export class LiveFormDirective {
                     fieldValue = undefined;
                 }
             } else if (field.type === DataType.BLOB) {
-                fieldValue = _.get(document.forms, [formName, fieldName + '_formWidget', 'files', 0]);
+                fieldValue = getFiles(formName, fieldName + '_formWidget', field.multiple);
             } else if (field.type === DataType.LIST) {
                 fieldValue = field.value || undefined;
             } else {
@@ -152,7 +185,7 @@ export class LiveFormDirective {
         });
         if (!isPreviousData) {
             // Set the values of the widgets inside the live form (other than form fields) in form data
-            this.form.dataoutput = {...this.form.ngForm.value, ...dataObject};
+            this.form.dataoutput = {...this.form.ngform.value, ...dataObject};
             return this.form.dataoutput;
         }
         return dataObject;
@@ -218,6 +251,7 @@ export class LiveFormDirective {
             })); // Convert of array of values to an object
             field.value = prevDataValues[field.key];
         });
+        return prevDataValues;
     }
 
     setPrevDataValues() {
@@ -232,7 +266,11 @@ export class LiveFormDirective {
     emptyDataModel() {
         this.form.formFields.forEach((field) => {
             if (isDefined(field)) {
-                field.datavalue = '';
+                if (field.type === DataType.BLOB) {
+                    this.resetFileUploadWidget(field);
+                } else {
+                    field.datavalue = '';
+                }
             }
         });
     }
@@ -276,20 +314,15 @@ export class LiveFormDirective {
     }
 
     reset() {
-        // var formEle = getFormElement(),
+        let prevDataValues;
         this.form.resetFormState();
-        this.getPrevDataValues();
-        // resetFormFields(formEle);
+        prevDataValues = this.getPrevDataValues();
         if (_.isArray(this.form.formFields)) {
             this.form.formFields.forEach((field) => {
-                if (field.type === DataType.BLOB) { // TODO: blob and autocomplete
-                    // resetFileUploadWidget(field, true);
-                    // field.href = $scope.getBlobURL(prevDataValues, field.key, field.value);
+                if (field.type === DataType.BLOB) {
+                    this.resetFileUploadWidget(field, true);
+                    field.href = this.getBlobURL(prevDataValues, field.key, field.value);
                 }
-                // if (WM.isUndefined(field.value) && field.widgettype === 'autocomplete') { //Empty the query in case of autocomplete widget
-                //     formEle.find('div[name=' + field.name + '] input').val('');
-                // }
-                // this.applyFilterOnField(field);
             });
             this.form.constructDataObject();
         }
@@ -324,9 +357,11 @@ export class LiveFormDirective {
         if (this.form.formFields && this.form.formFields.length > 0) {
             this.emptyDataModel();
         }
-        this.setDefaultValues();
-        this.form.setPrevDataValues();
-        this.form.constructDataObject();
+        setTimeout(() => {
+            this.setDefaultValues();
+            this.form.setPrevDataValues();
+            this.form.constructDataObject();
+        });
         this.form.isUpdateMode = true;
     }
 

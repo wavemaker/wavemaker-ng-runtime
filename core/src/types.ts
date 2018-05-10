@@ -24,7 +24,9 @@ enum Operation {
     GET_MATCH_MODE = 'getMatchMode',
     DOWNLOAD = 'download',
     GET_NAME = 'getName',
-    GET_PROPERTIES_MAP = 'getPropertiesMap'
+    GET_PROPERTIES_MAP = 'getPropertiesMap',
+    GET_PRIMARY_KEY = 'getPrimaryKey',
+    GET_BLOB_URL = 'getBlobURL'
 }
 
 export const DataSource = {

@@ -7,7 +7,7 @@ import { FormRef } from '../../framework/types';
 })
 export class FormWidgetDirective implements OnInit {
 
-    ngForm: FormGroup;
+    ngform: FormGroup;
     fb;
 
     constructor(
@@ -20,7 +20,7 @@ export class FormWidgetDirective implements OnInit {
     }
 
     get _control() {
-        return this.ngForm && this.ngForm.controls[this.key || this.name];
+        return this.ngform && this.ngform.controls[this.key || this.name];
     }
 
     createControl() {
@@ -32,8 +32,8 @@ export class FormWidgetDirective implements OnInit {
     }
 
     ngOnInit() {
-        this.ngForm = this.form.ngForm;
-        this.ngForm.addControl(this.key || this.name , this.createControl());
+        this.ngform = this.form.ngform;
+        this.ngform.addControl(this.key || this.name , this.createControl());
     }
 }
 

@@ -1,8 +1,8 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { FormWidgetType, IDGenerator } from '@wm/core';
 
-import { ALLFIELDS } from '../../../utils/data-utils';
-import { isDataSetWidget } from '../../../utils/widget-utils';
+import { ALLFIELDS } from '../../../../utils/data-utils';
+import { isDataSetWidget } from '../../../../utils/widget-utils';
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
@@ -92,7 +92,13 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
             break;
         case FormWidgetType.UPLOAD:
-            /*TODO*/
+            tmpl = `<a class="form-control-static" href="{{${counter}.href}}" target="_blank" *ngIf="${counter}.filetype === 'image' && ${counter}.href">
+                        <img style="height:2em" class="wi wi-file" [src]="${counter}.href"/></a>
+                        <a class="form-control-static" target="_blank" href="{{${counter}.href}}" *ngIf="${counter}.filetype !== 'image' && ${counter}.href">
+                        <i class="wi wi-file"></i></a>
+                        <input ${defaultTmpl} ${tmplRef} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}"
+                        [required]="${counter}.required" type="file" name="${fieldName}_formWidget" [readonly]="${counter}.readonly"
+                        [class.hidden]="!${pCounter}.isUpdateMode" [(ngModel)]="${counter}.value" [accept]="${counter}.permitted">`;
             break;
         default:
             tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;

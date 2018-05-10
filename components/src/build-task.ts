@@ -22,7 +22,7 @@ export * from './widgets/common/dialog/design-dialog/dialog.build';
 export * from './widgets/common/dialog/iframe-dialog/iframe-dialog.build';
 export * from './widgets/common/dialog/partial-dialog/partial-dialog.build';
 export * from './widgets/common/footer/footer.build';
-export * from './widgets/common/form-field/form-field.build';
+export * from './widgets/common/form/form-field/form-field.build';
 export * from './widgets/common/form/form-action/form-action.build';
 export * from './widgets/common/form/form.build';
 export * from './widgets/common/header/header.build';

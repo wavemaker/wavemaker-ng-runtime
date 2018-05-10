@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, getClonedObject, removeClass } from '@wm/core';
+import { $appDigest, getClonedObject, removeClass, getFiles } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { FormRef, WidgetRef } from '../../framework/types';
@@ -44,7 +44,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     _widgetClass = '';
     captionwidth: string;
     _captionClass = '';
-    ngForm: FormGroup;
+    ngform: FormGroup;
     isUpdateMode = true;
     formFields = [];
     formfields = {};
@@ -71,6 +71,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     isLiveForm;
     isLiveFilter;
     updateMode;
+    name;
     resetForm: Function;
     // Live Form Methods
     clearData: Function;
@@ -128,23 +129,23 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     }
 
     highlightInvalidFields() {
-        _.forEach(this.ngForm.controls, (control) => control.markAsTouched());
+        _.forEach(this.ngform.controls, (control) => control.markAsTouched());
     }
 
     validateFieldsOnSubmit() {
         // Disable the form submit if form is in invalid state. For delete operation, do not check the validation.
         if (this.operationType !== 'delete' && (this.validationtype === 'html' || this.validationtype === 'default')
-                && this.ngForm && this.ngForm.invalid) {
+                && this.ngform && this.ngform.invalid) {
             // TODO: For blob type required fields, even if file is present, required error is shown.
             // To prevent this, if value is present set the required validity to true
             // $($formEle.find('input[type="file"].app-blob-upload')).each(function () {
             //     var $blobEL = WM.element(this);
             //     if ($blobEL.val()) {
-            //         ngForm[$blobEL.attr('name')].$setValidity('required', true);
+            //         ngform[$blobEL.attr('name')].$setValidity('required', true);
             //     }
             // });
 
-            if (this.ngForm.invalid) {
+            if (this.ngform.invalid) {
                 if (this.validationtype === 'default') {
                     this.highlightInvalidFields();
                 }
@@ -247,8 +248,8 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         styler(this.nativeElement, this);
 
         this.dialogId = this.nativeElement.getAttribute('dialogId');
-        this.ngForm = fb.group({});
-        this.ngForm.valueChanges
+        this.ngform = fb.group({});
+        this.ngform.valueChanges
             .debounceTime(500)
             .subscribe(this.updateDataOutput.bind(this));
         this.elScope = this;
@@ -276,10 +277,9 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             fieldTarget = _.split(field.key || field.target, '.');
             fieldValue = field.datavalue || field._control.value;
 
-            // TODO: Blob file
-            // if (field.type === 'file') {
-            //     fieldValue = Utils.getFiles(scope.name, field.key + '_formWidget', field.multiple);
-            // }
+            if (field.type === 'file') {
+                fieldValue = getFiles(this.name, field.key + '_formWidget', field.multiple);
+            }
 
             fieldName   = fieldTarget[0] || field.key || field.name;
             // In case of update the field will be already present in form data
@@ -290,7 +290,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 formData[fieldTarget[0]][fieldTarget[1]] = fieldValue;
             }
         });
-        this.dataoutput = {...this.ngForm.value, ...formData};
+        this.dataoutput = {...this.ngform.value, ...formData};
         return this.dataoutput;
     }
 
@@ -311,12 +311,12 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     }
 
     resetFormState() {
-        if (!this.ngForm) {
+        if (!this.ngform) {
             return;
         }
         setTimeout(() => {
-            this.ngForm.markAsUntouched();
-            this.ngForm.markAsPristine();
+            this.ngform.markAsUntouched();
+            this.ngform.markAsPristine();
         });
     }
 
