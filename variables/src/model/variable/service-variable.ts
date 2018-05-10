@@ -68,6 +68,7 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
 
     init() {
         getManager().initBinding(this);
+        getManager().defineFirstLastRecord(this);
         if (this.startUpdate) {
             this.invoke();
         }

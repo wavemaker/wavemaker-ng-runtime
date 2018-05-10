@@ -250,4 +250,25 @@ export class ServiceVariableManager extends BaseVariableManager {
     public cancel(variable) {
         console.warn('Yet to be implemented!');
     }
+
+    public defineFirstLastRecord(variable) {
+        if (variable.isList) {
+            Object.defineProperty(variable, 'firstRecord', {
+                'configurable': true,
+                'get': function () {
+                    const dataSet = variable.dataSet;
+                    //For procedure(v1) data doesn't come under content
+                    return _.head(dataSet && dataSet.content) || _.head(dataSet) || {};
+                }
+            });
+            Object.defineProperty(variable, 'lastRecord', {
+                'configurable': true,
+                'get': function () {
+                    const dataSet = variable.dataSet;
+                    //For procedure(v1) data doesn't come under content
+                    return _.last(dataSet && dataSet.content) || _.last(dataSet) || {};
+                }
+            });
+        }
+    }
 }

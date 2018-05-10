@@ -422,4 +422,22 @@ export class LiveVariableManager extends BaseVariableManager {
             return Promise.reject(errorMsg);
         });
     }
+
+    public defineFirstLastRecord(variable) {
+        if (variable.operation === 'read') {
+            Object.defineProperty(variable, 'firstRecord', {
+                'configurable': true,
+                'get': function () {
+                    return _.get(variable.dataSet, 'data[0]', {});
+                }
+            });
+            Object.defineProperty(variable, 'lastRecord', {
+                'configurable': true,
+                'get': function () {
+                    const data = _.get(variable.dataSet, 'data', []);
+                    return data[data.length - 1];
+                }
+            });
+        }
+    }
 }

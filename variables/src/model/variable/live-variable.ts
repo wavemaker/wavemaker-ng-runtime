@@ -141,6 +141,7 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     init() {
         getManager().initBinding(this, 'dataBinding', this.operation === 'read' ? 'filterFields' : 'inputFields');
+        getManager().defineFirstLastRecord(this);
         if (this.startUpdate) {
             this.invoke();
         }

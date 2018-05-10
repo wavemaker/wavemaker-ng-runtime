@@ -15,6 +15,9 @@ export abstract class ApiAwareVariable extends BaseVariable {
     transformationRequired: boolean;
     canUpdate: boolean;
 
+    firstRecord;
+    lastRecord;
+
     onBeforeUpdate: string;
     onResult: string;
     onError: string;
