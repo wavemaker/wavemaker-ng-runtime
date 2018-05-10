@@ -1,5 +1,5 @@
 <span class="input-group-addon" [innerHtml]="currencysymbol"></span>
-<input type="number" class="form-control app-textbox app-currency-input"
+<input type="number" class="form-control app-textbox app-currency-input" aria-label="Currency (in dollars)"
        [(ngModel)]="datavalue"
        (change)="onChange($event);"
        [step]="step"

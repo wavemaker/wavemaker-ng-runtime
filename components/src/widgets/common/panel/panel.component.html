@@ -3,7 +3,7 @@
         <a href="javascript:void(0)" class="panel-toggle" (click)="togglePanel($event)">
             <div class="pull-left">
                 <i class="app-icon panel-icon {{iconclass}}" *ngIf="iconclass && !iconurl"></i>
-                <img data-identifier="img" class="panel-image-icon" [src]="iconurl | image" *ngIf="iconurl"
+                <img data-identifier="img" title="iconurl" alt="Panel icon" class="panel-image-icon" [src]="iconurl | image" *ngIf="iconurl"
                      [ngStyle]="{width: iconwidth ,height: iconheight, margin: iconmargin}"/>
             </div>
             <div class="pull-left">
@@ -12,7 +12,7 @@
             </div>
         </a>
         <div class="panel-actions">
-            <span *ngIf="badgevalue" class="app-badge label label-{{badgetype}}">{{badgevalue}}</span>
+            <span *ngIf="badgevalue" aria-label="badge" class="app-badge label label-{{badgetype}}">{{badgevalue}}</span>
             <!-- Todo - Vinay re-visit once wmMenu is ready -->
             <div wmMenu
                  type="anchor"

@@ -1,11 +1,11 @@
 <div class="container-fluid">
     <div class="navbar-header">
-        <button type="button" class="btn-transparent navbar-toggle collapsed" data-toggle="collapse" (click)="toggleCollapse()">
+        <button type="button" class="btn-transparent navbar-toggle collapsed" data-toggle="collapse" (click)="toggleCollapse()" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <i [ngClass]="menuiconclass"></i>
         </button>
         <a class="navbar-brand" href="#/" *ngIf="title || imagesrc">
-            <img data-identifier="img" class="brand-image" [alt]="title" height="20" *ngIf="imgsrc" [src]="imagesrc"/>
+            <img data-identifier="img" class="brand-image" [alt]="Brand" height="20" *ngIf="imgsrc" [src]="imagesrc"/>
             <span class="title" [textContent]="title"></span>
         </a>
     </div>

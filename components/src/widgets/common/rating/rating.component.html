@@ -1,4 +1,4 @@
-<div [(ngModel)]="_model_" (focus)="onFocus($event)" ngDefaultControl role="input">
+<div [(ngModel)]="_model_" (focus)="onFocus($event)" ngDefaultControl role="radiogroup">
     <div *ngIf="!readonly" class="rating-style">
         <label [ngClass]="{active : rate.value <= selectedRatingValue}"
                [ngStyle]="{'font-size' :iconsize, color: rate.value <= selectedRatingValue && iconcolor}"
@@ -7,7 +7,7 @@
                (mouseleave)="onMouseleave($event, rate)"
                (mouseenter)="onMouseenter($event, rate)"
                [for]="_id + '-' + rate.value">
-            <input type="radio" [id]="_id + '-' + rate.value" (click)="getActiveElements($event, rate)" [name]="ratingname" [value]="rate.value"/>
+            <input type="radio" aria-label="rating radio buttons" aria-checked="false" [id]="_id + '-' + rate.value" (click)="getActiveElements($event, rate)" [name]="ratingname" [value]="rate.value"/>
         </label>
     </div>
     <div [class.hidden]="!readonly" [ngStyle]="{'font-size' :iconsize}" class="ratings-container disabled" >

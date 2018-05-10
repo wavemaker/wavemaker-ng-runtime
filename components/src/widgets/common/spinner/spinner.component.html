@@ -1,5 +1,5 @@
-<div class="spinner-message">
-    <span class="spinner-image animated infinite {{animation}}"
+<div class="spinner-message" aria-label="loading gif">
+    <span class="spinner-image animated infinite {{animation}}" aria-hidden="true"
         [ngStyle]="{width: imagewidth, height: imageheight, backgroundImage: picture, backgroundSize: imagewidth}"
         *ngIf="type === 'image'"></span>
     <i class="spinner-image animated infinite" [ngClass]="[iconclass, animation]" [style.fonSize]="iconsize" *ngIf="type === 'icon'"></i>

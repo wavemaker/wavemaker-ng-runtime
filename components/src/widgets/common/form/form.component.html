@@ -1,7 +1,7 @@
 <div class="panel-heading" *ngIf="!isLayoutDialog && (title || subheading || iconclass || showButtons('header'))">
     <h3 class="panel-title">
         <div class="pull-left">
-            <i class="app-icon panel-icon" [ngClass]="iconclass" *ngIf="iconclass"></i>
+            <i class="app-icon panel-icon" aria-hidden="true" [ngClass]="iconclass" *ngIf="iconclass"></i>
         </div>
         <div class="pull-left">
             <div class="heading" [textContent]="title"></div>

@@ -1,6 +1,6 @@
 <ng-container *ngIf="type !== 'anchor'">
-    <div class="dropdown app-menu" dropdown [isOpen]="isOpen" [autoClose]="autoclose" role="input" listen-property="dataset" tabindex="-1">
-        <button [title]="hint" [ngClass]="['btn app-button dropdown-toggle', menuclass]" dropdownToggle focus-target>
+    <div class="dropdown app-menu" dropdown [isOpen]="isOpen" [autoClose]="autoclose" listen-property="dataset" tabindex="-1">
+        <button [title]="hint" [ngClass]="['btn app-button dropdown-toggle', menuclass]" dropdownToggle focus-target aria-hashpopup="true" aria-expanded="false">
             <i [ngClass]="['app-icon', iconclass]"></i>
             <span class="caption">{{caption}}</span>
             <span>
@@ -8,12 +8,12 @@
             </span>
             <span class="pull-right caret fa" [ngClass]="menuCaret"></span>
         </button>
-        <ul wmMenuDropdown [items]="menuItems" [menualign]="menualign" [menulayout]="menulayout" *dropdownMenu></ul>
+        <ul wmMenuDropdown [items]="menuItems" [menualign]="menualign" [menulayout]="menulayout" *dropdownMenu aria-labelledby="dropdownmenu"></ul>
     </div>
 </ng-container>
 <ng-container *ngIf="type === 'anchor'">
-    <div class="dropdown app-menu" dropdown [isOpen]="isOpen" [autoClose]="autoclose" role="input" listen-property="dataset" tabindex="-1">
-        <a [title]="hint" href="javascript:void(0);" [ngClass]="['app-anchor dropdown-toggle', menuclass]" dropdownToggle>
+    <div class="dropdown app-menu" dropdown [isOpen]="isOpen" [autoClose]="autoclose" listen-property="dataset" tabindex="-1">
+        <a [title]="hint" href="javascript:void(0);" role="button" [ngClass]="['app-anchor dropdown-toggle', menuclass]" dropdownToggle aria-hashpopup="true" aria-expanded="false">
             <i [ngClass]="['app-icon', iconclass]"></i>
             <span class="caption">{{caption}}</span>
             <span>
@@ -21,6 +21,6 @@
             </span>
             <span class="pull-right caret fa" [ngClass]="menuCaret"></span>
         </a>
-        <ul wmMenuDropdown [items]="menuItems" [menualign]="menualign" [menulayout]="menulayout" *dropdownMenu></ul>
+        <ul wmMenuDropdown [items]="menuItems" [menualign]="menualign" [menulayout]="menulayout" *dropdownMenu aria-labelledby="dropdownmenu"></ul>
     </div>
 </ng-container>

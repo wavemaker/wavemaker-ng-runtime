@@ -1,11 +1,10 @@
 <li [ngClass]="['checkbox', 'app-checkbox', itemclass]"
     [class.active]="dataObj.isChecked"
     *ngFor="let dataObj of displayOptions"
-    role="input"
     [title]="hint"
     (click)="_onCheckboxLabelClick($event)">
     <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled}" [title]="dataObj.value">
-        <input name="checkboxset" [required]="required" type="checkbox" 
+        <input name="checkboxset" [required]="required" type="checkbox" aria-label="checkbox group"
             [disabled]="disabled ? 'disabled' : ''" [attr.data-attr-index]="index"
             [value]="dataObj.key" [tabindex]="tabindex" [checked]="dataObj.isChecked"/>
         <span class="caption" [textContent]="dataObj.value"></span>

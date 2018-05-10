@@ -8,7 +8,7 @@ register('wm-text', (): IBuildTaskDef => {
     return {
         pre: attrs => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmText #${counter}="wmText" [(ngModel)]="${counter}.datavalue" role="input" ${getAttrMarkup(attrs)}
+            return `<${tagName} wmText #${counter}="wmText" [(ngModel)]="${counter}.datavalue" ${getAttrMarkup(attrs)}
                         [wmAutocomplete]="${counter}.autocomplete" ${getUpdateOnTmpl(attrs.get('updateon'), attrs.get('formControlName'))}>`;
         }
     };

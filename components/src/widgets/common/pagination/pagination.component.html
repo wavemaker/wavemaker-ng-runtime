@@ -3,13 +3,15 @@
     <li [ngClass]="{'disabled':isDisableFirst}">
         <a [title]="appLocale.LABEL_FIRST" name="first" href="javascript:void(0);" aria-label="First"
            (click)="navigatePage('first', $event)">
-            <i class="wi wi-first-page"></i>
+            <span aria-hidden="true"><i class="wi wi-first-page"></i></span>
+            <span class="sr-only">First</span>
         </a>
     </li>
     <li [ngClass]="{'disabled':isDisablePrevious}">
         <a [title]="appLocale.LABEL_PREVIOUS" name="prev" href="javascript:void(0);" aria-label="Previous"
            (click)="navigatePage('prev', $event)">
-            <i class="wi wi-chevron-left"></i>
+            <span aria-hidden="true"><i class="wi wi-chevron-left"></i></span>
+            <span class="sr-only">Previous</span>
         </a>
     </li>
     <li class="pagecount disabled">
@@ -22,13 +24,15 @@
     <li [ngClass]="{'disabled':isDisableNext}">
         <a [title]="appLocale.LABEL_NEXT" name="next" href="javascript:void(0);" aria-label="Next"
            (click)="navigatePage('next', $event)">
-            <i class="wi wi-chevron-right"></i>
+            <span aria-hidden="true"><i class="wi wi-chevron-right"></i></span>
+            <span class="sr-only">Next</span>
         </a>
     </li>
     <li [ngClass]="{'disabled':isDisableLast}">
         <a [title]="appLocale.LABEL_LAST" name="last" href="javascript:void(0);" aria-label="Last"
            (click)="navigatePage('last', $event)">
-            <i class="wi wi-last-page"></i>
+            <span aria-hidden="true"><i class="wi wi-last-page"></i></span>
+            <span class="sr-only">Last</span>
         </a>
     </li>
     <li *ngIf="showrecordcount" class="totalcount disabled">
@@ -37,15 +41,17 @@
 </ul>
 <ul class="pager {{navigationClass}}" *ngIf="navcontrols === 'Pager'">
     <li class="previous" [ngClass]="{'disabled':isDisablePrevious}">
-        <a href="javascript:void(0);" (click)="navigatePage('prev', $event)">
+        <a href="javascript:void(0);" (click)="navigatePage('prev', $event)" aria-label="Previous">
             <span aria-hidden="true"><i class="wi wi-chevron-left"></i></span>
             {{appLocale.LABEL_PREVIOUS}}
+            <span class="sr-only">Previous</span>
         </a>
     </li>
     <li class="next" [ngClass]="{'disabled':isDisableNext}">
-        <a href="javascript:void(0);" (click)="navigatePage('next', $event)">
+        <a href="javascript:void(0);" (click)="navigatePage('next', $event)" aria-label="Next">
             {{appLocale.LABEL_NEXT}}
             <span aria-hidden="true"><i class="wi wi-chevron-right"></i></span>
+            <span class="sr-only">Next</span>
         </a>
     </li>
 </ul>

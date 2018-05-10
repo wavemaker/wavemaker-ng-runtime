@@ -1,6 +1,6 @@
 <label [ngClass]="{'unchecked': isUnchecked(), 'disabled': (disabled || readonly), 'required': (required && _caption)}" role="button">
     <input focus-target
-           type="checkbox"
+           type="checkbox" aria-describedby="checkbox"
            [(ngModel)]="model"
            [readOnly]="readonly"
            [required]="required"

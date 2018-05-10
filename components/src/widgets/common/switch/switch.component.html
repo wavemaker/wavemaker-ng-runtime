@@ -1,13 +1,13 @@
-<div class="btn-group btn-group-justified">
+<div role="group" aria-label="button switch" class="btn-group btn-group-justified">
     <a *ngFor="let opt of options; let $index = index;"
        title="{{opt[displayfield || 'label']}}" focus-target
-       href="javascript:void(0);" role="button"
+       href="javascript:void(0);"
        class="btn btn-default"
        name="wm-switch-{{opt}}"
        [attr.disabled]="disabled"
        [ngClass]="{'selected': selected.index === $index}"
        (click)="selectOpt($event, $index)">
-        <i *ngIf="opt[iconclass || 'icon']" [ngClass]="['app-icon', opt[iconclass] || opt['icon']]"></i>
+        <i *ngIf="opt[iconclass || 'icon']" arai-hidden="true" [ngClass]="['app-icon', opt[iconclass] || opt['icon']]"></i>
         {{opt[displayfield || "label"]}}
     </a>
 </div>

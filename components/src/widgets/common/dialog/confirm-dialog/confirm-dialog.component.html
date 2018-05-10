@@ -9,7 +9,7 @@
         <p class="app-dialog-message {{messageclass}}">{{message}}</p>
     </div>
     <div wmDialogFooter>
-        <button wmButton class="btn-default btn-secondary cancel-action" caption.bind="canceltext" (click)="onCancel($event)"></button>
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="onOk($event)"></button>
+        <button wmButton class="btn-default btn-secondary cancel-action" caption.bind="canceltext" aria-label="Cancel button" (click)="onCancel($event)"></button>
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
     </div>
 </ng-template>

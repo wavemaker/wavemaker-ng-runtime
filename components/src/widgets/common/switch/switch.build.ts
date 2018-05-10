@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-switch', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmSwitch ${getAttrMarkup(attrs)} role="input">`,
+        pre: attrs => `<${tagName} wmSwitch ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

@@ -9,6 +9,6 @@
         <p class="app-dialog-message text-{{alerttype}}" [textContent]="message"></p>
     </div>
     <div wmDialogFooter>
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="onOk($event)"></button>
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
     </div>
 </ng-template>

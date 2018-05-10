@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-search', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmSearch role="input" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmSearch ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

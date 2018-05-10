@@ -4,7 +4,7 @@ const tagName = 'button';
 
 register('wm-button', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmButton role="button" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmButton ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

@@ -1,5 +1,5 @@
 <ng-template #typeaheadTemplate let-model="item" let-index="index">
-    <img src="{{model.wmImgSrc}}" *ngIf="model.wmImgSrc" [style.width]="model.wmImgWidth">
+    <img src="{{model.wmImgSrc}}" alt="" *ngIf="model.wmImgSrc" [style.width]="model.wmImgWidth">
     <span title="{{model.wmDisplayLabel}}">{{model.wmDisplayLabel}}</span>
 </ng-template>
 <span class="wi wi-arrow-left form-control-feedback back-btn" (click)="closeSearch()"></span>

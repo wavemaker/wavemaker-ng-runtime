@@ -1,4 +1,4 @@
-<input class="form-control app-textbox app-dateinput display-input"
+<input class="form-control app-textbox app-dateinput display-input" aria-label="Select date"
        type="text"
        [value]="formattedModel"
        (click)="datepicker.toggle()"
@@ -6,9 +6,9 @@
        [required]="required"
        [placeholder]="placeholder">
 <span class="input-group-btn" (click)="datepicker.toggle()">
-    <button type="button" class="btn btn-default btn-time" focus-target><i class="app-icon wi wi-calendar"></i></button>
+    <button type="button" class="btn btn-default btn-time" aria-haspopup="true" aria-expanded="false" focus-target><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
 </span>
-<div style="height: 0;">
+<div style="height: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">
     <input class="model-holder"
            container="body"
            [bsConfig]="_dateOptions"

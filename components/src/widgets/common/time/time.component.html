@@ -1,5 +1,5 @@
 <div dropdown [isOpen]="status.isopen" [autoClose]="false" style="display: inherit">
-    <input class="form-control app-textbox display-input"
+    <input class="form-control app-textbox display-input" aria-label="Set the time"
            type="text"
            [value]="formattedModel || ''"
            [disabled]="isDisabled"
@@ -8,7 +8,7 @@
            [required]="required"
            (click)="toggleDropdown($event)">
     <span class="input-group-btn dropdown-toggle" (click)="toggleDropdown($event)">
-      <button type="button" class="btn btn-default btn-date"><i class="app-icon wi wi-access-time"></i></button>
+      <button type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
     </span>
     <div *dropdownMenu class="dropdown-menu">
         <timepicker class="model-holder"

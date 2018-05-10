@@ -4,7 +4,7 @@ const tagName = 'nav';
 
 register('wm-pagination', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmPagination data-identifier="pagination" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmPagination data-identifier="pagination" aria-label="Page navigation" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

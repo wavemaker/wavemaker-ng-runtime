@@ -29,10 +29,10 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmSearch ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.CHECKBOX:
-            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
             tmpl = `<div wmCheckboxset ${defaultTmpl} ${tmplRef}></div>`;
@@ -41,25 +41,25 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             /*TODO*/
             break;
         case FormWidgetType.COLORPICKER:
-            tmpl = `<div wmColorPicker ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmColorPicker ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmCurrency ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmDate ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="number" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="number" ${ngModelTmpl} aria-label="Only numbers" ${autoCompleteTmpl}>`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="password" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="password" ${ngModelTmpl} aria-label="Enter password" ${autoCompleteTmpl}>`;
             break;
         case FormWidgetType.RADIOSET:
-            tmpl = `<div wmRadioset ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmRadioset ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.RATING:
             tmpl = `<div wmRating ${defaultTmpl} ${tmplRef}></div>`;
@@ -71,22 +71,22 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmSelect ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.TOGGLE:
-            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef} type="toggle"  role="input"></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
             break;
         case FormWidgetType.SLIDER:
-            tmpl = `<div wmSlider ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmSlider ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.SWITCH:
-            tmpl = `<div wmSwitch ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmSwitch ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} aria-describedby="Enter text" ${autoCompleteTmpl}>`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<textarea wmTextarea ${defaultTmpl} ${tmplRef}="wmTextarea" ${ngModelTmpl} role="input"></textarea>`;
+            tmpl = `<textarea wmTextarea ${defaultTmpl} ${tmplRef}="wmTextarea" ${ngModelTmpl} role="textbox" aria-describedby="Place your text"></textarea>`;
             break;
         case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmTime ${defaultTmpl} ${tmplRef}></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
             tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
@@ -101,7 +101,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
                         [class.hidden]="!${pCounter}.isUpdateMode" [(ngModel)]="${counter}.value" [accept]="${counter}.permitted">`;
             break;
         default:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} role="input" ${autoCompleteTmpl}>`;
+            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} aria-describedby="Enter text" ${autoCompleteTmpl}>`;
             break;
     }
     return tmpl;

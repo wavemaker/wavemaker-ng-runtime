@@ -11,6 +11,6 @@
         <div wmIframe encodeurl.bind="encodeurl" iframesrc.bind="url" height="100%" width="100%" hint.bind="hint"></div>
     </div>
     <div wmDialogFooter *ngIf="showactions">
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="onOk($event)"></button>
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
     </div>
 </ng-template>

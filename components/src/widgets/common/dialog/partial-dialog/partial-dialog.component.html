@@ -10,6 +10,6 @@
         <ng-container *ngTemplateOutlet="dialogContent"></ng-container>
     </div>
     <div wmDialogFooter *ngIf="showactions">
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" (click)="onOk($event)"></button>
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
     </div>
 </ng-template>

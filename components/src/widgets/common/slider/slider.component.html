@@ -1,6 +1,6 @@
-<span class="app-slider-value" [innerText]="minvalue"></span>
-<span class="app-slider-value pull-right" [innerText]="maxvalue"></span>
-<input class="range-input"
+<span class="app-slider-value" aria-valuemin="0" [innerText]="minvalue"></span>
+<span class="app-slider-value pull-right" aria-valuemax="100" [innerText]="maxvalue"></span>
+<input class="range-input" aria-label="slider range" aria-orientation="horizontal"
        type="range" [title]="datavalue"
        [min]="minvalue" [max]="maxvalue"
        [step]="step"
@@ -8,4 +8,4 @@
        [disabled]="disable"
        [attr.accesskey]="shortcutkey"
        (change)="onChange($event)"/>
-<div *ngIf="readonly || disabled" class="readonly-wrapper"></div>
+<div *ngIf="readonly || disabled" aria-readonly="true" class="readonly-wrapper"></div>

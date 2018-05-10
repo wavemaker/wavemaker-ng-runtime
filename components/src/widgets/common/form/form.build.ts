@@ -58,7 +58,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                 attrs.set('width', '100%');
                 tmpl = getAttrMarkup(attrs);
                 return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog">
-                            <div wmDialog class="app-liveform-dialog" name="${attrs.get('dialogId')}" ${getAttrMarkup(dialogAttrsMap)} modal="true">
+                            <div wmDialog class="app-liveform-dialog" name="${attrs.get('dialogId')}" role="form" ${getAttrMarkup(dialogAttrsMap)} modal="true">
                         ${liveFormTmpl} ${tmpl}>`;
             }
             tmpl = getAttrMarkup(attrs);

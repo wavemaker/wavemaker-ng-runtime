@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-richtexteditor', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmRichTextEditor role="input" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmRichTextEditor role="textbox" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

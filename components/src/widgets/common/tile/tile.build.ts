@@ -4,7 +4,7 @@ const  tagName = 'div';
 
 register('wm-tile', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmTile ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmTile aria-describedby="Tile" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

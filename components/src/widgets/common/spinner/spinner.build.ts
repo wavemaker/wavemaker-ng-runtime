@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-spinner', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmSpinner ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmSpinner role="Loading" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
