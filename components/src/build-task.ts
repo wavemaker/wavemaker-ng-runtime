@@ -1,5 +1,7 @@
 export * from './widgets/common/accordion/accordion.build';
 export * from './widgets/common/accordion/accordion-pane/accordion-pane.build';
+export * from './widgets/common/tabs/tabs.build';
+export * from './widgets/common/tabs/tab-pane/tab-pane.build';
 export * from './widgets/common/anchor/anchor.build';
 export * from './widgets/common/audio/audio.build';
 export * from './widgets/common/button-group/button-group.build';
