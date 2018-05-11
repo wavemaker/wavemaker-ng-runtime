@@ -3,12 +3,12 @@
   [disabled]="disabled"
   [required]="required"
   [tabindex]="tabindex"
-  [(ngModel)]="_modelProxy"
+  [(ngModel)]="_model_"
   [multiple]="multiple"
   (change)="onSelectValueChange($event)"
   >
     <option selected [ngValue]="undefined" *ngIf="placeholder">{{placeholder}}</option>
     <option
-      *ngFor="let option of displayOptions"
-      [value]="option.key" [selected]="option.isChecked">{{option.value}}</option>
+      *ngFor="let item of datasetItems"
+      [value]="item.key" [selected]="item.selected">{{item.label}}</option>
 </select>
