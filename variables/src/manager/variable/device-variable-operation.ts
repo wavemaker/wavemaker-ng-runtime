@@ -31,7 +31,8 @@ export interface IDeviceVariableOperation {
      *
      * @param variable
      * @param options
+     * @param dataBindings
      * @returns {Promise<any>}
      */
-    invoke(variable: any, options: any): Promise<any>;
+    invoke(variable: any, options: any, dataBindings?: Map<string, any>): Promise<any>;
 }

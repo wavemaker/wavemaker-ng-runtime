@@ -1,0 +1,1 @@
+export * from '../../node_modules/@ionic-native/core/index';

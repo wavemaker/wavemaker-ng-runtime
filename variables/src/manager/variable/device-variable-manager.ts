@@ -1,6 +1,6 @@
 import { BaseVariableManager } from './base-variable.manager';
 import { initiateCallback } from '../../util/variable/variables.utils';
-import { DeviceVaribleService } from './device-varible-service';
+import { DeviceVariableService } from './device-variable-service';
 
 /**
  * Device operation registered in this class will be invoked when a device variable requests the operation.
@@ -10,9 +10,9 @@ export class DeviceVariableManager extends BaseVariableManager {
     /**
      * A map that contains services and their operations.
      *
-     * @type {Map<string, Map<string, IDeviceOperation>>}
+     * @type {Map<string, Map<string, DeviceVariableService>>}
      */
-    private serviceRegistry: Map<string, DeviceVaribleService> = new Map<string, DeviceVaribleService>();
+    private serviceRegistry: Map<string, DeviceVariableService> = new Map<string, DeviceVariableService>();
 
     /**
      * Invokes the given device variable and returns a promise that is resolved or rejected
@@ -33,10 +33,9 @@ export class DeviceVariableManager extends BaseVariableManager {
 
     /**
      * Adds an operation under the given service category
-     * @param {string} serviceName
-     * @param {IDeviceOperation} operation
+     * @param {string} service
      */
-    public registerService(service: DeviceVaribleService) {
+    public registerService(service: DeviceVariableService) {
         this.serviceRegistry.set(service.name, service);
     }
 }

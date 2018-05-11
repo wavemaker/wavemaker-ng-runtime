@@ -145,6 +145,17 @@ then
     fi
 
     echo -e "${Green}Bundled libs for wm-app \n"
+
+    ########## mobile components
+    echo -e "${Cyan}Building ionic-native ${White}"
+    $ROLLUP -c ./mobile/ionic-native/rollup.ionic-native.config.js --silent
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in ionic-native ${White}\n"
+        exit 1
+    fi
+    echo -e "${Green}Built ionic-native ${White}\n"
+
     echo -e "${Cyan}Bundling libs for wm-mobile ${White}"
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
@@ -182,7 +193,10 @@ then
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
+        ./node_modules/hammerjs/hammer.min.js \
         ./components/src/widgets/common/table/datatable.js \
+        ./dist/tmp/ionic-native-core.umd.js \
+        ./dist/tmp/ionic-native-plugins.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b
 
     if [ "$?" != "0" ]

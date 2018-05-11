@@ -1,5 +1,5 @@
 export const CONSTANTS = {
-    hasCordova: false,
+    hasCordova: window['cordova'] !== undefined,
     isWaveLens: false,
     isStudioMode: false,
     isRunMode: true,
