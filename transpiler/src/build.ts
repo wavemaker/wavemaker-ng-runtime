@@ -63,7 +63,7 @@ const processAttr = attr => {
          * hence, the value against it should be a computed string
          */
         if (attr.name === 'accessroles') {
-            return [overridden, `'${value}'`]
+            return [overridden, `'${value}'`];
         }
         return [overridden, value];
     }
@@ -77,7 +77,7 @@ const processAttr = attr => {
         return processBinding(attr, boundExpr);
     }
 
-    return [attr.name, value];
+    return [attr.name, quoteAttr(value)];
 };
 
 export const getDataSource = (dataSetExpr: string): string => {
