@@ -7,7 +7,7 @@
        [attr.disabled]="disabled"
        [ngClass]="{'selected': selected.index === $index}"
        (click)="selectOpt($event, $index)">
-        <i *ngIf="opt[iconclass || 'icon']" arai-hidden="true" [ngClass]="['app-icon', opt[iconclass] || opt['icon']]"></i>
+        <i *ngIf="opt[iconclass || 'icon']" aria-hidden="true" [ngClass]="['app-icon', opt[iconclass] || opt['icon']]"></i>
         {{opt[displayfield || "label"]}}
     </a>
 </div>

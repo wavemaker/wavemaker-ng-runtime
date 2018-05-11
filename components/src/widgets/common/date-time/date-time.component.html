@@ -10,7 +10,7 @@
     <button type="button" class="btn btn-default btn-time" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="datepicker.toggle();"><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
     <button type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
 </span>
-    <div style="height: 0;">
+    <div style="height: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">
         <input class="model-holder"
                [container]="'body'"
                [bsConfig]="_dateOptions"
