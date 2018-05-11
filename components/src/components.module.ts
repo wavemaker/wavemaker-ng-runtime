@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { NgxMaskModule } from 'ngx-mask';
 
 import { DialogService } from './widgets/common/dialog/dialog.service';
 
@@ -40,6 +41,11 @@ import { IconComponent } from './widgets/common/icon/icon.component';
 import { IframeComponent } from './widgets/common/iframe/iframe.component';
 import { IframeDialogComponent } from './widgets/common/dialog/iframe-dialog/iframe-dialog.component';
 import { ImagePipe } from './pipes/image.pipe';
+import { InputCalendarComponent } from './widgets/common/text/calendar/input-calendar.component';
+import { InputColorComponent } from './widgets/common/text/color/input-color.component';
+import { InputEmailComponent } from './widgets/common/text/email/input-email.component';
+import { InputNumberComponent } from './widgets/common/text/number/input-number.component';
+import { InputTextComponent } from './widgets/common/text/text/input-text.component';
 import { FormWidgetDirective } from './widgets/common/form/form-widget.directive';
 import { LabelDirective } from './widgets/common/label/label.directive';
 import { LayoutGridColumnDirective } from './widgets/common/layout-grid/layout-grid-column/layout-grid-column.directive';
@@ -85,7 +91,6 @@ import { TableColumnGroupDirective } from './widgets/common/table/table-column-g
 import { TableComponent } from './widgets/common/table/table.component';
 import { TableRowActionDirective } from './widgets/common/table/table-row-action/table-row-action.directive';
 import { TextareaDirective } from './widgets/common/textarea/textarea.directive';
-import { TextDirective } from './widgets/common/text/text.directive';
 import { TileDirective } from './widgets/common/tile/tile.directive';
 import { TimeComponent } from './widgets/common/time/time.component';
 import { TopNavDirective } from './widgets/common/top-nav/top-nav.directive';
@@ -128,6 +133,11 @@ const wmComponents = [
     IconComponent,
     IframeComponent,
     IframeDialogComponent,
+    InputCalendarComponent,
+    InputColorComponent,
+    InputEmailComponent,
+    InputNumberComponent,
+    InputTextComponent,
     FormWidgetDirective,
     LabelDirective,
     LayoutGridColumnDirective,
@@ -173,7 +183,6 @@ const wmComponents = [
     TableComponent,
     TableRowActionDirective,
     TextareaDirective,
-    TextDirective,
     TileDirective,
     TimeComponent,
     TopNavDirective,
@@ -207,7 +216,8 @@ const PIPES = [
         PaginationModule.forRoot(),
         TypeaheadModule.forRoot(),
         ProgressbarModule.forRoot(),
-        ModalModule.forRoot()
+        ModalModule.forRoot(),
+        NgxMaskModule.forRoot()
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],
@@ -225,3 +235,4 @@ const PIPES = [
 })
 export class WmComponentsModule {
 }
+

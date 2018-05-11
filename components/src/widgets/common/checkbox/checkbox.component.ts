@@ -4,9 +4,9 @@ import { isDefined, toggleClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
-import { BaseFormComponent } from '../base/base-form.component';
 import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { registerProps } from './checkbox.props';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
@@ -34,7 +34,7 @@ const unStringify = val => {
         {provide: WidgetRef, useExisting: forwardRef(() => CheckboxComponent)}
     ]
 })
-export class CheckboxComponent  extends BaseFormComponent implements OnInit {
+export class CheckboxComponent  extends BaseFormCustomComponent implements OnInit {
 
     model: boolean;
     /**

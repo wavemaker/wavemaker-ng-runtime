@@ -1,4 +1,4 @@
-import { ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
 import { Subject } from 'rxjs/Subject';
@@ -10,13 +10,13 @@ import { register } from '../../framework/widget-registry';
 import { proxyHandler } from '../../framework/property-change-handler';
 import { ChangeListener, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
-import { COMPONENT_HOST_EVENTS, DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
+import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
 import { ProxyProvider } from '../../framework/proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
 
 declare const $;
 
-export abstract class BaseComponent implements OnDestroy, OnInit {
+export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
     /**
      * unique identifier for the widget
@@ -105,6 +105,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
      * EventManger to add/remove events
      */
     protected readonly eventManager: EventManager;
+
+    /**
+     * Holds the event registration functions.
+     * these functions needs to be executed after onViewInit
+     */
+    private toBeSetupEventsQueue: Array<Function> = [];
 
     protected constructor(
         protected inj: Injector,
@@ -223,14 +229,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     protected onStyleChange(k: string, nv: any, ov: any) {}
 
     /**
-     * Determines whether an event needs to be added on the host nativeElement of the component or not.
-     * Components can override this method to change the default behavior
-     */
-    protected shouldRegisterHostEvent(eventName: string): boolean {
-        return COMPONENT_HOST_EVENTS.has(eventName);
-    }
-
-    /**
      * Register the widget with the widgetRegistry
      */
     protected registerWidget(widgetName: string) {
@@ -248,11 +246,15 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
      * invoke the event handler
      * Components can override this method to execute custom logic before invoking the user callback
      */
-    protected handleEvent(eventName: string, fn: Function, locals: any) {
-        this.eventManager.addEventListener(this.nativeElement, eventName, e => {
-            locals.$event = e;
-            fn();
-        });
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        this.eventManager.addEventListener(
+            node,
+            eventName,
+            e => {
+                locals.$event = e;
+                eventCallback();
+            }
+        );
     }
 
     /**
@@ -271,9 +273,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
 
         this.eventHandlers.set(eventName, {callback: fn, locals});
 
-        if (this.shouldRegisterHostEvent(eventName)) {
-            this.handleEvent(this.getMappedEventName(eventName), fn, locals);
-        }
+        // events needs to be setup after viewInit
+        this.toBeSetupEventsQueue.push(() => {
+            this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), fn, locals);
+        });
     }
 
     /**
@@ -296,10 +299,15 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
     /**
      * Remove watch on the bound property
      */
-    protected removePropertBinding(propName: string) {
+    protected removePropertyBinding(propName: string) {
         $unwatch(getWatchIdentifier(this.widgetId, propName));
     }
 
+    /**
+     * invoke the event callback method
+     * @param {string} eventName
+     * @param extraLocals
+     */
     public invokeEventCallback(eventName: string, extraLocals?: any) {
         const callbackInfo = this.eventHandlers.get(eventName);
         if (callbackInfo) {
@@ -397,6 +405,20 @@ export abstract class BaseComponent implements OnDestroy, OnInit {
             this.setInitProps();
         }
     }
+
+    /**
+     * Register the events
+     */
+    ngAfterViewInit() {
+        if (this.toBeSetupEventsQueue.length) {
+            for (const fn of this.toBeSetupEventsQueue) {
+                fn();
+            }
+        }
+        this.toBeSetupEventsQueue.length = 0;
+    }
+
+    ngAfterContentInit() {}
 
     ngOnDestroy() {
         this.styleChange.complete();

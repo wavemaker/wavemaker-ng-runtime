@@ -4,10 +4,10 @@ import { getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
-import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './date.props';
 import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 registerProps();
 
@@ -36,7 +36,7 @@ const getDateObj = (value?: string): Date => {
         {provide: WidgetRef, useExisting: forwardRef(() => DateComponent)}
     ]
 })
-export class DateComponent extends BaseFormComponent {
+export class DateComponent extends BaseFormCustomComponent {
     /**
      * This is an internal property used to map it to the widget
      */

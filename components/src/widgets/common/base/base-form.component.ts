@@ -1,30 +1,25 @@
-import { ControlValueAccessor } from '@angular/forms';
-
 import { StylableComponent } from './stylable.component';
 
-export abstract class BaseFormComponent extends StylableComponent implements ControlValueAccessor {
-    protected datavalue;
+export abstract class BaseFormComponent extends StylableComponent {
+    public datavalue;
+    private oldDataValue;
 
-    private _onChange: any = () => {};
-    private _onTouched: any = () => {};
+    protected invokeOnChange(value, $event?: Event) {
 
-    public registerOnChange(fn) {
-        this._onChange = fn;
+        // invoke the event callback
+        if ($event) {
+            this.invokeEventCallback('change', {
+                $event,
+                newVal: value,
+                oldVal: this.oldDataValue
+            });
+        }
+        // update the previous value
+        this.oldDataValue = value;
     }
 
-    public registerOnTouched(fn) {
-        this._onTouched = fn;
+    protected updateOldDatavalue(val: any) {
+        this.oldDataValue = val;
     }
 
-    public writeValue(value) {
-        this.datavalue = value;
-    }
-
-    protected invokeOnChange(value) {
-        this._onChange(value);
-    }
-
-    protected invokeOnTouched() {
-        this._onTouched();
-    }
 }

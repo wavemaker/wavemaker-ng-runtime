@@ -1,12 +1,12 @@
-import {Component, Injector, forwardRef} from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
 
-import {switchClass, $appDigest} from '@wm/core';
+import { $appDigest, switchClass } from '@wm/core';
 
-import {styler} from '../../framework/styler';
-import {BaseFormComponent} from '../base/base-form.component';
-import {updatedCheckedValues, updateCheckedValue, getDisplayValues, extractDisplayOptions, assignModelForMultiSelect} from '../../../utils/form-utils';
-import {getControlValueAccessor} from '../../../utils/widget-utils';
-import {registerProps} from '../checkboxset/checkboxset.props';
+import { styler } from '../../framework/styler';
+import { assignModelForMultiSelect, extractDisplayOptions, getDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../../utils/form-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { registerProps } from '../checkboxset/checkboxset.props';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 registerProps();
 const DEFAULT_CLS = 'app-checkboxset list-group';
@@ -21,7 +21,7 @@ declare const _;
     }]
 })
 
-export class CheckboxsetComponent extends BaseFormComponent {
+export class CheckboxsetComponent extends BaseFormCustomComponent {
     itemclass;
     required;
     tabindex;

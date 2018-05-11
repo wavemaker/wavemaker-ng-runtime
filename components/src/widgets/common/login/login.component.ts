@@ -4,9 +4,9 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './login.props';
-import { TextDirective } from '../text/text.directive';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
 import { ButtonComponent } from '../button/button.component';
+import { InputTextComponent } from '../text/text/input-text.component';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
@@ -23,9 +23,9 @@ declare const _, $;
 })
 export class LoginComponent extends StylableComponent implements AfterViewInit {
 
-    usernameCmp: TextDirective;
+    usernameCmp: InputTextComponent;
 
-    passwordCmp: TextDirective;
+    passwordCmp: InputTextComponent;
 
     rememberMeCmp: CheckboxComponent;
 
@@ -33,7 +33,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
     loginDetails: any;
 
-    @ContentChildren(TextDirective, {descendants: true}) textInputComponents;
+    @ContentChildren(InputTextComponent, {descendants: true}) textInputComponents;
     @ContentChildren(CheckboxComponent, {descendants: true}) checkboxCmp;
     @ContentChildren(ButtonComponent, {descendants: true}) buttonComponents;
 
@@ -80,6 +80,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
+        super.ngAfterViewInit();
         this.textInputComponents._results.forEach(cmp => {
             const elementType = cmp.getNativeElement().getAttribute('name');
             switch (elementType) {

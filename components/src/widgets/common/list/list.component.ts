@@ -348,7 +348,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         });
 
         dataNavigator.maxResults = this.pagesize || 5;
-        this.removePropertBinding('dataset');
+        this.removePropertyBinding('dataset');
         this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent, this.datasource);
     }
 
@@ -577,6 +577,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
+        super.ngAfterViewInit();
         this.setupHandlers();
         if (this.enablereorder) {
            this.configureDnD();

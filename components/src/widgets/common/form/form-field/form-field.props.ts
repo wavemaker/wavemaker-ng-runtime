@@ -1,14 +1,15 @@
 import { FormWidgetType } from '@wm/core';
 
 import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
-import { textProps } from '../../text/text.props';
 import { searchProps } from '../../search/search.props';
 import { checkboxProps } from '../../checkbox/checkbox.props';
 import { colorPickerProps } from '../../color-picker/color-picker.props';
 import { currencyProps } from '../../currency/currency.props';
 import { checkboxsetProps } from '../../checkboxset/checkboxset.props';
-import { dateProps } from '../../date/date.props';
 import { dateTimeProps } from '../../date-time/date-time.props';
+import { inputCalendarTypeProps } from '../../text/calendar/input-calendar.props';
+import { inputNumberTypeProps } from '../../text/number/input-number.props';
+import { inputTextTypeProps } from '../../text/text/input-text.props';
 import { radiosetProps } from '../../radioset/radioset.props';
 import { ratingProps } from '../../rating/rating.props';
 import { richTextProps } from '../../rich-text-editor/rich-text-editor.props';
@@ -16,7 +17,7 @@ import { selectProps } from '../../select/select.props';
 import { sliderProps } from '../../slider/slider.props';
 import { switchProps } from '../../switch/switch.props';
 import { textareaProps } from '../../textarea/textarea.props';
-import { timeProps} from '../../time/time.props';
+
 
 const uploadProps = new Map([
     ['disabled', PROP_BOOLEAN],
@@ -34,19 +35,19 @@ const widgetPropsMap = new Map(
         // TODO: [FormWidgetType.CHIPS, chipsProps],
         [FormWidgetType.COLORPICKER, colorPickerProps],
         [FormWidgetType.CURRENCY, currencyProps],
-        [FormWidgetType.DATE, dateProps],
-        [FormWidgetType.DATETIME, dateTimeProps],
-        [FormWidgetType.NUMBER, textProps],
-        [FormWidgetType.PASSWORD, textProps],
+        [FormWidgetType.DATE, inputCalendarTypeProps],
+        [FormWidgetType.DATETIME, inputCalendarTypeProps],
+        [FormWidgetType.NUMBER, inputNumberTypeProps],
+        [FormWidgetType.PASSWORD, inputTextTypeProps],
         [FormWidgetType.RADIOSET, radiosetProps],
         [FormWidgetType.RATING, ratingProps],
         [FormWidgetType.RICHTEXT, richTextProps],
         [FormWidgetType.SELECT, selectProps],
         [FormWidgetType.SLIDER, sliderProps],
         [FormWidgetType.SWITCH, switchProps],
-        [FormWidgetType.TEXT, textProps],
+        [FormWidgetType.TEXT, inputTextTypeProps],
         [FormWidgetType.TEXTAREA, textareaProps],
-        [FormWidgetType.TIME, timeProps],
+        [FormWidgetType.TIME, inputCalendarTypeProps],
         [FormWidgetType.TIMESTAMP, dateTimeProps],
         [FormWidgetType.TOGGLE, checkboxProps],
         [FormWidgetType.TYPEAHEAD, searchProps],

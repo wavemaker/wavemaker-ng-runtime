@@ -4,10 +4,10 @@ import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
-import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './date-time.props';
 import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -24,7 +24,7 @@ registerProps();
         {provide: WidgetRef, useExisting: forwardRef(() => DatetimeComponent)}
     ]
 })
-export class DatetimeComponent extends BaseFormComponent {
+export class DatetimeComponent extends BaseFormCustomComponent {
     /**
      * This property sets the widget to readonly mode
      */

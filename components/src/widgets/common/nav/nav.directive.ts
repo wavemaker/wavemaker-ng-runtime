@@ -210,6 +210,7 @@ export class NavDirective extends StylableComponent implements AfterViewInit, On
     }
 
     ngAfterViewInit() {
+        super.ngAfterViewInit();
         const $el = $(this.nativeElement);
         /* Element on select functionality */
         $el.on('click.on-select', '.app-anchor', (e) => {

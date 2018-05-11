@@ -1,13 +1,13 @@
-import {Component, forwardRef, Injector} from '@angular/core';
+import { Component, forwardRef, Injector } from '@angular/core';
 
-import {$appDigest, switchClass} from '@wm/core';
+import { $appDigest, switchClass } from '@wm/core';
 
-import {WidgetRef} from '../../framework/types';
-import {styler} from '../../framework/styler';
-import {BaseFormComponent} from '../base/base-form.component';
-import {registerProps} from './radioset.props';
-import {assignModelForSelected, extractDisplayOptions, getDisplayValues, updateCheckedValue, updatedCheckedValues} from '../../../utils/form-utils';
-import {getControlValueAccessor} from '../../../utils/widget-utils';
+import { WidgetRef } from '../../framework/types';
+import { styler } from '../../framework/styler';
+import { registerProps } from './radioset.props';
+import { assignModelForSelected, extractDisplayOptions, getDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../../utils/form-utils';
+import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 declare const _;
 
@@ -24,7 +24,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
         {provide: WidgetRef, useExisting: forwardRef(() => RadiosetComponent)}
     ]
 })
-export class RadiosetComponent extends BaseFormComponent {
+export class RadiosetComponent extends BaseFormCustomComponent {
     class = '';
     itemclass = '';
     width;

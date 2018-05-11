@@ -3,9 +3,9 @@ import { CONSTANTS_CURRENCY } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
-import { BaseFormComponent } from '../base/base-form.component';
 import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { registerProps } from './currency.props';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'input-group app-currency';
 const WIDGET_CONFIG = {widgetType: 'wm-currency', hostClass: DEFAULT_CLS};
@@ -19,7 +19,7 @@ registerProps();
         provide: WidgetRef, useExisting: forwardRef(() => CurrencyComponent)
     }]
 })
-export class CurrencyComponent extends BaseFormComponent implements OnInit {
+export class CurrencyComponent extends BaseFormCustomComponent implements OnInit {
     currency: string;
     oldVal;
 

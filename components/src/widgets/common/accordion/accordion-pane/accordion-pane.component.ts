@@ -113,6 +113,7 @@ export class AccordionPaneComponent extends StylableComponent implements OnInit,
     }
 
     ngAfterViewInit() {
+        super.ngAfterViewInit();
         styler(
             this.nativeElement.querySelector('.panel-body') as HTMLElement,
             this,

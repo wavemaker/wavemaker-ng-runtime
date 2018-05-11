@@ -4,10 +4,10 @@ import { removeAttr, setAttr } from '@wm/core';
 
 import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
-import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './select.props';
 import { assignModelForMultiSelect, assignModelForSelected, extractDisplayOptions, getDisplayValues, updatedCheckedValues } from '../../../utils/form-utils';
 import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 declare const _;
 
@@ -24,7 +24,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
     ]
 })
 
-export class SelectComponent extends BaseFormComponent implements OnInit {
+export class SelectComponent extends BaseFormCustomComponent implements OnInit {
 
     class = '';
     required;

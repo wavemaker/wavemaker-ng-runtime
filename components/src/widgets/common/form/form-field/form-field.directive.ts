@@ -355,6 +355,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     ngAfterContentInit() {
+        super.ngAfterContentInit();
         if (this.formWidget) {
             setTimeout(() => {
                 this.applyProps.forEach((key) => {

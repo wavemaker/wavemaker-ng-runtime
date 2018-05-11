@@ -4,10 +4,10 @@ import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/
 
 import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
-import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './time.props';
 import { getControlValueAccessor } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
@@ -29,7 +29,7 @@ registerProps();
         {provide: WidgetRef, useExisting: forwardRef(() => TimeComponent)}
     ]
 })
-export class TimeComponent extends BaseFormComponent implements OnDestroy {
+export class TimeComponent extends BaseFormCustomComponent implements OnDestroy {
     /**
      * This property sets the widget to readonly mode
      */

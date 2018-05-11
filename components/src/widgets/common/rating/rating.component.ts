@@ -6,7 +6,7 @@ import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { getControlValueAccessor, getEvaluatedData, getObjValueByKey } from '../../../utils/widget-utils';
 import { registerProps } from './rating.props';
-import { BaseFormComponent } from '../base/base-form.component';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 declare const _;
 
@@ -33,7 +33,7 @@ const DEFAULT_RATING = 5;
         {provide: WidgetRef, useExisting: forwardRef(() => RatingComponent)}
     ]
 })
-export class RatingComponent extends BaseFormComponent implements OnInit {
+export class RatingComponent extends BaseFormCustomComponent implements OnInit {
     _model_;
     /**
      * A placeholder is text to show in the editor when there is no value.

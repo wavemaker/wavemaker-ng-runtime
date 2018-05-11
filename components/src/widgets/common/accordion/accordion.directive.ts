@@ -119,6 +119,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     }
 
     ngAfterContentInit() {
+        super.ngAfterContentInit();
         // if the defaultPaneIndex is not bound, expand the pane otherwise wait till the binding is resolved
         if (!this.hasDefaultPaneIndexBinding) {
             this.expandDefaultPane();

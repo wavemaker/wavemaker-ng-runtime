@@ -137,6 +137,7 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
     }
 
     ngAfterContentInit() {
+        super.ngAfterContentInit();
         this.hasFooter = !!this.nativeElement.querySelector('[wmPanelFooter]');
         styler(this.panelContent.nativeElement.querySelector('.panel-body') as HTMLElement, this, APPLY_STYLES_TYPE.INNER_SHELL);
     }

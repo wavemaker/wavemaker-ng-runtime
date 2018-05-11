@@ -24,7 +24,7 @@ const CAPTION_POSITION = {
 };
 
 @Directive({
-    selector: 'div[wmFormGroup]',
+    selector: 'div[wmComposite]',
     providers: [
         {provide: WidgetRef, useExisting: forwardRef(() => CompositeDirective)}
     ]
@@ -71,6 +71,7 @@ export class CompositeDirective extends StylableComponent implements AfterViewIn
     }
 
     ngAfterViewInit() {
+        super.ngAfterViewInit();
         const labelEl = this.nativeElement.querySelectorAll('label.control-label'),
             inputEl = this.nativeElement.querySelectorAll('input, select, textarea');
         /*if there are only one input el and label El add id and for attribute*/

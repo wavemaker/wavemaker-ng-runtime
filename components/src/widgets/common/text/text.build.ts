@@ -1,16 +1,11 @@
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { IDGenerator, getUpdateOnTmpl } from '@wm/core';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
-const tagName = 'input';
-const idGen = new IDGenerator('wm_text_');
+const tagName = 'div';
 
 register('wm-text', (): IBuildTaskDef => {
     return {
-        pre: attrs => {
-            const counter = idGen.nextUid();
-            return `<${tagName} wmText #${counter}="wmText" [(ngModel)]="${counter}.datavalue" ${getAttrMarkup(attrs)}
-                        [wmAutocomplete]="${counter}.autocomplete" ${getUpdateOnTmpl(attrs.get('updateon'), attrs.get('formControlName'))}>`;
-        }
+        pre: attrs => `<${tagName} wmInput ${getAttrMarkup(attrs)}>`,
+        post: () => `</${tagName}>`
     };
 });
 

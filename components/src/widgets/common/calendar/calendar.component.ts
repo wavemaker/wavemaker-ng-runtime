@@ -546,6 +546,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
     }
 
     ngAfterViewInit() {
+        super.ngAfterViewInit();
         this.$fullCalendar = $(this._calendar.nativeElement);
         this.$fullCalendar.fullCalendar(this.calendarOptions.calendar);
         // if the changes are already stacked before calendar renders then execute them when needed

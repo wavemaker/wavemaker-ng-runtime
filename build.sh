@@ -97,6 +97,16 @@ then
     fi
     echo -e "${Green}Built ngx-toastr\n"
 
+    echo -e "${Cyan}Building ngx-mask ${White}"
+    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-mask/esm2015/ngx-mask.js --allowJs --skipLibCheck --module es2015
+    $ROLLUP -c ./config/rollup.ngx-mask.config.js --silent
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in building ngx-mask"
+        exit 1
+    fi
+    echo -e "${Green}Built ngx-mask\n"
+
     echo -e "${Cyan}Bundling libs for wm-app ${White}"
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
@@ -115,6 +125,7 @@ then
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/ngx-bootstrap.umd.js \
         ./dist/tmp/ngx-toastr.umd.js \
+        ./dist/tmp/ngx-mask.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
@@ -174,6 +185,7 @@ then
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/ngx-bootstrap.umd.js \
         ./dist/tmp/ngx-toastr.umd.js \
+        ./dist/tmp/ngx-mask.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \

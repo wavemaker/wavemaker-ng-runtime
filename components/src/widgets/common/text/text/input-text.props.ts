@@ -1,15 +1,14 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
-export const textProps = new Map(
+export const inputTextTypeProps = new Map(
     [
         ['autocomplete', {value: true, ...PROP_BOOLEAN}],
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
+        ['displayformat', PROP_STRING],
         ['maxchars', PROP_NUMBER],
-        ['maxvalue', PROP_NUMBER],
-        ['minvalue', PROP_NUMBER],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Enter text', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN],
@@ -26,7 +25,7 @@ export const textProps = new Map(
 
 export const registerProps = () => {
     register(
-        'wm-text',
-        textProps
+        'wm-input-text',
+        inputTextTypeProps
     );
 };

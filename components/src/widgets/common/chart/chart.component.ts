@@ -1013,6 +1013,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     }
 
     ngAfterViewInit() {
+        super.ngAfterViewInit();
         // For old projects
         if (!_.includes(['outside', 'inside', 'hide'], this.showlabels)) {
             this.showlabels        = getBooleanValue(this.showlabels);

@@ -6,10 +6,10 @@ import { $appDigest, getClonedObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
-import { BaseFormComponent } from '../base/base-form.component';
 import { getControlValueAccessor, getEvaluatedData } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 import { registerProps } from './search.props';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 declare const _;
 
@@ -33,7 +33,7 @@ registerProps();
         {provide: WidgetRef, useExisting: forwardRef(() => SearchComponent)}
     ]
 })
-export class SearchComponent extends BaseFormComponent implements OnInit {
+export class SearchComponent extends BaseFormCustomComponent implements OnInit {
 
     displaylabel;
     datafield;

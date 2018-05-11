@@ -4,10 +4,10 @@ import { $appDigest, isEqualWithFields, setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
-import { BaseFormComponent } from '../base/base-form.component';
 import { registerProps } from './switch.props';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 declare const _, $;
 
@@ -38,7 +38,7 @@ registerProps();
         {provide: WidgetRef, useExisting: forwardRef(() => SwitchComponent)}
     ]
 })
-export class SwitchComponent extends BaseFormComponent {
+export class SwitchComponent extends BaseFormCustomComponent {
 
     _model;
     datafield;

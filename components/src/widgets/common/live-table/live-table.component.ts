@@ -184,6 +184,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     ngAfterContentInit() {
+        super.ngAfterContentInit();
         if (this.form) {
             this.form._liveTableParent = this;
         }
