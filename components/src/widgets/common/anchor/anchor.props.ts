@@ -22,7 +22,7 @@ export const registerProps = () => {
                 ['shortcutkey', PROP_STRING],
                 ['show', PROP_BOOLEAN],
                 ['tabindex', PROP_NUMBER],
-                ['target', PROP_STRING]
+                ['target', {value: '_self', ...PROP_STRING}]
             ]
         )
     );

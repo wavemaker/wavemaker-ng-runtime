@@ -47,7 +47,7 @@ export class AnchorComponent extends StylableComponent {
                 nv = encodeUrl(nv);
             }
             // if hyperlink starts with 'www.' append '//' in the beginning
-            if (nv.startsWith(nv, 'www.')) {
+            if (nv.startsWith('www.')) {
                 nv = `//${nv}`;
             }
             setAttr(this.nativeElement, 'href', nv);
