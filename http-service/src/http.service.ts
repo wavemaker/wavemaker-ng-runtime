@@ -8,6 +8,7 @@ declare const _;
 export class HttpService {
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
     sessionTimeoutObservable = new Subject();
+    sessionTimeoutQueue = [];
 
     constructor(private httpClient: HttpClient) {}
 
@@ -55,10 +56,18 @@ export class HttpService {
             this.httpClient.request(req).toPromise().then((response) => {
                 resolve(response);
             } , (error) => {
+                // In case of 401, do not reject the promise.
+                // push it into the queue, which will be resolved post login
                 if (error.status === 401) {
+                    this.sessionTimeoutQueue.push({
+                        requestInfo: options,
+                        resolve: resolve,
+                        reject: reject
+                    });
                     this.on401();
+                } else {
+                    reject(error);
                 }
-                reject(error);
             });
         });
     }
@@ -90,5 +99,21 @@ export class HttpService {
      */
     on401() {
         this.sessionTimeoutObservable.next();
+    }
+
+    /**
+     * Execute queued requests, failed due to session timeout
+     */
+    executeSessionFailureRequests() {
+        const queue = this.sessionTimeoutQueue,
+            that = this;
+        that.sessionTimeoutQueue = [];
+        queue.forEach(function(data) {
+            that.send(data.requestInfo).then(function(response) {
+                data.resolve(response);
+            }, function(response){
+                data.reject(response)
+            });
+        });
     }
 }

@@ -2,7 +2,7 @@ import { getValidJSON, triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { initiateCallback, securityService } from './../../util/variable/variables.utils';
+import { appManager, initiateCallback, securityService } from './../../util/variable/variables.utils';
 import { routerService } from '../../util/variable/variables.utils';
 
 export class LogoutActionManager extends BaseActionManager {
@@ -34,7 +34,7 @@ export class LogoutActionManager extends BaseActionManager {
                     redirectUrl = getValidJSON(redirectUrl);
                     // Reset Security Config.
                     // $rootScope.isUserAuthenticated = false;
-                    securityService.resetSecurityConfig().
+                    appManager.reloadAppData().
                     then(function () {
                         // EVENT: ON_RESULT
                         initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, redirectUrl);

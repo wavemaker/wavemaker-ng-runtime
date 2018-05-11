@@ -5,6 +5,7 @@ declare const window, _, $;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 
+export let appManager;
 export let httpService;
 export let metadataService;
 export let routerService;
@@ -84,6 +85,9 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
 
 export const setDependency = (type: string, ref: any) => {
     switch (type) {
+        case 'appManager':
+            appManager = ref;
+            break;
         case 'http':
             httpService = ref;
             break;

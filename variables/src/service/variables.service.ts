@@ -18,9 +18,6 @@ declare const _;
 @Injectable()
 export class VariablesService {
 
-    variablesMap = {};
-    metadataMap = {};
-
     constructor(private httpService: HttpService,
                 private metadataService: MetadataService,
                 private routerService: Router,
@@ -28,7 +25,7 @@ export class VariablesService {
                 private oAuthService: OAuthService,
                 private securityService: SecurityService,
                 private dialogService: DialogService) {
-        // set external dependencies
+        // set external dependencies, to be used across variable classes, managers and utils
         setDependency('http', this.httpService);
         setDependency('metadata', this.metadataService);
         setDependency('router', this.routerService);
@@ -93,4 +90,7 @@ export class VariablesService {
     destroy() {
     }
 
+    registerDependency(name, ref) {
+        setDependency(name, ref);
+    }
 }

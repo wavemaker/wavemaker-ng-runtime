@@ -21,6 +21,7 @@ import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { App } from './services/app.service';
+import { AppManagerService } from './services/app.manager.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { I18nService } from './services/i18n.service';
@@ -88,6 +89,7 @@ const routes = [
         AppVariablesResolve,
         I18nService,
         I18nResolve,
+        AppManagerService,
         AppResourceManagerService,
         PrefabManagerService,
         SecurityConfigResolve,

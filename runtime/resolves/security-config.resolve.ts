@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
-import { SecurityService } from '@wm/security';
+
+import { AppManagerService } from '../services/app.manager.service';
 
 @Injectable()
 export class SecurityConfigResolve implements Resolve<any> {
+    loaded: boolean;
 
-    constructor(private securityService: SecurityService) {}
+    constructor(private appManager: AppManagerService) {}
 
     resolve() {
-        return this.securityService.isLoaded() || this.securityService.load();
+        return this.loaded || this.appManager.loadSecurityConfig().then(() => {
+            this.loaded = true;
+        });
     }
 }

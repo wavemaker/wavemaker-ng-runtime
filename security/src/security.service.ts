@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '@wm/http';
 import { getClonedObject, triggerFn } from '@wm/core';
-import { DialogService } from '@wm/components';
 
 declare const _WM_APP_PROPERTIES, _;
 
@@ -24,11 +23,7 @@ export class SecurityService {
                 private $http: HttpService,
                 private routerService: Router,
                 private activatedRoute: ActivatedRoute,
-                private _location: Location,
-                private dialogService: DialogService) {
-
-        // register method to invoke on session timeout
-        this.$http.registerOnSessionTimeout(this.handle401.bind(this));
+                private _location: Location) {
     }
 
     isLoaded() {
@@ -278,108 +273,6 @@ export class SecurityService {
         return _.join(params, '&');
     }
 
-    /**
-     * On session timeout, if the session timeout config is set to a dialog, then open login dialog
-     */
-    showLoginDialog() {
-        this.dialogService.closeAllDialogs();
-        this.dialogService.open('CommonLoginDialog');
-    }
-
-    /**
-     * Handles the app when a XHR request returns 401 response
-     * If no user was logged in before 401 occurred, First time Login is simulated
-     * Else, a session timeout has occurred and the same is simulated
-     * @param page  if provided, represents the page name for which XHR request returned 401, on re-login
-     *              if not provided, a service request returned 401
-     * @param onSuccess success handler
-     * @param onError error handler
-     */
-    handle401(page, onSuccess?, onError?) {
-        let sessionTimeoutConfig,
-            sessionTimeoutMethod,
-            loginConfig,
-            loginMethod,
-            ssoUrl,
-            pageParams;
-        const that = this,
-            LOGIN_METHOD = {
-            'DIALOG' : 'DIALOG',
-            'PAGE'   : 'PAGE',
-            'SSO'    : 'SSO'
-        };
-
-        const config = that.get();
-        loginConfig = config.loginConfig;
-        // if user found, 401 was thrown after session time
-        if (config.userInfo && config.userInfo.userName) {
-            config.authenticated = false;
-            sessionTimeoutConfig = loginConfig.sessionTimeout || {'type': LOGIN_METHOD.DIALOG};
-            sessionTimeoutMethod = sessionTimeoutConfig.type.toUpperCase();
-            // triggerFn($rs.onSessionTimeout);
-            // $rs.$emit('on-sessionTimeout');
-            if (sessionTimeoutMethod === LOGIN_METHOD.DIALOG) {
-                if (page) {
-                    // BaseService.pushToErrorCallStack(null, function () {
-                    //     _load(page, onSuccess, onError);
-                    // }, WM.noop);
-                }
-                that.showLoginDialog();
-            } else if (sessionTimeoutMethod === LOGIN_METHOD.PAGE) {
-                if (!page) {
-                    page = that.getCurrentRoutePage();
-                }
-                that.routerService.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
-            }
-        } else {
-            // if no user found, 401 was thrown for first time login
-            loginMethod = loginConfig.type.toUpperCase();
-            switch (loginMethod) {
-                case LOGIN_METHOD.DIALOG:
-                    // Through loginDialog, user will remain in the current state and failed calls will be executed post login through LoginVariableService.
-                    // NOTE: user will be redirected to respective landing page only if dialog is opened manually(not through a failed 401 call).
-                    // $rs._noRedirect = true;
-                    if (page) {
-                        // BaseService.pushToErrorCallStack(null, function () {
-                        //     _load(page, onSuccess, onError);
-                        // }, WM.noop);
-                    }
-                    that.showLoginDialog();
-                    break;
-                case LOGIN_METHOD.PAGE:
-                    // do not provide redirectTo page if fetching HOME page resulted 401
-                    // on app load, by default Home page is loaded
-                    page = that.getRedirectPage(config);
-                    that.routerService.navigate([loginConfig.pageName], {queryParams: {redirectTo: page}});
-                    break;
-                case LOGIN_METHOD.SSO:
-                    // do not provide redirectTo page if fetching HOME page resulted 401
-                    // on app load, by default Home page is loaded
-                    page = that.getRedirectPage(config);
-                    page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
-                    // pageParams = that.getQueryString($location.search());
-                    pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
-                    // showing a redirecting message
-                    document.body.textContent = 'Redirecting to sso login...';
-                    // appending redirect to page and page params
-                    // ssoUrl = $rs.project.deployedUrl + SSO_URL + page + pageParams;
-                    // /*
-                    //  * remove iFrame when redirected to IdP login page.
-                    //  * this is being done as IDPs do not allow to get themselves loaded into iFrames.
-                    //  * remove-toolbar has been assigned with a window name WM_PREVIEW_WINDOW, check if the iframe is our toolbar related and
-                    //  * safely change the location of the parent toolbar with current url.
-                    //  */
-                    // if ($window.self !== $window.top && $window.parent.name === PREVIEW_WINDOW_NAME) {
-                    //     $window.parent.location.href = $window.self.location.href;
-                    //     $window.parent.name = '';
-                    // } else {
-                    //     $window.location.href = ssoUrl;
-                    // }
-                    break;
-            }
-        }
-    }
-
     appLogin(params, successCallback, failureCallback) {
         const rememberme = _.isUndefined(params.rememberme) ? false : params.rememberme,
             loginParams = ['username', 'password', 'rememberme'],
@@ -432,26 +325,6 @@ export class SecurityService {
         triggerFn(successCallback, config.authenticated);
     }, failureCallback);
 }
-
-    /**
-     * Updates the security config in SecurityService by making a fresh call to the API
-     * If app.variables not loaded, will load them and the related dependencies
-     * Updates the loggedInUser with the fresh user info
-     * @returns {promise|*}
-     */
-    resetSecurityConfig() {
-        return this.load().then(function () {
-            // metadataService.load(undefined, true).then(function() {
-                // if (!appVariablesLoaded) {
-                //     initAppVariablesAndDependencies().
-                //     then(deferred.resolve, deferred.resolve);
-                // } else {
-                //     updateLoggedInUserVariable().
-                //     then(deferred.resolve, deferred.resolve);
-                // }
-            // });
-        });
-    }
 
     /**
      * The API is used to logout of the app.

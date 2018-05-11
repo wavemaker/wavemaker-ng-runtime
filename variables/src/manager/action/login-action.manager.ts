@@ -4,12 +4,11 @@ import { triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { initiateCallback, routerService, securityService, dialogService } from '../../util/variable/variables.utils';
+import { initiateCallback, routerService, securityService, dialogService, appManager } from '../../util/variable/variables.utils';
 
 export class LoginActionManager extends BaseActionManager {
     login(variable, options, success, error) {
         options = options || {};
-        console.log('logging in now..');
         let params: any = {},
             errMsg,
             paramKey,
@@ -66,7 +65,7 @@ export class LoginActionManager extends BaseActionManager {
              * Get App variables. if not loaded
              * Update loggedInUser variable with new user details
              */
-            securityService.resetSecurityConfig().
+            appManager.reloadAppData().
             then(function (config) {
                 triggerFn(success);
 
@@ -76,7 +75,7 @@ export class LoginActionManager extends BaseActionManager {
                 if (variable.useDefaultSuccessHandler) {
                     // if first time user logging in or same user re-logging in, execute n/w calls failed before logging in
                     if (!lastLoggedInUsername || lastLoggedInUsername === params.username) {
-                        //BaseService.executeErrorCallStack();
+                        appManager.executeSessionFailureRequests();
                     }
                     // get redirectTo page from URL and remove it from URL
                     const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo');
