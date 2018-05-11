@@ -124,6 +124,7 @@ export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
         return _.cloneDeep(dataSet);
     }
 
+    // The order by only works when the dataset contains list of objects.
     const items = orderBy.split(','),
         fields = [],
         directions = [];
@@ -133,6 +134,67 @@ export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
         directions.push(item[1]);
     });
     return _.orderBy(dataSet, fields, directions);
+};
+
+/**
+ * Returns an array of object, each object contain the DataSetItem whose key, value, label are extracted from object keys.
+ */
+export const transformDataWithKeys = (dataSet: any) => {
+    const data: DataSetItem[] = [];
+    // if the dataset is instance of object (not an array) or the first item in the dataset array is an object,
+    // then we extract the keys from the object and prepare the dataset items.
+    if (_.isObject(dataSet[0]) || (_.isObject(dataSet) && !(dataSet instanceof Array))) {
+        // getting keys of the object
+        const objectKeys = Object.keys(dataSet[0] || dataSet);
+        _.forEach(objectKeys, objKey => {
+            data.push({'key': objKey, 'label': objKey, 'value': objKey});
+        });
+    }
+
+    return data;
+};
+
+/**
+ * The first step in datasetItems creation is data transformation:
+ *
+ * The dataset can contain one of the following formats and each of them to be converted to the given format;
+ *
+ * 1) The comma separated string..eg: A,B,C => [{ key: 'A', value: 'A'}, { key: 'B', value: 'B'}, { key: 'C', value: 'C'}]
+ * 2) The array of values eg: [1,2,3] => [{ key: 1, value: 1}, { key: 2, value: 2}, { key: 3, value: 3}]
+ * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
+ * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
+ */
+export const transformData = (dataSet: any, myDataField, myDisplayField, myDisplayExpr) => {
+    const data = [];
+    if (_.isString(dataSet)) {
+        dataSet = dataSet.split(',').map(str => str.trim());
+        dataSet.forEach(option => {
+            data.push({'key': option, 'value': option, 'label': option});
+        });
+    } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
+        dataSet.forEach(option => {
+            data.push({'key': option, 'value': option, 'label': option});
+        });
+    } else if (!(dataSet instanceof Array) && dataSet instanceof Object) { // Todo: check instance of obj.
+        dataSet.forEach((value, key) => {
+            data.push({'key': key, 'value': key, 'label': value});
+        });
+    } else {
+        myDisplayField = getDisplayField(dataSet, myDisplayField || myDataField);
+        dataSet.forEach((option, index) => {
+            const key = myDataField === ALLFIELDS ? index : getObjValueByKey(option, myDataField);
+
+            // Omit all the items whose datafield (key) is null or undefined.
+            if (!_.isUndefined(key) && !_.isNull(key)) {
+                const label = getEvaluatedData(option, {
+                    displayfield: myDisplayField, displayexpression: myDisplayExpr
+                });
+                const dataSetItem = {'key': key, 'label': label, 'value': myDataField === ALLFIELDS ? option : key};
+                data.push(dataSetItem);
+            }
+        });
+    }
+    return data;
 };
 
 /**
@@ -208,6 +270,8 @@ export const assignModelForSelected = (displayOptions: any[], model: any, modelP
     }
     callback({'_dataVal': _dataVal, 'model': _model_});
 };
+
+// Todo: getSelectedObjFromDisplayOptions
 
 /**
  * This function iterates over the modelProxy and returns the model value. Here model is array of values.
@@ -328,10 +392,26 @@ export const getDisplayValues = (displayOptions: any[]) => {
     return displayValue;
 };
 
+// Todo: convert to Class
 interface DataSetProps {
     datafield: string;
     displayfield?: string;
     displayexpression?: string;
     usekeys?: boolean;
     orderby?: string;
+}
+
+/**
+ * key represents the datafield value
+ * label represents display value or expression value
+ * value displayValue for primitives and data object for allFields
+ * imgSrc picture source
+ * selected represents boolean to notify selected item.
+ */
+export class DataSetItem {
+    key: any;
+    label: any;
+    value: any;
+    imgSrc?: string;
+    selected?: boolean = false;
 }

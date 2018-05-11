@@ -1,12 +1,11 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import {Component, Injector, forwardRef, OnInit} from '@angular/core';
 
-import { $appDigest, switchClass } from '@wm/core';
+import {switchClass, $appDigest} from '@wm/core';
 
-import { styler } from '../../framework/styler';
-import { assignModelForMultiSelect, extractDisplayOptions, getDisplayValues, updateCheckedValue, updatedCheckedValues } from '../../../utils/form-utils';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
-import { registerProps } from '../checkboxset/checkboxset.props';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
+import {styler} from '../../framework/styler';
+import {getControlValueAccessor} from '../../../utils/widget-utils';
+import {registerProps} from '../checkboxset/checkboxset.props';
+import {DatasetAwareFormComponent} from '../base/dataset-aware-form.component';
 
 registerProps();
 const DEFAULT_CLS = 'app-checkboxset list-group';
@@ -15,151 +14,45 @@ declare const _;
 
 @Component({
     selector: '[wmCheckboxset]',
+    exportAs: 'wmCheckboxset',
     templateUrl: 'checkboxset.component.html',
     providers: [getControlValueAccessor(CheckboxsetComponent), {
         provide: '@Widget', useExisting: forwardRef(() => CheckboxsetComponent)
     }]
 })
 
-export class CheckboxsetComponent extends BaseFormCustomComponent {
-    itemclass;
-    required;
-    tabindex;
-    hint;
-
-    public dataset;
-    public datafield;
-    public displayfield;
-    public displayexpression;
-    public orderby;
-    public usekeys;
-    public readonly;
-    public disabled;
+export class CheckboxsetComponent extends DatasetAwareFormComponent implements OnInit {
     public layout = '';
-    public datasource;
-    public displayValue;
 
-    public _displayOptions: any[];
-    private _isChangedManually = false;
-    private ALLFIELDS = 'All Fields';
-    private modelProxy;
+    private oldValue;
 
-    private __model;
-    private _dataVal;
-
-    get _model_() {
-        return this.__model;
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this);
+        this.multiple = true;
     }
 
-    set _model_(val: any) {
-        this.__model = val;
-        updatedCheckedValues(this.displayOptions, this.__model, this.modelProxy, this.usekeys, (_modelProxy) => {
-            this.modelProxy = _modelProxy;
-            this.displayValue = getDisplayValues(this.displayOptions);
-        });
-        this.invokeOnChange(this.datavalue);
-    }
-
-    /**
-     * This property can be used to set the value of the component.
-     * */
-    set datavalue(val: any) {
-        this._model_ = val;
-    }
-
-    get datavalue() {
-        return this._model_;
-    }
-
-    get displayOptions() {
-        return this._displayOptions;
-    }
-
-    set displayOptions(val: any[]) {
-        this._displayOptions = val;
-    }
-
-
-    private updateValues(modelObj) {
-        this._dataVal = modelObj._dataVal;
-        this._model_ = modelObj.model;
-    }
-
-    private assignModelValue(option) {
-        if (option) {
-            if (this.datafield === this.ALLFIELDS) {
-                if (this.usekeys || !option.dataObject) {
-                    this._model_.push(option.key);
-                } else {
-                    this._model_.push(option.dataObject);
-                }
-            } else {
-                this._model_.push(option.key);
-            }
-        } else {
-            assignModelForMultiSelect(this.displayOptions, this.datafield, this.modelProxy, this._model_, this._isChangedManually, this._dataVal, this.updateValues.bind(this));
-        }
-        $appDigest();
-    }
-
-    private onResult(displayOptions) {
-        this.displayOptions = displayOptions;
-
-        // Use _dataVal as model when the displayOptions are updated i.e. when latest dataset is retrieved
-        if (this.displayOptions.length && !_.isNull(this._model_) && this._model_ !== ''
-            && (_.isUndefined(this._model_) || !this._model_.length)) {
-            this._model_ = this._dataVal;
-        }
-
-        updatedCheckedValues(this.displayOptions, this.__model, this.modelProxy, this.usekeys, (_modelProxy) => {
-            this.modelProxy = _modelProxy;
-            this.displayValue = getDisplayValues(this.displayOptions);
-            this.assignModelValue(undefined);
-        });
-    }
-
-    private constructDisplayOptions() {
-        extractDisplayOptions(this.dataset, {
-            'datafield': this.datafield,
-            'displayfield': this.displayfield,
-            'displayexpression': this.displayexpression,
-            'usekeys': this.usekeys,
-            'orderby': this.orderby
-        }, this.onResult.bind(this));
-    }
-
-    _onCheckboxLabelClick($event) {
-        this.invokeOnTouched();
-        this._isChangedManually = true;
-
-        // reset all the isChecked flags.
-        _.forEach(this.displayOptions, (dataObj) => dataObj.isChecked = false);
-
+    onCheckboxLabelClick($event) {
+        // construct the _model from the checked elements.
         const inputElements = this.nativeElement.querySelectorAll('input:checked');
-        this._model_ = [];
-
+        const keys = [];
         _.forEach(inputElements, ($el) => {
-            // set isChecked flag for displayOptions.
-            const checkedDisplayOption = updateCheckedValue($el.value, this.displayOptions);
-            this.assignModelValue(checkedDisplayOption);
+            keys.push($el.value);
         });
 
-        this.invokeOnChange(this.datavalue);
+        // Sets the datavalue from _model_
+        this.selectByKey(keys);
+
+        this.invokeOnTouched();
+        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
+        this.oldValue = this.datavalue;
     }
 
     onPropertyChange(key, nv, ov?) {
+        super.onPropertyChange(key, nv, ov);
         switch (key) {
-            case 'dataset':
-            case 'datafield':
-            case 'displayfield':
-            case 'usekeys':
-            case 'displayexpression':
-            case 'orderby':
-                this.constructDisplayOptions();
-                break;
-            case 'datavalue':
             case 'selectedvalues':
-                this._model_ = nv;
+                this.datavalue = nv;
                 break;
             case 'layout':
                 switchClass(this.nativeElement, nv, ov);
@@ -167,9 +60,8 @@ export class CheckboxsetComponent extends BaseFormCustomComponent {
         }
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
+    // Todo: As the datavalue is overridden by angular.
+    writeValue() {
 
     }
 }
