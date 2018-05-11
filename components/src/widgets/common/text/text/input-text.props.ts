@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
 
 export const inputTextTypeProps = new Map(
     [
@@ -19,7 +19,7 @@ export const inputTextTypeProps = new Map(
         ['step', PROP_NUMBER],
         ['tabindex', PROP_NUMBER],
         ['type', PROP_STRING],
-        ['updateon', {value: 'blur', ...PROP_STRING}]
+        ['updateon', {value: 'blur', ...PROP_STRING_NOTIFY}]
     ]
 );
 

@@ -9,6 +9,12 @@ import { styler } from '../../../framework/styler';
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {
     public class: string;
 
+    // possible values for ngModelOptions are 'blur' and 'change'
+    // default is 'blur'
+    protected ngModelOptions = {
+        updateOn: 'blur'
+    };
+
     /**
      * Reference to the input element. All the styles and classes will be applied on this node.
      * Input components must override this
@@ -30,6 +36,11 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         } else if (key === 'datavalue') {
             // update the oldDataValue when the datavalue is modified programmatically
             this.updateOldDatavalue(ov);
+        } else if (key === 'updateon') {
+            if (nv === 'default') {
+                nv = 'change';
+            }
+            this.ngModelOptions.updateOn = nv;
         }
     }
 
