@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
 
 export const inputNumberTypeProps = new Map(
     [
@@ -7,6 +7,7 @@ export const inputNumberTypeProps = new Map(
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
+        ['hint', PROP_STRING],
         ['maxchars', PROP_NUMBER],
         ['maxvalue', PROP_NUMBER],
         ['minvalue', PROP_NUMBER],
@@ -20,7 +21,7 @@ export const inputNumberTypeProps = new Map(
         ['step', PROP_NUMBER],
         ['tabindex', PROP_NUMBER],
         ['type', PROP_STRING],
-        ['updateon', {value: 'blur', ...PROP_STRING}]
+        ['updateon', {value: 'blur', ...PROP_STRING_NOTIFY}]
     ]
 );
 

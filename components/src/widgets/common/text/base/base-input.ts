@@ -35,7 +35,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
             }
         } else if (key === 'datavalue') {
             // update the oldDataValue when the datavalue is modified programmatically
-            this.updateOldDatavalue(ov);
+            this.updatePrevDatavalue(ov);
         } else if (key === 'updateon') {
             if (nv === 'default') {
                 nv = 'change';
@@ -54,9 +54,9 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     }
 
     // invoke the change callback only when the model is valid
-    protected handleChange(e: Event) {
+    protected handleChange(newValue: any) {
         if (this.ngModel.valid) {
-            this.invokeOnChange(this.datavalue, e);
+            this.invokeOnChange(this.datavalue, {type: 'change'});
         }
     }
 

@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
 
 
 export const registerProps = () => {
@@ -10,6 +10,7 @@ export const registerProps = () => {
             ['class', PROP_STRING],
             ['datavalue', PROP_STRING],
             ['disabled', PROP_BOOLEAN],
+            ['hint', PROP_STRING],
             ['name', PROP_STRING],
             ['placeholder', {value: 'Enter text', ...PROP_STRING}],
             ['readonly', PROP_BOOLEAN],
@@ -18,7 +19,7 @@ export const registerProps = () => {
             ['show', PROP_BOOLEAN],
             ['tabindex', PROP_NUMBER],
             ['type', PROP_STRING],
-            ['updateon', {value: 'blur', ...PROP_STRING}]
+            ['updateon', {value: 'blur', ...PROP_STRING_NOTIFY}]
         ])
     );
 };

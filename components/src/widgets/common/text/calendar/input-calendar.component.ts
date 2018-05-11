@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { registerProps } from './input-calendar.props';
@@ -16,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-input-calendar'};
         {provide: WidgetRef, useExisting: forwardRef(() => InputCalendarComponent)}
     ]
 })
-export class InputCalendarComponent extends BaseInput implements AfterViewInit {
+export class InputCalendarComponent extends BaseInput {
 
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

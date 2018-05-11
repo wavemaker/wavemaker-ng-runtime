@@ -6,6 +6,7 @@ export const textareaProps = new Map(
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
+        ['hint', PROP_STRING],
         ['maxchars', PROP_NUMBER],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Place your text', ...PROP_STRING}],

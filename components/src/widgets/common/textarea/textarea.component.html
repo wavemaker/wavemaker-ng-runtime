@@ -1,0 +1,15 @@
+<textarea class="form-control app-textarea"
+          role="input"
+          [(ngModel)]="datavalue"
+          [ngModelOptions]="ngModelOptions"
+          [readonly]="readonly"
+          [required]="required"
+          [disabled]="disabled"
+          [maxlength]="maxchars"
+          [attr.tabindex]="tabindex"
+          [attr.placeholder]="placeholder"
+          [attr.accesskey]="shortcutkey"
+          [autofocus]="autofocus"
+          (ngModelChange)="handleChange($event)"
+          #textarea
+></textarea>

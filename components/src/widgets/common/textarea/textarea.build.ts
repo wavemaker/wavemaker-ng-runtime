@@ -1,16 +1,10 @@
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { getUpdateOnTmpl, IDGenerator } from '@wm/core';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
-const tagName = 'textarea';
-const idGen = new IDGenerator('wm_textarea_');
+const tagName = 'div';
 
 register('wm-textarea', (): IBuildTaskDef => {
     return {
-        pre: attrs => {
-            const counter = idGen.nextUid();
-            return `<${tagName} wmTextarea #${counter}="wmTextarea" [(ngModel)]="${counter}.datavalue" role="input"
-                        ${getUpdateOnTmpl(attrs.get('updateon'), attrs.get('formControlName'))} ${getAttrMarkup(attrs)}>`;
-        },
+        pre: attrs => `<${tagName} wmTextarea ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

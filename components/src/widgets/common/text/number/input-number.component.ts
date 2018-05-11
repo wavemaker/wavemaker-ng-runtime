@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { registerProps } from './input-number.props';
@@ -16,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-input-number'};
         {provide: WidgetRef, useExisting: forwardRef(() => InputNumberComponent)}
     ]
 })
-export class InputNumberComponent extends BaseInput implements AfterViewInit {
+export class InputNumberComponent extends BaseInput {
 
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

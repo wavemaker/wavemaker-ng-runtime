@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { registerProps } from './input-text.props';
@@ -16,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-input-text'};
         {provide: WidgetRef, useExisting: forwardRef(() => InputTextComponent)}
     ]
 })
-export class InputTextComponent extends BaseInput implements AfterViewInit {
+export class InputTextComponent extends BaseInput {
 
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

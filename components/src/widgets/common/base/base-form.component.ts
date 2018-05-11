@@ -2,7 +2,7 @@ import { StylableComponent } from './stylable.component';
 
 export abstract class BaseFormComponent extends StylableComponent {
     public datavalue;
-    private oldDataValue;
+    private prevDatavalue;
 
     protected invokeOnChange(value, $event?: Event) {
 
@@ -11,15 +11,15 @@ export abstract class BaseFormComponent extends StylableComponent {
             this.invokeEventCallback('change', {
                 $event,
                 newVal: value,
-                oldVal: this.oldDataValue
+                oldVal: this.prevDatavalue
             });
         }
         // update the previous value
-        this.oldDataValue = value;
+        this.prevDatavalue = value;
     }
 
-    protected updateOldDatavalue(val: any) {
-        this.oldDataValue = val;
+    protected updatePrevDatavalue(val: any) {
+        this.prevDatavalue = val;
     }
 
 }

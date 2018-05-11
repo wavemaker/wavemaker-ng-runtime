@@ -10,5 +10,5 @@
        [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
        [autofocus]="autofocus"
-       (change)="handleChange($event)"
+       (ngModelChange)="handleChange($event)"
        #input>

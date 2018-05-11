@@ -6,4 +6,4 @@ export const getUpdateOnTmpl = (updateOn, formControlName) => {
     updateOn = updateOn || 'blur';
     updateOn = updateOn === 'default' ? 'change' : updateOn;
     return `[ngModelOptions]="{updateOn: '${updateOn}'}"`;
-};
+};  

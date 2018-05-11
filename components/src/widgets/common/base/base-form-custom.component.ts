@@ -19,7 +19,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
         this.datavalue = value;
     }
 
-    protected invokeOnChange(value, $event?: Event) {
+    protected invokeOnChange(value, $event?: Event | any) {
         // let the angular know about the change
         this._onChange(value);
 

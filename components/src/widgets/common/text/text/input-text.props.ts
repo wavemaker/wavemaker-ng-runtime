@@ -8,6 +8,7 @@ export const inputTextTypeProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['displayformat', PROP_STRING],
+        ['hint', PROP_STRING],
         ['maxchars', PROP_NUMBER],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Enter text', ...PROP_STRING}],
@@ -18,7 +19,7 @@ export const inputTextTypeProps = new Map(
         ['show', PROP_BOOLEAN],
         ['step', PROP_NUMBER],
         ['tabindex', PROP_NUMBER],
-        ['type', PROP_STRING],
+        ['type', {value: 'text', ...PROP_STRING}],
         ['updateon', {value: 'blur', ...PROP_STRING_NOTIFY}]
     ]
 );

@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
 
 export const inputCalendarTypeProps = new Map(
     [
@@ -7,6 +7,7 @@ export const inputCalendarTypeProps = new Map(
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
+        ['hint', PROP_STRING],
         ['maxvalue', PROP_NUMBER],
         ['minvalue', PROP_NUMBER],
         ['name', PROP_STRING],
@@ -18,7 +19,7 @@ export const inputCalendarTypeProps = new Map(
         ['step', PROP_NUMBER],
         ['tabindex', PROP_NUMBER],
         ['type', PROP_STRING],
-        ['updateon', {value: 'blur', ...PROP_STRING}]
+        ['updateon', {value: 'blur', ...PROP_STRING_NOTIFY}]
     ]
 );
 

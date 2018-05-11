@@ -90,7 +90,7 @@ import { TableColumnDirective } from './widgets/common/table/table-column/table-
 import { TableColumnGroupDirective } from './widgets/common/table/table-column-group/table-column-group.directive';
 import { TableComponent } from './widgets/common/table/table.component';
 import { TableRowActionDirective } from './widgets/common/table/table-row-action/table-row-action.directive';
-import { TextareaDirective } from './widgets/common/textarea/textarea.directive';
+import { TextareaComponent } from './widgets/common/textarea/textarea.component';
 import { TileDirective } from './widgets/common/tile/tile.directive';
 import { TimeComponent } from './widgets/common/time/time.component';
 import { TopNavDirective } from './widgets/common/top-nav/top-nav.directive';
@@ -182,7 +182,7 @@ const wmComponents = [
     TableColumnGroupDirective,
     TableComponent,
     TableRowActionDirective,
-    TextareaDirective,
+    TextareaComponent,
     TileDirective,
     TimeComponent,
     TopNavDirective,
