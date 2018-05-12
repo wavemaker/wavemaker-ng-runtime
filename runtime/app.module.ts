@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
+import { $parseExpr } from '@wm/core';
 import { WmComponentsModule } from '@wm/components';
 import { VariablesModule } from '@wm/variables';
 
@@ -31,6 +32,7 @@ import { AppVariablesResolve } from './resolves/app-variables.resolve';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { MobileAppModule } from '@wm/mobile/runtime';
 
+declare const $;
 declare const _WM_APP_PROPERTIES;
 
 const resolve = {
@@ -100,4 +102,7 @@ const routes = [
     bootstrap: [AppComponent]
 })
 export class AppModule {
+    constructor () {
+        $.fn.swipeAnimation.expressionEvaluator = $parseExpr;
+    }
 }

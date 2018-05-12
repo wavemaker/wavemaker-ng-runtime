@@ -107,6 +107,15 @@ then
     fi
     echo -e "${Green}Built ngx-mask\n"
 
+    echo -e "${Cyan}Building swipey ${White}"
+    $ROLLUP -c ./swipey/rollup.config.js --silent
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in building swipey ${White}\n"
+        exit 1
+    fi
+    echo -e "${Green}Built swipey ${White}\n"
+
     echo -e "${Cyan}Bundling libs for wm-app ${White}"
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
@@ -146,6 +155,8 @@ then
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
+        ./dist/tmp/swipey.umd.js \
+        ./swipey/src/swipee.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
 
@@ -206,6 +217,8 @@ then
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
+        ./dist/tmp/swipey.umd.js \
+        ./swipey/src/swipee.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
         ./dist/tmp/ionic-native-core.umd.js \
         ./dist/tmp/ionic-native-plugins.umd.js \

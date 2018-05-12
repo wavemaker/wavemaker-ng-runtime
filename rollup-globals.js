@@ -20,6 +20,7 @@ export default {
     '@ionic-native/media-capture': 'ionicNative.plugins',
     '@ionic-native/network': 'ionicNative.plugins',
     '@ionic-native/vibration': 'ionicNative.plugins',
+    '@swipey': 'swipey',
     '@wm/core': 'wm.core',
     '@wm/transpiler': 'wm.transpiler',
     '@wm/components': 'wm.components',

@@ -4,6 +4,7 @@ import { NgModule, Component } from '@angular/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { VariablesModule } from '@wm/mobile/variables';
 
+declare const $;
 
 @Component({
     selector : 'mobile-app',
@@ -23,4 +24,8 @@ export class MobileAppComponent {
     bootstrap: [MobileAppComponent]
 })
 export class MobileAppModule {
+
+    constructor() {
+        $('.wm-app:first').addClass('wm-mobile-app');
+    }
 }

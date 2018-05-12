@@ -1,0 +1,40 @@
+import { PROP_STRING, PROP_STRING_NOTIFY, register, PROP_NUMBER, PROP_BOOLEAN } from '@wm/components';
+
+export const navbarProps = new Map(
+    [
+        ['backbutton', {value: false, ...PROP_BOOLEAN}],
+        ['backbuttoniconclass', {value: 'wi wi-back', ...PROP_STRING}],
+        ['backbuttonlabel', {value: '', ...PROP_STRING}],
+        ['backgroundattachment', PROP_STRING],
+        ['backgroundcolor', PROP_STRING],
+        ['backgroundgradient', PROP_STRING],
+        ['backgroundimage', PROP_STRING],
+        ['backgroundposition', PROP_STRING],
+        ['backgroundrepeat', PROP_STRING],
+        ['backgroundsize', PROP_STRING],
+        ['datafield', PROP_STRING],
+        ['dataset', PROP_STRING_NOTIFY],
+        ['datavalue', PROP_STRING],
+        ['defaultview', PROP_STRING_NOTIFY],
+        ['displayimagesrc', PROP_STRING],
+        ['displaylabel', PROP_STRING],
+        ['imgsrc', PROP_STRING_NOTIFY],
+        ['query', {value: '', ...PROP_STRING}],
+        ['leftnavpaneliconclass', PROP_STRING],
+        ['readonlySearchBar', PROP_BOOLEAN],
+        ['searchbutton', {value: false, ...PROP_BOOLEAN}],
+        ['searchbuttoniconclass', {value: 'wi wi-search', ...PROP_STRING}],
+        ['searchbuttonlabel', {value: '', ...PROP_STRING}],
+        ['searchplaceholder', {value: 'Search', ...PROP_STRING}],
+        ['searchkey', PROP_STRING],
+        ['showSearchbar', PROP_BOOLEAN],
+        ['title', PROP_STRING]
+    ]
+);
+
+export const registerProps = () => {
+    register(
+        'wm-mobile-navbar',
+        navbarProps
+    );
+};
