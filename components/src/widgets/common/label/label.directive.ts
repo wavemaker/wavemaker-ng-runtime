@@ -1,12 +1,13 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
 import { setProperty, toggleClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './label.props';
 import { StylableComponent } from '../base/stylable.component';
 import { DISPLAY_TYPE } from '../../framework/constants';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -20,7 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Directive({
     selector: '[wmLabel]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => LabelDirective)}
+        provideAsWidgetRef(LabelDirective)
     ]
 })
 export class LabelDirective extends StylableComponent {

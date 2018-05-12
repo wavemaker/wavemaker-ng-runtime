@@ -1,9 +1,10 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './tile.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,7 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-tile', hostClass: DEFAULT_
 @Directive({
     selector: '[wmTile]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => TileDirective)}
+        provideAsWidgetRef(TileDirective)
     ]
 })
 export class TileDirective extends StylableComponent {

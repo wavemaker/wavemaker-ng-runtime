@@ -1,11 +1,11 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
 import { registerProps } from './page-content.props';
 import { StylableComponent } from '../base/stylable.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -15,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmPageContent]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => PageContentDirective)}
+        provideAsWidgetRef(PageContentDirective)
     ]
 })
 export class PageContentDirective extends StylableComponent {

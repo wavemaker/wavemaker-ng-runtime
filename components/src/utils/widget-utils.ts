@@ -2,6 +2,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { forwardRef } from '@angular/core';
 
 import { encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith, FormWidgetType } from '@wm/core';
+import { DialogRef, WidgetRef } from '../widgets/framework/types';
 
 declare const _;
 
@@ -186,12 +187,24 @@ export const getBackGroundImageUrl = (urlString) => {
     return 'url(' + getImageUrl(urlString) + ')';
 };
 
-export const getControlValueAccessor = component => {
+export const provideAs = (reference: any, key: any, multi?: boolean) => {
     return  {
-        provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => component),
-        multi: true
+        provide: key,
+        useExisting: forwardRef(() => reference),
+        multi: multi
     };
+};
+
+export const provideAsNgValueAccessor = (reference: any) => {
+    return provideAs(reference, NG_VALUE_ACCESSOR, true);
+};
+
+export const provideAsWidgetRef = (reference: any) => {
+    return provideAs(reference, WidgetRef);
+};
+
+export const provideAsDialogRef = (reference: any) => {
+    return provideAs(reference, DialogRef);
 };
 
 export const NAVIGATION_TYPE = {

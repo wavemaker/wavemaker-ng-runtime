@@ -1,16 +1,17 @@
-import { AfterContentInit, Attribute, Component, ElementRef, forwardRef, Injector, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
 import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, isPageable, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { TableRef, WidgetRef } from '../../framework/types';
+import { TableRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { getRowOperationsColumn } from '../../../utils/live-utils';
 import { refreshDataSource } from '../../../utils/data-utils';
+import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 declare const moment;
@@ -42,8 +43,8 @@ const rowOperations = {
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [
-        {provide: TableRef, useExisting: forwardRef(() => TableComponent)},
-        {provide: WidgetRef, useExisting: forwardRef(() => TableComponent)}
+        provideAsWidgetRef(TableComponent),
+        provideAs(TableComponent, TableRef)
     ]
 })
 export class TableComponent extends StylableComponent implements AfterContentInit {

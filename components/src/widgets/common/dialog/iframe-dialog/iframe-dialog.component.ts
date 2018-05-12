@@ -1,10 +1,9 @@
-import { Attribute, Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-
-import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './iframe-dialog.props';
 import { BaseDialog } from '../base/base-dialog';
+import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
 const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
@@ -15,8 +14,8 @@ registerProps();
     selector: 'div[wmIframeDialog]',
     templateUrl: './iframe-dialog.component.html',
     providers: [
-        {provide: DialogRef, useExisting: forwardRef(() => IframeDialogComponent)},
-        {provide: WidgetRef, useExisting: forwardRef(() => IframeDialogComponent)}
+        provideAsWidgetRef(IframeDialogComponent),
+        provideAsDialogRef(IframeDialogComponent)
     ]
 })
 export class IframeDialogComponent extends BaseDialog implements OnInit {

@@ -1,11 +1,10 @@
-import { AfterViewInit, Attribute, Component, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './checkbox.props';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
@@ -35,8 +34,8 @@ const unStringify = val => {
     selector: '[wmCheckbox]',
     templateUrl: './checkbox.component.html',
     providers: [
-        getControlValueAccessor(CheckboxComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => CheckboxComponent)}
+        provideAsNgValueAccessor(CheckboxComponent),
+        provideAsWidgetRef(CheckboxComponent)
     ]
 })
 export class CheckboxComponent extends BaseFormCustomComponent implements OnInit, AfterViewInit {

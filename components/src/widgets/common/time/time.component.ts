@@ -1,11 +1,9 @@
-import { Component, forwardRef, Injector, OnDestroy } from '@angular/core';
+import { Component, Injector, OnDestroy } from '@angular/core';
 
 import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/core';
-
-import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
@@ -25,8 +23,8 @@ registerProps();
     selector: '[wmTime]',
     templateUrl: './time.component.html',
     providers: [
-        getControlValueAccessor(TimeComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => TimeComponent)}
+        provideAsNgValueAccessor(TimeComponent),
+        provideAsWidgetRef(TimeComponent)
     ]
 })
 export class TimeComponent extends BaseFormCustomComponent implements OnDestroy {

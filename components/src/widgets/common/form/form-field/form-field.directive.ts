@@ -1,12 +1,12 @@
-import { AfterContentInit, Attribute, ContentChild, Directive, forwardRef, Inject, Injector, OnInit, Optional } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { DataType, FormWidgetType, isDefined, toBoolean } from '@wm/core';
 
 import { styler } from '../../../framework/styler';
-import { WidgetRef, FormRef } from '../../../framework/types';
+import { FormRef } from '../../../framework/types';
 import { registerProps } from './form-field.props';
-import { getEvaluatedData, isDataSetWidget } from '../../../../utils/widget-utils';
+import { getEvaluatedData, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField } from '../../../../utils/data-utils';
 import { getDefaultViewModeWidget, parseValueByType } from '../../../../utils/live-utils';
 import { StylableComponent } from '../../base/stylable.component';
@@ -28,7 +28,7 @@ const FILE_TYPES = {
     selector: '[wmFormField]',
     exportAs: 'wmFormField',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => FormFieldDirective)}
+        provideAsWidgetRef(FormFieldDirective)
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {

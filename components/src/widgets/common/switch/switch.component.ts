@@ -1,12 +1,11 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { $appDigest, isEqualWithFields, setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
 import { registerProps } from './switch.props';
 import { getOrderedDataSet } from '../../../utils/form-utils';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 declare const _, $;
@@ -34,8 +33,8 @@ registerProps();
     selector: 'div[wmSwitch]',
     templateUrl: './switch.component.html',
     providers: [
-        getControlValueAccessor(SwitchComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => SwitchComponent)}
+        provideAsNgValueAccessor(SwitchComponent),
+        provideAsWidgetRef(SwitchComponent)
     ]
 })
 export class SwitchComponent extends BaseFormCustomComponent {

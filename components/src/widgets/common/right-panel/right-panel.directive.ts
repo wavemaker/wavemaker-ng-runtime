@@ -1,11 +1,12 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
-import { WidgetRef, IWidgetConfig } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './right-panel.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -18,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Directive({
     selector: '[wmRightPanel]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => RightPanelDirective)}
+        provideAsWidgetRef(RightPanelDirective)
     ]
 })
 export class RightPanelDirective extends StylableComponent {

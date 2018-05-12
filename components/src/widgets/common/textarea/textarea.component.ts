@@ -1,9 +1,9 @@
-import { Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { WidgetRef } from '../../framework/types';
 import { registerProps } from './textarea.props';
 import { BaseInput } from '../text/base/base-input';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-textarea'};
     selector: '[wmTextarea]',
     templateUrl: './textarea.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => TextareaComponent)}
+        provideAsWidgetRef(TextareaComponent)
     ]
 })
 export class TextareaComponent extends BaseInput {

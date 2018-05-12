@@ -1,11 +1,12 @@
-import { Attribute, Component, forwardRef, Injector } from '@angular/core';
+import { Attribute, Component, Injector } from '@angular/core';
 
 import { findValueOf, isDefined, isString } from '@wm/core';
 
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './progress-bar.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -56,7 +57,7 @@ const TYPE_CLASS_MAP = {
     selector: '[wmProgressBar]',
     templateUrl: './progress-bar.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => ProgressBarComponent)}
+        provideAsWidgetRef(ProgressBarComponent)
     ]
 })
 export class ProgressBarComponent extends StylableComponent {

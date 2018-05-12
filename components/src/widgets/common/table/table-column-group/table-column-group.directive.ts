@@ -1,9 +1,10 @@
-import { Directive, forwardRef, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
+import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
 
-import { TableColumnGroupRef, TableRef, WidgetRef } from '../../../framework/types';
+import { TableColumnGroupRef, TableRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column-group.props';
+import { provideAs, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
@@ -11,8 +12,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
 @Directive({
     selector: '[wmTableColumnGroup]',
     providers: [
-        {provide: TableColumnGroupRef, useExisting: forwardRef(() => TableColumnGroupDirective)},
-        {provide: WidgetRef, useExisting: forwardRef(() => TableColumnGroupDirective)}
+        provideAsWidgetRef(TableColumnGroupDirective),
+        provideAs(TableColumnGroupDirective, TableColumnGroupRef)
     ]
 })
 export class TableColumnGroupDirective extends BaseComponent implements OnInit {

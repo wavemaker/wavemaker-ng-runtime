@@ -1,9 +1,9 @@
-import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { WidgetRef } from '../../../framework/types';
 import { registerProps } from './form-action.props';
 import { StylableComponent } from '../../base/stylable.component';
 import { FormRef } from '@wm/components';
+import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 declare const _;
 
@@ -14,7 +14,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 @Directive({
     selector: '[wmFormAction]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => FormActionDirective)}
+        provideAsWidgetRef(FormActionDirective)
     ]
 })
 export class FormActionDirective extends StylableComponent implements OnInit {

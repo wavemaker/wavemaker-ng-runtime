@@ -1,9 +1,9 @@
-import { Attribute, ChangeDetectorRef, Directive, ElementRef, forwardRef, Injector } from '@angular/core';
+import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
 
-import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';
 import { PROP_TYPE, register } from '../../framework/widget-props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-prefab';
 
@@ -12,7 +12,7 @@ const registeredPropsSet = new Set<string>();
 @Directive({
     selector: 'section[wmPrefab]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => PrefabDirective)}
+        provideAsWidgetRef(PrefabDirective)
     ]
 })
 export class PrefabDirective extends StylableComponent {

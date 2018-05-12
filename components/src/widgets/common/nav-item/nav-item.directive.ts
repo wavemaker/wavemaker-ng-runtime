@@ -1,9 +1,8 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
-
-import { WidgetRef } from '../../framework/types';
+import { Directive, Injector } from '@angular/core';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav-item.props';
 import { StylableComponent } from '../base/stylable.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-nav-item', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmNavItem]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => NavItemDirective)}
+        provideAsWidgetRef(NavItemDirective)
     ]
 })
 export class NavItemDirective extends StylableComponent {

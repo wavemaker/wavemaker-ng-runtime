@@ -1,10 +1,11 @@
-import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
+import { Component, HostBinding, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { DISPLAY_TYPE } from '../../framework/constants';
 import { registerProps } from './button.props';
 import { StylableComponent } from '../base/stylable.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -19,7 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'button[wmButton]',
     templateUrl: './button.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => ButtonComponent)}
+        provideAsWidgetRef(ButtonComponent)
     ]
 })
 export class ButtonComponent extends StylableComponent {

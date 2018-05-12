@@ -1,4 +1,4 @@
-import { AfterViewInit, ContentChildren, Directive, forwardRef, Injector } from '@angular/core';
+import { AfterViewInit, ContentChildren, Directive, Injector } from '@angular/core';
 
 import { setAttr, switchClass } from '@wm/core';
 
@@ -6,6 +6,7 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './composite.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const $;
 
@@ -26,7 +27,7 @@ const CAPTION_POSITION = {
 @Directive({
     selector: 'div[wmComposite]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => CompositeDirective)}
+        provideAsWidgetRef(CompositeDirective)
     ]
 })
 export class CompositeDirective extends StylableComponent implements AfterViewInit {

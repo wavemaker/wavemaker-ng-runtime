@@ -1,9 +1,10 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './footer.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -16,7 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Directive({
     selector: '[wmFooter]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => FooterDirective)}
+        provideAsWidgetRef(FooterDirective)
     ]
 })
 export class FooterDirective extends StylableComponent {

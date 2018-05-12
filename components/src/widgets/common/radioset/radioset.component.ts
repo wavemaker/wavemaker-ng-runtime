@@ -1,12 +1,11 @@
-import {Component, forwardRef, Injector, OnInit} from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
-import {$appDigest, switchClass} from '@wm/core';
+import { switchClass } from '@wm/core';
 
-import {WidgetRef} from '../../framework/types';
-import {styler} from '../../framework/styler';
-import {registerProps} from './radioset.props';
-import {getControlValueAccessor} from '../../../utils/widget-utils';
-import {DatasetAwareFormComponent} from '../base/dataset-aware-form.component';
+import { styler } from '../../framework/styler';
+import { registerProps } from './radioset.props';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
 registerProps();
 
@@ -18,8 +17,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
     exportAs: 'wmRadioset',
     templateUrl: './radioset.component.html',
     providers: [
-        getControlValueAccessor(RadiosetComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => RadiosetComponent)}
+        provideAsNgValueAccessor(RadiosetComponent),
+        provideAsWidgetRef(RadiosetComponent)
     ]
 })
 export class RadiosetComponent extends DatasetAwareFormComponent implements OnInit {

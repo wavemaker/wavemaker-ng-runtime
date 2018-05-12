@@ -1,12 +1,13 @@
-import { AfterContentInit, Attribute, ContentChildren, Directive, forwardRef, Injector, QueryList } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
 import { isNumber } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './accordion.props';
 import { StylableComponent } from '../base/stylable.component';
 import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -19,7 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Directive({
     selector: 'div[wmAccordion]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => AccordionDirective)}
+        provideAsWidgetRef(AccordionDirective)
     ]
 })
 export class AccordionDirective extends StylableComponent implements AfterContentInit {

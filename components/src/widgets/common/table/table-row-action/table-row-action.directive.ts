@@ -1,8 +1,9 @@
-import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { TableRef, WidgetRef } from '../../../framework/types';
+import { TableRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './table-row-action.props';
+import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 declare const _;
 
@@ -12,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
 @Directive({
     selector: '[wmTableRowAction]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => TableRowActionDirective)}
+        provideAsWidgetRef(TableRowActionDirective)
     ]
 })
 export class TableRowActionDirective extends BaseComponent implements OnInit {

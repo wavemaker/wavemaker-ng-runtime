@@ -1,10 +1,11 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './spinner.props';
 import { StylableComponent } from '../base/stylable.component';
 import { ImagePipe } from '../../../pipes/image.pipe';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -17,7 +18,7 @@ registerProps();
     selector: '[wmSpinner]',
     templateUrl: './spinner.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => SpinnerComponent)}
+        provideAsWidgetRef(SpinnerComponent)
     ]
 })
 export class SpinnerComponent extends StylableComponent {

@@ -1,11 +1,10 @@
-import { Attribute, Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { IWidgetConfig } from '@wm/components';
 import { toBoolean } from '@wm/core';
-
-import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './alert-dialog.props';
 import { BaseDialog } from '../base/base-dialog';
+import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-alert-dialog';
 
@@ -17,8 +16,8 @@ registerProps();
     selector: 'div[wmAlertDialog]',
     templateUrl: './alert-dialog.component.html',
     providers: [
-        {provide: DialogRef, useExisting: forwardRef(() => AlertDialogComponent)},
-        {provide: WidgetRef, useExisting: forwardRef(() => AlertDialogComponent)}
+        provideAsWidgetRef(AlertDialogComponent),
+        provideAsDialogRef(AlertDialogComponent)
     ]
 })
 export class AlertDialogComponent extends BaseDialog implements OnInit {

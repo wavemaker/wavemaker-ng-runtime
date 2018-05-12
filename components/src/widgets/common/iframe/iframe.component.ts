@@ -1,13 +1,14 @@
-import { Component, forwardRef, Injector, SecurityContext } from '@angular/core';
+import { Component, Injector, SecurityContext } from '@angular/core';
 
 import { AppLocale, encodeUrl, isInsecureContentRequest } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './iframe.props';
 import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -21,7 +22,7 @@ registerProps();
     selector: '[wmIframe]',
     templateUrl: './iframe.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => IframeComponent)}
+        provideAsWidgetRef(IframeComponent)
     ]
 })
 export class IframeComponent extends StylableComponent {

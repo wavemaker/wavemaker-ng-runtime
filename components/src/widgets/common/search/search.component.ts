@@ -1,12 +1,11 @@
-import { Component, forwardRef, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { $appDigest, getClonedObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
-import { getControlValueAccessor, getEvaluatedData } from '../../../utils/widget-utils';
+import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 import { registerProps } from './search.props';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
@@ -29,8 +28,8 @@ registerProps();
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [
-        getControlValueAccessor(SearchComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => SearchComponent)}
+        provideAsNgValueAccessor(SearchComponent),
+        provideAsWidgetRef(SearchComponent)
     ]
 })
 export class SearchComponent extends BaseFormCustomComponent implements OnInit {

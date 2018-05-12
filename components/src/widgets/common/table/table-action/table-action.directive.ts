@@ -1,8 +1,9 @@
-import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { WidgetRef, TableRef } from '../../../framework/types';
+import { TableRef } from '../../../framework/types';
 import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './table-action.props';
+import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 declare const _;
 
@@ -13,7 +14,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 @Directive({
     selector: '[wmTableAction]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => TableActionDirective)}
+        provideAsWidgetRef(TableActionDirective)
     ]
 })
 export class TableActionDirective extends StylableComponent implements OnInit {

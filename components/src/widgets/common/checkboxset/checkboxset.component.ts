@@ -1,11 +1,11 @@
-import {Component, Injector, forwardRef, OnInit} from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
-import {switchClass, $appDigest} from '@wm/core';
+import { switchClass } from '@wm/core';
 
-import {styler} from '../../framework/styler';
-import {getControlValueAccessor} from '../../../utils/widget-utils';
-import {registerProps} from '../checkboxset/checkboxset.props';
-import {DatasetAwareFormComponent} from '../base/dataset-aware-form.component';
+import { styler } from '../../framework/styler';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { registerProps } from '../checkboxset/checkboxset.props';
+import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
 registerProps();
 const DEFAULT_CLS = 'app-checkboxset list-group';
@@ -16,9 +16,10 @@ declare const _;
     selector: '[wmCheckboxset]',
     exportAs: 'wmCheckboxset',
     templateUrl: 'checkboxset.component.html',
-    providers: [getControlValueAccessor(CheckboxsetComponent), {
-        provide: '@Widget', useExisting: forwardRef(() => CheckboxsetComponent)
-    }]
+    providers: [
+        provideAsNgValueAccessor(CheckboxsetComponent),
+        provideAsWidgetRef(CheckboxsetComponent)
+    ]
 })
 
 export class CheckboxsetComponent extends DatasetAwareFormComponent implements OnInit {

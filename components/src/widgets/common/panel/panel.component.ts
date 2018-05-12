@@ -1,12 +1,13 @@
-import { AfterContentInit, Component, ContentChildren, ElementRef, forwardRef, Inject, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, ContentChildren, ElementRef, Inject, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { AppLocale, noop, setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './panel.props';
 import { RedrawableDirective } from '../redraw/redrawable.directive';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -17,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-panel', hostClass: DEFAULT
     selector: '[wmPanel]',
     templateUrl: './panel.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => PanelComponent)}
+        provideAsWidgetRef(PanelComponent)
     ]
 })
 

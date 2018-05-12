@@ -1,10 +1,9 @@
-import { Component, forwardRef, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
-import { WidgetRef } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { registerProps } from './select.props';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
-import {DatasetAwareFormComponent} from '../base/dataset-aware-form.component';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
 declare const _;
 
@@ -16,8 +15,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
     selector: '[wmSelect]',
     templateUrl: './select.component.html',
     providers: [
-        getControlValueAccessor(SelectComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => SelectComponent)}
+        provideAsNgValueAccessor(SelectComponent),
+        provideAsWidgetRef(SelectComponent)
     ]
 })
 export class SelectComponent extends DatasetAwareFormComponent implements OnInit {

@@ -1,9 +1,8 @@
-import { Component, forwardRef, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { CONSTANTS_CURRENCY } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './currency.props';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
@@ -15,9 +14,10 @@ registerProps();
 @Component({
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html',
-    providers: [getControlValueAccessor(CurrencyComponent), {
-        provide: WidgetRef, useExisting: forwardRef(() => CurrencyComponent)
-    }]
+    providers: [
+        provideAsNgValueAccessor(CurrencyComponent),
+        provideAsWidgetRef(CurrencyComponent)
+    ]
 })
 export class CurrencyComponent extends BaseFormCustomComponent implements OnInit {
     currency: string;

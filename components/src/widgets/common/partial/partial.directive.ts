@@ -1,8 +1,8 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
-import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './partial.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -12,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
 @Directive({
     selector: '[wmPartial]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => PartialDirective)}
+        provideAsWidgetRef(PartialDirective)
     ]
 })
 export class PartialDirective extends StylableComponent {

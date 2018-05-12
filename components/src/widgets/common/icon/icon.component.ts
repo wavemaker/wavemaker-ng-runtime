@@ -1,9 +1,10 @@
-import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
+import { Component, HostBinding, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './icon.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -17,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmIcon]',
     templateUrl: './icon.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => IconComponent)}
+        provideAsWidgetRef(IconComponent)
     ]
 })
 export class IconComponent extends StylableComponent {

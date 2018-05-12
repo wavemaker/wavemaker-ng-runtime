@@ -1,11 +1,12 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
 import { addClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './container.props';
 import { StylableComponent } from '../base/stylable.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -18,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Directive({
     selector: '[wmContainer]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => ContainerDirective)}
+        provideAsWidgetRef(ContainerDirective)
     ]
 })
 export class ContainerDirective extends StylableComponent {

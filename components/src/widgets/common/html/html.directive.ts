@@ -1,12 +1,13 @@
-import { Attribute, Directive, forwardRef, HostBinding, Injector, SecurityContext } from '@angular/core';
+import { Attribute, Directive, HostBinding, Injector, SecurityContext } from '@angular/core';
 
-import { setCSS, setProperty } from '@wm/core';
+import { setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './html.props';
 import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-html-container';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -19,7 +20,7 @@ registerProps();
 @Directive({
     selector: '[wmHtml]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => HtmlDirective)}
+        provideAsWidgetRef(HtmlDirective)
     ]
 })
 export class HtmlDirective extends StylableComponent {

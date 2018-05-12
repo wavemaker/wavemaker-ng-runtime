@@ -1,10 +1,9 @@
-import { Attribute, Component, ContentChild, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-
-import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './dialog.props';
 import { BaseDialog } from '../base/base-dialog';
+import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DIALOG_CLS = 'app-dialog modal-dialog';
 
@@ -16,8 +15,8 @@ registerProps();
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html',
     providers: [
-        {provide: DialogRef, useExisting: forwardRef(() => DialogComponent)},
-        {provide: WidgetRef, useExisting: forwardRef(() => DialogComponent)}
+        provideAsWidgetRef(DialogComponent),
+        provideAsDialogRef(DialogComponent)
     ]
 })
 export class DialogComponent extends BaseDialog implements OnInit {

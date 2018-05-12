@@ -1,12 +1,13 @@
-import { Component, forwardRef, HostBinding, Injector } from '@angular/core';
+import { Component, HostBinding, Injector } from '@angular/core';
 
 import { encodeUrl, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { DISPLAY_TYPE } from '../../framework/constants';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './anchor.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 
 registerProps();
@@ -22,7 +23,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'a[wmAnchor]',
     templateUrl: './anchor.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => AnchorComponent)}
+        provideAsWidgetRef(AnchorComponent)
     ]
 })
 export class AnchorComponent extends StylableComponent {

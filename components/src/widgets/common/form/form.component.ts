@@ -1,16 +1,17 @@
-import { Attribute, Component, forwardRef, HostBinding, HostListener, Injector, OnDestroy } from '@angular/core';
+import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, getClonedObject, removeClass, getFiles } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { FormRef, WidgetRef } from '../../framework/types';
+import { FormRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig } from '../../../utils/live-utils';
 import { performDataOperation } from '../../../utils/data-utils';
+import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -26,8 +27,8 @@ const getWidgetConfig = (isLiveForm, isLiveFilter) => (isLiveForm !== null ? LIV
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
     providers: [
-        {provide: FormRef, useExisting: forwardRef(() => FormComponent)},
-        {provide: WidgetRef, useExisting: forwardRef(() => FormComponent)}
+        provideAs(FormComponent, FormRef),
+        provideAsWidgetRef(FormComponent)
     ]
 })
 export class FormComponent extends StylableComponent implements OnDestroy {

@@ -1,9 +1,9 @@
-import { Component, ElementRef, forwardRef, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { registerProps } from './input-email.props';
 import { BaseInput } from '../base/base-input';
-import { WidgetRef } from '../../../framework/types';
+import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-input-email'};
     selector: '[wmInput][type="email"]',
     templateUrl: './input-email.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => InputEmailComponent)}
+        provideAsWidgetRef(InputEmailComponent)
     ]
 })
 export class InputEmailComponent extends BaseInput {

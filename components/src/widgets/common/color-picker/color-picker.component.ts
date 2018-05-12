@@ -1,9 +1,8 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
 import { registerProps } from './color-picker.props';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
@@ -15,8 +14,8 @@ registerProps();
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html',
     providers: [
-        getControlValueAccessor(ColorPickerComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => ColorPickerComponent)}
+        provideAsNgValueAccessor(ColorPickerComponent),
+        provideAsWidgetRef(ColorPickerComponent)
     ]
 })
 export class ColorPickerComponent extends BaseFormCustomComponent {

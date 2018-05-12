@@ -1,10 +1,10 @@
-import { Attribute, Component, ContentChild, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
 
-import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './partial-dialog.props';
 import { BaseDialog } from '../base/base-dialog';
+import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-page-dialog';
 const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
@@ -15,8 +15,8 @@ registerProps();
     selector: 'div[wmPartialDialog]',
     templateUrl: './partial-dialog.component.html',
     providers: [
-        {provide: DialogRef, useExisting: forwardRef(() => PartialDialogComponent)},
-        {provide: WidgetRef, useExisting: forwardRef(() => PartialDialogComponent)}
+        provideAsWidgetRef(PartialDialogComponent),
+        provideAsDialogRef(PartialDialogComponent)
     ]
 })
 export class PartialDialogComponent extends BaseDialog implements OnInit {

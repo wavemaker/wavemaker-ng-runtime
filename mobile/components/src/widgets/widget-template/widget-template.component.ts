@@ -1,6 +1,8 @@
-import { ChangeDetectorRef, Component, ElementRef, forwardRef, Injector } from '@angular/core';
-import { APPLY_STYLES_TYPE, styler, StylableComponent, WidgetRef, IWidgetConfig } from '@wm/components';
+import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, StylableComponent, styler } from '@wm/components';
+
 import { registerProps } from './widget-template.props';
+import { provideAsWidgetRef } from '../../../../../components/src/utils/widget-utils';
 
 registerProps();
 
@@ -11,7 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-widget-template', hostClas
     selector: 'div[wmWidgetTemplate]',
     templateUrl: './widget-template.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => WidgetTemplateComponent)}
+        provideAsWidgetRef(WidgetTemplateComponent)
     ]
 })
 export class WidgetTemplateComponent extends StylableComponent {

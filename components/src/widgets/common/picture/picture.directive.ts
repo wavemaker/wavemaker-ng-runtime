@@ -1,13 +1,14 @@
-import { Directive, forwardRef, HostBinding, Injector, OnInit } from '@angular/core';
+import { Directive, HostBinding, Injector, OnInit } from '@angular/core';
 
 import { setAttr, setCSS, switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
+import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './picture.props';
 import { StylableComponent } from '../base/stylable.component';
 import { DISPLAY_TYPE } from '../../framework/constants';
 import { ImagePipe } from '../../../pipes/image.pipe';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -21,7 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Directive({
     selector: '[wmPicture]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => PictureDirective)}
+        provideAsWidgetRef(PictureDirective)
     ]
 })
 export class PictureDirective extends StylableComponent implements OnInit {

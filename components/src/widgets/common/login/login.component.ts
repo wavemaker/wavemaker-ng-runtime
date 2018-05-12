@@ -1,12 +1,12 @@
-import { AfterViewInit, Component, ContentChildren, forwardRef, Injector } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './login.props';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
 import { ButtonComponent } from '../button/button.component';
 import { InputTextComponent } from '../text/text/input-text.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
@@ -18,7 +18,7 @@ declare const _, $;
     selector: 'div[wmLogin]',
     templateUrl: './login.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => LoginComponent)}
+        provideAsWidgetRef(LoginComponent)
     ]
 })
 export class LoginComponent extends StylableComponent implements AfterViewInit {

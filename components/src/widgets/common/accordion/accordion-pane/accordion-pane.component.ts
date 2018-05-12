@@ -1,13 +1,14 @@
-import { AfterViewInit, Component, ContentChildren, forwardRef, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, Injector, OnInit } from '@angular/core';
 
 import { AppLocale, noop, removeAttr } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../../framework/types';
+import { IWidgetConfig } from '../../../framework/types';
 import { registerProps } from './accordion-pane.props';
 import { StylableComponent } from '../../base/stylable.component';
 import { AccordionDirective } from '../accordion.directive';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';
+import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 
@@ -18,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass:
     selector: 'div[wmAccordionPane]',
     templateUrl: './accordion-pane.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => AccordionPaneComponent)}
+        provideAsWidgetRef(AccordionPaneComponent)
     ]
 })
 export class AccordionPaneComponent extends StylableComponent implements OnInit, AfterViewInit {

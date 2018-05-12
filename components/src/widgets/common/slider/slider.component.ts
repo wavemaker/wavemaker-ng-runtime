@@ -1,9 +1,8 @@
-import { Component, forwardRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
 import { registerProps } from './slider.props';
-import { getControlValueAccessor } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'app-slider slider';
@@ -15,8 +14,8 @@ registerProps();
     selector: '[wmSlider]',
     templateUrl: './slider.component.html',
     providers: [
-        getControlValueAccessor(SliderComponent),
-        {provide: WidgetRef, useExisting: forwardRef(() => SliderComponent)}
+        provideAsNgValueAccessor(SliderComponent),
+        provideAsWidgetRef(SliderComponent)
     ]
 })
 export class SliderComponent extends BaseFormCustomComponent {

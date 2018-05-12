@@ -1,8 +1,9 @@
-import { Directive, forwardRef, Injector } from '@angular/core';
+import { Directive, Injector } from '@angular/core';
 
-import { IWidgetConfig, WidgetRef } from '../../../../framework/types';
+import { IWidgetConfig } from '../../../../framework/types';
 import { BaseComponent } from '../../../base/base.component';
 import { registerProps } from './dialog-footer.props';
+import { provideAsWidgetRef } from '../../../../../utils/widget-utils';
 
 const WIDGET_INFO: IWidgetConfig = {
     widgetType: 'wm-dialogfooter',
@@ -14,7 +15,7 @@ registerProps();
 @Directive({
     selector: 'div[wmDialogFooter]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => DialogFooterDirective)}
+        provideAsWidgetRef(DialogFooterDirective)
     ]
 })
 export class DialogFooterDirective extends BaseComponent {

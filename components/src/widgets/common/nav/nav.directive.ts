@@ -1,13 +1,12 @@
-import { AfterViewInit, ComponentFactoryResolver, Directive, forwardRef, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ComponentFactoryResolver, Directive, Injector, OnInit, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { $appDigest, addClass, isObject, validateAccessRoles } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './nav.props';
-import { isActiveNavItem } from '../../../utils/widget-utils';
+import { isActiveNavItem, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { getOrderedDataSet } from '../../../utils/form-utils';
 import { MenuComponent } from '../menu/menu.component';
 
@@ -21,7 +20,7 @@ declare const _, $;
 @Directive({
     selector: '[wmNav]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => NavDirective)}
+        provideAsWidgetRef(NavDirective)
     ]
 })
 export class NavDirective extends StylableComponent implements AfterViewInit, OnInit {

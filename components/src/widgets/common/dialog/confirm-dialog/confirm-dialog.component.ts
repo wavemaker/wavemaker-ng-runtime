@@ -1,10 +1,9 @@
-import { Attribute, Component, forwardRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-
-import { DialogRef, WidgetRef } from '../../../framework/types';
 import { registerProps } from './confirm-dialog.props';
 import { BaseDialog } from '../base/base-dialog';
+import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-confirm-dialog';
 const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
@@ -15,8 +14,8 @@ registerProps();
     selector: 'div[wmConfirmDialog]',
     templateUrl: './confirm-dialog.component.html',
     providers: [
-        {provide: DialogRef, useExisting: forwardRef(() => ConfirmDialogComponent)},
-        {provide: WidgetRef, useExisting: forwardRef(() => ConfirmDialogComponent)}
+        provideAsWidgetRef(ConfirmDialogComponent),
+        provideAsDialogRef(ConfirmDialogComponent)
     ]
 })
 export class ConfirmDialogComponent extends BaseDialog implements OnInit {

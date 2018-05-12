@@ -1,12 +1,11 @@
-import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, forwardRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
 import { $appDigest, isDefined, isObject } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './list.props';
-import { NAVIGATION_TYPE } from '../../../utils/widget-utils';
+import { NAVIGATION_TYPE, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
 import { getOrderedDataSet } from '../../../utils/form-utils';
@@ -23,7 +22,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
     selector: 'div[wmList]',
     templateUrl: './list.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => ListComponent)}
+        provideAsWidgetRef(ListComponent)
     ]
 })
 export class ListComponent extends StylableComponent implements AfterViewInit {

@@ -1,9 +1,10 @@
-import { Directive, forwardRef, Injector, OnInit, Optional } from '@angular/core';
+import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { WidgetRef, TableColumnGroupRef, TableRef } from '../../../framework/types';
+import { TableColumnGroupRef, TableRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
+import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 declare const _;
 
@@ -14,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 @Directive({
     selector: '[wmTableColumn]',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => TableColumnDirective)}
+        provideAsWidgetRef(TableColumnDirective)
     ]
 })
 export class TableColumnDirective extends BaseComponent implements OnInit {

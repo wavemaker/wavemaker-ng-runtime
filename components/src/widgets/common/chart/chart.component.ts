@@ -1,12 +1,13 @@
-import { AfterViewInit, Component, forwardRef, HostBinding, Injector } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, Injector } from '@angular/core';
 
 import { getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IRedrawableComponent, WidgetRef } from '../../framework/types';
+import { IRedrawableComponent } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -94,7 +95,7 @@ const angle = d => {
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => ChartComponent)}
+        provideAsWidgetRef(ChartComponent)
     ]
 })
 export class ChartComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {

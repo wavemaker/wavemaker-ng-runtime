@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { getClonedObject, getSessionStorageItem } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IRedrawableComponent, WidgetRef } from '../../framework/types';
+import { IRedrawableComponent } from '../../framework/types';
 import { registerProps } from './calendar.props';
-import { getEvaluatedData } from '../../../utils/widget-utils';
+import { getEvaluatedData, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
 
 declare const _, $, moment;
@@ -94,7 +94,7 @@ registerProps();
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
     providers: [
-        {provide: WidgetRef, useExisting: forwardRef(() => CalendarComponent)}
+        provideAsWidgetRef(CalendarComponent)
     ]
 })
 export class CalendarComponent extends StylableComponent implements AfterViewInit, OnInit, IRedrawableComponent {
