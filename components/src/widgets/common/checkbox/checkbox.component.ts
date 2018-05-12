@@ -1,4 +1,5 @@
-import { Component, forwardRef, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Attribute, Component, forwardRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { NgModel } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
 
@@ -13,6 +14,9 @@ const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
 
 registerProps();
 
+/*
+ * try to convert the chekedvalue and unchecked values to boolean/number
+ */
 const unStringify = val => {
     if (val === 'true') {
         return true;
@@ -20,8 +24,9 @@ const unStringify = val => {
     if (val === 'false') {
         return false;
     }
-    if (!isNaN(parseInt(val, 10))) {
-        return parseInt(val, 10);
+    const number = parseInt(val, 10);
+    if (!isNaN(number)) {
+        return number;
     }
     return val;
 };
@@ -34,84 +39,64 @@ const unStringify = val => {
         {provide: WidgetRef, useExisting: forwardRef(() => CheckboxComponent)}
     ]
 })
-export class CheckboxComponent  extends BaseFormCustomComponent implements OnInit {
+export class CheckboxComponent extends BaseFormCustomComponent implements OnInit, AfterViewInit {
 
-    model: boolean;
-    /**
-     * This property defines the value of the widget when the element is in the checked state. Default value is boolean value true. If specified, the value will be of string type
-     */
-    checkedvalue;
-    /**
-     * This property defines the value of the widget when the element is in the unchecked state.
-     */
-    uncheckedvalue;
-
-    private _checkedvalue;
-    private _uncheckedvalue;
+    private proxyModel: boolean;
     private _caption = '&nbsp';
+    private readonly _checkedvalue;
+    private readonly _uncheckedvalue;
 
-    constructor(inj: Injector) {
+    @ViewChild(NgModel) ngModel: NgModel;
+
+    // if the checkbox is checked, return checkedvalue else return uncheckedvalue
+    public get datavalue() {
+        return this.proxyModel ? this._checkedvalue : this._uncheckedvalue;
+    }
+    // when the datavalue is set, update the checked state
+    public set datavalue(v) {
+        this.proxyModel = v === this._checkedvalue;
+        this.updatePrevDatavalue(this.datavalue);
+    }
+
+    constructor(
+        inj: Injector,
+        @Attribute('checkedvalue') checkedVal,
+        @Attribute('uncheckedvalue') uncheckedVal,
+        @Attribute('type') type
+    ) {
         super(inj, WIDGET_CONFIG);
-    }
 
-    ngOnInit() {
-        super.ngOnInit();
-        // Apply styles on the inner label node
-        styler(this.nativeElement.querySelector('label'), this);
-    }
+        this._checkedvalue = unStringify(checkedVal);
+        this._uncheckedvalue = unStringify(uncheckedVal);
 
-    get datavalue(){
-        return this.getComputedDataValue(this.model);
-    }
-
-    set datavalue(value: boolean | string | number) {
-        value = unStringify(value);
-        if ((isDefined(this._checkedvalue) && this._checkedvalue === value) || value === true) {
-            this.model = true;
-        } else {
-            this.model = false;
-        }
-        this.invokeOnChange(this.datavalue);
-    }
-
-    getComputedDataValue(modelValue) {
-        if (isDefined(this._checkedvalue) && modelValue) {
-            return this._checkedvalue;
-        }
-        if (isDefined(this._uncheckedvalue) && !modelValue) {
-            return this._uncheckedvalue;
-        }
-        return modelValue;
-    }
-
-    isUnchecked() {
-        return !this.model;
+        // if the type of the checkbox is toggle update the related classes on the host node
+        toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');
     }
 
     onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'type':
-                toggleClass(this.nativeElement, 'app-toggle', nv === 'toggle');
-                break;
-            case 'caption':
-                if (!isDefined(nv) || nv === '') {
-                    this._caption = '&nbsp;';
-                } else {
-                    this._caption = nv;
-                }
-                break;
-            case 'checkedvalue':
-                this._checkedvalue = unStringify(nv);
-                break;
-            case 'uncheckedvalue':
-                this._uncheckedvalue = unStringify(nv);
-                break;
+        if  (key === 'caption') {
+            if (!isDefined(nv) || nv === '') {
+                this._caption = '&nbsp;';
+            } else {
+                this._caption = nv;
+            }
         }
     }
 
-    onChange($event) {
-        this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue);
-        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.getComputedDataValue(!this.model)});
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (eventName !== 'change') {
+            super.handleEvent(node, eventName, callback, locals);
+        }
+    }
+
+    handleChange(newVal: boolean) {
+        if (this.ngModel.valid) {
+            this.invokeOnChange(this.datavalue, {type: 'change'});
+        }
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        styler(this.nativeElement.querySelector('label'), this);
     }
 }
