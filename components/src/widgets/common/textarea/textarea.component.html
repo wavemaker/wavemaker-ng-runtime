@@ -10,6 +10,7 @@
           [attr.placeholder]="placeholder"
           [attr.accesskey]="shortcutkey"
           [autofocus]="autofocus"
+          (blur)="handleBlur($event)"
           (ngModelChange)="handleChange($event)"
           #textarea
 ></textarea>

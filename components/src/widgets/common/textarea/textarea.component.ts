@@ -3,7 +3,7 @@ import { NgModel } from '@angular/forms';
 
 import { registerProps } from './textarea.props';
 import { BaseInput } from '../text/base/base-input';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,6 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-textarea'};
     selector: '[wmTextarea]',
     templateUrl: './textarea.component.html',
     providers: [
+        provideAsNgValueAccessor(TextareaComponent),
         provideAsWidgetRef(TextareaComponent)
     ]
 })

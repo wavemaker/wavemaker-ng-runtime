@@ -35,7 +35,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
             }
         } else if (key === 'datavalue') {
             // update the oldDataValue when the datavalue is modified programmatically
-            this.updatePrevDatavalue(ov);
+            this.updatePrevDatavalue(nv);
         } else if (key === 'updateon') {
             if (nv === 'default') {
                 nv = 'change';
@@ -53,18 +53,21 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         }
     }
 
-    // invoke the change callback only when the model is valid
+    // invoke the change callback
     protected handleChange(newValue: any) {
-        if (this.ngModel.valid) {
-            this.invokeOnChange(this.datavalue, {type: 'change'});
-        }
+        this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (eventName !== 'change') {
+        if (eventName !== 'change' && eventName !== 'blur') {
             super.handleEvent(this.inputEl.nativeElement, eventName, eventCallback, locals);
         }
+    }
+
+    // invoke the blur callback
+    protected handleBlur($event) {
+        this.invokeOnTouched($event);
     }
 
     ngAfterViewInit() {

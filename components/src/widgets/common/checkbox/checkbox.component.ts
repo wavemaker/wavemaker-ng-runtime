@@ -83,7 +83,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
-        if (eventName !== 'change') {
+        if (eventName !== 'change' && eventName !== 'blur') {
             super.handleEvent(node, eventName, callback, locals);
         }
     }
@@ -92,6 +92,10 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         if (this.ngModel.valid) {
             this.invokeOnChange(this.datavalue, {type: 'change'});
         }
+    }
+
+    handleBlur($event: Event) {
+        this.invokeOnTouched($event);
     }
 
     ngAfterViewInit() {

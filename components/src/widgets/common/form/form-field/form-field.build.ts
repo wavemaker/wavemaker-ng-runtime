@@ -22,86 +22,84 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
     let tmpl;
     const fieldName = attrs.get('key') || attrs.get('name');
     const formControl = isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
-    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl} ${eventsTmpl}`;
     const tmplRef = isMaxWidget ? `#formWidgetMax` : `#formWidget`;
-    const ngModelTmpl = isMaxWidget ? `[(ngModel)]="${counter}.maxValue"` : `[(ngModel)]="${counter}.datavalue"`;
-    const autoCompleteTmpl = `[wmAutocomplete]="${counter}.autocomplete"`;
+    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl} ${eventsTmpl} ${tmplRef}`;
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmSearch ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.CHECKBOX:
-            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
-            tmpl = `<div wmCheckboxset ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmCheckboxset ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.CHIPS:
             /*TODO*/
             break;
         case FormWidgetType.COLORPICKER:
-            tmpl = `<div wmColorPicker ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmColorPicker ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmCurrency ${defaultTmpl}}></div>`;
             break;
         case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmDate ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmDateTime ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="number" ${ngModelTmpl} aria-label="Only numbers" ${autoCompleteTmpl}>`;
+            tmpl = `<div wmInput ${defaultTmpl} type="number" aria-label="Only numbers"></div>`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="password" ${ngModelTmpl} aria-label="Enter password" ${autoCompleteTmpl}>`;
+            tmpl = `<div wmInput ${defaultTmpl} type="password" aria-label="Enter password" displayformat="${attrs.get('displayformat')}"></div>`;
             break;
         case FormWidgetType.RADIOSET:
-            tmpl = `<div wmRadioset ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmRadioset ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.RATING:
-            tmpl = `<div wmRating ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmRating ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.RICHTEXT:
             /*TODO*/
             break;
         case FormWidgetType.SELECT:
-            tmpl = `<div wmSelect ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmSelect ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.TOGGLE:
-            tmpl = `<div wmCheckbox ${defaultTmpl} ${tmplRef} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
+            tmpl = `<div wmCheckbox ${defaultTmpl} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
             break;
         case FormWidgetType.SLIDER:
-            tmpl = `<div wmSlider ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmSlider ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.SWITCH:
-            tmpl = `<div wmSwitch ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmSwitch ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" type="${attrs.get('inputtype')}" ${ngModelTmpl} aria-describedby="Enter text" ${autoCompleteTmpl}>`;
+            tmpl = `<div wmInput ${defaultTmpl} type="${attrs.get('inputtype') || 'text'}" aria-describedby="Enter text" displayformat="${attrs.get('displayformat')}"></div>`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<textarea wmTextarea ${defaultTmpl} ${tmplRef}="wmTextarea" ${ngModelTmpl} role="textbox" aria-describedby="Place your text"></textarea>`;
+            tmpl = `<div wmTextarea ${defaultTmpl} role="textbox" aria-describedby="Place your text"></div>`;
             break;
         case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${defaultTmpl} ${tmplRef}></div>`;
+            tmpl = `<div wmTime ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
-            tmpl = `<div wmDateTime ${defaultTmpl} ${tmplRef} role="input"></div>`;
+            tmpl = `<div wmDateTime ${defaultTmpl} role="input"></div>`;
             break;
         case FormWidgetType.UPLOAD:
             tmpl = `<a class="form-control-static" href="{{${counter}.href}}" target="_blank" *ngIf="${counter}.filetype === 'image' && ${counter}.href">
                         <img style="height:2em" class="wi wi-file" [src]="${counter}.href"/></a>
                         <a class="form-control-static" target="_blank" href="{{${counter}.href}}" *ngIf="${counter}.filetype !== 'image' && ${counter}.href">
                         <i class="wi wi-file"></i></a>
-                        <input ${defaultTmpl} ${tmplRef} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}"
+                        <input ${defaultTmpl} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}"
                         [required]="${counter}.required" type="file" name="${fieldName}_formWidget" [readonly]="${counter}.readonly"
                         [class.hidden]="!${pCounter}.isUpdateMode" [(ngModel)]="${counter}.value" [accept]="${counter}.permitted">`;
             break;
         default:
-            tmpl = `<input wmText ${defaultTmpl} ${tmplRef}="wmText" ${ngModelTmpl} aria-describedby="Enter text" ${autoCompleteTmpl}>`;
+            tmpl = `<div wmInput ${defaultTmpl} aria-describedby="Enter text" type="text" displayformat="${attrs.get('displayformat')}"></div>`;
             break;
     }
     return tmpl;

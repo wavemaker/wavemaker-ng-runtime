@@ -185,7 +185,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private setUpValidators(customValidator?) {
         this._validators = [];
 
-        if (this.required && this.show) {
+        if (this.required && this.show !== false) {
             this._validators.push(Validators.required);
         }
         if (this.maxchars) {
@@ -294,8 +294,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     set datavalue(val) {
-        if (this.formWidget.widget) {
-            this.formWidget.widget.datavalue = val;
+        if (this._control) {
+            this._control.setValue(val);
         }
     }
 
@@ -340,10 +340,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.ngform = this.form.ngform;
         this.ngform.addControl(fieldName, this.createControl());
 
-        if (this['is-range']) {
-            this.ngform.addControl(fieldName + '_max', this.createControl());
-        }
-
         if (this.form.isLiveForm || this.form.isLiveFilter) {
             this._control.valueChanges
                 .debounceTime(500)
@@ -352,6 +348,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         super.ngOnInit();
         styler(this.nativeElement, this);
+
+        if (this['is-range']) {
+            this.ngform.addControl(fieldName + '_max', this.createControl());
+        }
     }
 
     ngAfterContentInit() {

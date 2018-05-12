@@ -3,7 +3,7 @@ import { NgModel } from '@angular/forms';
 
 import { registerProps } from './input-text.props';
 import { BaseInput } from '../base/base-input';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,6 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-input-text'};
     selector: '[wmInput][type="text"], [wmInput]:not([type]), [wmInput][type="password"], [wmInput][type="search"], [wmInput][type="tel"], [wmInput][type="url"]',
     templateUrl: './input-text.component.html',
     providers: [
+        provideAsNgValueAccessor(InputTextComponent),
         provideAsWidgetRef(InputTextComponent)
     ]
 })

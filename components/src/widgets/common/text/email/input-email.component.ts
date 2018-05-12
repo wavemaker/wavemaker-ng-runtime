@@ -3,7 +3,7 @@ import { NgModel } from '@angular/forms';
 
 import { registerProps } from './input-email.props';
 import { BaseInput } from '../base/base-input';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,6 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-input-email'};
     selector: '[wmInput][type="email"]',
     templateUrl: './input-email.component.html',
     providers: [
+        provideAsNgValueAccessor(InputEmailComponent),
         provideAsWidgetRef(InputEmailComponent)
     ]
 })

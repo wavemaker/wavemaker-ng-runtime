@@ -3,7 +3,7 @@ import { NgModel } from '@angular/forms';
 
 import { registerProps } from './input-number.props';
 import { BaseInput } from '../base/base-input';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 
@@ -13,6 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-input-number'};
     selector: '[wmInput][type="number"]',
     templateUrl: './input-number.component.html',
     providers: [
+        provideAsNgValueAccessor(InputNumberComponent),
         provideAsWidgetRef(InputNumberComponent)
     ]
 })

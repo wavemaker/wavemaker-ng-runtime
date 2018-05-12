@@ -16,17 +16,24 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
     }
 
     public writeValue(value) {
-        this.datavalue = value;
+        this.widget.datavalue = value;
+        this.updatePrevDatavalue(value);
     }
 
-    protected invokeOnChange(value, $event?: Event | any) {
+    protected invokeOnChange(value, $event?: Event | any, valid?: boolean) {
         // let the angular know about the change
         this._onChange(value);
 
-        super.invokeOnChange(value, $event);
+        if (valid) {
+            super.invokeOnChange(value, $event);
+        }
     }
 
-    protected invokeOnTouched() {
+    protected invokeOnTouched($event?: Event) {
         this._onTouched();
+
+        if ($event) {
+            this.invokeEventCallback('blur', {$event});
+        }
     }
 }
