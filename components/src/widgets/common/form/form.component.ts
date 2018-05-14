@@ -1,15 +1,13 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { Subject } from 'rxjs/Subject';
-
 import { $appDigest, getClonedObject, getFiles, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { FormRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
-import { getFieldLayoutConfig } from '../../../utils/live-utils';
+import { getFieldLayoutConfig, parseValueByType } from '../../../utils/live-utils';
 import { performDataOperation } from '../../../utils/data-utils';
 import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
 
@@ -52,8 +50,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     buttonArray = [];
     dataoutput;
     datasource;
-    dataSourceChange = new Subject();
-    dataSourceChange$ = this.dataSourceChange.asObservable();
     formdata;
     rowdata;
     isSelected;
@@ -69,11 +65,8 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     primaryKey;
     postmessage;
     _liveTableParent;
-    isLiveForm;
-    isLiveFilter;
     updateMode;
     name;
-    resetForm: Function;
     // Live Form Methods
     clearData: Function;
     edit: Function;
@@ -88,7 +81,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     saveAndNew: Function;
     saveAndView: Function;
     setPrimaryKey: () => {};
-    setPrevDataValues: Function;
     dialogId: string;
     // Live Filter
     enableemptyfilter;
@@ -99,6 +91,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     filter: Function;
     filterOnDefault: Function;
     execute: Function;
+    onMaxDefaultValueChange: Function;
 
     private operationType;
     private _isLayoutDialog;
@@ -117,11 +110,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     @HostBinding('action') action: string;
 
     @HostListener('submit', ['$event']) submit($event) {
-        if (this.isLiveForm) {
-            this.formSave($event);
-            return;
-        }
-
         this.submitForm($event);
     }
 
@@ -129,10 +117,35 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         this.reset();
     }
 
+    constructor(
+        inj: Injector,
+        private fb: FormBuilder,
+        @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
+        @Attribute('submit.event') public onSubmitEvt,
+        @Attribute('dataset.bind') public binddataset,
+        @Attribute('wmLiveForm') isLiveForm,
+        @Attribute('wmLiveFilter') isLiveFilter
+    ) {
+        super(inj, getWidgetConfig(isLiveForm, isLiveFilter));
+
+        styler(this.nativeElement, this);
+
+        this.dialogId = this.nativeElement.getAttribute('dialogId');
+        this.ngform = fb.group({});
+
+        // On value change in form, update the dataoutput
+        this.ngform.valueChanges
+            .debounceTime(500)
+            .subscribe(this.updateDataOutput.bind(this));
+        this.elScope = this;
+    }
+
+    // This method loops through the form fields and set touched state as touched
     highlightInvalidFields() {
         _.forEach(this.ngform.controls, (control) => control.markAsTouched());
     }
 
+    // Disable the form submit if form is in invalid state. Highlight all the invalid fields if validation type is default
     validateFieldsOnSubmit() {
         // Disable the form submit if form is in invalid state. For delete operation, do not check the validation.
         if (this.operationType !== 'delete' && (this.validationtype === 'html' || this.validationtype === 'default')
@@ -189,13 +202,14 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 this.isUpdateMode = this.updateMode;
                 break;
             case 'datasource':
-                this.dataSourceChange.next(this.datasource);
+                this.onDataSourceChange();
                 break;
         }
     }
 
+    // Event callbacks on success/error
     onResult(data, status, event?) {
-        const params = {$event: event, $data: data};
+        const params = {$event: event, $data: data, $operation: this.operationType};
         // whether service call success or failure call this method
         this.invokeEventCallback('result', params);
         if (status) {
@@ -215,6 +229,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 this.statusMessage = {'caption': template || '', type: type};
             } else {
                 template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
+                // TODO: use default Notification action
                 // wmToaster.show(type, WM.isDefined(header) ? header : type.toUpperCase(), template, undefined, 'trustedHtml');
             }
         } else {
@@ -235,30 +250,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         $appDigest();
     }
 
-    constructor(
-        inj: Injector,
-        private fb: FormBuilder,
-        @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
-        @Attribute('submit.event') public onSubmitEvt,
-        @Attribute('dataset.bind') public binddataset,
-        @Attribute('wmLiveForm') isLiveForm,
-        @Attribute('wmLiveFilter') isLiveFilter
-    ) {
-        super(inj, getWidgetConfig(isLiveForm, isLiveFilter));
-
-        styler(this.nativeElement, this);
-
-        this.dialogId = this.nativeElement.getAttribute('dialogId');
-        this.ngform = fb.group({});
-        this.ngform.valueChanges
-            .debounceTime(500)
-            .subscribe(this.updateDataOutput.bind(this));
-        this.elScope = this;
-        this.resetForm = this.reset.bind(this);
-        this.isLiveForm = isLiveForm !== null;
-        this.isLiveFilter = isLiveFilter !== null;
-    }
-
     registerFormFields(formField) {
         this.formFields.push(formField);
         this.formfields[formField.key] = formField;
@@ -268,10 +259,11 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         this.buttonArray.push(formAction);
     }
 
+    // Construct the data object merging the form fields and custom widgets data
     constructDataObject() {
         const formData     = {};
         // Get all form fields and prepare form data as key value pairs
-        _.forEach(this.formFields, field => {
+        this.formFields.forEach(field => {
             let fieldName,
                 fieldTarget,
                 fieldValue;
@@ -300,11 +292,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     }
 
     setFormData(rowData) {
-        if (!this.formFields || _.isEmpty(this.formFields)) {
-            return;
-        }
-
-        this.formFields.forEach((field) => {
+        this.formFields.forEach(field => {
             field.value =  _.get(rowData, field.key || field.name);
         });
 
@@ -323,11 +311,9 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
     reset() {
         this.resetFormState();
-        if (_.isArray(this.formFields)) {
-            this.formFields.forEach((field) => {
-                field.value = undefined;
-            });
-        }
+        this.formFields.forEach(field => {
+            field.value = undefined;
+        });
         this.constructDataObject();
     }
 
@@ -355,35 +341,50 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             if (dataSource) {
                 performDataOperation(dataSource, formData, {})
                     .then((data) => {
-                        this.toggleMessage(true, this.postmessage, 'success');
                         this.onResult(data, true, $event);
+                        this.toggleMessage(true, this.postmessage, 'success');
                         this.invokeEventCallback('submit', params);
                     }, (errMsg) => {
                         template = this.errormessage || errMsg;
-                        this.toggleMessage(true, template, 'error');
                         this.onResult(errMsg, false, $event);
+                        this.toggleMessage(true, template, 'error');
                         this.invokeEventCallback('submit', params);
                     });
             } else {
-                this.invokeEventCallback('submit', params);
                 this.onResult({}, true, $event);
+                this.invokeEventCallback('submit', params);
             }
         } else {
             this.onResult({}, true, $event);
         }
     }
 
+    // Method to show/hide the panel header or footer based on the buttons
     showButtons(position) {
         return _.some(this.buttonArray, btn => {
             return _.includes(btn.position, position) && btn.updateMode === this.isUpdateMode;
         });
     }
 
+    // Expand or collapse the panel
     expandCollapsePanel() {
         if (this.collapsible) {
             // flip the active flag
             this.expanded = !this.expanded;
         }
+    }
+
+    // On form data source change. This method is overridden by live form and live filter
+    onDataSourceChange() {
+    }
+
+    // On form field default value change. This method is overridden by live form and live filter
+    onFieldDefaultValueChange(field, nv) {
+        field.value = parseValueByType(nv, undefined, field.widgettype);
+    }
+
+    // On form field value change. This method is overridden by live form and live filter
+    onFieldValueChange() {
     }
 
     get mode() {
@@ -395,10 +396,5 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         if (event) {
             this[event.substring(0, event.indexOf('('))]();
         }
-    }
-
-    ngOnDestroy() {
-        super.ngOnDestroy();
-        this.dataSourceChange.complete();
     }
 }

@@ -1,4 +1,3 @@
-export * from './src/build-utils';
 export * from './src/currency-constants';
 export * from './src/dom';
 export * from './src/enums';

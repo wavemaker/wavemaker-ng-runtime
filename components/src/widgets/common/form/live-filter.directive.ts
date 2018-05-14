@@ -4,7 +4,8 @@ import { DataSource } from '@wm/core';
 
 import { FormComponent } from './form.component';
 import { registerLiveFilterProps } from './form.props';
-import { getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../utils/data-utils';
+import { applyFilterOnField, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../utils/data-utils';
+import { isDataSetWidget } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -36,6 +37,11 @@ export class LiveFilterDirective {
         form.filter = this.filter.bind(this);
         form.filterOnDefault = this.filterOnDefault.bind(this);
         form.execute = this.execute.bind(this);
+        form.onFieldDefaultValueChange = this.onFieldDefaultValueChange.bind(this);
+        form.onMaxDefaultValueChange = this.onMaxDefaultValueChange.bind(this);
+        form.onDataSourceChange = this.onDataSourceChange.bind(this);
+        form.onFieldValueChange = this.onFieldValueChange.bind(this);
+        form.submitForm = this.submitForm.bind(this);
 
         this.form.result = {
             data: [],
@@ -43,8 +49,27 @@ export class LiveFilterDirective {
                 page: 1
             }
         };
+    }
 
-        this.form.dataSourceChange$.subscribe(nv => this.onFormDataSourceChange(nv));
+    onFieldDefaultValueChange(field, nv) {
+        field.minValue = nv;
+        field.value = nv;
+        this.filterOnDefault();
+    }
+
+    onFieldValueChange(field, nv) {
+        if (isDataSetWidget(field.widgettype)) {
+            applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
+        }
+        if (this.form.autoupdate) {
+            this.filter();
+        }
+    }
+
+    onMaxDefaultValueChange() {
+        setTimeout(() => {
+            this.filterOnDefault();
+        });
     }
 
     execute(operation, options) {
@@ -54,7 +79,23 @@ export class LiveFilterDirective {
         return this.form.datasource.execute(operation, options);
     }
 
-    onFormDataSourceChange(dataSource) {
+    onDataSourceChange() {
+        const dataSource = this.form.datasource;
+
+        if (!dataSource) {
+            return;
+        }
+
+        this.form.formFields.forEach(field => {
+            if (isDataSetWidget(field.widgettype)) {
+                getDistinctValuesForField(dataSource, field.widget, {
+                    widget: 'widgettype',
+                    enableemptyfilter: this.form.enableemptyfilter
+                });
+                applyFilterOnField(dataSource, field.widget, this.form.formFields, field.value, {isFirst: true});
+            }
+        });
+
         this.form.result.variableName = dataSource.execute(DataSource.Operation.GET_NAME);
         this.form.result.propertiesMap = dataSource.execute(DataSource.Operation.GET_PROPERTIES_MAP);
 
@@ -82,6 +123,10 @@ export class LiveFilterDirective {
             // Setting result to the default data
             this.filter();
         });
+    }
+
+    submitForm() {
+        this.filter();
     }
 
     applyFilter(options) {
@@ -145,7 +190,7 @@ export class LiveFilterDirective {
                 return;
             }
             /*Update these values in the formFields with new reference, inorder to maintain the UI values*/
-            _.each(this.form.formFields, filterField => {
+            this.form.formFields.forEach(filterField => {
                 if (!filterField['is-range']) {
                     filterField._value = dataModel[filterField.field].value;
                 } else {

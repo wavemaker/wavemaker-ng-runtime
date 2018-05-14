@@ -1,14 +1,13 @@
 import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { DataType, FormWidgetType, isDefined, toBoolean } from '@wm/core';
+import { DataType, FormWidgetType, toBoolean } from '@wm/core';
 
 import { styler } from '../../../framework/styler';
 import { FormRef } from '../../../framework/types';
 import { registerProps } from './form-field.props';
-import { getEvaluatedData, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
-import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField } from '../../../../utils/data-utils';
-import { getDefaultViewModeWidget, parseValueByType } from '../../../../utils/live-utils';
+import { getEvaluatedData, provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { getDefaultViewModeWidget } from '../../../../utils/live-utils';
 import { StylableComponent } from '../../base/stylable.component';
 
 declare const _;
@@ -36,8 +35,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     @ContentChild('formWidget') formWidget;
     @ContentChild('formWidgetMax') formWidgetMax;
 
+    // applyProps is used to store the props to be applied on inner form widget, after it is initialized
     private applyProps;
     private fb;
+    // excludeProps is used to store the props that should not be applied on inner widget
     private excludeProps;
     private _validators;
 
@@ -109,28 +110,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (this.binddataset) {
             this.isDataSetBound = true;
         }
-
-        if ((this.form.isLiveForm || this.form.isLiveFilter) && isDataSetWidget(_widgetType)) {
-            this.form.dataSourceChange$.subscribe(nv => this.onFormDataSourceChange(nv));
-        }
     }
 
-    onFormDataSourceChange(dataSource) {
-        if (this['is-related'] && this.form.isLiveForm) {
-            this.isDataSetBound = true;
-            fetchRelatedFieldData(dataSource, this.widget, {
-                relatedField: this.key,
-                datafield: ALLFIELDS
-            });
-        } else {
-            getDistinctValuesForField(dataSource, this.widget, {
-                widget: 'widgettype',
-                enableemptyfilter: this.form.enableemptyfilter
-            });
-            applyFilterOnField(dataSource, this.widget, this.form.formFields, this.value, {isFirst: true});
-        }
-    }
-
+    // Expression to be evaluated in view mode of form field
     evaluateExpr(object, displayExpr) {
         if (!displayExpr) {
             displayExpr = Object.keys(object)[0];
@@ -144,6 +126,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         });
     }
 
+    // Expression to be evaluated in view mode of form field
     getDisplayExpr() {
         const caption = [];
         const value = this.value;
@@ -161,27 +144,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         return value;
     }
 
-    setDefaultValue() {
-        // In Edit, do  not set default values
-        if (this.form.operationType === 'update') {
-            return;
-        }
-        const defaultValue = this.defaultvalue;
-        // Set the default value only if it exists.
-        if (isDefined(defaultValue) && defaultValue !== null && defaultValue !== '' && defaultValue !== 'null') {
-            this.value = parseValueByType(defaultValue, this.type, this.widgettype);
-        } else {
-            this.value = undefined;
-        }
-        /*If the field is primary but is assigned set readonly false.
-         Assigned is where the user inputs the value while a new entry.
-         This is not editable(in update mode) once entry is successful*/
-        if (this.readonly && this['primary-key'] && this.generator === 'assigned') {
-            this.widget.readonly = false;
-        }
-        this.form.setPrevDataValues();
-    }
-
+    // Method to setup validators for reactive form control
     private setUpValidators(customValidator?) {
         this._validators = [];
 
@@ -210,12 +173,14 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
     }
 
+    // Method to set the properties on inner form widget
     setFormWidget(key, val) {
         setTimeout(() => {
             this.formWidget.widget[key] = val;
         });
     }
 
+    // Method to set the properties on inner max form widget (when range is selected)
     setMaxFormWidget(key, val) {
         if (this.formWidgetMax) {
             setTimeout(() => {
@@ -234,6 +199,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             return;
         }
 
+        // As upload widget is an HTML widget, only required property is setup
         if (this.widgettype === FormWidgetType.UPLOAD) {
             if (key === 'required') {
                 this.setUpValidators();
@@ -243,28 +209,19 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         this.setFormWidget(key, newVal);
 
+        // Placeholder should not be setup on max widget
         if (key !== 'placeholder') {
             this.setMaxFormWidget(key, newVal);
         }
 
         switch (key) {
             case 'defaultvalue':
-                if (this.form.isLiveForm) {
-                    this.setDefaultValue();
-                } else if (this.form.isLiveFilter) {
-                    this.minValue = newVal;
-                    this.value = newVal;
-                    this.form.filterOnDefault();
-                } else {
-                    this.value = parseValueByType(newVal, undefined, this.widgettype);
-                }
+                this.form.onFieldDefaultValueChange(this, newVal);
                 break;
             case 'maxdefaultvalue':
                 this.maxValue = newVal;
                 this.setMaxFormWidget('datavalue', newVal);
-                setTimeout(() => {
-                    this.form.filterOnDefault();
-                });
+                this.form.onMaxDefaultValueChange();
                 break;
             case 'maxplaceholder':
                 this.setMaxFormWidget('placeholder', newVal);
@@ -307,10 +264,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.datavalue = val;
     }
 
+    // Get the reactive form control
     get _control() {
         return this.ngform && this.ngform.controls[this.key || this.name];
     }
 
+    // Create the reactive form control
     createControl() {
         let updateOn = this.updateon || 'blur';
         updateOn = updateOn === 'default' ? 'change' : updateOn;
@@ -320,15 +279,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         });
     }
 
+    // On field value change, propagate event to parent form
     onValueChange(val) {
-        if (isDataSetWidget(this.widgettype)) {
-            applyFilterOnField(this.form.datasource, this.widget, this.form.formFields, val);
-        }
-        if (this.form.isLiveFilter && this.form.autoupdate) {
-            this.form.filter();
-        }
+        this.form.onFieldValueChange(this, val);
     }
 
+    // Method to expose validation message and set control to invalid
     setValidationMessage(val) {
         this.validationmessage = val;
         this.setUpValidators(customValidatorFn);
@@ -340,11 +296,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.ngform = this.form.ngform;
         this.ngform.addControl(fieldName, this.createControl());
 
-        if (this.form.isLiveForm || this.form.isLiveFilter) {
-            this._control.valueChanges
-                .debounceTime(500)
-                .subscribe(this.onValueChange.bind(this));
-        }
+        this._control.valueChanges
+            .debounceTime(200)
+            .subscribe(this.onValueChange.bind(this));
 
         super.ngOnInit();
         styler(this.nativeElement, this);
@@ -366,6 +320,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.key = this.key || this.target || this.binding || this.name;
         this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
 
+        // For upload widget, generate the permitted field
         if (this.type === DataType.BLOB) {
             let fileType;
             // Create the accepts string from file type and extensions
@@ -373,6 +328,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
         }
 
+        // Register the form field with parent form
         this.form.registerFormFields(this.widget);
     }
 }

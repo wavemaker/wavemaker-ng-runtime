@@ -4,11 +4,13 @@ import { $appDigest, DataSource, DataType, getClonedObject, getFiles, getValidDa
 
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
-import { Live_Operations, performDataOperation } from '../../../utils/data-utils';
+import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField, Live_Operations, performDataOperation } from '../../../utils/data-utils';
 import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
+import { parseValueByType } from '../../../utils/live-utils';
+import { isDataSetWidget } from '../../../utils/widget-utils';
 
-declare const _, moment;
+declare const _;
 
 registerLiveFormProps();
 
@@ -27,28 +29,72 @@ const getValidTime = val => {
 export class LiveFormDirective {
 
     constructor(@Self() @Inject(FormComponent) private form, public datePipe: ToDatePipe, private dialogService: DialogService) {
+        // CUD operations
         form.edit = this.edit.bind(this);
-        form.update = this.edit.bind(this);
         form.cancel = this.cancel.bind(this);
-        form.formCancel = this.cancel.bind(this);
         form.reset = this.reset.bind(this);
         form.new = this.new.bind(this);
         form.delete = this.delete.bind(this);
         form.save = this.save.bind(this);
-        form.formSave = this.save.bind(this);
-        form.setPrevDataValues = this.setPrevDataValues.bind(this);
+        form.saveAndNew = this.saveAndNew.bind(this);
+        form.saveAndView = this.saveAndView.bind(this);
+
         form.setPrimaryKey = this.setPrimaryKey.bind(this);
         form.constructDataObject = this.constructDataObject.bind(this);
         form.changeDataObject = this.setFormData.bind(this);
         form.setFormData = this.setFormData.bind(this);
-        form.saveAndNew = this.saveAndNew.bind(this);
-        form.saveAndView = this.saveAndView.bind(this);
         form.findOperationType = this.findOperationType.bind(this);
         form.clearData = this.clearData.bind(this);
+        form.onFieldDefaultValueChange = this.onFieldDefaultValueChange.bind(this);
+        form.onDataSourceChange = this.onDataSourceChange.bind(this);
+        form.onFieldValueChange = this.onFieldValueChange.bind(this);
+        form.submitForm = this.submitForm.bind(this);
     }
 
-    getFormElement() {
-        return this.form.$element;
+    onDataSourceChange() {
+        this.form.formFields.forEach(field => {
+            if (isDataSetWidget(field.widgettype)) {
+                if (field['is-related']) {
+                    field.isDataSetBound = true;
+                    fetchRelatedFieldData(this.form.datasource, field.widget, {
+                        relatedField: field.key,
+                        datafield: ALLFIELDS
+                    });
+                } else {
+                    getDistinctValuesForField(this.form.datasource, field.widget, {
+                        widget: 'widgettype',
+                        enableemptyfilter: this.form.enableemptyfilter
+                    });
+                    applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, field.value, {isFirst: true});
+                }
+            }
+        });
+    }
+
+    onFieldDefaultValueChange(field, nv) {
+        // In Edit, do  not set default values
+        if (this.form.operationType === 'update') {
+            return;
+        }
+        // Set the default value only if it exists.
+        if (isDefined(nv) && nv !== null && nv !== '' && nv !== 'null') {
+            field.value = parseValueByType(nv, field.type, field.widgettype);
+        } else {
+            field.value = undefined;
+        }
+        /*If the field is primary but is assigned set readonly false.
+         Assigned is where the user inputs the value while a new entry.
+         This is not editable(in update mode) once entry is successful*/
+        if (field.readonly && field['primary-key'] && field.generator === 'assigned') {
+            field.widget.readonly = false;
+        }
+        this.setPrevDataValues();
+    }
+
+    onFieldValueChange(field, nv) {
+        if (isDataSetWidget(field.widgettype)) {
+            applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
+        }
     }
 
     getBlobURL(dataObj, key, value) {
@@ -73,7 +119,7 @@ export class LiveFormDirective {
     }
 
     resetFileUploadWidget(field, skipValueSet?) {
-        const $formEle = this.getFormElement();
+        const $formEle = this.form.$element;
         $formEle.find('[name="' + field.key + '_formWidget"]').val('');
         field._control.reset();
         if (!skipValueSet) {
@@ -83,19 +129,16 @@ export class LiveFormDirective {
     }
 
     setDefaultValues() {
-        if (!this.form.formFields) {
-            return;
-        }
         this.form.formFields.forEach(field => {
-            field.setDefaultValue();
+            this.onFieldDefaultValueChange(field, field.defaultvalue);
         });
     }
 
     setFormData(dataObj) {
-        if (!this.form.formFields || !dataObj) {
+        if (!dataObj) {
             return;
         }
-        this.form.formFields.forEach((field) => {
+        this.form.formFields.forEach(field => {
             const value = _.get(dataObj, field.key || field.name);
             if (isTimeType(field)) {
                 field.value = getValidTime(value);
@@ -107,7 +150,7 @@ export class LiveFormDirective {
                 field.value = value;
             }
         });
-        this.form.setPrevDataValues();
+        this.setPrevDataValues();
         this.form.constructDataObject();
     }
 
@@ -147,7 +190,7 @@ export class LiveFormDirective {
         const formName = this.form.name;
         let formFields;
         formFields = isPreviousData ? this.form.prevformFields : this.form.formFields;
-        _.forEach(formFields, field => {
+        formFields.forEach(field => {
             let dateTime,
                 fieldValue;
             const fieldTarget = _.split(field.key, '.');
@@ -242,10 +285,7 @@ export class LiveFormDirective {
 
     getPrevDataValues() {
         let prevDataValues;
-        if (!this.form.formFields) {
-            return;
-        }
-        this.form.formFields.forEach((field) => {
+        this.form.formFields.forEach(field => {
             prevDataValues = _.fromPairs(_.map(this.form.prevDataValues, (item) => {
                 return [item.key, item.value];
             })); // Convert of array of values to an object
@@ -255,16 +295,13 @@ export class LiveFormDirective {
     }
 
     setPrevDataValues() {
-        if (!this.form.formFields) {
-            return;
-        }
         this.form.prevDataValues = this.form.formFields.map((obj) => {
             return {'key': obj.key, 'value': obj.value};
         });
     }
 
     emptyDataModel() {
-        this.form.formFields.forEach((field) => {
+        this.form.formFields.forEach(field => {
             if (isDefined(field)) {
                 if (field.type === DataType.BLOB) {
                     this.resetFileUploadWidget(field);
@@ -277,16 +314,11 @@ export class LiveFormDirective {
 
     clearData() {
         this.form.toggleMessage(false);
-        if (this.form.formFields && this.form.formFields.length > 0) {
-            this.emptyDataModel();
-        }
+        this.emptyDataModel();
     }
 
     setReadonlyFields() {
-        if (!this.form.formFields) {
-            return;
-        }
-        this.form.formFields.forEach((field) => {
+        this.form.formFields.forEach(field => {
             if (field.primarykey && !field.isRelated) {
                 field.readonly = true;
             }
@@ -302,7 +334,7 @@ export class LiveFormDirective {
         if (!this.form.isLayoutDialog) {
             if (this.form.isSelected) {
                 this.setPrevformFields();
-                this.form.setPrevDataValues();
+                this.setPrevDataValues();
             }
             this.form.prevDataObject = getClonedObject(this.form.rowdata || {});
         }
@@ -317,15 +349,13 @@ export class LiveFormDirective {
         let prevDataValues;
         this.form.resetFormState();
         prevDataValues = this.getPrevDataValues();
-        if (_.isArray(this.form.formFields)) {
-            this.form.formFields.forEach((field) => {
-                if (field.type === DataType.BLOB) {
-                    this.resetFileUploadWidget(field, true);
-                    field.href = this.getBlobURL(prevDataValues, field.key, field.value);
-                }
-            });
-            this.form.constructDataObject();
-        }
+        this.form.formFields.forEach(field => {
+            if (field.type === DataType.BLOB) {
+                this.resetFileUploadWidget(field, true);
+                field.href = this.getBlobURL(prevDataValues, field.key, field.value);
+            }
+        });
+        this.form.constructDataObject();
     }
 
     cancel() {
@@ -354,12 +384,10 @@ export class LiveFormDirective {
         if (this.form.isSelected && !this.form.isLayoutDialog) {
             this.setPrevformFields();
         }
-        if (this.form.formFields && this.form.formFields.length > 0) {
-            this.emptyDataModel();
-        }
+        this.emptyDataModel();
         setTimeout(() => {
             this.setDefaultValues();
-            this.form.setPrevDataValues();
+            this.setPrevDataValues();
             this.form.constructDataObject();
         });
         this.form.isUpdateMode = true;
@@ -379,6 +407,10 @@ export class LiveFormDirective {
     // Function use to save the form and open new form after save
     saveAndView() {
         this.save(undefined, false);
+    }
+
+    submitForm($event) {
+        this.save($event);
     }
 
     save(event?, updateMode?, newForm?, callBackFn?) {
