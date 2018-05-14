@@ -1,12 +1,18 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
+import { NgModel } from '@angular/forms';
 
+import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { registerProps } from './slider.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
+
 const DEFAULT_CLS = 'app-slider slider';
-const WIDGET_CONFIG = {widgetType: 'wm-slider', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-slider',
+    hostClass: DEFAULT_CLS
+};
 
 registerProps();
 
@@ -20,18 +26,22 @@ registerProps();
 })
 export class SliderComponent extends BaseFormCustomComponent {
 
-    oldVal;
-    datavalue;
+    @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 
-    onChange($event) {
-        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
-        this.oldVal = this.datavalue;
-        this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue);
+    // change and blur events are added from the template
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (eventName !== 'change' && eventName !== 'blur') {
+            super.handleEvent(node, eventName, callback, locals);
+        }
     }
+
+    protected handleChange(newVal: boolean) {
+        this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
+    }
+
 }

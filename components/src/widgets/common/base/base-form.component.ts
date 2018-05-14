@@ -8,11 +8,13 @@ export abstract class BaseFormComponent extends StylableComponent {
 
         // invoke the event callback
         if ($event) {
-            this.invokeEventCallback('change', {
-                $event,
-                newVal: value,
-                oldVal: this.prevDatavalue
-            });
+            if (this.datavalue !== this.prevDatavalue) {
+                this.invokeEventCallback('change', {
+                    $event,
+                    newVal: value,
+                    oldVal: this.prevDatavalue
+                });
+            }
         }
         // update the previous value
         this.prevDatavalue = value;
