@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 
-import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate } from '@wm/core';
+import { $appDigest, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -67,9 +67,9 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         this.clearTimeInterval();
 
         if (newVal) {
-            this.dateModel = this.dateModel || this.getDateObj(newVal);
-            this.timeModel = this.timeModel || this.getDateObj(newVal);
-            this.proxyModel = this.getDateObj(newVal);
+            this.dateModel = this.dateModel || getDateObj(newVal);
+            this.timeModel = this.timeModel || getDateObj(newVal);
+            this.proxyModel = getDateObj(newVal);
             this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern) || '';
             this.timestamp = this.proxyModel.valueOf();
         } else {
@@ -185,13 +185,12 @@ export class DatetimeComponent extends BaseFormCustomComponent {
      */
     private onModelUpdate(newVal, type?) {
         if (!newVal) {
-            this.invokeEventCallback('change', {$event: newVal, newVal: undefined, oldVal: this.proxyModel});
             this.proxyModel = undefined;
             this.invokeOnChange(this.datavalue);
+            this.invokeEventCallback('change', {$event: newVal, newVal: undefined, oldVal: this.proxyModel});
             return;
         }
-        const dateObj = this.getDateObj(newVal);
-        this.invokeEventCallback('change', {$event: newVal, newVal: dateObj, oldVal: this.proxyModel});
+        const dateObj = getDateObj(newVal);
         if (type === 'date') {
             this.selectedDate = dateObj.toDateString();
             if (this.isDateOpen) {
@@ -211,16 +210,7 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern) || '';
         this.invokeOnChange(this.datavalue);
         $appDigest();
-    }
-    /**
-     * This is an internal method to get the date object from the input received
-     */
-    private getDateObj(value?: string): Date {
-        const dateObj = new Date(value);
-        if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
-            return now;
-        }
-        return dateObj;
+        this.invokeEventCallback('change', {$event: newVal, newVal: dateObj, oldVal: this.proxyModel});
     }
 
     constructor(inj: Injector, public datePipe: ToDatePipe) {
@@ -240,10 +230,10 @@ export class DatetimeComponent extends BaseFormCustomComponent {
                 this.datavalue = this._datavalue;
                 break;
             case 'mindate':
-                this.minDate = this.getDateObj(newVal);
+                this.minDate = getDateObj(newVal);
                 break;
             case 'maxdate':
-                this.maxDate = this.getDateObj(newVal);
+                this.maxDate = getDateObj(newVal);
                 break;
             case 'showweeks':
                 this._dateOptions.showWeekNumbers = newVal;

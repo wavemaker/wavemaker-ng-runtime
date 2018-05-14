@@ -2,7 +2,7 @@
     <input class="form-control app-textbox display-input" aria-label="Set the date and time"
            type="text"
            [value]="formattedModel"
-           (click)="isDateOpen = !isDateOpen"
+           (click)="datepicker.toggle()"
            [disabled]="isDisabled"
            [required]="required"
            [placeholder]="placeholder">

@@ -1,8 +1,8 @@
 <input class="form-control app-textbox app-dateinput display-input" aria-label="Select date"
        type="text"
-       [value]="formattedModel"
+       [value]="displayValue"
        (click)="datepicker.toggle()"
-       [disabled]="isDisabled"
+       [disabled]="disabled || readonly"
        [required]="required"
        [placeholder]="placeholder">
 <span class="input-group-btn" (click)="datepicker.toggle()">
@@ -16,10 +16,10 @@
            [isOpen]="isOpen"
            #datepicker="bsDatepicker"
            bsDatepicker
-           [isDisabled]="isDisabled"
-           [bsValue]="proxyModel"
-           [maxDate]="maxDate"
-           [minDate]="minDate"
+           [isDisabled]="disabled || readonly"
+           [bsValue]="bsDatavalue"
+           [maxDate]="_dateOptions.maxDate"
+           [minDate]="_dateOptions.minDate"
            (onShown)="onDatePickerOpen()"
            (bsValueChange)="onDateChange($event)">
 </div>

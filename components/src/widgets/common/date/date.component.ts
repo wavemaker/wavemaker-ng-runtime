@@ -1,31 +1,18 @@
 import { Component, Injector } from '@angular/core';
 
-import { getFormattedDate } from '@wm/core';
+import { getDateObj, getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
+import { BsDatepickerConfig } from 'ngx-bootstrap';
 
 registerProps();
 
 const DEFAULT_CLS = 'app-date input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-date', hostClass: DEFAULT_CLS};
-
-const now: Date = new Date();
-const CURRENT_DATE: string = 'CURRENT_DATE';
-/**
- * method to get the date object from the input received
- */
-// TODO: Modify this method to handle null and CURRENT_DATE
-const getDateObj = (value?: string): Date => {
-    const dateObj = new Date(value);
-    if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
-        return now;
-    }
-    return dateObj;
-};
 
 @Component({
     selector: '[wmDate]',
@@ -36,104 +23,84 @@ const getDateObj = (value?: string): Date => {
     ]
 })
 export class DateComponent extends BaseFormCustomComponent {
-    /**
-     * This is an internal property used to map it to the widget
-     */
-    private minDate: Date;
-    /**
-     * This is an internal property used to map it to the widget
-     */
-    private maxDate: Date;
-    /**
-     * This is an internal property used to map the main model to the bsDatewidget
-     */
-    private proxyModel: any;
-    /**
-     * This is an internal property used to map the formattedModel to the date display
-     */
-    private formattedModel: string = '';
-
-    private datePattern;
-
     private outputFormat;
-
-    disabled;
-    readonly;
-    _datavalue;
-
     /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
      */
-    private _dateOptions: any = {
-        'containerClass': 'theme-red'
-    };
+    private _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
 
-    onDatePickerOpen() {
-        this.invokeOnTouched();
-    }
-    /**
-     * This is an internal method triggered when the date selection changes
-     */
-    onDateChange(newVal): void {
-        // TODO: setDataValue(newVal);
-        // TODO: Move this to last
-        this.invokeEventCallback('change', {$event: newVal, newVal, oldVal: this.datavalue});
-        this.proxyModel = newVal;
-        if (newVal) {
-            this.formattedModel = getFormattedDate(this.datePipe, newVal, this.datePattern) || '';
-            this.datavalue = getFormattedDate(this.datePipe, this.proxyModel, this.outputFormat);
-        } else {
-            this.formattedModel = '';
-            this.datavalue = undefined;
-        }
-        this.invokeOnChange(this.datavalue);
+    bsDataValue;
+
+    get displayValue() {
+        return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
     }
 
-    // sets the dataValue and computes the display model values
-    private setDataValue(newVal): void {
-        if (newVal) {
-            this._datavalue = newVal;
-            this.proxyModel = getDateObj(newVal);
-            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datePattern) || '';
-            this.datavalue = getFormattedDate(this.datePipe, this.proxyModel, this.outputFormat);
-        } else {
-            this.formattedModel = '';
-            this._datavalue = this.proxyModel = this.datavalue = undefined;
-        }
-        this.invokeOnChange(this.datavalue);
+    get datavalue () {
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputFormat) || '';
     }
 
-    get isDisabled(): boolean {
-        return this.disabled || this.readonly;
+    // TODO use BsLocaleService to set the current user's locale to see the localized labels
+    constructor(inj: Injector, public datePipe: ToDatePipe) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this);
+        this._dateOptions.containerClass = 'theme-red';
     }
 
     onPropertyChange(key, newVal, ov?) {
         switch (key) {
             case 'datepattern':
-                this.datePattern = newVal;
-                this.setDataValue(this._datavalue);
+                this._dateOptions.dateInputFormat = newVal;
+                this.setDataValue(this.bsDataValue);
                 break;
             case 'outputformat':
                 this.outputFormat = newVal;
-                this.setDataValue(this._datavalue);
+                this.setDataValue(this.bsDataValue);
                 break;
-            case 'datavalue':
+            /*case 'datavalue': // Todo: Should reverse format be applied
                 this.setDataValue(newVal);
-                break;
+                break;*/
             case 'showweeks':
                 this._dateOptions.showWeekNumbers = newVal;
                 break;
             case 'mindate':
-                this.minDate = getDateObj(newVal);
+                this._dateOptions.minDate = getDateObj(newVal);
                 break;
             case 'maxdate':
-                this.maxDate = getDateObj(newVal);
+                this._dateOptions.maxDate = getDateObj(newVal);
                 break;
         }
     }
 
-    constructor(inj: Injector, public datePipe: ToDatePipe) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
+    onDatePickerOpen() {
+        this.invokeOnTouched();
+    }
+
+    /**
+     * This is an internal method triggered when the date selection changes
+     */
+    onDateChange(newVal): void {
+        this.setDataValue(newVal);
+        this.invokeEventCallback('change', {$event: newVal, newVal, oldVal: this.datavalue});
+    }
+
+    // sets the dataValue and computes the display model values
+    private setDataValue(newVal): void {
+        if (newVal) {
+            this.bsDataValue = newVal;
+        } else {
+            this.bsDataValue = undefined;
+        }
+        this.invokeOnChange(this.datavalue);
+    }
+
+    // sets the dataValue and computes the display model values
+    private set datavalue(newVal): void {
+        // TODO this impl should set the bsDatavalue by applying the reverse output format...
+        if (newVal) {
+            this.bsDataValue = newVal;
+        } else {
+            this.bsDataValue = undefined;
+        }
+        this.invokeOnChange(this.datavalue);
     }
 }
