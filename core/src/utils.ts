@@ -36,6 +36,8 @@ const REGEX = {
     compareBySeparator = ':';
 
 const NUMBER_TYPES = ['int', DataType.INTEGER, DataType.FLOAT, DataType.DOUBLE, DataType.LONG, DataType.SHORT, DataType.BYTE, DataType.BIG_INTEGER, DataType.BIG_DECIMAL];
+const now: Date = new Date();
+const CURRENT_DATE: string = 'CURRENT_DATE';
 
 export const enum EVENT_LIFE {ONCE, WINDOW}
 
@@ -280,6 +282,20 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
         return moment(dateObj).valueOf();
     }
     return datePipe.transform(dateObj, format);
+};
+
+export /**
+ * method to get the date object from the input received
+ */
+const getDateObj = (value?: string): Date => {
+    const dateObj = new Date(value);
+    if (value === null || value === undefined) {
+        return undefined;
+    }
+    if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
+        return now;
+    }
+    return dateObj;
 };
 
 export const addEventListener = (_element: Element, excludeElement: Element, eventType, successCB, life: EVENT_LIFE) => {

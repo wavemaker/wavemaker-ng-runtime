@@ -7,7 +7,8 @@ export const dateProps = new Map(
         ['datavalue', PROP_STRING_NOTIFY],
         ['datepattern', {value: 'yyyy-MM-dd', ...PROP_STRING_NOTIFY}],
         ['disabled', PROP_BOOLEAN_NOTIFY],
-        ['excludedays', PROP_STRING],
+        ['excludedays', PROP_STRING], // TODO not addressed
+        ['excludedates', PROP_STRING_NOTIFY], // TODO not addressed
         ['hint', {value: '', ...PROP_STRING}],
         ['maxdate', PROP_STRING_NOTIFY],
         ['mindate', PROP_STRING_NOTIFY],
@@ -16,9 +17,9 @@ export const dateProps = new Map(
         ['placeholder', {value: 'Select Date', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN_NOTIFY],
         ['required', PROP_BOOLEAN],
-        ['shortcutkey', PROP_STRING],
+        ['shortcutkey', PROP_STRING], // TODO not addressed
         ['show', PROP_BOOLEAN],
-        ['showbuttonbar', {value: true, ...PROP_BOOLEAN}],
+        ['showbuttonbar', {value: true, ...PROP_BOOLEAN}], // TODO not addressed
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['showweeks', {value: false, ...PROP_BOOLEAN_NOTIFY}],
         ['tabindex', PROP_NUMBER]
