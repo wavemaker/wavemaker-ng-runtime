@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
+import { Attribute, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 
 import { WidgetRef } from '@wm/components';
 import { noop } from '@wm/core';
@@ -34,12 +34,15 @@ export class PartialContainerDirective {
         public renderUtils: RenderUtilsService,
         public vcRef: ViewContainerRef,
         public elRef: ElementRef,
-        public inj: Injector
+        public inj: Injector,
+        @Attribute('content') _content: string
     ) {
 
-        (this.inj as any).view.component._registerFragment();
+        if (_content) {
+            (this.inj as any).view.component._registerFragment();
+        }
 
-        componentInstance.registerPropertyChangeListener((key, nv, ov) => {
+        componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
             if (key === 'content') {
                 if (componentInstance.$lazyLoad) {
                     componentInstance.$lazyLoad = () => {
