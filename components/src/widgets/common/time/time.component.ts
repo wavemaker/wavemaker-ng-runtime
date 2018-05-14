@@ -144,9 +144,9 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
      */
     private onTimeChange(newVal) {
         if (newVal) {
-            this.bsDataValue = newVal;
+            this.bsTimeValue = newVal;
         } else {
-            this.bsDataValue = undefined;
+            this.bsTimeValue = undefined;
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);

@@ -35,10 +35,6 @@ export class DateComponent extends BaseFormCustomComponent {
         return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
     }
 
-    get datavalue () {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputFormat) || '';
-    }
-
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
     constructor(inj: Injector, public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
@@ -93,8 +89,11 @@ export class DateComponent extends BaseFormCustomComponent {
         this.invokeOnChange(this.datavalue);
     }
 
+    get datavalue () {
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputFormat) || '';
+    }
     // sets the dataValue and computes the display model values
-    private set datavalue(newVal): void {
+    set datavalue(newVal) {
         // TODO this impl should set the bsDatavalue by applying the reverse output format...
         if (newVal) {
             this.bsDataValue = newVal;
