@@ -1,4 +1,4 @@
-export const CONSTANTS_CURRENCY  = {
+export const CURRENCY_INFO  = {
     'USD': {
         'symbol': '$',
         'name': 'US Dollar',

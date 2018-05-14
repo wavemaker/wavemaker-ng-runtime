@@ -1,13 +1,20 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { CONSTANTS_CURRENCY } from '@wm/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { NgModel } from '@angular/forms';
 
+import { CURRENCY_INFO } from '@wm/core';
+
+import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './currency.props';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'input-group app-currency';
-const WIDGET_CONFIG = {widgetType: 'wm-currency', hostClass: DEFAULT_CLS};
+
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-currency',
+    hostClass: DEFAULT_CLS
+};
 
 registerProps();
 
@@ -21,7 +28,9 @@ registerProps();
 })
 export class CurrencyComponent extends BaseFormCustomComponent implements OnInit {
     currency: string;
-    oldVal;
+    currencySymbol: string;
+
+    @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -32,15 +41,20 @@ export class CurrencyComponent extends BaseFormCustomComponent implements OnInit
         styler(this.nativeElement.querySelector('input'), this);
     }
 
-    get currencysymbol() {
-        return CONSTANTS_CURRENCY[this.currency || 'USD'].symbol;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'currency') {
+            this.currencySymbol = CURRENCY_INFO[this.currency || 'USD'].symbol;
+        }
     }
 
-    // TODO: commanalize onchange event
-    onChange($event) {
-        this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue);
-        this.invokeEventCallback('change', {$event, newVal: $event, oldVal: this.oldVal});
-        this.oldVal = $event;
+    // change and blur events are added from the template
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (eventName !== 'change' && eventName !== 'blur') {
+            super.handleEvent(node, eventName, callback, locals);
+        }
+    }
+
+    protected handleChange(newVal: boolean) {
+        this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 }

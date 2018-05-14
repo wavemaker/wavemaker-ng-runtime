@@ -5,6 +5,7 @@ export const colorPickerProps = new Map(
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
+        ['hint', PROP_STRING],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Select Color', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN],

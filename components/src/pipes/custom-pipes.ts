@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { CONSTANTS_CURRENCY, isDefined } from '@wm/core';
+import { CURRENCY_INFO, isDefined } from '@wm/core';
 
 declare const moment, _, $;
 
@@ -59,7 +59,7 @@ export class ToNumberPipe implements PipeTransform {
 })
 export class ToCurrencyPipe implements PipeTransform {
     transform(data, currencySymbol, fracSize) {
-        const _currencySymbol = (CONSTANTS_CURRENCY[currencySymbol] || {}).symbol || currencySymbol || '',
+        const _currencySymbol = (CURRENCY_INFO[currencySymbol] || {}).symbol || currencySymbol || '',
             _val = new ToNumberPipe(this.decimalPipe).transform(data, fracSize);
         return _val ? _currencySymbol + _val : '';
     }
