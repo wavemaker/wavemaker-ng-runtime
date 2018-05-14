@@ -3,13 +3,17 @@ import { NgModel } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
 
+import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './checkbox.props';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
-const WIDGET_CONFIG = {widgetType: 'wm-checkbox', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-checkbox',
+    hostClass: DEFAULT_CLS
+};
 
 registerProps();
 
@@ -82,6 +86,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         }
     }
 
+    // change and blur events are handled from template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
             super.handleEvent(node, eventName, callback, locals);
@@ -89,14 +94,9 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     }
 
     handleChange(newVal: boolean) {
-        if (this.ngModel.valid) {
-            this.invokeOnChange(this.datavalue, {type: 'change'});
-        }
+        this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 
-    handleBlur($event: Event) {
-        this.invokeOnTouched($event);
-    }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();

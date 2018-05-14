@@ -1,13 +1,16 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
+import { IWidgetConfig } from '../../../framework/types';
 import { registerProps } from './input-text.props';
 import { BaseInput } from '../base/base-input';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-input-text'};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-input-text'
+};
 
 @Component({
     selector: '[wmInput][type="text"], [wmInput]:not([type]), [wmInput][type="password"], [wmInput][type="search"], [wmInput][type="tel"], [wmInput][type="url"]',

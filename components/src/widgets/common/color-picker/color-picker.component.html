@@ -1,13 +1,16 @@
-<input class="form-control app-textbox" aria-label="Select color" aria-hashpopup="true" aria-expanded="false"
+<input class="form-control app-textbox" aria-label="Select color" aria-haspopup="true" aria-expanded="false"
        [(colorPicker)]="datavalue"
-       (colorPickerChange)="onChange($event);"
+       (colorPickerChange)="handleChange($event);"
        [cpPosition]="'bottom'"
        [placeholder]="placeholder"
-       [disabled]="readonly || disable"
+       [disabled]="readonly || disabled"
        [required]="required"
        [tabindex]="tabindex"
-       [value]="datavalue"
+       [(ngModel)]="datavalue"
+       (ngModelChange)="handleChange($event);"
+       [ngModelOptions]="{updateOn: 'blur'}"
+       (blur)="invokeOnTouched($event)"
        [attr.accesskey]="shortcutkey">
 <span class="input-group-addon colorpicker-container">
-    <i class="colored-box" [ngStyle]="{backgroundColor: datavalue}">&nbsp;</i>
+    <i class="colored-box" [style.backgroundColor]="datavalue">&nbsp;</i>
 </span>

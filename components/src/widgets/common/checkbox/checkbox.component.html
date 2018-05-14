@@ -6,7 +6,7 @@
            [disabled]="disabled || readonly"
            [attr.accesskey]="shortcutkey"
            [tabindex]="tabindex"
-           (blur)="handleBlur($event)"
+           (blur)="invokeOnTouched($event)"
            (ngModelChange)="handleChange($event)">
     <span class="caption" [innerHtml]="_caption"></span>
     <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>

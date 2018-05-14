@@ -11,7 +11,6 @@ export const colorPickerProps = new Map(
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', PROP_BOOLEAN],
-        ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]
 );

@@ -1,13 +1,16 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
+import { IWidgetConfig } from '../../../framework/types';
 import { registerProps } from './input-number.props';
 import { BaseInput } from '../base/base-input';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-input-number'};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-input-number'
+};
 
 @Component({
     selector: '[wmInput][type="number"]',
