@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { Subject } from 'rxjs/Subject';
+import { CarouselModule } from 'ngx-bootstrap';
 
 import { WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
@@ -79,7 +80,15 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
 const getDynamicModule = component => {
     @NgModule({
         declarations: [component],
-        imports: [WmComponentsModule, WmMobileComponentsModule, FormsModule, ReactiveFormsModule, TempModule, CommonModule],
+        imports: [
+            WmComponentsModule,
+            WmMobileComponentsModule,
+            FormsModule,
+            ReactiveFormsModule,
+            TempModule,
+            CommonModule,
+            CarouselModule.forRoot()
+        ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     class DynamicModule {

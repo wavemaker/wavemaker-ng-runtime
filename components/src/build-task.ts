@@ -7,6 +7,8 @@ export * from './widgets/common/audio/audio.build';
 export * from './widgets/common/button-group/button-group.build';
 export * from './widgets/common/button/button.build';
 export * from './widgets/common/calendar/calendar.build';
+export * from './widgets/common/carousel/carousel.build';
+export * from './widgets/common/carousel/carousel-template/carousel-template.build';
 export * from './widgets/common/chart/chart.build';
 export * from './widgets/common/checkbox/checkbox.build';
 export * from './widgets/common/checkboxset/checkboxset.build';

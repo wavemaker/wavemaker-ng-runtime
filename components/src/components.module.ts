@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxMaskModule } from 'ngx-mask';
@@ -18,6 +18,8 @@ import { AudioComponent } from './widgets/common/audio/audio.component';
 import { ButtonComponent } from './widgets/common/button/button.component';
 import { ButtonGroupDirective } from './widgets/common/button-group/button-group.directive';
 import { CalendarComponent } from './widgets/common/calendar/calendar.component';
+import { CarouselDirective } from './widgets/common/carousel/carousel.directive';
+import { CarouselTemplateDirective } from "./widgets/common/carousel/carousel-template/carousel-template.directive";
 import { ChartComponent } from './widgets/common/chart/chart.component';
 import { CheckboxComponent } from './widgets/common/checkbox/checkbox.component';
 import { CheckboxsetComponent } from './widgets/common/checkboxset/checkboxset.component';
@@ -114,6 +116,8 @@ const wmComponents = [
     ButtonComponent,
     ButtonGroupDirective,
     CalendarComponent,
+    CarouselDirective,
+    CarouselTemplateDirective,
     ChartComponent,
     CheckboxComponent,
     ColorPickerComponent,
@@ -223,7 +227,8 @@ const PIPES = [
         TypeaheadModule.forRoot(),
         ProgressbarModule.forRoot(),
         ModalModule.forRoot(),
-        NgxMaskModule.forRoot()
+        NgxMaskModule.forRoot(),
+        CarouselModule.forRoot()
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],
