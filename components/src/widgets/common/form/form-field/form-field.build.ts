@@ -157,7 +157,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                             <label *ngIf="${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
-                            <div [ngClass]="[${pCounter}._widgetClass, ${counter}.class]">
+                            <div [ngClass]="[${pCounter}._widgetClass]">
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter)}

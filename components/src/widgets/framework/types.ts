@@ -1,4 +1,5 @@
 import { BaseComponent } from '../common/base/base.component';
+import { FormGroup } from '@angular/forms';
 
 export interface IWidgetConfig {
     widgetType: string;
@@ -15,7 +16,9 @@ export type ChangeListener = (key: string, nv: any, ov?: any) => void;
 
 export abstract class WidgetRef {}
 
-export abstract class FormRef {}
+export abstract class FormRef {
+    ngform: FormGroup;
+}
 
 export abstract class MenuRef {}
 

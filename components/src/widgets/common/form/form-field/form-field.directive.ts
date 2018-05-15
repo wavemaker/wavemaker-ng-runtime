@@ -1,7 +1,7 @@
 import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { DataType, FormWidgetType, toBoolean } from '@wm/core';
+import { DataType, FormWidgetType, toBoolean, removeClass } from '@wm/core';
 
 import { styler } from '../../../framework/styler';
 import { FormRef } from '../../../framework/types';
@@ -242,6 +242,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 break;
             case 'display-name':
                 this.displayname = newVal;
+                break;
+            case 'class':
+                // Apply class on the inner widget only. Rremove from form filed element
+                removeClass(this.getNativeElement(), newVal);
                 break;
         }
     }

@@ -72,6 +72,7 @@ export const registerProps = (widgetType) => {
             ['maxplaceholder', PROP_STRING_NOTIFY],
             ['primary-key', PROP_STRING_NOTIFY],
             ['related-entity-name', PROP_STRING],
+            ['required', PROP_BOOLEAN],
             ['show', PROP_BOOLEAN],
             ['validationmessage', PROP_STRING],
             ['viewmodewidget', PROP_STRING],
