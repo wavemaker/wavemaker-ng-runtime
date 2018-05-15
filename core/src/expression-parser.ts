@@ -296,7 +296,8 @@ class ASTCompiler {
         }
         const fn = this.build(ast.receiver);
         const v = this.createVar();
-        stmts.push(`${v}= ${fn}&&${fn}.${ast.name}&&${fn}.${ast.name}.bind(_ctx)(${_args.join(',')})`);
+        const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver;
+        stmts.push(`${v}= ${fn}&&${fn}.${ast.name}&&${fn}.${ast.name}${isImplicitReceiver ? '.bind(_ctx)' : ''}(${_args.join(',')})`);
         return v;
     }
 
