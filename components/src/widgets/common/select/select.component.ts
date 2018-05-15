@@ -34,10 +34,8 @@ export class SelectComponent extends DatasetAwareFormComponent implements OnInit
         styler(this.nativeElement.children[0] as HTMLElement, this);
     }
 
-    // triggers on model change.
     onSelectValueChange($event) {
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue);
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
         this.oldValue = this.datavalue;
     }

@@ -40,10 +40,9 @@ export class RadiosetComponent extends DatasetAwareFormComponent implements OnIn
             return;
         }
 
-        this._model_ = key;
+        this.proxyModel = key;
 
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue);
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
         this.oldValue = this.datavalue;
     }

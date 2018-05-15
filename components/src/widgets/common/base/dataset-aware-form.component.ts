@@ -21,16 +21,18 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     private _datavalue: any;
     private _model: any;
-    public acceptsArray = false; // set to true if _model_ on widget accepts array type.
+    public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
 
-    get _model_() {
+    get proxyModel() {
         return this._model;
     }
 
     // triggers on ngModel change. This function extracts the datavalue value.
-    set _model_(val: any) {
+    set proxyModel(val: any) {
         this.selectByKey(val);
         this._model = val;
+        // invoke on datavalue change.
+        this.invokeOnChange(this._datavalue);
     }
 
     get datavalue() {
@@ -193,7 +195,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     }
 
 
-    // Once the dataSetItems are ready, set the _model_ by using datavalue.
+    // Once the dataSetItems are ready, set the proxyModel by using datavalue.
     protected postDatasetItemsInit() {
         if (this.datasetItems.length) {
             this.selectByValue(this.datavalue);
