@@ -33,7 +33,11 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         this.multiple = true;
     }
 
-    onCheckboxLabelClick($event) {
+    onCheckboxLabelClick($event, key) {
+        if (!$($event.target).is('input')) {
+            return;
+        }
+
         // construct the _model from the checked elements.
         const inputElements = this.nativeElement.querySelectorAll('input:checked');
         const keys = [];
@@ -41,10 +45,10 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
             keys.push($el.value);
         });
 
-        // Sets the datavalue from _model_
-        this.selectByKey(keys);
+        this._model_ = keys;
 
         this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue);
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
         this.oldValue = this.datavalue;
     }
@@ -59,10 +63,5 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
                 switchClass(this.nativeElement, nv, ov);
                 break;
         }
-    }
-
-    // Todo: As the datavalue is overridden by angular.
-    writeValue() {
-
     }
 }

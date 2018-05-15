@@ -36,9 +36,14 @@ export class RadiosetComponent extends DatasetAwareFormComponent implements OnIn
      * On click of the option, update the datavalue
      */
     onRadioLabelClick($event, key) {
-        this.selectByKey(key);
+        if (!$($event.target).is('input')) {
+            return;
+        }
+
+        this._model_ = key;
 
         this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue);
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
         this.oldValue = this.datavalue;
     }

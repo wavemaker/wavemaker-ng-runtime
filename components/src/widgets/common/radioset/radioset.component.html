@@ -5,11 +5,11 @@
     <label class="app-radioset-label"
            [ngClass]="{'disabled':disabled}"
            [title]="item.label">
-        <input name="radioset" [required]="required" type="radio" aria-label="radio options" [attr.data-attr-index]="i"
+        <input [name]="'radioset_' + widgetId" type="radio" aria-label="radio options" [attr.data-attr-index]="i"
                [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/><!--Todo aria-label value same as value attr-->
         <span class="caption" [textContent]="item.label"></span>
     </label>
 </li>
 
-<input [disabled]="disabled" [hidden]="true" class="model-holder">
+<input [disabled]="disabled" hidden class="model-holder">
 <div *ngIf="readonly || disabled" aria-readonly="true" class="readonly-wrapper"></div>
