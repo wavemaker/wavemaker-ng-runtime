@@ -1,5 +1,5 @@
-<ul class="nav nav-tabs" [ngClass]="{'nav-stacked': vertical, 'nav-justified': justified}">
-    <li class="tab-header" *ngFor="let pane of panes;" [ngClass]="{'active': pane.isActive, 'disabled': pane.disabled}" [hidden]="pane.show"
+<ul class="nav nav-tabs" [ngClass]="{'nav-stacked': vertical, 'nav-justified': justified}" role="tablist">
+    <li class="tab-header" *ngFor="let pane of panes;" [ngClass]="{'active': pane.isActive, 'disabled': pane.disabled}" [hidden]="!pane.show"
         (click)="pane.select($event)" role="tab">
         <a href="javascript:void(0);" role="button" [tabindex]="pane.tabindex">
             <div class="tab-heading">
