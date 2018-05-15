@@ -73,7 +73,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         // invoke select callback on the selected tab
         paneRef.invokeOnSelectCallback(evt);
 
-        // invoke change callback if the evt is present
+        // invoke change callback if the evt is present, select a tab programmatically will not have the event
         if (evt) {
             this.invokeEventCallback('change', {
                 $event: evt,

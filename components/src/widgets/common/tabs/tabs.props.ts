@@ -7,6 +7,7 @@ export const registerProps = () => {
             [
                 ['class', PROP_STRING],
                 ['defaultpaneindex', {value: 0, ...PROP_NUMBER_NOTIFY}],
+                ['justified', PROP_BOOLEAN],
                 ['tabsposition', {value: 'top', ...PROP_STRING_NOTIFY}],
                 ['name', PROP_STRING],
                 ['show', PROP_BOOLEAN],
