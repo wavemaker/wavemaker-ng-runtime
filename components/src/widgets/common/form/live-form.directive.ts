@@ -397,7 +397,7 @@ export class LiveFormDirective {
         this.form.resetFormState();
         this.form.operationType = Live_Operations.DELETE;
         this.form.prevDataObject = getClonedObject(this.form.rowdata || {});
-        this.form.formSave(undefined, undefined, undefined, callBackFn);
+        this.form.save(undefined, undefined, undefined, callBackFn);
     }
 
     // Function use to save the form and open new form after save

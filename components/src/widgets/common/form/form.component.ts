@@ -1,4 +1,4 @@
-import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy } from '@angular/core';
+import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { $appDigest, getClonedObject, getFiles, removeClass } from '@wm/core';
@@ -70,12 +70,9 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     // Live Form Methods
     clearData: Function;
     edit: Function;
-    update: Function;
     new: Function;
     cancel: Function;
-    formCancel: Function;
     delete: Function;
-    formSave: Function;
     findOperationType: Function;
     save: Function;
     saveAndNew: Function;
@@ -120,11 +117,14 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     constructor(
         inj: Injector,
         private fb: FormBuilder,
+        @SkipSelf() @Optional() public parentForm: FormRef,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('wmLiveForm') isLiveForm,
-        @Attribute('wmLiveFilter') isLiveFilter
+        @Attribute('wmLiveFilter') isLiveFilter,
+        @Attribute('key') key,
+        @Attribute('name') name
     ) {
         super(inj, getWidgetConfig(isLiveForm, isLiveFilter));
 
@@ -132,6 +132,11 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});
+
+        if (this.parentForm && this.parentForm.ngform) {
+            // If parent form is present, add the current form as as formGroup for parent form
+            this.parentForm.ngform.addControl(key || name, this.ngform);
+        }
 
         // On value change in form, update the dataoutput
         this.ngform.valueChanges
@@ -389,6 +394,18 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
     get mode() {
         return this.operationType || this.findOperationType();
+    }
+
+    get dirty() {
+        return this.ngform && this.ngform.dirty;
+    }
+
+    get invalid() {
+        return this.ngform && this.ngform.invalid;
+    }
+
+    get touched() {
+        return this.ngform && this.ngform.touched;
     }
 
     callEvent(event) {
