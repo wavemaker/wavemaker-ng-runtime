@@ -29,10 +29,27 @@ export class DateComponent extends BaseFormCustomComponent {
      */
     private _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
 
+    private isCurrentDate;
+
     bsDataValue;
 
     get displayValue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
+    }
+
+    get datavalue () {
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputFormat) || '';
+    }
+
+    // Todo[Shubham]: needs to be redefined
+    // sets the dataValue and computes the display model values
+    set datavalue(newVal) {
+        if (newVal) {
+            this.bsDataValue = getDateObj(newVal);
+        } else {
+            this.bsDataValue = undefined;
+        }
+        this.invokeOnChange(this.datavalue);
     }
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
@@ -40,21 +57,17 @@ export class DateComponent extends BaseFormCustomComponent {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this._dateOptions.containerClass = 'theme-red';
+        this._dateOptions.showWeekNumbers = false;
     }
 
     onPropertyChange(key, newVal, ov?) {
         switch (key) {
             case 'datepattern':
                 this._dateOptions.dateInputFormat = newVal;
-                this.setDataValue(this.bsDataValue);
                 break;
             case 'outputformat':
                 this.outputFormat = newVal;
-                this.setDataValue(this.bsDataValue);
                 break;
-            /*case 'datavalue': // Todo: Should reverse format be applied
-                this.setDataValue(newVal);
-                break;*/
             case 'showweeks':
                 this._dateOptions.showWeekNumbers = newVal;
                 break;
@@ -76,7 +89,6 @@ export class DateComponent extends BaseFormCustomComponent {
      */
     onDateChange(newVal): void {
         this.setDataValue(newVal);
-        this.invokeEventCallback('change', {$event: newVal, newVal, oldVal: this.datavalue});
     }
 
     // sets the dataValue and computes the display model values
@@ -86,20 +98,6 @@ export class DateComponent extends BaseFormCustomComponent {
         } else {
             this.bsDataValue = undefined;
         }
-        this.invokeOnChange(this.datavalue);
-    }
-
-    get datavalue () {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputFormat) || '';
-    }
-    // sets the dataValue and computes the display model values
-    set datavalue(newVal) {
-        // TODO this impl should set the bsDatavalue by applying the reverse output format...
-        if (newVal) {
-            this.bsDataValue = newVal;
-        } else {
-            this.bsDataValue = undefined;
-        }
-        this.invokeOnChange(this.datavalue);
+        this.invokeOnChange(this.datavalue, {}, true);
     }
 }

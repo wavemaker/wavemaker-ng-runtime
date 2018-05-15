@@ -42,7 +42,7 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
         return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat) || '';
     }
 
-    /**
+    /**Todo[Shubham]: needs to be redefined
      * This property sets the default value for the time selection
      */
     set datavalue(newVal: any) {
@@ -149,8 +149,7 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
             this.bsTimeValue = undefined;
         }
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue);
-        this.invokeEventCallback('change', {newVal, oldVal: this.bsTimeValue});
+        this.invokeOnChange(this.datavalue, {}, true);
     }
 
     /**

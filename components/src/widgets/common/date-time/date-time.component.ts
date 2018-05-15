@@ -7,6 +7,7 @@ import { registerProps } from './date-time.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
+import { BsDatepickerConfig } from 'ngx-bootstrap';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -25,39 +26,23 @@ registerProps();
 })
 export class DatetimeComponent extends BaseFormCustomComponent {
     /**
-     * This property sets the widget to readonly mode
-     */
-    readonly: boolean;
-    /**
-     * This property sets the widget to disabled mode
-     */
-    disabled: boolean;
-    /**
-     * This is an internal property used to map it to the widget, Sets the value to true if readonly or disabled is true
-     */
-    get isDisabled () {
-        return this.disabled || this.readonly || this.isCurrentDate;
-    }
-    /**
-     * This property sets the display pattern of the date selected
-     */
-    datepattern: string;
-    private datePattern;
-    /**
      * This property sets the output format for the selected date datavalue
      */
     outputformat: string;
     timestamp;
-    private outputFormat;
+
+    get displayValue(): any {
+        return getFormattedDate(this.datePipe, this.bsDateTimeValue, this._dateOptions.dateInputFormat) || '';
+    }
 
     get datavalue(): any {
-        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
+        return getFormattedDate(this.datePipe, this.bsDateTimeValue, this.outputformat);
     }
-    /**
+
+    /**Todo[Shubham]: needs to be redefined
      * This property sets the default value for the date selection
      */
     set datavalue(newVal: any) {
-        this._datavalue = newVal;
         if (newVal === CURRENT_DATE) {
             this.isCurrentDate = true;
             this.setTimeInterval();
@@ -67,54 +52,25 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         this.clearTimeInterval();
 
         if (newVal) {
-            this.dateModel = this.dateModel || getDateObj(newVal);
-            this.timeModel = this.timeModel || getDateObj(newVal);
-            this.proxyModel = getDateObj(newVal);
-            this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern) || '';
-            this.timestamp = this.proxyModel.valueOf();
+            this.bsDateValue = this.bsDateValue || getDateObj(newVal);
+            this.bsTimeValue = this.bsTimeValue || getDateObj(newVal);
+            this.bsDateTimeValue = getDateObj(newVal);
+            this.timestamp = this.bsDateTimeValue.valueOf();
         } else {
-            this.formattedModel = '';
-            this.dateModel = this.timeModel = this.proxyModel = this.timestamp = undefined;
+            this.bsDateValue = this.bsTimeValue = this.bsDateTimeValue = this.timestamp = undefined;
         }
         this.invokeOnChange(this.datavalue);
         $appDigest();
     }
     private timeinterval: any;
     /**
-     * This is an internal property used to map it to the widget
-     */
-    private minDate: Date;
-    /**
-     * This is an internal property used to map it to the widget
-     */
-    private maxDate: Date;
-    /**
      * This is an internal property used to map the main model to the bsDatewidget
      */
-    private proxyModel: any;
-    /**
-     * This is an internal property used to map the formattedModel to the date display
-     */
-    private formattedModel: string = '';
+    private bsDateTimeValue: any;
     /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
      */
-    private _dateOptions: any = {
-        'containerClass': 'theme-red',
-        'showWeekNumbers': false
-    };
-
-    /* Internal property to have a flag to check the given datavalue is of Current time*/
-    private isCurrentTime: boolean;
-
-    /**
-     * This is an internal property used to map it to the widget
-     */
-    private minTime: Date;
-    /**
-     * This is an internal property used to map it to the widget
-     */
-    private maxTime: Date;
+    private _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     /**
      * This property checks if the timePicker is Open
      */
@@ -126,17 +82,44 @@ export class DatetimeComponent extends BaseFormCustomComponent {
     /**
      * This property is to internally map the selected Date from the date picker
      */
-    private selectedDate;
+    private dateValue;
     /**
      * This property is to internally map the selected time from the time picker
      */
-    private selectedTime;
+    private timeValue;
 
-    private _datavalue;
-
-    private dateModel;
-    private timeModel;
+    private bsDateValue;
+    private bsTimeValue;
     isDateOpen = false;
+
+    constructor(inj: Injector, public datePipe: ToDatePipe) {
+        super(inj, WIDGET_CONFIG);
+        this.registerDestroyListener(() => this.clearTimeInterval());
+        styler(this.nativeElement, this);
+        this._dateOptions.containerClass = 'theme-red';
+        this._dateOptions.showWeekNumbers = false;
+    }
+
+    onPropertyChange(key, newVal, oldVal) {
+        switch (key) {
+            case 'datepattern':
+                this._dateOptions.dateInputFormat = newVal;
+                break;
+            case 'outputformat':
+                this.outputformat = newVal;
+                break;
+            case 'mindate':
+                this._dateOptions.minDate = getDateObj(newVal);
+                break;
+            case 'maxdate':
+                this._dateOptions.maxDate = getDateObj(newVal);
+                break;
+            case 'showweeks':
+                this._dateOptions.showWeekNumbers = newVal;
+                break;
+        }
+    }
+
     /**
      * This is an internal method used to maintain a time interval to update the time model when the data value is set to CURRENT_TIME
      */
@@ -180,64 +163,34 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         this.isDateOpen = !this.isDateOpen;
         this.invokeOnTouched();
     }
+
     /**
      * This is an internal method to update the model
      */
     private onModelUpdate(newVal, type?) {
         if (!newVal) {
-            this.proxyModel = undefined;
-            this.invokeOnChange(this.datavalue);
-            this.invokeEventCallback('change', {$event: newVal, newVal: undefined, oldVal: this.proxyModel});
+            this.bsDateTimeValue = undefined;
+            this.invokeOnChange(this.datavalue, {}, true); // Todo[Shubham]: should pass event as second param(not supported by lib presently)
             return;
         }
         const dateObj = getDateObj(newVal);
         if (type === 'date') {
-            this.selectedDate = dateObj.toDateString();
+            this.dateValue = dateObj.toDateString();
             if (this.isDateOpen) {
                 this.toggleTimePicker(true);
             }
-            if (!this.selectedTime) {
-                this.selectedTime = dateObj.toTimeString();
+            if (!this.timeValue) {
+                this.timeValue = dateObj.toTimeString();
             }
-            this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
+            this.bsDateTimeValue = new Date(`${this.dateValue} ${this.timeValue}`);
         } else {
-            this.selectedTime = dateObj.toTimeString();
-            if (!this.selectedDate) {
-                this.selectedDate = dateObj.toDateString();
+            this.timeValue = dateObj.toTimeString();
+            if (!this.dateValue) {
+                this.dateValue = dateObj.toDateString();
             }
-            this.proxyModel = new Date(`${this.selectedDate} ${this.selectedTime}`);
+            this.bsDateTimeValue = new Date(`${this.dateValue} ${this.timeValue}`);
         }
-        this.formattedModel = getFormattedDate(this.datePipe, this.proxyModel, this.datepattern) || '';
-        this.invokeOnChange(this.datavalue);
+        this.invokeOnChange(this.datavalue, {}, true);
         $appDigest();
-        this.invokeEventCallback('change', {$event: newVal, newVal: dateObj, oldVal: this.proxyModel});
-    }
-
-    constructor(inj: Injector, public datePipe: ToDatePipe) {
-        super(inj, WIDGET_CONFIG);
-        this.registerDestroyListener(() => this.clearTimeInterval());
-        styler(this.nativeElement, this);
-    }
-
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'datepattern':
-                this.datePattern = newVal;
-                this.datavalue = this._datavalue;
-                break;
-            case 'outputformat':
-                this.outputFormat = newVal;
-                this.datavalue = this._datavalue;
-                break;
-            case 'mindate':
-                this.minDate = getDateObj(newVal);
-                break;
-            case 'maxdate':
-                this.maxDate = getDateObj(newVal);
-                break;
-            case 'showweeks':
-                this._dateOptions.showWeekNumbers = newVal;
-                break;
-        }
     }
 }

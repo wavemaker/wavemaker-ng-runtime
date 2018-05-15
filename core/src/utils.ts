@@ -284,10 +284,10 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
     return datePipe.transform(dateObj, format);
 };
 
-export /**
+/**
  * method to get the date object from the input received
  */
-const getDateObj = (value?: string): Date => {
+export const getDateObj = (value?: string): Date => {
     const dateObj = new Date(value);
     if (value === null || value === undefined) {
         return undefined;

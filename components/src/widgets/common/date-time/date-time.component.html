@@ -1,9 +1,9 @@
 <div dropdown [isOpen]="isTimeOpen" [autoClose]="false" (onShown)="addClickListener()" style="display: inherit;">
     <input class="form-control app-textbox display-input" aria-label="Set the date and time"
            type="text"
-           [value]="formattedModel"
+           [value]="displayValue"
            (click)="datepicker.toggle()"
-           [disabled]="isDisabled"
+           [disabled]="disabled || readonly || (isCurrentDate && isCurrentTime)"
            [required]="required"
            [placeholder]="placeholder">
     <span class="input-group-btn">
@@ -19,17 +19,15 @@
                (onHidden)="isDateOpen = !isDateOpen;"
                #datepicker=bsDatepicker
                bsDatepicker
-               [isDisabled]="isDisabled"
-               [bsValue]="dateModel"
-               [maxDate]="maxDate"
-               [minDate]="minDate"
+               [isDisabled]="disabled || readonly || isCurrentDate"
+               [bsValue]="bsDateValue"
                (bsValueChange)="onModelUpdate($event, 'date')">
     </div>
     <div *dropdownMenu class="dropdown-menu" aria-label="timepicker dropdown" aria-controls="time">
         <timepicker class="model-holder"
                     [showMeridian]="!ismeridian"
-                    [readonlyInput]="isDisabled"
-                    [(ngModel)]="timeModel"
+                    [readonlyInput]="disabled || readonly || isCurrentTime"
+                    [(ngModel)]="bsTimeValue"
                     [min]="minTime"
                     [max]="maxTime"
                     [hourStep]="hourstep"

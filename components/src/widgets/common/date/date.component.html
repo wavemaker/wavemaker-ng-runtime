@@ -2,7 +2,7 @@
        type="text"
        [value]="displayValue"
        (click)="datepicker.toggle()"
-       [disabled]="disabled || readonly"
+       [disabled]="disabled || readonly || isCurrentDate"
        [required]="required"
        [placeholder]="placeholder">
 <span class="input-group-btn" (click)="datepicker.toggle()">
@@ -16,10 +16,8 @@
            [isOpen]="isOpen"
            #datepicker="bsDatepicker"
            bsDatepicker
-           [isDisabled]="disabled || readonly"
+           [isDisabled]="disabled || readonly || isCurrentDate"
            [bsValue]="bsDatavalue"
-           [maxDate]="_dateOptions.maxDate"
-           [minDate]="_dateOptions.minDate"
            (onShown)="onDatePickerOpen()"
            (bsValueChange)="onDateChange($event)">
 </div>
