@@ -26,14 +26,52 @@ registerProps();
 })
 export class DatetimeComponent extends BaseFormCustomComponent {
     /**
-     * This property sets the output format for the selected date datavalue
+     * This property sets the output format for the selected date datavalue. This widget's output will always be the formatted value using this format.
      */
     outputformat: string;
+
     timestamp;
 
+    /**
+     * The below propeties prefixed with "bs" always holds the value that is selected from the datepicker.
+     * The bsDateTimeValue = bsDateValue + bsTimeValue.
+     */
+    private bsDateTimeValue: any;
+    private bsDateValue;
+    private bsTimeValue;
+
+    /**
+     * The displayValue is the display value of the bsDateTimeValue after applying the datePattern on it.
+     * @returns {any|string}
+     */
     get displayValue(): any {
         return getFormattedDate(this.datePipe, this.bsDateTimeValue, this._dateOptions.dateInputFormat) || '';
     }
+
+    /**
+     * This property checks if the timePicker is Open
+     */
+    private isTimeOpen: boolean = false;
+
+    /**
+     * This property checks if the datePicker is Open
+     */
+    private isDateOpen = false;
+
+    /**
+     * This timeinterval is used to run the timer when the time component value is set to CURRENT_TIME in properties panel.
+     */
+    private timeinterval: any;
+
+    /**
+     * This property is set to TRUE if the time component value is set to CURRENT_TIME; In this case the timer keeps changing the time value until the widget is available.
+     */
+    private isCurrentDate: boolean = false;
+
+    /**
+     * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
+     */
+    private _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
 
     get datavalue(): any {
         return getFormattedDate(this.datePipe, this.bsDateTimeValue, this.outputformat);
@@ -62,35 +100,6 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         this.invokeOnChange(this.datavalue);
         $appDigest();
     }
-    private timeinterval: any;
-    /**
-     * This is an internal property used to map the main model to the bsDatewidget
-     */
-    private bsDateTimeValue: any;
-    /**
-     * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
-     */
-    private _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
-    /**
-     * This property checks if the timePicker is Open
-     */
-    private isTimeOpen: boolean = false;
-    /**
-     * This property checks if the timePicker is Open
-     */
-    private isCurrentDate: boolean = false;
-    /**
-     * This property is to internally map the selected Date from the date picker
-     */
-    private dateValue;
-    /**
-     * This property is to internally map the selected time from the time picker
-     */
-    private timeValue;
-
-    private bsDateValue;
-    private bsTimeValue;
-    isDateOpen = false;
 
     constructor(inj: Injector, public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
@@ -132,6 +141,7 @@ export class DatetimeComponent extends BaseFormCustomComponent {
             this.onModelUpdate(currentTime);
         }, 1000);
     }
+
     /**
      * This is an internal method used to clear the time interval created
      */
@@ -141,12 +151,15 @@ export class DatetimeComponent extends BaseFormCustomComponent {
             this.timeinterval = null;
         }
     }
+
     /**
      * This is an internal method to toggle the time picker
      */
     private toggleTimePicker(newVal) {
         this.isTimeOpen = newVal;
+        this.invokeOnTouched();
     }
+
     /**
      * This is an internal method to add a click listener once the time dropdown is open
      */
@@ -159,6 +172,7 @@ export class DatetimeComponent extends BaseFormCustomComponent {
             }, EVENT_LIFE.ONCE);
         }, 350);
     }
+
     onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
         this.invokeOnTouched();
@@ -175,20 +189,20 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         }
         const dateObj = getDateObj(newVal);
         if (type === 'date') {
-            this.dateValue = dateObj.toDateString();
+            this.bsDateValue = dateObj.toDateString();
             if (this.isDateOpen) {
                 this.toggleTimePicker(true);
             }
-            if (!this.timeValue) {
-                this.timeValue = dateObj.toTimeString();
+            if (!this.bsTimeValue) {
+                this.bsTimeValue = dateObj.toTimeString();
             }
-            this.bsDateTimeValue = new Date(`${this.dateValue} ${this.timeValue}`);
+            this.bsDateTimeValue = new Date(`${this.bsDateValue} ${this.bsTimeValue}`);
         } else {
-            this.timeValue = dateObj.toTimeString();
-            if (!this.dateValue) {
-                this.dateValue = dateObj.toDateString();
+            this.bsTimeValue = dateObj.toTimeString();
+            if (!this.bsDateValue) {
+                this.bsDateValue = dateObj.toDateString();
             }
-            this.bsDateTimeValue = new Date(`${this.dateValue} ${this.timeValue}`);
+            this.bsDateTimeValue = new Date(`${this.bsDateValue} ${this.bsTimeValue}`);
         }
         this.invokeOnChange(this.datavalue, {}, true);
         $appDigest();
