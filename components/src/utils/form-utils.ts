@@ -146,8 +146,8 @@ export const transformDataWithKeys = (dataSet: any) => {
     if (_.isObject(dataSet[0]) || (_.isObject(dataSet) && !(dataSet instanceof Array))) {
         // getting keys of the object
         const objectKeys = Object.keys(dataSet[0] || dataSet);
-        _.forEach(objectKeys, objKey => {
-            data.push({'key': objKey, 'label': objKey, 'value': objKey});
+        _.forEach(objectKeys, (objKey, index) => {
+            data.push({'key': objKey, 'label': objKey, 'value': objKey, 'index': index + 1});
         });
     }
 
@@ -168,16 +168,17 @@ export const transformData = (dataSet: any, myDataField, myDisplayField, myDispl
     const data = [];
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
-        dataSet.forEach(option => {
-            data.push({'key': option, 'value': option, 'label': option});
+        dataSet.forEach((option, index) => {
+            data.push({'key': option, 'value': option, 'label': option, 'index': index + 1});
         });
     } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
-        dataSet.forEach(option => {
-            data.push({'key': option, 'value': option, 'label': option});
+        dataSet.forEach((option, index) => {
+            data.push({'key': option, 'value': option, 'label': option, 'index': index + 1});
         });
-    } else if (!(dataSet instanceof Array) && dataSet instanceof Object) { // Todo: check instance of obj.
+    } else if (!(dataSet instanceof Array) && dataSet instanceof Object) {
+        const index = 0;
         dataSet.forEach((value, key) => {
-            data.push({'key': key, 'value': key, 'label': value});
+            data.push({'key': key, 'value': key, 'label': value, 'index': index + 1});
         });
     } else {
         myDisplayField = getDisplayField(dataSet, myDisplayField || myDataField);
@@ -189,7 +190,7 @@ export const transformData = (dataSet: any, myDataField, myDisplayField, myDispl
                 const label = getEvaluatedData(option, {
                     displayfield: myDisplayField, displayexpression: myDisplayExpr
                 });
-                const dataSetItem = {'key': key, 'label': label, 'value': myDataField === ALLFIELDS ? option : key};
+                const dataSetItem = {'key': key, 'label': label, 'value': myDataField === ALLFIELDS ? option : key, 'index': index + 1};
                 data.push(dataSetItem);
             }
         });
@@ -414,4 +415,5 @@ export class DataSetItem {
     value: any;
     imgSrc?: string;
     selected?: boolean = false;
+    index: number;
 }
