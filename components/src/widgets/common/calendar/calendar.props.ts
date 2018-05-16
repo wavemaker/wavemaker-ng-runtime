@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, PROP_NUMBER, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -7,6 +7,7 @@ export const registerProps = () => {
             [
                 ['calendartype', {value: 'basic', ...PROP_STRING_NOTIFY}],
                 ['class', PROP_STRING],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['controls', {value: 'navigation, today, year, month, week, day', ...PROP_STRING}],
                 ['dataset', PROP_STRING_NOTIFY],
                 ['datavalue', PROP_STRING],
