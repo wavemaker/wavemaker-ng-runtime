@@ -14,10 +14,12 @@ export const ratingProps = new Map(
         ['iconsize', PROP_STRING],
         ['maxvalue', {value: 5, ...PROP_NUMBER_NOTIFY}],
         ['name', PROP_STRING],
+        ['orderby', PROP_STRING_NOTIFY],
         ['readonly', PROP_BOOLEAN_NOTIFY],
         ['show', PROP_BOOLEAN],
         ['showcaptions', PROP_BOOLEAN],
-        ['tabindex', {value: 0, ...PROP_NUMBER}]
+        ['tabindex', {value: 0, ...PROP_NUMBER}],
+        ['usekeys', PROP_BOOLEAN_NOTIFY]
     ]
 );
 

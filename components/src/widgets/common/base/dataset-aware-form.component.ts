@@ -3,6 +3,7 @@ import { Injector, OnInit } from '@angular/core';
 import { styler } from '../../framework/styler';
 import { DataSetItem, getOrderedDataSet, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
+import {Subject} from 'rxjs/Subject';
 
 declare const _;
 
@@ -22,6 +23,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     private _datavalue: any;
     private _model: any;
     public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
+
+    listenToDataset = new Subject();
+    listenToDatavalue = new Subject();
 
     get proxyModel() {
         return this._model;
@@ -43,6 +47,11 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     set datavalue(val: any) {
         this.selectByValue(val);
         this._datavalue = val;
+        // invoke on datavalue change.
+        this.invokeOnChange(val);
+
+        // changes on the datavalue can be subscribed using listenToDatavalue
+        this.listenToDatavalue.next(val);
     }
 
     constructor(inj: Injector, WIDGET_CONFIG) {
@@ -170,7 +179,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.displayValue =  this.multiple ? displayValues : displayValues[0];
     }
 
-
     // This function parses the dataset and extracts the displayOptions from parsed dataset.
     protected initDatasetItems() {
         if (!this.dataset || _.isEmpty(this.dataset)) {
@@ -199,6 +207,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected postDatasetItemsInit() {
         if (this.datasetItems.length) {
             this.selectByValue(this.datavalue);
+
+            // changes on the datasetItems can be subscribed using listenToDataset.
+            this.listenToDataset.next(this.datasetItems);
         }
     }
 }
