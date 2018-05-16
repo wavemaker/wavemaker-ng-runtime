@@ -3,6 +3,7 @@ import { DataType } from './enums';
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
 declare const document;
+declare const resolveLocalFileSystemURL;
 
 const REGEX = {
     SNAKE_CASE: /[A-Z]/g,
@@ -723,3 +724,32 @@ export const noop = (...args) => {};
 export const isString = v => typeof v === 'string';
 
 export const isNumber = v => typeof v === 'number';
+
+/**
+ * This function returns a blob object from the given file path
+ * @param filepath
+ * @returns promise having blob object
+ */
+export const convertToBlob = (filepath): Promise<any> => {
+    return new Promise<any> ((resolve, reject) => {
+        // Read the file entry from the file URL
+        resolveLocalFileSystemURL(filepath, function (fileEntry) {
+            fileEntry.file(function (file) {
+                // file has the cordova file structure. To submit to the backend, convert this file to javascript file
+                const reader = new window['__zone_symbol__FileReader'];
+                reader.onloadend = () => {
+                    const imgBlob = new Blob([reader.result], {
+                        'type' : file.type
+                    });
+                    resolve({'blob' : imgBlob, 'filepath': filepath});
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }, reject);
+    });
+};
+
+export const hasCordova = () => {
+    return !!window['cordova'];
+}

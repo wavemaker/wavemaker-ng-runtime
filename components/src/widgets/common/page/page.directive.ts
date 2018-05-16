@@ -1,11 +1,12 @@
 import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
+import { Subject } from 'rxjs/Subject';
+
 import { isObject, noop } from '@wm/core';
 
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './page.props';
-import { Subject } from 'rxjs/Subject';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 
