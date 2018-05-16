@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['class', PROP_STRING],
-                ['formlayout', PROP_STRING_NOTIFY],
+                ['formlayout', PROP_STRING],
                 ['name', PROP_STRING],
                 ['show', PROP_BOOLEAN]
             ]

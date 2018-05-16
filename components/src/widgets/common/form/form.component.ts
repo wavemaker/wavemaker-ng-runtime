@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { $appDigest, getClonedObject, getFiles, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { FormRef } from '../../framework/types';
+import { FormRef, LiveTableRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig, parseValueByType } from '../../../utils/live-utils';
@@ -118,6 +118,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         inj: Injector,
         private fb: FormBuilder,
         @SkipSelf() @Optional() public parentForm: FormRef,
+        @Optional() liveTable: LiveTableRef,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
         @Attribute('dataset.bind') public binddataset,
@@ -129,6 +130,12 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         super(inj, getWidgetConfig(isLiveForm, isLiveFilter));
 
         styler(this.nativeElement, this);
+
+        if (liveTable) {
+            this._liveTableParent = liveTable;
+            this.isLayoutDialog = liveTable.isLayoutDialog;
+            liveTable.onFormRender(this);
+        }
 
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});
@@ -199,12 +206,14 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 this.setFormData(newVal);
                 break;
             case 'defaultmode':
-                if (newVal && newVal === 'Edit') {
-                    this.updateMode = true;
-                } else {
-                    this.updateMode = false;
+                if (!this.isLayoutDialog) {
+                    if (newVal && newVal === 'Edit') {
+                        this.updateMode = true;
+                    } else {
+                        this.updateMode = false;
+                    }
+                    this.isUpdateMode = this.updateMode;
                 }
-                this.isUpdateMode = this.updateMode;
                 break;
             case 'datasource':
                 this.onDataSourceChange();

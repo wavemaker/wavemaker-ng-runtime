@@ -20,6 +20,11 @@ export abstract class FormRef {
     ngform: FormGroup;
 }
 
+export abstract class LiveTableRef {
+    onFormRender: Function;
+    isLayoutDialog: boolean;
+}
+
 export abstract class MenuRef {}
 
 export abstract class TableColumnGroupRef {}

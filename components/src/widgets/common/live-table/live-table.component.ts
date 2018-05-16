@@ -1,6 +1,6 @@
-import { AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
+import { Attribute, AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
 
-import { getClonedObject, isDefined } from '@wm/core';
+import { $appDigest, getClonedObject, isDefined, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './live-table.props';
@@ -8,10 +8,10 @@ import { FormComponent } from '../form/form.component';
 import { TableComponent } from '../table/table.component';
 import { DialogService } from '../dialog/dialog.service';
 import { StylableComponent } from '../base/stylable.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { LiveTableRef } from '../../framework/types';
 
 declare const _;
-declare const moment;
 declare var $: any;
 
 registerProps();
@@ -23,6 +23,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
     selector: '[wmLiveTable]',
     templateUrl: './live-table.component.html',
     providers: [
+        provideAs(LiveTableComponent, LiveTableRef),
         provideAsWidgetRef(LiveTableComponent)
     ]
 })
@@ -31,13 +32,66 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     @ContentChild(FormComponent) form: FormComponent;
     @ContentChild(TableComponent) table: TableComponent;
 
-    private isLayoutDialog;
+    private isLayoutDialog: boolean;
+    private dialogId;
+    private $queue = [];
 
     private tableOptions = {
         'multiselect': false,
         'setGridEditMode': '',
         'onRowDelete': this.deleteRow
     };
+
+    constructor(
+        inj: Injector,
+        elRef: ElementRef,
+        cdr: ChangeDetectorRef,
+        private dialogService: DialogService,
+        @Attribute('formlayout') layoutType: string,
+        @Attribute('dialogid') dialogId: string
+    ) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this);
+        if (layoutType === 'dialog') {
+            this.isLayoutDialog = true;
+            this.dialogId = dialogId;
+        }
+    }
+
+    ngAfterContentInit() {
+        super.ngAfterContentInit();
+        if (this.table) {
+            this.table._liveTableParent = this;
+            this.table.datagridElement.datatable('option', this.tableOptions);
+
+            this.table.selectedItemChange$
+                .debounceTime(500)
+                .subscribe(this.onSelectedItemChange.bind(this));
+
+            if (!this.form) {
+                this.table.datagridElement.datatable('option', {
+                    'beforeRowUpdate' : () => {
+                        this.showErrorMessage();
+                    },
+                    'beforeRowDelete' : () => {
+                        this.showErrorMessage();
+                    },
+                    'beforeRowInsert' : () => {
+                        this.showErrorMessage();
+                    }
+                });
+            }
+        }
+    }
+
+    openDialog() {
+        this.dialogService.open(this.dialogId);
+        $appDigest();
+    }
+
+    closeDialog() {
+        this.dialogService.close(this.dialogId);
+    }
 
     focusFirstInput() {
         const $firstInput = $(this.form.$element).find('[role="input"]:first');
@@ -46,9 +100,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     onDialogOpen() {
-        setTimeout(() => {
-            this.focusFirstInput();
-        }, 100);
+        this.focusFirstInput();
     }
 
     deleteRow(row, callBackFn?) {
@@ -56,48 +108,47 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         this.form.delete(callBackFn);
     }
 
-    addNewRow() {
+    private _addNewRow() {
         this.form.isSelected = true;
         this.form.getWidget().rowdata = '';
 
         this.form.new();
 
         if (this.isLayoutDialog) {
-            this.toggleDialogVisibility(true);
-        }
-    }
-
-    toggleDialogVisibility(flag) {
-        const dialogId = this.form.dialogId;
-        if (flag) {
-            this.dialogService.open(dialogId);
             this.onDialogOpen();
-        } else {
-            this.dialogService.close(dialogId);
         }
     }
 
-    onPropertyChange(key, nv) {
-        if (key === 'formlayout' && nv === 'dialog') {
-            this.isLayoutDialog = true;
-            this.form.isLayoutDialog = true;
-        }
-    }
-
-    updateRow(row, eventName) {
-
-        if (!this.form) {
+    addNewRow() {
+        if (this.isLayoutDialog) {
+            this.openDialog();
+            this.$queue.push(this._addNewRow.bind(this));
             return;
         }
 
+       this._addNewRow();
+    }
+
+    private _updateRow(row, eventName) {
         this.form.getWidget().rowdata = row;
         this.form.isSelected = true;
         this.form.edit();
 
         if (this.isLayoutDialog) {
             this.form.isUpdateMode = (eventName === 'dblclick') ? this.form.updateMode : true;
-            this.toggleDialogVisibility(true);
+            this.onDialogOpen();
         }
+    }
+
+    updateRow(row, eventName) {
+
+        if (this.isLayoutDialog) {
+            this.openDialog();
+            this.$queue.push(this._updateRow.bind(this, row, eventName));
+            return;
+        }
+
+        this._updateRow(row, eventName);
     }
 
     onSelectedItemChange(newValue) {
@@ -134,7 +185,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     onCancel() {
         this.form.isUpdateMode = false;
         if (this.isLayoutDialog) {
-            this.toggleDialogVisibility(false);
+            this.closeDialog();
         }
     }
 
@@ -174,7 +225,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
                     this.form.edit();
                 }
             } else {
-                this.toggleDialogVisibility(false);
+                this.closeDialog();
             }
         }
     }
@@ -183,35 +234,11 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         // TODO: wmToaster.show('error', 'ERROR', $rs.appLocale.LABEL_ACCESS_DENIED);
     }
 
-    ngAfterContentInit() {
-        super.ngAfterContentInit();
-        if (this.form) {
-            this.form._liveTableParent = this;
-        }
-        if (this.table) {
-            this.table._liveTableParent = this;
-            this.table.datagridElement.datatable('option', this.tableOptions);
-
-            this.table.selectedItemChange$.subscribe(this.onSelectedItemChange.bind(this));
-
-            if (!this.form) {
-                this.table.datagridElement.datatable('option', {
-                    'beforeRowUpdate' : () => {
-                        this.showErrorMessage();
-                    },
-                    'beforeRowDelete' : () => {
-                        this.showErrorMessage();
-                    },
-                    'beforeRowInsert' : () => {
-                        this.showErrorMessage();
-                    }
-                });
-            }
-        }
-    }
-
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, private dialogService: DialogService) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
+    // In dialog mode, on form render call the queued functions
+    onFormRender(form) {
+        this.form = form;
+        setTimeout(() => {
+            triggerFn(this.$queue.pop());
+        });
     }
 }

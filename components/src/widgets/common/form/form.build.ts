@@ -40,17 +40,20 @@ const addFormControlName = (children = []) => {
 
 const buildTask = (directiveAttr = ''): IBuildTaskDef => {
     return {
+        requires: ['wm-livetable'],
         template: (node: Element) => {
             addFormControlName(node.children);
         },
-        pre: (attrs, shared) => {
+        pre: (attrs, shared, parentLiveTable) => {
             let tmpl;
+            let dialogId;
             const counter = idGen.nextUid();
             const liveFormTmpl = `<${tagName} wmForm ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                         [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {
-                attrs.set('dialogId', 'liveformdialog-' + attrs.get('name') + '-' + counter);
+                dialogId = parentLiveTable && parentLiveTable.get('liveform_dialog_id');
+                attrs.set('dialogId', dialogId);
                 const dialogAttrsMap = new Map<string, string>();
                 dialogAttrsMap.set('title', attrs.get('title'));
                 dialogAttrsMap.set('iconclass', attrs.get('iconclass'));
@@ -58,15 +61,16 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                 attrs.set('width', '100%');
                 tmpl = getAttrMarkup(attrs);
                 return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog">
-                            <div wmDialog class="app-liveform-dialog" name="${attrs.get('dialogId')}" role="form" ${getAttrMarkup(dialogAttrsMap)} modal="true">
-                        ${liveFormTmpl} ${tmpl}>`;
+                            <div wmDialog class="app-liveform-dialog" name="${dialogId}" role="form" ${getAttrMarkup(dialogAttrsMap)} modal="true">
+                            <ng-template><div wmDialogBody>
+                            ${liveFormTmpl} ${tmpl}>`;
             }
             tmpl = getAttrMarkup(attrs);
             return `${liveFormTmpl} ${tmpl}>`;
         },
         post: (attrs) => {
             if (attrs.get('formlayout') === 'dialog') {
-                return '</form></div></div>';
+                return '</form></div></ng-template></div></div>';
             }
             return `</${tagName}>`;
         },
