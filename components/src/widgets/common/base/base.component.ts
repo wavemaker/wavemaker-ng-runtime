@@ -396,6 +396,15 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     /**
+     * Returns true, if a listener registered for the given event on this widget markup.
+     * @param eventName
+     * @returns {boolean}
+     */
+    protected hasEventCallback(eventName): boolean {
+        return this.eventHandlers.has(eventName);
+    }
+
+    /**
      * nativeElement will be available by this time
      * if the delayInit is false, properties meta will be available by this time
      * Invoke the setInitProps if the delayInit is false

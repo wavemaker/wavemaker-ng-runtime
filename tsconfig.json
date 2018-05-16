@@ -3,6 +3,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "@swipey": ["swipey"],
             "@wm/core": [ "core" ],
             "@wm/oAuth": [ "oAuth" ],
             "@wm/components": [ "components" ],

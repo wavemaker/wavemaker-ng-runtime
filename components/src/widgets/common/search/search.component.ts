@@ -164,7 +164,7 @@ export class SearchComponent extends BaseFormCustomComponent implements OnInit {
     onDataValueChange(newVal?) {
         let model;
         newVal = newVal || this._datavalue;
-        if (newVal) {
+        if (newVal && this.dataset) {
             model = this.getDataObjbyDataField(newVal);
             if (!_.isEmpty(model)) {
                 model = model[0];
@@ -191,6 +191,18 @@ export class SearchComponent extends BaseFormCustomComponent implements OnInit {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    public onClearSearch() {
+        this.queryModel = '';
+    }
+
+    public onQueryModelChange() {
+        this.datavalue = this.queryModel;
+    }
+
+    public onSearchKeyDown($event) {
+        this.invokeEventCallback('submit', {$event, value: this.queryModel});
     }
 
     /**
@@ -334,3 +346,4 @@ export class SearchComponent extends BaseFormCustomComponent implements OnInit {
         }
     }
 }
+

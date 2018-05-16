@@ -1,0 +1,21 @@
+<nav class="navbar navbar-default"> 
+    <ul class="tab-items nav navbar-nav">
+        <li class="tab-item" *ngFor="let item of tabItems; index as i" [class.hidden]="!(tabItems.length === layout.max || i < layout.max)" >
+            <a [class.active]="item.active" [href]="(item.link || 'javascript:void(0)')| trustAs: 'resource'" (click)="onSelect($event, item)">
+                <i class="app-icon" [ngClass]="item.icon"></i><label>{{item.label}}</label>
+            </a>
+        </li>
+        <li class="menu-items dropdown" [class.hidden]="tabItems.length <= layout.max" [ngClass]="{dropup : position === bottom}">
+            <a (click)="showMoreMenu = !showMoreMenu" href="javascript:void(0)">
+                <i class="app-icon {{morebuttoniconclass}}"></i><label>{{morebuttonlabel}}</label>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" [ngClass]="{'nav navbar-nav' : menutype === thumbnail}" *ngIf="showMoreMenu">
+                <li role="menuitem" class="menu-item" *ngFor="let item of tabItems;index as i" [class.hidden]="i < layout.max">
+                    <a [ngClass]="{active : item.active}" [href]="(item.link || 'javascript:void(0)')| trustAs: 'resource'" (click)="onSelect($event, item)" class="dropdown-item">
+                        <i class="app-icon" [ngClass]="item.icon"></i><label>{{item.label}}</label>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>
