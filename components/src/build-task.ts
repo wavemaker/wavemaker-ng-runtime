@@ -58,6 +58,7 @@ export * from './widgets/common/right-panel/right-panel.build';
 export * from './widgets/common/select/select.build';
 export * from './widgets/common/slider/slider.build';
 export * from './widgets/common/spinner/spinner.build';
+export * from './widgets/common/switch/switch.build';
 export * from './widgets/common/table/table-action/table-action.build';
 export * from './widgets/common/table/table-column-group/table-column-group.build';
 export * from './widgets/common/table/table-column/table-column.build';

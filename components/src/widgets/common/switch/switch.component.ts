@@ -1,78 +1,56 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
-import { $appDigest, isEqualWithFields, setCSS } from '@wm/core';
+import { setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
-import { getOrderedDataSet } from '../../../utils/form-utils';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
+import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
 declare const _, $;
 
 const DEFAULT_CLS = 'app-switch';
 const WIDGET_CONFIG = {widgetType: 'wm-switch', hostClass: DEFAULT_CLS};
 
-const toOptionsObjFromString = str => {
-    return {
-        'value': str,
-        'label': str
-    };
-};
-
-enum DatasetType {
-    NONE,
-    COMMA_SEP_STRING,
-    ARRAY_STRINGS,
-    ARRAY_OBJECTS
-}
-
 registerProps();
 
 @Component({
-    selector: 'div[wmSwitch]',
+    selector: '[wmSwitch]',
     templateUrl: './switch.component.html',
     providers: [
         provideAsNgValueAccessor(SwitchComponent),
         provideAsWidgetRef(SwitchComponent)
     ]
 })
-export class SwitchComponent extends BaseFormCustomComponent {
+export class SwitchComponent extends DatasetAwareFormComponent implements OnInit {
 
-    _model;
-    datafield;
     options = [];
-    compareby;
     selected: any = {};
-    orderby;
-    disabled;
-    dataset;
-    displayfield;
     iconclass;
-    required;
     private oldVal;
-    private datasetType;
     private btnwidth;
 
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+
+        this.listenToDataset.subscribe(() => {
+            this.updateSwitchOptions();
+        });
+
+        this.listenToDatavalue.subscribe(() => {
+            this.setSelectedValue();
+            this.updateHighlighter(true);
+        });
     }
 
-    set datavalue(val) {
-        this._model_ = val;
+    ngOnInit() {
+        super.ngOnInit();
+        styler(this.nativeElement.children[0] as HTMLElement, this);
     }
 
-    get datavalue() {
-        return this._model_;
-    }
-
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'dataset':
-                this.updateSwitchOptions();
-                break;
-        }
+    onPropertyChange(key, nv, ov) {
+        super.onPropertyChange(key, nv, ov);
     }
 
     onStyleChange(key, newVal, oldVal) {
@@ -81,78 +59,38 @@ export class SwitchComponent extends BaseFormCustomComponent {
         }
     }
 
+    // This function sets the selected index.
     private setSelectedValue() {
-        const options = this.options;
-        // If _model_ is defined and is not empty string, then set selected index (_model_ can be 0)
-        if (!_.isUndefined(this._model_) && _.trim(this._model_).length) {
-            options.some( (opt, index) => {
-                if (this.datafield === 'All Fields' && this.compareby && this.compareby.length) {
-                    if (isEqualWithFields(opt, this._model_, this.compareby)) {
-                        this.selected.index = index;
-                        return true;
-                    }
-                    return false;
-                }
-                if (_.isEqual(this._model_, opt)
-                    || this._model_ === opt[this.datafield]
-                    || this._model_ === opt.value) {
+        const selectedItem =  _.find(this.datasetItems, {'selected' : true});
 
-                    this.selected.index = index;
-
-                    return true;
-                }
-            });
-        } else {
-            // If no value is provided, set first value as default if options are available else set -1 ie no selection
-            if (this.options && this.options.length) {
-                this.selectOptAtIndex(0);
-            } else {
-                this.selected.index = -1;
-            }
+        if (selectedItem) {
+            this.selected.index = selectedItem.index - 1;
+            return;
         }
+        // Todo: compare the fields based on compareby property.
     }
 
+    // set the css for switch overlay element.
+    // set the selected index from the datasetItems and highlight the datavalue on switch.
     private updateSwitchOptions() {
-        let options = [],
-        dataset = this.dataset;
-
-        this.selected.index = -1;
-        this.datasetType = DatasetType.NONE;
-        dataset = dataset ? dataset.data || dataset : [];
-
-        if (typeof dataset === 'string') { // comma separated strings
-            options = dataset.split(',').map(_.trim).map(toOptionsObjFromString);
-            this.datasetType = DatasetType.COMMA_SEP_STRING;
-        } else if (_.isObject(dataset)) { // array or object
-            if (_.isArray(dataset)) { // array
-                dataset = getOrderedDataSet(dataset, this.orderby);
-                if (_.isString(dataset[0])) { // array of strings
-                    options = dataset.map(_.trim).map(toOptionsObjFromString);
-                    this.datasetType = DatasetType.ARRAY_STRINGS;
-                } else if (_.isObject(dataset[0]) && !_.isArray(dataset[0])) { // array of objects
-                    options = dataset;
-                    this.datasetType = DatasetType.ARRAY_OBJECTS;
-                }
-            }
-        }
-
-        if (options.length) {
-            this.btnwidth = (100 / options.length);
+        if (this.datasetItems.length) {
+            this.btnwidth = (100 / this.datasetItems.length);
             setCSS(this.nativeElement.querySelector('.app-switch-overlay') as HTMLElement, 'width', this.btnwidth + '%');
         }
 
-        this.options = options;
-
         this.setSelectedValue();
         this.updateHighlighter(true);
-        this.oldVal = this.datavalue;
-        $appDigest();
     }
 
+    // This function animates the highlighted span on to the selected value.
     private updateHighlighter(skipAnimation?) {
         const handler = $(this.nativeElement).find('span.app-switch-overlay');
+
+        this.setSelectedValue();
+
         let left,
             index = this.selected.index;
+
         if (index === undefined || index === null) {
             index = -1;
         }
@@ -166,64 +104,31 @@ export class SwitchComponent extends BaseFormCustomComponent {
         }
     }
 
-    get _model_() {
-        return this._model;
-    }
-
-    set _model_(val) {
-        this._model = val;
-        this.setSelectedValue();
-        setTimeout(() => {
-            this.updateHighlighter(true);
-        }, 130);
-        this.invokeOnChange(val);
-    }
-
-    private selectOptAtIndex($index) {
-        const opt = this.options[$index];
-        if (this.datasetType === DatasetType.ARRAY_OBJECTS) {
-            if (this.datafield) {
-                if (this.datafield === 'All Fields') {
-                    this._model_ = opt;
-                } else {
-                    this._model_ = opt[this.datafield];
-                }
-            }
-        } else {
-            this._model_ = opt.value;
-        }
-    }
-
-    selectOpt($event, $index) {
+    // Triggered on selected the option from the switch.
+    // set the index and highlight the default value. Invoke onchange event handler.
+    selectOpt($event, $index, option) {
+        this.proxyModel = option.key;
 
         this.invokeOnTouched();
         $event.preventDefault();
 
-        if (this.disabled) {
-            return;
-        }
-
         if (this.selected.index === $index) {
-            if (this.options.length === 2) {
+            if (this.datasetItems.length === 2) {
                 $index = $index === 1 ? 0 : 1;
             } else {
                 return;
             }
         }
         this.selected.index = $index;
-
-        this.selectOptAtIndex($index);
+        this.updateHighlighter();
 
         this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
-
         this.oldVal = this.datavalue;
-
-        $appDigest();
     }
 
     reset() {
-        if (this.options.length > 0) {
-            this.datavalue = this.options[0].value;
+        if (this.datasetItems.length > 0) {
+            this.datavalue = this.datasetItems[0].value;
             this.selected.index = 0;
         }
     }

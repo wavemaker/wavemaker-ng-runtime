@@ -1,9 +1,9 @@
 import { Injector, OnInit } from '@angular/core';
+import {Subject} from 'rxjs/Subject';
 
 import { styler } from '../../framework/styler';
 import { DataSetItem, getOrderedDataSet, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
-import {Subject} from 'rxjs/Subject';
 
 declare const _;
 

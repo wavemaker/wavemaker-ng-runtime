@@ -181,6 +181,9 @@ export const transformData = (dataSet: any, myDataField, myDisplayField, myDispl
             data.push({'key': key, 'value': key, 'label': value, 'index': index + 1});
         });
     } else {
+        if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
+            myDataField = ALLFIELDS;
+        }
         myDisplayField = getDisplayField(dataSet, myDisplayField || myDataField);
         dataSet.forEach((option, index) => {
             const key = myDataField === ALLFIELDS ? index : getObjValueByKey(option, myDataField);
