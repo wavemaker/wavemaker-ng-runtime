@@ -56,7 +56,6 @@ export class PaginationComponent extends StylableComponent {
     navcontrols = 'Basic';
     navigation;
 
-    maxsize;
     boundarylinks;
     directionlinks;
 
@@ -431,7 +430,6 @@ export class PaginationComponent extends StylableComponent {
             case 'navigationalign':
                 switchClass(this.nativeElement, `text-${nv}`, `text-${ov}`);
                 break;
-            case 'maxsize':
             case 'maxResults':
                 this.setPagingValues(this.dataset);
                 break;

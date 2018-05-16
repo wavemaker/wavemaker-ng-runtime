@@ -1,15 +1,17 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, PROP_BOOLEAN_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, PROP_BOOLEAN_NOTIFY, register, PROP_NUMBER_NOTIFY } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-table',
         new Map(
             [
+                ['boundarylinks', {value: false, ...PROP_BOOLEAN}],
                 ['class', PROP_STRING],
                 ['confirmdelete', {value: 'Are you sure you want to delete this?', ...PROP_STRING}],
                 ['datasource', PROP_STRING_NOTIFY],
                 ['dataset', PROP_STRING_NOTIFY],
                 ['deletemessage', {value: 'Record deleted successfully', ...PROP_STRING}],
+                ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['editmode', PROP_STRING],
                 ['enablecolumnselection', {value: false, ...PROP_BOOLEAN}],
                 ['enablesort', {value: true, ...PROP_BOOLEAN}],
@@ -18,6 +20,7 @@ export const registerProps = () => {
                 ['exportdatasize', {value: 100, ...PROP_NUMBER}],
                 ['filtermode', PROP_STRING_NOTIFY],
                 ['filternullrecords', {value: true, ...PROP_BOOLEAN_NOTIFY}],
+                ['forceellipses', {value: true, ...PROP_BOOLEAN}],
                 ['formposition', PROP_STRING],
                 ['gridclass', {value: 'table-bordered table-striped table-hover', ...PROP_STRING_NOTIFY}],
                 ['gridfirstrowselect', PROP_BOOLEAN_NOTIFY],
@@ -25,6 +28,7 @@ export const registerProps = () => {
                 ['insertmessage', {value: 'Record added successfully', ...PROP_STRING}],
                 ['loadingdatamsg', {value: 'Loading...', ...PROP_STRING_NOTIFY}],
                 ['loadingicon', {value: 'fa fa-spinner fa-spin', ...PROP_STRING_NOTIFY}],
+                ['maxsize', {value: 5, ...PROP_NUMBER_NOTIFY}],
                 ['multiselect', PROP_BOOLEAN_NOTIFY],
                 ['name', PROP_STRING],
                 ['navigation', {value: 'Basic', ...PROP_STRING_NOTIFY}],
