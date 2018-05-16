@@ -6,7 +6,7 @@
          [iconmargin]="iconmargin"
          [heading]="title"></div>
     <div wmDialogBody>
-        <p class="app-dialog-message text-{{alerttype}}" [textContent]="message"></p>
+        <p class="app-dialog-message text-{{alerttype}}" [attr.aria-describedby]="message" [textContent]="message"></p>
     </div>
     <div wmDialogFooter>
         <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>

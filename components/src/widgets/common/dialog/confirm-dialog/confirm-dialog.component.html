@@ -6,7 +6,7 @@
          [iconmargin]="iconmargin"
          [heading]="title"></div>
     <div wmDialogBody>
-        <p class="app-dialog-message {{messageclass}}">{{message}}</p>
+        <p class="app-dialog-message {{messageclass}}" [attr.aria-describedby]="message">{{message}}</p>
     </div>
     <div wmDialogFooter>
         <button wmButton class="btn-default btn-secondary cancel-action" caption.bind="canceltext" aria-label="Cancel button" (click)="onCancel($event)"></button>

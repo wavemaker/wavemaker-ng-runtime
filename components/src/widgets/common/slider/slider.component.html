@@ -1,5 +1,5 @@
-<span class="app-slider-value" aria-valuemin="0" [textContent]="minvalue"></span>
-<span class="app-slider-value pull-right" aria-valuemax="100" [textContent]="maxvalue"></span>
+<span class="app-slider-value" [attr.aria-valuemin]="minvalue" [textContent]="minvalue"></span>
+<span class="app-slider-value pull-right" [attr.aria-valuemax]="maxvalue" [textContent]="maxvalue"></span>
 <input class="range-input" aria-label="slider range" aria-orientation="horizontal"
        type="range" [title]="datavalue"
        [min]="minvalue"

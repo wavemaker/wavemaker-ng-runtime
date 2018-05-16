@@ -4,7 +4,7 @@ const tagName = 'p';
 
 register('wm-message', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmMessage role="alert" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmMessage aria-label="Notification Alerts" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

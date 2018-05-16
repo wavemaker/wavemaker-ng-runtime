@@ -1,6 +1,6 @@
 <ng-container *ngIf="type !== 'anchor'">
     <div class="dropdown app-menu" dropdown [isOpen]="isOpen" [autoClose]="autoclose" listen-property="dataset" tabindex="-1">
-        <button [title]="hint" [ngClass]="['btn app-button dropdown-toggle', menuclass]" dropdownToggle focus-target aria-hashpopup="true" aria-expanded="false">
+        <button [title]="hint" [ngClass]="['btn app-button dropdown-toggle', menuclass]" dropdownToggle focus-target aria-haspopup="true" aria-expanded="false">
             <i [ngClass]="['app-icon', iconclass]"></i>
             <span class="caption">{{caption}}</span>
             <span>
@@ -13,7 +13,7 @@
 </ng-container>
 <ng-container *ngIf="type === 'anchor'">
     <div class="dropdown app-menu" dropdown [isOpen]="isOpen" [autoClose]="autoclose" listen-property="dataset" tabindex="-1">
-        <a [title]="hint" href="javascript:void(0);" role="button" [ngClass]="['app-anchor dropdown-toggle', menuclass]" dropdownToggle aria-hashpopup="true" aria-expanded="false">
+        <a [title]="hint" href="javascript:void(0);" role="button" [ngClass]="['app-anchor dropdown-toggle', menuclass]" dropdownToggle aria-haspopup="true" aria-expanded="false">
             <i [ngClass]="['app-icon', iconclass]"></i>
             <span class="caption">{{caption}}</span>
             <span>
