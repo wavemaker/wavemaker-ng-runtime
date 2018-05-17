@@ -10,6 +10,8 @@ import { MobileLeftPanelDirective } from './widgets/left-panel/left-panel.direct
 import { MobileNavbarComponent } from './widgets/mobile-navbar/mobile-navbar.component';
 import { MobilePageDirective } from './widgets/page/page.directive';
 import { SearchDirective } from './widgets/search/search.directive';
+import { SegmentContentComponent } from './widgets/segmented-control/segment-content/segment-content.component';
+import { SegmentedControlComponent } from './widgets/segmented-control/segmented-control.component';
 import { MobileTabbarComponent } from './widgets/tabbar/tabbar.component';
 import { WidgetTemplateComponent } from './widgets/widget-template/widget-template.component';
 
@@ -21,6 +23,8 @@ const wmMobileComponents = [
     MobilePageDirective,
     MobileTabbarComponent,
     SearchDirective,
+    SegmentContentComponent,
+    SegmentedControlComponent,
     WidgetTemplateComponent
 ];
 
