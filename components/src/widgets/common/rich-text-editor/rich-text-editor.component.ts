@@ -14,7 +14,7 @@ const getChangeEvt = () => {
     // for IE the event constructor doesn't work so use the createEvent proto
     if (typeof(Event) === 'function') {
         changeEvt = new Event('change');
-    } else{
+    } else {
         changeEvt = document.createEvent('Event');
         changeEvt.initEvent('change', true, true);
     }
@@ -33,8 +33,9 @@ declare const _, $;
 export class RichTextEditorComponent extends StylableComponent implements OnInit, OnDestroy {
 
     $richTextEditor;
+    _model_;
     $hiddenInputEle;
-    showpreview: boolean;
+    showpreview: boolean = false;
     operationStack = [];
     isEditorLoaded = false;
     disabled = true;
@@ -57,7 +58,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
                 this.isEditorLoaded = true;
                 if (this.operationStack.length) {
                     this.operationStack.forEach(operationParam => {
-                        let key = Array.from(operationParam.keys())[0],
+                        const key = Array.from(operationParam.keys())[0],
                             val = operationParam.get(key);
                         this.performEditorOperation(key, val);
                     });
@@ -65,7 +66,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
                 }
             },
             onChange: (contents, editable) => {
-                this.$hiddenInputEle.val(contents);
+                this._model_ = contents;
                 this.invokeEventCallback('change', {newVal: contents, $event: getChangeEvt()});
             }
         },
@@ -88,7 +89,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
     }
 
     onPropertyChange(key, nv, ov?) {
-        switch(key) {
+        switch (key) {
             case 'placeholder':
                 this.EDITOR_DEFAULT_OPTIONS.placeholder = nv;
                 this.performEditorOperation({
@@ -121,7 +122,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
 
     performEditorOperation(key, value?) {
         if (!this.isEditorLoaded) {
-            let op: any = new Map();
+            const op: any = new Map();
             op.set(key, value);
             this.operationStack.push(op);
             return;
