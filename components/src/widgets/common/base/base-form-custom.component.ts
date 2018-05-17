@@ -16,8 +16,10 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
     }
 
     public writeValue(value) {
-        this.widget.datavalue = value;
-        this.updatePrevDatavalue(value);
+        if (this.hasOwnProperty('formControlName')) {
+            this.widget.datavalue = value;
+            this.updatePrevDatavalue(value);
+        }
     }
 
     protected invokeOnChange(value, $event?: Event | any, valid?: boolean) {

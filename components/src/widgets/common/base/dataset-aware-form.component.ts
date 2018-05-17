@@ -22,6 +22,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     private _datavalue: any;
     private _model: any;
+    public unUsedDatavalue: any;
     public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
 
     listenToDataset = new Subject();
@@ -135,7 +136,15 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected selectByValue(values) {
         this.resetDataSetItems();
 
-        if (!this.datasetItems.length) {
+        // if datavalue is not defined or empty then set the model as undefined.
+        if (_.isUndefined(values) || _.isNull(values) || (values instanceof Array && !values.length)) {
+            this._model = undefined;
+            return;
+        }
+
+        // preserve the datavalue if datasetItems are empty.
+        if (!this.datasetItems.length && !_.isUndefined(values)) {
+            this.unUsedDatavalue = values;
             return;
         }
 
@@ -155,6 +164,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 }
             });
         } else {
+            this._model = undefined;
             const itemByValue = _.find(this.datasetItems, item => {
                 return ((_.isObject(values) && _.isEqual(item.value, values)) || _.toString(item.value) === _.toString(values));
             });
@@ -162,6 +172,14 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 itemByValue.selected = true;
                 this._model = itemByValue.key;
             }
+        }
+
+        // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in unUsedDatavalue.
+        if (_.isUndefined(this._model) || !this._model.length) {
+            this.unUsedDatavalue = values;
+        } else if (!_.isUndefined(this.unUsedDatavalue)) {
+            this._datavalue = this.unUsedDatavalue;
+            this.unUsedDatavalue = undefined;
         }
 
         this.initDisplayValues();
@@ -206,7 +224,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     // Once the dataSetItems are ready, set the proxyModel by using datavalue.
     protected postDatasetItemsInit() {
         if (this.datasetItems.length) {
-            this.selectByValue(this.datavalue);
+            // use unUsedDatavalue if available to select the proxyModel
+            const dv = _.isUndefined(this.unUsedDatavalue) ? this.datavalue : this.unUsedDatavalue;
+            this.selectByValue(dv);
 
             // changes on the datasetItems can be subscribed using listenToDataset.
             this.listenToDataset.next(this.datasetItems);

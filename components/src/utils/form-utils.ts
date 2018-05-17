@@ -164,7 +164,7 @@ export const transformDataWithKeys = (dataSet: any) => {
  * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
  * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
  */
-export const transformData = (dataSet: any, myDataField, myDisplayField, myDisplayExpr) => {
+export const transformData = (dataSet: any, myDataField, myDisplayField, myDisplayExpr): Array<DataSetItem> => {
     const data = [];
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());

@@ -1,11 +1,12 @@
 import { Component, Injector, OnInit } from '@angular/core';
 
-import { setCSS } from '@wm/core';
+import { $appDigest, isEqualWithFields, setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
+import { DataSetItem } from '../../../utils/form-utils';
 
 declare const _, $;
 
@@ -25,10 +26,11 @@ registerProps();
 export class SwitchComponent extends DatasetAwareFormComponent implements OnInit {
 
     options = [];
-    selected: any = {};
+    selectedItem: DataSetItem;
     iconclass;
     private oldVal;
     private btnwidth;
+    private compareby;
 
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
@@ -59,15 +61,31 @@ export class SwitchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    // This function sets the selected index.
-    private setSelectedValue() {
-        const selectedItem =  _.find(this.datasetItems, {'selected' : true});
+    // This function sets the selectedItem by comparing the field values, where fields are passed by "compareby" property.
+    setItemByCompare() {
+        // compare the fields based on fields given to compareby property.
+        this.datasetItems.some(function (opt) {
+            if (isEqualWithFields(opt.value, this.datavalue, this.compareby)) {
+                opt.selected = true;
+                this.selectedItem = opt;
+                return true;
+            }
+            return false;
+        });
+    }
 
-        if (selectedItem) {
-            this.selected.index = selectedItem.index - 1;
-            return;
+    // This function sets the selectedItem by either using compareby fields or selected flag on datasetItems.
+    private setSelectedValue() {
+        if (this.datafield === 'All Fields' && this.compareby && this.compareby.length) {
+            this.setItemByCompare();
+        } else {
+            const selectedItem =  _.find(this.datasetItems, {'selected' : true});
+
+            if (selectedItem) {
+                this.selectedItem = selectedItem;
+                return;
+            }
         }
-        // Todo: compare the fields based on compareby property.
     }
 
     // set the css for switch overlay element.
@@ -89,7 +107,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements OnInit
         this.setSelectedValue();
 
         let left,
-            index = this.selected.index;
+            index = this.selectedItem ? this.selectedItem.index - 1 : -1;
 
         if (index === undefined || index === null) {
             index = -1;
@@ -112,24 +130,26 @@ export class SwitchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeOnTouched();
         $event.preventDefault();
 
-        if (this.selected.index === $index) {
+        if ($index === (this.selectedItem.index - 1)) {
             if (this.datasetItems.length === 2) {
                 $index = $index === 1 ? 0 : 1;
             } else {
                 return;
             }
         }
-        this.selected.index = $index;
+        this.selectedItem = this.datasetItems[$index];
         this.updateHighlighter();
 
         this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
         this.oldVal = this.datavalue;
+
+        $appDigest();
     }
 
     reset() {
         if (this.datasetItems.length > 0) {
             this.datavalue = this.datasetItems[0].value;
-            this.selected.index = 0;
+            this.selectedItem = this.datasetItems[0];
         }
     }
 }
