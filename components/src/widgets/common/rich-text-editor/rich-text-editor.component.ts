@@ -4,6 +4,7 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './rich-text-editor.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
@@ -44,14 +45,17 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
     EDITOR_DEFAULT_OPTIONS = {
         toolbar: [
             // [groupName, [list of button]]
-            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['misc', ['undo', 'redo']],
+            ['style', ['style']],
+            ['fontname', ['fontname']],
             ['fontsize', ['fontsize']],
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
             ['height', ['height']],
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['color', ['color']],
             ['insert', ['table', 'picture', 'link', 'video', 'hr']],
-            ['misc', ['undo', 'redo', 'codeview', 'fullscreen', 'help']]
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['misc', ['codeview', 'fullscreen', 'help']]
         ],
         callbacks: {
             onInit: () => {
@@ -66,10 +70,11 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
                 }
             },
             onChange: (contents, editable) => {
-                this._model_ = contents;
+                this._model_ = this.domSanitizer.bypassSecurityTrustHtml(contents.toString());
                 this.invokeEventCallback('change', {newVal: contents, $event: getChangeEvt()});
             }
         },
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Merriweather'],
         placeholder: '',
         height: 100,
         disableResizeEditor: true
@@ -83,9 +88,20 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
         return this.htmlcontent;
     }
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, private domSanitizer: DomSanitizer) {
         super(inj, WIDGET_INFO);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        this.$richTextEditor = $(this.nativeElement.querySelector('[richTextEditor]'));
+        this.$hiddenInputEle = $(this.nativeElement.querySelector('input.model-holder.ng-hide'));
+        this.initEditor();
+    }
+
+    initEditor() {
+        this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
     }
 
     onPropertyChange(key, nv, ov?) {
@@ -134,23 +150,12 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
         return this.performEditorOperation('createRange');
     }
 
-    initEditor() {
-        this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
-    }
-
     undo() {
         this.performEditorOperation('undo');
     }
 
     focus() {
         this.performEditorOperation('focus');
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        this.$richTextEditor = $(this.nativeElement.querySelector('[richTextEditor]'));
-        this.$hiddenInputEle = $(this.nativeElement.querySelector('input.model-holder.ng-hide'));
-        this.initEditor();
     }
 
     ngOnDestroy() {
