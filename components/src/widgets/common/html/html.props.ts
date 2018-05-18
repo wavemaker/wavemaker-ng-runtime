@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['content', PROP_STRING_NOTIFY],
                 ['hint', PROP_STRING],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN]
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );

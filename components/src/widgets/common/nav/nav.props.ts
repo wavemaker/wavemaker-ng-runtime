@@ -17,7 +17,7 @@ export const registerProps = () => {
                 ['layout', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
                 ['orderby', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['type', PROP_STRING_NOTIFY],
                 ['userrole', PROP_STRING_NOTIFY]
             ]

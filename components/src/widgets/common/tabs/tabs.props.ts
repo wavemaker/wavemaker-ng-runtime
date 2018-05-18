@@ -10,7 +10,7 @@ export const registerProps = () => {
                 ['justified', PROP_BOOLEAN],
                 ['tabsposition', {value: 'top', ...PROP_STRING_NOTIFY}],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['transition', {value: 'none', ...PROP_STRING}]
             ]
         )

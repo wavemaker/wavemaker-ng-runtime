@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map([
             ['class', PROP_STRING],
             ['name', PROP_STRING],
-            ['show', PROP_BOOLEAN]
+            ['show', {value: true, ...PROP_BOOLEAN}]
         ])
     );
 };

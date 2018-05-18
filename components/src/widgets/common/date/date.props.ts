@@ -18,7 +18,7 @@ export const dateProps = new Map(
         ['readonly', PROP_BOOLEAN_NOTIFY],
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING], // TODO not addressed
-        ['show', PROP_BOOLEAN],
+        ['show', {value: true, ...PROP_BOOLEAN}],
         ['showbuttonbar', {value: true, ...PROP_BOOLEAN}], // TODO not addressed
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['showweeks', {value: false, ...PROP_BOOLEAN_NOTIFY}],

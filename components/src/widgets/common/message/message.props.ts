@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['hideclose', {value: false, ...PROP_BOOLEAN}],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['type', {value: 'success', ...PROP_STRING_NOTIFY}],
             ]
         )

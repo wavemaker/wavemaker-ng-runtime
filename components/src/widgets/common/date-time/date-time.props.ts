@@ -20,7 +20,7 @@ export const dateTimeProps = new Map(
         ['required', PROP_BOOLEAN],
         ['secondsstep', {value: 15, ...PROP_NUMBER}],
         ['shortcutkey', PROP_STRING],
-        ['show', PROP_BOOLEAN],
+        ['show', {value: true, ...PROP_BOOLEAN}],
         ['showbuttonbar', PROP_BOOLEAN],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['showseconds', {value: false, ...PROP_BOOLEAN}],

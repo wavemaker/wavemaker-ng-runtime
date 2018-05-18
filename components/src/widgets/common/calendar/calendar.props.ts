@@ -17,7 +17,7 @@ export const registerProps = () => {
                 ['eventstart', PROP_STRING],
                 ['eventtitle', PROP_STRING],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
                 ['view', PROP_STRING_NOTIFY],
                 ['selectionmode', PROP_STRING_NOTIFY]

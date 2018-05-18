@@ -12,7 +12,7 @@ export const registerProps = () => {
                 ['iconsize', PROP_STRING],
                 ['iconurl', PROP_STRING],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN]
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );

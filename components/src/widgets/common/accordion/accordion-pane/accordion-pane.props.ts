@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['iconclass', PROP_STRING],
                 ['isdefaultpane', PROP_BOOLEAN],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['subheading', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', {value: 'Title', ...PROP_STRING}]

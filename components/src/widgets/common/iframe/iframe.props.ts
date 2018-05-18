@@ -10,7 +10,7 @@ export const registerProps = () => {
                 ['height', {value: '150px', ...PROP_STRING}],
                 ['iframesrc', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['width', {value: '300px', ...PROP_STRING}]
             ]
         )

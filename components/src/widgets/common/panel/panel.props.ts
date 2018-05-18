@@ -28,7 +28,7 @@ export const registerProps = () => {
                 ['itemlabel', PROP_STRING],
                 ['itemlink', PROP_STRING],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['subheading', PROP_STRING],
                 ['title', PROP_STRING],
                 ['userrole', PROP_STRING]

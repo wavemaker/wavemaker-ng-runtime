@@ -15,7 +15,7 @@ export const registerProps = () => {
                 ['mp3format', PROP_STRING_NOTIFY],
                 ['muted', PROP_BOOLEAN],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}]
             ]
         )

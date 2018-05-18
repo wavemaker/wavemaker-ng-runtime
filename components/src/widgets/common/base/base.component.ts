@@ -8,9 +8,9 @@ import { $parseEvent, $unwatch, $watch, addClass, isDefined, setAttr } from '@wm
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
 import { proxyHandler } from '../../framework/property-change-handler';
-import { ChangeListener, IWidgetConfig } from '../../framework/types';
+import { ChangeListener, Context, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
-import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
+import { ATTR_SKIP_LIST, DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
 import { ProxyProvider } from '../../framework/proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
 
@@ -127,6 +127,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.widget = ProxyProvider.create(this, proxyHandler);
         this.eventManager = inj.get(EventManager);
 
+        this.initContext();
+
         if (config.hostClass) {
             addClass(this.nativeElement, config.hostClass);
         }
@@ -199,6 +201,23 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         return this.displayType;
     }
 
+    protected initContext() {
+        const context = (this.inj as any).view.context;
+
+        const parentContexts = this.inj.get(Context, {});
+
+        // assign the context property accordingly
+        if (this.pageComponent !== context) {
+            this.context = context;
+        } else {
+            this.context = {};
+        }
+
+        if (parentContexts) {
+            this.context = Object.assign({}, ...(<Array<any>>parentContexts), this.context);
+        }
+    }
+
     /**
      * set the value on the proxy object ie, widget
      * setting the property on the proxy will invoke the change listeners
@@ -267,7 +286,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     protected processEventAttr(eventName: string, expr: string) {
         let fn = $parseEvent(expr);
-        const locals = {widget: this.widget, $event: undefined};
+        const locals = this.context;
+        locals.widget = this.widget;
 
         fn = fn.bind(undefined, this.pageComponent, locals);
 
@@ -356,15 +376,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Register the widget
      */
     protected initWidget() {
-        const context = (this.inj as any).view.context;
-
-        // assign the context property accordingly
-        if (this.pageComponent !== context) {
-            this.context = context;
-        } else {
-            this.context = {};
-        }
-
         this.initState = new Map<string, any>();
 
         // get the widget properties
@@ -387,7 +398,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected setInitProps() {
         this.widget.name = this.initState.get('name');
         this.initState.forEach((v, k) => {
-            if (k !== 'name') {
+            // name is already set, ignore name
+            // if the key is part of to be ignored attributes list do not set it on the component instance
+            if (k !== 'name' && !ATTR_SKIP_LIST[k]) {
                 this.widget[k] = v;
             }
         });

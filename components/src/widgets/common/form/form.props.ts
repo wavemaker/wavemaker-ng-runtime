@@ -14,7 +14,7 @@ const propsMap = new Map(
         ['expanded', {value: true, ...PROP_BOOLEAN}],
         ['iconclass', PROP_STRING],
         ['name', PROP_STRING],
-        ['show', PROP_BOOLEAN],
+        ['show', {value: true, ...PROP_BOOLEAN}],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['subheading', PROP_STRING],
         ['tabindex', PROP_NUMBER],

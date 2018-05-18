@@ -26,7 +26,7 @@ export const registerProps = () => {
                 ['selectfirstitem', PROP_BOOLEAN_NOTIFY],
                 ['selectionlimit', PROP_NUMBER_NOTIFY],
                 ['shortcutkey', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showrecordcount', PROP_BOOLEAN],
                 ['subheading', PROP_BOOLEAN],
                 ['title', PROP_STRING]

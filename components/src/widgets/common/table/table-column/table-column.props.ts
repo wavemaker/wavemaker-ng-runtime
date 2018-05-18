@@ -24,7 +24,7 @@ export const registerProps = () => {
                 ['relatedEntityName', PROP_STRING],
                 ['required', PROP_BOOLEAN_NOTIFY],
                 ['searchable', PROP_BOOLEAN_NOTIFY],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['sortable', PROP_BOOLEAN],
                 ['textalignment', PROP_STRING],
                 ['textcolor', PROP_STRING],

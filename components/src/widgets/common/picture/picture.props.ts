@@ -12,7 +12,7 @@ export const registerProps = () => {
                 ['pictureplaceholder', PROP_STRING_NOTIFY],
                 ['picturesource', PROP_STRING_NOTIFY],
                 ['shape', PROP_STRING_NOTIFY],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}]
             ]
         )

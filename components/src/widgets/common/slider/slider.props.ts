@@ -11,7 +11,7 @@ export const sliderProps = new Map(
         ['name', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
-        ['show', PROP_BOOLEAN],
+        ['show', {value: true, ...PROP_BOOLEAN}],
         ['step', PROP_NUMBER],
         ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]

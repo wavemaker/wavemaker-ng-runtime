@@ -1,6 +1,8 @@
-import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, ContentChild, Inject, Injector, OnInit, Self, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
+
+import { Context } from '../../../framework/types';
 import { registerProps } from './dialog.props';
 import { BaseDialog } from '../base/base-dialog';
 import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
@@ -16,7 +18,8 @@ registerProps();
     templateUrl: './dialog.component.html',
     providers: [
         provideAsWidgetRef(DialogComponent),
-        provideAsDialogRef(DialogComponent)
+        provideAsDialogRef(DialogComponent),
+        {provide: Context, useValue: {}, multi: true}
     ]
 })
 export class DialogComponent extends BaseDialog implements OnInit {
@@ -29,6 +32,7 @@ export class DialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
+        @Self() @Inject(Context) contexts: Array<any>
     ) {
         if (modal === null || modal === undefined) {
             modal = true;
@@ -37,6 +41,10 @@ export class DialogComponent extends BaseDialog implements OnInit {
         if (closable === null || closable === undefined) {
             closable = true;
         }
+
+        // contexts[0] will refer to the self context provided by this component
+        contexts[0].closeDialog = () => this.close();
+
         super(
             inj,
             WIDGET_INFO,

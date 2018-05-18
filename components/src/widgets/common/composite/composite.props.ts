@@ -8,7 +8,7 @@ export const registerProps = () => {
                 ['captionposition', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
                 ['required', PROP_BOOLEAN_NOTIFY],
-                ['show', PROP_BOOLEAN]
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );

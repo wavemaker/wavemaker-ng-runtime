@@ -1,5 +1,7 @@
-import { BaseComponent } from '../common/base/base.component';
+import { InjectionToken } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+
+import { BaseComponent } from '../common/base/base.component';
 
 export interface IWidgetConfig {
     widgetType: string;
@@ -32,6 +34,8 @@ export abstract class TableColumnGroupRef {}
 export abstract class TableRef {}
 
 export abstract class DialogRef<T extends BaseComponent> {}
+
+export const Context = new InjectionToken('Context Provider Reference');
 
 export interface IDialog {
     open: () => void;

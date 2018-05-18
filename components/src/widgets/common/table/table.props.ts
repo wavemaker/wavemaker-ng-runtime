@@ -39,7 +39,7 @@ export const registerProps = () => {
                 ['rowclass', PROP_STRING],
                 ['rowngclass', PROP_STRING],
                 ['searchlabel', {value: 'Search', ...PROP_STRING}],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showheader', {value: true, ...PROP_BOOLEAN_NOTIFY}],
                 ['shownewrow', {value: true, ...PROP_BOOLEAN}],
                 ['showrecordcount', PROP_BOOLEAN_NOTIFY],

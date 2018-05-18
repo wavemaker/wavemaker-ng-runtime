@@ -8,7 +8,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['name', PROP_STRING],
                 ['columnwidth', PROP_NUMBER_NOTIFY],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );

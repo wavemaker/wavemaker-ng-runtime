@@ -10,7 +10,7 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['scrollamount', PROP_NUMBER],
                 ['scrolldelay', PROP_NUMBER],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );

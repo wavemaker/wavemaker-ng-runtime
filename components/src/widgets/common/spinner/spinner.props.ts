@@ -14,7 +14,7 @@ export const registerProps = () => {
                 ['imageheight', PROP_STRING],
                 ['imagewidth', {value: '20px', ...PROP_STRING}],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['type', {value: 'icon', ...PROP_STRING}]
             ]
         )

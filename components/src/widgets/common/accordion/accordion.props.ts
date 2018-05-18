@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['closeothers', {value: true, ...PROP_BOOLEAN}],
                 ['defaultpaneindex', PROP_NUMBER_NOTIFY],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}]
             ]
         )

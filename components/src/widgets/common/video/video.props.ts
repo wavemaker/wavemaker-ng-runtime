@@ -14,7 +14,7 @@ export const registerProps = () => {
                 ['muted', PROP_BOOLEAN],
                 ['name', PROP_STRING],
                 ['oggformat', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['subtitlelang', {value: 'en', ...PROP_STRING_NOTIFY}],
                 ['subtitlesource', PROP_STRING_NOTIFY],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],

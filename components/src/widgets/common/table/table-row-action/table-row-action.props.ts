@@ -13,7 +13,7 @@ export const registerProps = () => {
                 ['displayName', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['key', PROP_STRING],
-                ['show', PROP_BOOLEAN],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', PROP_NUMBER],
                 ['title', PROP_STRING]
             ]

@@ -15,7 +15,7 @@ export const textProps = new Map(
         ['regexp', PROP_STRING],
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
-        ['show', PROP_BOOLEAN],
+        ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', PROP_NUMBER],
         ['type', PROP_STRING],
         ['updateon', {value: 'blur', ...PROP_STRING_NOTIFY}]

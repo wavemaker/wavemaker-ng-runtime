@@ -73,14 +73,14 @@ export const registerProps = (widgetType) => {
             ['primary-key', PROP_STRING_NOTIFY],
             ['related-entity-name', PROP_STRING],
             ['required', PROP_BOOLEAN],
-            ['show', PROP_BOOLEAN],
+            ['show', {value: true, ...PROP_BOOLEAN}],
             ['validationmessage', PROP_STRING],
             ['viewmodewidget', PROP_STRING],
             ['widgettype', PROP_STRING]
         ]
     );
     const widgetProps = widgetPropsMap.get(widgetType);
-    widgetProps.forEach((v, k) => {
+    widgetProps.forEach((v: any, k) => {
         v.notify = true;
         propsMap.set(k, v);
     });

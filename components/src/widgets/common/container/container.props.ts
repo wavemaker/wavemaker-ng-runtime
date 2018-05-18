@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['conditionalclass', PROP_STRING],
                 ['content', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
-                ['show', PROP_BOOLEAN]
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );
