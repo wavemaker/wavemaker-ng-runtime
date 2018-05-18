@@ -25,8 +25,9 @@ export const navbarProps = new Map(
         ['searchbutton', {value: false, ...PROP_BOOLEAN}],
         ['searchbuttoniconclass', {value: 'wi wi-search', ...PROP_STRING}],
         ['searchbuttonlabel', {value: '', ...PROP_STRING}],
-        ['searchplaceholder', {value: 'Search', ...PROP_STRING}],
+        ['showLeftnavbtn', {value: true, ...PROP_BOOLEAN}],
         ['searchkey', PROP_STRING],
+        ['searchplaceholder', {value: 'Search', ...PROP_STRING}],
         ['showSearchbar', PROP_BOOLEAN],
         ['title', PROP_STRING]
     ]

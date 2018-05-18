@@ -1,0 +1,127 @@
+import { Component, ContentChild, ElementRef, Injector, TemplateRef } from '@angular/core';
+
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
+import { isArray, isString, isObject, isPageable, $parseExpr, addClass, removeClass, $appDigest } from '@wm/core';
+
+import { registerProps } from './media-list.props';
+
+registerProps();
+
+const DEFAULT_CLS = 'app-medialist';
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-media-list', hostClass: DEFAULT_CLS};
+
+enum Layout {
+    SINGLE_ROW = 'Single-row',
+    MULTI_ROW = 'Multi-row'
+}
+
+@Component({
+    selector: '[wmMediaList]',
+    templateUrl: './media-list.component.html',
+    providers: [
+        provideAsWidgetRef(MediaListComponent)
+    ]
+})
+export class MediaListComponent extends StylableComponent {
+
+    public binddataset;
+    public fieldDefs: any[]  [];
+    public mediaurl: string;
+    public thumbnailurl: string;
+    public selectedMediaIndex = -1;
+
+    @ContentChild('mediaListTemplate') mediaListTemplate: TemplateRef<ElementRef>;
+
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+    }
+
+    public onPropertyChange(key, nv, ov?) {
+        switch (key) {
+            case 'dataset':
+                this.onDataChange(nv);
+                break;
+            case 'layout':
+                if (nv === Layout.SINGLE_ROW) {
+                    addClass(this.nativeElement, 'singlerow');
+                } else {
+                    removeClass(this.nativeElement, 'singlerow');
+                }
+                break;
+        }
+    }
+
+    public exitFullScreen() {
+        this.selectedMediaIndex = -1;
+        $appDigest();
+    }
+
+    public getPicTitle() {
+        return this.selectedMediaIndex + 1 + '/' + this.fieldDefs.length;
+    }
+
+    public showFullScreen(i) {
+        this.selectedMediaIndex = i;
+        $appDigest();
+    }
+
+    public showNext() {
+        if (this.selectedMediaIndex < this.fieldDefs.length - 1) {
+            this.selectedMediaIndex++;
+            $appDigest();
+        }
+    }
+
+    public showPrev() {
+        if (this.selectedMediaIndex > 0) {
+            this.selectedMediaIndex--;
+            $appDigest();
+        }
+    }
+
+    private onDataChange(nv: any) {
+        if (nv) {
+            nv = nv.data || nv;
+
+            /*If the data is a pageable object, then display the content.*/
+            if (isObject(nv) && isPageable(nv)) {
+                nv = nv.content;
+            }
+
+            if (isObject(nv) && !isArray(nv)) {
+                nv = [nv];
+            }
+            if (!this.binddataset) {
+                if (isString(nv)) {
+                    nv = nv.split(',');
+                }
+            }
+            if (isArray(nv)) {
+                this.updateFieldDefs(nv as any[]);
+            }
+        } else {
+            this.updateFieldDefs([]);
+        }
+    }
+
+    /** With given data, creates media list items*/
+    private updateFieldDefs(data: any[]) {
+        this.fieldDefs = data;
+        data.forEach(field => {
+            field.mediaUrlVal     = $parseExpr(this.mediaurl)(field);
+            field.thumbnailUrlVal = $parseExpr(this.thumbnailurl)(field);
+        });
+        this.fieldDefs = data;
+    }
+
+    /**
+     * used to track list items by Index.
+     * @param {number} index value of the list item
+     * @returns {number} index.
+     */
+    private listTrackByFn(index: number): number {
+        return index;
+    }
+
+}

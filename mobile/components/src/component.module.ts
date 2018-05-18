@@ -6,6 +6,8 @@ import { WmComponentsModule } from '@wm/components';
 
 import { BarcodeScannerComponent } from './widgets/barcode-scanner/barcode-scanner.component';
 import { CameraComponent } from './widgets/camera/camera.component';
+import { MediaListComponent } from './widgets/media-list/media-list.component';
+import { MediaListItemDirective } from './widgets/media-list/media-list-item/media-list-item.directive';
 import { MobileLeftPanelDirective } from './widgets/left-panel/left-panel.directive';
 import { MobileNavbarComponent } from './widgets/mobile-navbar/mobile-navbar.component';
 import { MobilePageDirective } from './widgets/page/page.directive';
@@ -18,6 +20,8 @@ import { WidgetTemplateComponent } from './widgets/widget-template/widget-templa
 const wmMobileComponents = [
     BarcodeScannerComponent,
     CameraComponent,
+    MediaListComponent,
+    MediaListItemDirective,
     MobileLeftPanelDirective,
     MobileNavbarComponent,
     MobilePageDirective,

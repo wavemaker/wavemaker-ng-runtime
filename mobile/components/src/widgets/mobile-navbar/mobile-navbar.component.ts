@@ -21,14 +21,15 @@ export class MobileNavbarComponent extends BaseComponent {
     public datavalue: string;
     public imagesrc: string;
     public leftNavPanel: LeftPanelDirective;
-    public showLeftnavBtn: boolean;
+    public showLeftnavbtn: boolean;
     public showSearchbar: boolean;
 
     constructor(private page: PageDirective, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG);
         page.subscribe('wmLeftPanel:ready', (leftNavPanel: LeftPanelDirective) => {
-            this.showLeftnavBtn = true;
-            this.leftNavPanel = leftNavPanel;
+            if (this.showLeftnavbtn) {
+                this.leftNavPanel = leftNavPanel;
+            }
         });
     }
 

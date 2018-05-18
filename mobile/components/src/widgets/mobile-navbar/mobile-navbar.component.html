@@ -1,7 +1,7 @@
 <nav class="navbar" *ngIf="!showSearchbar">
     <div class="mobile-navbar-left">
         <ul class="nav navbar-nav navbar-left">
-            <li *ngIf="showLeftnavBtn" >
+            <li *ngIf="leftNavPanel" >
                 <a (click)="leftNavPanel.toggle();"  href="javascript: void(0);">
                     <i [ngClass]="leftnavpaneliconclass"></i>
                     </a>
