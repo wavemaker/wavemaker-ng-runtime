@@ -73,12 +73,34 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         this.bindEvents();
     }
 
+    onPropertyChange(key, nv, ov) {
+        switch (key) {
+            case 'dataset':
+                this.nodes = this.getNodes(nv.data || nv);
+                this._selectNode = undefined;
+                this._renderTree();
+                break;
+            case 'nodeicon':
+            case 'nodelabel':
+            case 'nodechildren':
+            case 'orderby':
+                this._renderTree();
+                break;
+            case 'treeicons':
+                this.changeTreeIcons(nv, ov);
+                break;
+            case 'datavalue':
+                this.selectNodeById(nv);
+                break;
+        }
+    }
+
     private constructNodes(nodes, parent, levels, deep, _evalDataValue) {
 
-        let $ul           = $('<ul></ul>'),
+        const $ul           = $('<ul></ul>'),
             _iconClses    = ICON_CLASSES[this.treeicons || defaultTreeIconClass],
-            _expr         = (this.binddatavalue || this.datavalue),
-            _iconCls,
+            _expr         = (this.binddatavalue || this.datavalue);
+        let _iconCls,
             _cls;
 
         _cls     = levels > 0 ? ' expanded ' : ' collapsed ';
@@ -88,13 +110,13 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
         parent.append($ul);
         nodes.forEach((node, idx) => {
-            let $li             = $('<li></li>'),
+            const $li             = $('<li></li>'),
                 $iconNode       = $('<i></i>'),
                 nodeLabel       = getEvaluatedData(node, {displayexpression: this.nodelabel}) || node.label,
                 nodeIcon        = getEvaluatedData(node, {displayexpression: this.nodeicon}) || node.icon,
                 nodeChildren    = getEvaluatedData(node, {displayexpression: this.nodechildren}) || node.children,
-                nodeIdValue     = getEvaluatedData(node, {displayexpression: this.nodeid}),
-                isNodeMatched   = false,
+                nodeIdValue     = getEvaluatedData(node, {displayexpression: this.nodeid});
+            let isNodeMatched   = false,
                 expandCollapseIcon;
 
             $li.data('nodedata', node)
@@ -110,7 +132,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
             // if node identifier is present then verify the datavalue is bound expr or static value and compare with the node model
             if (this.bindnodeid || this.nodeid) {
-                isNodeMatched = this.binddatavalue ? nodeIdValue == _evalDataValue : nodeIdValue == _expr;
+                isNodeMatched = this.binddatavalue ? nodeIdValue === _evalDataValue : nodeIdValue === _expr;
                 if (nodeIdValue) {
                     $li.attr('id', nodeIdValue);
                 }
@@ -150,7 +172,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     }
 
     private getNodesFromString(value) {
-        return value.split(',').map(function (item) {
+        return value.split(',').map((item) => {
             return {
                 'label': item && item.trim()
             };
@@ -199,13 +221,13 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     }
 
     private _renderTree(forceRender?) {
-        let levels = +this.nativeElement.getAttribute('levels') || 0,
-            docFrag,
+        let docFrag,
             $li,
             $liPath,
             data,
-            path = '',
-        $el = $(this.nativeElement);
+            path = '';
+        const levels = +this.nativeElement.getAttribute('levels') || 0,
+            $el = $(this.nativeElement);
 
         $el.empty();
 
@@ -231,7 +253,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
             $liPath
                 .each(() => {
-                    let $current = $(this),
+                    const $current = $(this),
                         $i       = $current.children('i.collapsed'),
                         $title   = $current.children('.title');
                     this.toggleExpandCollapseNode(undefined, $i, $current);
@@ -247,33 +269,11 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         }
     }
 
-    onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'dataset':
-                this.nodes = this.getNodes(nv.data || nv);
-                this._selectNode = undefined;
-                this._renderTree();
-                break;
-            case 'nodeicon':
-            case 'nodelabel':
-            case 'nodechildren':
-            case 'orderby':
-                this._renderTree();
-                break;
-            case 'treeicons':
-                this.changeTreeIcons(nv, ov);
-                break;
-            case 'datavalue':
-                this.selectNodeById(nv);
-                break;
-        }
-    }
-
     private selectNode(evt, value) {
-        let target = evt && $(evt.target),
+        const target = evt && $(evt.target),
             $el = $(this.nativeElement),
-            $li = _.isObject(value) ? value : $el.find('li[id="' + value + '"]:first'),
-            data,
+            $li = _.isObject(value) ? value : $el.find('li[id="' + value + '"]:first');
+        let data,
             path = '',
             $liPath,
             nodeAction;
@@ -290,17 +290,17 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
         // construct the path of the node
         $liPath
-            .each(function () {
-                let current = $(this).children('.title').text();
+            .each(() => {
+                const current = $(this).children('.title').text();
                 path = '/' + current + path;
             });
 
         // expand the current node till the viewParent level which is collapsed
-        let that = this;
+        const that = this;
         $li.parentsUntil($el, 'li.viewParent-node.collapsed')
-            .each(function () {
-                let $current = $(this),
-                    $i       = $current.children('i.collapsed');
+            .each(() => {
+                const $current = $(this),
+                    $i = $current.children('i.collapsed');
                 that.toggleExpandCollapseNode(undefined, $i, $current);
             });
 
@@ -327,7 +327,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     // click event is added on the host nativeElement
     private bindEvents() {
         $(this.nativeElement).on('click', (evt) => {
-            let target = $(evt.target),
+            const target = $(evt.target),
                 li     = target.closest('li'),
                 $i     = target.is('i') ? target : target.siblings('i.collapsed,i.expanded');
 
