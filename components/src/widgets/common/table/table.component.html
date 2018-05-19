@@ -14,8 +14,8 @@
                     iconclass.bind="btn.iconclass" (click)="btn.action" type="button" shortcutkey.bind="btn.shortcutkey"
                     tabindex.bind="btn.tabindex"
                     hint.bind="btn.title" attr.disabled.bind="btn.disabled"></button>
-            <!--<wm-menu autoclose="always" caption="{{$root.appLocale.LABEL_EXPORT}}" ng-if="exportOptions.length" name="{{::name}}-export"-->
-            <!--scopedataset="exportOptions" on-select="export($item)" menuposition="down,left"></wm-menu>-->
+            <!--<div wmMenu caption="Export" *ngIf="exportOptions.length"-->
+                <!--dataset.bind="exportOptions" select.event="export($item)" menuposition="down,left"></div>-->
         </div>
     </h3>
 </div>

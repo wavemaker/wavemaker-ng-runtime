@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
-import { $appDigest, isDefined, isObject } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, isDefined, isObject } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -73,12 +73,12 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
 
     get selecteditem() {
         if (this.multiselect) {
-            return this._items;
+            return getClonedObject(this._items);
         }
         if (_.isEmpty(this._items)) {
             return {};
         }
-        return this._items[0];
+        return getClonedObject(this._items[0]);
     }
 
     set selecteditem(items) {
@@ -101,6 +101,13 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
+    }
+
+    execute(operation, options) {
+        if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
+            return false;
+        }
+        return this.datasource.execute(operation, options);
     }
 
     /**
@@ -374,6 +381,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     private clearItems() {
         this.deselectListItems();
         this._items.length = 0;
+        $appDigest();
     }
 
     /**
@@ -390,6 +398,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
             this._items.push(item);
             $listItem.isActive = true;
         }
+        $appDigest();
     }
 
     /**

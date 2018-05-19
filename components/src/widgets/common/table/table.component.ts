@@ -2,7 +2,7 @@ import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateR
 
 import { Subject } from 'rxjs/Subject';
 
-import { getClonedObject, getValidJSON, isDefined, isEmptyObject, isNumberType, isPageable, triggerFn } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, isEmptyObject, isPageable, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { TableRef } from '../../framework/types';
@@ -10,8 +10,8 @@ import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { getRowOperationsColumn } from '../../../utils/live-utils';
-import { refreshDataSource } from '../../../utils/data-utils';
-import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { refreshDataSource, transformData } from '../../../utils/data-utils';
+import { getOrderByExpr, provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 declare const moment;
@@ -39,6 +39,13 @@ const rowOperations = {
     }
 };
 
+const exportIconMapping = {
+    'EXCEL' : 'fa fa-file-excel-o',
+    'CSV'   : 'fa fa-file-text-o'
+};
+
+const ROW_OPS_FIELD = 'rowOperations';
+
 @Component({
     selector: '[wmTable]',
     templateUrl: './table.component.html',
@@ -54,6 +61,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ViewChild('rowActions') rowActionsTmpl: TemplateRef<any>;
     @ViewChild('rowActionsContainer', {read: ViewContainerRef}) rowActionsContainer: ViewContainerRef;
 
+    columns = {};
     datagridElement;
     datasource;
     editmode;
@@ -94,6 +102,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         'footer': []
     };
     exportOptions = [];
+    exportdatasize;
     headerConfig = [];
     items = [];
     navControls = 'Basic';
@@ -112,11 +121,22 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private filterInfo;
     private sortInfo;
     private serverData;
-    private isBoundToLiveVariableRoot;
     private filternullrecords;
     private variableInflight;
 
     private applyProps = new Map();
+
+    // Filter and Sort Methods
+    _searchSortHandler = () => {};
+    searchSortHandler = (...args) => {
+        this._searchSortHandler.apply(this, args);
+    }
+    _isPageSearch;
+    _isClientSearch;
+    checkFiltersApplied: Function;
+    getSearchResult: Function;
+    getSortResult: Function;
+    getFilterFields: Function;
 
     private gridOptions = {
         'data': [],
@@ -126,6 +146,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             'field': '',
             'direction': ''
         },
+        'filtermode': '',
         'rowActions': [],
         'headerConfig': [],
         'rowClass': '',
@@ -147,6 +168,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.callDataGridMethod('selectRows', this.items);
             this.selectedItems = this.callDataGridMethod('getSelectedRows');
             this.selectedItemChange.next(this.selectedItems);
+
+            if (this.gridData.length) {
+                this.invokeEventCallback('datarender', {$data: this.gridData});
+            }
+            // On render, apply the filters set for query service variable
+            if (this._isPageSearch && this.filterInfo) {
+                this.searchSortHandler(this.filterInfo, undefined, 'search');
+            }
+
+            $appDigest();
         },
         onRowSelect: (rowData, e) => {
             this.selectedItems = this.callDataGridMethod('getSelectedRows');
@@ -164,6 +195,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.items.length = 0;
                 this.items.push(rowData);
             }
+            $appDigest();
         },
         onRowDblClick: () => {
         },
@@ -172,6 +204,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.items = _.pullAllWith(this.items, [rowData], _.isEqual);
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
             }
+            $appDigest();
         },
         onColumnSelect: () => {
         },
@@ -222,8 +255,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // Function to redraw the widgets on resize of columns
         redrawWidgets: () => {
         },
-        searchHandler: this.handleOperation.bind(this),
-        sortHandler: this.handleOperation.bind(this),
+        searchHandler: this.searchSortHandler.bind(this),
+        sortHandler: this.searchSortHandler.bind(this),
         timeoutCall: () => {
         },
         safeApply: () => {
@@ -233,16 +266,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _gridData;
     set gridData(newValue) {
         this._gridData = newValue;
-        const startRowIndex = 0;
+        let startRowIndex = 0;
         let gridOptions;
 
         if (isDefined(newValue)) {
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
              and its current page is set properly*/
-            // if (this.shownavigation && this.dataNavigator && this.dataNavigator.dn.currentPage) {
-            //     startRowIndex = ((this.dataNavigator.dn.currentPage - 1) * ($is.dataNavigator.maxResults || 1)) + 1;
-            //     this.setDataGridOption('startRowIndex', startRowIndex);
-            // }
+            if (this.shownavigation && this.dataNavigator && this.dataNavigator.dn.currentPage) {
+                startRowIndex = ((this.dataNavigator.dn.currentPage - 1) * (this.dataNavigator.maxResults || 1)) + 1;
+                this.setDataGridOption('startRowIndex', startRowIndex);
+            }
             /* If colDefs are available, but not already set on the datagrid, then set them.
              * This will happen while switching from markup to design tab. */
             gridOptions = this.callDataGridMethod('getOptions');
@@ -255,35 +288,93 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.setDataGridOption('colDefs', getClonedObject(this.fieldDefs));
             }
             // Map the col defs to columns
-            // _.map(gridOptions.colDefs, (column) => {
-            //     this.columns[column.field] = column;
-            // });
+            _.map(gridOptions.colDefs, column => {
+                this.columns[column.field] = column;
+            });
             // If data and colDefs are present, call on before data render event
-            // if (!_.isEmpty(newValue) && gridOptions.colDefs.length) {
-            //     $is.onBeforedatarender({$isolateScope: $is, $data: newValue, $columns: $is.columns});
-            // }
+            if (!_.isEmpty(newValue) && gridOptions.colDefs.length) {
+                this.invokeEventCallback('beforedatarender', {$data: newValue, $columns: this.columns});
+            }
             this.setDataGridOption('data', getClonedObject(newValue));
         }
     }
 
     get gridData() {
-        return this._gridData;
+        return this._gridData || [];
     }
 
     get selecteditem() {
         if (this.multiselect) {
-            return this.items;
+            return getClonedObject(this.items); // TODO: is cloning required?
         }
         if (_.isEmpty(this.items)) {
             return {};
         }
-        return this.items[0];
+        return getClonedObject(this.items[0]);
     }
 
     set selecteditem(val) {
         // Select the rows in the table based on the new selected items passed
         this.items.length = 0;
         this.callDataGridMethod('selectRows', val);
+    }
+
+    constructor(inj: Injector, @Attribute('dataset.bind') public binddataset) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this);
+    }
+
+    ngAfterContentInit() {
+        super.ngAfterContentInit();
+        const runModeInitialProperties = {
+            'showrowindex': 'showRowIndex',
+            'multiselect': 'multiselect',
+            'radioselect': 'showRadioColumn',
+            'filternullrecords': 'filterNullRecords',
+            'enablesort': 'enableSort',
+            'showheader': 'showHeader',
+            'enablecolumnselection': 'enableColumnSelection',
+            'shownewrow': 'showNewRow',
+            'gridfirstrowselect': 'selectFirstRow'
+        };
+
+        this.gridOptions.colDefs = this.fullFieldDefs;
+        this.gridOptions.headerConfig = this.headerConfig;
+        this.gridOptions.rowNgClass = this.rowngclass;
+        this.gridOptions.rowClass = this.rowclass;
+        this.gridOptions.editmode = this.editmode;
+        this.gridOptions.formPosition = this.formposition;
+        this.gridOptions.filtermode = this.filtermode;
+        this.gridOptions.name = this.name;
+        this.datagridElement = $(this._tableElement.nativeElement);
+
+        _.forEach(runModeInitialProperties, (value, key) => {
+            if (isDefined(this[key])) {
+                this.gridOptions[value] = (this[key] === 'true' || this[key] === true);
+            }
+        });
+
+        // This is expose columns property to user so that he can programatically use columns to do some custom logic
+        this.gridOptions.colDefs.map(column => {
+            this.columns[column.field] = column;
+        });
+
+        this.renderOperationColumns();
+        this.gridOptions.colDefs = this.fieldDefs;
+
+        this.datagridElement.datatable(this.gridOptions);
+        this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+
+        this.watchVariableDataSet(this.dataset);
+
+        this.applyProps.forEach(args => this.callDataGridMethod(...args));
+    }
+
+    execute(operation, options) {
+        if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
+            return false;
+        }
+        return this.datasource.execute(operation, options);
     }
 
     /* Check whether it is non-empty row. */
@@ -308,26 +399,20 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     /* Function to remove the empty data. */
     removeEmptyRecords(serviceData) {
-        const allRecords = serviceData.data || serviceData;
+        const allRecords = serviceData;
         let filteredData = [];
         if (allRecords && allRecords.length) {
             /*Comparing and pushing the non-empty data columns*/
-            filteredData = allRecords.filter((record) => {
+            filteredData = allRecords.filter(record => {
                 return record && !this.isEmptyRecord(record);
             });
         }
         return filteredData;
     }
 
-    setGridData(serverData, forceSet = false) {
-        let data = serverData;
-        /*If serverData has data but is undefined, then return*/
-        if (!forceSet && (this.isBoundToLiveVariableRoot || isDefined(serverData.propertiesMap))) {
-            if (!serverData.data || isEmptyObject(serverData.data)) {
-                return;
-            }
-            data = serverData.data;
-        }
+    setGridData(serverData) {
+        const data = serverData;
+        // If serverData has data but is undefined, then return
         if (this.filternullrecords) {
             this.gridData = this.removeEmptyRecords(data);
         } else {
@@ -339,128 +424,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             } else {
                 this.callDataGridMethod('setStatus', 'ready');
             }
-        }
-    }
-
-    // Get search value based on the time
-    getSearchValue(value, type) {
-        if (isNumberType(type)) {
-            return _.toNumber(value);
-        }
-        if (type === 'datetime') {
-            return moment(value).valueOf();
-        }
-        return _.toString(value).toLowerCase();
-    }
-
-    // Filter the data based on the search value and conditions
-    getFilteredData(data, searchObj) {
-        const searchVal = this.getSearchValue(searchObj.value, searchObj.type);
-        let currentVal;
-        data = data.filter((obj) => {
-            let isExists;
-            if (searchObj.field) {
-                currentVal = this.getSearchValue(_.get(obj, searchObj.field), searchObj.type);
-            } else {
-                currentVal = _.values(obj).join(' ').toLowerCase(); // If field is not there, search on all the columns
-            }
-            switch (searchObj.matchMode) {
-                case 'start':
-                    isExists = _.startsWith(currentVal, searchVal as string);
-                    break;
-                case 'end':
-                    isExists = _.endsWith(currentVal, searchVal as string);
-                    break;
-                case 'exact':
-                    isExists = _.isEqual(currentVal, searchVal);
-                    break;
-                case 'notequals':
-                    isExists = !_.isEqual(currentVal, searchVal);
-                    break;
-                case 'null':
-                    isExists = _.isNull(currentVal);
-                    break;
-                case 'isnotnull':
-                    isExists = !_.isNull(currentVal);
-                    break;
-                case 'empty':
-                    isExists = _.isEmpty(currentVal);
-                    break;
-                case 'isnotempty':
-                    isExists = !_.isEmpty(currentVal);
-                    break;
-                case 'nullorempty':
-                    isExists = _.isNull(currentVal) || _.isEmpty(currentVal);
-                    break;
-                case 'lessthan':
-                    isExists = currentVal < searchVal;
-                    break;
-                case 'lessthanequal':
-                    isExists = currentVal <= searchVal;
-                    break;
-                case 'greaterthan':
-                    isExists = currentVal > searchVal;
-                    break;
-                case 'greaterthanequal':
-                    isExists = currentVal >= searchVal;
-                    break;
-                default:
-                    isExists = isNumberType(searchObj.type) ? _.isEqual(currentVal, searchVal) : _.includes(currentVal, searchVal);
-                    break;
-            }
-            return isExists;
-        });
-        return data;
-    }
-
-    getSearchResult(data, searchObj) {
-        if (!searchObj) {
-            return data;
-        }
-        if (_.isArray(searchObj)) {
-            searchObj.forEach((obj) => {
-                data = this.getFilteredData(data, obj);
-            });
-        } else {
-            data = this.getFilteredData(data, searchObj);
-        }
-        return data;
-    }
-
-    /*Returns data sorted using sortObj*/
-    getSortResult(data, sortObj) {
-        if (sortObj && sortObj.direction) {
-            data = _.orderBy(data, sortObj.field, sortObj.direction);
-        }
-        return data;
-    }
-
-    handleOperation(searchSortObj, e, type) {
-        let data;
-        data = this.shownavigation ? getClonedObject(this.__fullData) : getClonedObject(this.dataset);
-        if (type === 'search') {
-            this.filterInfo = searchSortObj;
-        } else {
-            this.sortInfo = searchSortObj;
-        }
-        if (_.isObject(data) && !_.isArray(data)) {
-            data = [data];
-        }
-        /*Both the functions return same 'data' if arguments are undefined*/
-        data = this.getSearchResult(data, this.filterInfo);
-        data = this.getSortResult(data, this.sortInfo);
-        this.serverData = data;
-        if (this.shownavigation) {
-            // Reset the page number to 1
-            this.dataNavigator.dn.currentPage = 1;
-            this.dataNavigator.setPagingValues(data);
-        } else {
-            this.setGridData(this.serverData);
-        }
-
-        if (type === 'sort') {
-            // Calling 'onSort' event
-            // $is.onSort({$event: e, $data: this.serverData});
         }
     }
 
@@ -501,8 +464,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
 
-        rowActionCol = _.find(this.fullFieldDefs, {'field': 'rowOperations', type: 'custom'}); // Check if column is fetched from markup
-        _.remove(this.fieldDefs, {type: 'custom', field: 'rowOperations'}); // Removing operations column
+        rowActionCol = _.find(this.fullFieldDefs, {'field': ROW_OPS_FIELD, type: 'custom'}); // Check if column is fetched from markup
+        _.remove(this.fieldDefs, {type: 'custom', field: ROW_OPS_FIELD}); // Removing operations column
         _.remove(this.headerConfig, {field: rowOperationsColumn.field});
 
         // Loop through the "rowOperations"
@@ -616,17 +579,26 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return true;
     }
 
-    /* Function to populate the grid with data. */
+    // Function to populate the grid with data.
     populateGridData(serviceData) {
-        /*Allowing when the data is directly given to the dataset*/
-        this.serverData = serviceData;
+        let data;
+        serviceData = transformData(serviceData, this.name);
+        // Apply filter and sort, if data is refreshed through Refresh data method
+        if (!this.shownavigation && this._isClientSearch) {
+            data = getClonedObject(serviceData);
+            data = this.getSearchResult(data, this.filterInfo);
+            data = this.getSortResult(data, this.sortInfo);
+            this.serverData = data;
+        } else {
+            this.serverData = serviceData;
+        }
         /*check if new column defs required*/
         this.setGridData(this.serverData);
     }
 
     watchVariableDataSet(newVal) {
         let result;
-        let _isPageable;
+        let sortExp;
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
         if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
             return;
@@ -652,9 +624,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
 
         /*If the data is a pageable object, then display the content.*/
-        if (_.isObject(newVal) && isPageable(newVal)) {
-            newVal = newVal.content;
-            _isPageable = true;
+        if (_.isObject(newVal)) {
+            if (isPageable(newVal)) {
+                sortExp = getOrderByExpr(newVal.sort);
+                newVal = newVal.content;
+            } else {
+                newVal = newVal.data || newVal;
+            }
         }
 
         // If value is empty or in studio mode, dont enable the navigation
@@ -670,12 +646,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
         }
 
+        if (!this.shownavigation) {
+            this.checkFiltersApplied(sortExp);
+        }
+
+        // TODO: Handle selected item reference data
+
         if (newVal) {
             this.populateGridData(newVal);
         }
     }
 
     onPropertyChange(key: string, newVal) {
+        let enableNewRow;
         switch (key) {
             case 'datasource':
                 this.watchVariableDataSet(this.dataset);
@@ -691,6 +674,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 break;
             case 'filtermode':
                 this.setDataGridOption('filtermode', newVal);
+                break;
+            case 'searchlabel':
+                this.setDataGridOption('searchLabel', newVal);
+                break;
+            case 'rowngclass':
+                this.setDataGridOption('rowNgClass', newVal);
+                break;
+            case 'rowclass':
+                this.setDataGridOption('rowClass', newVal);
                 break;
             case 'navigation':
                 if (newVal === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
@@ -741,6 +733,42 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.navigationSize = '';
                 }
                 break;
+            case 'exportformat':
+                this.exportOptions = [];
+                if (newVal) {
+                    // Populate options for export drop down menu
+                    _.forEach(_.split(newVal, ','), type => {
+                        this.exportOptions.push({
+                            'label'      : type,
+                            'icon'       : exportIconMapping[type]
+                        });
+                    });
+                }
+                break;
+            case 'shownewrow':
+                // Enable new row if shownew is true or addNewRow buton is present
+                enableNewRow = newVal || _.some(this.actions, act => _.includes(act.action, 'addNewRow()'));
+                this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
+                break;
+            case 'show':
+                if (newVal) {
+                    this.invokeEventCallback('show');
+                } else {
+                    this.invokeEventCallback('hide');
+                }
+                break;
+
+        }
+    }
+
+    onStyleChange(key, nv) {
+        switch (key) {
+            case 'width':
+                this.callDataGridMethod('setGridDimensions', 'width', nv);
+                break;
+            case 'height':
+                this.callDataGridMethod('setGridDimensions', 'height', nv);
+                break;
         }
     }
 
@@ -755,45 +783,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this._actions.footer.push(action);
             }
         });
-    }
-
-    ngAfterContentInit() {
-        super.ngAfterContentInit();
-        const runModeInitialProperties = {
-            'showrowindex': 'showRowIndex',
-            'multiselect': 'multiselect',
-            'radioselect': 'showRadioColumn',
-            'filternullrecords': 'filterNullRecords',
-            'enablesort': 'enableSort',
-            'showheader': 'showHeader',
-            'enablecolumnselection': 'enableColumnSelection',
-            'shownewrow': 'showNewRow'
-        };
-
-        this.gridOptions.colDefs = this.fullFieldDefs;
-        this.gridOptions.headerConfig = this.headerConfig;
-        this.gridOptions.rowNgClass = this.rowngclass;
-        this.gridOptions.rowClass = this.rowclass;
-        this.gridOptions.editmode = this.editmode;
-        this.gridOptions.formPosition = this.formposition;
-        this.gridOptions.name = this.name;
-        this.datagridElement = $(this._tableElement.nativeElement);
-
-        _.forEach(runModeInitialProperties, (value, key) => {
-            if (isDefined(this[key])) {
-                this.gridOptions[value] = (this[key] === 'true' || this[key] === true);
-            }
-        });
-
-        this.renderOperationColumns();
-        this.gridOptions.colDefs = this.fieldDefs;
-
-        this.datagridElement.datatable(this.gridOptions);
-        this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
-
-        this.watchVariableDataSet(this.dataset);
-
-        this.applyProps.forEach(args => this.callDataGridMethod(...args));
     }
 
     registerColumns(tableColumn) {
@@ -928,6 +917,28 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
     }
 
+    onDataNavigatorDataSetChange(nv) {
+        let data,
+            variableSort;
+        if (_.isObject(nv) && isPageable(nv)) {
+            variableSort = getOrderByExpr(nv.sort);
+            this.__fullData = nv.content;
+        } else {
+            this.__fullData = nv;
+        }
+        this.checkFiltersApplied(variableSort);
+        if (this._isClientSearch) {
+            data = getClonedObject(this.__fullData);
+            if (_.isObject(data) && !_.isArray(data)) {
+                data = [data];
+            }
+            data = this.getSearchResult(data, this.filterInfo);
+            data = this.getSortResult(data, this.sortInfo);
+            return data;
+        }
+        return nv;
+    }
+
     updateVariable(row?, callBack?) {
         const dataSource = this.datasource;
         // TODO: Filter
@@ -948,15 +959,59 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
+    toggleMessage(show, type, msg, header) {
+        // TODO: Use app notifcation
+        if (show && msg) {
+            // wmToaster.show(type, WM.isDefined(header) ? header : type.toUpperCase(), msg);
+        } else {
+            // wmToaster.hide();
+        }
+    }
+
+    export($item) {
+        let filterFields;
+        const sortOptions = _.isEmpty(this.sortInfo) ? '' : this.sortInfo.field + ' ' + this.sortInfo.direction;
+        const fields = [];
+        let isValid;
+        let requestData;
+        this.fieldDefs.forEach(fieldDef => {
+            // Do not add the row operation actions column to the exported file.
+            if (fieldDef.field === ROW_OPS_FIELD) {
+                return;
+            }
+            const option = {
+                'header': fieldDef.displayName
+            };
+            // If column has exportexpression, then send form the expression as required by backend.
+            // otherwise send the field name.
+            if (fieldDef.exportexpression) {
+                (<any>option).expression = '${' + fieldDef.exportexpression + '}';
+            } else {
+                (<any>option).field = fieldDef.field;
+            }
+            fields.push(option);
+        });
+        filterFields = this.getFilterFields(this.filterInfo);
+        requestData = {
+            'matchMode'    : 'anywhere',
+            'filterFields' : filterFields,
+            'orderBy'      : sortOptions,
+            'exportType'   : $item.label,
+            'logicalOp'    : 'AND',
+            'size'         : this.exportdatasize,
+            'fields'       : fields
+        };
+        isValid = this.invokeEventCallback('beforeexport', {$data: requestData});
+        if (isValid === false) {
+            return;
+        }
+        this.datasource.execute(DataSource.Operation.DOWNLOAD, requestData);
+    }
+
     callEvent(event) {
         // TODO: Change logic to handle all scenarios
         if (event) {
             this[event.substring(0, event.indexOf('('))]();
         }
-    }
-
-    constructor(inj: Injector, @Attribute('dataset.bind') public binddataset) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
     }
 }

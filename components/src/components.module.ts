@@ -93,6 +93,7 @@ import { TableActionDirective } from './widgets/common/table/table-action/table-
 import { TableColumnDirective } from './widgets/common/table/table-column/table-column.directive';
 import { TableColumnGroupDirective } from './widgets/common/table/table-column-group/table-column-group.directive';
 import { TableComponent } from './widgets/common/table/table.component';
+import { TableFilterSortDirective } from './widgets/common/table/table-filter.directive';
 import { TableRowActionDirective } from './widgets/common/table/table-row-action/table-row-action.directive';
 import { TextareaComponent } from './widgets/common/textarea/textarea.component';
 import { TileDirective } from './widgets/common/tile/tile.directive';
@@ -190,6 +191,7 @@ const wmComponents = [
     TableColumnDirective,
     TableColumnGroupDirective,
     TableComponent,
+    TableFilterSortDirective,
     TableRowActionDirective,
     TextareaComponent,
     TileDirective,

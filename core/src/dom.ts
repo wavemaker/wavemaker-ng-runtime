@@ -31,7 +31,8 @@ export const removeNode = (node: HTMLElement, sync?: boolean) => {
     sync ? task() : invokeLater(task);
 };
 
-export const removeClass = (node: HTMLElement, ov: string = '', sync?: boolean) => {
+export const removeClass = (node: HTMLElement, ov: string, sync?: boolean) => {
+    ov = ov || '';
     const task = c => node.classList.remove(c);
     ov.split(' ').forEach(c => {
         if (c.length) {
@@ -40,7 +41,8 @@ export const removeClass = (node: HTMLElement, ov: string = '', sync?: boolean) 
     });
 };
 
-export const addClass = (node: HTMLElement, nv: string = '', sync?: boolean) => {
+export const addClass = (node: HTMLElement, nv: string, sync?: boolean) => {
+    nv = nv || '';
     const task = c => node.classList.add(c);
     nv.split(' ').forEach(c => {
         if (c.length) {

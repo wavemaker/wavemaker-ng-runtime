@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Injector, Output } from '@angular/core';
+import { Component, EventEmitter, Injector, Output, SkipSelf, Inject } from '@angular/core';
 
 import { $watch, DataSource, isDefined, isPageable, switchClass, triggerFn } from '@wm/core';
 
@@ -6,6 +6,7 @@ import { registerProps } from './pagination.props';
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { getOrderByExpr, getWatchIdentifier, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { WidgetRef } from '../../framework/types';
 
 declare const _;
 
@@ -89,6 +90,11 @@ export class PaginationComponent extends StylableComponent {
     filterFields;
     sortOptions;
     binddataset;
+
+    constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this);
+    }
 
     setResult(result) {
         // TODO: Emit event only if result is changed
@@ -415,7 +421,13 @@ export class PaginationComponent extends StylableComponent {
     onPropertyChange(key: string, nv, ov) {
         switch (key) {
             case 'dataset':
-                this.setPagingValues(nv);
+                let data;
+                if (this.parent && this.parent.onDataNavigatorDataSetChange) {
+                    data = this.parent.onDataNavigatorDataSetChange(nv);
+                } else {
+                    data = nv;
+                }
+                this.setPagingValues(data);
                 break;
             case 'navigation':
                 if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
@@ -435,10 +447,5 @@ export class PaginationComponent extends StylableComponent {
                 break;
 
         }
-    }
-
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
     }
 }
