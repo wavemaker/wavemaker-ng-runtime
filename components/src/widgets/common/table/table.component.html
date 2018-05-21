@@ -8,12 +8,8 @@
             <div class="description" [textContent]="subheading"></div>
         </div>
         <div class="panel-actions app-datagrid-actions" *ngIf="exportOptions.length || _actions.header.length">
-            <button wmButton *ngFor="let btn of _actions.header" caption.bind="btn.displayName" show.bind="btn.show"
-                    class="{{btn.class}}"
-                    ngClass.bind="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
-                    iconclass.bind="btn.iconclass" (click)="btn.action" type="button" shortcutkey.bind="btn.shortcutkey"
-                    tabindex.bind="btn.tabindex"
-                    hint.bind="btn.title" attr.disabled.bind="btn.disabled"></button>
+            <ng-container *ngFor="let btn of _actions.header" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+            </ng-container>
             <!--<div wmMenu caption="Export" *ngIf="exportOptions.length"-->
                 <!--dataset.bind="exportOptions" select.event="export($item)" menuposition="down,left"></div>-->
         </div>
@@ -30,14 +26,16 @@
              forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></nav>
     </div>
     <div class="app-datagrid-actions" *ngIf="_actions.footer.length">
-        <button wmButton *ngFor="let btn of _actions.footer" caption.bind="$implicit.displayName"
-                show.bind="$implicit.show" class.bind="$implicit.class"
-                [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
-                iconclass.bind="$implicit.iconclass" (click)="callEvent(btn.action)" type="button"
-                shortcutkey.bind="$implicit.shortcutkey" tabindex.bind="$implicit.tabindex"
-                hint.bind="$implicit.title" attr.disabled.bind="$implicit.disabled"></button>
+        <ng-container *ngFor="let btn of _actions.footer" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+        </ng-container>
     </div>
 </div>
+
+<ng-template #buttonRef let-btn="btn">
+    <button wmButton caption.bind="btn.displayName" show.bind="btn.show" class.bind="btn.class"  iconclass.bind="btn.iconclass" (click)="callEvent(btn.action)"
+            [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
+            type="button" shortcutkey.bind="btn.shortcutkey" tabindex.bind="btn.tabindex" hint.bind="btn.title" attr.disabled.bind="btn.disabled"></button>
+</ng-template>
 
 
 <div #rowActionsContainer>

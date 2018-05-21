@@ -8,9 +8,8 @@
             <div class="description" [textContent]="subheading"></div>
         </div>
         <div class="form-action panel-actions basic-btn-grp">
-            <button *ngFor="let btn of buttonArray | filter : 'position' : 'header'" wmButton name="{{btn.key}}" caption.bind="$implicit.displayName" class.bind="$implicit.class" iconclass.bind="$implicit.iconclass"
-                    (click)="callEvent(btn.action)" type.bind="$implicit.type" hint.bind="$implicit.title" shortcutkey.bind="$implicit.shortcutkey" disabled.bind="$implicit.disabled"
-                    tabindex.bind="btnField.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+            <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'header'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+            </ng-container>
             <button type="button" class="app-icon wi panel-action" *ngIf="collapsible" title="Collapse/Expand"
                      [ngClass]="expanded ? 'wi-minus': 'wi-plus'" (click)="expandCollapsePanel();"></button>
         </div>
@@ -22,8 +21,13 @@
         <ng-content></ng-content>
     </div>
     <div class="basic-btn-grp form-action panel-footer clearfix" [ngClass]="{'modal-footer': isLayoutDialog}" [class.hidden]="!expanded || !showButtons('footer')">
-        <button *ngFor="let btn of buttonArray | filter : 'position' : 'footer'" wmButton name="{{btn.key}}" caption.bind="$implicit.displayName" class.bind="$implicit.class" iconclass.bind="$implicit.iconclass"
-                (click)="callEvent(btn.action)" type.bind="$implicit.type" hint.bind="$implicit.title" shortcutkey.bind="$implicit.shortcutkey" disabled.bind="$implicit.disabled"
-                tabindex.bind="btnField.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+        <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'footer'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+        </ng-container>
     </div>
 </div>
+
+<ng-template #buttonRef let-btn="btn">
+    <button  wmButton name="{{btn.key}}" caption.bind="btn.displayName" class.bind="btn.class" iconclass.bind="btn.iconclass"
+             (click)="callEvent(btn.action)" type.bind="btn.type" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey" disabled.bind="btn.disabled"
+             tabindex.bind="btnField.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+</ng-template>
