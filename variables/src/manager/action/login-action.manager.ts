@@ -16,11 +16,7 @@ export class LoginActionManager extends BaseActionManager {
             loginInfo = {};
 
         /* If login info provided along explicitly with options, don't look into the variable bindings for the same */
-        if (options.loginInfo) {
-            loginInfo = options.loginInfo;
-        } else {
-            loginInfo = variable.dataBinding;
-        }
+        loginInfo = options.loginInfo || options.input || variable.dataBinding;
 
         for (paramKey in loginInfo) {
             // TODO[VIBHU]: check if this logic is required
