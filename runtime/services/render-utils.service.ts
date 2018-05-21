@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs/Subject';
 import { CarouselModule } from 'ngx-bootstrap';
 
-import { WmComponentsModule } from '@wm/components';
+import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
 import { getValidJSON } from '@wm/core';
@@ -104,8 +104,8 @@ const registerVariablesAndActions = (inj: Injector, identifier: string, variable
     const pageVariables = variablesService.register(identifier, variables, pageInstance);
 
     // create namespace for Variables nad Actions on page/partial, which inherits the Variables and Actions from App instance
-    pageInstance.Variables = Object.create(appInstance.Variables);
-    pageInstance.Actions = Object.create(appInstance.Actions);
+    pageInstance.Variables = appInstance ? Object.create(appInstance.Variables) : {};
+    pageInstance.Actions = appInstance ? Object.create(appInstance.Actions) : {};
 
     // assign all the page variables to the pageInstance
     Object.entries(pageVariables.Variables).forEach(([name, variable]) => {
@@ -251,7 +251,7 @@ export class RenderUtilsService {
             .then(() => parseEndResolveFn());
     }
 
-    async renderPrefab(prefabName: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: any) {
+    async renderPrefab(prefabName: string, config: any, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: BaseComponent) {
         const {markup, script, styles, variables} = await this.loadMinJson(getPrefabMinJsonUrl(prefabName));
 
         let onReadyResolveFn = noop;
@@ -260,16 +260,41 @@ export class RenderUtilsService {
         const postConstructFn = (prefabInstance, inj) => {
             this.defineI18nProps(prefabInstance);
             prefabInstance.Widgets = {};
+
             registerVariablesAndActions(inj, prefabName, variables, prefabInstance);
 
             execScript(script, `prefab-${prefabName}`, 'Prefab', prefabInstance, this.app, inj);
 
             prefabInstance.App = this.app;
-            containerWidget.onPropertyChange = prefabInstance.onPropertyChange;
-            containerWidget.onStyleChange = prefabInstance.onPropertyChange;
-            prefabInstance.element = containerWidget.element;
 
-            onReadyPromise.then(() => (prefabInstance.onReady || noop)());
+            (containerWidget as any).onPropertyChange = prefabInstance.onPropertyChange;
+            (containerWidget as any).onStyleChange = prefabInstance.onPropertyChange;
+
+            // prefabInstance.$element = containerWidget.element;
+
+            // bridge events and methods
+            Object.entries((config.properties || {}))
+                .forEach((key, prop) => {
+                    if (prop.type === 'event') {
+                        prefabInstance[key] = (locals: any) => {
+                            const eventName = key.substr(2).toLowerCase();
+                            containerWidget.invokeEventCallback(eventName, (locals || {}));
+                        };
+                    } else if (prop.type === 'method') {
+                        containerWidget[key] = (...args) => {
+                            try {
+                                prefabInstance[prop.method](...args);
+                            } catch {
+                                console.warn(`error in executing prefab-${prefabName} method-${key}`);
+                            }
+                        };
+                    }
+                });
+
+            onReadyPromise.then(() => {
+                (prefabInstance.onReady || noop)();
+                containerWidget.invokeEventCallback('load');
+            });
         };
 
         return this.renderResource(`app-prefab-${prefabName}`, markup, styles, undefined, postConstructFn, vcRef, $target)

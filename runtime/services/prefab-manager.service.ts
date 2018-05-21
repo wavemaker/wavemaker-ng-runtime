@@ -70,6 +70,7 @@ export class PrefabManagerService {
     renderPrefab(prefabName, vcRef, elRef, componentInstance) {
         return this.renderUtils.renderPrefab(
             prefabName,
+            prefabConfigCache.get(prefabName),
             vcRef,
             elRef.nativeElement,
             componentInstance
@@ -88,12 +89,13 @@ export class PrefabManagerService {
                 this.renderPrefab(prefabName, vcRef, elRef, componentInstance);
             });
         }
-        const _promise = Object.create(null);
-        new Promise((res, rej) => {
-            _promise.resolve = res;
-            _promise.reject = rej;
-        });
-        inProgress.set(prefabName, _promise);
+
+        const _promise = {
+            resolve: () => Promise.resolve(),
+            reject: () => Promise.reject('')
+        };
+
+        inProgress.set(prefabName, _promise as any);
 
         return this.loadConfig(prefabName)
             .then(config => this.loadDependencies(prefabName, config))

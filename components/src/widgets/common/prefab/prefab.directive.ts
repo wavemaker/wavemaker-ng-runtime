@@ -21,7 +21,32 @@ export class PrefabDirective extends StylableComponent {
     prefabName: string;
     propsReady: Function;
 
-    prepareProps(props = {}) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName) {
+        const widgetType = `wm-prefab-${prefabName}`;
+        const WIDGET_CONFIG = {widgetType, hostClass: DEFAULT_CLS};
+
+        super(inj, WIDGET_CONFIG, new Promise(res => this.propsReady = res));
+
+        this.prefabName = prefabName;
+        this.widgetType = widgetType;
+
+        styler(this.nativeElement, this);
+    }
+
+    public setPrefabProps(props) {
+        if (!registeredPropsSet.has(this.widgetType)) {
+            register(this.widgetType, this.prepareProps(props));
+        }
+
+        this.propsReady();
+    }
+
+    protected handleEvent() {
+        // do not call the super;
+        // prevent events from getting registered
+    }
+
+    private prepareProps(props = {}) {
         const propsMap = new Map<string, any>();
         Object.entries(props).forEach(([k, v]: [string, any]) => {
             let type = PROP_TYPE.STRING;
@@ -40,25 +65,5 @@ export class PrefabDirective extends StylableComponent {
         registeredPropsSet.add(this.widgetType);
 
         return propsMap;
-    }
-
-    setPrefabProps(props) {
-        if (!registeredPropsSet.has(this.widgetType)) {
-            register(this.widgetType, this.prepareProps(props));
-        }
-
-        this.propsReady();
-    }
-
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName) {
-        const widgetType = `wm-prefab-${prefabName}`;
-        const WIDGET_CONFIG = {widgetType, hostClass: DEFAULT_CLS};
-
-        super(inj, WIDGET_CONFIG, new Promise(res => this.propsReady = res));
-
-        this.prefabName = prefabName;
-        this.widgetType = widgetType;
-
-        styler(this.nativeElement, this);
     }
 }
