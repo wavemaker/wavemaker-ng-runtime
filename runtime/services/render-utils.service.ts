@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { Subject } from 'rxjs/Subject';
-import { CarouselModule } from 'ngx-bootstrap';
+import { CarouselModule, BsDropdownModule } from 'ngx-bootstrap';
 
 import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
@@ -87,7 +87,8 @@ const getDynamicModule = component => {
             ReactiveFormsModule,
             TempModule,
             CommonModule,
-            CarouselModule.forRoot()
+            CarouselModule.forRoot(),
+            BsDropdownModule.forRoot()
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

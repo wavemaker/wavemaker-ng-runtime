@@ -19,7 +19,6 @@ export class NavItemDirective extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }

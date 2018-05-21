@@ -754,4 +754,12 @@ export const convertToBlob = (filepath): Promise<any> => {
 
 export const hasCordova = () => {
     return !!window['cordova'];
-}
+};
+
+export const openLink = (link: string, target: string = '_self') => {
+    if ( hasCordova() && _.startsWith(link, '#')) {
+        location.hash = link;
+    } else {
+        window.open(link, target);
+    }
+};

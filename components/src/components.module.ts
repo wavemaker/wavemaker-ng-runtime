@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -15,6 +15,7 @@ import { TabPaneComponent } from './widgets/common/tabs/tab-pane/tab-pane.compon
 import { AlertDialogComponent } from './widgets/common/dialog/alert-dialog/alert-dialog.component';
 import { AnchorComponent } from './widgets/common/anchor/anchor.component';
 import { AudioComponent } from './widgets/common/audio/audio.component';
+import { BreadcrumbComponent } from './widgets/common/breadcrumb/breadcrumb.component';
 import { ButtonComponent } from './widgets/common/button/button.component';
 import { ButtonGroupDirective } from './widgets/common/button-group/button-group.directive';
 import { CalendarComponent } from './widgets/common/calendar/calendar.component';
@@ -63,11 +64,11 @@ import { LiveFilterDirective } from './widgets/common/form/live-filter.directive
 import { LiveTableComponent } from './widgets/common/live-table/live-table.component';
 import { LoginComponent } from './widgets/common/login/login.component';
 import { MenuComponent } from './widgets/common/menu/menu.component';
-import { MenuDropdownComponent } from './widgets/common/menu/menu-dropdown.component';
-import { MenuDropdownItemComponent } from './widgets/common/menu/menu-dropdown-item.component';
+import { MenuDropdownComponent } from './widgets/common/menu/menu-dropdown/menu-dropdown.component';
+import { MenuDropdownItemComponent } from './widgets/common/menu/menu-dropdown-item/menu-dropdown-item.component';
 import { MessageComponent } from './widgets/common/message/message.component';
 import { NavbarComponent } from './widgets/common/navbar/navbar.component';
-import { NavDirective } from './widgets/common/nav/nav.directive';
+import { NavComponent } from './widgets/common/nav/nav.component';
 import { NavItemDirective } from './widgets/common/nav-item/nav-item.directive';
 import { PageContentDirective } from './widgets/common/page-content/page-content.directive';
 import { PageDirective } from './widgets/common/page/page.directive';
@@ -114,6 +115,7 @@ const wmComponents = [
     AlertDialogComponent,
     AnchorComponent,
     AudioComponent,
+    BreadcrumbComponent,
     ButtonComponent,
     ButtonGroupDirective,
     CalendarComponent,
@@ -165,7 +167,7 @@ const wmComponents = [
     MenuDropdownItemComponent,
     MessageComponent,
     NavbarComponent,
-    NavDirective,
+    NavComponent,
     NavItemDirective,
     PageContentDirective,
     PageDirective,
@@ -239,7 +241,8 @@ const PIPES = [
         ToDatePipe,
         FilterPipe,
         TrustAsPipe,
-        ImagePipe
+        ImagePipe,
+        Location
     ],
     entryComponents: [
         MenuComponent,

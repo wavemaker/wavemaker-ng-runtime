@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 
 import { addClass, removeClass } from '@wm/core';
 
-import { MenuRef } from '../../framework/types';
+import { MenuRef } from '../../../framework/types';
 
 declare const $, _;
 
@@ -66,17 +66,6 @@ export class MenuDropdownComponent implements AfterViewInit {
 
     get menualign() {
         return this.parentMenu && this.parentMenu.menualign;
-    }
-
-    @Input()
-    set menulayout(nv) {
-        removeClass(this.$el, this._menulayout);
-        addClass(this.$el, nv);
-        this._menulayout = nv;
-    }
-
-    get menulayout() {
-        return this.parentMenu && this.parentMenu.menulayout;
     }
 
     get linktarget() {
