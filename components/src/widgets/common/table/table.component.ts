@@ -583,7 +583,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     maxResults: this.pagesize || 5
                 };
                 this.removePropertyBinding('dataset');
-                this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent, this.datasource);
+                this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource);
             }
         }
     }

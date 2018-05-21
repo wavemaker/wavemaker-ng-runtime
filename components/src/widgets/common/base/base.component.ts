@@ -55,7 +55,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * View parent component
      * eg, Page, Partial, Prefab
      */
-    protected readonly pageComponent: any;
+    protected readonly viewParent: any;
 
     /**
      * Style change subject and observable
@@ -121,7 +121,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.nativeElement = elementRef.nativeElement;
         this.widgetType = config.widgetType;
         this.widgetSubType = config.widgetSubType || config.widgetType;
-        this.pageComponent = (inj as any).view.component;
+        this.viewParent = (inj as any).view.component;
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
         this.context = (inj as any).view.context;
         this.widget = ProxyProvider.create(this, proxyHandler);
@@ -207,7 +207,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         const parentContexts = this.inj.get(Context, {});
 
         // assign the context property accordingly
-        if (this.pageComponent !== context) {
+        if (this.viewParent !== context) {
             this.context = context;
         } else {
             this.context = {};
@@ -251,7 +251,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Register the widget with the widgetRegistry
      */
     protected registerWidget(widgetName: string) {
-        this.registerDestroyListener(register(this.widget, this.pageComponent, this.widgetId, widgetName));
+        this.registerDestroyListener(register(this.widget, this.viewParent, this.widgetId, widgetName));
     }
 
     /**
@@ -289,7 +289,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         const locals = this.context;
         locals.widget = this.widget;
 
-        fn = fn.bind(undefined, this.pageComponent, locals);
+        fn = fn.bind(undefined, this.viewParent, locals);
 
         this.eventHandlers.set(eventName, {callback: fn, locals});
 
@@ -308,7 +308,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.registerDestroyListener(
             $watch(
                 expr,
-                this.pageComponent,
+                this.viewParent,
                 this.context,
                 nv => this.widget[propName] = nv,
                 getWatchIdentifier(this.widgetId, propName)

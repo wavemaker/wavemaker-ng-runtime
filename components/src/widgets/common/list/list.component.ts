@@ -348,7 +348,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
 
         dataNavigator.maxResults = this.pagesize || 5;
         this.removePropertyBinding('dataset');
-        this.dataNavigator.setBindDataSet(this.binddataset, this.pageComponent, this.datasource);
+        this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource);
     }
 
     private onDataSetChange(newVal) {
