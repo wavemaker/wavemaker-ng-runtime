@@ -51,6 +51,16 @@ export class LiveFilterDirective {
         };
     }
 
+    execute(operation, options) {
+        if (operation === DataSource.Operation.LIST_RECORDS || operation === DataSource.Operation.DOWNLOAD) {
+            return this.applyFilter(options);
+        }
+        if (operation === DataSource.Operation.GET_OPTIONS) {
+            return this.form.result ? this.form.result.options : {};
+        }
+        return this.form.datasource.execute(operation, options);
+    }
+
     onFieldDefaultValueChange(field, nv) {
         field.minValue = nv;
         field.value = nv;
@@ -70,13 +80,6 @@ export class LiveFilterDirective {
         setTimeout(() => {
             this.filterOnDefault();
         });
-    }
-
-    execute(operation, options) {
-        if (operation === DataSource.Operation.LIST_RECORDS) {
-            return this.applyFilter(options);
-        }
-        return this.form.datasource.execute(operation, options);
     }
 
     onDataSourceChange() {

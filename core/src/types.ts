@@ -26,7 +26,9 @@ enum Operation {
     GET_NAME = 'getName',
     GET_PROPERTIES_MAP = 'getPropertiesMap',
     GET_PRIMARY_KEY = 'getPrimaryKey',
-    GET_BLOB_URL = 'getBlobURL'
+    GET_BLOB_URL = 'getBlobURL',
+    SUPPORTS_SERVER_FILTER = 'supportsServerFilter',
+    GET_OPTIONS = 'getOptions'
 }
 
 export const DataSource = {

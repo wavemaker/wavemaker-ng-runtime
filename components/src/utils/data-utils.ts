@@ -67,8 +67,8 @@ export function performDataOperation(dataSource, requestData, options): Promise<
 export function refreshDataSource(dataSource, options): Promise<any> {
     return new Promise((res, rej) => {
         dataSource.execute(DataSource.Operation.LIST_RECORDS, {
-            // 'filterFields' : filterFields,
-            // 'orderBy'      : sortOptions,
+            'filterFields' : options.filterFields || {},
+            'orderBy' : options.orderBy,
             'page': options.page || 1
         }).then(res, rej);
     });
@@ -409,4 +409,57 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
             }, noop);
         }
     });
+}
+
+// Transform data as required by data table
+export function transformData(dataObject, variableName) {
+    let newObj,
+        tempArr,
+        keys,
+        oldKeys,
+        numKeys,
+        newObject,
+        tempObj;
+
+    // data sanity testing
+    dataObject = dataObject || [];
+    // if the dataObject is not an array make it an array
+    if (!_.isArray(dataObject)) {
+        // if the data returned is of type string, make it an object inside an array
+        if (_.isString(dataObject)) {
+            keys = variableName.substring(variableName.indexOf('.') + 1, variableName.length).split('.');
+            oldKeys = [];
+            numKeys = keys.length;
+            newObject = {};
+            tempObj = newObject;
+
+            // loop over the keys to form appropriate data object required for grid
+            keys.forEach((key, index) => {
+                // loop over old keys to create new object at the iterative level
+                oldKeys.forEach(oldKey  => {
+                    tempObj = newObject[oldKey];
+                });
+                tempObj[key] = index === numKeys - 1 ? dataObject : {};
+                oldKeys.push(key);
+            });
+
+            // change the string data to the new dataObject formed
+            dataObject = newObject;
+        }
+        dataObject = [dataObject];
+    } else {
+        /*if the dataObject is an array and each value is a string, then lite-transform the string to an object
+         * lite-transform: just checking if the first value is string and then transforming the object, instead of traversing through the whole array
+         * */
+        if (_.isString(dataObject[0])) {
+            tempArr = [];
+            _.forEach(dataObject, str => {
+                newObj = {};
+                newObj[variableName.split('.').join('-')] = str;
+                tempArr.push(newObj);
+            });
+            dataObject = tempArr;
+        }
+    }
+    return dataObject;
 }

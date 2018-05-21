@@ -714,7 +714,7 @@ export const getEvaluatedOrderBy = (varOrder, optionsOrder) => {
     let optionFields,
         varOrderBy;
     // If options order by is not defined, return variable order
-    if (!optionsOrder || _.element.isEmptyObject(optionsOrder)) {
+    if (!optionsOrder || _.isEmpty(optionsOrder)) {
         return varOrder;
     }
     // If variable order by is not defined, return options order

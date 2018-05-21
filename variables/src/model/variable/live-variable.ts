@@ -13,6 +13,7 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     liveSource;
     propertiesMap;
     type;
+    _options;
 
     constructor(variable: any) {
         super();
@@ -29,6 +30,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = true;
                 break;
             case DataSource.Operation.IS_PAGEABLE:
+                returnVal = true;
+                break;
+            case DataSource.Operation.SUPPORTS_SERVER_FILTER:
                 returnVal = true;
                 break;
             case DataSource.Operation.GET_OPERATION_TYPE:
@@ -81,6 +85,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
                 break;
             case DataSource.Operation.GET_BLOB_URL:
                 returnVal = `services/${this.liveSource}/${this.type}/${options.primaryValue}/content/${options.columnName}`;
+                break;
+            case DataSource.Operation.GET_OPTIONS:
+                returnVal = this._options || {};
                 break;
             default:
                 returnVal = {};

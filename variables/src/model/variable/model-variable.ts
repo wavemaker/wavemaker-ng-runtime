@@ -30,8 +30,12 @@ export class ModelVariable extends BaseVariable implements IDataSource {
             case DataSource.Operation.IS_PAGEABLE:
                 returnVal = false;
                 break;
+            case DataSource.Operation.SUPPORTS_SERVER_FILTER:
+                returnVal = false;
+                break;
             default:
                 returnVal = {};
+                break;
         }
         return returnVal;
     }
