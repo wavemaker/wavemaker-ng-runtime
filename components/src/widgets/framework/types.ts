@@ -23,7 +23,7 @@ export abstract class FormRef {
 }
 
 export abstract class LiveTableRef {
-    onFormRender: Function;
+    onFormReady: Function;
     isLayoutDialog: boolean;
 }
 

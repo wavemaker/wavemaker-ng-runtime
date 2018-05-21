@@ -65,7 +65,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
             this.table.datagridElement.datatable('option', this.tableOptions);
 
             this.table.selectedItemChange$
-                .debounceTime(500)
+                .debounceTime(250)
                 .subscribe(this.onSelectedItemChange.bind(this));
 
             if (!this.form) {
@@ -104,13 +104,13 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     deleteRow(row, callBackFn?) {
-        this.form.getWidget().rowdata = row;
+        this.form.getWidget().formdata = row;
         this.form.delete(callBackFn);
     }
 
     private _addNewRow() {
         this.form.isSelected = true;
-        this.form.getWidget().rowdata = '';
+        this.form.getWidget().formdata = '';
 
         this.form.new();
 
@@ -130,7 +130,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     private _updateRow(row, eventName) {
-        this.form.getWidget().rowdata = row;
+        this.form.getWidget().formdata = row;
         this.form.isSelected = true;
         this.form.edit();
 
@@ -170,14 +170,14 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
                 rowData = newValue[newValue.length - 1];
             }
 
-            this.form.getWidget().rowdata = getClonedObject(rowData);
+            this.form.getWidget().formdata = getClonedObject(rowData);
             /*If the form is already in update mode, call the form update function*/
             if (this.form.isUpdateMode) {
                 this.form.edit();
             }
         } else {
             this.form.isSelected = false;
-            this.form.getWidget().rowdata = '';
+            this.form.getWidget().formdata = '';
             this.form.clearData();
         }
     }
@@ -235,7 +235,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     // In dialog mode, on form render call the queued functions
-    onFormRender(form) {
+    onFormReady(form) {
         this.form = form;
         setTimeout(() => {
             triggerFn(this.$queue.pop());

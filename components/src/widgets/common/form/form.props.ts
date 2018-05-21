@@ -33,7 +33,6 @@ formMap.set('enctype', PROP_STRING);
 formMap.set('errormessage', {value: 'An error occured. Please try again!', ...PROP_STRING});
 formMap.set('messagelayout', {value: 'Inline', ...PROP_STRING});
 formMap.set('formdata', PROP_STRING_NOTIFY);
-formMap.set('rowdata', PROP_STRING_NOTIFY);
 formMap.set('novalidate', PROP_BOOLEAN_NOTIFY);
 formMap.set('validationtype', {value: 'default', ...PROP_STRING});
 
@@ -53,7 +52,6 @@ liveFormMap.set('deletemessage', {value: 'Record deleted successfully', ...PROP_
 liveFormMap.set('errormessage', {value: 'An error occured. Please try again!', ...PROP_STRING});
 liveFormMap.set('messagelayout', {value: 'Inline', ...PROP_STRING});
 liveFormMap.set('formdata', PROP_STRING_NOTIFY);
-liveFormMap.set('rowdata', PROP_STRING_NOTIFY);
 liveFormMap.set('novalidate', PROP_BOOLEAN_NOTIFY);
 liveFormMap.set('validationtype', {value: 'default', ...PROP_STRING});
 

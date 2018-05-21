@@ -28,7 +28,9 @@ const getValidTime = val => {
 })
 export class LiveFormDirective {
 
-    constructor(@Self() @Inject(FormComponent) private form, public datePipe: ToDatePipe, private dialogService: DialogService) {
+    constructor(@Self() @Inject(FormComponent) private form,
+                public datePipe: ToDatePipe,
+                private dialogService: DialogService) {
         // CUD operations
         form.edit = this.edit.bind(this);
         form.cancel = this.cancel.bind(this);
@@ -175,6 +177,13 @@ export class LiveFormDirective {
         }));
     }
 
+    getPrevformFields() {
+        this.form.formFields.map(field => {
+            const prevField = this.form.prevformFields.find(pField => pField.key === field.key);
+            field.value = prevField.value;
+        });
+    }
+
     getDataObject() {
         if (this.form.operationType === Live_Operations.INSERT) {
             return {};
@@ -284,11 +293,10 @@ export class LiveFormDirective {
     }
 
     getPrevDataValues() {
-        let prevDataValues;
+        const prevDataValues = _.fromPairs(_.map(this.form.prevDataValues, (item) => {
+            return [item.key, item.value];
+        })); // Convert of array of values to an object
         this.form.formFields.forEach(field => {
-            prevDataValues = _.fromPairs(_.map(this.form.prevDataValues, (item) => {
-                return [item.key, item.value];
-            })); // Convert of array of values to an object
             field.value = prevDataValues[field.key];
         });
         return prevDataValues;
@@ -336,7 +344,7 @@ export class LiveFormDirective {
                 this.setPrevformFields();
                 this.setPrevDataValues();
             }
-            this.form.prevDataObject = getClonedObject(this.form.rowdata || {});
+            this.form.prevDataObject = getClonedObject(this.form.formdata || {});
         }
 
         this.setReadonlyFields();
@@ -365,7 +373,7 @@ export class LiveFormDirective {
         this.form.reset();
         /*Show the previous selected data*/
         if (this.form.isSelected) {
-            this.getPrevDataValues();
+            this.getPrevformFields();
         }
         this.form.isUpdateMode = false;
         if (this.form.isLayoutDialog) {
@@ -396,7 +404,7 @@ export class LiveFormDirective {
     delete(callBackFn) {
         this.form.resetFormState();
         this.form.operationType = Live_Operations.DELETE;
-        this.form.prevDataObject = getClonedObject(this.form.rowdata || {});
+        this.form.prevDataObject = getClonedObject(this.form.formdata || {});
         this.form.save(undefined, undefined, undefined, callBackFn);
     }
 
@@ -457,7 +465,7 @@ export class LiveFormDirective {
         };
 
         if (operationType === Live_Operations.UPDATE) {
-            requestData.rowData = this.form.rowdata || this.form.formdata;
+            requestData.rowData = this.form.formdata;
             requestData.prevData = prevData;
         }
 

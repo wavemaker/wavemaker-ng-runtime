@@ -51,7 +51,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     dataoutput;
     datasource;
     formdata;
-    rowdata;
     isSelected;
     prevDataValues;
     prevDataObject;
@@ -134,7 +133,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         if (liveTable) {
             this._liveTableParent = liveTable;
             this.isLayoutDialog = liveTable.isLayoutDialog;
-            liveTable.onFormRender(this);
+            liveTable.onFormReady(this);
         }
 
         this.dialogId = this.nativeElement.getAttribute('dialogId');
@@ -202,7 +201,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 this.widget.validationtype = (newVal === true || newVal === 'true') ? 'none' : 'default';
                 break;
             case 'formdata':
-            case 'rowdata':
                 this.setFormData(newVal);
                 break;
             case 'defaultmode':
@@ -305,9 +303,9 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         this.constructDataObject();
     }
 
-    setFormData(rowData) {
+    setFormData(data) {
         this.formFields.forEach(field => {
-            field.value =  _.get(rowData, field.key || field.name);
+            field.value =  _.get(data, field.key || field.name);
         });
 
         this.constructDataObject();
