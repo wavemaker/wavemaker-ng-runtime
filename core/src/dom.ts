@@ -83,7 +83,7 @@ export const setProperty = (node: HTMLElement, propName: string, val: any, sync?
 };
 
 export const setAttr = (node: HTMLElement, attrName: string, val: any, sync?: boolean) => {
-    const task = () => node.setAttribute(attrName, val);
+    const task = () => node instanceof Element && node.setAttribute(attrName, val);
     sync ? task() : invokeLater(task);
 };
 

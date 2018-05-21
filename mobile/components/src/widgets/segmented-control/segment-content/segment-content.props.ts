@@ -2,7 +2,7 @@ import { PROP_STRING, register } from '@wm/components';
 
 export const registerProps = () => {
     register(
-        'wm-segmented-content',
+        'wm-segment-content',
         new Map(
             [
                 ['caption', {value: '', ...PROP_STRING}],
