@@ -1,9 +1,9 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { TableRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './table-row-action.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { TableComponent } from '../table.component';
 
 declare const _;
 
@@ -33,7 +33,7 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
 
     constructor(
         inj: Injector,
-        @Optional() public _tableParent: TableRef,
+        @Optional() public table: TableComponent,
     ) {
         super(inj, WIDGET_CONFIG);
     }
@@ -56,6 +56,6 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
-        (this._tableParent as any).registerRowActions(this.buttonDef);
+        this.table.registerRowActions(this.buttonDef);
     }
 }

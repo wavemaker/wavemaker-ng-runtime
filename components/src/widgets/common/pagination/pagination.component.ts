@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Injector, Output, SkipSelf, Inject } from '@angular/core';
 
-import { $watch, DataSource, isDefined, isPageable, switchClass, triggerFn } from '@wm/core';
+import { $watch, DataSource, isDefined, isPageable, switchClass, triggerFn, $appDigest } from '@wm/core';
 
 import { registerProps } from './pagination.props';
 import { styler } from '../../framework/styler';
@@ -317,6 +317,7 @@ export class PaginationComponent extends StylableComponent {
                 'matchMode': 'anywhere'
             }).then(response => {
                 this.onPageDataReady(event, response, callback);
+                $appDigest();
             }, error => {
                 // If error is undefined, do not show any message as this may be discarded request
                 if (error) {

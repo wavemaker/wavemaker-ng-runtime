@@ -1,4 +1,4 @@
-import { Directive, Inject, Self } from '@angular/core';
+import { Directive, Inject, Self, Optional } from '@angular/core';
 
 import { $appDigest, DataSource, DataType, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 
@@ -9,6 +9,7 @@ import { DialogService } from '../dialog/dialog.service';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { parseValueByType } from '../../../utils/live-utils';
 import { isDataSetWidget } from '../../../utils/widget-utils';
+import { LiveTableComponent } from '../live-table/live-table.component';
 
 declare const _;
 
@@ -29,8 +30,15 @@ const getValidTime = val => {
 export class LiveFormDirective {
 
     constructor(@Self() @Inject(FormComponent) private form,
+                @Optional() liveTable: LiveTableComponent,
                 public datePipe: ToDatePipe,
                 private dialogService: DialogService) {
+
+        if (liveTable) {
+            this.form._liveTableParent = liveTable;
+            this.form.isLayoutDialog = liveTable.isLayoutDialog;
+            liveTable.onFormReady(this.form);
+        }
         // CUD operations
         form.edit = this.edit.bind(this);
         form.cancel = this.cancel.bind(this);
@@ -90,7 +98,7 @@ export class LiveFormDirective {
         if (field.readonly && field['primary-key'] && field.generator === 'assigned') {
             field.widget.readonly = false;
         }
-        this.setPrevDataValues();
+        this.savePrevDataValues();
     }
 
     onFieldValueChange(field, nv) {
@@ -152,7 +160,7 @@ export class LiveFormDirective {
                 field.value = value;
             }
         });
-        this.setPrevDataValues();
+        this.savePrevDataValues();
         this.form.constructDataObject();
     }
 
@@ -165,7 +173,7 @@ export class LiveFormDirective {
         this.form.isUpdateMode = isDefined(updateMode) ? updateMode : true;
     }
 
-    setPrevformFields() {
+    savePrevformFields() {
         this.form.prevformFields = getClonedObject(this.form.formFields.map(field => {
             return {
                 'key': field.key,
@@ -302,7 +310,7 @@ export class LiveFormDirective {
         return prevDataValues;
     }
 
-    setPrevDataValues() {
+    savePrevDataValues() {
         this.form.prevDataValues = this.form.formFields.map((obj) => {
             return {'key': obj.key, 'value': obj.value};
         });
@@ -339,13 +347,11 @@ export class LiveFormDirective {
 
         this.form.operationType = Live_Operations.UPDATE;
 
-        if (!this.form.isLayoutDialog) {
-            if (this.form.isSelected) {
-                this.setPrevformFields();
-                this.setPrevDataValues();
-            }
-            this.form.prevDataObject = getClonedObject(this.form.formdata || {});
+        if (this.form.isSelected) {
+            this.savePrevformFields();
+            this.savePrevDataValues();
         }
+        this.form.prevDataObject = getClonedObject(this.form.formdata || {});
 
         this.setReadonlyFields();
         this.form.isUpdateMode = true;
@@ -389,13 +395,13 @@ export class LiveFormDirective {
         this.form.resetFormState();
         this.form.operationType = Live_Operations.INSERT;
         this.form.clearMessage();
-        if (this.form.isSelected && !this.form.isLayoutDialog) {
-            this.setPrevformFields();
+        if (this.form.isSelected) {
+            this.savePrevformFields();
         }
         this.emptyDataModel();
         setTimeout(() => {
             this.setDefaultValues();
-            this.setPrevDataValues();
+            this.savePrevDataValues();
             this.form.constructDataObject();
         });
         this.form.isUpdateMode = true;

@@ -19,7 +19,7 @@ import { ButtonComponent } from './widgets/common/button/button.component';
 import { ButtonGroupDirective } from './widgets/common/button-group/button-group.directive';
 import { CalendarComponent } from './widgets/common/calendar/calendar.component';
 import { CarouselDirective } from './widgets/common/carousel/carousel.directive';
-import { CarouselTemplateDirective } from "./widgets/common/carousel/carousel-template/carousel-template.directive";
+import { CarouselTemplateDirective } from './widgets/common/carousel/carousel-template/carousel-template.directive';
 import { ChartComponent } from './widgets/common/chart/chart.component';
 import { CheckboxComponent } from './widgets/common/checkbox/checkbox.component';
 import { CheckboxsetComponent } from './widgets/common/checkboxset/checkboxset.component';

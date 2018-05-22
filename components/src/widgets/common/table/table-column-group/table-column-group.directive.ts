@@ -1,10 +1,10 @@
 import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
 
-import { TableColumnGroupRef, TableRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column-group.props';
-import { provideAs, provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { TableComponent } from '../table.component';
 
 registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
@@ -12,8 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
 @Directive({
     selector: '[wmTableColumnGroup]',
     providers: [
-        provideAsWidgetRef(TableColumnGroupDirective),
-        provideAs(TableColumnGroupDirective, TableColumnGroupRef)
+        provideAsWidgetRef(TableColumnGroupDirective)
     ]
 })
 export class TableColumnGroupDirective extends BaseComponent implements OnInit {
@@ -24,13 +23,12 @@ export class TableColumnGroupDirective extends BaseComponent implements OnInit {
     colClass;
     name;
     textalignment;
-
-    public config;
+    config: any = {};
 
     constructor(
         inj: Injector,
-        @SkipSelf() @Optional() public _groupParent: TableColumnGroupRef,
-        @Optional() public _tableParent: TableRef
+        @SkipSelf() @Optional() public group: TableColumnGroupDirective,
+        @Optional() public table: TableComponent
     ) {
         super(inj, WIDGET_CONFIG);
     }
@@ -38,19 +36,26 @@ export class TableColumnGroupDirective extends BaseComponent implements OnInit {
     populateConfig() {
         this.config = {
             field: this.name,
-            displayName: this.caption,
+            displayName: this.caption || '',
             columns: [],
             isGroup: true,
             accessroles: this.accessroles,
             textAlignment: this.textalignment || 'center',
             backgroundColor: this.backgroundcolor,
-            class: this.colClass
+            class: this['col-class']
         };
+    }
+
+    onPropertyChange(key, nv) {
+        if (key === 'caption') {
+            this.config.displayName = nv || '';
+            this.table.callDataGridMethod('setColumnProp', this.config.field, 'displayName', nv, true);
+        }
     }
 
     ngOnInit() {
         super.ngOnInit();
         this.populateConfig();
-        setHeaderConfigForTable((this._tableParent as any).headerConfig, this.config, this._groupParent && (this._groupParent as any).name);
+        setHeaderConfigForTable(this.table.headerConfig, this.config, this.group && this.group.name);
     }
 }

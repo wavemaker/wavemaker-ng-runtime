@@ -4,12 +4,10 @@ import { $appDigest, getClonedObject, isDefined, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './live-table.props';
-import { FormComponent } from '../form/form.component';
 import { TableComponent } from '../table/table.component';
 import { DialogService } from '../dialog/dialog.service';
 import { StylableComponent } from '../base/stylable.component';
-import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { LiveTableRef } from '../../framework/types';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 declare var $: any;
@@ -23,16 +21,15 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
     selector: '[wmLiveTable]',
     templateUrl: './live-table.component.html',
     providers: [
-        provideAs(LiveTableComponent, LiveTableRef),
         provideAsWidgetRef(LiveTableComponent)
     ]
 })
 export class LiveTableComponent extends StylableComponent implements AfterContentInit {
 
-    @ContentChild(FormComponent) form: FormComponent;
     @ContentChild(TableComponent) table: TableComponent;
 
-    private isLayoutDialog: boolean;
+    form;
+    isLayoutDialog: boolean;
     private dialogId;
     private $queue = [];
 

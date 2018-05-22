@@ -9,12 +9,12 @@ const  VIEW_MODE_OPTIONS = {
 
 // Method to set the header config of the data table
 export const setHeaderConfig = (headerConfig, config, field): void => {
-    _.forEach(headerConfig, (cols) => {
+    _.forEach(headerConfig, cols => {
         if (cols.isGroup) {
             if (cols.field === field) {
                 cols.columns.push(config);
             } else {
-                this.setHeaderConfig(cols.columns, config, field);
+                setHeaderConfig(cols.columns, config, field);
             }
         }
     });
@@ -22,7 +22,7 @@ export const setHeaderConfig = (headerConfig, config, field): void => {
 
 export const setHeaderConfigForTable = (headerConfig, config, fieldName): void => {
     if (fieldName) {
-        this.setHeaderConfig(headerConfig, config, fieldName);
+        setHeaderConfig(headerConfig, config, fieldName);
     } else {
         headerConfig.push(config);
     }
