@@ -230,6 +230,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         onBeforeFormRender: () => {
         },
+        clearViewRef: () => {
+            this.rowActionsContainer.clear();
+        },
         getCompiledTemplate: () => {
             // TODO: Demo code. Need to change
             this.rowActionsContainer.createEmbeddedView(this.rowActionsTmpl);

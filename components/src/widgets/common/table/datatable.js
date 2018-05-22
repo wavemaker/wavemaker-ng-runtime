@@ -2604,6 +2604,7 @@ $.widget('wm.datatable', {
     _appendRowActions: function ($htm, isNewRow, rowData) {
         var self, template,
             rowOperationsCol = this._getRowActionsColumnDef();
+        this.options.clearViewRef();
         if (this.options.rowActions.length || rowOperationsCol) {
             self = this;
             template = self._getRowActionsTemplate();
