@@ -274,7 +274,7 @@ export class RenderUtilsService {
 
             // bridge events and methods
             Object.entries((config.properties || {}))
-                .forEach((key, prop) => {
+                .forEach(([key, prop]) => {
                     if (prop.type === 'event') {
                         prefabInstance[key] = (locals: any) => {
                             const eventName = key.substr(2).toLowerCase();

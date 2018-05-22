@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { IWidgetConfig } from '../../../framework/types';
@@ -20,18 +20,12 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(InputTextComponent)
     ]
 })
-export class InputTextComponent extends BaseInput implements AfterViewInit {
+export class InputTextComponent extends BaseInput {
 
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-    }
-
-    ngAfterViewInit() {
-        setTimeout(() => {
-            console.log(this.ngModel);
-        }, 500);
     }
 }
