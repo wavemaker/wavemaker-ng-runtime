@@ -20,9 +20,7 @@ export class PageWrapperComponent implements OnInit {
         private securityService: SecurityService,
         private routerService: Router,
         private app: App
-    ) {
-        this.metadataService.load();
-    }
+    ) {}
 
     renderPage(pageName) {
         this.vcRef.clear();

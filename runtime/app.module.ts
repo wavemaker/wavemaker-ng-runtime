@@ -35,10 +35,17 @@ import { MobileAppModule } from '@wm/mobile/runtime';
 declare const $;
 declare const _WM_APP_PROPERTIES;
 
-const resolve = {
+const securityConfigResolve = {
+    securityConfig: SecurityConfigResolve,
+};
+
+const appVariablesResolve = {
+    appVariables: AppVariablesResolve
+};
+
+const pageResolve = {
     securityConfig: SecurityConfigResolve,
     metadata: MetadataResolve,
-    appVariables: AppVariablesResolve,
     appJS: AppJSResolve,
     i18n: I18nResolve
 };
@@ -48,13 +55,19 @@ const routes = [
         path: '',
         component: PageWrapperComponent,
         pathMatch: 'full',
-        resolve: resolve
+        resolve: securityConfigResolve
     },
     {
         path: ':pageName',
-        component: PageWrapperComponent,
         pathMatch: 'full',
-        resolve: resolve
+        resolve: pageResolve,
+        children: [
+            {
+                path: '',
+                component: PageWrapperComponent,
+                resolve: appVariablesResolve
+            }
+        ]
     }
 ];
 

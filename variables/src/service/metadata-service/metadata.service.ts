@@ -14,7 +14,7 @@ export class MetadataService {
         return this.metadataMap ? Object.keys(this.metadataMap).length : false;
     }
 
-    load() {
+    load(): Promise<any> {
         return new Promise((resolve, reject) => {
             this.httpClient.get('./services/servicedefs').toPromise().then((response) => {
                 this.metadataMap = response;
