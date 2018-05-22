@@ -13,12 +13,12 @@ export class TimerAction extends BaseAction {
     }
 
     // Backward compatible method
-    trigger(options, success, error) {
+    fire(options, success, error) {
         return getManager().trigger(this, options, success, error);
     }
 
     invoke(options, success, error) {
-        return this.trigger(options, success, error);
+        return this.fire(options, success, error);
     }
 
     cancel() {
