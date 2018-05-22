@@ -1,27 +1,39 @@
 import { Injectable } from '@angular/core';
-import { I18nService } from './i18n.service';
-import { HttpService } from '@wm/http';
+
+import { IAppInternals } from '@wm/core';
 import { SecurityService } from '@wm/security';
+import { HttpService } from '@wm/http';
+
+import { I18nService } from './i18n.service';
 
 declare const _;
+declare const _WM_APP_PROPERTIES: any;
+
+const enum PROJECT_TYPE {
+    APPLICATION = 'APPLICATION',
+    PREFAB = 'PREFAB',
+    TEMPLATE_BUNDLE = 'TEMPLATEBUNDLE'
+}
 
 const noop = (...args) => {};
 
-interface AppInternals {
-    activePageName: string;
-    lastActivePageName: string;
-}
-
 @Injectable()
-export class App {
-    Variables:any;
-    Actions:any;
+export class AppRef {
+    Variables: any;
+    Actions: any;
     onAppVariablesReady = noop;
     onSessionTimeout = noop;
     onPageReady = noop;
     onServiceError =  noop;
 
-    internals: AppInternals = {
+    projectName: string;
+    isPrefabType: boolean;
+    isApplicationType: boolean;
+    isTemplateBundleType: boolean;
+
+    appLocale: any;
+
+    internals: IAppInternals = {
         activePageName: undefined,
         lastActivePageName: undefined
     };
@@ -37,7 +49,15 @@ export class App {
         private httpService: HttpService,
         private securityService: SecurityService
     ) {
+
+        this.projectName = _WM_APP_PROPERTIES.name;
+        this.isPrefabType = _WM_APP_PROPERTIES.type === PROJECT_TYPE.PREFAB;
+        this.isApplicationType = _WM_APP_PROPERTIES.type === PROJECT_TYPE.APPLICATION;
+        this.isTemplateBundleType = _WM_APP_PROPERTIES.type === PROJECT_TYPE.TEMPLATE_BUNDLE;
+
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
+
+        this.appLocale = this.i18nService.getAppLocale();
     }
 
     /**

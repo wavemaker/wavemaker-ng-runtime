@@ -1,5 +1,3 @@
-import { InjectionToken } from '@angular/core';
-
 export class IDataSource {
     execute: (operation: Operation, options?: any) => boolean | string | Promise<any>;
 }
@@ -35,4 +33,25 @@ export const DataSource = {
     Operation
 };
 
-export const AppLocale = new InjectionToken('Application Locale Key');
+export interface IAppInternals {
+    activePageName: string;
+    lastActivePageName: string;
+}
+
+export abstract class App {
+    appLocale: any;
+    Variables: any;
+    Actions: any;
+    onAppVariablesReady: Function;
+    onSessionTimeout: Function;
+    onPageReady: Function;
+    onServiceError: Function;
+    projectName: string;
+    isPrefabType: boolean;
+    isApplicationType: boolean;
+    isTemplateBundleType: boolean;
+    internals: IAppInternals;
+    changeLocale: Function;
+    reload: Function;
+    on401: Function;
+}

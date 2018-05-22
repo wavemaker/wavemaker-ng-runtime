@@ -73,7 +73,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     onError(error?) {
         this.loginMessage = {
             type: 'error',
-            caption: this.errormessage || error || this.viewParent.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
+            caption: this.errormessage || error || this.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
             show: true
         };
         this.invokeEventCallback('error');

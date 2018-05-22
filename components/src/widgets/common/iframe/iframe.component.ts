@@ -1,13 +1,13 @@
 import { Component, Injector, SecurityContext } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
 
-import { AppLocale, encodeUrl, isInsecureContentRequest } from '@wm/core';
+import { encodeUrl, isInsecureContentRequest } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './iframe.props';
 import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
-import { SafeResourceUrl } from '@angular/platform-browser';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
@@ -62,10 +62,8 @@ export class IframeComponent extends StylableComponent {
             if (isInsecureContentRequest(url)) {
                 this.showContentLoadError = true;
 
-                const appLocale = this.inj.get(AppLocale) as any;
-
-                this.errorMsg = `${appLocale.MESSAGE_ERROR_CONTENT_DISPLAY} ${this.iframesrc}`;
-                this.hintMsg = `${appLocale.MESSAGE_ERROR_CONTENT_DISPLAY} ${this.iframesrc}`;
+                this.errorMsg = `${this.appLocale.MESSAGE_ERROR_CONTENT_DISPLAY} ${this.iframesrc}`;
+                this.hintMsg = this.errorMsg;
             }
 
             // iframe dialog opening was not instant without the delay

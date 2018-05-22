@@ -1,10 +1,12 @@
-declare const _WM_APP_PROPERTIES;
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
-import { RenderUtilsService } from '../services/render-utils.service';
+
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
-import { App } from '../services/app.service';
+import { App } from '@wm/core';
+
+import { RenderUtilsService } from '../services/render-utils.service';
+
 
 @Component({
     selector: 'app-page-outlet',

@@ -9,10 +9,9 @@ import { CarouselModule } from 'ngx-bootstrap';
 import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
-import { getValidJSON } from '@wm/core';
+import { getValidJSON, App } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
-import { App } from './app.service';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
@@ -144,11 +143,14 @@ const monitorFragments = (instance, onParseEnd: Promise<void>, onReadyFn) => {
 
 @Injectable()
 export class RenderUtilsService {
-    constructor(private compiler: Compiler, private app: App,
-                private injector: Injector, private route: ActivatedRoute,
-                private resouceMngr: AppResourceManagerService,
-                private i18nService: I18nService) {
-    }
+    constructor(
+        private compiler: Compiler,
+        private app: App,
+        private injector: Injector,
+        private route: ActivatedRoute,
+        private resouceMngr: AppResourceManagerService,
+        private i18nService: I18nService
+    ) {}
 
     getComponentFactory(componentDef, moduleDef) {
         return this.compiler
@@ -204,7 +206,12 @@ export class RenderUtilsService {
             pageInstance.Widgets = {};
             registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
 
-            execScript(script, `page-${pageName}`, 'Page', pageInstance, this.app, inj);
+            let context = 'Page';
+            if (this.app.isPrefabType) {
+                context = 'Prefab';
+            }
+
+            execScript(script, `page-${pageName}`, context, pageInstance, this.app, inj);
 
             pageInstance.App = this.app;
             pageInstance.App.Widgets = Object.create(pageInstance.Widgets);
@@ -267,8 +274,8 @@ export class RenderUtilsService {
 
             prefabInstance.App = this.app;
 
-            (containerWidget as any).onPropertyChange = prefabInstance.onPropertyChange;
-            (containerWidget as any).onStyleChange = prefabInstance.onPropertyChange;
+            containerWidget.registerPropertyChangeListener(prefabInstance.onPropertyChange);
+            containerWidget.registerStyleChangeListener(prefabInstance.onPropertyChange);
 
             // prefabInstance.$element = containerWidget.element;
 

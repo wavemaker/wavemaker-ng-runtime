@@ -3,7 +3,7 @@ import { EventManager } from '@angular/platform-browser';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $parseEvent, $unwatch, $watch, addClass, isDefined, setAttr } from '@wm/core';
+import { $parseEvent, $unwatch, $watch, addClass, App, isDefined, setAttr } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
@@ -58,6 +58,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected readonly viewParent: any;
 
     /**
+     * EventManger to add/remove events
+     */
+    protected readonly eventManager: EventManager;
+
+    /**
+     * App Locale
+     */
+    protected readonly appLocale: any;
+
+    /**
      * Style change subject and observable
      */
     private readonly styleChange = new Subject();
@@ -99,18 +109,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     /**
      * Display type of the component. eg, block(Default), inline-block, inline etc
      */
-    private displayType: string;
-
-    /**
-     * EventManger to add/remove events
-     */
-    protected readonly eventManager: EventManager;
+    private readonly displayType: string;
 
     /**
      * Holds the event registration functions.
      * these functions needs to be executed after onViewInit
      */
     private toBeSetupEventsQueue: Array<Function> = [];
+
 
     protected constructor(
         protected inj: Injector,
@@ -126,6 +132,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.context = (inj as any).view.context;
         this.widget = ProxyProvider.create(this, proxyHandler);
         this.eventManager = inj.get(EventManager);
+
+        this.appLocale = inj.get(App).appLocale || {};
 
         this.initContext();
 

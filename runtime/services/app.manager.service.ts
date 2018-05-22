@@ -6,7 +6,7 @@ import { SecurityService } from '@wm/security';
 import { DialogService } from '@wm/components';
 import { MetadataService, VariablesService } from '@wm/variables';
 
-import { App } from './app.service';
+import { App } from '@wm/core';
 
 declare const _;
 
@@ -22,7 +22,6 @@ export class AppManagerService {
         private $variables: VariablesService,
         private $metadata: MetadataService
     ) {
-        console.log('app manager initialized');
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
 
@@ -189,7 +188,7 @@ export class AppManagerService {
      * @returns {Promise<void>}
      */
     reloadAppData() {
-        return this.loadSecurityConfig().then(()=>{
+        return this.loadSecurityConfig().then(() => {
             return this.loadMetadata().then(() => {
                 this.updateLoggedInUserVariable();
             });

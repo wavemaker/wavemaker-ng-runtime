@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
+
 import { I18nService } from '../services/i18n.service';
 
 @Injectable()

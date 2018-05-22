@@ -1,8 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Resolve } from '@angular/router';
-import * as Utils from '@wm/core';
-import { App } from '../services/app.service';
+import * as core from '@wm/core';
+import { App } from '@wm/core';
 
 let appJsLoaded = false;
 
@@ -17,7 +17,7 @@ export class AppJSResolve implements Resolve<any> {
             .subscribe(response => {
                 // @ts-ignore
                 const appJs = new Function('App', 'Utils', 'Injector', response);
-                appJs(this.app, Utils, this.inj);
+                appJs(this.app, core, this.inj);
                 appJsLoaded = true;
             });
     }

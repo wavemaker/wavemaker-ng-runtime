@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ContentChildren, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
 
-import { AppLocale, noop, removeAttr } from '@wm/core';
+import { noop, removeAttr } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
 import { IWidgetConfig } from '../../../framework/types';
@@ -22,10 +22,9 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass:
         provideAsWidgetRef(AccordionPaneComponent)
     ]
 })
-export class AccordionPaneComponent extends StylableComponent implements OnInit, AfterViewInit {
+export class AccordionPaneComponent extends StylableComponent implements AfterViewInit {
     private isActive = false;
     private $lazyLoad = noop;
-    private expandCollapseIconTitle: string;
 
     public name: string;
 
@@ -105,12 +104,6 @@ export class AccordionPaneComponent extends StylableComponent implements OnInit,
                 }
                 break;
         }
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        const appLocale = this.inj.get(AppLocale) as any;
-        this.expandCollapseIconTitle = `${appLocale.LABEL_COLLAPSE}/${appLocale.LABEL_EXPAND}`;
     }
 
     ngAfterViewInit() {

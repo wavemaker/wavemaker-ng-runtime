@@ -14,7 +14,7 @@
         <span class="label label-{{badgetype}}">{{badgevalue}}</span>
         <button type="button" [attr.aria-expanded]="isActive" [attr.aria-controls]="name"
                 class="app-icon wi panel-action"
-                [title]="expandCollapseIconTitle"
+                title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"
                 [ngClass]="isActive ? 'wi-minus' : 'wi-plus'"><!--Todo aria-expanded state depends on the active state-->
         </button>
     </div>

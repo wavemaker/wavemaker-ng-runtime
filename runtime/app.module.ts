@@ -5,23 +5,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
-import { $parseExpr } from '@wm/core';
+import { $parseExpr, App } from '@wm/core';
 import { WmComponentsModule } from '@wm/components';
 import { VariablesModule } from '@wm/variables';
+import { HttpServiceModule } from '@wm/http';
+import { OAuthModule } from '@wm/oAuth';
+import { WmMobileComponentsModule } from '@wm/mobile/components';
+import { MobileAppModule } from '@wm/mobile/runtime';
 
 import { AppComponent } from './app.component';
 import { PipeProvider } from './services/pipe-provider.service';
 import { RenderUtilsService } from './services/render-utils.service';
 import { PageWrapperComponent } from './components/page-wrapper.component';
-
-import { AppLocale } from '@wm/core';
-import { HttpServiceModule } from '@wm/http';
-import { OAuthModule } from '@wm/oAuth';
-
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
-import { App } from './services/app.service';
+import { AppRef } from './services/app.service';
 import { AppManagerService } from './services/app.manager.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
@@ -29,8 +28,6 @@ import { I18nService } from './services/i18n.service';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { AppVariablesResolve } from './resolves/app-variables.resolve';
 
-import { WmMobileComponentsModule } from '@wm/mobile/components';
-import { MobileAppModule } from '@wm/mobile/runtime';
 
 declare const $;
 declare const _WM_APP_PROPERTIES;
@@ -96,10 +93,10 @@ const routes = [
         MobileAppModule
     ],
     providers: [
+        {provide: App, useClass: AppRef},
         PipeProvider,
         RenderUtilsService,
         MetadataResolve,
-        App,
         AppJSResolve,
         AppVariablesResolve,
         I18nService,
@@ -109,8 +106,7 @@ const routes = [
         PrefabManagerService,
         SecurityConfigResolve,
         DecimalPipe,
-        DatePipe,
-        {provide: AppLocale, useValue: {}} // Todo - vinay update the value
+        DatePipe
     ],
     bootstrap: [AppComponent]
 })

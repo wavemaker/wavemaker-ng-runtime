@@ -1,6 +1,6 @@
-import { AfterContentInit, Component, ContentChildren, ElementRef, Inject, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, ContentChildren, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { AppLocale, noop, setCSS, toggleClass } from '@wm/core';
+import { noop, setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -55,12 +55,13 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
         return this.iconurl || this.iconclass || this.collapsible || this.actions || this.title || this.subheading || this.enablefullscreen;
     }
 
-    constructor(inj: Injector, @Inject(AppLocale) private appLocale: any) {
+    constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
+
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 
         this.fullScreenTitle = `${this.appLocale.LABEL_FULLSCREEN}/${this.appLocale.LABEL_EXITFULLSCREEN}`;
-        this.expandCollapseTitle = `${appLocale.LABEL_COLLAPSE}/${appLocale.LABEL_EXPAND}`;
+        this.expandCollapseTitle = `${this.appLocale.LABEL_COLLAPSE}/${this.appLocale.LABEL_EXPAND}`;
     }
 
     // toggle the panel state between collapsed - expanded. invoke the respective callbacks
@@ -144,4 +145,4 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
     }
 }
 
-//Todo Vinay - menu, action click event
+// Todo Vinay - menu, action click event
