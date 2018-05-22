@@ -5,7 +5,6 @@ import { Subject } from 'rxjs/Subject';
 import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, isEmptyObject, isPageable, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { TableRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
@@ -50,8 +49,7 @@ const ROW_OPS_FIELD = 'rowOperations';
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [
-        provideAsWidgetRef(TableComponent),
-        provideAs(TableComponent, TableRef)
+        provideAsWidgetRef(TableComponent)
     ]
 })
 export class TableComponent extends StylableComponent implements AfterContentInit {

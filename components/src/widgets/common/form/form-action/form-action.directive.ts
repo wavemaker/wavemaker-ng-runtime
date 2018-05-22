@@ -2,8 +2,8 @@ import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
 import { registerProps } from './form-action.props';
 import { StylableComponent } from '../../base/stylable.component';
-import { FormRef } from '@wm/components';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { FormComponent } from '../form.component';
 
 declare const _;
 
@@ -37,7 +37,7 @@ export class FormActionDirective extends StylableComponent implements OnInit {
 
     public buttonDef;
 
-    constructor(inj: Injector, @Optional() public _parentForm: FormRef) {
+    constructor(inj: Injector, @Optional() public form: FormComponent) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -64,6 +64,6 @@ export class FormActionDirective extends StylableComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
-        (this._parentForm as any).registerActions(this.buttonDef);
+        this.form.registerActions(this.buttonDef);
     }
 }

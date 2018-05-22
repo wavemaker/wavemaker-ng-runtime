@@ -1,10 +1,11 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { TableColumnGroupRef, TableRef } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 import { setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { TableComponent } from '../table.component';
+import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
 
 declare const _;
 
@@ -50,8 +51,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit {
 
     constructor(
         inj: Injector,
-        @Optional() public _tableParent: TableRef,
-        @Optional() public _groupParent: TableColumnGroupRef,
+        @Optional() public table: TableComponent,
+        @Optional() public group: TableColumnGroupDirective,
     ) {
         super(inj, WIDGET_CONFIG);
     }
@@ -92,10 +93,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateFieldDef();
-        (this._tableParent as any).registerColumns(this.fieldDef);
-        setHeaderConfigForTable((this._tableParent as any).headerConfig, {
+        this.table.registerColumns(this.fieldDef);
+        setHeaderConfigForTable(this.table.headerConfig, {
             field: this.fieldDef.field,
             displayName: this.fieldDef.displayName
-        }, this._groupParent && (this._groupParent as any).name);
+        }, this.group && this.group.name);
     }
 }

@@ -1,16 +1,15 @@
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-table-column-group',
         new Map(
             [
-                ['accessroles', PROP_STRING],
-                ['backgroundcolor', PROP_STRING_NOTIFY],
-                ['caption', PROP_BOOLEAN],
-                ['colClass', PROP_BOOLEAN],
-                ['name', PROP_STRING_NOTIFY],
-                ['textalignment', PROP_STRING]
+                ['backgroundcolor', PROP_STRING],
+                ['caption', PROP_STRING_NOTIFY],
+                ['col-class', PROP_STRING],
+                ['name', PROP_STRING],
+                ['textalignment', {value: 'center', ...PROP_STRING}]
             ]
         )
     );

@@ -4,12 +4,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { $appDigest, getClonedObject, getFiles, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { FormRef, LiveTableRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig, parseValueByType } from '../../../utils/live-utils';
 import { performDataOperation } from '../../../utils/data-utils';
-import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -25,7 +24,6 @@ const getWidgetConfig = (isLiveForm, isLiveFilter) => (isLiveForm !== null ? LIV
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
     providers: [
-        provideAs(FormComponent, FormRef),
         provideAsWidgetRef(FormComponent)
     ]
 })
@@ -116,8 +114,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     constructor(
         inj: Injector,
         private fb: FormBuilder,
-        @SkipSelf() @Optional() public parentForm: FormRef,
-        @Optional() liveTable: LiveTableRef,
+        @SkipSelf() @Optional() public parentForm: FormComponent,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
         @Attribute('dataset.bind') public binddataset,
@@ -129,12 +126,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         super(inj, getWidgetConfig(isLiveForm, isLiveFilter));
 
         styler(this.nativeElement, this);
-
-        if (liveTable) {
-            this._liveTableParent = liveTable;
-            this.isLayoutDialog = liveTable.isLayoutDialog;
-            liveTable.onFormReady(this);
-        }
 
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});

@@ -1,9 +1,9 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { TableRef } from '../../../framework/types';
 import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './table-action.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { TableComponent } from '../table.component';
 
 declare const _;
 
@@ -35,7 +35,7 @@ export class TableActionDirective extends StylableComponent implements OnInit {
 
     public buttonDef;
 
-    constructor(inj: Injector, @Optional() public _tableParent: TableRef) {
+    constructor(inj: Injector, @Optional() public table: TableComponent) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -60,6 +60,6 @@ export class TableActionDirective extends StylableComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
-        (this._tableParent as any).registerActions(this.buttonDef);
+        this.table.registerActions(this.buttonDef);
     }
 }

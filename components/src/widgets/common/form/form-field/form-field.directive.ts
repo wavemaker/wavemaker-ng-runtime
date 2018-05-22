@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataType, FormWidgetType, toBoolean, removeClass } from '@wm/core';
 
 import { styler } from '../../../framework/styler';
-import { FormRef } from '../../../framework/types';
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { getDefaultViewModeWidget } from '../../../../utils/live-utils';
 import { StylableComponent } from '../../base/stylable.component';
+import { FormComponent } from '../form.component';
 
 declare const _;
 
@@ -82,7 +82,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     constructor(
         inj: Injector,
-        @Optional() form: FormRef,
+        @Optional() form: FormComponent,
         fb: FormBuilder,
         @Attribute('dataset.bind') binddataset,
         @Attribute('widgettype') _widgetType,
@@ -133,7 +133,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         const displayExpr = this.displayexpression || this.displayfield || this.displaylabel;
         if (_.isObject(value)) {
             if (_.isArray(value)) {
-                _.forEach(value, function (obj) {
+                _.forEach(value, obj => {
                     caption.push(this.evaluateExpr(obj, displayExpr));
                 });
             } else {
