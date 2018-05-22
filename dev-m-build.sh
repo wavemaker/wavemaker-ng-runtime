@@ -123,5 +123,6 @@ runtime=$((end-start))
 
 echo -e "${Purple}Execution time: ${runtime}sec${White}\n"
 
+cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/remote-studio/
 cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/static-files/
 echo -e "${Green}Copied files to studio-saas ${White}\n"

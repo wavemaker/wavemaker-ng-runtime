@@ -22,8 +22,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 
 export enum AnimationType {
-    SLIDE_IN = AnimationType.SLIDE_IN,
-    SLIDE_OVER = AnimationType.SLIDE_OVER
+    SLIDE_IN = 'slide-in',
+    SLIDE_OVER = 'slide-over'
 }
 
 @Directive({
@@ -167,7 +167,7 @@ export class LeftPanelDirective extends StylableComponent {
                 addClass(this.$page[0], `left-panel-container-${device}-${12 - newVal}`);
             }
             if (oldVal) {
-                removeClass(this.page[0], `left-panel-container-${device}-${12 - oldVal}`);
+                removeClass(this.$page[0], `left-panel-container-${device}-${12 - oldVal}`);
             }
         });
     }
