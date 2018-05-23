@@ -12,6 +12,7 @@
             "@wm/runtime": ["runtime"],
             "@wm/transpiler": ["transpiler"],
             "@wm/security": ["security"],
+            "@wm/mobile/core": ["mobile/core"],
             "@wm/mobile/components": ["mobile/components"],
             "@wm/mobile/variables": ["mobile/variables"],
             "@wm/mobile/runtime": ["mobile/runtime"]

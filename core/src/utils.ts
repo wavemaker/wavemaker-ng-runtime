@@ -5,6 +5,7 @@ declare const moment;
 declare const document;
 declare const resolveLocalFileSystemURL;
 
+const userAgent = navigator.userAgent;
 const REGEX = {
     SNAKE_CASE: /[A-Z]/g,
     ANDROID: /Android/i,
@@ -63,6 +64,16 @@ function isIE11 () {
 export const isIE = () => {
     return isIE11() || navigator.userAgent.indexOf('MSIE') > -1;
 };
+
+
+export const isAndroid = () => REGEX.ANDROID.test(userAgent);
+
+export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent);
+
+export const isIphone = () => REGEX.IPHONE.test(userAgent);
+export const isIpod = () => REGEX.IPOD.test(userAgent);
+export const isIpad = () => REGEX.IPAD.test(userAgent);
+export const isIos = () => isIphone() || isIpod() || isIpad();
 
 /**
  * this method encodes the url and returns the encoded string
@@ -649,6 +660,8 @@ export const loadStyleSheet = (url, attr) => {
     if (attr && attr.name) {
         link.setAttribute(attr.name, attr.value);
     }
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
     document.head.appendChild(link);
     return link;
 };
@@ -762,4 +775,16 @@ export const openLink = (link: string, target: string = '_self') => {
     } else {
         window.open(link, target);
     }
+};
+
+/* util function to load the content from a url */
+export const fetchContent = (dataType, url: string, inSync: boolean, onSuccess: (any) => void, onError?: () => void): void => {
+    $.ajax({
+        type: 'get',
+        dataType: dataType,
+        url: url,
+        success: onSuccess,
+        error: onError,
+        async: !inSync
+    });
 };

@@ -5,6 +5,7 @@ export * from '../../node_modules/@ionic-native/camera/index';
 export * from '../../node_modules/@ionic-native/contacts/index';
 export * from '../../node_modules/@ionic-native/core/index';
 export * from '../../node_modules/@ionic-native/device/index';
+export * from '../../node_modules/@ionic-native/file/index';
 export * from '../../node_modules/@ionic-native/geolocation/index';
 export * from '../../node_modules/@ionic-native/media-capture/index';
 export * from '../../node_modules/@ionic-native/network/index';

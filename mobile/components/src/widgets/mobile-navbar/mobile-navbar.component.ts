@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy } from '@angular/core';
 
 import { BaseComponent, IWidgetConfig, getImageUrl, PageDirective, LeftPanelDirective, provideAsWidgetRef } from '@wm/components';
+import { DeviceService } from '@wm/mobile/core';
 
 import { registerProps } from './mobile-navbar.props';
 
@@ -16,7 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass:
         provideAsWidgetRef(MobileNavbarComponent)
     ]
 })
-export class MobileNavbarComponent extends BaseComponent {
+export class MobileNavbarComponent extends BaseComponent implements OnDestroy{
 
     public datavalue: string;
     public imagesrc: string;
@@ -24,12 +25,20 @@ export class MobileNavbarComponent extends BaseComponent {
     public showLeftnavbtn: boolean;
     public showSearchbar: boolean;
 
-    constructor(private page: PageDirective, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    private _backBtnListenerDestroyer;
+
+    constructor(private page: PageDirective,
+                private deviceService: DeviceService,
+                inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG);
         page.subscribe('wmLeftPanel:ready', (leftNavPanel: LeftPanelDirective) => {
             if (this.showLeftnavbtn) {
                 this.leftNavPanel = leftNavPanel;
             }
+        });
+        this._backBtnListenerDestroyer = deviceService.onBackButtonTap($event => {
+            this.goBack($event);
+            return false;
         });
     }
 
@@ -40,6 +49,10 @@ export class MobileNavbarComponent extends BaseComponent {
         } else {
             window.history.go(-1);
         }
+    }
+
+    public ngOnDestroy() {
+        this._backBtnListenerDestroyer();
     }
 
     public onPropertyChange(key, nv, ov?) {

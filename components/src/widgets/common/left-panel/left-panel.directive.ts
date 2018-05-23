@@ -70,6 +70,7 @@ export class LeftPanelDirective extends StylableComponent {
         if (this._destroyCollapseActionListener) {
             this._destroyCollapseActionListener();
         }
+        this.page.notify('wmLeftPanel:collapse');
     }
 
     public expand(): void {
@@ -84,6 +85,7 @@ export class LeftPanelDirective extends StylableComponent {
             this.setPageWidthAndPosition(['md', 'sm'], this.columnwidth);
             this.setPageWidthAndPosition(['xs'], this.xscolumnwidth);
         }
+        this.page.notify('wmLeftPanel:expand');
     }
 
     public isGesturesEnabled(): boolean {

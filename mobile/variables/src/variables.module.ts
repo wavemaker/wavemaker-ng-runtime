@@ -1,42 +1,27 @@
 import { NgModule } from '@angular/core';
 
-import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } from '@wm/variables';
-
-import { DeviceService } from './services/device-service';
-import { Device } from '@ionic-native/device';
 import { AppVersion } from '@ionic-native/app-version';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { Calendar } from '@ionic-native/calendar';
 import { Camera } from '@ionic-native/camera';
+import { Device } from '@ionic-native/device';
 import { Contacts } from '@ionic-native/contacts';
 import { MediaCapture } from '@ionic-native/media-capture';
 import { Geolocation } from '@ionic-native/geolocation';
-import { Network } from '@ionic-native/network';
 import { Vibration } from '@ionic-native/vibration';
+
+import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } from '@wm/variables';
+
 import { CalendarService } from './services/calendar-service';
 import { CameraService } from './services/camera-service';
+import { DeviceService } from './services/device-service';
 import { ContactsService } from './services/contacts-service';
 import { ScanService } from './services/scan-service';
-
-const ionicServices = [
-    AppVersion,
-    BarcodeScanner,
-    Calendar,
-    Camera,
-    Contacts,
-    Device,
-    Geolocation,
-    MediaCapture,
-    Network,
-    Vibration
-];
 
 @NgModule({
     imports: [],
     declarations: [],
-    providers: [
-        ...ionicServices
-    ]
+    providers: []
 })
 export class VariablesModule {
 

@@ -377,6 +377,17 @@ then
 fi
 echo -e "${Green}Done with inline templates ${White}\n"
 
+########## mobile core
+echo -e "${Cyan}Building mobile core task ${White}"
+$ROLLUP -c ./mobile/core/rollup.config.js --silent
+if [ "$?" != "0" ]
+then
+    echo -e "${Red}Error in building mobile core task ${White}\n"
+    exit 1
+fi
+echo -e "${Green}Built mobile core task ${White}\n"
+
+
 ########## mobile components
 echo -e "${Cyan}Building mobile components build task ${White}"
 $ROLLUP -c ./mobile/components/rollup.wm-components.build-task.config.js --silent
@@ -425,6 +436,7 @@ $UGLIFYJS ./dist/tmp/wm-core.umd.js \
     ./dist/tmp/wm-security.umd.js \
     ./dist/tmp/wm-components.build-task.umd.js \
     ./dist/tmp/wm-components.umd.js \
+    ./dist/tmp/mobile/wm-core.umd.js \
     ./dist/tmp/mobile/wm-components.build-task.umd.js \
     ./dist/tmp/mobile/wm-components.umd.js \
     ./dist/tmp/wm-variables.umd.js \
