@@ -25,6 +25,6 @@ export abstract class DialogRef<T extends BaseComponent> {}
 export const Context = new InjectionToken('Context Provider Reference');
 
 export interface IDialog {
-    open: () => void;
+    open: (initState?: any) => void;
     close: () => void;
 }

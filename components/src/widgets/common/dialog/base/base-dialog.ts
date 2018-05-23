@@ -31,7 +31,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
      * Opens the dialog
      * Subscribe to the onShown event emitter of bsModal and trigger on-opened event callback
      */
-    public open() {
+    public open(initState?: any) {
         if (this.isOpened) {
             return;
         }
@@ -49,6 +49,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
             this.invokeEventCallback('opened');
             showSubscription.unsubscribe();
         });
+
+        // extend the context with the initState
+        Object.assign(this.context, initState);
 
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
         this.isOpened = true;

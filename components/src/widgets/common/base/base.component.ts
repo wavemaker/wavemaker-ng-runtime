@@ -91,7 +91,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * context of the widget
      * when the widget is preset inside a repeater this context will have the repeater related properties
      */
-    private context: any;
+    protected context: any;
 
     /**
      * Initial state of the widget.

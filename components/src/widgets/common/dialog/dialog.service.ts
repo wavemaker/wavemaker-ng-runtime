@@ -29,14 +29,14 @@ export class DialogService {
      * Opens the dialog with the given name
      * @param {string} name
      */
-    public open(name: string) {
+    public open(name: string, initState?: any) {
         const dialogRef = this.dialogRefs.get(name);
 
         if (!dialogRef) {
             return;
         }
 
-        dialogRef.open();
+        dialogRef.open(initState);
     }
 
     /**
@@ -63,4 +63,3 @@ export class DialogService {
         });
     }
 }
-// Todo: Vinay - accept dialogParams for openDialog method
