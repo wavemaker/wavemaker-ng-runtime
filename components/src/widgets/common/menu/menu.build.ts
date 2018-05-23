@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-menu', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmMenu ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} dropdown [isOpen]="isOpen" [autoClose]="autoclose !== 'disabled'" wmMenu ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

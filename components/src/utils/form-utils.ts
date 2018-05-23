@@ -119,7 +119,7 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
 /**
  * function to get the ordered dataset based on the given orderby
  */
-export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
+export const getOrderedDataSet = (dataSet: any, orderBy: string): Array<any> => {
     if (!orderBy) {
         return _.cloneDeep(dataSet);
     }

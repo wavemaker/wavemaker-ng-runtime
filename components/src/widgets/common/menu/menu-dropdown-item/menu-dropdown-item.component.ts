@@ -1,17 +1,11 @@
 import { AfterViewInit, Component, ComponentFactoryResolver, ElementRef, HostListener, Inject, Input, OnDestroy, Optional, SkipSelf, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { openLink } from '@wm/core';
 
-import { MenuRef } from '../../framework/types';
-import { MenuComponent } from './menu.component';
-import { MenuDropdownComponent } from './menu-dropdown.component';
+import { MenuRef } from '../../../framework/types';
+import { MenuComponent } from '../menu.component';
+import { MenuDropdownComponent } from '../menu-dropdown/menu-dropdown.component';
 
-const openLink = (link: string, target: string) => {
-    if (/*hasCordova && */_.startsWith(link, '#')) {
-        location.hash = link;
-    } else {
-        window.open(link, target);
-    }
-};
 
 const isActiveNavItem = (...args) => true;
 
@@ -72,7 +66,6 @@ export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
             const childMenuCmp = this.childMenuDropdownComponent;
             const childMenuCmpIns = childMenuCmp.instance;
             childMenuCmpIns.items = this.item.children;
-            childMenuCmpIns.menulayout = this.menulayout;
             childMenuCmpIns.menualign = this.menualign;
             childMenuCmp.changeDetectorRef.detectChanges();
         }
@@ -81,7 +74,7 @@ export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
     @HostListener('click', ['$event', 'item']) onSelect = ($event, item) => {
         const args = {$event, item: item.value || item.label};
         const itemAction = args.item[this.parent.itemaction || 'action'],
-            linkTarget = this.linktarget || '_self';
+            linkTarget = this.linktarget;
 
         // If link starts with # and not with #/ replace with #/
         if (this.menuLink && _.startsWith(this.menuLink, '#') && !_.startsWith(this.menuLink, '#/')) {

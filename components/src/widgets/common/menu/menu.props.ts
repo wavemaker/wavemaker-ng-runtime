@@ -24,7 +24,8 @@ export const registerProps = () => {
                 ['menuposition', PROP_STRING_NOTIFY],
                 ['orderby', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
-                ['tabindex', {value: 0, ...PROP_NUMBER}]
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
+                ['type', {value: 'menu', ...PROP_STRING}]
             ]
         )
     );

@@ -336,6 +336,34 @@ export function getEmptyMatchMode(enableemptyfilter) {
     }
     return matchMode;
 }
+
+/**
+ * converts the data passed to array.
+ *  -> Array: [1,2,3] - [1,2,3]
+ *  -> String: a,b,c - ['a','b','c']
+ *  -> object: {a:1} - [{a:1}]
+ *  -> null - []
+ *  -> undefined - []
+ * @param data
+ * @returns {Array<any>}
+ */
+export const createArrayFrom = (data): Array<any> => {
+
+    if (_.isUndefined(data) || _.isNull(data)) {
+        return [];
+    }
+
+    if (_.isString(data)) {
+        data = data.split(',').map(Function.prototype.call, String.prototype.trim);
+    }
+
+    if (!_.isArray(data)) {
+        data = [data];
+    }
+
+    return data;
+}
+
 /**
  * @ngdoc function
  * @name wm.widgets.live.applyFilterOnField
