@@ -24,8 +24,7 @@ registerProps();
 })
 export class DialogComponent extends BaseDialog implements OnInit {
 
-    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
-    @ContentChild(TemplateRef) dialogContent: TemplateRef<any>;
+    @ViewChild('dialogTemplate', {read: TemplateRef}) dialogTemplate: TemplateRef<any>;
 
     constructor(
         inj: Injector,
