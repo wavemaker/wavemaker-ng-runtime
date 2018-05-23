@@ -312,7 +312,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Register a watch on the bound expression
      */
     protected processBindAttr(propName: string, expr: string) {
-        this.initState.delete(propName);
+
+        // if the show property is bound, set the initial value to false
+        if (propName === 'show') {
+            this.initState.set(propName, false);
+        } else {
+            this.initState.delete(propName);
+        }
+
         this.registerDestroyListener(
             $watch(
                 expr,

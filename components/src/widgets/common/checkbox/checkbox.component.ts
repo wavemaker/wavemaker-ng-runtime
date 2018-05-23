@@ -20,13 +20,19 @@ registerProps();
 /*
  * try to convert the chekedvalue and unchecked values to boolean/number
  */
-const unStringify = val => {
+const unStringify = (val, defaultVal) => {
+    if (val === null) {
+        return defaultVal;
+    }
+
     if (val === 'true') {
         return true;
     }
+
     if (val === 'false') {
         return false;
     }
+
     const number = parseInt(val, 10);
     if (!isNaN(number)) {
         return number;
@@ -69,8 +75,8 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     ) {
         super(inj, WIDGET_CONFIG);
 
-        this._checkedvalue = unStringify(checkedVal);
-        this._uncheckedvalue = unStringify(uncheckedVal);
+        this._checkedvalue = unStringify(checkedVal, true);
+        this._uncheckedvalue = unStringify(uncheckedVal, false);
 
         // if the type of the checkbox is toggle update the related classes on the host node
         toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');
