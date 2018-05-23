@@ -4,7 +4,8 @@ export const CONSTANTS = {
     isStudioMode: false,
     isRunMode: true,
     XSRF_COOKIE_NAME: 'wm_xsrf_token',
-    DEFAULT_TIMER_DELAY: 500
+    DEFAULT_TIMER_DELAY: 500,
+    INT_MAX_VALUE: 2147483647
 };
 export const VARIABLE_CONSTANTS = {
     CATEGORY: {

@@ -22,7 +22,6 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 export class SelectComponent extends DatasetAwareFormComponent implements OnInit {
 
     public readonly;
-    private oldValue;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

@@ -1,14 +1,16 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Attribute, Component, Directive, ElementRef, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { $appDigest, getClonedObject } from '@wm/core';
+import { DataSource, findValueOf, isPageable} from '@wm/core';
+import { CONSTANTS } from '@wm/variables';
 
 import { styler } from '../../framework/styler';
-import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { getOrderedDataSet } from '../../../utils/form-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { convertDataToObject, DataSetItem, transformData } from '../../../utils/form-utils';
+import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
+
 import { registerProps } from './search.props';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 declare const _;
 
@@ -17,13 +19,7 @@ const ALL_FIELDS: string = 'All Fields';
 const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'app-search input-group'};
 
 registerProps();
-/**
- * The Search component
- * Represents search widget with dataset, displaylabel, datafield etc., properties.
- * Example of usage:
- * <example-url>http://localhost:4200/search</example-url>
- *
- */
+
 @Component({
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
@@ -32,318 +28,414 @@ registerProps();
         provideAsWidgetRef(SearchComponent)
     ]
 })
-export class SearchComponent extends BaseFormCustomComponent implements OnInit {
 
-    displaylabel;
-    datafield;
+export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
+
     casesensitive;
-    searchkey;
     imagewidth;
-    orderby;
-    displayimagesrc;
+    searchkey;
 
-    /**
-     * Private property to map the datavalue
-     */
-    private proxyDatavalue;
-    private _datavalue;
-    /**
-     * The result of the search input when dropdown is open
-     */
-    result: any;
-    /**
-     * The current page of the result set
-     */
-    private page = 0;
-    /**
-     * Private property to map the formatted dataset based on the collection
-     */
-    private formattedDataSet;
-    /**
-     * Private property to map the dataSource observable to the typeahead
-     */
+    query: string;
     dataSource: Observable<any>;
-    /**
-     * Private property to map the queryModel value
-     */
-    queryModel: string;
-    /**
-     * Private property to get the complete model object of the selected item
-     */
-    private selectedItem;
-    /**
-     * Private property to map the itemsList prepared from the dataset
-     */
-    private itemsList: any;
-    /**
-     * Private property to flag the loading status of the items
-     */
-    private _loadingItems;
-    private _dataset;
-    /**
-     * The dataset property to set the search results
-     */
-    set dataset(data) {
-        this._dataset = data;
-    }
 
-    get dataset() {
-        return this.itemsList;
-    }
+    private formattedDataSet;
+    private pagesize: any;
+    private limit: any;
+    private datasource;
+    private oldQuery;
+    private lastPage: boolean;
+    private page = 1;
 
-    get datavalue() {
-        return this.proxyDatavalue;
-    }
+    private showsearchicon;
 
-    /**
-     * The default value to be assigned on the search input
-     */
-    set datavalue(newVal) {
-        this._datavalue = newVal;
-    }
+    protected variableDataSource;
+    protected localDataSource;
 
-    onDatasetChange(newVal?) {
-        let dataSet;
+    private queryModel: DataSetItem[];
+    private _defaultQuery;
+    private isPaginatedData: boolean;
+    private itemIndex;
+    private minLength: number;
+    private _loadingItems: boolean;
 
-        newVal = newVal || this._dataset;
-
-        // get the variable-data w.r.t the variable type
-        newVal = (newVal && newVal.data) || newVal;
-        // set data-set
-        dataSet = getClonedObject(newVal);
-        // if data-set is an array, show the 'listOfObjects' mode
-        if (_.isArray(dataSet)) {
-            // Removing null values from dataSet.
-            _.remove(dataSet, (o) => {
-                return _.isUndefined(o) || _.isNull(o);
-            });
-
-            dataSet = getOrderedDataSet(dataSet, this.orderby);
-            // check if dataSet contains list of objects, then switch to 'listOfObjects', else display 'default'
-            if (_.isObject(dataSet[0])) {
-                _.forEach(dataSet, (eachItem, index) => {
-                    const itemValue = dataSet[index];
-                    if (_.isObject(itemValue)) {
-                        // convert display-label-value to string, as ui.typeahead expects only strings
-                        itemValue.wmDisplayLabel = getEvaluatedData(eachItem, {displayexpression: this.displaylabel});
-                        // to save all the image urls
-                        itemValue.wmImgSrc = getEvaluatedData(eachItem, {displayexpression: this.displayimagesrc});
-                        itemValue.wmImgWidth = this.imagewidth;
-                    }
-                });
-            } else {
-                // convert all the values in the array to strings
-                _.forEach(dataSet, (val, index) => {
-                    dataSet[index] = _.toString(val);
-                });
-            }
-
-            // set the itemList. If page number is greater than 1, append the results.
-            this.itemsList = this.page > 1 ? this.itemsList.concat(dataSet) : dataSet;
-
-        } else if (_.isString(dataSet) && dataSet.trim()) {
-            // make the string an array, for ex. => if dataSet is 1,2,3 then make it [1,2,3]
-            this.dataset = _.split(dataSet, ',');
-            return;
-        } else if (_.isObject(dataSet)) {
-            this.dataset = _.join(Object.keys(dataSet), ',');
-            return;
-        }
-        this.formattedDataSet = this.page > 1 ? this.formattedDataSet.concat(dataSet) : dataSet;
-
-        $appDigest();
-        // update the queryModel, if the default value is given and formatted Dataset is defined.
-        /*
-        if (!isVariableUpdateRequired($is, element.scope(), true) || ($is.formattedDataSet.length && !$is.isDefaultValueExist && WM.isDefined($is.datavalue) && $is.datavalue !== '')) {
-            updateQueryModel($is, element);
-            $is.isDefaultValueExist = true;
-        }
-        */
-    }
-
-    onDataValueChange(newVal?) {
-        let model;
-        newVal = newVal || this._datavalue;
-        if (newVal && this.dataset) {
-            model = this.getDataObjbyDataField(newVal);
-            if (!_.isEmpty(model)) {
-                model = model[0];
-                this.selectedItem = getClonedObject(model);
-                this.proxyDatavalue = (this.datafield && this.datafield !== ALL_FIELDS) ? (this.selectedItem && _.get(this.selectedItem, this.datafield)) : this.selectedItem;
-                this.queryModel = getEvaluatedData(model, {displayexpression: this.displaylabel});
-            } else {
-                this.selectedItem = this.proxyDatavalue = this.queryModel = undefined;
-            }
-        }
-        this.invokeOnChange(this.datavalue);
-        $appDigest();
-    }
-
-    get query() {
-        return this.queryModel;
-    }
-
-    set query(newVal) {
-        this.queryModel = newVal;
-        $appDigest();
-    }
-
-    constructor(inj: Injector) {
+    constructor(inj: Injector, @Attribute('datavalue.bind') private binddatavalue, @Attribute('dataset.bind') private binddataset) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
-    }
 
-    public onClearSearch() {
-        this.queryModel = '';
-    }
+        /**
+         * Listens for the change in the ngModel on every search and retreives the data as observable.
+         * This observable data is passed to the typeahead.
+         * @type {Observable<any>}
+         */
+        this.dataSource = Observable.create((observer: any) => {
+            // Runs on every search
+            observer.next(this.query);
+            this.oldQuery = this.query;
 
-    public onQueryModelChange() {
-        this.datavalue = this.queryModel;
-    }
+        }).mergeMap((token: string) => (this.getDataSourceAsObservable(token)));
 
-    public onSearchKeyDown($event) {
-        this.invokeEventCallback('submit', {$event, value: this.queryModel});
-    }
+        /**
+         * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
+         * after getting the response, set the queryModel and query.
+         */
+        this.datavalue$.subscribe((val) => {
+            if (!_.isUndefined(val) && _.isUndefined(this.proxyModel)) {
+                // make call.
+                this.fetchDefaultModel().then(response => {
+                    const dataSet = convertDataToObject(this.dataset);
+                    this.itemIndex = dataSet.length;
+                    if (!_.isArray(response)) {
+                        response = [response];
+                    }
+                    // Todo: [bandhavya] verify after this change.
+                    this.queryModel = transformData(response, this.datafield, this.displaylabel, this.displayexpression, this.displayimagesrc, this.itemIndex);
 
-    /**
-     * Private method to get the the dataobj by the datafield
-     */
-    private getDataObjbyDataField(matchValue) {
-        return _.filter(this.dataset, (item) => {
-            if (item[this.datafield] === matchValue) {
-                return true;
+                    // Show the label value on input.
+                    this.query = this.queryModel[0].label;
+                });
             }
         });
-    }
 
-    /**
-     * Private method to get the unique objects by the data field
-     */
-    private getUniqObjsByDataField(data, dataField, displayField, isLocalSearch) {
-        let uniqData;
-        const isAllFields = dataField === ALL_FIELDS;
-
-        uniqData = isAllFields ? _.uniqWith(data, _.isEqual) : _.uniqBy(data, dataField);
-
-        if (!displayField && isLocalSearch) {
-            return uniqData;
-        }
-
-        // return objects having non empty datafield and display field values.
-        return _.filter(uniqData, (obj) => {
-            if (isAllFields) {
-                return _.trim(obj.wmDisplayLabel);
-            }
-            return !!_.trim(_.get(obj, dataField)) && _.trim(obj.wmDisplayLabel);
-        });
-    }
-
-    /**
-     * Private method to filter the search fields based on the search inputs, returns ScalableObservable instance with the data
-     */
-    private filterData(token: string): Observable<any> {
-        const keys = _.split(this.searchkey, ',');
-        /*push the wmDisplayLabel to match the display label formatted*/
-        keys.push('wmDisplayLabel');
-        const result = _.filter(this.dataset, (item: any) => {
-            return keys.some((key) => {
-                let a = _.get(item, key),
-                    b = token;
-                if (!this.casesensitive) {
-                    a = _.toLower(_.toString(a));
-                    b = _.toLower(_.toString(b));
-                }
-                return _.includes(a, b);
-            });
-        });
-
-        this.updateResult(result);
-        return Observable.of(this.getUniqObjsByDataField(result, this.datafield, this.displaylabel, true));
-    }
-
-    /**
-     * Private method to update the result and change the datavalue if results are empty
-     */
-    private updateResult(matchedItems) {
-        // on typing the value in input, make the datavalue undefined, if no matches found.
-        if (!matchedItems || _.isEmpty(matchedItems)) {
-            this.proxyDatavalue = undefined;
-        }
-        this.invokeOnChange(this.datavalue);
-        this.result = (this.datafield === ALL_FIELDS || !this.datafield) ? matchedItems : _.map(matchedItems, this.datafield);
-        $appDigest();
-    }
-
-    /**
-     * Private method wrapper to map the selectedValue to onSelect, onSubmit Events
-     */
-    private onTypeAheadSelect($event: TypeaheadMatch | any) {
-        this.invokeOnTouched();
-        $event = $event || <TypeaheadMatch>{};
-
-        let $item = getClonedObject($event.item);
-
-        $item = this.selectedItem = $item || (this.proxyDatavalue === _.get(this.selectedItem, this.datafield) ? this.selectedItem : undefined);
-
-        const $label = $item && getEvaluatedData($item, {displayexpression: this.displaylabel});
-
-        if ($item && ($item.wmImgSrc || $item.wmDisplayLabel)) {
-            delete $item.wmImgSrc;
-            delete $item.wmImgWidth;
-            delete $item.wmDisplayLabel;
-        }
-
-        // add the selected object to the event.data and send to the user
-        $event.data = {'item': $item, 'model': $item, 'label': $label, 'query': $label};
-
-        delete $event.item;
-        // set selected item on widget's exposed property
-        this.proxyDatavalue = (this.datafield && this.datafield !== ALL_FIELDS) ? ($item && _.get($item, this.datafield)) : $item;
-        this.queryModel = $label;
-        this.result = [];
-        // call user 'onSubmit & onSelect' fn
-        this.invokeEventCallback('select', {$event, newVal: this.proxyDatavalue});
-        this.invokeEventCallback('submit', {$event});
-        this.invokeOnChange(this.datavalue);
-    }
-
-    /**
-     * Private method to change the loading status of the flag
-     */
-    private setLoadingItemsFlag(flag) {
-        this._loadingItems = flag;
-    }
-    /**
-     * Private method wrappper to the keyDown event
-     */
-    private executeKeyDownEvent = ($event) => {
-        this.invokeEventCallback('keydown', {$event});
+        this._defaultQuery = true;
     }
 
     ngOnInit() {
         super.ngOnInit();
-        this.dataSource = Observable.create((observer: any) => {
-            observer.next(this.queryModel);
-        }).mergeMap((token: string) => this.filterData(token));
+        styler(this.nativeElement.children[0] as HTMLElement, this);
     }
 
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'scopedataset':
-            case 'dataset':
-                this.onDatasetChange(newVal);
-                break;
-            case 'scopedatavalue':
-            case 'datavalue':
-                this.onDataValueChange(newVal);
-                break;
-            case 'displaylabel':
-            case 'displayimagesrc':
-            case 'datafield':
-                this.onDatasetChange();
-                this.onDataValueChange();
-                break;
+    get showFooter() {
+        return !this._loadingItems && this.isPaginatedData && this.lastPage;
+    }
+
+    // OptionsListTemplate listens to the scroll event and triggers this function.
+    public onScroll ($scrollEl, evt: Event) {
+        const totalHeight = $scrollEl.scrollHeight,
+            clientHeight = $scrollEl.clientHeight;
+
+        // If scroll is at the bottom and no request is in progress and next page records are available, fetch next page items.
+        if (!this._loadingItems && !this.lastPage && (totalHeight * 0.9 < $scrollEl.scrollTop + clientHeight)) {
+            this.triggerSearch(true);
         }
     }
+
+    private triggerSearch(incrementPage?) {
+        // Increase the page number and trigger force query update
+        this.page = incrementPage ? this.page + 1 : this.page;
+
+        // Todo:[bandhavya] .next trigger manually to fetch the results.
+        // this.query = this.nativeElement.querySelector('input').value;
+    }
+
+    // This function returns an observable containing the search results.
+    // if searchKey is defined, then variable call is made using the searchkey and other filterfields
+    // else local data search is performed.
+    getDataSourceAsObservable(token: string): Observable<any> {
+        if (!this.dataset || (_.isArray(this.dataset) && !this.dataset.length)) {
+            return;
+        }
+        this._loadingItems = true;
+
+        const dataSet = convertDataToObject(this.dataset);
+
+        const dataConfig = {
+            dataset: dataSet,
+            datasource: this.datasource,
+            datafield: this.datafield,
+            queryText: token || this.query,
+            searchKey: this.searchkey,
+            casesensitive: this.casesensitive,
+            defaultQuery: this._defaultQuery
+        };
+
+        return Observable.from(new Promise((resolve, reject) => {
+            if (this.searchkey) {
+                _.assignIn(dataConfig, {
+                    orderby: this.orderby,
+                    limit: this.limit,
+                    pagesize: this.pagesize,
+                    page: this.page
+                });
+
+                this.variableDataSource = new VariableDataSource(dataConfig);
+
+                this.variableDataSource.filter().then(response => {
+                    this.handleQuerySuccess(response).then((result) => {
+                        this._loadingItems = false;
+                        resolve(result);
+                    });
+                }).catch((err) => {
+                    // setting loadingItems to false when some error occurs, so that loading icon is hidden
+                    this._loadingItems = false;
+                });
+            } else {
+                this.localDataSource = new LocalDataSource(dataConfig);
+
+                return this.localDataSource.filter().then(response => {
+                    if (!_.isArray(response)) {
+                        response = [response];
+                    }
+                    const result = transformData(response, this.datafield, this.displaylabel, this.displayexpression, this.displayimagesrc);
+                    resolve(result);
+                }).then(() => this._loadingItems = false);
+            }
+        }));
+    }
+
+    // set the minLength, showsearchicon depending on type.
+    set type(val) {
+        if (val === 'autocomplete') {
+            this.minLength = 0;
+        } else {
+            this.minLength = _.isUndefined(this.minLength) ? this.minLength : 1;
+        }
+        this.showsearchicon = _.isUndefined(this.showsearchicon) ? this.showsearchicon : val === 'search';
+    }
+
+    // defaultQuery is set only when default datavalue is available, reset to false when onchange is triggerred.
+    private onInputChange() {
+        if (this._defaultQuery) {
+            this._defaultQuery = false;
+        }
+    }
+
+    private fetchVariableData(queryText) {
+        return this.getDataSourceAsObservable(queryText).toPromise();
+    }
+
+    // Makes call to fetch the default data only when _defaultQuery is true.
+    private fetchDefaultModel() {
+        return new Promise((resolve, reject) => {
+            if (this.datafield === ALL_FIELDS) {
+                // Todo convert to datasetItem
+                resolve(this.datavalue);
+            } else {
+                // Null values in query params returns all records. So datavalue other than null values are considered.
+                if (this._defaultQuery && !_.isUndefined(this.datavalue) && !_.isNull(this.datavalue) && this.datavalue !== '') {
+                    this.fetchVariableData(this.datavalue).then((response) => {
+                        resolve(response);
+                    });
+                }
+            }
+        });
+    }
+
+    // Todo: [bandhavya] this flag is required ?
+    // function isVariableUpdateRequired($is, scope, calledFromSetDataSet) {}
+
+    // Todo: [bandhavya] full-screen mode for mobile.
+
+    // Check if the page retrieved currently is the last page. If last page, don't send any more request
+    private isLastPage(page, dataSize, maxResults, currentResults?): boolean {
+        // if last page info is not returned by backend and current results is less than max results, this is the last page
+        if (dataSize === CONSTANTS.INT_MAX_VALUE) {
+            return currentResults !== 0 && currentResults < maxResults;
+        }
+        const pageCount = ((dataSize > maxResults) ? (Math.ceil(dataSize / maxResults)) : (dataSize < 0 ? 0 : 1));
+        return page === pageCount;
+    }
+
+    // this function transform the response data in case it is not an array
+    private getTransformedData(variable, data) {
+        const operationResult = variable.operation + 'Result', // when output is only string it is available as oprationNameResult
+            tempResponse    = data[operationResult],
+            tempObj         = {};
+        // in case data received is value as string then add that string value to object and convert object into array
+        if (tempResponse) {
+            _.set(tempObj, operationResult, tempResponse);
+            data = [tempObj]; // convert data into an array having tempObj
+        } else {
+            // Todo [bandhavya] check if required.
+            // in case data received is already an object then convert it into an array
+            data = convertDataToObject(data);
+        }
+
+        return data;
+    }
+
+    /**
+     * this function processes the response depending on pageOptions, isPageable and prepares the formattedDataset.
+     */
+    private handleQuerySuccess = (response) => {
+        let data = isPageable(response) ? response.content : response,
+            index,
+            restExpr,
+            formattedData;
+        const expressionArray = _.split(this.binddataset, '.'),
+            dataExpression = _.slice(expressionArray, _.indexOf(expressionArray, 'dataSet') + 1).join('.'),
+            $I = '[$i]';
+
+        return new Promise((resolve, reject) => {
+            const pageOptions = response.pageOptions;
+            if (pageOptions) {
+                this.page = pageOptions.currentPage;
+                this.lastPage = this.isLastPage(this.page, pageOptions.dataSize, pageOptions.maxResults);
+                this.isPaginatedData = true;
+            } else if (_.isObject(response) && isPageable(response)) {
+                this.page = response.number + 1;
+                this.lastPage = this.isLastPage(this.page, response.totalElements, response.size, response.numberOfElements);
+                this.isPaginatedData = true;
+                /*TODO: [bandhavya] This workaround is because backend is not giving the last page in distinct api. Remove after issue is fixed in backend*/
+                if (this.page > 1 && !this.lastPage && _.isEmpty(response.content) && response.totalElements === CONSTANTS.INT_MAX_VALUE) {
+                    this.lastPage = true;
+                    resolve(this.formattedDataSet);
+                    return;
+                }
+            }
+            // if data expression exists, extract the data from the expression path
+            if (dataExpression) {
+                index = dataExpression.lastIndexOf($I);
+                restExpr = dataExpression.substr(index + 5);
+
+                if (_.isArray(data)) {
+                    formattedData = data.map((datum) => {
+                        return findValueOf(datum, restExpr);
+                    });
+                } else if (_.isObject(data)) {
+                    formattedData = _.get(data, dataExpression);
+                }
+
+                data = formattedData || data;
+            }
+            if (!_.isArray(data)) {
+                data = this.getTransformedData(this.datasource, data);
+            }
+            // in case of no data received, resolve the promise with empty array
+            if (!data.length) {
+                resolve([]);
+            } else {
+                this.formattedDataSet = this.page > 1 ? this.formattedDataSet.concat(data) : data;
+
+                resolve(transformData(this.formattedDataSet, this.datafield, this.displaylabel, this.displayexpression, this.displayimagesrc));
+            }
+        });
+    }
+
+    private handleQueryError() {
+        // setting loadingItems to false when some error occurs, so that loading icon is hidden
+        this._loadingItems = false;
+    }
+
+    // triggered on select on option from the list. Set the queryModel, query and proxyModel from the matched item.
+    typeaheadOnSelect($event, match: TypeaheadMatch): void {
+        const item = match.item;
+        this.queryModel = item;
+        item.selected = true;
+        this.query = item.label;
+        this.proxyModel = item.key;
+
+        this.invokeOnTouched();
+        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
+        this.oldValue = this.datavalue;
+        this.oldQuery = this.query;
+    }
+
+    // Todo: Close the full screen mode in mobile view of auto complete
+    closeSearch(): void {
+        this.page = 1;
+    }
+
+
+    // Todo: this functions clears the input value
+    private clearText() {
+    }
+
+    // Todo: Clear the search and trigger the search with empty value
+    clearSearch(): void {
+        this.page = 1;
+    }
 }
+
+export class LocalDataSource {
+    private dataset: any[];
+    private queryText: string;
+    private searchKey: string;
+    private casesensitive: boolean;
+
+    constructor(dataConfig) {
+        this.dataset = dataConfig.dataset;
+        this.queryText = dataConfig.queryText;
+        this.searchKey = dataConfig.searchKey;
+        this.casesensitive = dataConfig.casesensitive;
+    }
+
+    // LocalData filtering is done based on the searchkey.
+    public filter() {
+            const entries = this.dataset;
+            const casesensitive = this.casesensitive;
+            let queryText = this.queryText;
+
+            return new Promise((resolve, reject) => {
+                if (this.searchKey) {
+                    const keys = _.split(this.searchKey, ',');
+                    /*push the wmDisplayLabel to match the display label formatted*/
+                    // Todo: why wmDisplayLabel is the key.
+                    keys.push('label');
+                    resolve(_.filter(this.dataset, (item: any) => {
+                        return keys.some((key) => {
+                            let a = _.get(item, key),
+                                b = queryText;
+                            if (!casesensitive) {
+                                a = _.toLower(_.toString(a));
+                                b = _.toLower(_.toString(b));
+                            }
+                            return _.includes(a, b);
+                        });
+                    }));
+                } else {
+                    // local search on data with array of objects.
+                    if (_.isArray(entries) && _.isObject(entries[0])) {
+                        resolve(_.filter(entries, entry => {
+                            return (_.includes(_.toLower(_.values(entry).join(' ')), _.toLower(queryText)));
+                        }));
+                    } else {
+                        resolve(_.filter(entries, entry => {
+                            if (!casesensitive) {
+                                entry = _.toLower(entry);
+                                queryText = _.toLower(queryText);
+                            }
+                            return _.includes(entry, queryText);
+                        }));
+                    }
+                }
+            });
+    }
+}
+
+// This class contains filter method which makes call to search records for live or service variable.
+export class VariableDataSource {
+    datasource;
+    private datafield: any[];
+    private queryText: string;
+    private searchkey: string;
+    private casesensitive: boolean;
+    private defaultQuery: boolean;
+    private orderby: any;
+    private limit: any;
+    private pagesize;
+    private page;
+
+    constructor(dataConfig) {
+        this.defaultQuery = dataConfig.defaultQuery;
+        this.datafield = dataConfig.datafield;
+        this.queryText = dataConfig.queryText;
+        this.searchkey = dataConfig.searchKey;
+        this.casesensitive = dataConfig.casesensitive;
+        this.orderby = dataConfig.orderby;
+        this.limit = dataConfig.limit;
+        this.pagesize = dataConfig.pagesize;
+        this.datasource = dataConfig.datasource;
+        this.page = dataConfig.page;
+    }
+
+    public filter() {
+        return this.datasource.execute(DataSource.Operation.SEARCH_RECORDS, {
+            searchKeys: this.defaultQuery ? _.split(this.datafield, ',') : _.split(this.searchkey, ','),
+            searchValue: this.queryText,
+            orderBy: this.orderby ? _.replace(this.orderby, /:/g, ' ') : '',
+            pagesize: this.limit || this.pagesize,
+            page: this.page
+        });
+    }
+}
+
 

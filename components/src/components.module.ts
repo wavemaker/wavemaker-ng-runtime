@@ -86,6 +86,7 @@ import { RedrawableDirective } from './widgets/common/redraw/redrawable.directiv
 import { RichTextEditorComponent } from './widgets/common/rich-text-editor/rich-text-editor.component';
 import { RightPanelDirective } from './widgets/common/right-panel/right-panel.directive';
 import { SearchComponent } from './widgets/common/search/search.component';
+import { ScrollableDirective } from './widgets/common/search/scrollable.directive';
 import { SelectComponent } from './widgets/common/select/select.component';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SliderComponent } from './widgets/common/slider/slider.component';
@@ -185,6 +186,7 @@ const wmComponents = [
     RedrawableDirective,
     RichTextEditorComponent,
     RightPanelDirective,
+    ScrollableDirective,
     SearchComponent,
     SelectComponent,
     ShowInDeviceDirective,

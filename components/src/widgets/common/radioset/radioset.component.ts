@@ -24,7 +24,6 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 export class RadiosetComponent extends DatasetAwareFormComponent implements OnInit {
 
     public layout = '';
-    private oldValue;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

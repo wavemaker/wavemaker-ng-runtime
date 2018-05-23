@@ -1,10 +1,10 @@
-import {isDefined} from '@wm/core';
+import { isDefined, isEqualWithFields } from '@wm/core';
 
-import {getEvaluatedData, getObjValueByKey} from './widget-utils';
+import { getEvaluatedData, getObjValueByKey } from './widget-utils';
+
+import { ALLFIELDS } from './data-utils';
 
 declare const _;
-
-const ALLFIELDS = 'All Fields';
 
 /**
  * return the default display field, if the widget does not have a display field or it is set to All fields
@@ -38,7 +38,7 @@ const extractDataObjects = (dataSet: any, options: DataSetProps) => {
         key,
         value;
 
-    // TODO: remove check for data property
+    // TODO: [bandhavya] remove check for data property
     dataSet = dataSet.hasOwnProperty('data') ? dataSet.data : dataSet;
     dataSet = getOrderedDataSet(dataSet, options.orderby);
 
@@ -154,6 +154,19 @@ export const transformDataWithKeys = (dataSet: any) => {
     return data;
 };
 
+// This function return always an object containing dataset details.
+export const convertDataToObject = (dataResult) => {
+    // TODO: [bandhavya] remove check for data property
+    // Check for data to get data for livevariable.
+    dataResult = dataResult.hasOwnProperty('data') ? dataResult.data : dataResult;
+
+    if (_.isString(dataResult)) {
+        dataResult = _.split(dataResult, ',').map(str => str.trim());
+    }
+
+    return dataResult;
+};
+
 /**
  * The first step in datasetItems creation is data transformation:
  *
@@ -164,8 +177,10 @@ export const transformDataWithKeys = (dataSet: any) => {
  * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
  * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
  */
-export const transformData = (dataSet: any, myDataField, myDisplayField, myDisplayExpr): Array<DataSetItem> => {
+export const transformData = (dataSet: any, myDataField: string, myDisplayField, myDisplayExpr?, myDisplayImgSrc?, startIndex?: number): Array<DataSetItem> => {
     const data = [];
+    dataSet = convertDataToObject(dataSet);
+
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
@@ -176,9 +191,9 @@ export const transformData = (dataSet: any, myDataField, myDisplayField, myDispl
             data.push({'key': option, 'value': option, 'label': option, 'index': index + 1});
         });
     } else if (!(dataSet instanceof Array) && dataSet instanceof Object) {
-        const index = 0;
-        dataSet.forEach((value, key) => {
-            data.push({'key': key, 'value': key, 'label': value, 'index': index + 1});
+        const i = 0;
+        _.forEach(dataSet, (value, key) => {
+            data.push({'key': _.trim(key), 'value': key, 'label': value, 'index': i + 1});
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
@@ -186,6 +201,10 @@ export const transformData = (dataSet: any, myDataField, myDisplayField, myDispl
         }
         myDisplayField = getDisplayField(dataSet, myDisplayField || myDataField);
         dataSet.forEach((option, index) => {
+            // startIndex is the index of the next new item.
+            if (!_.isUndefined(startIndex)) {
+                index = index + startIndex;
+            }
             const key = myDataField === ALLFIELDS ? index : getObjValueByKey(option, myDataField);
 
             // Omit all the items whose datafield (key) is null or undefined.
@@ -193,7 +212,15 @@ export const transformData = (dataSet: any, myDataField, myDisplayField, myDispl
                 const label = getEvaluatedData(option, {
                     displayfield: myDisplayField, displayexpression: myDisplayExpr
                 });
-                const dataSetItem = {'key': key, 'label': label, 'value': myDataField === ALLFIELDS ? option : key, 'index': index + 1};
+                const dataSetItem = {
+                    key: key,
+                    label: label,
+                    value: myDataField === ALLFIELDS ? option : key,
+                    index: index + 1
+                };
+                if (myDisplayImgSrc) {
+                    dataSetItem['imgSrc'] = getEvaluatedData(option, {expressionName: myDisplayImgSrc});
+                }
                 data.push(dataSetItem);
             }
         });
@@ -275,8 +302,6 @@ export const assignModelForSelected = (displayOptions: any[], model: any, modelP
     callback({'_dataVal': _dataVal, 'model': _model_});
 };
 
-// Todo: getSelectedObjFromDisplayOptions
-
 /**
  * This function iterates over the modelProxy and returns the model value. Here model is array of values.
  * If datafield is ALLFIELDS, modelProxy is 0, then model will be retrieved from dataObject in displayOptions
@@ -291,7 +316,7 @@ export const assignModelForMultiSelect = (displayOptions: any, datafield: any, m
         _dataVal = _model_;
         _model_ = selectedCheckboxValue;
 
-        // todo remove this prop.
+        // todo  remove this prop.
         // this._ngModelOldVal = _dataVal;
     } else if (selectedCheckboxValue) {
         _model_ = [];
@@ -396,6 +421,46 @@ export const getDisplayValues = (displayOptions: any[]) => {
     return displayValue;
 };
 
+/**
+ * Private method to get the unique objects by the data field
+ */
+export const getUniqObjsByDataField = (data, dataField, displayField, isLocalSearch?) => {
+    let uniqData;
+    const isAllFields = dataField === ALLFIELDS;
+
+    uniqData = isAllFields ? _.uniqWith(data, _.isEqual) : _.uniqBy(data, 'key');
+
+    if (!displayField && isLocalSearch) {
+        return uniqData;
+    }
+
+    // return objects having non empty datafield and display field values.
+    return _.filter(uniqData, (obj) => {
+        if (isAllFields) {
+            return _.trim(obj.label);
+        }
+        return _.trim(obj.key) && _.trim(obj.label);
+    });
+};
+
+/**
+ * This function sets the selectedItem by comparing the field values, where fields are passed by "compareby" property.
+ * works only for datafield with ALL_FIELDS
+ * @param datasetItems list of dataset items.
+ * @param compareWithDataObj represents the datavalue (object) whose properties are to be checked against each property of datasetItem.
+ * @param compareByField specifies the property names on which datasetItem has to be compared against datavalue object.
+ */
+export const setItemByCompare = (datasetItems, compareWithDataObj, compareByField) => {
+    // compare the fields based on fields given to compareby property.
+    datasetItems.some(function (opt) {
+        if (isEqualWithFields(opt.value, compareWithDataObj, compareByField)) {
+            opt.selected = true;
+            return true;
+        }
+        return false;
+    });
+};
+
 // Todo: convert to Class
 interface DataSetProps {
     datafield: string;
@@ -416,7 +481,7 @@ export class DataSetItem {
     key: any;
     label: any;
     value: any;
+    index?: number;
     imgSrc?: string;
     selected?: boolean = false;
-    index: number;
 }

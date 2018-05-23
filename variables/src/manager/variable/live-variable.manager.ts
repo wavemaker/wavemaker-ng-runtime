@@ -150,7 +150,7 @@ export class LiveVariableManager extends BaseVariableManager {
         }, error);
     }
 
-    //*********************************************************** PUBLIC ***********************************************************//
+    // *********************************************************** PUBLIC ***********************************************************//
 
     /**
      * Makes http call for a Live Variable against the configured DB Entity.
@@ -443,5 +443,40 @@ export class LiveVariableManager extends BaseVariableManager {
 
     public getPrimaryKey(variable) {
         return LiveVariableUtils.getPrimaryKey(variable);
+    }
+
+    /**
+     * Gets the filtered records based on searchKey
+     * @param variable
+     * @param options contains the searchKey and queryText
+     * @param success
+     * @param error
+     * @returns {Promise<any>}
+     */
+    public searchRecords(variable, options, success, error) {
+        let requestParams;
+
+        const searchKeys = options.searchKeys,
+            searchValue = options.searchValue,
+            formFields = {};
+
+        _.forEach(searchKeys, function (colName) {
+            formFields[colName] = {
+                value: searchValue,
+                logicalOp: 'AND'
+            };
+        });
+
+        requestParams = {
+            filterFields: formFields,
+            page: options.page,
+            pagesize: options.pagesize,
+            skipDataSetUpdate: true, // dont update the actual variable dataset,
+            skipToggleState: true, // Dont change the variable toggle state as this is a independent call
+            inFlightBehavior: 'executeAll',
+            logicalOp: 'OR'
+        };
+
+        return this.listRecords(variable, requestParams, success, error);
     }
 }

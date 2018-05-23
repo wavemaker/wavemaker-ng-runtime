@@ -73,9 +73,11 @@ export class ServiceVariableManager extends BaseVariableManager {
             response = newDataSet;
         }
 
+        newDataSet = (!_.isObject(response)) ? {'value': response} : response;
+
         /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
-            variable.dataSet = (!_.isObject(response)) ? {'value': response} : response;
+            variable.dataSet = newDataSet;
         }
 
         /* trigger success callback */
@@ -94,6 +96,8 @@ export class ServiceVariableManager extends BaseVariableManager {
             // EVENT: ON_CAN_UPDATE
             initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, options.xhrObj);
         });
+
+        return variable.dataSet;
     }
 
     /**
@@ -117,7 +121,7 @@ export class ServiceVariableManager extends BaseVariableManager {
             this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
             return;
         }
-    };
+    }
 
     /**
      * function to transform the service data as according to the variable configuration
@@ -228,14 +232,15 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         // make the call
         return this.makeCall(requestParams).then(function (response) {
-            _this.processSuccessResponse(response.body, variable, options, success);
+            const data = _this.processSuccessResponse(response.body, variable, options, success);
             initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
+            return Promise.resolve(data);
         }, function (e) {
             _this.processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
         });
     }
 
-    //*********************************************************** PUBLIC ***********************************************************//
+    // *********************************************************** PUBLIC ***********************************************************//
 
     public invoke(variable, options, success, error) {
         options = options || {};
@@ -257,7 +262,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 'configurable': true,
                 'get': function () {
                     const dataSet = variable.dataSet;
-                    //For procedure(v1) data doesn't come under content
+                    // For procedure(v1) data doesn't come under content
                     return _.head(dataSet && dataSet.content) || _.head(dataSet) || {};
                 }
             });
@@ -265,10 +270,36 @@ export class ServiceVariableManager extends BaseVariableManager {
                 'configurable': true,
                 'get': function () {
                     const dataSet = variable.dataSet;
-                    //For procedure(v1) data doesn't come under content
+                    // For procedure(v1) data doesn't come under content
                     return _.last(dataSet && dataSet.content) || _.last(dataSet) || {};
                 }
             });
         }
+    }
+
+    /**
+     * This method returns filtered records based on searchKey and queryText.
+     * @param variable
+     * @param options
+     * @param success
+     * @param error
+     * @returns {Promise<any>}
+     */
+    public searchRecords(variable, options, success, error) {
+        const searchKeys = options.searchKeys,
+            searchValue = options.searchValue;
+
+        _.forEach(searchKeys, key => {
+           this.setInput(variable, key, searchValue, options);
+        });
+
+        const requestParams = {
+            page: options.page,
+            skipDataSetUpdate: true, // dont update the actual variable dataset,
+            skipToggleState: true, // Dont change the varibale toggle state as this is a independent call
+            inFlightBehavior: 'executeAll',
+        };
+
+        return this.invoke(variable, requestParams, success, error);
     }
 }

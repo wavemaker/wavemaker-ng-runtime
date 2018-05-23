@@ -25,8 +25,6 @@ declare const _;
 export class CheckboxsetComponent extends DatasetAwareFormComponent implements OnInit {
     public layout = '';
 
-    private oldValue;
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
