@@ -81,6 +81,7 @@ export const registerProps = (widgetType) => {
     );
     const widgetProps = widgetPropsMap.get(widgetType);
     widgetProps.forEach((v: any, k) => {
+        v = {...v};
         v.notify = true;
         propsMap.set(k, v);
     });

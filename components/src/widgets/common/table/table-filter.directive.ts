@@ -1,7 +1,7 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { TableComponent } from './table.component';
-import { DataSource, getClonedObject, isDefined, isNumberType } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, isDefined, isNumberType } from '@wm/core';
 import { refreshDataSource } from '../../../utils/data-utils';
 
 declare const _;
@@ -266,7 +266,9 @@ export class TableFilterSortDirective {
             'page': 1,
             'filterFields' : filterFields,
             'orderBy' : sortOptions
-        }).then(() => {}, () => {
+        }).then(() => {
+            $appDigest();
+        }, () => {
             this.table.toggleMessage(true, 'error', this.table.nodatamessage);
         });
     }
@@ -285,6 +287,7 @@ export class TableFilterSortDirective {
             'filterFields' : filterFields,
             'orderBy' : sortOptions
         }).then(() => {
+            $appDigest();
             this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData});
         }, (error) => {
             this.table.toggleMessage(true, 'error', error);
