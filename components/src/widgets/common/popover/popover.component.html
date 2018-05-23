@@ -1,0 +1,26 @@
+<a [popover]="popoverTemplate"
+   [popoverTitle]="title"
+   [placement]="popoverplacement"
+   [outsideClick]="true"
+   [triggers]="event"
+   (onShown)="onShown()"
+   (onHidden)="onHidden()"
+   [containerClass]="popoverAnimation"
+   container="body"
+
+   wmAnchor
+   animation.bind="animation"
+   badgevalue.bind="badgevalue"
+   caption.bind="caption"
+   encodeurl.bind="encodeurl"
+   hint.bind="hint"
+   hyperlink.bind="hyperlink"
+   iconurl.bind="iconurl"
+   iconwidth.bind="iconwidth"
+   iconheight.bind="iconheight"
+   iconmargin.bind="iconmargin"
+   iconclass.bind="iconclass"
+   iconposition.bind="iconposition"
+   shortcutkey.bind="shortcutkey"
+   tabindex.bind="tabindex">
+</a>

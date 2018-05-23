@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
-import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule, PopoverModule  } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxMaskModule } from 'ngx-mask';
@@ -78,6 +78,7 @@ import { PanelComponent } from './widgets/common/panel/panel.component';
 import { PartialDialogComponent } from './widgets/common/dialog/partial-dialog/partial-dialog.component';
 import { PartialDirective } from './widgets/common/partial/partial.directive';
 import { PictureDirective } from './widgets/common/picture/picture.directive';
+import { PopoverComponent } from './widgets/common/popover/popover.component';
 import { PrefabDirective } from './widgets/common/prefab/prefab.directive';
 import { ProgressBarComponent } from './widgets/common/progress-bar/progress-bar.component';
 import { RadiosetComponent } from './widgets/common/radioset/radioset.component';
@@ -178,6 +179,7 @@ const wmComponents = [
     PartialDialogComponent,
     PartialDirective,
     PictureDirective,
+    PopoverComponent,
     PrefabDirective,
     ProgressBarComponent,
     RadiosetComponent,
@@ -234,7 +236,8 @@ const PIPES = [
         ProgressbarModule.forRoot(),
         ModalModule.forRoot(),
         NgxMaskModule.forRoot(),
-        CarouselModule.forRoot()
+        CarouselModule.forRoot(),
+        PopoverModule.forRoot()
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],

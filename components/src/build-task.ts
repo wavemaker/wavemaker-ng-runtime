@@ -54,6 +54,7 @@ export * from './widgets/common/pagination/pagination.build';
 export * from './widgets/common/panel/panel.build';
 export * from './widgets/common/partial/partial.build';
 export * from './widgets/common/picture/picture.build';
+export * from './widgets/common/popover/popover.build';
 export * from './widgets/common/prefab/prefab.build';
 export * from './widgets/common/progress-bar/progress-bar.build';
 export * from './widgets/common/radioset/radioset.build';
