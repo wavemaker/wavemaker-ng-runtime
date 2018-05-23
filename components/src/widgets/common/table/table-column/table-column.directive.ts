@@ -13,6 +13,11 @@ registerProps();
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
+const COLUMN_PROPS = ['generator', 'widgetType', 'datepattern', 'currencypattern', 'fractionsize', 'suffix', 'prefix', 'accessroles', 'dataset', 'datafield',
+    'placeholder', 'displaylabel', 'searchkey', 'displayfield', 'rowactionsposition', 'filterplaceholder', 'relatedEntityName', 'checkedvalue', 'uncheckedvalue',
+    'filterOn', 'filterdataset', 'filterdatafield', 'filterdisplayfield', 'filterdisplaylabel', 'filtersearchkey', 'filteronfilter', 'editdatepattern',
+    'width', 'type', 'filterwidget', 'defaultvalue', 'disabled', 'required', 'sortable', 'show'];
+
 @Directive({
     selector: '[wmTableColumn]',
     providers: [
@@ -46,8 +51,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit {
     textcolor;
     type;
     width;
+    fieldDef: any = {};
 
-    public fieldDef;
+    private IsPropsInitialized;
 
     constructor(
         inj: Injector,
@@ -58,45 +64,62 @@ export class TableColumnDirective extends BaseComponent implements OnInit {
     }
 
     getStyleDef() {
-        return `{width: ${this.width}; background-color: ${this.backgroundcolor}; color: ${this.textcolor}};`
+        return `{width: ${this.width || ''}; background-color: ${this.backgroundcolor || ''}; color: ${this.textcolor || ''}};`;
     }
     populateFieldDef() {
+        this.width = this.width === 'px' ?  '' : (this.width || '');
+
         this.fieldDef = {
             field: this.binding,
-            displayName: this.caption,
-            pcDisplay: !_.isUndefined(this.pcdisplay) ? this.pcdisplay === 'true' : true,
-            mobileDisplay: !_.isUndefined(this.mobiledisplay) ? this.mobiledisplay === 'true' : true,
-            width: this.width === 'px' ?  '' : (this.width || ''),
-            textAlignment: this.textalignment || 'left',
+            displayName: this.caption || '',
+            pcDisplay: this.pcdisplay,
+            mobileDisplay: this.mobiledisplay,
+            textAlignment: this.textalignment,
             backgroundColor: this.backgroundcolor,
             textColor: this.textcolor,
-            type: this.type || 'string',
-            primaryKey: this.primaryKey,
+            primaryKey: this['primary-key'],
             style: this.getStyleDef(),
-            class: this.colClass,
-            ngclass: this.colNgClass,
+            class: this['col-class'],
+            ngclass: this['col-ng-class'],
             formatpattern: this.formatpattern === 'toNumber' ? 'numberToString' : this.formatpattern,
-            disabled: !this.disabled ? false : (this.disabled === 'true' || this.disabled),
-            required: this.required ? false : (this.required === 'true' || this.required),
-            sortable: this.sortable !== 'false',
-            searchable: (this.type === 'blob' || this.type === 'clob') ? false : this.searchable !== 'false',
-            show: this.show === 'false' ? false : (this.show === 'true' || !this.show || this.show),
+            searchable: (this.type === 'blob' || this.type === 'clob') ? false : this.searchable,
             limit: this.limit ? +this.limit : undefined,
-            filterwidget: this.filterwidget,
-            generator: this.generator,
-            defaultvalue: this.defaultvalue,
-            editWidgetType: this.editWidgetType,
+            editWidgetType: this['edit-widget-type'],
             readonly: !_.isUndefined(this.readonly) ? this.readonly === 'true' : this.relatedEntityName ? !this.primaryKey : _.includes(['identity', 'uniqueid', 'sequence'], this.generator),
         };
+
+        COLUMN_PROPS.forEach(prop => {
+            this.fieldDef[prop] = this[prop];
+        });
+    }
+
+    onPropertyChange(key, nv) {
+        if (!this.IsPropsInitialized) {
+            return;
+        }
+        switch (key) {
+            case 'caption':
+                this.fieldDef.displayName = nv || '';
+                this.table.callDataGridMethod('setColumnProp', this.binding, 'displayName', nv);
+                break;
+            case 'show':
+                this.fieldDef.show = nv;
+                this.table.redraw(true);
+                break;
+        }
     }
 
     ngOnInit() {
         super.ngOnInit();
+
         this.populateFieldDef();
         this.table.registerColumns(this.fieldDef);
+
         setHeaderConfigForTable(this.table.headerConfig, {
             field: this.fieldDef.field,
             displayName: this.fieldDef.displayName
         }, this.group && this.group.name);
+
+        this.IsPropsInitialized = true;
     }
 }

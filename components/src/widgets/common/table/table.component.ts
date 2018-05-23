@@ -124,6 +124,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     private applyProps = new Map();
 
+    redraw = _.debounce(this._redraw, 150);
+
     // Filter and Sort Methods
     _searchSortHandler = () => {};
     searchSortHandler = (...args) => {
@@ -1007,6 +1009,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
         this.datasource.execute(DataSource.Operation.DOWNLOAD, requestData);
+    }
+
+    private _redraw(forceRender) {
+        if (forceRender) {
+            this.datagridElement.datatable(this.gridOptions);
+        } else {
+            setTimeout(function () {
+                this.callDataGridMethod('setColGroupWidths');
+                this.callDataGridMethod('addOrRemoveScroll');
+            });
+        }
     }
 
     callEvent(event) {

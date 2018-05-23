@@ -233,7 +233,7 @@ $.widget('wm.datatable', {
                 field = value.field,
                 headerLabel = self.Utils.isDefined(value.displayName) ? value.displayName : (field || ''),
                 titleLabel = headerLabel,
-                sortEnabled = self.options.enableSort && (_.isUndefined(value.show) || value.show) && (_.isUndefined(value.sortable) || value.sortable) && !value.widgetType,
+                sortEnabled = self.options.enableSort && (_.isUndefined(value.show) || value.show) && (_.isUndefined(value.sortable) || value.sortable),
                 headerClasses = self.options.cssClassNames.headerCell,
                 sortClass,
                 tl = '',
