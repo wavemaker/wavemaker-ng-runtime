@@ -62,7 +62,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                 tmpl = getAttrMarkup(attrs);
                 return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog">
                             <div wmDialog class="app-liveform-dialog" name="${dialogId}" role="form" ${getAttrMarkup(dialogAttrsMap)} modal="true">
-                            <ng-template><div wmDialogBody>
+                            <ng-template #dialogBody>
                             ${liveFormTmpl} ${tmpl}>`;
             }
             tmpl = getAttrMarkup(attrs);
@@ -70,7 +70,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
         },
         post: (attrs) => {
             if (attrs.get('formlayout') === 'dialog') {
-                return '</form></div></ng-template></div></div>';
+                return '</form></ng-template></div></div>';
             }
             return `</${tagName}>`;
         },

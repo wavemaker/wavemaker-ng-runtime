@@ -8,7 +8,7 @@
          *ngIf="showheader"
     ></div>
     <div wmDialogBody>
-        <ng-content></ng-content>
+        <ng-container *ngTemplateOutlet="dialogBody"></ng-container>
     </div>
-    <ng-content select="[wmDialogFooter]"></ng-content>
+    <ng-container *ngTemplateOutlet="dialogFooter"></ng-container>
 </ng-template>
