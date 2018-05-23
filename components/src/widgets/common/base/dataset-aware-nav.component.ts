@@ -1,5 +1,5 @@
-import { Injector } from '@angular/core';
-import { findValueOf, isObject, validateAccessRoles } from '@wm/core';
+import { Injector, OnInit } from '@angular/core';
+import { $appDigest, findValueOf, isObject, validateAccessRoles } from '@wm/core';
 
 import { createArrayFrom } from '../../../utils/data-utils';
 import { getEvaluatedData } from '../../../utils/widget-utils';
@@ -8,7 +8,7 @@ import { StylableComponent } from './stylable.component';
 
 declare const _;
 
-export class DatasetAwareNavComponent extends StylableComponent {
+export class DatasetAwareNavComponent extends StylableComponent implements OnInit {
 
     public nodes: Array<NavNode>;
     public dataset: any;
@@ -36,7 +36,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
      * @param fields
      * @param node
      */
-    private getNode(fields, node) : NavNode {
+    private getNode(fields, node): NavNode {
         const children = getEvaluatedData(node, {expressionName: 'itemchildren'}) || node[fields.childrenField];
         return {
             action   : getEvaluatedData(node, {expressionName: 'itemaction'}) || node[fields.actionField],
@@ -59,7 +59,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
     }
 
     getItemFieldsMap() {
-        if(!this._itemFieldMap) {
+        if (!this._itemFieldMap) {
             this._itemFieldMap = {
                 idField : this.itemid || 'itemid',
                 iconField : this.itemicon || 'icon',
@@ -84,11 +84,11 @@ export class DatasetAwareNavComponent extends StylableComponent {
     private prepareNodeDataSet(nv) {
         nv =  createArrayFrom(nv);
         return nv.map((val) => {
-           if(!isObject(val)) {
+           if (!isObject(val)) {
                 return {
                     label: val,
                     value: val
-                }
+                };
            }
            return val;
         });
@@ -114,6 +114,16 @@ export class DatasetAwareNavComponent extends StylableComponent {
         return nodes;
     }
 
+    // enable the inherited class to extend this method.
+    protected resetNodes() {
+        this.resetItemFieldMap();
+        this.nodes = this.getNodes();
+        $appDigest();
+    }
+
+    // debounce function for reset nodes functions.
+    private _resetNodes = _.debounce(this.resetNodes, 50);
+
     onPropertyChange(key, nv, ov) {
         switch (key) {
             case 'dataset':
@@ -122,9 +132,8 @@ export class DatasetAwareNavComponent extends StylableComponent {
             case 'itemlink':
             case 'itemchildren':
             case 'orderby':
-                // older projects had display field & data field property for menu.
-                this.itemlabel = this.itemlabel || this.displayfield;
-                this.nodes = this.getNodes();
+                // calls resetnodes method after 50ms. any calls within 50ms will be ignored.
+                this._resetNodes();
                 break;
         }
     }
@@ -135,15 +144,15 @@ export class DatasetAwareNavComponent extends StylableComponent {
 }
 
 export interface NavNode {
-    action?   : any,
-    badge?    : string,
-    children? : Array<NavNode>,
-    class     : string
-    disabled? : boolean,
-    icon?     : string,
-    id?       : string,
-    label     : string,
-    link?     : string,
-    role?     : string,
-    value?    : any,
+    label: string;
+    action?: any;
+    badge?: string;
+    children?: Array<NavNode>;
+    class?: string;
+    disabled?: boolean;
+    icon?: string;
+    id?: string;
+    link?: string;
+    role?: string;
+    value?: any;
 }

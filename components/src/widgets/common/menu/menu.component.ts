@@ -88,7 +88,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public onSelect(args) {
         // emit the values to the subscribers as menu is also used as a dynamic component
         this.select.next(args);
-        this.invokeEventCallback('change', args);
+        this.invokeEventCallback('select', args);
     }
 
     onPropertyChange(key, newVal, oldVal?) {

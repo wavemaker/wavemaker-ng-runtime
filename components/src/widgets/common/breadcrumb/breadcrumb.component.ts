@@ -6,7 +6,7 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './breadcrumb.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareNavComponent, NavNode } from '../base/dataset-aware-nav.component';
-import { openLink } from '@wm/core';
+import { $appDigest } from '@wm/core';
 
 registerProps();
 
@@ -71,28 +71,25 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent implements Aft
         return this.location.path().substr(1);
     }
 
+    // over rides resetNode function, generating path for the breadcrumb.
+    protected resetNodes() {
+        super.resetNodes();
+        // get path only if the widget have id property.
+        if (this.itemid) {
+            this.nodes = this.getPath({key: this.getCurrentRoute(), isPathFound: false}, this.nodes);
+            $appDigest();
+        }
+
+    }
+
     onPropertyChange(key, nv, ov) {
         super.onPropertyChange(key, nv, ov);
-        switch (key) {
-            case 'dataset':
-            case 'itemicon':
-            case 'itemlabel':
-            case 'itemlink':
-            case 'itemchildren':
-            case 'orderby':
-                if(this.itemid) {
-                    this.nodes = this.getPath({key: this.getCurrentRoute(), isPathFound: false}, this.nodes);
-                }
-                break;
-        }
     }
 
     onItemClick ($item) {
-        let link = $item.link || '',
-            canNavigate = !(this.invokeEventCallback('beforenavigate', {$item}) === false),
-            index,
-            queryParams,
-            params = {};
+        let link = $item.link || '';
+        const canNavigate = !(this.invokeEventCallback('beforenavigate', {$item}) === false);
+        const params = {};
 
         if (link && canNavigate) {
             /* removing spl characters from the beginning of the path.
@@ -101,10 +98,10 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent implements Aft
             */
             link = _.first(link.match(/[\w]+.*/g));
 
-            //If url params are present, construct params object and pass it to search
-            index = link.indexOf('?');
+            // If url params are present, construct params object and pass it to search
+            const index = link.indexOf('?');
             if (index !== -1) {
-                queryParams = _.split(link.substring(index + 1, link.length), '&');
+                const queryParams = _.split(link.substring(index + 1, link.length), '&');
                 link = link.substring(0, index);
                 queryParams.forEach((param) => {
                     param = _.split(param, '=');
@@ -113,9 +110,9 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent implements Aft
             }
             // search method is passed with empty object to remove url parameters.
             // TODO: navigate to the link. using angular route
-            openLink(link);
+            window.location.href = link;
         }
-    };
+    }
 
     ngOnInit() {
         super.ngOnInit();

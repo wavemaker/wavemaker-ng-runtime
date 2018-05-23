@@ -5,9 +5,7 @@ import { openLink } from '@wm/core';
 import { MenuRef } from '../../../framework/types';
 import { MenuComponent } from '../menu.component';
 import { MenuDropdownComponent } from '../menu-dropdown/menu-dropdown.component';
-
-
-const isActiveNavItem = (...args) => true;
+import { isActiveNavItem } from '@wm/components';
 
 declare const $, _;
 
@@ -72,8 +70,11 @@ export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
     }
 
     @HostListener('click', ['$event', 'item']) onSelect = ($event, item) => {
-        const args = {$event, item: item.value || item.label};
-        const itemAction = args.item[this.parent.itemaction || 'action'],
+        if (this.element.nativeElement !== $event.target.closest('[wmmenudropdownitem]')) {
+            return;
+        }
+        const args = {$event, $item: item.value || item.label};
+        const itemAction = args.$item[this.parent.itemaction || 'action'],
             linkTarget = this.linktarget;
 
         // If link starts with # and not with #/ replace with #/

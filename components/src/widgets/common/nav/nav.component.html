@@ -3,8 +3,8 @@
          itemicon.bind="itemicon" itemchildren.bind="itemchildren" itemaction.bind="itemaction" userrole.bind="userrole"
          caption.bind="node.label" dataset.bind="node.children"></div>
 </ng-template>
-<li class="app-nav-item" *ngFor="let node of nodes; let index = index;" (click)="onNavSelect($event, node, nodeRef)" #nodeRef>
-    <a class="app-anchor" [href]="node.link || 'javascript:void(0)'" *ngIf="!node.children.length">
+<li class="app-nav-item {{node.class}}" *ngFor="let node of nodes; let index = index;" #nodeRef>
+    <a class="app-anchor" [href]="node.link || 'javascript:void(0)'" *ngIf="!node.children.length" (click)="onNavSelect($event, node, nodeRef)">
         <i class="app-nav-icon" [ngClass]="node.icon"></i>
         <span class="anchor-caption" [textContent]="node.label"></span>
         <span class="badge" [textContent]="node.badge"></span>

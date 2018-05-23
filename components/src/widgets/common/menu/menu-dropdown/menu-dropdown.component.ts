@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, Optional } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional } from '@angular/core';
 
 import { addClass, removeClass } from '@wm/core';
 
@@ -74,7 +74,7 @@ export class MenuDropdownComponent implements AfterViewInit {
 
     @Input() items;
 
-    constructor(private el: ElementRef, @Inject(MenuRef) @Optional() private parentMenu, public cdr: ChangeDetectorRef) {
+    constructor(private el: ElementRef, @Inject(MenuRef) @Optional() private parentMenu) {
         this.$el = el.nativeElement;
         addClass(this.$el, DEFAULT_CLS);
     }
@@ -88,13 +88,5 @@ export class MenuDropdownComponent implements AfterViewInit {
             // Set same animation to sub menu items of that of the parent.
             this.animateClass = this.parentMenu.animateClass;
         }
-    }
-
-    @HostListener('click') onSelect({$event, $scope, item}) {
-        const args = {$event, $item: item.value || item.label};
-        if ($event) {
-            $event.stopPropagation();
-        }
-        this.parentMenu.onSelect(args);
     }
 }

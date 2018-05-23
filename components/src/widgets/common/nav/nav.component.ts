@@ -1,5 +1,4 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, ViewChildren, Injector, OnInit, QueryList } from '@angular/core';
 
 import { addClass, switchClass } from '@wm/core';
 
@@ -7,6 +6,7 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
+import { MenuComponent } from '../menu/menu.component';
 
 registerProps();
 
@@ -29,17 +29,21 @@ const NavClassMap =  {
 export class NavComponent extends DatasetAwareNavComponent implements AfterViewInit, OnInit {
 
     public selecteditem;
+    public type;
+    public layout;
+    public autoclose;
+    public isOpen;
+
+    private menuSubscribers = [];
+
+    // to query all the menu components in the view.
+    @ViewChildren(MenuComponent) menus: QueryList<MenuComponent>;
 
     constructor(
-        inj: Injector,
-        private route: Router,
-        @Attribute('type') type: string,
-        @Attribute('layout') layout: string
+        inj: Injector
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
-        this.setNavType(type);
-        this.setNavLayout(layout);
     }
 
 
@@ -51,17 +55,17 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
         addClass(this.nativeElement, `nav-${layout}`);
     }
 
-    private onNavSelect($event, node, nodeRef) {
+    public onNavSelect($event, node, nodeRef) {
         // TODO: need to change this logic
-        Array.prototype.forEach.call(nodeRef.parentNode.children, function(node) {
-            switchClass(node, '', 'active')
+        Array.prototype.forEach.call(nodeRef.parentNode.children, function(childNode) {
+            switchClass(childNode, '', 'active');
         });
         addClass(nodeRef, 'active');
         this.invokeEventCallback('select', {$event, $item: node});
         this.selecteditem = node;
         if (node) {
-            let itemLink   = node[this.itemlink] || node.link;
-            let itemAction = node[this.itemaction] || node.action;
+            const itemLink: string   = node[this.itemlink] || node.link;
+            const itemAction: string = node[this.itemaction] || node.action;
             if (itemAction) {
                 // TODO: Evaluating the action expression
                 /*Utils.evalExp($el.scope(), itemAction).then(function () {
@@ -80,6 +84,12 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
         super.onPropertyChange(key, nv, ov);
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+        this.setNavType(this.type);
+        this.setNavLayout(this.layout);
+    }
+
     /**
      * invoked from the menu widget when a menu item is selected.
      * @param e
@@ -92,5 +102,16 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+        // subscribe to the menuItemSelect event on the menu.
+        this.menus.changes.subscribe((menus) => {
+            // menu subscribes list.
+            this.menuSubscribers.forEach((subscriber) => subscriber.unsubscribe());
+            this.menuSubscribers.length = 0;
+            menus.forEach( (menu) => {
+                this.menuSubscribers.push(menu.select.asObservable().subscribe((e: any) => {
+                    this._onMenuItemSelect(e.$event, e.$item);
+                }));
+            });
+        });
     }
 }
