@@ -10,6 +10,8 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
+declare const _;
+
 const DEFAULT_CLS = 'progress app-progress';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progressbar', hostClass: DEFAULT_CLS};
 
@@ -69,6 +71,7 @@ export class ProgressBarComponent extends StylableComponent {
     public type: string;
     public dataset: Array<any>;
 
+    private _prepareData: Function;
     private readonly hasDataset: boolean;
 
     // progress-bar data, ngFor in the template iterates on this
@@ -85,6 +88,8 @@ export class ProgressBarComponent extends StylableComponent {
         this.hasDataset = !!(dataset || boundDataset);
 
         styler(this.nativeElement, this);
+
+        this._prepareData = _.debounce(() => this.prepareData(), 50);
     }
 
     // update the proper classes when there is a change in type
@@ -157,7 +162,8 @@ export class ProgressBarComponent extends StylableComponent {
             case 'maxvalue':
             case 'datavalue':
             case 'dataset':
-                this.prepareData();
+            case 'displayformat':
+                this._prepareData();
                 break;
         }
     }

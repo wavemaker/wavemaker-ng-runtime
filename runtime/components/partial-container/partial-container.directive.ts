@@ -16,10 +16,16 @@ export class PartialContainerDirective {
     }
 
     renderPartial(nv, vcRef, componentInstance) {
+        this.vcRef.clear();
+
+        const $target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
+
+        $target.innerHTML = '';
+
         return this.renderUtils.renderPartial(
             nv,
             vcRef,
-            this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement,
+            $target,
             componentInstance,
             () => (this.inj as any).view.component._resolveFragment()
         );

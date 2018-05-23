@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['badgevalue', PROP_STRING],
-                ['caption', {value: 'link', ...PROP_STRING}],
+                ['caption', {value: 'Link', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_STRING],
                 ['encodeurl', PROP_BOOLEAN],

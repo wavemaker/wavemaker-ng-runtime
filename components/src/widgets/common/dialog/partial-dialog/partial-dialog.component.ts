@@ -38,12 +38,15 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
             closable = true;
         }
 
+        // setting the backdrop to 'static' will not close the dialog on backdrop click
+        const backdrop: boolean | 'static' = toBoolean(modal) ? 'static' : true;
+
         super(
             inj,
             WIDGET_INFO,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
-                backdrop: toBoolean(modal) || 'static',
+                backdrop,
                 keyboard: toBoolean(closable)
             }
         );

@@ -1,4 +1,4 @@
-<img data-identifier="img" alt="Image" class="anchor-image-icon" [src]="iconsrc | image" *ngIf="iconsrc" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
+<img data-identifier="img" alt="Image" class="anchor-image-icon" [src]="iconurl | image" *ngIf="iconurl" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
 <i class="app-icon {{iconclass}}" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}" *ngIf="iconclass"></i>
 <span class="sr-only" *ngIf="iconclass">Icon</span> <!--Todo(Add the name of the icon selected)-->
 <span class="anchor-caption" [innerHTML]="caption | trustAs:'html'"></span>

@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, Input } from '@angular/core';
 
-import { addClass } from '@wm/core';
+import { addClass, toBoolean } from '@wm/core';
 
 import { DialogRef } from '../../../../framework/types';
 import { BaseDialog } from '../base-dialog';
@@ -21,6 +21,10 @@ export class DialogHeaderComponent {
     @Input() public closable = true;
     @Input() public heading: string;
     @Input() public subheading: string;
+
+    private get isClosable() {
+        return toBoolean(this.closable);
+    }
 
     constructor(elRef: ElementRef, @Inject(DialogRef) private dialogRef: BaseDialog) {
         addClass(elRef.nativeElement, DEFAULT_CLS);

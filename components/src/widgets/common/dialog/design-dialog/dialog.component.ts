@@ -46,12 +46,15 @@ export class DialogComponent extends BaseDialog implements OnInit {
         // contexts[0] will refer to the self context provided by this component
         contexts[0].closeDialog = () => this.close();
 
+        // setting the backdrop to 'static' will not close the dialog on backdrop click
+        const backdrop: boolean | 'static' = toBoolean(modal) ? 'static' : true;
+
         super(
             inj,
             WIDGET_INFO,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
-                backdrop: toBoolean(modal) || 'static',
+                backdrop,
                 keyboard: toBoolean(closable)
             }
         );
