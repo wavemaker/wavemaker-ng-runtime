@@ -6,6 +6,7 @@ import { Calendar } from '@ionic-native/calendar';
 import { Camera } from '@ionic-native/camera';
 import { Contacts } from '@ionic-native/contacts';
 import { File } from '@ionic-native/file';
+import { FileOpener } from '@ionic-native/file-opener';
 import { Device } from '@ionic-native/device';
 import { MediaCapture } from '@ionic-native/media-capture';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -15,8 +16,13 @@ import { Vibration } from '@ionic-native/vibration';
 
 import { hasCordova } from '@wm/core';
 
-import { DeviceService } from './services/device.service';
+
+import { DeviceFileCacheService } from './services/device-file-cache.service';
+import { DeviceFileDownloadService } from './services/device-file-download.service';
+import { DeviceFileOpenerService } from './services/device-file-opener.service';
 import { DeviceFileService } from './services/device-file.service';
+import { DeviceFileUploadService } from './services/device-file-upload.service';
+import { DeviceService } from './services/device.service';
 
 const ionicServices = [
     AppVersion,
@@ -25,6 +31,7 @@ const ionicServices = [
     Camera,
     Contacts,
     File,
+    FileOpener,
     Device,
     Geolocation,
     MediaCapture,
@@ -36,7 +43,11 @@ const ionicServices = [
     declarations: [],
     imports: [],
     providers: [
+        DeviceFileDownloadService,
+        DeviceFileCacheService,
+        DeviceFileOpenerService,
         DeviceFileService,
+        DeviceFileUploadService,
         DeviceService,
         ...ionicServices
     ],
@@ -44,9 +55,14 @@ const ionicServices = [
 })
 export class MobileCoreModule {
 
-    constructor(deviceService: DeviceService, deviceFileService: DeviceFileService) {
+    constructor(deviceService: DeviceService,
+                deviceFileService: DeviceFileService,
+                fileCacheService: DeviceFileCacheService,
+                fileOpener: DeviceFileOpenerService) {
         if (hasCordova()) {
             deviceService.addStartUpService(deviceFileService);
+            deviceService.addStartUpService(fileCacheService);
+            deviceService.addStartUpService(fileOpener);
         }
     }
 }

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
@@ -51,7 +51,7 @@ const APP_FOLDER_STRUCTURE = [{
 @Injectable()
 export class DeviceFileService implements IDeviceStartUpService {
 
-    public serviceName = 'DeviceFileService';
+    public serviceName = DeviceFileService.name;
 
     private _appName: string;
     private _fileTypeVsPathMap = {
@@ -105,7 +105,7 @@ export class DeviceFileService implements IDeviceStartUpService {
     }
 
     public getPersistentRootPath(): string {
-        return cordova.file.externalRootDirectory;
+        return cordova.file.dataDirectory;
     }
 
     public getTemporaryRootPath(): string {
@@ -226,13 +226,13 @@ export class DeviceFileService implements IDeviceStartUpService {
         let extension;
         if (fileName.indexOf('.') > 0) {
             extension = fileName.split('.').pop().toLowerCase();
-            if (IMAGE_EXTENSIONS.find(extension)) {
+            if (IMAGE_EXTENSIONS.some(a => a === extension)) {
                 return FileType.IMAGE;
             }
-            if (VIDEO_EXTENSIONS.find(extension)) {
+            if (VIDEO_EXTENSIONS.some(a => a === extension)) {
                 return FileType.VIDEO;
             }
-            if (AUDIO_EXTENSIONS.find(extension)) {
+            if (AUDIO_EXTENSIONS.some(a => a === extension)) {
                 return FileType.AUDIO;
             }
         }

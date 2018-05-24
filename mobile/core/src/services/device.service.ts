@@ -52,10 +52,15 @@ export class DeviceService {
                     resolve();
                 }
             }).then(() => {
-                return Promise.all(this._startUpServices.map(s => s.start()));
+                return Promise.all(this._startUpServices.map(s => {
+                    return s.start().catch((error) => {
+                        console.error('%s failed to start due to: %O', s.serviceName, error);
+                        return Promise.reject(error);
+                    });
+                }));
             }).then(() => {
                 this._startUpServices.length = 0;
-                this._whenReadyPromises.forEach(i => i());
+                this._whenReadyPromises.forEach(fn => fn());
                 this._isReady = true;
             });
         }

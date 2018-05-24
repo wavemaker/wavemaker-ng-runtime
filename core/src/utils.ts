@@ -751,7 +751,7 @@ export const convertToBlob = (filepath): Promise<any> => {
         resolveLocalFileSystemURL(filepath, function (fileEntry) {
             fileEntry.file(function (file) {
                 // file has the cordova file structure. To submit to the backend, convert this file to javascript file
-                const reader = new window['__zone_symbol__FileReader'];
+                const reader = new FileReader();
                 reader.onloadend = () => {
                     const imgBlob = new Blob([reader.result], {
                         'type' : file.type

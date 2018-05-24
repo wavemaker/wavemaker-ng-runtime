@@ -18,8 +18,8 @@ export class DeviceVariableService {
         } else if (CONSTANTS.hasCordova) {
             const dataBindings = new Map<string, any>();
             if (variable.dataBinding !== undefined) {
-                (variable.dataBinding as [Map<string, any>]).forEach(i => {
-                    dataBindings.set(i['target'], i['value']);
+                Object.entries(variable.dataBinding).forEach(o => {
+                    dataBindings.set(o[0], o[1]);
                 });
             }
             return operation.invoke(variable, options, dataBindings)
