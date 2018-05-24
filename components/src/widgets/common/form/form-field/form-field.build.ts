@@ -33,7 +33,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmCheckbox ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
-            tmpl = `<div wmCheckboxset ${defaultTmpl}></div>`;
+            tmpl = `<ul wmCheckboxset ${defaultTmpl}></ul>`;
             break;
         case FormWidgetType.CHIPS:
             /*TODO*/
@@ -51,13 +51,13 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmDateTime ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<div wmInput ${defaultTmpl} type="number" aria-label="Only numbers"></div>`;
+            tmpl = `<wm-input ${defaultTmpl} type="number" aria-label="Only numbers"></wm-input>`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<div wmInput ${defaultTmpl} type="password" aria-label="Enter password" displayformat="${attrs.get('displayformat')}"></div>`;
+            tmpl = `<wm-input ${defaultTmpl} type="password" aria-label="Enter password" displayformat="${attrs.get('displayformat')}"></wm-input>`;
             break;
         case FormWidgetType.RADIOSET:
-            tmpl = `<div wmRadioset ${defaultTmpl}></div>`;
+            tmpl = `<ul wmRadioset ${defaultTmpl}></ul>`;
             break;
         case FormWidgetType.RATING:
             tmpl = `<div wmRating ${defaultTmpl}></div>`;
@@ -66,7 +66,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             /*TODO*/
             break;
         case FormWidgetType.SELECT:
-            tmpl = `<div wmSelect ${defaultTmpl}></div>`;
+            tmpl = `<wm-select ${defaultTmpl}></wm-select>`;
             break;
         case FormWidgetType.TOGGLE:
             tmpl = `<div wmCheckbox ${defaultTmpl} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
@@ -78,10 +78,10 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
             tmpl = `<div wmSwitch ${defaultTmpl}></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<div wmInput ${defaultTmpl} type="${attrs.get('inputtype') || 'text'}" aria-describedby="Enter text" displayformat="${attrs.get('displayformat')}"></div>`;
+            tmpl = `<wm-input ${defaultTmpl} type="${attrs.get('inputtype') || 'text'}" aria-describedby="Enter text" displayformat="${attrs.get('displayformat')}"></wm-input>`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<div wmTextarea ${defaultTmpl} role="textbox" aria-describedby="Place your text"></div>`;
+            tmpl = `<wm-textarea ${defaultTmpl} role="textbox" aria-describedby="Place your text"></wm-textarea>`;
             break;
         case FormWidgetType.TIME:
             tmpl = `<div wmTime ${defaultTmpl}></div>`;
@@ -99,7 +99,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
                         [class.hidden]="!${pCounter}.isUpdateMode" [(ngModel)]="${counter}.value" [accept]="${counter}.permitted">`;
             break;
         default:
-            tmpl = `<div wmInput ${defaultTmpl} aria-describedby="Enter text" type="text" displayformat="${attrs.get('displayformat')}"></div>`;
+            tmpl = `<wm-input ${defaultTmpl} aria-describedby="Enter text" type="text" displayformat="${attrs.get('displayformat')}"></wm-input>`;
             break;
     }
     return tmpl;

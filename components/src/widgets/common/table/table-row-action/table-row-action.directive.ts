@@ -42,13 +42,13 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
         this.buttonDef = {
             key: this.key,
             displayName: this.displayName || this.caption || '',
-            show: this.show || 'false',
+            show: this.show,
             class: this.class || '',
             iconclass: this.iconclass || '',
             title: _.isUndefined(this.title) ? (this.displayName || '') : this.title,
             action: this.action,
             accessroles: this.accessroles,
-            disabled: this.disabled || 'false',
+            disabled: this.disabled,
             tabindex: this.tabindex ? +this.tabindex : undefined
         };
     }

@@ -12,7 +12,7 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'};
 
 @Component({
-    selector: '[wmSelect]',
+    selector: 'wm-select',
     templateUrl: './select.component.html',
     providers: [
         provideAsNgValueAccessor(SelectComponent),

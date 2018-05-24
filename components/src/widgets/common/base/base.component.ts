@@ -315,7 +315,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         // if the show property is bound, set the initial value to false
         if (propName === 'show') {
-            this.initState.set(propName, false);
+            this.nativeElement.hidden = true;
         } else {
             this.initState.delete(propName);
         }

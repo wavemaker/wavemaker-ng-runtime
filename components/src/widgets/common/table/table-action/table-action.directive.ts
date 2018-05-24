@@ -43,14 +43,14 @@ export class TableActionDirective extends StylableComponent implements OnInit {
         this.buttonDef = {
             key: this.key,
             displayName: this['display-name'] || this.caption || '',
-            show: this.show || 'false',
+            show: this.show,
             class: this.class || '',
             iconclass: this.iconclass || '',
             title: _.isUndefined(this.title) ? (this['display-name'] || '') : this.title,
             action: this.action,
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,
-            disabled: this.disabled || 'false',
+            disabled: this.disabled,
             tabindex: this.tabindex ? +this.tabindex : undefined,
             icon: this.icon,
             position: this.position || 'footer'

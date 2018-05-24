@@ -4,7 +4,7 @@ import { generateGUId, setCSS } from '@wm/core';
 import { styler } from '../../framework/styler';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './rating.props';
-import {DatasetAwareFormComponent} from '../base/dataset-aware-form.component';
+import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
 declare const _;
 

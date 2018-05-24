@@ -10,7 +10,7 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-textarea'};
 
 @Component({
-    selector: '[wmTextarea]',
+    selector: 'wm-textarea',
     templateUrl: './textarea.component.html',
     providers: [
         provideAsNgValueAccessor(TextareaComponent),
