@@ -10,7 +10,7 @@ declare const _;
 
 export class DatasetAwareNavComponent extends StylableComponent implements OnInit {
 
-    public nodes: Array<NavNode>;
+    public nodes: Array<NavNode> = [];
     public dataset: any;
     public itemicon: string;
     public itemlabel: string;

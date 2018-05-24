@@ -13,7 +13,7 @@ export const registerProps = () => {
                 ['itemicon', PROP_STRING_NOTIFY],
                 ['itemchildren', PROP_STRING_NOTIFY],
                 ['itemaction', PROP_STRING_NOTIFY],
-                ['itembadge', PROP_STRING_NOTIFY],
+                ['itembadge', PROP_STRING],
                 ['layout', PROP_STRING_NOTIFY],
                 ['name', PROP_STRING],
                 ['orderby', PROP_STRING],
