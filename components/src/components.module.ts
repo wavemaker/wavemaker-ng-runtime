@@ -63,6 +63,7 @@ import { LiveFormDirective } from './widgets/common/form/live-form.directive';
 import { LiveFilterDirective } from './widgets/common/form/live-filter.directive';
 import { LiveTableComponent } from './widgets/common/live-table/live-table.component';
 import { LoginComponent } from './widgets/common/login/login.component';
+import { MarqueeDirective } from './widgets/common/marquee/marquee.directive';
 import { MenuComponent } from './widgets/common/menu/menu.component';
 import { MenuDropdownComponent } from './widgets/common/menu/menu-dropdown/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './widgets/common/menu/menu-dropdown-item/menu-dropdown-item.component';
@@ -162,6 +163,7 @@ const wmComponents = [
     LiveFormDirective,
     LiveTableComponent,
     LoginComponent,
+    MarqueeDirective,
     MenuComponent,
     MenuDropdownComponent,
     MenuDropdownItemComponent,

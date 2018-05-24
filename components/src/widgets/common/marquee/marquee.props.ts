@@ -2,7 +2,7 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framewor
 
 export const registerProps = () => {
     register(
-        'wm-label',
+        'wm-marquee',
         new Map(
             [
                 ['class', PROP_STRING],

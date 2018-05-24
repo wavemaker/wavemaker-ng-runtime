@@ -42,6 +42,7 @@ export * from './widgets/common/layout-grid/layout-grid.build';
 export * from './widgets/common/left-panel/left-panel.build';
 export * from './widgets/common/live-table/live-table.build';
 export * from './widgets/common/login/login.build';
+export * from './widgets/common/marquee/marquee.build';
 export * from './widgets/common/message/message.build';
 export * from './widgets/common/menu/menu.build';
 export * from './widgets/common/nav-item/nav-item.build';
