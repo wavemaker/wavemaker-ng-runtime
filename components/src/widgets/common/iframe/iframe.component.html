@@ -4,8 +4,7 @@
         marginwidth="0"
         frameborder="0"
         [name]="name"
-        [src]="_iframesrc"
-        *ngIf="!showContentLoadError && _iframesrc"
+        [attr.src]="_iframesrc"
         seamless="seamless">
 </iframe>
 <div class="wm-content-info readonly-wrapper" *ngIf="showContentLoadError">

@@ -27,15 +27,12 @@ registerProps();
 })
 export class IframeComponent extends StylableComponent {
 
-    private _iframesrc: SafeResourceUrl;
-
     public iframesrc: string;
-
-    private errorMsg: string;
-
-    private hintMsg: string;
-
     public encodeurl: boolean;
+
+    private _iframesrc: SafeResourceUrl;
+    private errorMsg: string;
+    private hintMsg: string;
 
     /**
      * this property member is set to true when the content request url doesn't match windows protocol

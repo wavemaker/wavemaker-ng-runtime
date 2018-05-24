@@ -1,5 +1,5 @@
 <ng-template ngIf="navsearchbar; else searchTemplate">
-    <input title="{{hint || query}}" type="text" class="form-control list-of-objs" [placeholder]="placeholder"
+    <input title="{{hint || query}}" type="text" class="form-control list-of-objs" [attr.placeholder]="placeholder"
     [(ngModel)]="queryModel"
     (keydown.enter)="onSearchKeyDown($event, query)"
     (ngModelChange)="onQueryModelChange()"
@@ -27,7 +27,7 @@
     </ng-template>
     <span class="wi wi-arrow-left form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"></span>
     <span class="sr-only">Back button</span>
-    <input title="{{hint || query}}" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder"
+    <input title="{{hint || query}}" type="text" class="app-textbox form-control list-of-objs" [attr.placeholder]="placeholder"
            container="body"
            [(ngModel)]="queryModel"
            (keydown)="executeKeyDownEvent($event, query)"

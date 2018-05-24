@@ -4,7 +4,7 @@
            [value]="displayValue"
            [disabled]="disabled || readonly || isCurrentTime"
            [required]="required"
-           [placeholder]="placeholder"
+           [attr.placeholder]="placeholder"
            [required]="required"
            (click)="toggleDropdown($event)">
     <span class="input-group-btn dropdown-toggle" (click)="toggleDropdown($event)">

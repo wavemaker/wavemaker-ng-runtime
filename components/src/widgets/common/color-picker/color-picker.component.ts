@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { IWidgetConfig } from '../../framework/types';
@@ -28,6 +28,7 @@ registerProps();
 export class ColorPickerComponent extends BaseFormCustomComponent {
 
     @ViewChild(NgModel) ngModel: NgModel;
+    @ViewChild('input', {read: ElementRef}) inputEl: ElementRef;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -37,7 +38,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
-            super.handleEvent(node, eventName, callback, locals);
+            super.handleEvent(this.inputEl.nativeElement, eventName, callback, locals);
         }
     }
 
