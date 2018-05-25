@@ -1,15 +1,15 @@
-import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, OnDestroy, ViewContainerRef } from '@angular/core';
+import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, OnDestroy, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { Subject } from 'rxjs/Subject';
-import { CarouselModule, BsDropdownModule, PopoverModule } from 'ngx-bootstrap';
+import { BsDropdownModule, CarouselModule, PopoverModule } from 'ngx-bootstrap';
 
 import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
-import { getValidJSON, App } from '@wm/core';
+import { App, getValidJSON } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
@@ -47,7 +47,8 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
         selector,
         template,
         styles,
-        providers
+        providers,
+        encapsulation: ViewEncapsulation.None
     })
     class DynamicComponent implements OnDestroy {
         onPropertyChange;
