@@ -1,10 +1,10 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
-const tagName = 'div';
+const tagName = 'wm-input';
 
 register('wm-text', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmInput ${getAttrMarkup(attrs)} ngModel>`,
+        pre: attrs => `<${tagName} ${getAttrMarkup(attrs)} ngModel>`,
         post: () => `</${tagName}>`
     };
 });

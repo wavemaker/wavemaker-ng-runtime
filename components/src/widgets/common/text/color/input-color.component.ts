@@ -13,7 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-    selector: '[wmInput][type="color"]',
+    selector: 'wm-input[type="color"]',
     templateUrl: './input-color.component.html',
     providers: [
         provideAsNgValueAccessor(InputColorComponent),

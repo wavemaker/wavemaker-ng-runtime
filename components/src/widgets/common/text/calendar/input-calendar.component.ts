@@ -13,7 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-    selector: '[wmInput][type="date"], [wmInput][type="datetime-local"], [wmInput][type="month"], [wmInput][type="time"], [wmInput][type="week"]',
+    selector: 'wm-input[type="date"], wm-input[type="datetime-local"], wm-input[type="month"], wm-input[type="time"], wm-input[type="week"]',
     templateUrl: './input-calendar.component.html',
     providers: [
         provideAsNgValueAccessor(InputCalendarComponent),

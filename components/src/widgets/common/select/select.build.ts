@@ -1,10 +1,10 @@
 import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 
-const tagName = 'div';
+const tagName = 'wm-select';
 
 register('wm-select', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmSelect ${getAttrMarkup(attrs)} ngModel>`,
+        pre: attrs => `<${tagName} ${getAttrMarkup(attrs)} ngModel>`,
         post: () => `</${tagName}>`
     };
 });

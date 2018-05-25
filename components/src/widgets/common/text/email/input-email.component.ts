@@ -13,7 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-    selector: '[wmInput][type="email"]',
+    selector: 'wm-input[type="email"]',
     templateUrl: './input-email.component.html',
     providers: [
         provideAsNgValueAccessor(InputEmailComponent),
