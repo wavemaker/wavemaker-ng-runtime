@@ -40,7 +40,6 @@ export class RatingComponent extends DatasetAwareFormComponent implements OnInit
     private ratingsWidth;
     private ratingItems;
     private _id;
-    private oldValue: any;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -48,13 +47,13 @@ export class RatingComponent extends DatasetAwareFormComponent implements OnInit
         styler(this.nativeElement, this);
 
         // prepare the rating options on dataset ready.
-        this.listenToDataset.subscribe(() => {
+        this.dataset$.subscribe(() => {
             this.prepareRatingDataset();
             this.onDatavalueChange(this.datavalue);
         });
 
         // listen to changes in datavalue.
-        this.listenToDatavalue.subscribe(() => this.onDatavalueChange(this.datavalue));
+        this.datavalue$.subscribe(() => this.onDatavalueChange(this.datavalue));
     }
 
     ngOnInit() {
@@ -89,7 +88,7 @@ export class RatingComponent extends DatasetAwareFormComponent implements OnInit
 
         for (let i = maxValue; i > 0; i--) {
             if (!data.length) {
-                ratingItems.push({'index': i, 'label': i});
+                ratingItems.push({'key': i, 'value': i, 'index': i, 'label': i});
             } else {
                 const ratingOption = data[i - 1];
 
@@ -102,6 +101,9 @@ export class RatingComponent extends DatasetAwareFormComponent implements OnInit
         }
 
         this.ratingItems = ratingItems;
+        if (!data.length) { // constructs default datasetItems when there is no dataset binding.
+            this.datasetItems = ratingItems;
+        }
     }
 
     onRatingClick($event, rate) {
@@ -139,6 +141,8 @@ export class RatingComponent extends DatasetAwareFormComponent implements OnInit
             if (selectedItem) {
                 selectedItem.selected = true;
             } else {
+                // reset the  model if there is no item found.
+                this.proxyModel = undefined;
                 return;
             }
 

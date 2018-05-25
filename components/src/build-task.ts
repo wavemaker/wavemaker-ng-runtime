@@ -61,6 +61,7 @@ export * from './widgets/common/radioset/radioset.build';
 export * from './widgets/common/rating/rating.build';
 export * from './widgets/common/rich-text-editor/rich-text-editor.build';
 export * from './widgets/common/right-panel/right-panel.build';
+export * from './widgets/common/search/search.build';
 export * from './widgets/common/select/select.build';
 export * from './widgets/common/slider/slider.build';
 export * from './widgets/common/spinner/spinner.build';

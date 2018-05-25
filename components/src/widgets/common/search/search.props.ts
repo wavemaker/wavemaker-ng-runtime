@@ -1,4 +1,5 @@
 import { PROP_STRING, PROP_STRING_NOTIFY, register, PROP_NUMBER, PROP_BOOLEAN } from '../../framework/widget-props';
+import { PROP_BOOLEAN_NOTIFY } from '@wm/components';
 
 export const searchProps = new Map(
     [
@@ -23,7 +24,7 @@ export const searchProps = new Map(
         ['shortcutkey', PROP_STRING],
         ['showsearchicon', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['type', {value: 'search', ...PROP_STRING}],
+        ['type', {value: 'search', ...PROP_STRING_NOTIFY}],
         ['width', {value: '100%', ...PROP_STRING}]
     ]
 );

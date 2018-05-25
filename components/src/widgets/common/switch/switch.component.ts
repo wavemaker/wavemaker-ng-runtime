@@ -6,7 +6,7 @@ import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { DataSetItem } from '../../../utils/form-utils';
+import { DataSetItem, setItemByCompare } from '../../../utils/form-utils';
 
 declare const _, $;
 
@@ -36,11 +36,11 @@ export class SwitchComponent extends DatasetAwareFormComponent implements OnInit
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
-        this.listenToDataset.subscribe(() => {
+        this.dataset$.subscribe(() => {
             this.updateSwitchOptions();
         });
 
-        this.listenToDatavalue.subscribe(() => {
+        this.datavalue$.subscribe(() => {
             this.setSelectedValue();
             this.updateHighlighter(true);
         });
@@ -61,30 +61,16 @@ export class SwitchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    // This function sets the selectedItem by comparing the field values, where fields are passed by "compareby" property.
-    setItemByCompare() {
-        // compare the fields based on fields given to compareby property.
-        this.datasetItems.some(function (opt) {
-            if (isEqualWithFields(opt.value, this.datavalue, this.compareby)) {
-                opt.selected = true;
-                this.selectedItem = opt;
-                return true;
-            }
-            return false;
-        });
-    }
-
     // This function sets the selectedItem by either using compareby fields or selected flag on datasetItems.
     private setSelectedValue() {
         if (this.datafield === 'All Fields' && this.compareby && this.compareby.length) {
-            this.setItemByCompare();
-        } else {
-            const selectedItem =  _.find(this.datasetItems, {'selected' : true});
+            setItemByCompare(this.datasetItems, this.datavalue, this.compareby);
+        }
+        const selectedItem =  _.find(this.datasetItems, {'selected' : true});
 
-            if (selectedItem) {
-                this.selectedItem = selectedItem;
-                return;
-            }
+        if (selectedItem) {
+            this.selectedItem = selectedItem;
+            return;
         }
     }
 

@@ -1,8 +1,8 @@
 import { Injector, OnInit } from '@angular/core';
-import {Subject} from 'rxjs/Subject';
+import { Subject } from 'rxjs/Subject';
 
 import { styler } from '../../framework/styler';
-import { DataSetItem, getOrderedDataSet, transformData, transformDataWithKeys } from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, getOrderedDataSet, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 
 declare const _;
@@ -11,11 +11,14 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public dataset: any;
     public datafield: string;
     public displayfield: string;
+    public displaylabel: string;
+    public displayimagesrc: string;
     public displayexpression: string;
     public usekeys: boolean;
     public orderby: string;
     public multiple: boolean;
     public readonly: boolean;
+    public oldValue;
 
     public datasetItems: DataSetItem[] = [];
     public displayValue;
@@ -25,8 +28,8 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public unUsedDatavalue: any;
     public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
 
-    listenToDataset = new Subject();
-    listenToDatavalue = new Subject();
+    dataset$ = new Subject();
+    datavalue$ = new Subject();
 
     get proxyModel() {
         return this._model;
@@ -52,10 +55,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(val);
 
         // changes on the datavalue can be subscribed using listenToDatavalue
-        this.listenToDatavalue.next(val);
+        this.datavalue$.next(val);
     }
 
-    constructor(inj: Injector, WIDGET_CONFIG) {
+    protected constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -156,7 +159,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             this._model = [];
             values.forEach(val => {
                 const itemByValue = _.find(this.datasetItems, item => {
-                    return ((_.isObject(val) && _.isEqual(item.value, val)) || item.value === val);
+                    return (val instanceof Object ? _.isEqual(item.value, val) : item.value === val);
                 });
                 if (itemByValue) {
                     itemByValue.selected = true;
@@ -166,7 +169,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         } else {
             this._model = undefined;
             const itemByValue = _.find(this.datasetItems, item => {
-                return ((_.isObject(values) && _.isEqual(item.value, values)) || _.toString(item.value) === _.toString(values));
+                return (values instanceof Object  ? _.isEqual(item.value, values) : _.toString(item.value) === _.toString(values));
             });
             if (itemByValue) {
                 itemByValue.selected = true;
@@ -204,17 +207,17 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             return;
         }
 
-        // TODO: remove check for data property
-        let newDataSet = this.dataset.hasOwnProperty('data') ? this.dataset.data : this.dataset;
+        // convert any dataset to the object format.
+        let newDataset = convertDataToObject(this.dataset);
 
-        newDataSet = getOrderedDataSet(newDataSet, this.orderby);
+        newDataset = getOrderedDataSet(newDataset, this.orderby);
 
         if (this.usekeys) {
-            this.datasetItems = transformDataWithKeys(newDataSet);
+            this.datasetItems = transformDataWithKeys(newDataset);
         } else {
-            const displayOptions = transformData(newDataSet, this.datafield, this.displayfield, this.displayexpression);
+            const displayOptions = transformData(newDataset, this.datafield, this.displayfield || this.displaylabel, this.displayexpression, this.displayimagesrc);
             // get the unique objects out of the extracted data.
-            this.datasetItems = _.uniqBy(displayOptions, 'key');
+            this.datasetItems = getUniqObjsByDataField(displayOptions, this.datafield, this.displayfield || this.displaylabel);
         }
 
         this.postDatasetItemsInit();
@@ -229,7 +232,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             this.selectByValue(dv);
 
             // changes on the datasetItems can be subscribed using listenToDataset.
-            this.listenToDataset.next(this.datasetItems);
+            this.dataset$.next(this.datasetItems);
         }
     }
 }
