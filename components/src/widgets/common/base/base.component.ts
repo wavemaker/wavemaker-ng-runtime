@@ -2,6 +2,7 @@ import { AfterContentInit, AfterViewInit, ElementRef, Injector, OnDestroy, OnIni
 import { EventManager } from '@angular/platform-browser';
 
 import { Subject } from 'rxjs/Subject';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 import { $parseEvent, $unwatch, $watch, addClass, App, isDefined, setAttr } from '@wm/core';
 
@@ -70,7 +71,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     /**
      * Style change subject and observable
      */
-    private readonly styleChange = new Subject();
+    private readonly styleChange = new ReplaySubject();
 
     /**
      * Property change subject and observable
