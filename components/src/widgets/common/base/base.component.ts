@@ -314,12 +314,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     protected processBindAttr(propName: string, expr: string) {
 
-        // if the show property is bound, set the initial value to false
-        if (propName === 'show') {
-            this.nativeElement.hidden = true;
-        } else {
-            this.initState.delete(propName);
-        }
+        this.initState.delete(propName);
 
         this.registerDestroyListener(
             $watch(
@@ -365,6 +360,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected processAttr(attrName: string, attrValue: string) {
         const {0: propName, 1: meta, length} = attrName.split('.');
         if (meta === 'bind') {
+            // if the show property is bound, set the initial value to false
+            if (propName === 'show') {
+                this.nativeElement.hidden = true;
+            }
             this.processBindAttr(propName, attrValue);
         } else if (meta === 'event') {
             this.processEventAttr(propName, attrValue);
