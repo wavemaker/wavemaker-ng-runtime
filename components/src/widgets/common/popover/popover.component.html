@@ -5,8 +5,9 @@
    [triggers]="event"
    (onShown)="onShown()"
    (onHidden)="onHidden()"
-   [containerClass]="popoverAnimation"
+   [containerClass]="getContainerClass()"
    container="body"
+   [isOpen] = "isOpen"
 
    wmAnchor
    animation.bind="animation"

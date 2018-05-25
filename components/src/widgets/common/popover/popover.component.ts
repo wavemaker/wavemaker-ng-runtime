@@ -1,4 +1,4 @@
-import { Component, ContentChild, Injector, OnInit, TemplateRef } from '@angular/core';
+import { Component, ContentChild, Injector, Input, OnInit, TemplateRef } from '@angular/core';
 import { formatStyle } from '@wm/core';
 
 import { IWidgetConfig } from '../../framework/types';
@@ -19,12 +19,14 @@ const eventsMap = {
 
 @Component({
     selector: '[wmPopover]',
-    templateUrl: './popover.component.html'
+    templateUrl: './popover.component.html',
+    exportAs: 'wmPopover'
 })
 
 export class PopoverComponent extends StylableComponent implements OnInit {
     private event: string;
     private popoverAnimation: string;
+    private isOpen: boolean = false;
 
     public interaction: string;
     public popoverarrow: boolean;
@@ -33,6 +35,7 @@ export class PopoverComponent extends StylableComponent implements OnInit {
     public contentanimation: string;
 
     @ContentChild(TemplateRef) popoverTemplate;
+    @Input() popoverId;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -44,7 +47,10 @@ export class PopoverComponent extends StylableComponent implements OnInit {
         this.event = eventsMap[this.interaction];
         this.popoverAnimation = `animated ${this.contentanimation}`;
     }
-
+    // returns classes(animation and popover id) for popover
+    getContainerClass() {
+       return `${this.popoverAnimation} ${this.popoverId}`;
+    }
     // Trigger on hiding popover
     private onHidden() {
         this.invokeEventCallback('hide');
@@ -52,12 +58,41 @@ export class PopoverComponent extends StylableComponent implements OnInit {
 
     // Trigger on showing popover
     private onShown() {
-        const popover: HTMLElement = document.querySelector('.popover');
+        this.isOpen = true;
+        const popover: HTMLElement = document.querySelector(`.${this.popoverId}`);
         popover.style.height = formatStyle(this.popoverheight, 'px');
         popover.style.width = formatStyle(this.popoverwidth, 'px');
         if (!this.popoverarrow) {
             document.querySelector('.arrow').classList.add('hidden');
         }
+        const popoverContent: HTMLElement = popover.querySelector('.popover-content');
+        popoverContent.onkeydown = (event: any) => {
+            // Check for Esc key
+            if (event.keyCode === 27) {
+                this.hidePopover();
+            }
+        };
         this.invokeEventCallback('show');
+        const popoverStartBtn: HTMLElement = popover.querySelector('.popover-start');
+        popoverStartBtn.focus();
+    }
+
+    private popoverEnd(event: any) {
+        // Check for Tab key
+        if (!event.shiftKey && event.keyCode === 9) {
+            this.hidePopover();
+        }
+    }
+
+    private popoverStart(event: any) {
+        // Check for Shift+Tab key
+        if (event.shiftKey && event.keyCode === 9) {
+            this.hidePopover();
+        }
+    }
+
+    private hidePopover() {
+        this.isOpen = false;
+        this.$element.find('a').focus();
     }
 }
