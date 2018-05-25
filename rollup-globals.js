@@ -17,6 +17,7 @@ export default {
     '@ionic-native/contacts': 'ionicNative.plugins',
     '@ionic-native/device': 'ionicNative.plugins',
     '@ionic-native/file': 'ionicNative.plugins',
+    '@ionic-native/file-opener': 'ionicNative.plugins',
     '@ionic-native/geolocation': 'ionicNative.plugins',
     '@ionic-native/media-capture': 'ionicNative.plugins',
     '@ionic-native/network': 'ionicNative.plugins',

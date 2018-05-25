@@ -25,7 +25,8 @@ export class MobileHttpInterceptor implements HttpInterceptor {
 
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let modifiedRequest = request;
-        if (MobileHttpInterceptor.REMOTE_SERVICE_URL_PATTERNS.find(r => r.test(request.url))) {
+        if (request.url.indexOf('://') < 0
+            && MobileHttpInterceptor.REMOTE_SERVICE_URL_PATTERNS.find(r => r.test(request.url))) {
             modifiedRequest = request.clone({
                 url: this._deployedUrl + request.url
             });
