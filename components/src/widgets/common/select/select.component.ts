@@ -1,11 +1,9 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './select.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-
-declare const _;
 
 registerProps();
 
@@ -19,18 +17,15 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
         provideAsWidgetRef(SelectComponent)
     ]
 })
-export class SelectComponent extends DatasetAwareFormComponent implements OnInit {
+export class SelectComponent extends DatasetAwareFormComponent implements AfterViewInit {
 
     public readonly;
+
+    @ViewChild('select', {read: ElementRef}) selectEl: ElementRef;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         this.acceptsArray = true;
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        styler(this.nativeElement.children[0] as HTMLElement, this);
     }
 
     onSelectValueChange($event) {
@@ -41,6 +36,11 @@ export class SelectComponent extends DatasetAwareFormComponent implements OnInit
 
     onPropertyChange(key, nv, ov?) {
         super.onPropertyChange(key, nv, ov);
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        styler(this.selectEl.nativeElement as HTMLElement, this);
     }
 
 }

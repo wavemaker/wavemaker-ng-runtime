@@ -1,8 +1,8 @@
-import { AfterViewInit, Attribute, Component, Directive, ElementRef, Injector, OnInit } from '@angular/core';
+import { Attribute, Component, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { DataSource, findValueOf, isPageable} from '@wm/core';
+import { DataSource, findValueOf, isPageable } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 
 import { styler } from '../../framework/styler';
@@ -29,7 +29,7 @@ registerProps();
     ]
 })
 
-export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
+export class SearchComponent extends DatasetAwareFormComponent implements OnInit {
 
     casesensitive;
     imagewidth;
@@ -100,7 +100,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     ngOnInit() {
         super.ngOnInit();
-        styler(this.nativeElement.children[0] as HTMLElement, this);
+        styler(this.nativeElement as HTMLElement, this);
     }
 
     get showFooter() {

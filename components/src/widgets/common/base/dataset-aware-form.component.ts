@@ -1,13 +1,13 @@
-import { Injector, OnInit } from '@angular/core';
+import { Injector } from '@angular/core';
+
 import { Subject } from 'rxjs/Subject';
 
-import { styler } from '../../framework/styler';
 import { convertDataToObject, DataSetItem, getOrderedDataSet, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 
 declare const _;
 
-export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent implements OnInit {
+export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent {
     public dataset: any;
     public datafield: string;
     public displayfield: string;
@@ -60,11 +60,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     protected constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        styler(this.nativeElement.children[0] as HTMLElement, this);
     }
 
     onPropertyChange(key, nv, ov?) {

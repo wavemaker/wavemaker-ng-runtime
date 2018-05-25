@@ -131,9 +131,12 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
                 this.expanded = nv;
                 break;
             case 'content':
-                if (this.expanded) {
-                    setTimeout(() => this.$lazyLoad, 50);
-                }
+                setTimeout(() => {
+                    if (this.expanded || !this.collapsible) {
+                        this.$lazyLoad();
+                    }
+                }, 20);
+
                 break;
         }
     }
