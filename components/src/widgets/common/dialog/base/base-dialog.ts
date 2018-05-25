@@ -46,7 +46,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
                 hideSubscription.unsubscribe();
             });
 
-            this.invokeEventCallback('opened');
+            this.invokeEventCallback('opened', {$event: {type: 'opened'}});
             showSubscription.unsubscribe();
         });
 
