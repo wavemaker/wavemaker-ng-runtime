@@ -28,19 +28,14 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         this.acceptsArray = true;
     }
 
-    onSelectValueChange($event) {
-        this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
-        this.oldValue = this.datavalue;
-    }
-
-    onPropertyChange(key, nv, ov?) {
-        super.onPropertyChange(key, nv, ov);
-    }
-
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.selectEl.nativeElement as HTMLElement, this);
     }
 
+    onSelectValueChange($event) {
+        this.invokeOnTouched();
+        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldValue});
+        this.oldValue = this.datavalue;
+    }
 }

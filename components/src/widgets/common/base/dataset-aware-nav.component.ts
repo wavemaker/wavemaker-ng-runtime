@@ -1,4 +1,4 @@
-import { Injector, OnInit } from '@angular/core';
+import { Attribute, Injector, OnInit } from '@angular/core';
 import { $appDigest, findValueOf, isObject, validateAccessRoles } from '@wm/core';
 
 import { createArrayFrom } from '../../../utils/data-utils';
@@ -26,9 +26,27 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
     public displayfield: string;
 
     private _itemFieldMap;
+    private binditemlabel: string | null;
+    private binditemicon: string | null;
+    private binditemaction: string | null;
+    private binditembadge: string | null;
+    private binditemchildren: string | null;
+    private binditemid: string | null;
+    private binditemlink: string | null;
+    private binduserrole: string | null;
 
-    constructor(inj: Injector, WIDGET_CONFIG) {
+    constructor(inj: Injector,
+                WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
+
+        this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
+        this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');
+        this.binditemaction = this.nativeElement.getAttribute('itemaction.bind');
+        this.binditembadge = this.nativeElement.getAttribute('itembadge.bind');
+        this.binditemchildren = this.nativeElement.getAttribute('itemchildren.bind');
+        this.binditemid = this.nativeElement.getAttribute('itemid.bind');
+        this.binditemlink = this.nativeElement.getAttribute('itemlink.bind');
+        this.binduserrole = this.nativeElement.getAttribute('userrole.bind');
     }
 
     /**
@@ -37,18 +55,18 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
      * @param node
      */
     private getNode(fields, node): NavNode {
-        const children = getEvaluatedData(node, {expressionName: 'itemchildren'}) || node[fields.childrenField];
+        const children = getEvaluatedData(node, {expression: 'itemchildren', bindExpression: this.binditemchildren}) || node[fields.childrenField];
         return {
-            action   : getEvaluatedData(node, {expressionName: 'itemaction'}) || node[fields.actionField],
-            badge    : getEvaluatedData(node, {expressionName: 'itembadge'}) || node[fields.badgeField],
+            action   : getEvaluatedData(node, {expression: 'itemaction', bindExpression: this.binditemaction}) || node[fields.actionField],
+            badge    : getEvaluatedData(node, {expression: 'itembadge', bindExpression: this.binditembadge}) || node[fields.badgeField],
             children : Array.isArray(children) ? this.getNodes(children) : [],
             class    : node[fields.classField],
             disabled : node.disabled,
-            icon     : getEvaluatedData(node, {expressionName: 'itemicon'}) || node[fields.iconField],
-            id       : getEvaluatedData(node, {expressionName: 'itemid'}) || node[fields.idField],
-            label    : getEvaluatedData(node, {expressionName: 'itemlink'}) || node[fields.labelField],
-            link     : getEvaluatedData(node, {expressionName: 'itemlink'}) || node[fields.linkField],
-            role     : getEvaluatedData(node, {expressionName: 'userrole'}),
+            icon     : getEvaluatedData(node, {expression: 'itemicon', bindExpression: this.binditemicon}) || node[fields.iconField],
+            id       : getEvaluatedData(node, {expression: 'itemid', bindExpression: this.binditemid}) || node[fields.idField],
+            label    : getEvaluatedData(node, {expression: 'itemlabel', bindExpression: this.binditemlabel}) || node[fields.labelField],
+            link     : getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}) || node[fields.linkField],
+            role     : getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}),
             // older projects have display field & data field property for menu.
             value    : this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
         };

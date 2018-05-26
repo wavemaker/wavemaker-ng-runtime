@@ -1,6 +1,6 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, ViewChild} from '@angular/core';
 
-import { $appDigest, isEqualWithFields, setCSS } from '@wm/core';
+import { $appDigest, setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
@@ -23,7 +23,7 @@ registerProps();
         provideAsWidgetRef(SwitchComponent)
     ]
 })
-export class SwitchComponent extends DatasetAwareFormComponent implements OnInit {
+export class SwitchComponent extends DatasetAwareFormComponent implements AfterViewInit {
 
     options = [];
     selectedItem: DataSetItem;
@@ -32,9 +32,10 @@ export class SwitchComponent extends DatasetAwareFormComponent implements OnInit
     private btnwidth;
     private compareby;
 
+    @ViewChild('switch', {read: ElementRef}) switchEl: ElementRef;
+
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
 
         this.dataset$.subscribe(() => {
             this.updateSwitchOptions();
@@ -46,13 +47,9 @@ export class SwitchComponent extends DatasetAwareFormComponent implements OnInit
         });
     }
 
-    ngOnInit() {
-        super.ngOnInit();
-        styler(this.nativeElement.children[0] as HTMLElement, this);
-    }
-
-    onPropertyChange(key, nv, ov) {
-        super.onPropertyChange(key, nv, ov);
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        styler(this.switchEl.nativeElement as HTMLElement, this);
     }
 
     onStyleChange(key, newVal, oldVal) {

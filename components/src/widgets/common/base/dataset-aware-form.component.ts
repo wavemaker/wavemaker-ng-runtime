@@ -20,6 +20,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public readonly: boolean;
     public oldValue;
 
+    public binddisplayexpression;
+    public binddisplayimagesrc;
+
     public datasetItems: DataSetItem[] = [];
     public displayValue;
 
@@ -60,6 +63,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     protected constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
+
+        this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
+        this.binddisplayimagesrc = this.nativeElement.getAttribute('displayimagesrc.bind');
     }
 
     onPropertyChange(key, nv, ov?) {
@@ -210,7 +216,13 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (this.usekeys) {
             this.datasetItems = transformDataWithKeys(newDataset);
         } else {
-            const displayOptions = transformData(newDataset, this.datafield, this.displayfield || this.displaylabel, this.displayexpression, this.displayimagesrc);
+            const displayOptions = transformData(newDataset, this.datafield, {
+                displayField: this.displayfield || this.displaylabel,
+                displayExpr: this.displayexpression,
+                bindDisplayExpr: this.binddisplayexpression,
+                bindDisplayImgSrc: this.binddisplayimagesrc,
+                displayImgSrc: this.displayimagesrc
+            });
             // get the unique objects out of the extracted data.
             this.datasetItems = getUniqObjsByDataField(displayOptions, this.datafield, this.displayfield || this.displaylabel);
         }

@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { generateGUId, setCSS } from '@wm/core';
 import { styler } from '../../framework/styler';
@@ -31,10 +31,10 @@ const DEFAULT_RATING = 5;
         provideAsWidgetRef(RatingComponent)
     ]
 })
-export class RatingComponent extends DatasetAwareFormComponent implements OnInit {
-    caption: string;
-    showcaptions: boolean;
-    maxvalue;
+export class RatingComponent extends DatasetAwareFormComponent {
+    public caption: string;
+    public showcaptions: boolean;
+    public maxvalue;
 
     private selectedRatingValue;
     private ratingsWidth;
@@ -54,10 +54,6 @@ export class RatingComponent extends DatasetAwareFormComponent implements OnInit
 
         // listen to changes in datavalue.
         this.datavalue$.subscribe(() => this.onDatavalueChange(this.datavalue));
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 
     writeValue(value) {

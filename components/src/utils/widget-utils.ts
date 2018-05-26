@@ -91,34 +91,39 @@ export const getObjValueByKey = (obj: any, strKey: string) => {
 };
 
 /**
- * returns the display field data for select, radioboxset and checkboxset widgets
+ * returns the display field data for any dataset widgets
  * Based on the bind display expression or display expression or display name,
  * data is extracted and formatted from the passed option object
+ * If there is field is specified, field value is obtained from the dataObj.
+ * If expression is given, evaluates the expression value.
+ * else check for bindExpression, extract the value from the dataObj
  */
 export const getEvaluatedData = (dataObj: any, options: any) => {
     let expressionValue;
-    const displayField = options.displayfield,
-        displayExp = options.displayexpression;
+    const field = options.field,
+        expr = options.expression,
+        bindExpr = options.bindExpression;
 
     // if key is bound expression
-    if (displayExp) {
-        if (stringStartsWith(displayExp, 'bind:')) {
-            // remove 'bind:' prefix from the boundExpressionName
-            expressionValue = displayExp.replace('bind:', '');
-            // parse the expressionValue for replacing all the expressions with values in the object
-            expressionValue = this.getUpdatedExpr(expressionValue);
+    if (bindExpr) {
+        // remove 'bind:' prefix from the boundExpressionName
+        expressionValue = bindExpr.replace('bind:', '');
+        // parse the expressionValue for replacing all the expressions with values in the object
+        expressionValue = getUpdatedExpr(expressionValue);
 
-            // TODO: Optimize the behavior
-            const f = new Function('__1', '__2', '__3', 'return ' + expressionValue);
-            // evaluate the expression in the given scope and return the value
-            return f(_.assign({}, dataObj, {'__1': dataObj}));
-        }
-        return getEvaluatedExprValue(dataObj, displayExp);
+        // TODO: Optimize the behavior
+        const f = new Function('__1', '__2', '__3', 'return ' + expressionValue);
+        // evaluate the expression in the given scope and return the value
+        return f(_.assign({}, dataObj, {'__1': dataObj}));
+    }
+    // expression is given but no bindexpression
+    if (expr) {
+        return getEvaluatedExprValue(dataObj, expr);
     }
 
-    /*If value is passed*/
-    if (displayField) {
-        return getObjValueByKey(dataObj, displayField);
+    // If value is passed
+    if (field) {
+        return getObjValueByKey(dataObj, field);
     }
 };
 

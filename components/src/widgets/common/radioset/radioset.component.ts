@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
@@ -21,7 +21,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(RadiosetComponent)
     ]
 })
-export class RadiosetComponent extends DatasetAwareFormComponent implements OnInit {
+export class RadiosetComponent extends DatasetAwareFormComponent {
 
     public layout = '';
 

@@ -7,119 +7,9 @@ import { ALLFIELDS } from './data-utils';
 declare const _;
 
 /**
- * return the default display field, if the widget does not have a display field or it is set to All fields
- */
-export const getDisplayField = (dataSet: any, displayField: string) => {
-    /*if displayField is not set or set to all fields*/
-    if (!displayField || displayField === ALLFIELDS) {
-        /*if dataSet is an array*/
-        if (_.isArray(dataSet) && dataSet.length > 0) {
-            /*if dataSet is an array of objects*/
-            if (_.isObject(dataSet[0])) {
-                /* get the first field of the object*/
-                displayField = Object.keys(dataSet[0])[0];
-            } else {
-                displayField = '';
-            }
-        } else if (_.isObject(dataSet)) {
-            displayField = '';
-        }
-    }
-    /* return dataValue to be the default key */
-    return displayField;
-};
-
-/**
- * parse dataSet to filter the options based on the datafield, displayfield & displayexpression
- */
-const extractDataObjects = (dataSet: any, options: DataSetProps) => {
-    /*store parsed data in 'data'*/
-    let objectKeys = [],
-        key,
-        value;
-
-    // TODO: [bandhavya] remove check for data property
-    dataSet = dataSet.hasOwnProperty('data') ? dataSet.data : dataSet;
-    dataSet = getOrderedDataSet(dataSet, options.orderby);
-
-    const useKeys = options.usekeys,
-        dataField = options.datafield,
-        displayField = getDisplayField(dataSet, options.displayfield || options.datafield),
-        data = [];
-
-    if (_.isString(dataSet)) {
-        dataSet = dataSet.split(',').map(str => str.trim());
-    }
-
-    if (useKeys && _.isObject(dataSet[0])) {
-        /*getting keys of the object*/
-        objectKeys = Object.keys(dataSet[0]);
-        /*iterating over object keys and creating checkboxset dataset*/
-        objectKeys.forEach((_key) => {
-            data.push({'key': _key, 'value': _key});
-        });
-        return data;
-    }
-
-    // if filter dataSet if dataField is selected other than 'All Fields'
-    if (dataField && dataField !== ALLFIELDS) {
-        // Widget selected item dataset will be object instead of array.
-        if (_.isObject(dataSet) && !_.isArray(dataSet)) {
-            key = getObjValueByKey(dataSet, dataField);
-            value = getEvaluatedData(dataSet, {
-                displayfield: options.displayfield, displayexpression: options.displayexpression
-            });
-            data.push({'key': key, 'value': value});
-        } else {
-            if (_.isObject(dataSet[0])) {
-                dataSet.forEach((option) => {
-                    key = getObjValueByKey(option, dataField);
-                    value = getEvaluatedData(option, {
-                        displayfield: options.displayfield, displayexpression: options.displayexpression
-                    });
-                    data.push({'key': key, 'value': value});
-                });
-            } else {
-                dataSet.forEach((option) => {
-                    data.push({'key': option, 'value': option});
-                });
-            }
-        }
-
-    } else {
-        dataSet.forEach((option, index) => {
-            if (_.isObject(option)) {
-                if (options.datafield === ALLFIELDS) {
-                    key = index;
-                    value = getEvaluatedData(option, {
-                        displayfield: options.displayfield, displayexpression: options.displayexpression
-                    });
-
-                    data.push({'key': key + '', 'value': value, 'dataObject': option});
-                } else {
-                    key = getObjValueByKey(option, dataField);
-                    value = getEvaluatedData(option, {
-                        displayfield: options.displayfield, displayexpression: options.displayexpression
-                    });
-                    data.push({'key': key, 'value': value});
-                }
-            } else {
-                if (_.isArray(dataSet)) {
-                    data.push({'key': option, 'value': option});
-                } else {
-                    // If dataset is object with key, value and useKeys set to true, only keys are to be returned.
-                    data.push({'key': index, 'value': useKeys ? index : option});
-                }
-            }
-        });
-    }
-    return data;
-};
-
-/**
  * function to get the ordered dataset based on the given orderby
  */
-export const getOrderedDataSet = (dataSet: any, orderBy: string): Array<any> => {
+export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
     if (!orderBy) {
         return _.cloneDeep(dataSet);
     }
@@ -177,7 +67,7 @@ export const convertDataToObject = (dataResult) => {
  * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
  * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
  */
-export const transformData = (dataSet: any, myDataField: string, myDisplayField, myDisplayExpr?, myDisplayImgSrc?, startIndex?: number): Array<DataSetItem> => {
+export const transformData = (dataSet: any, myDataField: string, displayOptions, startIndex?: number): Array<DataSetItem> => {
     const data = [];
     dataSet = convertDataToObject(dataSet);
 
@@ -199,7 +89,9 @@ export const transformData = (dataSet: any, myDataField: string, myDisplayField,
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
             myDataField = ALLFIELDS;
         }
-        myDisplayField = getDisplayField(dataSet, myDisplayField || myDataField);
+
+        const myDisplayImgSrc = displayOptions.displayImgSrc;
+
         dataSet.forEach((option, index) => {
             // startIndex is the index of the next new item.
             if (!_.isUndefined(startIndex)) {
@@ -210,7 +102,9 @@ export const transformData = (dataSet: any, myDataField: string, myDisplayField,
             // Omit all the items whose datafield (key) is null or undefined.
             if (!_.isUndefined(key) && !_.isNull(key)) {
                 const label = getEvaluatedData(option, {
-                    displayfield: myDisplayField, displayexpression: myDisplayExpr
+                    field: displayOptions.displayField,
+                    expression: displayOptions.displayExpr,
+                    bindExpression: displayOptions.bindDisplayExpr
                 });
                 const dataSetItem = {
                     key: key,
@@ -219,7 +113,10 @@ export const transformData = (dataSet: any, myDataField: string, myDisplayField,
                     index: index + 1
                 };
                 if (myDisplayImgSrc) {
-                    dataSetItem['imgSrc'] = getEvaluatedData(option, {expressionName: myDisplayImgSrc});
+                    dataSetItem['imgSrc'] = getEvaluatedData(option, {
+                        expression: displayOptions.displayImgSrc,
+                        bindExpression: displayOptions.bindDisplayImgSrc
+                    });
                 }
                 data.push(dataSetItem);
             }
@@ -228,79 +125,6 @@ export const transformData = (dataSet: any, myDataField: string, myDisplayField,
     return data;
 };
 
-/**
- * This function parses the dataset and extracts the displayOptions from parsed dataset.
- * displayOption will contain datafield as key, displayfield as value.
- */
-export const extractDisplayOptions = (dataSet: any, options: DataSetProps, callback?: (options: any) => void): any[] => {
-    let newDataSet,
-        displayOptions = [];
-
-    if (!dataSet) {
-        return;
-    }
-    newDataSet = getOrderedDataSet(dataSet, options.orderby);
-
-    if (!_.isEmpty(newDataSet)) {
-        displayOptions = extractDataObjects(newDataSet, options);
-    }
-
-    displayOptions = _.uniqBy(displayOptions, 'key');
-
-    // Omit all the options whose datafield (key) is null or undefined.
-    _.remove(displayOptions, (opt) => {
-        return _.isUndefined(opt.key) || _.isNull(opt.key);
-    });
-
-    callback(displayOptions);
-};
-
-/**
- * This function finds the displayOption whose key is equal to the value and sets the isChecked flag for that displayOptions.
- */
-export const updateCheckedValue = (value: any, displayOptions: any[]) => {
-    const checkedDisplayOption = _.find(displayOptions, dataObj => {
-        return _.toString(dataObj.key) === _.toString(value);
-    });
-    return checkedDisplayOption;
-};
-
-/**
- * This function assigns the model value depending on modelProxy. Here model can be object or string.
- * If datafield is ALLFIELDS, modelProxy is 0, then model will be retrieved from dataObject in displayOptions
- * If datafield is other than ALLFIELDS, the modelProxy and model will be retrieved from key in displayOptions
- */
-export const assignModelForSelected = (displayOptions: any[], model: any, modelProxy: any, datafield: string, _isChangedManually: boolean, _dataVal: any, callback?: (obj: any) => void) => {
-    let selectedOption,
-        _model_;
-    const selectedValue = modelProxy;
-
-    // ModelProxy is undefined, then update the _dataVal which can be used when latest dataset is obtained.
-    if (!_isChangedManually && _.isUndefined(selectedValue) && !_.isUndefined(model)) {
-        _dataVal = _model_;
-        _model_ = selectedValue;
-    } else if (_.isNull(selectedValue)) { // key can never be null, so return model as undefined.
-        _model_ = selectedValue;
-    } else {
-        selectedOption = _.find(displayOptions, {key: selectedValue});
-        if (selectedOption) {
-            selectedOption.isChecked = true;
-        }
-
-        if (selectedOption && datafield === ALLFIELDS) {
-            _model_ = selectedOption.dataObject;
-            selectedOption.isChecked = true;
-        } else {
-            _model_ = selectedValue;
-        }
-    }
-
-    // clear _dataVal when model is defined.
-    if (!_.isUndefined(_model_) && !_.isUndefined(_dataVal)) {
-        _dataVal = undefined;
-    }
-    callback({'_dataVal': _dataVal, 'model': _model_});
-};
 
 /**
  * This function iterates over the modelProxy and returns the model value. Here model is array of values.

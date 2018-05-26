@@ -1,11 +1,10 @@
-import { Attribute, Component, Injector, OnInit } from '@angular/core';
+import { Attribute, Component, Injector } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { DataSource, findValueOf, isPageable } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 
-import { styler } from '../../framework/styler';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, transformData } from '../../../utils/form-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
@@ -29,7 +28,7 @@ registerProps();
     ]
 })
 
-export class SearchComponent extends DatasetAwareFormComponent implements OnInit {
+export class SearchComponent extends DatasetAwareFormComponent {
 
     casesensitive;
     imagewidth;
@@ -87,7 +86,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                         response = [response];
                     }
                     // Todo: [bandhavya] verify after this change.
-                    this.queryModel = transformData(response, this.datafield, this.displaylabel, this.displayexpression, this.displayimagesrc, this.itemIndex);
+                    this.queryModel = transformData(response, this.datafield, {
+                        displayField: this.displayfield || this.displaylabel,
+                        displayExpr: this.displayexpression,
+                        bindDisplayExpr: this.binddisplayexpression,
+                        bindDisplayImgSrc: this.binddisplayimagesrc,
+                        displayImgSrc: this.displayimagesrc
+                    }, this.itemIndex);
 
                     // Show the label value on input.
                     this.query = this.queryModel[0].label;
@@ -96,11 +101,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         });
 
         this._defaultQuery = true;
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        styler(this.nativeElement as HTMLElement, this);
     }
 
     get showFooter() {
@@ -174,7 +174,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     if (!_.isArray(response)) {
                         response = [response];
                     }
-                    const result = transformData(response, this.datafield, this.displaylabel, this.displayexpression, this.displayimagesrc);
+                    const result = transformData(response, this.datafield, {
+                        displayField: this.displayfield || this.displaylabel,
+                        displayExpr: this.displayexpression,
+                        bindDisplayExpr: this.binddisplayexpression,
+                        bindDisplayImgSrc: this.binddisplayimagesrc,
+                        displayImgSrc: this.displayimagesrc
+                    });
                     resolve(result);
                 }).then(() => this._loadingItems = false);
             }
@@ -237,8 +243,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // this function transform the response data in case it is not an array
     private getTransformedData(variable, data) {
         const operationResult = variable.operation + 'Result', // when output is only string it is available as oprationNameResult
-            tempResponse    = data[operationResult],
-            tempObj         = {};
+            tempResponse = data[operationResult],
+            tempObj = {};
         // in case data received is value as string then add that string value to object and convert object into array
         if (tempResponse) {
             _.set(tempObj, operationResult, tempResponse);
@@ -305,7 +311,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             } else {
                 this.formattedDataSet = this.page > 1 ? this.formattedDataSet.concat(data) : data;
 
-                resolve(transformData(this.formattedDataSet, this.datafield, this.displaylabel, this.displayexpression, this.displayimagesrc));
+                resolve(transformData(this.formattedDataSet, this.datafield, {
+                    displayField: this.displayfield || this.displaylabel,
+                    displayExpr: this.displayexpression,
+                    bindDisplayExpr: this.binddisplayexpression,
+                    bindDisplayImgSrc: this.binddisplayimagesrc,
+                    displayImgSrc: this.displayimagesrc
+                }));
             }
         });
     }
@@ -403,7 +415,7 @@ export class LocalDataSource {
 
 // This class contains filter method which makes call to search records for live or service variable.
 export class VariableDataSource {
-    datasource;
+    private datasource;
     private datafield: any[];
     private queryText: string;
     private searchkey: string;

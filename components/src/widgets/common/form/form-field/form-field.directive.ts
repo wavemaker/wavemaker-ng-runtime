@@ -122,7 +122,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             }
         }
         return getEvaluatedData(object, {
-            displayexpression: displayExpr
+            expression: displayExpr
         });
     }
 

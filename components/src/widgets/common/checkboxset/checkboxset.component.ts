@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
@@ -22,7 +22,7 @@ declare const _;
     ]
 })
 
-export class CheckboxsetComponent extends DatasetAwareFormComponent implements OnInit {
+export class CheckboxsetComponent extends DatasetAwareFormComponent {
     public layout = '';
 
     constructor(inj: Injector) {

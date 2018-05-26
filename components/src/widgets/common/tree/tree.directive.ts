@@ -68,7 +68,12 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     nodeicon;
     nodechildren;
 
-    constructor(inj: Injector, @Attribute('datavalue.bind') private binddatavalue, @Attribute('nodeid.bind') private bindnodeid) {
+    constructor(inj: Injector,
+                @Attribute('datavalue.bind') private binddatavalue,
+                @Attribute('nodelabel.bind') private bindnodelabel,
+                @Attribute('nodeicon.bind') private bindnodeicon,
+                @Attribute('nodechildren.bind') private bindnodechildren,
+                @Attribute('nodeid.bind') private bindnodeid) {
         super(inj, WIDGET_INFO);
         this.bindEvents();
     }
@@ -112,10 +117,10 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         nodes.forEach((node, idx) => {
             const $li             = $('<li></li>'),
                 $iconNode       = $('<i></i>'),
-                nodeLabel       = getEvaluatedData(node, {displayexpression: this.nodelabel}) || node.label,
-                nodeIcon        = getEvaluatedData(node, {displayexpression: this.nodeicon}) || node.icon,
-                nodeChildren    = getEvaluatedData(node, {displayexpression: this.nodechildren}) || node.children,
-                nodeIdValue     = getEvaluatedData(node, {displayexpression: this.nodeid});
+                nodeLabel       = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}) || node.label,
+                nodeIcon        = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}) || node.icon,
+                nodeChildren    = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}) || node.children,
+                nodeIdValue     = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}) || node.children;
             let isNodeMatched   = false,
                 expandCollapseIcon;
 
@@ -311,7 +316,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             if (this.nodeid) {
                 this.datavalue = $parseExpr(this.nodeid)(this, data);
             } else if (this.bindnodeid) {
-                this.datavalue = getEvaluatedData(data, {expressionName: 'nodeid'});
+                this.datavalue = getEvaluatedData(data, {expression: this.nodeid, bindExpression: this.bindnodeid});
             } else {
                 this.datavalue = getClonedObject(data) || {};
             }

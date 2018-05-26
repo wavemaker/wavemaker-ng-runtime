@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy } from '@angular/core';
+import {AfterViewInit, Attribute, ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy} from '@angular/core';
 
 import { styler, StylableComponent, IWidgetConfig, PageDirective, getEvaluatedData, provideAsWidgetRef } from '@wm/components';
 
@@ -38,7 +38,11 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         {'minwidth' : 0,    'max': 4}
     ];
 
-    constructor(private page: PageDirective, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(private page: PageDirective,
+                inj: Injector,
+                @Attribute('itemlabel.bind') public binditemlabel,
+                @Attribute('itemicon.bind') public binditemicon,
+                @Attribute('itemicon.bind') public binditemlink) {
         super(inj, WIDGET_CONFIG);
         styler(this.$element, this);
         page.notify('wmMobileTabbar:ready', this);
@@ -85,11 +89,11 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         if (_.isArray(value)) {
             if (_.isObject(value[0])) {
                 return (value as any[]).map(item => {
-                    const link = getEvaluatedData(item, {expressionName: 'itemlink'}) || item.link;
+                    const link = getEvaluatedData(item, {expression: 'itemlink', 'bindExpression': this.binditemlink}) || item.link;
                     const activePageName = window.location.hash.substr(2);
                     return {
-                        'label': getEvaluatedData(item, {expressionName: 'itemlabel'}) || item.label,
-                        'icon': getEvaluatedData(item, {expressionName: 'itemicon'}) || item.icon,
+                        'label': getEvaluatedData(item, {expression: 'itemlabel', bindExpression: this.binditemlabel}) || item.label,
+                        'icon': getEvaluatedData(item, {expression: 'itemicon', bindExpression: this.binditemicon}) || item.icon,
                         'link': link,
                         'active' : _.includes([activePageName, '#' + activePageName, '#/' + activePageName], link)
                     };
