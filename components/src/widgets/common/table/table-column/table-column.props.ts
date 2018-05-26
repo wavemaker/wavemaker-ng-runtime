@@ -22,7 +22,7 @@ export const registerProps = () => {
                 ['displaylabel', PROP_STRING],
                 ['editdatepattern', PROP_STRING],
                 ['editWidgetType', PROP_STRING],
-                ['filterdataset', PROP_STRING],
+                ['filterdataset', PROP_STRING_NOTIFY],
                 ['filterdatafield', PROP_STRING],
                 ['filterdisplayfield', PROP_STRING],
                 ['filterdisplaylabel', PROP_STRING],

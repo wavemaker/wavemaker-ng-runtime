@@ -30,6 +30,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.SUPPORTS_CRUD:
                 returnVal = true;
                 break;
+            case DataSource.Operation.SUPPORTS_DISTINCT_API:
+                returnVal = true;
+                break;
             case DataSource.Operation.IS_PAGEABLE:
                 returnVal = true;
                 break;

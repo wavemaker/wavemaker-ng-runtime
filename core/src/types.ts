@@ -12,6 +12,7 @@ enum Operation {
     NOTIFY = 'notify',
     IS_API_AWARE = 'isApiAware',
     SUPPORTS_CRUD = 'supportsCRUD',
+    SUPPORTS_DISTINCT_API = 'supportsDistinctAPI',
     IS_PAGEABLE = 'isPageable',
     GET_OPERATION_TYPE = 'getOperationType',
     GET_RELATED_PRIMARY_KEYS = 'getRelatedTablePrimaryKeys',

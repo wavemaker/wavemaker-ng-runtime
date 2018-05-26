@@ -1,5 +1,5 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
-import { FormWidgetType, IDGenerator } from '@wm/core';
+import { FormWidgetType, getFormWidgetTemplate, IDGenerator } from '@wm/core';
 
 import { ALLFIELDS } from '../../../../utils/data-utils';
 import { isDataSetWidget } from '../../../../utils/widget-utils';
@@ -19,90 +19,11 @@ const getEventsTemplate = (attrs) => {
 };
 
 const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isMaxWidget?) => {
-    let tmpl;
     const fieldName = attrs.get('key') || attrs.get('name');
     const formControl = isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
     const tmplRef = isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl} ${eventsTmpl} ${tmplRef}`;
-    switch (widgetType) {
-        case FormWidgetType.AUTOCOMPLETE:
-        case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.CHECKBOX:
-            tmpl = `<div wmCheckbox ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.CHECKBOXSET:
-            tmpl = `<ul wmCheckboxset ${defaultTmpl}></ul>`;
-            break;
-        case FormWidgetType.CHIPS:
-            /*TODO*/
-            break;
-        case FormWidgetType.COLORPICKER:
-            tmpl = `<div wmColorPicker ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${defaultTmpl}}></div>`;
-            break;
-        case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.NUMBER:
-            tmpl = `<wm-input ${defaultTmpl} type="number" aria-label="Only numbers"></wm-input>`;
-            break;
-        case FormWidgetType.PASSWORD:
-            tmpl = `<wm-input ${defaultTmpl} type="password" aria-label="Enter password" displayformat="${attrs.get('displayformat')}"></wm-input>`;
-            break;
-        case FormWidgetType.RADIOSET:
-            tmpl = `<ul wmRadioset ${defaultTmpl}></ul>`;
-            break;
-        case FormWidgetType.RATING:
-            tmpl = `<div wmRating ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.RICHTEXT:
-            /*TODO*/
-            break;
-        case FormWidgetType.SELECT:
-            tmpl = `<wm-select ${defaultTmpl}></wm-select>`;
-            break;
-        case FormWidgetType.TOGGLE:
-            tmpl = `<div wmCheckbox ${defaultTmpl} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
-            break;
-        case FormWidgetType.SLIDER:
-            tmpl = `<div wmSlider ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.SWITCH:
-            tmpl = `<div wmSwitch ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.TEXT:
-            tmpl = `<wm-input ${defaultTmpl} type="${attrs.get('inputtype') || 'text'}" aria-describedby="Enter text" displayformat="${attrs.get('displayformat')}"></wm-input>`;
-            break;
-        case FormWidgetType.TEXTAREA:
-            tmpl = `<wm-textarea ${defaultTmpl} role="textbox" aria-describedby="Place your text"></wm-textarea>`;
-            break;
-        case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${defaultTmpl}></div>`;
-            break;
-        case FormWidgetType.TIMESTAMP:
-            tmpl = `<div wmDateTime ${defaultTmpl} role="input"></div>`;
-            break;
-        case FormWidgetType.UPLOAD:
-            tmpl = `<a class="form-control-static" href="{{${counter}.href}}" target="_blank" *ngIf="${counter}.filetype === 'image' && ${counter}.href">
-                        <img style="height:2em" class="wi wi-file" [src]="${counter}.href"/></a>
-                        <a class="form-control-static" target="_blank" href="{{${counter}.href}}" *ngIf="${counter}.filetype !== 'image' && ${counter}.href">
-                        <i class="wi wi-file"></i></a>
-                        <input ${defaultTmpl} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}"
-                        [required]="${counter}.required" type="file" name="${fieldName}_formWidget" [readonly]="${counter}.readonly"
-                        [class.hidden]="!${pCounter}.isUpdateMode" [(ngModel)]="${counter}.value" [accept]="${counter}.permitted">`;
-            break;
-        default:
-            tmpl = `<wm-input ${defaultTmpl} aria-describedby="Enter text" type="text" displayformat="${attrs.get('displayformat')}"></wm-input>`;
-            break;
-    }
-    return tmpl;
+    return getFormWidgetTemplate(widgetType, defaultTmpl, attrs, counter, pCounter);
 };
 
 

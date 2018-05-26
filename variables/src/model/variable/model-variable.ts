@@ -27,6 +27,9 @@ export class ModelVariable extends BaseVariable implements IDataSource {
             case DataSource.Operation.SUPPORTS_CRUD:
                 returnVal = false;
                 break;
+            case DataSource.Operation.SUPPORTS_DISTINCT_API:
+                returnVal = false;
+                break;
             case DataSource.Operation.IS_PAGEABLE:
                 returnVal = false;
                 break;

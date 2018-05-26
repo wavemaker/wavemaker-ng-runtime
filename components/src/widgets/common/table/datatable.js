@@ -2347,83 +2347,30 @@ $.widget('wm.datatable', {
             }
         });
     },
-    //Get the respective widget template
-    _getFilterWidgetTemplate: function (field) {
-        var widget = field.filterwidget || 'text',
-            placeholder = field.filterplaceholder || '',
-            fieldName = field.field,
-            widgetName = ' name="' + this.options.name + '_filter_' + fieldName + '"',
-            timeFormat = this.options.timeFormat || 'hh:mm:ss a',
-            template,
-            filterOptions;
-        widget = widget === 'number' ? 'text' : widget;
-        widget = widget === 'autocomplete' ? 'search' : widget;
-        template = '<wm-' + widget + widgetName + ' placeholder="' + placeholder + '" scopedatavalue="rowFilter[\'' + fieldName + '\'].value" on-change="onRowFilterChange(\'' + fieldName + '\')" disabled="{{emptyMatchModes.indexOf(rowFilter[\'' + fieldName + '\'].matchMode) > -1}}"';
-        switch (field.filterwidget) {
-            case 'number':
-                template += ' type="number" ';
-                break;
-            case 'select':
-                if (field._isLiveVariable) {
-                    template += ' scopedataset="fullFieldDefs[' + field.index + '].__filterdataset" orderby="' + fieldName + ':asc"';
-                } else if (field._isFilterDataSetBound) {
-                    template += ' dataset="' + field.filterdataset + '" datafield="' + field.filterdatafield + '" displayfield="' + field.filterdisplayfield + '"';
-                } else {
-                    template += ' dataset="' + this.options.getBindDataSet() + '" datafield="' + fieldName + '" displayfield="' + fieldName + '" orderby="' + fieldName + ':asc"';
-                }
-                break;
-            case 'autocomplete':
-                if (field._isLiveVariable) {
-                    filterOptions = field.filterdataoptions;
-                    template += ' dataset="' + this.options.getBindDataSet() + '" dataoptions="fullFieldDefs[' + field.index + '].filterdataoptions" datafield="' + filterOptions.aliasColumn + '" searchkey="' + filterOptions.distinctField + '" displaylabel="' + filterOptions.aliasColumn + '"';
-                } else if (field._isFilterDataSetBound) {
-                    template += ' dataset="' + field.filterdataset + '"  datafield="' + field.filterdatafield + '" searchkey="' + field.filtersearchkey + '" displaylabel="' + field.filterdisplaylabel + '" ';
-                } else {
-                    template += ' dataset="' + this.options.getBindDataSet() + '"  datafield="' + fieldName + '" searchkey="' + fieldName + '" displaylabel="' + fieldName + '" orderby="' + fieldName + ':asc"';
-                }
-                template += ' type="autocomplete" on-submit="onRowFilterChange(\'' + fieldName + '\')"';
-                break;
-            case 'time':
-                template += ' timepattern="' + timeFormat + '" ';
-                break;
-        }
-        template += '></wm-' + widget + '>';
-        return template;
-    },
     //Generate the row level filter
     _renderRowFilter: function () {
-        var htm = '<tr class="filter-row">',
+        var $row = $('<tr class="filter-row"></tr>'),
             self = this,
-            $headerElement = (this.options.isMobile && !this.options.showHeader) ? this.gridElement : this.gridHeaderElement,
-            compiledFilterTl;
+            $headerElement = (this.options.isMobile && !this.options.showHeader) ? this.gridElement : this.gridHeaderElement;
         $headerElement.find('.filter-row').remove();
+        this.options.generateFilterRow();
         this.preparedHeaderData.forEach(function (field, index) {
             var fieldName = field.field,
-                widget = field.filterwidget || 'text';
+                $th = $('<th data-col-id="' + index + '"></th>');
             if (!field.searchable) {
-                htm += '<th data-col-id="' + index + '"></th>';
+                $row.append($th);
                 return;
             }
-            htm += '<th data-col-id="' + index + '">' +
-                '<span class="input-group ' + widget + '">' +
-                self._getFilterWidgetTemplate(field) +
-                '<span class="input-group-addon filter-clear-icon" ng-if="showClearIcon(\'' + fieldName + '\')"><button class="btn-transparent btn app-button" type="button" ng-click="clearRowFilter(\'' + fieldName + '\')"><i class="app-icon wi wi-clear"></i></button></span>' +
-                '<span class="input-group-addon" uib-dropdown dropdown-append-to-body>' +
-                '<button class="btn-transparent btn app-button" type="button"  uib-dropdown-toggle><i class="app-icon wi wi-filter-list"></i></button>' +
-                '<ul class="matchmode-dropdown dropdown-menu" uib-dropdown-menu> <li ng-repeat="matchMode in matchModeTypesMap[\'' + field.type + '\' || \'string\']" ng-class="{active: matchMode === (rowFilter[\'' + fieldName + '\'].matchMode || matchModeTypesMap[\'' + field.type + '\' || \'string\'][0])}"><a href="javascript:void(0);" ng-click="onFilterConditionSelect(\'' + fieldName + '\', matchMode)">{{matchModeMsgs[matchMode]}}</a></li> </ul>' +
-                '</span>' +
-                '</span>' +
-                '</th>';
+            $th.append(self.options.getFilterWidget(fieldName));
+            $row.append($th);
         }, this);
-        htm += '</tr>';
-        compiledFilterTl = this.options.compileTemplateInGridScope(htm);
         if (this.options.showHeader) {
-            this.gridHeader.append(compiledFilterTl);
+            this.gridHeader.append($row);
         } else {
             if (this.options.isMobile) {
-                $headerElement.append($('<thead></thead>').append(compiledFilterTl));
+                $headerElement.append($('<thead></thead>').append($row));
             } else {
-                $headerElement.append('<thead></thead>').append(compiledFilterTl);
+                $headerElement.append('<thead></thead>').append($row);
             }
         }
         this.gridSearch = $headerElement.find('.filter-row');

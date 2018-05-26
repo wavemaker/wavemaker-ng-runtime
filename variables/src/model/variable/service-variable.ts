@@ -25,6 +25,9 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.SUPPORTS_CRUD:
                 returnVal = false;
                 break;
+            case DataSource.Operation.SUPPORTS_DISTINCT_API:
+                returnVal = false;
+                break;
             case DataSource.Operation.IS_PAGEABLE:
                 returnVal = (this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || isPageable(this.dataSet));
                 break;

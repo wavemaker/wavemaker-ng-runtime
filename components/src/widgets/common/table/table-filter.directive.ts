@@ -1,11 +1,14 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { TableComponent } from './table.component';
-import { $appDigest, DataSource, getClonedObject, isDefined, isNumberType } from '@wm/core';
+import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType } from '@wm/core';
 import { refreshDataSource } from '../../../utils/data-utils';
+import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget } from '@wm/components';
 
 declare const _;
 declare const moment;
+
+const emptyMatchModes = ['null', 'empty', 'nullorempty', 'isnotnull', 'isnotempty'];
 
 // Get search value based on the time
 const getSearchValue = (value, type) => {
@@ -15,7 +18,7 @@ const getSearchValue = (value, type) => {
     if (isNumberType(type)) {
         return _.toNumber(value);
     }
-    if (type === 'datetime') {
+    if (type === DataType.DATETIME) {
         return moment(value).valueOf();
     }
     return _.toString(value).toLowerCase();
@@ -84,6 +87,7 @@ const getFilteredData = (data, searchObj) => {
     return data;
 };
 
+// Set the filter fields as required by datasource
 const setFilterFields = (filterFields, searchObj) => {
     const field = searchObj && searchObj.field;
     /*Set the filter options only when a field/column has been selected.*/
@@ -109,12 +113,20 @@ export class TableFilterSortDirective {
         table.getSortResult = this.getSortResult.bind(this);
         table.checkFiltersApplied = this.checkFiltersApplied.bind(this);
         table.getFilterFields = this.getFilterFields.bind(this);
+        table.onRowFilterChange = this.onRowFilterChange.bind(this);
+        table.onFilterConditionSelect = this.onFilterConditionSelect.bind(this);
+        table.showClearIcon = this.showClearIcon.bind(this);
+        table.clearRowFilter = this.clearRowFilter.bind(this);
+        table.matchModeTypesMap = getMatchModeTypesMap();
+        table.matchModeMsgs = getMatchModeMsgs();
+        table.emptyMatchModes = emptyMatchModes;
     }
 
+    // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
         const filterFields = {};
         if (_.isArray(searchObj)) {
-            _.forEach(searchObj, function (obj) {
+            _.forEach(searchObj,  obj => {
                 setFilterFields(filterFields, obj);
             });
         } else {
@@ -145,10 +157,12 @@ export class TableFilterSortDirective {
         let $gridElement;
         this.table.filterInfo = {};
         if (this.table.filtermode === 'multicolumn') {
-            // this.table.rowFilter = {};
-            // if (!skipFilter) {
-            //     this.table.onRowFilterChange();
-            // }
+            _.forEach(this.table.rowFilter, (v, k) => {
+                this.table.rowFilter[k].value = undefined;
+            });
+            if (!skipFilter) {
+                this.table.onRowFilterChange();
+            }
         } else if (this.table.filtermode === 'search') {
             $gridElement = this.table.datagridElement;
             $gridElement.find('[data-element="dgSearchText"]').val('');
@@ -196,6 +210,7 @@ export class TableFilterSortDirective {
         return data;
     }
 
+    // This method handles the client side sort and search
     handleClientSideSortSearch(searchSortObj, e, type) {
         this.table._isClientSearch = true;
 
@@ -227,6 +242,7 @@ export class TableFilterSortDirective {
         }
     }
 
+    // This method handles the search for pageable datasource
     handleSinglePageSearch(searchObj) {
         this.table._isPageSearch = true;
 
@@ -256,6 +272,7 @@ export class TableFilterSortDirective {
         this.table.callDataGridMethod('updateSelectAllCheckboxState');
     }
 
+    // This method handles the search for server side variables
     handleServerSideSearch(searchObj) {
         this.table.filterInfo = searchObj;
 
@@ -273,6 +290,7 @@ export class TableFilterSortDirective {
         });
     }
 
+    // This method handles the sort for server side variables
     handleSeverSideSort(sortObj, e) {
         // Update the sort info for passing to datagrid
         this.table.gridOptions.sortInfo.field = sortObj.field;
@@ -316,11 +334,111 @@ export class TableFilterSortDirective {
         }
     }
 
+    // This method is triggered by jquery table
     searchSortHandler(searchSortObj, e, type) {
         if (type === 'search') {
             this.searchHandler(searchSortObj, e, type);
         } else {
             this.sortHandler(searchSortObj, e, type);
+        }
+    }
+
+    // Method to show/hide clear icon in multi column filter
+    showClearIcon(fieldName) {
+        const value = this.table.rowFilter[fieldName] && this.table.rowFilter[fieldName].value;
+        return isDefined(value) && value !== '' && value !== null;
+    }
+
+    // Method clear the filter value in multi column filter
+    clearRowFilter(fieldName) {
+        if (this.table.rowFilter && this.table.rowFilter[fieldName]) {
+            this.table.rowFilter[fieldName].value = '';
+            this.onRowFilterChange(fieldName);
+        }
+    }
+
+    // This method is triggered on select of condition in multi column filter
+    onFilterConditionSelect(fieldName, condition) {
+        this.table.rowFilter[fieldName] = this.table.rowFilter[fieldName] || {};
+        this.table.rowFilter[fieldName].matchMode = condition;
+        // For empty match modes, clear off the value and call filter
+        if (_.includes(this.table.emptyMatchModes, condition)) {
+            this.table.rowFilter[fieldName].value = undefined;
+            this.table.onRowFilterChange();
+        } else {
+            // If value is present, call the filter. Else, focus on the field
+            if (isDefined(this.table.rowFilter[fieldName].value) && this.table.rowFilter[fieldName].value !== '') {
+                this.table.onRowFilterChange();
+            } else {
+                // TODO: Focus element on function
+                // setTimeout(() => {
+                //     this.Widgets[name + '_filter_' + field].focus();
+                // });
+            }
+        }
+    }
+
+    // Method to get the updated values when filter on field is changed for multicolumn filter
+    getFilterOnFieldValues(filterDef) {
+        if (!this.table.datasource || !this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
+            return;
+        }
+
+        const fieldName = filterDef.field;
+        const formFields = this.table.fullFieldDefs;
+        const filterOnFields = _.filter(formFields, {'filteronfilter': fieldName});
+        const newVal = _.get(this.table.rowFilter, [fieldName, 'value']);
+
+        // Loop over the fields for which the current field is filter on field
+        _.forEach(filterOnFields, filterField => {
+            const filterOn = filterField.filteronfilter;
+            const filterKey = filterField.field;
+            const filterFields = {};
+            const filterWidget = filterField.filterwidget;
+
+            if (!isDataSetWidget(filterWidget) || filterOn === filterKey || filterField._isFilterDataSetBound) {
+                return;
+            }
+
+            filterFields[filterOn] = (isDefined(newVal) && newVal !== '' && newVal !== null) ? {'value' : newVal} : {};
+
+            if (filterWidget === FormWidgetType.AUTOCOMPLETE && filterField.filterdataoptions) { // TODO: Handle autocomplete
+                // filterField.filterdataoptions.filterFields = filterFields;
+            } else {
+                this.table.datasource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
+                    'fields'         : filterKey,
+                    'filterFields'   : filterFields
+                }).then(data => {
+                    filterField._widget.filterdataset = _.pull(_.map(data.content, filterKey), null);
+                });
+            }
+        });
+    }
+
+    // This method is triggered on value change in multi column filter
+    onRowFilterChange(fieldName) {
+        const searchObj = [];
+        const field = _.find(this.table.fullFieldDefs, {'field': fieldName});
+        // Convert row filters to a search object and call search handler
+        _.forEach(this.table.rowFilter, (value, key) => {
+            if ((isDefined(value.value) && value.value !== '') || _.includes(this.table.emptyMatchModes, value.matchMode)) {
+                if (field && key === field.field) {
+                    value.type      = value.type || field.type;
+                    value.matchMode = value.matchMode || _.get(this.table.matchModeTypesMap[value.type], 0);
+                }
+                searchObj.push({
+                    'field'     : key,
+                    'value'     : value.value,
+                    'matchMode' : value.matchMode,
+                    'type'      : value.type
+                });
+            }
+        });
+        this.table.gridOptions.searchHandler(searchObj, undefined, 'search');
+
+        // If field is passed, update any filter on field values if present
+        if (field) {
+            this.getFilterOnFieldValues(field);
         }
     }
 }

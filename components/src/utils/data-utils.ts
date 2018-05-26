@@ -163,19 +163,21 @@ function getDistinctFieldProperties(dataSource, formField) {
  * @param {function} callBack Function to be executed after fetching results
  *
  */
-function getDistinctValues(dataSource, formField, widget, callBack) {
+export function getDistinctValues(dataSource, formField, widget) {
     let props;
 
-    if (isDataSetWidget(formField[widget]) && (!formField.isDataSetBound || widget === 'filterwidget')) {
-        props = getDistinctFieldProperties(dataSource, formField);
-        dataSource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
-            'fields'        : props.distinctField,
-            'entityName'    : props.tableName,
-            'pagesize'      : formField.limit
-        }).then(data => {
-            callBack(formField, data, props.aliasColumn);
-        }, noop);
-    }
+    return new Promise((res, rej) => {
+        if (isDataSetWidget(formField[widget]) && (!formField.isDataSetBound || widget === 'filterwidget')) {
+            props = getDistinctFieldProperties(dataSource, formField);
+            dataSource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
+                'fields'        : props.distinctField,
+                'entityName'    : props.tableName,
+                'pagesize'      : formField.limit
+            }).then(data => {
+                res({'field': formField, 'data': data, 'aliasColumn': props.aliasColumn});
+            }, rej);
+        }
+    });
 }
 
 // Set the data field properties on dataset widgets
@@ -245,11 +247,13 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
         return;
     }
     // TODO: For autocomplete widget, widget will fetch the data. Set properties on the widget itself. Other widgets, fetch the data.
-    getDistinctValues(dataSource, formField, options.widget, (field, data, aliasColumn) => setFieldDataSet(field, data, {
-        aliasColumn: aliasColumn,
-        widget: options.widget,
-        isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
-    }));
+    getDistinctValues(dataSource, formField, options.widget).then((res: any) => {
+        setFieldDataSet(res.field, res.data, {
+            aliasColumn: res.aliasColumn,
+            widget: options.widget,
+            isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
+        });
+    });
 }
 
 /**

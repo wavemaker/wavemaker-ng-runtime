@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, ContentChildren, QueryList } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -10,10 +10,9 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { getRowOperationsColumn } from '../../../utils/live-utils';
 import { refreshDataSource, transformData } from '../../../utils/data-utils';
-import { getOrderByExpr, provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
-declare const moment;
 declare var $: any;
 
 registerProps();
@@ -45,6 +44,8 @@ const exportIconMapping = {
 
 const ROW_OPS_FIELD = 'rowOperations';
 
+const noop = () => {};
+
 @Component({
     selector: '[wmTable]',
     templateUrl: './table.component.html',
@@ -55,9 +56,13 @@ const ROW_OPS_FIELD = 'rowOperations';
 export class TableComponent extends StylableComponent implements AfterContentInit {
 
     @ViewChild(PaginationComponent) dataNavigator;
+
     @ViewChild('datagridElement') private _tableElement: ElementRef;
     @ViewChild('rowActions') rowActionsTmpl: TemplateRef<any>;
     @ViewChild('rowActionsContainer', {read: ViewContainerRef}) rowActionsContainer: ViewContainerRef;
+
+    @ContentChildren('filterTmpl') filterTmpl: QueryList<any>;
+    @ViewChild('multiColumnFilter', {read: ViewContainerRef}) multiColumnFilterTl: ViewContainerRef;
 
     columns = {};
     datagridElement;
@@ -127,16 +132,22 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     redraw = _.debounce(this._redraw, 150);
 
     // Filter and Sort Methods
-    _searchSortHandler = () => {};
-    searchSortHandler = (...args) => {
-        this._searchSortHandler.apply(this, args);
-    }
+    rowFilter: any = {};
+    matchModeTypesMap;
+    matchModeMsgs;
+    emptyMatchModes;
+    _searchSortHandler = noop;
+    searchSortHandler = (...args) => { this._searchSortHandler.apply(this, args); };
     _isPageSearch;
     _isClientSearch;
     checkFiltersApplied: Function;
     getSearchResult: Function;
     getSortResult: Function;
     getFilterFields: Function;
+    onRowFilterChange = noop;
+    onFilterConditionSelect = noop;
+    showClearIcon = noop;
+    clearRowFilter = noop;
 
     private gridOptions = {
         'data': [],
@@ -239,6 +250,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // TODO: Demo code. Need to change
             this.rowActionsContainer.createEmbeddedView(this.rowActionsTmpl);
             return $(this.nativeElement).find('.row__actions')[0];
+        },
+        generateFilterRow: () => {
+            // Clear the view container ref
+            this.multiColumnFilterTl.clear();
+            // For all the columns inside the table, generate the compiled filter template
+            this.filterTmpl.forEach((tmpl) => {
+                this.multiColumnFilterTl.createEmbeddedView(tmpl, {
+                    changeFn: this.onRowFilterChange.bind(this),
+                    isDisabled: (fieldName) => {
+                        return this.emptyMatchModes.indexOf(this.rowFilter[fieldName] && this.rowFilter[fieldName].matchMode) > -1;
+                    }
+                });
+            });
+        },
+        getFilterWidget: (fieldName) => {
+            // Move the generated filter template to the filter row
+            return $(this.nativeElement).find(`.multi-column-filter [data-col-identifier='${fieldName}']`)[0];
         },
         compileTemplateInGridScope: () => {
         },
@@ -660,11 +688,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
+    onDataSourceChange() {
+        this.fieldDefs.forEach(col => {
+           triggerFn(col.onDataSourceChange);
+        });
+    }
+
     onPropertyChange(key: string, newVal) {
         let enableNewRow;
         switch (key) {
             case 'datasource':
                 this.watchVariableDataSet(this.dataset);
+                this.onDataSourceChange();
                 break;
             case 'dataset':
                 if (!this.datasource) {
@@ -791,6 +826,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     registerColumns(tableColumn) {
         this.fieldDefs.push(tableColumn);
         this.fullFieldDefs.push(tableColumn);
+        this.rowFilter[tableColumn.field] = {
+            value: undefined
+        };
     }
 
     registerActions(tableAction) {

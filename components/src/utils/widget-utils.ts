@@ -220,3 +220,49 @@ export const NAVIGATION_TYPE = {
 
 
 export const getWatchIdentifier = (...args) => args.join('_');
+
+const matchModeTypesMap = {
+    'integer'    : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'big_integer': ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'short'      : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'float'      : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'big_decimal': ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'double'     : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'long'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'byte'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'string'     : ['anywhere', 'start', 'end', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
+    'character'  : ['exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
+    'text'       : ['anywhere', 'start', 'end', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
+    'date'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'time'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'timestamp'  : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'datetime'   : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    'boolean'    : ['exact', 'null', 'isnotnull'],
+    'clob'       : [],
+    'blob'       : []
+};
+
+export const getMatchModeTypesMap = () => {
+    return matchModeTypesMap;
+};
+
+const matchModeMsgs = {
+    'start': 'Starts with',
+    'end': 'Ends with',
+    'anywhere': 'Contains',
+    'exact': 'Is equal to',
+    'notequals': 'Is not equal to',
+    'lessthan': 'Less than',
+    'lessthanequal': 'Less than or equals to',
+    'greaterthan': 'Greater than',
+    'greaterthanequal': 'Greater than or equals to',
+    'null': 'Is null',
+    'isnotnull': 'Is not null',
+    'empty': 'Is empty',
+    'isnotempty': 'Is not empty',
+    'nullorempty': 'Is null or empty'
+};
+
+export const getMatchModeMsgs = () => {
+    return matchModeMsgs;
+};
