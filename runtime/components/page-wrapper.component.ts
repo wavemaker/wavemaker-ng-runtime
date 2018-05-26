@@ -24,28 +24,58 @@ export class PageWrapperComponent implements OnInit {
         private app: App
     ) {}
 
-    renderPage(pageName) {
+    getTargetNode() {
+        return this.appRef.components[0].location.nativeElement;
+    }
+
+    resetViewContainer() {
         this.vcRef.clear();
+        const $target = this.getTargetNode();
+        $target.innerHTML = '';
+    }
+
+    renderPage(pageName) {
+        this.resetViewContainer();
+        const $target = this.getTargetNode();
 
         this.renderUtils.renderPage(
             pageName,
             this.vcRef,
-            this.appRef.components[0].location.nativeElement
+            $target
         ).then(() => {
             this.app.internals.lastActivePageName = this.app.internals.activePageName;
             this.app.internals.activePageName = pageName;
         });
     }
 
+    renderPrefabPreviewPage() {
+        this.resetViewContainer();
+        const $target = this.getTargetNode();
+
+        this.renderUtils.renderPrefabPreviewPage(
+            this.vcRef,
+            $target
+        );
+    }
+
     ngOnInit() {
-        this.route.params.subscribe(({pageName}) => {
-            if (pageName) {
-                this.renderPage(pageName);
-            } else {
-                this.securityService.getPageByLoggedInUser().then(page => {
-                    this.routerService.navigate([`/${page}`]);
-                });
-            }
-        });
+        if (this.app.isPrefabType) {
+            // there is only one route
+            this.renderPrefabPreviewPage();
+        } else {
+            this.route.params.subscribe(({pageName}) => {
+                if (pageName) {
+                    this.renderPage(pageName);
+                } else {
+                    if (this.app.isApplicationType) {
+                        this.securityService.getPageByLoggedInUser().then(page => {
+                            this.routerService.navigate([`/${page}`]);
+                        });
+                    } else {
+                        this.routerService.navigate(['/Main']);
+                    }
+                }
+            });
+        }
     }
 }

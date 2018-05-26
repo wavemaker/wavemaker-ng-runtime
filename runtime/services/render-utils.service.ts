@@ -15,7 +15,6 @@ import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
-import { getPrefabMinJsonUrl } from './prefab-manager.service';
 import { I18nService } from './i18n.service';
 import { AccessrolesDirective } from '../directives/accessroles.directive';
 
@@ -231,6 +230,18 @@ export class RenderUtilsService {
             .then(() => parseEndResolveFn());
     }
 
+    async renderPrefabPreviewPage(vcRef: ViewContainerRef, $target: HTMLElement) {
+        return this.renderResource(
+            `app-prefab-self`,
+            transpile(`<wm-prefab name="prefab-preview" prefabname="__self__"></wm-prefab>`),
+            '',
+            undefined,
+            noop,
+            vcRef,
+            $target
+        );
+    }
+
     async renderPartial(partialName: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: any, resolveFn: Function) {
         const {markup, script, styles, variables} = await this.loadMinJson(getPageOrPartialMinUrl(partialName));
 
@@ -261,8 +272,8 @@ export class RenderUtilsService {
             .then(() => parseEndResolveFn());
     }
 
-    async renderPrefab(prefabName: string, config: any, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: BaseComponent) {
-        const {markup, script, styles, variables} = await this.loadMinJson(getPrefabMinJsonUrl(prefabName));
+    async renderPrefab(prefabName: string, config: any, minJsonUrl: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: BaseComponent) {
+        const {markup, script, styles, variables} = await this.loadMinJson(minJsonUrl);
 
         let onReadyResolveFn = noop;
         const onReadyPromise = new Promise(resolve => onReadyResolveFn = resolve);

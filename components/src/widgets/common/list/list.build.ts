@@ -49,7 +49,7 @@ register(wmlistTag, (): IBuildTaskDef => {
 
 register(wmListTemplateTag, (): IBuildTaskDef => {
     return {
-        pre: () => `<${listTemplateTagName} #listTemplate let-item>`,
+        pre: () => `<${listTemplateTagName} #listTemplate let-item="item">`,
         post: () => `</${listTemplateTagName}>`
     };
 });

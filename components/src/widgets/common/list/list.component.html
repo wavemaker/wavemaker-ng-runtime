@@ -18,8 +18,9 @@
     </ul>
 </nav>
 <ul tabindex="0" class="app-livelist-container clearfix" [ngClass]="listclass">
-    <li *ngFor="let item of fieldDefs; let index = index; trackBy: listTrackByFn;" class="app-list-item clearfix " [ngClass]="[itemsPerRowClass, listItemRef.itemClass]" [wmListItem]="item" #listItemRef="listItemRef">
-        <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item:item, index:index}"></ng-container>
+    <li *ngFor="let item of fieldDefs; let i = index; trackBy: listTrackByFn;" class="app-list-item clearfix"
+        [ngClass]="[itemsPerRowClass, listItemRef.itemClass]" [wmListItem]="item" #listItemRef="listItemRef">
+        <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i}"></ng-container>
     </li>
 </ul>
 <div class="no-data-msg" *ngIf="noDataFound && !variableInflight">{{nodatamessage}}</div>

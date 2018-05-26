@@ -6,27 +6,28 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 import { $parseExpr, App } from '@wm/core';
-import { WmComponentsModule } from '@wm/components';
-import { VariablesModule } from '@wm/variables';
 import { HttpServiceModule } from '@wm/http';
-import { OAuthModule } from '@wm/oAuth';
-import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { MobileAppModule } from '@wm/mobile/runtime';
+import { OAuthModule } from '@wm/oAuth';
+import { VariablesModule } from '@wm/variables';
+import { WmComponentsModule } from '@wm/components';
+import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { AppComponent } from './app.component';
-import { PipeProvider } from './services/pipe-provider.service';
-import { RenderUtilsService } from './services/render-utils.service';
-import { PageWrapperComponent } from './components/page-wrapper.component';
-import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
-import { SecurityConfigResolve } from './resolves/security-config.resolve';
-import { AppRef } from './services/app.service';
 import { AppManagerService } from './services/app.manager.service';
+import { AppRef } from './services/app.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
-import { PrefabManagerService } from './services/prefab-manager.service';
-import { I18nService } from './services/i18n.service';
-import { I18nResolve } from './resolves/i18n.resolve';
 import { AppVariablesResolve } from './resolves/app-variables.resolve';
+import { I18nResolve } from './resolves/i18n.resolve';
+import { I18nService } from './services/i18n.service';
+import { MetadataResolve } from './resolves/metadata.resolve';
+import { PageWrapperComponent } from './components/page-wrapper.component';
+import { PipeProvider } from './services/pipe-provider.service';
+import { PrefabManagerService } from './services/prefab-manager.service';
+import { PrefabPreviewManagerService } from './services/prefab-preview-manager.service';
+import { RenderUtilsService } from './services/render-utils.service';
+import { SecurityConfigResolve } from './resolves/security-config.resolve';
 
 
 declare const $;
@@ -40,7 +41,7 @@ const appVariablesResolve = {
     appVariables: AppVariablesResolve
 };
 
-const pageResolve = {
+const pageDependenciesResolve = {
     securityConfig: SecurityConfigResolve,
     metadata: MetadataResolve,
     appJS: AppJSResolve,
@@ -57,7 +58,7 @@ const routes = [
     {
         path: ':pageName',
         pathMatch: 'full',
-        resolve: pageResolve,
+        resolve: pageDependenciesResolve,
         children: [
             {
                 path: '',
@@ -104,6 +105,7 @@ const routes = [
         AppManagerService,
         AppResourceManagerService,
         PrefabManagerService,
+        PrefabPreviewManagerService,
         SecurityConfigResolve,
         DecimalPipe,
         DatePipe

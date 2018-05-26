@@ -1,13 +1,11 @@
-import { AppResourceManagerService } from './app-resource-manager.service';
 import { Injectable } from '@angular/core';
+
 import { stringStartsWith, loadStyleSheets, loadScripts } from '@wm/core';
+
+import { AppResourceManagerService } from './app-resource-manager.service';
 import { RenderUtilsService } from './render-utils.service';
 
 declare const _;
-
-const getPrefabBaseUrl = prefabName => `app/prefabs/${prefabName}`;
-const getConfigUrl = prefabName => `${getPrefabBaseUrl(prefabName)}/config.json`;
-export const getPrefabMinJsonUrl = prefabName => `${getPrefabBaseUrl(prefabName)}/pages/Main/page.min.json`;
 
 const prefabConfigCache = new Map<string, any>();
 const prefabsWithError = new Set<string>();
@@ -24,21 +22,42 @@ const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
 @Injectable()
 export class PrefabManagerService {
 
-    loadConfig(prefabName): Promise<any> {
-        const config = prefabConfigCache.get(prefabName);
+    constructor(
+        protected resourceMngr: AppResourceManagerService,
+        protected renderUtils: RenderUtilsService
+    ) {}
+
+    protected getPrefabConfig(prefabName: string) {
+        return prefabConfigCache.get(prefabName);
+    }
+
+    protected getPrefabBaseUrl(prefabName: string) {
+        return `app/prefabs/${prefabName}`;
+    }
+
+    protected getConfigUrl(prefabName: string) {
+        return `${this.getPrefabBaseUrl(prefabName)}/config.json`;
+    }
+
+    protected getPrefabMinJsonUrl(prefabName: string) {
+        return `${this.getPrefabBaseUrl(prefabName)}/pages/Main/page.min.json`;
+    }
+
+    protected loadConfig(prefabName): Promise<any> {
+        const config = this.getPrefabConfig(prefabName);
         if (config) {
             return Promise.resolve(config);
         }
 
-        return this.resourceMngr.get(getConfigUrl(prefabName))
+        return this.resourceMngr.get(this.getConfigUrl(prefabName))
             .then(_config => {
                 prefabConfigCache.set(prefabName, _config);
                 return _config;
             });
     }
 
-    loadStyles(prefabName, {resources: {styles}} = {resources: {styles: []}}): Promise<void> {
-        const baseUrl = getPrefabBaseUrl(prefabName);
+    protected loadStyles(prefabName, {resources: {styles}} = {resources: {styles: []}}): Promise<void> {
+        const baseUrl = this.getPrefabBaseUrl(prefabName);
         const _styles = styles.map(url => {
             if (!_.endsWith(url, '/pages/Main/Main.css')) {
                 return getPrefabResourceUrl(url, baseUrl);
@@ -52,14 +71,14 @@ export class PrefabManagerService {
     }
 
     // TODO [Vinay] - implement onPrefabResourceLoad
-    loadScripts(prefabName, {resources: {scripts}} = {resources: {scripts: []}}): Promise<any> {
-        const baseUrl = getPrefabBaseUrl(prefabName);
+    protected loadScripts(prefabName, {resources: {scripts}} = {resources: {scripts: []}}): Promise<any> {
+        const baseUrl = this.getPrefabBaseUrl(prefabName);
         const _scripts = scripts.map(url => getPrefabResourceUrl(url, baseUrl));
 
         return loadScripts(_scripts);
     }
 
-    loadDependencies(prefabName, config): Promise<any> {
+    protected loadDependencies(prefabName, config): Promise<any> {
         return Promise.all([
             this.loadStyles(prefabName, config),
             this.loadScripts(prefabName, config),
@@ -67,17 +86,18 @@ export class PrefabManagerService {
         ]);
     }
 
-    renderPrefab(prefabName, vcRef, elRef, componentInstance) {
+    protected renderPrefab(prefabName, vcRef, elRef, componentInstance) {
         return this.renderUtils.renderPrefab(
             prefabName,
-            prefabConfigCache.get(prefabName),
+            this.getPrefabConfig(prefabName),
+            this.getPrefabMinJsonUrl(prefabName),
             vcRef,
             elRef.nativeElement,
             componentInstance
         );
     }
 
-    init(prefabName, vcRef, elRef, componentInstance): Promise<any> {
+    public init(prefabName, vcRef, elRef, componentInstance): Promise<any> {
 
         if (prefabsWithError.has(prefabName)) {
             return Promise.reject('');
@@ -101,12 +121,7 @@ export class PrefabManagerService {
             .then(config => this.loadDependencies(prefabName, config))
             .then(() => this.renderPrefab(prefabName, vcRef, elRef, componentInstance))
             .then(() => {
-                return prefabConfigCache.get(prefabName);
+                return this.getPrefabConfig(prefabName);
             });
     }
-
-    constructor(
-        private resourceMngr: AppResourceManagerService,
-        private renderUtils: RenderUtilsService
-    ) {}
 }

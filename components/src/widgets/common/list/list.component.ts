@@ -360,7 +360,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
 
     private onDataSetChange(newVal) {
         if (!this.dataNavigatorWatched) {
-            if (this.navigation !== 'None') {
+            if (this.navigation !== 'None' && this.datasource) {
                 this.setupDataSource();
             } else {
                 this.onDataChange(newVal);
@@ -458,8 +458,8 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         } else {
             this.deselectListItems();
             selectedItems.forEach((selecteditem) => {
-                let listItem: ListItemDirective = this.getListItem(listItems, selecteditem);
-                if(listItem) {
+                const listItem: ListItemDirective = this.getListItem(listItems, selecteditem);
+                if (listItem) {
                     listItem.isActive = true;
                 }
             });
@@ -533,7 +533,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     onPropertyChange(key, newVal, oldVal?) {
         switch (key) {
             case  'dataset' :
-                if (!this.datasource || !newVal) {
+                if (!newVal) {
                     return;
                 }
                 this.onDataSetChange(newVal.data || newVal);
