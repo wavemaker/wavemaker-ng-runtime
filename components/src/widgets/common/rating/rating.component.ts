@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import {Component, ElementRef, Injector, ViewChild} from '@angular/core';
 
 import { generateGUId, setCSS } from '@wm/core';
 import { styler } from '../../framework/styler';
@@ -41,6 +41,8 @@ export class RatingComponent extends DatasetAwareFormComponent {
     private ratingItems;
     private _id;
 
+    @ViewChild('ratingInput', {read: ElementRef}) ratingEl: ElementRef;
+
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         this._id = generateGUId();
@@ -59,6 +61,13 @@ export class RatingComponent extends DatasetAwareFormComponent {
     writeValue(value) {
         this.datavalue = value;
         this.onPropertyChange('datavalue', value);
+    }
+
+    // Change event is registered from the template, Prevent the framework from registering one more event
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        if (eventName !== 'change' && eventName !== 'blur') {
+            super.handleEvent(this.ratingEl.nativeElement, eventName, eventCallback, locals);
+        }
     }
 
     // This function returns the rating widget dataset containing the index, value and label

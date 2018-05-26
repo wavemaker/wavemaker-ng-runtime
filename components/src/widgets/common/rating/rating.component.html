@@ -7,7 +7,7 @@
                (mouseleave)="onMouseleave($event, rate)"
                (mouseenter)="onMouseenter($event, rate)"
                [for]="_id + '-' + rate.index">
-            <input type="radio" aria-label="rating radio buttons" aria-checked="false" aria-multiselectable="true"
+            <input #ratingInput type="radio" aria-label="rating radio buttons" aria-checked="false" aria-multiselectable="true"
                    [id]="_id + '-' + rate.index" (click)="onRatingClick($event, rate)" name="ratings-id" [value]="rate.index"/>
         </label>
     </div>

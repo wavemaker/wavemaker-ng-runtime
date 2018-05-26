@@ -33,6 +33,13 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         styler(this.selectEl.nativeElement as HTMLElement, this);
     }
 
+    // Change event is registered from the template, Prevent the framework from registering one more event
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        if (eventName !== 'change' && eventName !== 'blur') {
+            super.handleEvent(this.selectEl.nativeElement, eventName, eventCallback, locals);
+        }
+    }
+
     onSelectValueChange($event) {
         this.invokeOnTouched();
         this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldValue});
