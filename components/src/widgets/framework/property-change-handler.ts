@@ -74,7 +74,7 @@ const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv:
  * This method invokes the defaultPropertyChange handler where the common widget properties like name, class are handled
  * Notifies the component about the style/property change
  */
-const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: any) => {
+export const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: any) => {
     const widgetId = component.widgetId;
     const ov = component[key];
 
@@ -107,19 +107,5 @@ const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: 
         }
 
         $appDigest();
-    }
-};
-
-
-/**
- *  proxy handler for the components
- */
-export const proxyHandler = {
-    set: (target: BaseComponent, key: string, value: any): boolean => {
-        globalPropertyChangeHandler(target, key, value);
-        return true;
-    },
-    get: (target: BaseComponent, key: string): any => {
-        return target[key];
     }
 };

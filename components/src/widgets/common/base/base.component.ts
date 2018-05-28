@@ -8,11 +8,10 @@ import { $parseEvent, $unwatch, $watch, addClass, App, isDefined, setAttr } from
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
-import { proxyHandler } from '../../framework/property-change-handler';
 import { ChangeListener, Context, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
 import { ATTR_SKIP_LIST, DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
-import { ProxyProvider } from '../../framework/proxy-provider';
+import { WidgetProxyProvider } from '../../framework/widget-proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
 
 declare const $;
@@ -136,7 +135,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.viewParent = (inj as any).view.component;
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
         this.context = (inj as any).view.context;
-        this.widget = ProxyProvider.create(this, proxyHandler);
+        this.widget = WidgetProxyProvider.create(this, this.widgetSubType, getWidgetPropsByType(this.widgetSubType));
         this.eventManager = inj.get(EventManager);
 
         this.appLocale = inj.get(App).appLocale || {};

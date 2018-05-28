@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { fetchContent, hasCordova, preventCachingOf } from '@wm/core';
+import { fetchContent, hasCordova } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 import { $rootScope } from '@wm/variables';
 
@@ -35,6 +35,7 @@ export class MobileHttpInterceptor implements HttpInterceptor {
         this.deviceService.whenReady().then(() => {
             next.handle(modifiedRequest).subscribe(subject);
         });
+
         return subject;
     }
 
@@ -46,11 +47,12 @@ export class MobileHttpInterceptor implements HttpInterceptor {
                 // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
                 deployedUrl = waveLensAppUrl;
             } else {
-                fetchContent('json', preventCachingOf('./config.json'), true, (response => {
-                    if (!response.error && response.baseUrl) {
-                        deployedUrl = response.baseUrl;
-                    }
-                }));
+                fetchContent('json', './config.json', true)
+                    .then(response => {
+                        if (!response.error && response.baseUrl) {
+                            deployedUrl = response.baseUrl;
+                        }
+                    });
             }
             $rootScope.project.deployedUrl = deployedUrl;
         }

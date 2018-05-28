@@ -333,10 +333,6 @@ export const getClonedObject = (object) => {
     return _.cloneDeep(object);
 };
 
-export const preventCachingOf = (url) => {
-    return url;
-};
-
 export const getFiles = (formName, fieldName, isList) => {
     const files = _.get(document.forms, [formName , fieldName, 'files']);
     return isList ? _.map(files, _.identity) : files && files[0];
@@ -683,13 +679,21 @@ export const loadScript = async url => {
     if (!_url.length || isScriptLoaded(_url)) {
         return Promise.resolve();
     }
-    return fetch(_url)
-        .then(response => response.text())
+
+    return fetchContent('text', _url)
         .then(text => {
             const script = document.createElement('script');
             script.textContent = text;
             document.head.appendChild(script);
         });
+
+    // return fetch(_url)
+    //     .then(response => response.text())
+    //     .then(text => {
+    //         const script = document.createElement('script');
+    //         script.textContent = text;
+    //         document.head.appendChild(script);
+    //     });
 };
 
 export const loadScripts = async (urls = []) => {
@@ -798,13 +802,8 @@ export const formatStyle = (val: string | number = '', format: string = 'px', fo
     return val;
 };
 /* util function to load the content from a url */
-export const fetchContent = (dataType, url: string, inSync: boolean, onSuccess: (any) => void, onError?: () => void): void => {
-    $.ajax({
-        type: 'get',
-        dataType: dataType,
-        url: url,
-        success: onSuccess,
-        error: onError,
-        async: !inSync
-    });
+export const fetchContent = (dataType, url: string, inSync: boolean = false): Promise<any> => {
+    return $.ajax({type: 'get', dataType: dataType, url: url, async: !inSync})
+        .done(response => Promise.resolve(response))
+        .fail(reason => Promise.reject(reason));
 };
