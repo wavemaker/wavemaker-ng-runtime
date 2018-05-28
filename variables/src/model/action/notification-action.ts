@@ -32,6 +32,7 @@ export class NotificationAction extends BaseAction implements IDataSource {
         });
     }
 
+    // Backward compatible method
     notify(options, success, error) {
         getManager().notify(this, options, success, error);
     }

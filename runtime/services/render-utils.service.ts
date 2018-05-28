@@ -33,6 +33,12 @@ class TempModule {}
 
 const getPageOrPartialMinUrl = name => `./pages/${name}/page.min.json`;
 
+enum CONTEXT {
+    PAGE = 'Page',
+    PARTIAL = 'Partial',
+    PREFAB = 'Prefab'
+}
+
 interface IPageMinJSON {
     markup: string;
     script: string;
@@ -105,8 +111,8 @@ const registerVariablesAndActions = (inj: Injector, identifier: string, variable
     const pageVariables = variablesService.register(identifier, variables, pageInstance);
 
     // create namespace for Variables nad Actions on page/partial, which inherits the Variables and Actions from App instance
-    pageInstance.Variables = appInstance ? Object.create(appInstance.Variables) : {};
-    pageInstance.Actions = appInstance ? Object.create(appInstance.Actions) : {};
+    pageInstance.Variables = appInstance ? Object.create(appInstance.Variables || null) : {};
+    pageInstance.Actions = appInstance ? Object.create(appInstance.Actions || null) : {};
 
     // assign all the page variables to the pageInstance
     Object.entries(pageVariables.Variables).forEach(([name, variable]) => {
@@ -208,9 +214,11 @@ export class RenderUtilsService {
             pageInstance.Widgets = {};
             registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
 
-            let context = 'Page';
+            let context = CONTEXT.PAGE;
             if (this.app.isPrefabType) {
-                context = 'Prefab';
+                context = CONTEXT.PREFAB;
+            } else if (pageName === 'Common') {
+                context = CONTEXT.PARTIAL;
             }
 
             execScript(script, `page-${pageName}`, context, pageInstance, this.app, inj);

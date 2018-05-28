@@ -54,27 +54,23 @@ export const notify = (variable, options, success, error)  => {
             toaster.onTap.subscribe( customNotificationOnClick );
         }
     } else {
-         // get the callback scope for the variable based on its owner
-        /*if (variableOwner === VARIABLE_CONSTANTS.OWNER.APP) {
-            scope = $rootScope || {};
-        } else {
-            scope = options.scope.$$childTail || {};
-        }*/
         dialogId = (variableOwner === VARIABLE_CONSTANTS.OWNER.APP ) ? commonPageDialogId : dialogId;
         dialogService.open(dialogId, {
-            'title' : options.title || variable.dataBinding.title,
-            'message' : options.message || variable.dataBinding.text,
-            'oktext' : options.okButtonText || variable.dataBinding.okButtonText,
-            'canceltext' : options.cancelButtonText || variable.dataBinding.cancelButtonText,
-            'alerttype' : options.alerttype || variable.dataBinding.alerttype,
-            onOk: () => {
-                initiateCallback('onOk', variable, options.data);
-            },
-            onCancel: () => {
-                initiateCallback('onCancel', variable, options.data);
-            },
-            onClose: () => {
-                initiateCallback('onClose', variable, options.data);
+            notification: {
+                'title' : options.title || variable.dataBinding.title,
+                'text' : options.message || variable.dataBinding.text,
+                'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText,
+                'cancelButtonText' : options.cancelButtonText || variable.dataBinding.cancelButtonText,
+                'alerttype' : options.alerttype || variable.dataBinding.alerttype,
+                onOk: () => {
+                    initiateCallback('onOk', variable, options.data);
+                },
+                onCancel: () => {
+                    initiateCallback('onCancel', variable, options.data);
+                },
+                onClose: () => {
+                    initiateCallback('onClose', variable, options.data);
+                }
             }
         });
     }

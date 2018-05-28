@@ -50,15 +50,13 @@ export class HttpService {
 
         const req = new HttpRequest(options.method, options.url, third, fourth);
 
-        // const observable = this.httpClient.request(req);
-
         return new Promise((resolve, reject) => {
             this.httpClient.request(req).toPromise().then((response) => {
                 resolve(response);
             } , (error) => {
                 // In case of 401, do not reject the promise.
                 // push it into the queue, which will be resolved post login
-                if (error.status === 401) {
+                if (this.isPlatformSessionTimeout(error)) {
                     this.sessionTimeoutQueue.push({
                         requestInfo: options,
                         resolve: resolve,
@@ -70,6 +68,15 @@ export class HttpService {
                 }
             });
         });
+    }
+
+    getHeader(error, headerKey) {
+        return error.headers.get(headerKey);
+    }
+
+    isPlatformSessionTimeout(error) {
+        const MSG_SESSION_NOT_FOUND = 'Session Not Found';
+        return error.status === 401 && this.getHeader(error,'x-wm-login-errormessage') === MSG_SESSION_NOT_FOUND;
     }
 
     get(url: string, options?: any) {
