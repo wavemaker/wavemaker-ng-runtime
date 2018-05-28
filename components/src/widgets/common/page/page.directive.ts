@@ -1,9 +1,7 @@
 import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { Subject } from 'rxjs/Subject';
-
-import { isObject, noop } from '@wm/core';
+import { EventNotifier } from '@wm/core';
 
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './page.props';
@@ -23,9 +21,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
 })
 export class PageDirective extends StylableComponent implements AfterViewInit, OnDestroy {
 
-    private _subject = new Subject();
-    private _isInitialized = false;
-    private _eventsBeforeInit = [];
+    private _eventNotifier = new EventNotifier(false);
 
     onPropertyChange(key, nv, ov) {
         if (key === 'pagetitle') {
@@ -45,17 +41,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
      * @param data
      */
     public notify(eventName: string, data?: any) {
-        if (this._isInitialized) {
-            this._subject.next({
-                name: eventName,
-                data: data
-            });
-        } else {
-            this._eventsBeforeInit.push({
-                name: eventName,
-                data: data
-            });
-        }
+        this._eventNotifier.notify(eventName, data);
     }
 
     /**
@@ -66,30 +52,17 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
      * @param {(data: any) => void} callback
      * @returns {any}
      */
-    public subscribe(eventName, callback: (data: any) => void) {
-        let eventListener;
-        if (eventName && callback) {
-            eventListener = this._subject
-                .subscribe((event: any) => {
-                    if (event && isObject(event) && event.name === eventName) {
-                        callback(event.data);
-                    }
-                });
-            return () => {
-                eventListener.destroy();
-            };
-        }
-        return noop;
+    public subscribe(eventName, callback: (data: any) => void): () => void {
+        return this._eventNotifier.subscribe(eventName, callback);
     }
 
     public ngAfterViewInit() {
         setTimeout(() => {
-            this._isInitialized = true;
-            this._eventsBeforeInit.forEach((event) => this._subject.next(event));
+            this._eventNotifier.start();
         }, 1);
     }
 
     public ngOnDestroy() {
-        this._subject.complete();
+        this._eventNotifier.destroy();
     }
 }

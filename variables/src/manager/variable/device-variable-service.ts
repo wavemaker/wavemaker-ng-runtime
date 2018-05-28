@@ -1,6 +1,7 @@
 import { initiateCallback } from '../../util/variable/variables.utils';
 import { IDeviceVariableOperation } from './device-variable-operation';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+import { $appDigest } from '@wm/core';
 
 export class DeviceVariableService {
 
@@ -26,8 +27,10 @@ export class DeviceVariableService {
                 .then(function (data) {
                     variable.dataSet = data;
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, data);
+                    $appDigest();
                 }, function (reason) {
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null);
+                    $appDigest();
                     return Promise.reject(reason);
                 });
         } else {

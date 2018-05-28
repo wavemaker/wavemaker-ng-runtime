@@ -1,11 +1,12 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule, Component } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 
-import { hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, removeNode } from '@wm/core';
-import { WmMobileComponentsModule } from '@wm/mobile/components';
+import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, removeNode } from '@wm/core';
+import { NetworkInfoToasterComponent, WmMobileComponentsModule } from '@wm/mobile/components';
 import { MobileCoreModule, DeviceService } from '@wm/mobile/core';
 import { VariablesModule } from '@wm/mobile/variables';
+import { $rootScope } from '@wm/variables';
 
 import {MobileHttpInterceptor} from './services/http-interceptor.service';
 
@@ -19,16 +20,8 @@ enum OS {
 
 const KEYBOARD_CLASS = 'keyboard';
 
-@Component({
-    selector : 'mobile-app',
-    template : '<p>TITLE</p>'
-})
-export class MobileAppComponent {
-
-}
-
 @NgModule({
-    declarations: [MobileAppComponent],
+    declarations: [],
     imports: [
         MobileCoreModule,
         VariablesModule,
@@ -41,18 +34,19 @@ export class MobileAppComponent {
             multi: true
         }
     ],
-    bootstrap: [MobileAppComponent]
+    bootstrap: [NetworkInfoToasterComponent]
 })
 export class MobileAppModule {
 
     private _$appEl;
 
-    constructor(deviceService: DeviceService) {
+    constructor(app: App, deviceService: DeviceService) {
         this._$appEl = $('.wm-app:first');
         this._$appEl.addClass('wm-mobile-app');
         if (hasCordova()) {
             this._$appEl.addClass('cordova');
         }
+        app.deployedUrl = this.getDeployedUrl();
         this.getDeviceOS().then(os => this.applyOSTheme(os));
         this.handleKeyBoardClass();
         deviceService.start();
@@ -79,6 +73,28 @@ export class MobileAppModule {
                 this._$appEl.removeClass(KEYBOARD_CLASS);
             }
         });
+    }
+
+    private getDeployedUrl(): string {
+        const waveLensAppUrl = window['WaveLens'] && window['WaveLens']['appUrl'];
+        let deployedUrl = $rootScope.project.deployedUrl;
+        if (hasCordova()) {
+            if (waveLensAppUrl) {
+                // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
+                deployedUrl = waveLensAppUrl;
+            } else {
+                fetchContent('json', './config.json', true, (response => {
+                    if (!response.error && response.baseUrl) {
+                        deployedUrl = response.baseUrl;
+                    }
+                }));
+            }
+            $rootScope.project.deployedUrl = deployedUrl;
+        }
+        if (!deployedUrl.endsWith('/')) {
+            deployedUrl = deployedUrl + '/';
+        }
+        return deployedUrl;
     }
 
     private getDeviceOS(): Promise<string> {

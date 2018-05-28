@@ -56,4 +56,8 @@ export abstract class App {
     changeLocale: Function;
     reload: Function;
     on401: Function;
+    networkStatus: any;
+    notify: (eventName: string, data?: any) => void;
+    deployedUrl: string;
+    subscribe: (eventName, callback: (data: any) => void) => () => void;
 }

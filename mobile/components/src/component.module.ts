@@ -10,6 +10,7 @@ import { MediaListComponent } from './widgets/media-list/media-list.component';
 import { MediaListItemDirective } from './widgets/media-list/media-list-item/media-list-item.directive';
 import { MobileLeftPanelDirective } from './widgets/left-panel/left-panel.directive';
 import { MobileNavbarComponent } from './widgets/mobile-navbar/mobile-navbar.component';
+import { NetworkInfoToasterComponent } from './widgets/network-info-toaster/network-info-toaster.component';
 import { MobilePageDirective } from './widgets/page/page.directive';
 import { SearchDirective } from './widgets/search/search.directive';
 import { SegmentContentComponent } from './widgets/segmented-control/segment-content/segment-content.component';
@@ -26,6 +27,7 @@ const wmMobileComponents = [
     MobileNavbarComponent,
     MobilePageDirective,
     MobileTabbarComponent,
+    NetworkInfoToasterComponent,
     SearchDirective,
     SegmentContentComponent,
     SegmentedControlComponent,

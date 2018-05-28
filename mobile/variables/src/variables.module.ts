@@ -10,7 +10,8 @@ import { MediaCapture } from '@ionic-native/media-capture';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Vibration } from '@ionic-native/vibration';
 
-import { DeviceFileOpenerService, DeviceFileUploadService } from '@wm/mobile/core';
+import { App } from '@wm/core';
+import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService } from '@wm/mobile/core';
 import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } from '@wm/variables';
 
 import { CalendarService } from './services/calendar-service';
@@ -27,7 +28,8 @@ import { ScanService } from './services/scan-service';
 })
 export class VariablesModule {
 
-    constructor(appVersion: AppVersion,
+    constructor(app: App,
+                appVersion: AppVersion,
                 barcodeScanner: BarcodeScanner,
                 calendar: Calendar,
                 contacts: Contacts,
@@ -37,13 +39,14 @@ export class VariablesModule {
                 device: Device,
                 geoLocation: Geolocation,
                 mediaCapture: MediaCapture,
+                networkService: NetworkService,
                 vibrateService: Vibration) {
         const deviceVariableManager = VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.DEVICE) as DeviceVariableManager;
         deviceVariableManager.registerService(new CameraService(camera, mediaCapture));
         deviceVariableManager.registerService(new CalendarService(calendar));
         deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
         deviceVariableManager.registerService(new ContactsService(contacts));
-        deviceVariableManager.registerService(new DeviceService(appVersion, device, geoLocation, vibrateService));
+        deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
         deviceVariableManager.registerService(new ScanService(barcodeScanner));
     }
 }

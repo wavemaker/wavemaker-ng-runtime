@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { IAppInternals } from '@wm/core';
+import { EventNotifier, IAppInternals } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { HttpService } from '@wm/http';
 
@@ -40,6 +40,8 @@ export class AppRef {
 
     changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
 
+    private _eventNotifier = new EventNotifier();
+
     reload() {
         window.location.reload();
     }
@@ -60,6 +62,10 @@ export class AppRef {
         this.appLocale = this.i18nService.getAppLocale();
     }
 
+    public notify(eventName: string, data?: any) {
+        this._eventNotifier.notify(eventName, data);
+    }
+
     /**
      * triggers the onSessionTimeout callback in app.js
      */
@@ -69,5 +75,9 @@ export class AppRef {
         if (!_.isEmpty(userInfo)) {
             this.onSessionTimeout();
         }
+    }
+
+    public subscribe(eventName, callback: (data: any) => void): () => void {
+        return this._eventNotifier.subscribe(eventName, callback);
     }
 }

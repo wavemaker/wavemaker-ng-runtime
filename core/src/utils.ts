@@ -680,8 +680,7 @@ export const loadScript = async url => {
         return Promise.resolve();
     }
 
-    return fetchContent('text', _url)
-        .then(text => {
+    return fetchContent('text', _url, false, text => {
             const script = document.createElement('script');
             script.textContent = text;
             document.head.appendChild(script);
@@ -802,8 +801,85 @@ export const formatStyle = (val: string | number = '', format: string = 'px', fo
     return val;
 };
 /* util function to load the content from a url */
-export const fetchContent = (dataType, url: string, inSync: boolean = false): Promise<any> => {
+export const fetchContent = (dataType, url: string, inSync: boolean = false, success?, error?): Promise<any> => {
     return $.ajax({type: 'get', dataType: dataType, url: url, async: !inSync})
-        .done(response => Promise.resolve(response))
-        .fail(reason => Promise.reject(reason));
+        .done(response => success && success(response))
+        .fail(reason => error && error(reason));
+};
+
+/**
+ * If the given object is a promise, then object is returned. Otherwise, a promise is resoved with the given object.
+ * @param {Promise<T> | T} a
+ * @returns {Promise<T>}
+ */
+export const toPromise = <T>(a: T | Promise<T>): Promise<T> => {
+    if (a instanceof Promise) {
+        return a;
+    } else {
+        return Promise.resolve(a as T);
+    }
+};
+
+/**
+ * This function invokes the given the function (fn) until the function successfully executes or the maximum number
+ * of retries is reached or onBeforeRetry returns false.
+ *
+ * @param fn - a function that is needs to be invoked. The function can also return a promise as well.
+ * @param interval - minimum time gap between successive retries. This argument should be greater or equal to 0.
+ * @param maxRetries - maximum number of retries. This argument should be greater than 0. For all other values,
+ * maxRetries is infinity.
+ * @param onBeforeRetry - a callback function that will be invoked before re-invoking again. This function can
+ * return false or a promise that is resolved to false to stop further retry attempts.
+ * @returns {*} a promise that is resolved when fn is success (or) maximum retry attempts reached
+ * (or) onBeforeRetry returned false.
+ */
+export const retryIfFails = (fn: () => any, interval: number, maxRetries: number, onBeforeRetry = () => Promise.resolve(false)) => {
+    let retryCount = 0;
+    const tryFn = () => {
+        retryCount++;
+        if (_.isFunction(fn)) {
+            return fn();
+        }
+    };
+    maxRetries = (_.isNumber(maxRetries) && maxRetries > 0 ? maxRetries : 0);
+    interval = (_.isNumber(interval) && interval > 0 ? interval : 0);
+    return new Promise((resolve, reject) => {
+        const errorFn = function () {
+            const errArgs = arguments;
+            setTimeout(() => {
+                toPromise<boolean>(onBeforeRetry()).then(function (retry) {
+                    if (retry !== false && (!maxRetries || retryCount <= maxRetries)) {
+                        toPromise(tryFn()).then(resolve, errorFn);
+                    } else {
+                        reject(errArgs);
+                    }
+                }, () => reject(errArgs));
+            }, interval);
+        };
+        toPromise(tryFn()).then(resolve, errorFn);
+    });
+};
+
+/**
+ * Promise of a defer created using this function, has abort function that will reject the defer when called.
+ * @returns {*} angular defer object
+ */
+export const getAbortableDefer = () => {
+    const defer = {
+        promise: null,
+        reject: null,
+        resolve: null,
+        onAbort: () => {},
+        isAborted: false
+    };
+    defer.promise = new Promise((resolve, reject) => {
+        defer.resolve = resolve;
+        defer.reject = reject;
+    });
+    defer.promise.abort = () => {
+        triggerFn(defer.onAbort);
+        defer.reject('aborted');
+        defer.isAborted = true;
+    };
+    return defer;
 };

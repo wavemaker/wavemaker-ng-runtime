@@ -23,6 +23,7 @@ import { DeviceFileOpenerService } from './services/device-file-opener.service';
 import { DeviceFileService } from './services/device-file.service';
 import { DeviceFileUploadService } from './services/device-file-upload.service';
 import { DeviceService } from './services/device.service';
+import { NetworkService } from './services/network.service';
 
 const ionicServices = [
     AppVersion,
@@ -49,6 +50,7 @@ const ionicServices = [
         DeviceFileService,
         DeviceFileUploadService,
         DeviceService,
+        NetworkService,
         ...ionicServices
     ],
     bootstrap: []
@@ -58,11 +60,13 @@ export class MobileCoreModule {
     constructor(deviceService: DeviceService,
                 deviceFileService: DeviceFileService,
                 fileCacheService: DeviceFileCacheService,
-                fileOpener: DeviceFileOpenerService) {
+                fileOpener: DeviceFileOpenerService,
+                networkService: NetworkService) {
         if (hasCordova()) {
             deviceService.addStartUpService(deviceFileService);
             deviceService.addStartUpService(fileCacheService);
             deviceService.addStartUpService(fileOpener);
+            deviceService.addStartUpService(networkService);
         }
     }
 }
