@@ -1,10 +1,10 @@
 import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './rich-text-editor.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { DomSanitizer } from '@angular/platform-browser';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
@@ -34,13 +34,11 @@ declare const _, $;
 export class RichTextEditorComponent extends StylableComponent implements OnInit, OnDestroy {
 
     $richTextEditor;
-    _model_;
     $hiddenInputEle;
-    showpreview: boolean = false;
-    operationStack = [];
+
+    _model_;
+    _operationStack = [];
     isEditorLoaded = false;
-    disabled = true;
-    height;
 
     EDITOR_DEFAULT_OPTIONS = {
         toolbar: [
@@ -60,13 +58,13 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
         callbacks: {
             onInit: () => {
                 this.isEditorLoaded = true;
-                if (this.operationStack.length) {
-                    this.operationStack.forEach(operationParam => {
+                if (this._operationStack.length) {
+                    this._operationStack.forEach(operationParam => {
                         const key = Array.from(operationParam.keys())[0],
                             val = operationParam.get(key);
                         this.performEditorOperation(key, val);
                     });
-                    this.operationStack = [];
+                    this._operationStack = [];
                 }
             },
             onChange: (contents, editable) => {
@@ -115,10 +113,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
             case 'datavalue':
                 this.$hiddenInputEle.val(nv);
                 this.performEditorOperation('reset');
-                this.performEditorOperation('inserText', nv);
-                break;
-            case 'showpreview':
-                this.showpreview = nv;
+                this.performEditorOperation('insertText', nv);
                 break;
             case 'disabled':
             case 'readonly':
@@ -137,13 +132,14 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
     }
 
     performEditorOperation(key, value?) {
-        if (!this.isEditorLoaded) {
+        if (this.isEditorLoaded) {
+            return this.$richTextEditor.summernote(key, value);
+        } else {
             const op: any = new Map();
             op.set(key, value);
-            this.operationStack.push(op);
+            this._operationStack.push(op);
             return;
         }
-        return this.$richTextEditor.summernote(key, value);
     }
 
     getCurrentPosition() {
@@ -159,7 +155,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
     }
 
     ngOnDestroy() {
-        super.ngOnDestroy();
         this.performEditorOperation('destroy');
+        super.ngOnDestroy();
     }
 }
