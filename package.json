@@ -65,6 +65,7 @@
         "@types/jquery": "^3.3.1",
         "@types/node": "~6.0.60",
         "codelyzer": "^4.1.0",
+        "core-js-builder": "^2.5.7",
         "gulp": "^3.9.1",
         "gulp-angular-embed-templates": "^2.3.0",
         "jasmine-core": "~2.6.2",

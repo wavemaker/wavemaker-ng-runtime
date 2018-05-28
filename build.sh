@@ -27,11 +27,22 @@ White='\033[0;37m'        # White
 
 echo -e "${Cyan}Cleanup dist directory ${White} \n"
 $RIMRAF ./dist
-mkdir dist
+
+mkdir -p dist/tmp
 
 if [ "$?" != "0" ]
 then
 	echo -e "${Red}Error in cleaning dist directory ${White}\n"
+	exit 1
+fi
+
+################################ core-js
+
+echo -e "${Cyan}Build core-js umd ${White} \n"
+node ./core-js-builder.js
+if [ "$?" != "0" ]
+then
+	echo -e "${Red}Error in creating core-js umd ${White}\n"
 	exit 1
 fi
 
@@ -60,8 +71,6 @@ echo -e "${Green}Done with inline templates ${White}\n"
 
 mkdir -p ./dist/bundles/wmapp/scripts
 mkdir -p ./dist/bundles/wmmobile/scripts
-mkdir ./dist/tmp
-
 
 ################################ Bundle libs
 
@@ -119,6 +128,7 @@ then
     echo -e "${Cyan}Bundling libs for wm-app ${White}"
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
+        ./dist/tmp/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/Rx.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
