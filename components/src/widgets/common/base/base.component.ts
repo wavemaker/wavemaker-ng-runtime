@@ -79,6 +79,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     private readonly propertyChange = new Subject();
 
     /**
+     * On Ready State change subject and observable
+     */
+    private readonly readyState = new Subject();
+
+    /**
      * Component destroy subject and observable
      */
     private readonly destroy = new Subject();
@@ -190,6 +195,13 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             fn = fn.bind(ctx);
         }
         this.styleChange.subscribe(({key, nv, ov}) => fn(key, nv, ov));
+    }
+
+    public registerReadyStateListener(fn: Function, ctx?: any) {
+        if (ctx) {
+            fn = fn.bind(ctx);
+        }
+        this.readyState.subscribe(() => fn());
     }
 
     public registerPropertyChangeListener(fn: ChangeListener, ctx?: any) {
@@ -421,6 +433,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         });
         this.initState.clear();
         this.initState = undefined;
+
+        this.readyState.next();
+        this.readyState.complete();
     }
 
     /**

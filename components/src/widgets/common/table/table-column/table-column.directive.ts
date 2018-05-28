@@ -61,6 +61,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     filterdisplayfield;
     filterdisplaylabel;
     filtersearchkey;
+    filterplaceholder;
     fieldDef: any = {};
 
     private IsPropsInitialized;
@@ -127,13 +128,19 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Set the props on the row filter widget
     setUpFilterWidget() {
-        this.filterWidget.dataset = this._filterDataSet;
-        this.filterWidget.datafield = this.filterdatafield || this.binding;
-        this.filterWidget.displayfield = this.filterdisplayfield || this.binding;
-        if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
-            this.filterWidget.displaylabel = this.filterdisplaylabel || this.binding;
-            this.filterWidget.searchkey = this.filtersearchkey || this.binding;
-        }
+        this.filterWidget.registerReadyStateListener(() => {
+            this.filterWidget.dataset = this._filterDataSet;
+            this.filterWidget.datafield = this.filterdatafield || this.binding;
+            this.filterWidget.displayfield = this.filterdisplayfield || this.binding;
+            if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
+                this.filterWidget.displaylabel = this.filterdisplaylabel || this.binding;
+                this.filterWidget.searchkey = this.filtersearchkey || this.binding;
+            }
+            if (this.filterwidget === FormWidgetType.TIME) {
+                this.filterWidget.timepattern = 'hh:mm:ss a'; // TODO: Set application time format
+            }
+            this.filterWidget.placeholder = this.filterplaceholder || '';
+        });
     }
 
     ngAfterContentInit() {
