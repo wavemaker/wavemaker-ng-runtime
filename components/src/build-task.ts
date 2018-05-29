@@ -45,7 +45,7 @@ export * from './widgets/common/login/login.build';
 export * from './widgets/common/marquee/marquee.build';
 export * from './widgets/common/message/message.build';
 export * from './widgets/common/menu/menu.build';
-export * from './widgets/common/nav-item/nav-item.build';
+export * from './widgets/common/nav/nav-item/nav-item.build';
 export * from './widgets/common/nav/nav.build';
 export * from './widgets/common/navbar/navbar.build';
 export * from './widgets/common/page-content/page-content.build';

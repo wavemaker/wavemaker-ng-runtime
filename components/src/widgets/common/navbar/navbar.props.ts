@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['class', {value: '', ...PROP_STRING}],
+                ['homelink', PROP_STRING_NOTIFY],
                 ['imgsrc', PROP_STRING_NOTIFY],
                 ['menuiconclass', {value: 'wi wi-more-vert', ...PROP_STRING}],
                 ['name', PROP_STRING],

@@ -56,7 +56,6 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
     }
 
     public onNavSelect($event, node, nodeRef) {
-        // TODO: need to change this logic
         Array.prototype.forEach.call(nodeRef.parentNode.children, function(childNode) {
             switchClass(childNode, '', 'active');
         });

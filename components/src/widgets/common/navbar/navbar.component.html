@@ -4,12 +4,12 @@
             <span class="sr-only">Toggle navigation</span>
             <i [ngClass]="menuiconclass"></i>
         </button>
-        <a class="navbar-brand" href="#/" *ngIf="title || imagesrc">
-            <img data-identifier="img" class="brand-image" [alt]="Brand" height="20" *ngIf="imgsrc" [src]="imagesrc"/>
+        <a class="navbar-brand" [href]="_homeLink || '#/'" *ngIf="title || _imgSrc">
+            <img data-identifier="img" class="brand-image" [alt]="Brand" height="20" *ngIf="_imgSrc" [src]="_imgSrc"/>
             <span class="title" [textContent]="title"></span>
         </a>
     </div>
-    <div class="collapse navbar-collapse" id="collapse-content" partial-container-target>
+    <div class="collapse navbar-collapse">
         <ng-content></ng-content>
     </div>
 </div>
