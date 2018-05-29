@@ -19,7 +19,7 @@ export const selectProps = new Map(
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
-        ['tabindex', PROP_NUMBER],
+        ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['usekeys', PROP_BOOLEAN_NOTIFY]
     ]
 );

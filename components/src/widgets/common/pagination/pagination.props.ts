@@ -18,7 +18,7 @@ export const registerProps = () => {
                 ['navigationsize', PROP_NUMBER_NOTIFY],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showrecordcount', PROP_BOOLEAN],
-                ['tabindex', PROP_NUMBER]
+                ['tabindex', {value: 0, ...PROP_NUMBER}]
             ]
         )
     );

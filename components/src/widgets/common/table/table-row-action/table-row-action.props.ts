@@ -14,7 +14,7 @@ export const registerProps = () => {
                 ['iconclass', PROP_STRING],
                 ['key', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['tabindex', PROP_NUMBER],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING]
             ]
         )

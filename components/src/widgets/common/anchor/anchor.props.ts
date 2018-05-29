@@ -21,7 +21,7 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['tabindex', PROP_NUMBER],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['target', {value: '_self', ...PROP_STRING}]
             ]
         )

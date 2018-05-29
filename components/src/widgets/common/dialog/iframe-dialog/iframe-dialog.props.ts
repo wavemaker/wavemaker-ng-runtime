@@ -18,7 +18,7 @@ export const registerProps = () => {
                 ['oktext', {value: 'OK', ...PROP_STRING}],
                 ['showactions', {value: true, ...PROP_BOOLEAN}],
                 ['showheader', {value: true, ...PROP_BOOLEAN}],
-                ['tabindex', PROP_NUMBER],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', {value: 'External Content', ...PROP_STRING}],
                 ['url', {value: '//www.wavemaker.com', ...PROP_STRING}]
             ]

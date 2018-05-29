@@ -46,7 +46,7 @@ export const registerProps = () => {
                 ['showrowindex', PROP_BOOLEAN_NOTIFY],
                 ['spacing', {value: 'normal', ...PROP_STRING_NOTIFY}],
                 ['subheading', PROP_STRING],
-                ['tabindex', PROP_NUMBER],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING],
                 ['updatemessage', {value: 'Record updated successfully', ...PROP_STRING}]
             ]

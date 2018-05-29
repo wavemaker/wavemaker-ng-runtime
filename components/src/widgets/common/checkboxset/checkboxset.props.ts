@@ -20,7 +20,7 @@ export const checkboxsetProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['usekeys', PROP_BOOLEAN_NOTIFY],
-        ['tabindex', PROP_NUMBER],
+        ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', PROP_STRING]
     ]
 );

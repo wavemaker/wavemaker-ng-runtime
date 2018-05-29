@@ -1,12 +1,15 @@
 <div class="panel-heading" *ngIf="title || subheading || iconclass">
     <h3 class="panel-title">
-        <div class="pull-left"><i class="app-icon panel-icon {{iconclass}}" aria-hidden="true" [hidden]="!iconclass"></i></div>
         <div class="pull-left">
-            <div class="heading">{{title}}</div>
-            <div class="description">{{subheading}}</div>
+            <i class="app-icon panel-icon {{iconclass}}" aria-hidden="true" [hidden]="!iconclass"></i>
+        </div>
+        <div class="pull-left">
+            <div class="heading" [textContent]="title"></div>
+            <div class="description" [textContent]="subheading"></div>
         </div>
     </h3>
 </div>
+
 <nav class="app-datanavigator" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="previous" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisablePrevious : true)}">
@@ -17,20 +20,39 @@
         </li>
     </ul>
 </nav>
-<ul tabindex="0" class="app-livelist-container clearfix" [ngClass]="listclass">
-    <li *ngFor="let item of fieldDefs; let i = index; trackBy: listTrackByFn;" class="app-list-item clearfix"
-        [ngClass]="[itemsPerRowClass, listItemRef.itemClass]" [wmListItem]="item" #listItemRef="listItemRef">
-        <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i}"></ng-container>
+
+<ul tabindex="0" class="app-livelist-container clearfix" [ngClass]="listclass"
+    (keydown.enter)="handleKeyDown($event, 'select')"
+
+    (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
+    (keydown.arrowdown)="handleKeyDown($event, 'focusNext')"
+    (keydown.arrowleft)="handleKeyDown($event, 'foucsPrev')"
+    (keydown.arrowright)="handleKeyDown($event, 'focusNext')"
+
+    (keydown.shift.arrowup)="handleKeyDown($event, 'selectPrev')"
+    (keydown.shift.arrowdown)="handleKeyDown($event, 'selectNext')"
+    (keydown.shift.arrowleft)="handleKeyDown($event, 'selectPrev')"
+    (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
+>
+    <li *ngFor="let item of fieldDefs; let i = index;" class="app-list-item clearfix "
+        [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
+        [wmListItem]="item"
+        #listItemRef="listItemRef"
+        tabindex="-1">
+        <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index: i}"></ng-container>
     </li>
 </ul>
-<div class="no-data-msg" *ngIf="noDataFound && !variableInflight">{{nodatamessage}}</div>
+
+<div class="no-data-msg" *ngIf="noDataFound && !variableInflight" [textContent]="nodatamessage"></div>
+
 <div class="loading-data-msg" *ngIf="variableInflight">
     <span>
         <i class="app-icon panel-icon fa-spin" aria-hidden="true" [ngClass]="loadingicon"></i>
         <span class="sr-only">Loading</span>
-        <span class="loading-text">{{loadingdatamsg}}</span>
+        <span class="loading-text" [textContent]="loadingdatamsg"></span>
     </span>
 </div>
+
 <nav class="app-datanavigator" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="next" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisableNext  : true)}">
@@ -41,9 +63,23 @@
         </li>
     </ul>
 </nav>
+
 <div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation">
-    <nav wmPagination show.bind="showNavigation" navigationalign.bind="navigationalign" navigationsize.bind="navigationSize"
-         navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize" boundarylinks.bind="boundarylinks"
-         forceellipses.bind="forceellipses" directionlinks.bind="directionlinks" [hidden]="onDemandLoad"></nav>
-    <a *ngIf="onDemandLoad" href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)" class="app-button btn btn-block" [ngClass]="paginationclass">{{ondemandmessage}}</a>
+    <nav wmPagination
+         navigationalign.bind="navigationalign"
+         navigationsize.bind="navigationSize"
+         navigation.bind="navControls"
+         showrecordcount.bind="showrecordcount"
+         maxsize.bind="maxsize"
+         boundarylinks.bind="boundarylinks"
+         forceellipses.bind="forceellipses"
+         directionlinks.bind="directionlinks"
+         show.bind="onDemandLoad"
+    ></nav>
+    <a *ngIf="onDemandLoad" href="javascript:void(0);"
+       (click)="dataNavigator.navigatePage('next', $event)"
+       class="app-button btn btn-block"
+       [ngClass]="paginationclass"
+       [textContent]="ondemandmessage"
+    ></a>
 </div>

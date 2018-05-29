@@ -1,7 +1,8 @@
-import { Injector, Input, HostListener, HostBinding, Directive } from '@angular/core';
+import { Directive, ElementRef, HostBinding, Injector, Input } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 
 import { $watch } from '@wm/core';
 
@@ -13,51 +14,59 @@ import { ListComponent } from './list.component';
 })
 export class ListItemDirective {
 
-    item;
-    context;
-    destroy = new Subject();
-    destroy$ = this.destroy.asObservable();
+    public item;
+    public context;
+    public destroy: Subject<any> = new Subject();
+    public destroy$: Observable<any> = this.destroy.asObservable();
+    public nativeElement: HTMLElement;
 
-    private listComponent: ListComponent;
+    private readonly listComponent: ListComponent;
     private itemClass: string = '';
 
     @HostBinding('class.active') isActive: boolean = false;
     @HostBinding('class.disable-item') disableItem: boolean = false;
-    @HostListener('click', ['$event']) onClick ($event: any) {
-        this.listComponent.onItemClick($event, this);
-    }
 
     @Input() set wmListItem(val) {
         this.item = val;
     }
 
-    registerWatches(expression: string, callback) {
+    constructor(private inj: Injector, elRef: ElementRef) {
+        this.nativeElement = elRef.nativeElement;
+        this.listComponent = (<ListComponent>(<any>inj).view.component);
+        this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
+        this.itemClassWatcher(this.listComponent);
+        this.disableItemWatcher(this.listComponent);
+        this.setupEventHandlers();
+
+        $(this.nativeElement).data('listItemContext', this);
+    }
+
+    private registerWatch(expression: string, callback: Function) {
         const $locals =  (<any>this.inj).view.context;
 
         this.destroy$.subscribe($watch(expression, this, $locals, callback));
     }
 
-    itemClassWatcher($list) {
-        if ($list.binditemclass) {
-            this.registerWatches($list.binditemclass, nv => this.itemClass = nv || '');
+    private itemClassWatcher(listComponent: ListComponent) {
+        if (listComponent.binditemclass) {
+            this.registerWatch(listComponent.binditemclass, nv => this.itemClass = nv || '');
         } else {
-            this.itemClass = $list.itemclass;
+            this.itemClass = listComponent.itemclass;
         }
     }
 
-    disableItemWatcher($list: ListComponent) {
+    private disableItemWatcher($list: ListComponent) {
         if ($list.binddisableitem) {
-            this.registerWatches($list.binddisableitem, nv => this.disableItem = nv || false);
+            this.registerWatch($list.binddisableitem, nv => this.disableItem = nv || false);
         } else {
             this.disableItem = $list.disableitem || false;
         }
     }
 
-    constructor(private inj: Injector) {
-        this.listComponent = (<ListComponent>(<any>inj).view.component);
-        this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
-        this.itemClassWatcher(this.listComponent);
-        this.disableItemWatcher(this.listComponent);
+    private setupEventHandlers() {
+        this.nativeElement.addEventListener('click', ($event) => {
+            this.listComponent.onItemClick($event, this);
+        }, true);
     }
 }
 

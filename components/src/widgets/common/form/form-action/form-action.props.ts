@@ -18,7 +18,7 @@ export const registerProps = () => {
                 ['position', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['tabindex', PROP_NUMBER],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING],
                 ['type', PROP_STRING],
                 ['updateMode', PROP_STRING]

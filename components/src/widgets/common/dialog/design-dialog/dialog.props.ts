@@ -14,7 +14,7 @@ export const registerProps = () => {
                 ['modal', {value: true, ...PROP_BOOLEAN}],
                 ['name', PROP_STRING],
                 ['showheader', {value: true, ...PROP_BOOLEAN}],
-                ['tabindex', PROP_NUMBER],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', {value: 'Information', ...PROP_STRING}]
             ]
         )

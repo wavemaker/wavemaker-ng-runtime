@@ -22,7 +22,7 @@ export const dateProps = new Map(
         ['showbuttonbar', {value: true, ...PROP_BOOLEAN}], // TODO not addressed
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['showweeks', {value: false, ...PROP_BOOLEAN_NOTIFY}],
-        ['tabindex', PROP_NUMBER]
+        ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]
 );
 

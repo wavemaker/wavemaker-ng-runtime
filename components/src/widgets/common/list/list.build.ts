@@ -1,56 +1,51 @@
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { Element } from '@angular/compiler';
+import { Attribute, Element } from '@angular/compiler';
 
-const wmlistTag = 'wm-list';
+import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/transpiler';
+
+const wmListTag = 'wm-list';
 const listTagName = 'div';
-const wmListTemplateTag = 'wm-listtemplate';
-const listTemplateTagName = 'ng-template';
 const dataSetKey = 'dataset';
 
-register(wmlistTag, (): IBuildTaskDef => {
-        return {
-            pre: (attrs) => {
-                const tmpl = getAttrMarkup(attrs);
-                return `<${listTagName} wmList ${tmpl}>`;
-            },
-            post: () => `</${listTagName}>`,
-            template: (node: Element) => {
-                let bindDataset;
-                const attrObj = node.attrs.find(attr => attr.name === dataSetKey),
-                    /**
-                     *  Replacing binded property value with item
-                     * @param children
-                     */
-                    replaceBind = (children = []) => {
-                        children.forEach(childNode => {
-                            if (childNode.name) {
-                                // return if the child Element is of wm-list .
-                                if (childNode.name !== wmlistTag) {
-                                    childNode.attrs.forEach((attr) => {
-                                        if (attr.value.startsWith(`bind:${bindDataset}`)) {
-                                            attr.value = attr.value.replace(bindDataset, 'item');
-                                        }
-                                    });
-                                    replaceBind(childNode.children);
-                                }
+register(wmListTag, (): IBuildTaskDef => {
+    return {
+        template: (node: Element) => {
+
+            const datasetAttr = node.attrs.find(attr => attr.name === dataSetKey);
+
+            if (!datasetAttr) {
+                return;
+            }
+            const boundExpr = getBoundToExpr(datasetAttr.value);
+
+            if (!boundExpr) {
+                return;
+            }
+
+            // replace bound attrs with item
+            const replaceBind = (children: Array<Element> = []) => {
+                children.forEach((childNode: Element) => {
+                    if (childNode.name) {
+                        replaceBind(childNode.children as Array<Element>);
+                        // return if the child Element is of wm-list .
+                        childNode.attrs.forEach((attr: Attribute) => {
+                            if (attr.value.startsWith(`bind:${boundExpr}`)) {
+                                attr.value = attr.value.replace(boundExpr, 'item');
                             }
                         });
-                    };
-                if (attrObj && attrObj.value.startsWith('bind:')) {
-                    bindDataset = attrObj.value.replace('bind:', '');
-                }
-                if (bindDataset) {
-                    replaceBind(node.children);
-                }
-            }
-        };
-    }
-);
+                    }
+                });
+            };
+            replaceBind(node.children as Array<Element>);
+        },
+        pre: (attrs) => `<${listTagName} wmList ${getAttrMarkup(attrs)}>`,
+        post: () => `</${listTagName}>`
+    };
+});
 
-register(wmListTemplateTag, (): IBuildTaskDef => {
+register('wm-listtemplate', (): IBuildTaskDef => {
     return {
-        pre: () => `<${listTemplateTagName} #listTemplate let-item="item">`,
-        post: () => `</${listTemplateTagName}>`
+        pre: () => `<ng-template #listTemplate let-item="item">`,
+        post: () => `</ng-template>`
     };
 });
 

@@ -1,4 +1,6 @@
-import { AfterViewInit, Attribute, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+
+import { Subscription } from 'rxjs/Subscription';
 
 import { $appDigest, DataSource, getClonedObject, isDefined, isObject } from '@wm/core';
 
@@ -27,51 +29,49 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 })
 export class ListComponent extends StylableComponent implements AfterViewInit {
 
-    // ToDo: itemsPerRow should be dynamically generated.
-    private itemsPerRowClass: string = 'col-xs-12 col-sm-12 col-md-12 col-lg-12';
-    private firstSelectedItem: ListItemDirective;
-    private lastSelectedItem: ListItemDirective;
-
     @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
-    @ViewChild(PaginationComponent) dataNavigator;
 
+    @ViewChild(PaginationComponent) dataNavigator;
     @ViewChildren(ListItemDirective) listItems: QueryList<ListItemDirective>;
 
-    navControls;
-    datasource;
-    disableitem;
-    navigation;
-    navigationalign;
-    navigatorMaxResultWatch;
-    navigatorResultWatch;
-    noDataFound;
-    pagesize;
-    dataset;
-    multiselect;
-    selectfirstitem;
-    showNavigation;
-    reorderProps: {
-        minIndex: number,
-        maxIndex: number
-    } = {minIndex: null, maxIndex: null};
+    private itemsPerRowClass: string;
+    private firstSelectedItem: ListItemDirective;
+    private lastSelectedItem: ListItemDirective;
+    private navigatorMaxResultWatch: Subscription;
+    private navigatorResultWatch: Subscription;
+    private navControls: string;
+    private onDemandLoad: boolean;
+    private _items: Array<any> = [];
+    private dataNavigatorWatched: boolean = false;
+    private datasource: any;
+    private showNavigation: boolean;
+    private noDataFound: boolean;
+    private debouncedFetchNextDatasetOnScroll: Function;
+    private reorderProps: any = {
+        minIndex: null,
+        maxIndex: null
+    };
 
-    orderby: string;
-    loadingicon: string = 'fa fa-circle-o-notch';
-    paginationclass: string;
-    ondemandmessage: string = 'Load More';
-    loadingdatamsg: string = 'Loading...';
+    public fieldDefs: Array<any> = [];
+    public disableitem;
+    public navigation: string;
+    public navigationalign: string;
+    public pagesize: number;
+    public dataset: any;
+    public multiselect: boolean;
+    public selectfirstitem: boolean;
+    public orderby: string;
+    public loadingicon: string;
+    public paginationclass: string;
+    public ondemandmessage: string;
+    public loadingdatamsg: string;
+    public selectionlimit: number;
+    public infScroll: boolean;
+    public enablereorder: boolean;
+    public itemsperrow: string;
+    public itemclass: string;
 
-    infScroll: boolean;
-    onDemandLoad: boolean;
-    enablereorder: boolean = false;
-    variableInflight: boolean = false;
-
-
-    fieldDefs: Array<any> = [];
-    _items: Array<any> = [];
-    dataNavigatorWatched: boolean = false;
-
-    get selecteditem() {
+    public get selecteditem() {
         if (this.multiselect) {
             return getClonedObject(this._items);
         }
@@ -81,53 +81,38 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         return getClonedObject(this._items[0]);
     }
 
-    set selecteditem(items) {
+    public set selecteditem(items) {
         this._items.length = 0;
         if (_.isArray(items)) {
-            _.forEach(items, (item) => {
-                this.selectItem(item);
-            });
+            items.forEach(item => this.selectItemByModel(item));
         } else {
-            this.selectItem(items);
+            this.selectItemByModel(items);
         }
         $appDigest();
     }
 
     constructor(
         inj: Injector,
+        private cdRef: ChangeDetectorRef,
         @Attribute('itemclass.bind') public binditemclass,
         @Attribute('disableitem.bind') public binddisableitem,
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
-    }
 
-    execute(operation, options) {
-        if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
-            return false;
-        }
-        return this.datasource.execute(operation, options);
-    }
-
-    /**
-     * used to track list items by Index.
-     * @param {number} index value of the list item
-     * @returns {number} index.
-     */
-    private listTrackByFn(index: number): number {
-        return index;
+        this.debouncedFetchNextDatasetOnScroll = _.debounce(() => this.fetchNextDatasetOnScroll, 50);
     }
 
     private resetNavigation() {
         this.showNavigation = false;
-        this.navControls    = undefined;
-        this.infScroll      = false;
-        this.onDemandLoad   = false;
+        this.navControls = undefined;
+        this.infScroll = false;
+        this.onDemandLoad = false;
     }
 
     private enableBasicNavigation() {
-        this.navControls    = NAVIGATION_TYPE.BASIC;
+        this.navControls = NAVIGATION_TYPE.BASIC;
         this.showNavigation = true;
     }
 
@@ -136,12 +121,12 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     }
 
     private enableClassicNavigation() {
-        this.navControls    = NAVIGATION_TYPE.CLASSIC;
+        this.navControls = NAVIGATION_TYPE.CLASSIC;
         this.showNavigation = true;
     }
 
     private enablePagerNavigation() {
-        this.navControls    = NAVIGATION_TYPE.PAGER;
+        this.navControls = NAVIGATION_TYPE.PAGER;
         this.showNavigation = true;
     }
 
@@ -149,13 +134,38 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         this.navControls = NAVIGATION_TYPE.NONE;
         this.showNavigation = false;
     }
-    enableInfiniteScroll() {
+
+    private enableInfiniteScroll() {
         this.infScroll = true;
     }
 
-    enableOnDemandLoad() {
+    private enableOnDemandLoad() {
         this.onDemandLoad = true;
         this.showNavigation = true;
+    }
+
+    /* this function sets the itemclass depending on itemsperrow.
+     * if itemsperrow is 2 for large device, then itemclass is 'col-xs-1 col-sm-1 col-lg-2'
+     * if itemsperrow is 'lg-3' then itemclass is 'col-lg-3'
+     */
+    private setListClass() {
+        let temp = '';
+        if (this.itemsperrow) {
+            if (isNaN(parseInt(this.itemsperrow, 10))) {
+                // handling itemsperrow containing string of classes
+                _.split(this.itemsperrow, ' ').forEach((cls: string) => {
+                    const keys = _.split(cls, '-');
+                    cls = `${keys[0]}-${(12 / parseInt(keys[1], 10))}`;
+                    temp += ` col-${cls}`;
+                });
+                this.itemsPerRowClass = temp.trim();
+            } else {
+                // handling itemsperrow having integer value.
+                this.itemsPerRowClass = `col-xs-${(12 / parseInt(this.itemsperrow, 10))}`;
+            }
+        } else { // If itemsperrow is not specified make it full width
+            this.itemsPerRowClass = 'col-xs-12';
+        }
     }
 
     /**
@@ -190,21 +200,19 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         }
     }
 
-    private _fetchNextOnScroll() {
-        setTimeout(() => {
-            this.dataNavigator.navigatePage('next');
-        });
+    private fetchNextDatasetOnScroll() {
+        this.dataNavigator.navigatePage('next');
     }
 
     private bindScrollEvt() {
-        const $el = $(this.nativeElement),
-            $ul = $el.find('> ul'),
-            $firstChild = $ul.children().first(),
-            $c = this;
+        const $el = this.$element;
+        const $ul = $el.find('> ul');
+        const $firstChild = $ul.children().first();
+        const self = this;
 
-        let $scrollParent,
-            scrollNode,
-            lastScrollTop  = 0;
+        let $scrollParent;
+        let scrollNode;
+        let lastScrollTop = 0;
 
         if (!$firstChild.length) {
             return;
@@ -221,26 +229,26 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         // has scroll
         if (scrollNode.scrollHeight > scrollNode.clientHeight) {
             $scrollParent
-                .each(function () {
+                .each((index: number, node: HTMLElement | Document) =>  {
                     // scrollTop property is 0 or undefined for body in IE, safari.
-                    lastScrollTop = this === document ? (this.body.scrollTop || $(window).scrollTop()) : this.scrollTop;
+                    lastScrollTop = node === document ? (node.body.scrollTop || $(window).scrollTop()) : (node as HTMLElement).scrollTop;
                 })
                 .off('scroll.scroll_evt')
                 .on('scroll.scroll_evt', function (evt) {
-                    let target = evt.target,
-                        clientHeight,
-                        totalHeight,
-                        scrollTop;
+                    let target = evt.target;
+                    let clientHeight;
+                    let totalHeight;
+                    let scrollTop;
                     // scrollingElement is undefined for IE, safari. use body as target Element
                     target =  target === document ? (target.scrollingElement || document.body) : target;
 
                     clientHeight = target.clientHeight;
-                    totalHeight  = target.scrollHeight;
-                    scrollTop    = target === document.body ? $(window).scrollTop() : target.scrollTop;
+                    totalHeight = target.scrollHeight;
+                    scrollTop = target === document.body ? $(window).scrollTop() : target.scrollTop;
 
                     if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
                         $(this).off('scroll.scroll_evt');
-                        $c._fetchNextOnScroll();
+                        self.debouncedFetchNextDatasetOnScroll();
                     }
 
                     lastScrollTop = scrollTop;
@@ -248,10 +256,10 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
             $ul.off('wheel.scroll_evt');
         } else {
             // if there is no scrollable element register wheel event on ul element
-            $ul.on('wheel.scroll_evt', function (e) {
+            $ul.on('wheel.scroll_evt', e => {
                 if (e.originalEvent.deltaY > 0) {
                     $ul.off('wheel.scroll_evt');
-                    $c._fetchNextOnScroll();
+                    this.debouncedFetchNextDatasetOnScroll();
                 }
             });
         }
@@ -264,20 +272,14 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
      */
     private updateFieldDefs(newVal: Array<any>) {
         if (this.infScroll || this.onDemandLoad) {
-            if (!isDefined(this.fieldDefs)) {
+
+            if (!isDefined(this.fieldDefs) || this.dataNavigator.isFirstPage()) {
                 this.fieldDefs = [];
             }
-
-            if (this.dataNavigator.isFirstPage()) {
-                this.fieldDefs.length = 0;
-            }
-
-            _.forEach(newVal, (item) => {
-                this.fieldDefs.push(item);
-            });
+            _.forEach(newVal, item => this.fieldDefs.push(item));
 
             setTimeout(() => {
-                // Functionality of On-Demand and Scroll will be same except we don't attach scroll events
+                // functionality of On-Demand and Scroll will be same except we don't attach scroll events
                 if (this.fieldDefs.length && !this.onDemandLoad) {
                     this.bindScrollEvt();
                 }
@@ -285,9 +287,11 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         } else {
             this.fieldDefs = newVal;
         }
+
         if (this.orderby) {
             this.fieldDefs = getOrderedDataset(this.fieldDefs, this.orderby);
         }
+
         if (!this.fieldDefs.length) {
             this.noDataFound = true;
             this.selecteditem = undefined;
@@ -300,10 +304,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         if (newVal) {
 
             this.noDataFound = false;
-
-            if (newVal.data) {
-                newVal = newVal.data;
-            }
+            newVal = newVal.data || newVal;
 
             if (isObject(newVal) && !_.isArray(newVal)) {
                 newVal = _.isEmpty(newVal) ? [] : [newVal];
@@ -313,6 +314,9 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
             }
 
             if (_.isArray(newVal)) {
+                if (newVal.length) {
+                    this.invokeEventCallback('beforedatarender', {widget: this, $data: newVal});
+                }
                 this.updateFieldDefs(newVal);
             }
         } else {
@@ -320,9 +324,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         }
     }
 
-    /**
-     * Updates the dataSource when pagination is enabled for the Component.
-     */
+    // Updates the dataSource when pagination is enabled for the Component.
     private setupDataSource() {
         const dataNavigator = this.dataNavigator;
 
@@ -368,97 +370,87 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         }
     }
 
-    /**
-     * All the ListItem's Active state is set to false.
-     */
+    // All the ListItem's Active state is set to false.
     private deselectListItems() {
         this.listItems.forEach(item => item.isActive = false);
     }
 
-    /**
-     * Deselect all the ListItems and clear the selecteditem(InOutBound Property model)
-     */
-    private clearItems() {
+    // Deselect all the ListItems and clear the selecteditem(InOutBound Property model)
+    private clearSelectedItems() {
         this.deselectListItems();
         this._items.length = 0;
         $appDigest();
     }
 
     /**
-     * Selects an item and updates selecteditem property.
-     * If the item is already a selected selected item then deselects the item.
-     * @param {ListItemDirective} $listItem
-     */
-    setItem($listItem: ListItemDirective) {
-        const item = $listItem.item;
-        if ($listItem.isActive) {
-            this._items = _.pullAllWith(this._items, [item], _.isEqual);
-            $listItem.isActive = false;
-        } else {
-            this._items.push(item);
-            $listItem.isActive = true;
-        }
-        $appDigest();
-    }
-
-    /**
-     * Gets the List item by checking the equality of the model of the ListItem.
-     * @param listItems: array of ListItems.
+     * return the ListItemDirective instance by checking the equality of the model.
      * @param listModel: model to be searched for
      * @returns ListItem if the model is matched else return null.
      */
-    private getListItem(listItems, listModel) {
-        return listItems.find((listItem) => {
+    private getListItemByModel(listModel): ListItemDirective {
+        return this.listItems.find((listItem) => {
             if (_.isEqual(listItem.item, listModel)) {
-                return listItem;
+                return true;
             }
         }) || null;
     }
 
     /**
-     * Selects or Deselects a List Item.
+     * Selects the listItem and updates selecteditem property.
+     * If the listItem is already a selected selected item then deselects the item.
      * @param {ListItemDirective} $listItem: Item to be selected of deselected.
-     * @param {boolean} isSelect: true to select an item or false to deselect.
      */
-    private toggleListItem($listItem: ListItemDirective, isSelect: boolean) {
-        if($listItem && !$listItem.disableItem) {
+    private toggleListItemSelection($listItem: ListItemDirective) {
+        // item is not allowed to get selected if it is disabled.
+        if ($listItem && !$listItem.disableItem) {
+            const item = $listItem.item;
             if (!this.multiselect) {
-                this.clearItems();
+                this.clearSelectedItems();
             }
-            $listItem.isActive = !isSelect;
-            this.setItem($listItem);
+            if ($listItem.isActive) {
+                this._items = _.pullAllWith(this._items, [item], _.isEqual);
+                $listItem.isActive = false;
+            } else {
+                this._items.push(item);
+                $listItem.isActive = true;
+            }
         }
     }
 
     /**
-     * Select or Deselect an ListItem whose model is matched .
+     * Select an ListItem whose model is matched.
+     * It also updates the selected item of the list
      * @param listModel: Model to be searched over the ListItems.
      */
-    private selectItem(listModel) {
-        const $listItem = <ListItemDirective>this.getListItem(this.listItems, listModel);
-        this.toggleListItem($listItem, true);
+    private selectItemByModel(listModel) {
+        const $listItem = <ListItemDirective>this.getListItemByModel(listModel);
+        if ($listItem) {
+            $listItem.isActive = false;
+            this.toggleListItemSelection($listItem);
+        }
     }
 
     /**
      * Method is Invoked when the model for the List Widget is changed.
      * @param {QueryList<ListItemDirective>} listItems
      */
-    private onlistRender(listItems: QueryList<ListItemDirective>) {
-        const selectedItems = _.isArray(this.selecteditem)? this.selecteditem : [this.selecteditem];
+    private onListRender(listItems: QueryList<ListItemDirective>) {
+        const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
 
         this.firstSelectedItem = this.lastSelectedItem = null;
 
-        if(this.selectfirstitem && !(_.get(this, ['dataNavigator', 'dn', 'currentPage']) !== 1 && this.multiselect)) {
+        // selectfirst item when the pagination in the first page.
+        if (this.selectfirstitem && !(_.get(this, ['dataNavigator', 'dn', 'currentPage']) !== 1 && this.multiselect)) {
             const $firstItem: ListItemDirective = listItems.first;
-            if(!$firstItem.disableItem) {
-                this.clearItems();
+            if (!$firstItem.disableItem) {
+                this.clearSelectedItems();
                 this.firstSelectedItem = this.lastSelectedItem = $firstItem;
-                this.setItem($firstItem);
+                this.toggleListItemSelection($firstItem);
             }
         } else {
             this.deselectListItems();
-            selectedItems.forEach((selecteditem) => {
-                const listItem: ListItemDirective = this.getListItem(listItems, selecteditem);
+            selectedItems.forEach(selecteditem => {
+                const listItem: ListItemDirective = this.getListItemByModel(selecteditem);
                 if (listItem) {
                     listItem.isActive = true;
                 }
@@ -468,75 +460,132 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
 
     private setupHandlers() {
         this.listItems.changes.subscribe( listItems => {
-            this.onlistRender(listItems);
+            this.onListRender(listItems);
             $appDigest();
         });
     }
 
+    // configures reordering the list items.
     private configureDnD() {
-        const $el = $(this.nativeElement),
-            $ulEle = $el.find('.app-livelist-container'),
-            $is = this;
+        const $el = $(this.nativeElement);
+        const $ulEle = $el.find('.app-livelist-container');
+        const $is = this;
         $ulEle.sortable({
-            'appendTo'    : 'body',
-            'containment' : $ulEle,
-            'delay'       : 100,
-            'opacity'     : 0.8,
-            'helper'      : 'clone',
-            'zIndex'      : 1050,
-            'tolerance'   : 'pointer',
-            'start'       : function (evt, ui) {
+            appendTo: 'body',
+            containment: $ulEle,
+            delay: 100,
+            opacity: 0.8,
+            helper: 'clone',
+            zIndex: 1050,
+            tolerance: 'pointer',
+            start: function (evt, ui) {
                 ui.placeholder.height(ui.item.height());
                 $(this).data('oldIndex', ui.item.index());
             },
-            'update'      : function (evt, ui) {
-                let changedItem,
-                    newIndex,
-                    oldIndex,
-                    draggedItem,
-                    $dragEl,
-                    minIndex,
-                    maxIndex,
-                    data;
+            update: function (evt, ui) {
+                const data = $is.fieldDefs;
+                const $dragEl = $(this);
+                const newIndex = ui.item.index();
+                const oldIndex = $dragEl.data('oldIndex');
 
-                data        = $is.fieldDefs;
-                $dragEl     = $(this);
-                newIndex    = ui.item.index();
-                oldIndex    = $dragEl.data('oldIndex');
+                const minIndex = _.min([newIndex, oldIndex]);
+                const maxIndex = _.max([newIndex, oldIndex]);
 
-                minIndex    = _.min([newIndex, oldIndex]);
-                maxIndex    = _.max([newIndex, oldIndex]);
+                const draggedItem = _.pullAt(data, oldIndex)[0];
+
                 $is.reorderProps.minIndex = _.min([minIndex, $is.reorderProps.minIndex]);
                 $is.reorderProps.maxIndex = _.max([maxIndex, $is.reorderProps.maxIndex]);
 
-                draggedItem = _.pullAt(data, oldIndex)[0];
                 data.splice(newIndex, 0, draggedItem);
                 // cancel the sort even. as the data model is changed Angular will render the list.
-                $ulEle.sortable("cancel");
-                changedItem = {
+                $ulEle.sortable('cancel');
+                $is.cdRef.detectChanges();
+                const $changedItem = {
                     oldIndex: oldIndex,
                     newIndex: newIndex,
                     item: data[newIndex]
                 };
+                $is.invokeEventCallback('reorder', {$event: evt, widget: this, $changedItem});
                 $dragEl.removeData('oldIndex');
-                setTimeout(() => {
-                    $is.listItems.setDirty();
-                });
-                $appDigest();
             }
         });
         $el.find('.app-livelist-container').droppable({'accept': '.app-list-item'});
     }
 
-    /*================================  PUBLIC METHODS  ====================================*/
+    // returns true if the selection limit is reached.
+    private checkSelectionLimit(count: number) {
+        return (!this.selectionlimit || count < this.selectionlimit);
+    }
 
-    onPropertyChange(key, newVal, oldVal?) {
+    // returns listitem reference by index value.
+    private getQueryListItemByIndex(index: number) {
+        return this.listItems.toArray()[index];
+    }
+
+    // this method is called form other data widgets like table.
+    public execute(operation, options) {
+        if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
+            return false;
+        }
+        return this.datasource.execute(operation, options);
+    }
+
+    public handleKeyDown($event, action: string) {
+        const listItems: QueryList<ListItemDirective> = this.listItems;
+
+        const presentIndex: number = this.lastSelectedItem.context.index;
+
+        if (this.multiselect) {
+            const firstIndex: number = this.firstSelectedItem.context.index;
+            const selectCount: number = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
+            if (action === 'selectPrev') {
+                if (presentIndex > 0) {
+                    if ((presentIndex === firstIndex || presentIndex < firstIndex) && this.checkSelectionLimit(selectCount)) {
+                        this.lastSelectedItem = this.getQueryListItemByIndex( presentIndex - 1);
+                        this.toggleListItemSelection(this.lastSelectedItem);
+                    } else if (presentIndex > firstIndex) {
+                        this.toggleListItemSelection(this.getQueryListItemByIndex(presentIndex));
+                        this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex - 1);
+                    } else {
+                        this.invokeEventCallback('selectionlimitexceed', {$event, widget: this});
+                    }
+                }
+            } else if (action === 'selectNext') {
+                if (presentIndex < listItems.length - 1) {
+                    if ((presentIndex === firstIndex || presentIndex > firstIndex) && this.checkSelectionLimit(selectCount)) {
+                        this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
+                        this.toggleListItemSelection(this.lastSelectedItem);
+                    } else if (presentIndex < firstIndex) {
+                        this.toggleListItemSelection(this.getQueryListItemByIndex(presentIndex));
+                        this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
+                    } else {
+                        this.invokeEventCallback('selectionlimitexceed', {$event, widget: this});
+                    }
+                }
+            }
+        }
+        if (action === 'focusPrev') {
+            if (presentIndex !== 0) {
+                this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex - 1);
+                this.lastSelectedItem.nativeElement.focus();
+            }
+        } else if (action === 'focusNext') {
+            if (presentIndex !== listItems.length - 1) {
+                this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
+                this.lastSelectedItem.nativeElement.focus();
+            }
+        } else if (action === 'select') {
+            this.onItemClick($event, this.getQueryListItemByIndex(presentIndex));
+        }
+    }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
         switch (key) {
             case  'dataset' :
-                if (!newVal) {
+                if (!nv) {
                     return;
                 }
-                this.onDataSetChange(newVal.data || newVal);
+                this.onDataSetChange(nv.data || nv);
                 break;
             case 'datasource':
                 if (this.dataset) {
@@ -544,51 +593,93 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
                 }
                 break;
             case 'navigation':
-                this.onNavigationTypeChange(newVal);
+                this.onNavigationTypeChange(nv);
                 if (this.dataNavigator) {
                     this.dataNavigator.navigationClass = this.paginationclass;
                 }
                 break;
+            case 'itemsperrow':
+                this.setListClass();
+                break;
         }
-        $appDigest();
     }
 
-    onItemClick(evt: any, $listItem: ListItemDirective) {
+    public onItemClick(evt: any, $listItem: ListItemDirective) {
+        let selectCount: number;
+
         if (!$listItem.disableItem) {
+            $listItem.nativeElement.focus();
+            this.firstSelectedItem = this.firstSelectedItem || $listItem;
+            // Setting selectCount value based number of items selected.
+            selectCount = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
+
+            // TODO: Handle multiselect for mobile applications
             if ((evt.ctrlKey || evt.metaKey) && this.multiselect) {
-                this.firstSelectedItem = this.lastSelectedItem = $listItem;
-                this.setItem($listItem);
-            } else if (evt.shiftKey && this.multiselect && this.firstSelectedItem) {
-                let first = $listItem.context.index,
-                    last = this.firstSelectedItem.context.index;
+                if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
+                    this.firstSelectedItem = this.lastSelectedItem = $listItem;
+                    this.toggleListItemSelection($listItem);
+                } else {
+                    this.invokeEventCallback('selectionlimitexceed', {$event: evt, widget: this});
+                }
+            } else if (evt.shiftKey && this.multiselect) {
+                let first = $listItem.context.index;
+                let last = this.firstSelectedItem.context.index;
 
                 // if first is greater than last, then swap values
                 if (first > last) {
                     last = [first, first = last][0];
                 }
-                this.clearItems();
-                this.listItems.forEach(($liItem: ListItemDirective) => {
-                    const index = $liItem.context.index;
-                    if (index >= first && index <= last) {
-                        this.setItem($liItem);
-                    }
-                });
+                if (this.checkSelectionLimit(last - first)) {
+                    this.clearSelectedItems();
+                    this.listItems.forEach(($liItem: ListItemDirective) => {
+                        const index = $liItem.context.index;
+                        if (index >= first && index <= last) {
+                            this.toggleListItemSelection($liItem);
+                        }
+                    });
+                    this.lastSelectedItem = $listItem;
+                }  else {
+                    this.invokeEventCallback('selectionlimitexceed', {$event: evt, widget: this});
+                }
 
-                this.lastSelectedItem = $listItem;
             } else {
-                this.firstSelectedItem = this.lastSelectedItem = $listItem;
-                this.clearItems();
-                this.setItem($listItem);
+                if (!$listItem.isActive || selectCount > 1) {
+                    this.clearSelectedItems();
+                    this.toggleListItemSelection($listItem);
+                    this.firstSelectedItem = this.lastSelectedItem = $listItem;
+                }
             }
+            // TODO: updateSelectedItemsWidgets
+            $appDigest();
         }
-        $appDigest();
+    }
+
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        if (_.includes(['click', 'tap', 'dblclick', 'doubletap', 'mouseenter', 'mouseleave'], eventName)) {
+            this.eventManager.addEventListener(
+                this.nativeElement,
+                eventName,
+                (evt) => {
+                    const target = $(evt.target).closest('.app-list-item');
+                    if (target) {
+                        const listItemContext = target.data('listItemContext');
+                        this.invokeEventCallback(eventName, {$event: evt, item: listItemContext.item});
+                    }
+                }
+            );
+        }
+
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.setupHandlers();
+        this.setListClass();
         if (this.enablereorder) {
            this.configureDnD();
         }
     }
 }
+
+
+// Todo(punith) -- groupby, setlectItemWidgets, currentItemWidgets, mobileRelatedChanges

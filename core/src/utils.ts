@@ -915,3 +915,5 @@ export const getRouteFromNavLink = (link) => {
     }
     return link;
 };
+
+export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(navigator.platform);

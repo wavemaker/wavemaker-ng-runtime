@@ -12,7 +12,7 @@ interface IProviderInfo {
     provide: Map<string, any>;
 }
 
-const BIND_REG_EX = /^\s*bind:(.*)$/g;
+export const BIND_REG_EX = /^\s*bind:(.*)$/g;
 
 const OVERRIDES = {
     'accessroles': '*accessroles',
@@ -20,7 +20,7 @@ const OVERRIDES = {
     'showindevice': 'showInDevice'
 };
 
-const getBoundToExpr = value => {
+export const getBoundToExpr = value => {
     const match = BIND_REG_EX.exec(value);
     BIND_REG_EX.lastIndex = 0;
     return match && match[1];
