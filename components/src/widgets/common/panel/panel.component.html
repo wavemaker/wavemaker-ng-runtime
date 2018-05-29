@@ -42,10 +42,10 @@
 </div>
 <div class="panel-content" [hidden]="!expanded" #panelContent>
     <!-- Todo Bandhavya - implement smooth scroll -->
-    <div class="panel-body {{helpClass}}" partial-container-target #panelBody>
+    <div partial-container-target #panelBody [ngClass]="['panel-body', helpClass]">
         <ng-content></ng-content>
     </div>
-    <aside class="panel-help-message {{helpClass}}">
+    <aside class="panel-help-message" [ngClass]="helpClass">
         <h5 class="panel-help-header" [textContent]="appLocale.LABEL_HELP"></h5>
         <div class="panel-help-content" [innerHTML]="helptext | trustAs : 'html'"></div>
     </aside>

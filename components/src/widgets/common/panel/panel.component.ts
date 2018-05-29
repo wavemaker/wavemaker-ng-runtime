@@ -1,6 +1,6 @@
 import { AfterContentInit, Component, ContentChildren, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { noop, setCSS, toggleClass } from '@wm/core';
+import { $appDigest, noop, setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -35,7 +35,7 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
     public subheading: string;
     public actions: any;
 
-    private helpClass: string;
+    private helpClass: string = '';
     private fullScreenTitle: string;
     private expandCollapseTitle: string;
 
@@ -89,8 +89,9 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
 
     // show/hide help
     protected toggleHelp() {
-        this.helpClass = this.helpClass ? null : 'show-help';
+        this.helpClass = this.helpClass ? '' : 'show-help';
         toggleClass(this.nativeElement, 'show-help', !!this.helpClass);
+        $appDigest();
     }
 
     // hide the panel and invoke the respective event handler
