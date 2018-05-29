@@ -3,8 +3,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './rich-text-editor.props';
+import { BaseFormComponent } from '../base/base-form.component';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
@@ -31,7 +31,7 @@ declare const _, $;
         provideAsWidgetRef(RichTextEditorComponent)
     ]
 })
-export class RichTextEditorComponent extends StylableComponent implements OnInit, OnDestroy {
+export class RichTextEditorComponent extends BaseFormComponent implements OnInit, OnDestroy {
 
     $richTextEditor;
     $hiddenInputEle;
@@ -69,7 +69,7 @@ export class RichTextEditorComponent extends StylableComponent implements OnInit
             },
             onChange: (contents, editable) => {
                 this._model_ = this.domSanitizer.bypassSecurityTrustHtml(contents.toString());
-                this.invokeEventCallback('change', {newVal: contents, $event: getChangeEvt()});
+                this.invokeOnChange(contents, getChangeEvt());
             }
         },
         fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Merriweather'],
