@@ -1,0 +1,40 @@
+<div class="app-card-header panel-heading" *ngIf="showHeader">
+    <div class="app-card-avatar" *ngIf="iconclass || iconurl">
+        <i class="app-icon" [ngClass]="iconclass" *ngIf="iconclass && !iconurl"></i>
+        <img class="img-circle" [src]="iconurl" *ngIf="iconurl" />
+    </div>
+    <div class="app-card-header-text">
+        <h4 class="card-heading" [textContent]="title"></h4>
+        <h5 class="card-subheading text-muted" [textContent]="subheading"></h5>
+    </div>
+    <div class="panel-actions" *ngIf="actions">
+        <!-- TODO(punith) need to bind autoclose-->
+        <div wmMenu dropdown
+             [autoClose]="autoclose !== 'disabled'"
+             class="panel-action"
+             type="anchor"
+             iconclass="wi wi-more-vert"
+             menuposition="down,left"
+             hint="Actions"
+             dataset.bind="actions"
+             itemicon.bind="itemicon"
+             itemlabel.bind="itemlabel"
+             itemlink.bind="itemlink"
+             itemchildren.bind="itemchildren"
+             itemaction.bind="itemaction"
+             userrole.bind="userrole">
+        </div>
+    </div>
+</div>
+<div class="app-card-image" *ngIf="picturesource">
+   <img wmPicture class="card-image" picturesource.bind="picturesource" hint.bind="picturetitle" height.bind="imageheight" />
+</div>
+<div class="cardContentWrapper" #cardContainerWrapper>
+    <ng-content select="[wmCardContent]" ></ng-content>
+</div>
+<div>
+    <ng-content select="[wmCardActions]"></ng-content>
+</div>
+<div>
+    <ng-content select="[wmCardFooter]"></ng-content>
+</div>

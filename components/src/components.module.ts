@@ -19,6 +19,10 @@ import { BreadcrumbComponent } from './widgets/common/breadcrumb/breadcrumb.comp
 import { ButtonComponent } from './widgets/common/button/button.component';
 import { ButtonGroupDirective } from './widgets/common/button-group/button-group.directive';
 import { CalendarComponent } from './widgets/common/calendar/calendar.component';
+import { CardComponent } from './widgets/common/card/card.component';
+import { CardActionsDirective } from './widgets/common/card/card-actions/card-actions.directive';
+import { CardContentComponent } from './widgets/common/card/card-content/card-content.component';
+import { CardFooterDirective } from './widgets/common/card/card-footer/card-footer.directive';
 import { CarouselDirective } from './widgets/common/carousel/carousel.directive';
 import { CarouselTemplateDirective } from './widgets/common/carousel/carousel-template/carousel-template.directive';
 import { ChartComponent } from './widgets/common/chart/chart.component';
@@ -127,6 +131,10 @@ const wmComponents = [
     ButtonComponent,
     ButtonGroupDirective,
     CalendarComponent,
+    CardComponent,
+    CardActionsDirective,
+    CardContentComponent,
+    CardFooterDirective,
     CarouselDirective,
     CarouselTemplateDirective,
     ChartComponent,
