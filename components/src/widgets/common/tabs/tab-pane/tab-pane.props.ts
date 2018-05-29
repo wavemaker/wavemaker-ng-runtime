@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['badgevalue', PROP_STRING],
-                ['badgetype', PROP_STRING],
+                ['badgetype', {value: 'default', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['content', PROP_STRING_NOTIFY],
                 ['disabled', PROP_BOOLEAN],

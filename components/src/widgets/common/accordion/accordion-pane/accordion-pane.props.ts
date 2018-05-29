@@ -5,7 +5,7 @@ export const registerProps = () => {
         'wm-accordionpane',
         new Map(
             [
-                ['badgetype', PROP_STRING],
+                ['badgetype', {value: 'default', ...PROP_STRING}],
                 ['badgevalue', PROP_STRING],
                 ['content', PROP_STRING_NOTIFY],
                 ['iconclass', PROP_STRING],
