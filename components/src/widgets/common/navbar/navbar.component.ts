@@ -1,4 +1,5 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, AfterViewInit} from '@angular/core';
+import { getResourceURL } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -19,39 +20,48 @@ declare const _, $;
         provideAsWidgetRef(NavbarComponent)
     ]
 })
-export class NavbarComponent extends StylableComponent {
-    imagesrc;
+export class NavbarComponent extends StylableComponent implements AfterViewInit {
 
-    $navbarContent;
+    private navContent;
 
-    toggleCollapse() {
-        this.$navbarContent.animate({ 'height': 'toggle'});
-        if (this.$navbarContent.hasClass('in')) {
+    public _imgSrc;
+    public _homeLink;
+
+    private delayToggleNavCollapse() {
+        setTimeout(() => this.toggleNavCollapse(), 500);
+    }
+
+    private toggleNavCollapse() {
+        this.navContent.classList.toggle('in');
+    }
+
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+    }
+
+    public toggleCollapse() {
+        const $navContent = $(this.navContent);
+        $navContent.animate({ 'height': 'toggle'});
+        if ($navContent.hasClass('in')) {
             this.delayToggleNavCollapse();
         } else {
             this.toggleNavCollapse();
         }
     }
 
-    delayToggleNavCollapse() {
-        setTimeout(() => this.toggleNavCollapse(), 500);
-    }
-
-    toggleNavCollapse() {
-        this.$navbarContent.toggleClass('in');
-    }
-
     onPropertyChange(key, nv, ov) {
         switch (key) {
             case 'imgsrc':
-                this.imagesrc = getImageUrl(nv);
+                this._imgSrc = getImageUrl(nv);
+                break;
+            case 'homelink':
+                this._homeLink = getResourceURL(nv);
                 break;
         }
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
-        this.$navbarContent = $(this.nativeElement).children().find('> #collapse-content');
+    ngAfterViewInit() {
+        this.navContent = this.nativeElement.querySelector('.container-fluid > .navbar-collapse');
     }
 }

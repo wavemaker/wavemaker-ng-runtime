@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['animateitems', PROP_STRING],
                 ['autoclose', {value: 'always', ...PROP_STRING}],
                 ['caption', PROP_STRING],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {value: 'Menu Item 1, Menu Item 2, Menu Item 3', ...PROP_STRING_NOTIFY}],
                 ['iconclass', PROP_STRING],
                 ['itemaction', PROP_STRING_NOTIFY],
                 ['itemchildren', PROP_STRING_NOTIFY],
