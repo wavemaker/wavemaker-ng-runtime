@@ -8,7 +8,7 @@ import { registerProps } from './list.props';
 import { NAVIGATION_TYPE, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
-import { getOrderedDataSet } from '../../../utils/form-utils';
+import { getOrderedDataset } from '../../../utils/form-utils';
 
 declare const _;
 declare const $;
@@ -286,7 +286,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
             this.fieldDefs = newVal;
         }
         if (this.orderby) {
-            this.fieldDefs = getOrderedDataSet(this.fieldDefs, this.orderby);
+            this.fieldDefs = getOrderedDataset(this.fieldDefs, this.orderby);
         }
         if (!this.fieldDefs.length) {
             this.noDataFound = true;

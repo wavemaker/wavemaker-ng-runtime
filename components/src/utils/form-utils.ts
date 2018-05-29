@@ -9,7 +9,7 @@ declare const _;
 /**
  * function to get the ordered dataset based on the given orderby
  */
-export const getOrderedDataSet = (dataSet: any, orderBy: string) => {
+export const getOrderedDataset = (dataSet: any, orderBy: string) => {
     if (!orderBy) {
         return _.cloneDeep(dataSet);
     }
@@ -37,7 +37,12 @@ export const transformDataWithKeys = (dataSet: any) => {
         // getting keys of the object
         const objectKeys = Object.keys(dataSet[0] || dataSet);
         _.forEach(objectKeys, (objKey, index) => {
-            data.push({'key': objKey, 'label': objKey, 'value': objKey, 'index': index + 1});
+            data.push({
+                key: objKey,
+                label: objKey,
+                value: objKey,
+                index: index + 1
+            });
         });
     }
 
@@ -45,7 +50,7 @@ export const transformDataWithKeys = (dataSet: any) => {
 };
 
 // This function return always an object containing dataset details.
-export const convertDataToObject = (dataResult) => {
+export const convertDataToObject = dataResult => {
     // TODO: [bandhavya] remove check for data property
     // Check for data to get data for livevariable.
     dataResult = dataResult.hasOwnProperty('data') ? dataResult.data : dataResult;
@@ -80,7 +85,7 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
         dataSet.forEach((option, index) => {
             data.push({'key': option, 'value': option, 'label': option, 'index': index + 1});
         });
-    } else if (!(dataSet instanceof Array) && dataSet instanceof Object) {
+    } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
         const i = 0;
         _.forEach(dataSet, (value, key) => {
             data.push({'key': _.trim(key), 'value': key, 'label': value, 'index': i + 1});
@@ -113,7 +118,7 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
                     index: index + 1
                 };
                 if (myDisplayImgSrc) {
-                    dataSetItem['imgSrc'] = getEvaluatedData(option, {
+                    (dataSetItem as any).imgSrc = getEvaluatedData(option, {
                         expression: displayOptions.displayImgSrc,
                         bindExpression: displayOptions.bindDisplayImgSrc
                     });

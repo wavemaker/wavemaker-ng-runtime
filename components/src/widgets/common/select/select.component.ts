@@ -42,7 +42,6 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     onSelectValueChange($event) {
         this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldValue});
-        this.oldValue = this.datavalue;
+        this.invokeEventCallback('change', {$event, newVal: this.datavalue});
     }
 }

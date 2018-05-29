@@ -3,7 +3,7 @@ import { $appDigest, findValueOf, isObject, validateAccessRoles } from '@wm/core
 
 import { createArrayFrom } from '../../../utils/data-utils';
 import { getEvaluatedData } from '../../../utils/widget-utils';
-import { getOrderedDataSet } from '../../../utils/form-utils';
+import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from './stylable.component';
 
 declare const _;
@@ -116,7 +116,7 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
      * constructs dataset form the nav elements.
      */
     private getNodes(nv = (this.dataset || {}).data || this.dataset): Array<NavNode> {
-        let nodes: Array<any> = getOrderedDataSet(this.prepareNodeDataSet(nv), this.orderby) || [];
+        let nodes: Array<any> = getOrderedDataset(this.prepareNodeDataSet(nv), this.orderby) || [];
 
         if (nodes.length) {
             const userRole = this.userrole;

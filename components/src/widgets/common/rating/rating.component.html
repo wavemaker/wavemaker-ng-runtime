@@ -1,4 +1,4 @@
-<div [(ngModel)]="proxyModel" (focus)="onFocus($event)" ngDefaultControl role="radiogroup">
+<div [(ngModel)]="modelByKey" (focus)="onFocus($event)" ngDefaultControl role="radiogroup">
     <div *ngIf="!readonly" class="rating-style">
         <label *ngFor="let rate of ratingItems;"
                [ngClass]="{active : rate.index <= selectedRatingValue}"

@@ -772,6 +772,8 @@ export const hasCordova = () => {
     return !!window['cordova'];
 };
 
+export const INT_MAX_VALUE = 2147483647;
+
 export const openLink = (link: string, target: string = '_self') => {
     if ( hasCordova() && _.startsWith(link, '#')) {
         location.hash = link;

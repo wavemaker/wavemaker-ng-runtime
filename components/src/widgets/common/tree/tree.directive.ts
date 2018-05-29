@@ -5,7 +5,7 @@ import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 import { IRedrawableComponent } from '../../framework/types';
 import { registerProps } from './tree.props';
 import { getEvaluatedData, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { getOrderedDataSet } from '../../../utils/form-utils';
+import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from '../base/stylable.component';
 
 const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
@@ -192,7 +192,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
                 nodes = this.getNodesFromString(newVal);
             }
         } else if (_.isArray(newVal)) {
-            newVal = getOrderedDataSet(newVal, this.orderby);
+            newVal = getOrderedDataset(newVal, this.orderby);
             nodes = newVal;
         } else if (_.isObject(newVal)) {
             nodes = [newVal];

@@ -11,10 +11,10 @@
         <i *ngIf="opt[iconclass || 'icon']" aria-hidden="true" [ngClass]="['app-icon', opt[iconclass] || opt['icon']]"></i>
     </a>
 </div>
-<span [title]="selectedItem ? selectedItem.label : proxyModel"
+<span [title]="selectedItem ? selectedItem.label : modelByKey"
       class="btn btn-primary app-switch-overlay switch-handle">
     <i *ngIf="iconclass"
        [ngClass]="['app-icon', iconclass]"></i>
-    {{selectedItem ? selectedItem.label : proxyModel}}
+    {{selectedItem ? selectedItem.label : modelByKey}}
 </span>
-<input [name]="name" class="model-holder ng-hide" [disabled]="disabled" [value]="proxyModel" [required]="required">
+<input [name]="name" class="model-holder ng-hide" [disabled]="disabled" [value]="modelByKey" [required]="required">

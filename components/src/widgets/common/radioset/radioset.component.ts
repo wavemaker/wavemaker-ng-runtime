@@ -39,11 +39,10 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
             return;
         }
 
-        this.proxyModel = key;
+        this.modelByKey = key;
 
         this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
-        this.oldValue = this.datavalue;
+        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});
     }
 
     onPropertyChange(key, nv, ov?) {

@@ -113,7 +113,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
 
     onRatingClick($event, rate) {
         this.selectedRatingValue = rate.index;
-        this.proxyModel = rate.key;
+        this.modelByKey = rate.key;
 
         // support if the caption is binded in the old projects for backward compatibility
         if (!this.showcaptions) {
@@ -121,8 +121,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
         }
 
         this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue, oldVal: this.oldValue});
-        this.oldValue = this.datavalue;
+        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});
     }
 
     // Update the selected flag on datasetItems and assign the ratingValue.
@@ -147,7 +146,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
                 selectedItem.selected = true;
             } else {
                 // reset the  model if there is no item found.
-                this.proxyModel = undefined;
+                this.modelByKey = undefined;
                 return;
             }
 
