@@ -71,6 +71,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         inj: Injector,
         @Attribute('checkedvalue') checkedVal,
         @Attribute('uncheckedvalue') uncheckedVal,
+        @Attribute('datavalue') defaultVal,
         @Attribute('type') type
     ) {
         super(inj, WIDGET_CONFIG);
@@ -78,8 +79,17 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         this._checkedvalue = unStringify(checkedVal, true);
         this._uncheckedvalue = unStringify(uncheckedVal, false);
 
+        this.datavalue = unStringify(defaultVal, false);
+
         // if the type of the checkbox is toggle update the related classes on the host node
         toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');
+    }
+
+    protected processAttr(attrName: string, attrValue: any) {
+        // default datavalue is handled in the constructor, do not set it again
+        if (attrName !== 'datavalue') {
+            super.processAttr(attrName, attrValue);
+        }
     }
 
     onPropertyChange(key, nv, ov) {
