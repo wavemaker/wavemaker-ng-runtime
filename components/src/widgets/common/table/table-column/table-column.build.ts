@@ -1,5 +1,5 @@
 import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { DataType, getFormWidgetTemplate } from '@wm/core';
+import { DataType, FormWidgetType, getFormWidgetTemplate } from '@wm/core';
 import { getDataTableFilterWidget } from '../../../../utils/live-utils';
 
 const tagName = 'div';
@@ -9,7 +9,7 @@ const getFilterTemplate = (attrs, pCounter)  => {
     const widget = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
     const fieldName = attrs.get('binding');
     const type = attrs.get('type') || 'string';
-    const innerTmpl = `#filterWidget [(ngModel)]="${pCounter}.rowFilter['${fieldName}'].value" change.event="changeFn('${fieldName}')"
+    const innerTmpl = `#filterWidget formControlName="${fieldName + '_filter'}" change.event="changeFn('${fieldName}')"
                         disabled.bind="isDisabled('${fieldName}')"`;
     const widgetTmpl = `${getFormWidgetTemplate(widget, innerTmpl, attrs)}`;
 
@@ -35,13 +35,30 @@ const getFilterTemplate = (attrs, pCounter)  => {
     </span></ng-template>`;
 };
 
+// get the inline widget template
+const getInlineEditWidgetTmpl = (attrs) => {
+    const fieldName = attrs.get('binding');
+    const widget = attrs.get('edit-widget-type') || FormWidgetType.TEXT;
+    const innerTmpl = `#inlineWidget data-col-identifier="${fieldName}" data-field-name="${fieldName}" formControlName="${fieldName}"`;
+    const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs);
+
+    return `<ng-template #inlineWidgetTmpl>
+                 ${widgetTmpl}
+            </ng-template>`;
+};
+
 register('wm-table-column', (): IBuildTaskDef => {
     return {
         requires: ['wm-table'],
         pre: (attrs, shared, parentTable) => {
             const pCounter = parentTable.get('table_reference');
-            const rowFilterTmpl = parentTable.get('filtermode') === 'multicolumn' ? getFilterTemplate(attrs, pCounter) : '';
-            return `<${tagName} wmTableColumn ${getAttrMarkup(attrs)}> ${rowFilterTmpl}`;
+            const rowFilterTmpl = (parentTable.get('filtermode') === 'multicolumn' && attrs.get('searchable') !== 'false') ? getFilterTemplate(attrs, pCounter) : '';
+            const editMode = parentTable.get('editmode');
+            const inlineEditTmpl = (editMode === 'dialog' || editMode === 'form' || attrs.get('readonly') === 'true') ? '' : getInlineEditWidgetTmpl(attrs);
+
+            return `<${tagName} wmTableColumn ${getAttrMarkup(attrs)} [formGroup]="${pCounter}.ngform">
+                    ${rowFilterTmpl}
+                    ${inlineEditTmpl}`;
         },
         post: () => `</${tagName}>`
     };

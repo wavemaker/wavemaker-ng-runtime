@@ -157,8 +157,8 @@ export class TableFilterSortDirective {
         let $gridElement;
         this.table.filterInfo = {};
         if (this.table.filtermode === 'multicolumn') {
-            _.forEach(this.table.rowFilter, (v, k) => {
-                this.table.rowFilter[k].value = undefined;
+            this.table.fieldDefs.forEach(col => {
+                col.resetFilter();
             });
             if (!skipFilter) {
                 this.table.onRowFilterChange();
@@ -352,7 +352,7 @@ export class TableFilterSortDirective {
     // Method clear the filter value in multi column filter
     clearRowFilter(fieldName) {
         if (this.table.rowFilter && this.table.rowFilter[fieldName]) {
-            this.table.rowFilter[fieldName].value = '';
+            this.table.columns[fieldName].resetFilter();
             this.onRowFilterChange(fieldName);
         }
     }
@@ -396,7 +396,7 @@ export class TableFilterSortDirective {
             const filterFields = {};
             const filterWidget = filterField.filterwidget;
 
-            if (!isDataSetWidget(filterWidget) || filterOn === filterKey || filterField._isFilterDataSetBound) {
+            if (!isDataSetWidget(filterWidget) || filterOn === filterKey || filterField.isFilterDataSetBound) {
                 return;
             }
 
@@ -409,7 +409,7 @@ export class TableFilterSortDirective {
                     'fields'         : filterKey,
                     'filterFields'   : filterFields
                 }).then(data => {
-                    filterField._widget.filterdataset = _.pull(_.map(data.content, filterKey), null);
+                    filterField.filterdataset = _.pull(_.map(data.content, filterKey), null);
                 });
             }
         });

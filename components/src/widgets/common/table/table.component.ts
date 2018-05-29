@@ -9,8 +9,9 @@ import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { getRowOperationsColumn } from '../../../utils/live-utils';
-import { refreshDataSource, transformData } from '../../../utils/data-utils';
+import { transformData } from '../../../utils/data-utils';
 import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 declare const _;
 declare var $: any;
@@ -64,6 +65,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ContentChildren('filterTmpl') filterTmpl: QueryList<any>;
     @ViewChild('multiColumnFilter', {read: ViewContainerRef}) multiColumnFilterTl: ViewContainerRef;
 
+    @ContentChildren('inlineWidgetTmpl') inlineWidgetTmpl: QueryList<any>;
+    @ViewChild('inlineEdit', {read: ViewContainerRef}) inlineEditTl: ViewContainerRef;
+
     columns = {};
     datagridElement;
     datasource;
@@ -114,8 +118,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     dataset;
     _liveTableParent;
 
+    fieldDefs = [];
     private fullFieldDefs = [];
-    private fieldDefs = [];
     private __fullData;
     private dataNavigatorWatched;
     private navigatorResultWatch;
@@ -148,6 +152,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     onFilterConditionSelect = noop;
     showClearIcon = noop;
     clearRowFilter = noop;
+
+    // Inline Edit
+    ngform: FormGroup;
+    updateVariable: Function;
+    updateRecord: Function;
+    deleteRecord: Function;
+    insertRecord: Function;
 
     private gridOptions = {
         'data': [],
@@ -223,9 +234,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         onHeaderClick: () => {
         },
-        onRowDelete: () => {
+        onRowDelete: (rowData, cancelRowDeleteCallback, e, callBack) => {
+            this.deleteRecord(rowData, cancelRowDeleteCallback, e, callBack);
         },
-        onRowInsert: () => {
+        onRowInsert: (rowData, e, callBack) => {
+            this.insertRecord({'row': rowData, event: e, 'callBack': callBack});
         },
         beforeRowUpdate: (rowData, eventName?) => {
             if (this._liveTableParent) {
@@ -233,11 +246,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             this.prevData = getClonedObject(rowData);
         },
-        afterRowUpdate: () => {
+        afterRowUpdate: (rowData, e, callBack) => {
+            this.updateRecord({'row': rowData, 'prevData': this.prevData, 'event': e, 'callBack': callBack});
         },
-        onBeforeRowUpdate: () => {
+        onBeforeRowUpdate: (rowData, e) => {
+            return this.invokeEventCallback('beforerowupdate', {$event: e, $data: rowData, $rowData: rowData});
         },
-        onBeforeRowInsert: () => {
+        onBeforeRowInsert: (rowData, e) => {
+            return this.invokeEventCallback('beforerowinsert', {$event: e, $data: rowData, $rowData: rowData});
         },
         onFormRender: () => {
         },
@@ -250,6 +266,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // TODO: Demo code. Need to change
             this.rowActionsContainer.createEmbeddedView(this.rowActionsTmpl);
             return $(this.nativeElement).find('.row__actions')[0];
+        },
+        generateInlineEditRow: () => {
+            $appDigest();
+            // Clear the view container ref
+            this.inlineEditTl.clear();
+            this.ngform.reset();
+            // For all the columns inside the table, generate the inline widget
+            this.inlineWidgetTmpl.forEach(tmpl => {
+                this.inlineEditTl.createEmbeddedView(tmpl);
+            });
+        },
+        getInlineEditWidget: (fieldName, value) => {
+            const control = this.ngform.controls && this.ngform.controls[fieldName];
+            if (control) {
+                control.setValue(value);
+            }
+            return $(this.nativeElement).find(`.inline-edit-widgets [data-col-identifier='${fieldName}']`)[0];
+        },
+        getFieldValue: (fieldName) => {
+            const control = this.ngform.controls && this.ngform.controls[fieldName];
+            return control && control.value;
         },
         generateFilterRow: () => {
             // Clear the view container ref
@@ -350,9 +387,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.callDataGridMethod('selectRows', val);
     }
 
-    constructor(inj: Injector, @Attribute('dataset.bind') public binddataset) {
+    constructor(inj: Injector,
+                public fb: FormBuilder,
+                @Attribute('dataset.bind') public binddataset) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+
+        this.ngform = fb.group({});
     }
 
     ngAfterContentInit() {
@@ -690,7 +731,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     onDataSourceChange() {
         this.fieldDefs.forEach(col => {
-           triggerFn(col.onDataSourceChange);
+           triggerFn(col.onDataSourceChange.bind(col));
         });
     }
 
@@ -851,12 +892,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.gridOptions.beforeRowUpdate(row);
             } else {
                 // Wait for the selected item to get updated
-                setTimeout(() => {
-                    row = this.datagridElement.find('tr.active');
-                    if (row.length) {
-                        this.callDataGridMethod('toggleEditRow', undefined, {$row: row, action: 'edit'});
-                    }
-                });
+                // setTimeout(() => {
+                //     row = this.datagridElement.find('tr.active');
+                //     if (row.length) {
+                //         this.callDataGridMethod('toggleEditRow', undefined, {$row: row, action: 'edit'});
+                //     }
+                // });
             }
         }
     }
@@ -980,29 +1021,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return nv;
     }
 
-    updateVariable(row?, callBack?) {
-        const dataSource = this.datasource;
-        // TODO: Filter
-        // if (this.isBoundToFilter) {
-        //     //If grid is bound to filter, call the apply fiter and update filter options
-        //     if (!this.shownavigation) {
-        //         refreshLiveFilter();
-        //     }
-        //     this.Widgets[this.widgetName].fetchDistinctValues();
-        //     return;
-        // }
-        if (dataSource && !this.shownavigation) {
-            refreshDataSource(dataSource, {
-                page: 1
-            }).then(() => {
-                this.selectItemOnSuccess(row, true, callBack);
-            });
-        }
-    }
-
-    toggleMessage(show, type, msg, header) {
+    toggleMessage(show, type, msg) {
         // TODO: Use app notifcation
         if (show && msg) {
+            this.viewParent.App.Actions.appNotification.invoke({
+                message: msg,
+                class: type
+            });
             // wmToaster.show(type, WM.isDefined(header) ? header : type.toUpperCase(), msg);
         } else {
             // wmToaster.hide();

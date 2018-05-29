@@ -6,19 +6,14 @@ import { registerProps } from './table-column.props';
 import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
-import { $watch, DataSource, FormWidgetType } from '@wm/core';
-import { getDistinctValues } from '../../../../utils/data-utils';
+import { $watch, DataSource, FormWidgetType, isDefined } from '@wm/core';
+import { applyFilterOnField, fetchRelatedFieldData, getDistinctValues, getDistinctValuesForField } from '../../../../utils/data-utils';
 
 declare const _;
 
 registerProps();
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
-
-const COLUMN_PROPS = ['generator', 'widgetType', 'datepattern', 'currencypattern', 'fractionsize', 'suffix', 'prefix', 'accessroles', 'dataset', 'datafield',
-    'placeholder', 'displaylabel', 'searchkey', 'displayfield', 'rowactionsposition', 'filterplaceholder', 'relatedEntityName', 'checkedvalue', 'uncheckedvalue',
-    'filterOn', 'filterdataset', 'filterdatafield', 'filterdisplayfield', 'filterdisplaylabel', 'filtersearchkey', 'filteronfilter', 'editdatepattern',
-    'width', 'type', 'filterwidget', 'defaultvalue', 'disabled', 'required', 'sortable', 'show'];
 
 @Directive({
     selector: '[wmTableColumn]',
@@ -29,26 +24,30 @@ const COLUMN_PROPS = ['generator', 'widgetType', 'datepattern', 'currencypattern
 export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit {
 
     @ContentChildren('filterWidget') _filterWidget;
+    @ContentChildren('inlineWidget') _inlineWidget;
 
-    filterWidget;
+    private filterWidget;
+    private inlineWidget;
+    private IsPropsInitialized;
+    private _filterDataSet;
+    private _dataSet;
+    private _isRowFilter;
+    private _isInlineEditable;
 
     backgroundcolor;
     binding;
     caption;
-    colClass;
-    colNgClass;
     defaultvalue;
     disabled;
     editWidgetType;
     filterwidget;
+    field;
     formatpattern;
     generator;
     limit;
     mobiledisplay;
     pcdisplay;
-    primaryKey;
     readonly;
-    relatedEntityName;
     required;
     searchable;
     show;
@@ -62,17 +61,30 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     filterdisplaylabel;
     filtersearchkey;
     filterplaceholder;
-    fieldDef: any = {};
-
-    private IsPropsInitialized;
-    private _filterDataSet;
-    private _isRowFilter;
+    datafield;
+    displayfield;
+    displayName;
+    pcDisplay;
+    mobileDisplay;
+    textAlignment;
+    backgroundColor;
+    textColor;
+    primaryKey;
+    relatedEntityName;
+    style;
+    class;
+    ngclass;
+    filterOn;
+    filterControl;
+    isDataSetBound;
+    isFilterDataSetBound;
 
     constructor(
         inj: Injector,
         @Optional() public table: TableComponent,
         @Optional() public group: TableColumnGroupDirective,
-        @Attribute('filterdataset.bind') public bindfilterdataset
+        @Attribute('filterdataset.bind') public bindfilterdataset,
+        @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
     }
@@ -80,27 +92,87 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     ngOnInit() {
         super.ngOnInit();
 
-        this._isRowFilter = this.table.filtermode === 'multicolumn';
-
+        // Set the default values and register with table
         this.populateFieldDef();
-        this.table.registerColumns(this.fieldDef);
+        this.table.registerColumns(this.widget);
+
+        this._isRowFilter = this.table.filtermode === 'multicolumn' && this.searchable;
+        this._isInlineEditable = !this.readonly && (this.table.editmode !== 'dialog' && this.table.editmode !== 'form');
+        this.setUpControls();
 
         // Register column with header config to create group structure
         setHeaderConfigForTable(this.table.headerConfig, {
-            field: this.fieldDef.field,
-            displayName: this.fieldDef.displayName
+            field: this.field,
+            displayName: this.displayName
         }, this.group && this.group.name);
 
         this.IsPropsInitialized = true;
 
     }
 
+    ngAfterContentInit() {
+        if (this._isRowFilter) {
+            // Listen on the inner row filter widget and setup the widget
+            this.registerDestroyListener(this._filterWidget.changes.subscribe((val) => {
+                this.filterWidget = val.first && val.first.widget;
+                this.setUpFilterWidget();
+            }));
+        }
+
+        if (this._isInlineEditable) {
+            this.registerDestroyListener(this._inlineWidget.changes.subscribe((val) => {
+                // Listen on the inner inline widget and setup the widget
+                this.inlineWidget = val.first && val.first.widget;
+                this.setUpInlineWidget();
+            }));
+        }
+    }
+
+    // Setup the inline edit and filter widget
+    setUpControls() {
+        if (this._isInlineEditable) {
+            this.table.ngform.addControl(this.binding, this.table.fb.control(''));
+            const control = this.table.ngform.controls[this.binding];
+            if (control) {
+                control.valueChanges.subscribe(this.onValueChange.bind(this));
+            }
+        }
+
+        if (this._isRowFilter) {
+            const filterName = this.binding + '_filter';
+            this.table.ngform.addControl(filterName, this.table.fb.control(''));
+            this.filterControl = this.table.ngform.controls[filterName];
+            if (this.filterControl) {
+                this.filterControl.valueChanges.subscribe(this.onFilterValueChange.bind(this));
+            }
+        }
+    }
+
+    // Reset the row filter value
+    resetFilter() {
+        if (this.filterControl) {
+            this.filterControl.setValue('');
+        }
+    }
+
+    // On field value change, propagate event to parent form
+    onFilterValueChange(val) {
+        this.table.rowFilter[this.field].value = val;
+    }
+
+    // On field value change, apply cascading filter
+    onValueChange(val) {
+        if (val !== null && isDataSetWidget(this['edit-widget-type'])) {
+            applyFilterOnField(this.table.datasource, this.widget, this.table.fieldDefs, val);
+        }
+    }
+
     initializeFilter() {
         // If filterdataset is not bound, get the data implicitly
-        if (isDataSetWidget(this.filterwidget) && !this.bindfilterdataset) {
+        if (this._isRowFilter && isDataSetWidget(this.filterwidget) && !this.bindfilterdataset) {
             // For live variable, get the data using distinct API
             if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
-                getDistinctValues(this.table.datasource, this.fieldDef, 'filterwidget').then((res: any) => {
+                getDistinctValues(this.table.datasource, this.widget, 'filterwidget').then((res: any) => {
                     this._filterDataSet = _.pull(_.map(res.data.content, res.aliasColumn), null);
                     this.setFilterWidgetDataSet();
                 });
@@ -112,11 +184,30 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
     }
 
+    initializeInlineWidget() {
+        // If dataset is not bound, get the data implicitly
+        if (isDataSetWidget(this['edit-widget-type']) && !this.binddataset && !this.readonly) {
+            const dataSource = this.table.datasource;
+            if (this['related-entity-name'] && this['primary-key']) {
+                // Fetch the data for the related fields
+                this.isDataSetBound = true;
+                const bindings = _.split(this.binding, '.');
+                fetchRelatedFieldData(dataSource, this.widget, {
+                    relatedField: _.head(bindings),
+                    datafield: _.last(bindings)
+                });
+            } else if (dataSource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
+                getDistinctValuesForField(dataSource, this.widget, {
+                    widget: 'edit-widget-type'
+                });
+            }
+        }
+    }
+
     // On table datasource change, get the data for row filters
     onDataSourceChange() {
-        if (this._isRowFilter) {
-            this.initializeFilter();
-        }
+        this.initializeFilter();
+        this.initializeInlineWidget();
     }
 
     // Set the data on the row filter widget
@@ -129,12 +220,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Set the props on the row filter widget
     setUpFilterWidget() {
         this.filterWidget.registerReadyStateListener(() => {
-            this.filterWidget.dataset = this._filterDataSet;
-            this.filterWidget.datafield = this.filterdatafield || this.binding;
-            this.filterWidget.displayfield = this.filterdisplayfield || this.binding;
-            if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
-                this.filterWidget.displaylabel = this.filterdisplaylabel || this.binding;
-                this.filterWidget.searchkey = this.filtersearchkey || this.binding;
+            if (isDataSetWidget(this.filterwidget)) {
+                this.filterWidget.dataset = this._filterDataSet;
+                this.filterWidget.datafield = this.filterdatafield || this.binding;
+                this.filterWidget.displayfield = this.filterdisplayfield || this.binding;
+                if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
+                    this.filterWidget.displaylabel = this.filterdisplaylabel || this.binding;
+                    this.filterWidget.searchkey = this.filtersearchkey || this.binding;
+                }
             }
             if (this.filterwidget === FormWidgetType.TIME) {
                 this.filterWidget.timepattern = 'hh:mm:ss a'; // TODO: Set application time format
@@ -143,14 +236,22 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         });
     }
 
-    ngAfterContentInit() {
-        if (this._isRowFilter) {
-            // Listen on the inner row filter widget and setup the widget
-            this.registerDestroyListener(this._filterWidget.changes.subscribe((val) => {
-                this.filterWidget = val.first && val.first.widget;
-                this.setUpFilterWidget();
-            }));
+    // Set the props on the inline edit widget
+    setInlineWidgetProp(prop, nv) {
+        if (this.inlineWidget) {
+            this.inlineWidget[prop] = nv;
         }
+    }
+
+    // Initialize the inline edit widget
+    setUpInlineWidget() {
+        this.inlineWidget.registerReadyStateListener(() => {
+            if (isDataSetWidget(this['edit-widget-type'])) {
+                this.inlineWidget.dataset = this._dataSet;
+                this.inlineWidget.datafield = this.datafield;
+                this.inlineWidget.displayfield = this.displayfield;
+            }
+        });
     }
 
     getStyleDef() {
@@ -159,33 +260,26 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     populateFieldDef() {
         this.width = this.width === 'px' ?  '' : (this.width || '');
-
-        this.fieldDef = {
-            field: this.binding,
-            displayName: this.caption || '',
-            pcDisplay: this.pcdisplay,
-            mobileDisplay: this.mobiledisplay,
-            textAlignment: this.textalignment,
-            backgroundColor: this.backgroundcolor,
-            textColor: this.textcolor,
-            primaryKey: this['primary-key'],
-            style: this.getStyleDef(),
-            class: this['col-class'],
-            ngclass: this['col-ng-class'],
-            formatpattern: this.formatpattern === 'toNumber' ? 'numberToString' : this.formatpattern,
-            searchable: (this.type === 'blob' || this.type === 'clob') ? false : this.searchable,
-            limit: this.limit ? +this.limit : undefined,
-            editWidgetType: this['edit-widget-type'],
-            readonly: !_.isUndefined(this.readonly) ? this.readonly === 'true' : this.relatedEntityName ? !this.primaryKey : _.includes(['identity', 'uniqueid', 'sequence'], this.generator),
-            filterwidget: this.filterwidget || getDataTableFilterWidget(this.type || 'string'),
-            onDataSourceChange: this.onDataSourceChange.bind(this)
-        };
-        this.fieldDef._isFilterDataSetBound = !!this.bindfilterdataset;
-        this.fieldDef._widget = this.widget;
-
-        COLUMN_PROPS.forEach(prop => {
-            this.fieldDef[prop] = this[prop];
-        });
+        this.field = this.binding;
+        this.displayName =  this.caption || '';
+        this.pcDisplay =  this.pcdisplay;
+        this.mobileDisplay =  this.mobiledisplay;
+        this.textAlignment =  this.textalignment;
+        this.backgroundColor =  this.backgroundcolor;
+        this.textColor =  this.textcolor;
+        this.primaryKey =  this['primary-key'];
+        this.relatedEntityName =  this['related-entity-name'];
+        this.style =  this.getStyleDef();
+        this.class =  this['col-class'];
+        this.ngclass =  this['col-ng-class'];
+        this.formatpattern =  this.formatpattern === 'toNumber' ? 'numberToString'  :  this.formatpattern;
+        this.searchable =  (this.type === 'blob' || this.type === 'clob') ? false  :  this.searchable;
+        this.limit =  this.limit ? +this.limit  :  undefined;
+        this.editWidgetType =  this['edit-widget-type'];
+        this.filterOn =  this['filter-on'];
+        this.readonly =  isDefined(this.readonly) ? this.readonly  :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
+        this.filterwidget =  this.filterwidget || getDataTableFilterWidget(this.type || 'string');
+        this.isFilterDataSetBound = !!this.bindfilterdataset;
     }
 
     onPropertyChange(key, nv) {
@@ -194,16 +288,23 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
         switch (key) {
             case 'caption':
-                this.fieldDef.displayName = nv || '';
+                this.displayName = nv || '';
                 this.table.callDataGridMethod('setColumnProp', this.binding, 'displayName', nv);
                 break;
             case 'show':
-                this.fieldDef.show = nv;
                 this.table.redraw(true);
                 break;
             case 'filterdataset':
                 this._filterDataSet = nv;
                 this.setFilterWidgetDataSet();
+                break;
+            case 'dataset':
+                this._dataSet = nv;
+                this.setInlineWidgetProp(key, nv);
+                break;
+            case 'datafield':
+            case 'displayfield':
+                this.setInlineWidgetProp(key, nv);
                 break;
         }
     }

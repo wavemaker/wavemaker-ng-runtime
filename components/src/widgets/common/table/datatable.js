@@ -599,77 +599,6 @@ $.widget('wm.datatable', {
         });
         return template;
     },
-    _getEditableTemplate: function ($el, colDef, cellText, rowId, operation) {
-        var template,
-            formName,
-            checkedTmpl,
-            placeholder = _.isUndefined(colDef.placeholder) ? '' : colDef.placeholder,
-            dataValue = (this.Utils.isDefined(cellText) && cellText !== null) ? cellText : undefined,
-            eventTemplate = this._getEventTemplate(colDef),
-            dataFieldName = ' data-field-name="' + colDef.field + '" ',
-            disabled = (operation !== 'new' && colDef.primaryKey && colDef.generator === 'assigned' && !colDef.relatedEntityName) ? true : colDef.disabled,//In edit mode, set disabled for assigned columns
-            disabledTl = disabled ? ' disabled="' + disabled + '" ' : '',
-            required = colDef.required ? ' required="' + colDef.required + '" ' : '',
-            datePattern = colDef.editdatepattern ? ((colDef.editWidgetType === 'time' ? 'timepattern' : 'datepattern') + '="' + colDef.editdatepattern + '" ') : '',
-            properties = disabledTl + dataFieldName + eventTemplate + required + datePattern,
-            index = colDef.index,
-            limit = colDef.limit ? ' limit="' + colDef.limit + '" ' : '',
-            //If dataset is bound, set the dataset. Else, set the scopedataset.
-            dataSetTl = (colDef.isDataSetBound || colDef.isAutoCompleteDataSet) && !colDef.isDefinedData ? 'dataset="' + colDef.dataset + '"' : ' scopedataset="fullFieldDefs[' + index + '].dataset"';
-        switch (colDef.editWidgetType) {
-            case 'select':
-                cellText = cellText || '';
-                template = '<wm-select ' + properties + dataSetTl + ' datafield="' + colDef.datafield + '" displayfield="' + colDef.displayfield + '" placeholder="' + placeholder + '"></wm-select>';
-                break;
-            case 'autocomplete':
-            case 'typeahead':
-                $el.addClass('datetime-wrapper');
-                template = '<wm-search ' + properties + dataSetTl + limit + ' datafield="' + colDef.datafield + '" displaylabel="' + colDef.displaylabel + '" searchkey="' + colDef.searchkey + '" ' + (colDef.dataoptions ? ' dataoptions="fullFieldDefs[' + index + '].dataoptions"' : '') + ' type="autocomplete" placeholder="' + placeholder + '"></wm-search>';
-                break;
-            case 'date':
-                $el.addClass('datetime-wrapper');
-                template = '<wm-date ' + properties + ' placeholder="' + placeholder + '"></wm-date>';
-                break;
-            case 'time':
-                $el.addClass('datetime-wrapper');
-                template = '<wm-time ' + properties + ' placeholder="' + placeholder + '"></wm-time>';
-                break;
-            case 'datetime':
-                $el.addClass('datetime-wrapper');
-                template = '<wm-datetime ' + properties + ' outputformat="yyyy-MM-ddTHH:mm:ss" placeholder="' + placeholder + '"></wm-datetime>';
-                break;
-            case 'timestamp':
-                $el.addClass('datetime-wrapper');
-                template = '<wm-datetime ' + properties + ' placeholder="' + placeholder + '"></wm-datetime>';
-                break;
-            case 'checkbox':
-                checkedTmpl = colDef.checkedvalue ? ' checkedvalue="' + colDef.checkedvalue + '" ' : '';
-                checkedTmpl += colDef.uncheckedvalue ? ' uncheckedvalue="' + colDef.uncheckedvalue + '" ' : '';
-                template = '<wm-checkbox ' + checkedTmpl + properties + '></wm-checkbox>';
-                break;
-            case 'number':
-                template = '<wm-text type="number" ' + properties + ' placeholder="' + placeholder + '"></wm-text>';
-                break;
-            case 'textarea':
-                cellText = cellText || '';
-                template = '<wm-textarea ' + properties + ' placeholder="' + placeholder + '"></wm-textarea>';
-                break;
-            case 'upload':
-                formName = colDef.field + '_' + rowId;
-                $el.attr('form-name', formName);
-                template = '<form name="' + formName + '"><input focus-target' + dataFieldName + 'class="file-upload" type="file" name="' + colDef.field + '"/></form>';
-                break;
-            default:
-                template = '<wm-text ' + properties + ' placeholder="' + placeholder + '"></wm-text>';
-                break;
-        }
-        if (this.Utils.isDefined(dataValue)) {
-            template = $(template);
-            template.attr('datavalue', dataValue);
-        }
-        $el.addClass(colDef.editWidgetType + '-widget');
-        return this.options.getCompiledTemplate(template, this.preparedData[rowId] || {}, colDef);
-    },
     setHeaderConfigForDefaultFields: function (name) {
         if (_.isEmpty(this.options.headerConfig)) {
             return;
@@ -1425,34 +1354,8 @@ $.widget('wm.datatable', {
             }
         }
     },
-    _getValue: function ($el) {
-        var type = $el.attr('type'),
-            text;
-        if (type === 'checkbox') {
-            text = $el.prop('checked').toString();
-        } else {
-            text = $el.val();
-            $el.text(this.Utils.isDefined(text) ? text : '');
-        }
-        return text;
-    },
-    getTextValue: function ($el, colDef, fields) {
-        var text,
-            $ie = $el.find('input'),
-            dataValue,
-            $elScope;
-        text = this._getValue($ie, fields);
-        if (colDef.editWidgetType && colDef.editWidgetType !== 'upload') {
-            $elScope = $el.children().isolateScope();
-            if ($elScope) {
-                dataValue = $elScope.datavalue;
-                text = dataValue === '' ? undefined : dataValue; //Empty value is set from the grid cell. So, set it back to undefined.
-            }
-        }
-        if (colDef.type === 'timestamp' && (!colDef.editWidgetType || colDef.editWidgetType === 'text')) {
-            text = parseInt(text, 10);
-        }
-        return text;
+    getTextValue: function (fieldName) {
+        return this.options.getFieldValue(fieldName);
     },
     isDataModified: function ($editableElements, rowData) {
         var isDataChanged = false,
@@ -1466,8 +1369,7 @@ $.widget('wm.datatable', {
             var $el = $(this),
                 colId = $el.attr('data-col-id'),
                 colDef = self.preparedHeaderData[colId],
-                fields = _.split(colDef.field, '.'),
-                text = self.getTextValue($el, colDef, fields),
+                text = self.getTextValue(colDef.field),
                 originalData = _.get(rowData, colDef.field);
             if (colDef.editWidgetType === 'upload') {
                 //For upload widget, check if any file is uploaded
@@ -1573,6 +1475,8 @@ $.widget('wm.datatable', {
             rowId = parseInt($row.attr('data-row-id'), 10),
             $editableElements;
 
+        this.options.generateInlineEditRow();
+
         $originalElements.each(function () {
             var $el = $(this),
                 cellText = $el.text(),
@@ -1580,9 +1484,10 @@ $.widget('wm.datatable', {
                 colDef = self.preparedHeaderData[id],
                 value,
                 editableTemplate;
+
             if (!colDef.readonly) {
                 value = _.get(rowData, colDef.field);
-                editableTemplate = self._getEditableTemplate($el, colDef, value, rowId, operation);
+                editableTemplate = self.options.getInlineEditWidget(colDef.field, value);
                 if (!(colDef.customExpression || colDef.formatpattern)) {
                     $el.addClass('cell-editing').html(editableTemplate).data('originalText', cellText);
                 } else {
@@ -1720,7 +1625,7 @@ $.widget('wm.datatable', {
                             colDef = self.preparedHeaderData[colId],
                             fields = _.split(colDef.field, '.'),
                             text;
-                        text = self.getTextValue($el, colDef, fields);
+                        text = self.getTextValue(colDef.field);
                         if (fields.length === 1 && colDef.editWidgetType === 'upload') {
                             _.set(rowData, colDef.field, _.get(document.forms, [$el.attr('form-name'), colDef.field, 'files', 0]));
                         } else {
@@ -1866,7 +1771,7 @@ $.widget('wm.datatable', {
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
                 colDef = self.preparedHeaderData[$el.attr('data-col-id')];
-                text = self.getTextValue($el, colDef, colDef.field.split('.'));
+                text = self.getTextValue(colDef.field);
                 $el.text(self.Utils.isDefined(text) ? text : '');
             } else {
                 originalValue = value;
