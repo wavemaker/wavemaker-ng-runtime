@@ -8,27 +8,28 @@ register('wm-pagedialog', (): IBuildTaskDef => {
             const content = attrs.get('content');
             attrs.delete('content');
 
+            const boundContent = attrs.get('content.bind');
+            attrs.delete('content.bind');
+
             const onLoad = attrs.get('on-load');
             attrs.delete('on-load');
 
             let onLoadEvtMarkup = '';
-            let contentMakrup = '';
+            let contentMarkup = '';
 
             if (onLoad) {
                 onLoadEvtMarkup = `load.event="${onLoad}"`;
             }
 
-            if (content) {
-                if (content.startsWith('bind:')) {
-                    contentMakrup = `content.bind=${content.substr(5)}`;
-                } else {
-                    contentMakrup = `content=${content}`;
-                }
+            if (boundContent) {
+                contentMarkup = `content.bind="${boundContent}"`;
+            } else if (content) {
+                contentMarkup = `content="${content}"`;
             }
 
             let containerMarkup = '';
-            if (contentMakrup) {
-                containerMarkup += `<ng-template><div wmContainer partialContainer content="${content}" width="100%" height="100%" ${onLoadEvtMarkup}></div></ng-template>`;
+            if (contentMarkup) {
+                containerMarkup += `<ng-template><div wmContainer partialContainer ${contentMarkup} width="100%" height="100%" ${onLoadEvtMarkup}></div></ng-template>`;
             }
 
             return `<${tagName} wmPartialDialog ${getAttrMarkup(attrs)}>${containerMarkup}`;

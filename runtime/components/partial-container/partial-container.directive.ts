@@ -8,7 +8,7 @@ import { RenderUtilsService } from '../../services/render-utils.service';
 declare const _;
 
 @Directive({
-    selector: '[partialContainer]:not([content="inline"])'
+    selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]'
 })
 export class PartialContainerDirective {
     get name() {
