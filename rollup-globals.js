@@ -40,5 +40,6 @@ export default {
     'ngx-color-picker': 'zef.ngxColorPicker',
     'ngx-mask': 'ngxMask',
     'rxjs/Subject': 'Rx',
-    'rxjs/ReplaySubject': 'Rx'
+    'rxjs/ReplaySubject': 'Rx',
+    'tslib': 'tslib'
 };
