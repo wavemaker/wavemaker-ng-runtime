@@ -5,10 +5,10 @@
                [ngStyle]="{'font-size' :iconsize, color: rate.index <= selectedRatingValue && iconcolor}"
                [title]="rate.label || rate.index"
                (mouseleave)="onMouseleave($event, rate)"
-               (mouseenter)="onMouseenter($event, rate)"
+               (mouseover)="onMouseOver($event, rate)"
                [for]="_id + '-' + rate.index">
             <input #ratingInput type="radio" aria-label="rating radio buttons" aria-checked="false" aria-multiselectable="true"
-                   [id]="_id + '-' + rate.index" (click)="onRatingClick($event, rate)" name="ratings-id" [value]="rate.index"/>
+                   [id]="_id + '-' + rate.index" (click)="onRatingClick($event, rate)" name="ratings-id" [value]="rate.key || rate.index"/>
         </label>
     </div>
     <div [class.hidden]="!readonly" [ngStyle]="{'font-size' :iconsize}" class="ratings-container disabled" >

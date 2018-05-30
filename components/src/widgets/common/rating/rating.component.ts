@@ -1,10 +1,12 @@
-import {Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
-import { generateGUId, setCSS } from '@wm/core';
+import { $appDigest, generateGUId, setCSS } from '@wm/core';
+
 import { styler } from '../../framework/styler';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './rating.props';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
+import { getOrderedDataset } from '../../../utils/form-utils';
 
 declare const _;
 
@@ -77,7 +79,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
             this.caption = '';
         }
 
-        const ratingItems = [];
+        let ratingItems = [];
         let data = this.datasetItems;
         const maxvalue = parseInt(this.maxvalue || this.datasetItems.length, 10);
         const maxValue = (maxvalue > MAX_RATING ? MAX_RATING : maxvalue) || DEFAULT_RATING;
@@ -85,22 +87,23 @@ export class RatingComponent extends DatasetAwareFormComponent {
         /**
          * 1. If datasetItems.length is more than maxValue (i.e. 10 ratings) then just extract maxValue of items from datasetItems.
          * 2. If datasetItems are not available then prepare ratings value depending on maxvalue. eg: 1,2,3 .. upto maxvalue
-         * 3. If datasetItem at the given index (i - 1) is available then add to ratingItems otherwise prepare object with index and label.
+         * 3. If maxvalue / i value is more than datasetItems length, prepare default rating items for i values more than datasetItems.length
          */
         if (data.length && data.length > maxValue) {
-            data = _.slice(data, 0, maxValue);
+            // slice the elements from end.
+            data = _.slice(data, data.length - maxValue, data.length);
         }
 
         for (let i = maxValue; i > 0; i--) {
             if (!data.length) {
-                ratingItems.push({'key': i, 'value': i, 'index': i, 'label': i});
+                ratingItems.push({key: i, value: i, index: i, label: i});
             } else {
-                const ratingOption = data[i - 1];
-
-                if (ratingOption) {
-                    ratingItems.push(ratingOption);
+                if (i > data.length) {
+                    ratingItems.push({key: i, value: i, index: i, label: i});
                 } else {
-                    ratingItems.push({'index': i, 'label': i});
+                    data = getOrderedDataset(data, 'index:desc');
+                    ratingItems = ratingItems.concat(data);
+                    break;
                 }
             }
         }
@@ -140,11 +143,12 @@ export class RatingComponent extends DatasetAwareFormComponent {
                 selectedItem = _.find(this.datasetItems, function (item) {
                     return _.toString(item.index) === dataVal;
                 });
+                if (selectedItem) {
+                    selectedItem.selected = true;
+                }
             }
 
-            if (selectedItem) {
-                selectedItem.selected = true;
-            } else {
+            if (!selectedItem) {
                 // reset the  model if there is no item found.
                 this.modelByKey = undefined;
                 return;
@@ -191,15 +195,17 @@ export class RatingComponent extends DatasetAwareFormComponent {
                 break;
             case 'maxvalue':
                 this.prepareRatingDataset();
+                // reset all the items.
+                this.resetDatasetItems();
                 break;
         }
     }
 
-    onMouseleave($event, rate) {
-        this.caption = rate.label;
+    onMouseleave() {
+        this.caption = this.displayValue as string;
     }
 
-    onMouseenter($event, rate) {
+    onMouseOver($event, rate) {
         this.caption = rate.label;
     }
 }

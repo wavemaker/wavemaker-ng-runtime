@@ -228,7 +228,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     }
 
     // Reset the selected flag on datasetItems to false.
-    private resetDatasetItems() {
+    protected resetDatasetItems() {
         this.datasetItems.forEach(item => item.selected = false);
     }
 

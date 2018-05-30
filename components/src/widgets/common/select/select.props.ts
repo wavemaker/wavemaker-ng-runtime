@@ -14,7 +14,7 @@ export const selectProps = new Map(
         ['multiple', {value: false, ...PROP_BOOLEAN_NOTIFY}],
         ['name', PROP_STRING],
         ['orderby', PROP_STRING_NOTIFY],
-        ['placeholder', {value: 'Enter text', ...PROP_STRING}],
+        ['placeholder', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
