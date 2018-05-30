@@ -13,8 +13,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 const eventsMap = {
     click : 'click',
-    hover : 'mouseenter:mouseleave',
-    default : 'click mouseenter:mouseleave'
+    hover : 'mouseenter',
+    default : 'click mouseenter'
 };
 
 @Component({
@@ -27,6 +27,7 @@ export class PopoverComponent extends StylableComponent implements OnInit {
     private event: string;
     private popoverAnimation: string;
     private isOpen: boolean = false;
+    private timeOut;
 
     public interaction: string;
     public popoverarrow: boolean;
@@ -73,6 +74,14 @@ export class PopoverComponent extends StylableComponent implements OnInit {
             }
         };
         this.invokeEventCallback('show');
+        if (this.interaction === 'hover' || this.interaction === 'default') {
+            popover.onmouseenter = () => {
+                clearTimeout(this.timeOut);
+            };
+            popover.onmouseleave = () => {
+                this.hidePopover();
+            };
+        }
         const popoverStartBtn: HTMLElement = popover.querySelector('.popover-start');
         popoverStartBtn.focus();
     }
@@ -92,7 +101,9 @@ export class PopoverComponent extends StylableComponent implements OnInit {
     }
 
     private hidePopover() {
-        this.isOpen = false;
-        this.$element.find('a').focus();
+        this.timeOut = setTimeout(() => {
+            this.isOpen = false;
+            this.$element.find('a').focus();
+        }, 500);
     }
 }

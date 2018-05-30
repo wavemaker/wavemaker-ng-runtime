@@ -20,7 +20,7 @@ export const registerProps = () => {
                 ['iconposition', PROP_STRING],
                 ['iconurl', PROP_STRING],
                 ['iconwidth', PROP_STRING],
-                ['interaction', {value: 'default', ...PROP_STRING}],
+                ['interaction', {value: 'click', ...PROP_STRING}],
                 ['popoverarrow', {value: true, ...PROP_BOOLEAN}],
                 ['popoverheight', {value: '360', ...PROP_STRING}],
                 ['popoverplacement', {value: 'bottom', ... PROP_STRING}],

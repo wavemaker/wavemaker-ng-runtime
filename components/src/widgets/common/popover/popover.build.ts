@@ -1,5 +1,5 @@
 import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import {IDGenerator} from '@wm/core';
+import { IDGenerator } from '@wm/core';
 
 const tagName = 'div';
 const idGen = new IDGenerator('wm_popover_ref_');
@@ -14,7 +14,7 @@ register('wm-popover', (): IBuildTaskDef => {
                 const contentsource = attrs.get('contentsource');
                 const content = attrs.get('content');
 
-                if (contentsource === 'partial') {
+                if (contentsource !== 'inline') {
                     markup = `<div wmContainer partialContainer content=${content}></div>`;
                 }
             }
