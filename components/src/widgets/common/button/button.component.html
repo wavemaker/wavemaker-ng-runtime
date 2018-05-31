@@ -1,0 +1,5 @@
+<img data-identifier="img" alt="button image" class="button-image-icon" [src]="iconurl | image" *ngIf="iconurl" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
+<i class="app-icon {{iconclass}}" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="iconclass"></i>
+<span class="sr-only" *ngIf="iconclass">Icon</span> <!--Todo specify the icon selected-->
+<span class="btn-caption" [innerHTML]="caption | trustAs:'html'"></span>
+<span *ngIf="badgevalue" class="badge pull-right" [textContent]="badgevalue"></span>

@@ -1,0 +1,21 @@
+<div class="network-info-toaster-content" [ngSwitch]="networkState" *ngIf="showMessage">
+    <div class="info" *ngSwitchCase="-3">
+       <label class="message" [textContent]="appLocale.MESSAGE_NETWORK_NOT_AVAILABLE"></label>
+       <button class="btn btn-default hide-btn" (click)="hideMessage()" [textContent]="appLocale.LABEL_HIDE_NETWORK_INFO"></button>
+    </div>
+    <div class="info" *ngSwitchCase="-2">
+       <label class="message" [textContent]="appLocale.MESSAGE_SERVICE_NOT_AVAILABLE"></label>
+       <button class="btn btn-default hide-btn" (click)="hideMessage()" [textContent]="appLocale.LABEL_HIDE_NETWORK_INFO"></button>
+    </div>
+    <div class="info" *ngSwitchCase="-1">
+       <label class="message" [textContent]="appLocale.MESSAGE_SERVICE_AVAILABLE"></label>
+       <button class="btn btn-default hide-btn" (click)="hideMessage()" [textContent]="appLocale.LABEL_HIDE_NETWORK_INFO"></button>
+       <button class="btn btn-primary connect-btn" (click)="connect()" [textContent]="appLocale.LABEL_CONNECT_TO_SERVICE"></button>
+    </div>
+    <div class="info" *ngSwitchCase="0">
+       <label class="message" [textContent]="appLocale.MESSAGE_SERVICE_CONNECTING"></label>
+    </div>
+    <div class="info" *ngSwitchCase="1">
+       <label class="message" [textContent]="appLocale.MESSAGE_SERVICE_CONNECTED"></label>
+    </div>
+</div>

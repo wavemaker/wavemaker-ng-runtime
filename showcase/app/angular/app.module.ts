@@ -24,7 +24,7 @@ import { ToastrModule } from 'ngx-toastr';
         WmComponentsModule,
         ToastrModule.forRoot()
     ],
-    providers: [PipeProvider, {provide: '@namespace', useValue: undefined}],
+    providers: [PipeProvider],
     bootstrap: [AppComponent]
 })
 export class AppModule {

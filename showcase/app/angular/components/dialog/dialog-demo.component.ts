@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DialogService } from '@components/widgets/dialog/dialog.service';
 
 @Component({
     selector: 'app-dialog-demo',
@@ -7,12 +8,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DialogDemoComponent implements OnInit {
 
-    constructor() { }
+    constructor(private dialogService: DialogService) { }
     private iconclass: string = 'wi wi-file-text';
     private title: string = 'Information';
     private closable: boolean = true;
     private class: string = 'modal-lg';
     ngOnInit() {
+    }
+
+    onOk() {
+        alert('You clicked okay button!');
+    }
+
+    onConfirmOk() {
+        this.dialogService.open('alertdialog1', {oktext: 'Okay!'});
     }
 
 }

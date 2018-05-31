@@ -1,0 +1,16 @@
+<span class="input-group-addon" [textContent]="currencySymbol"></span>
+<!-- todo: Lovin localize aria text -->
+<input type="number" class="form-control app-textbox app-currency-input" aria-label="Currency (in dollars)"
+       [(ngModel)]="datavalue"
+       (ngModelChange)="handleChange($event);"
+       [ngModelOptions]="{updateOn: 'blur'}"
+       (blur)="invokeOnTouched($event)"
+       [step]="step"
+       [min]="minvalue"
+       [max]="maxvalue"
+       [required]="required"
+       [disabled]="disabled"
+       [readonly]="readonly"
+       [attr.accesskey]="shortcutkey"
+       [tabindex]="tabindex"
+       [attr.placeholder]="placeholder">

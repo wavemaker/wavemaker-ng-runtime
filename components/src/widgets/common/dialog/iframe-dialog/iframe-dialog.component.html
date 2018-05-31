@@ -1,0 +1,16 @@
+<ng-template #dialogTemplate>
+    <div wmDialogHeader [closable]="closable"
+         [iconclass]="iconclass"
+         [iconwidth]="iconwidth"
+         [iconheight]="iconheight"
+         [iconmargin]="iconmargin"
+         [heading]="title"
+         *ngIf="showheader"
+    ></div>
+    <div wmDialogBody>
+        <div wmIframe encodeurl.bind="encodeurl" iframesrc.bind="url" height="100%" width="100%" hint.bind="hint"></div>
+    </div>
+    <div wmDialogFooter *ngIf="showactions">
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
+    </div>
+</ng-template>

@@ -3,12 +3,19 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@utils/*": [ "utils/*" ],
-            "@components/*": [ "components/*" ],
-            "@variables/*": [ "variables/*" ],
-            "@http-service/*": [ "http-service/*" ],
-            "@runtime/*": ["runtime/*"],
-            "@transpiler/*": ["transpiler/*"]
+            "@swipey": ["swipey"],
+            "@wm/core": [ "core" ],
+            "@wm/oAuth": [ "oAuth" ],
+            "@wm/components": [ "components" ],
+            "@wm/variables" : [ "variables" ],
+            "@wm/http": [ "http-service" ],
+            "@wm/runtime": ["runtime"],
+            "@wm/transpiler": ["transpiler"],
+            "@wm/security": ["security"],
+            "@wm/mobile/core": ["mobile/core"],
+            "@wm/mobile/components": ["mobile/components"],
+            "@wm/mobile/variables": ["mobile/variables"],
+            "@wm/mobile/runtime": ["mobile/runtime"]
         },
         "outDir": "./dist/out-tsc",
         "sourceMap": false,

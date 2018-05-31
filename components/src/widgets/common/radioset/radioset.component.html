@@ -1,0 +1,15 @@
+<li [ngClass]="['radio', 'app-radio', itemclass]"
+    [class.active]="item.selected"
+    *ngFor="let item of datasetItems;let i = index"
+    (click)="onRadioLabelClick($event, item.key)">
+    <label class="app-radioset-label"
+           [ngClass]="{'disabled':disabled}"
+           [title]="item.label">
+        <input [name]="'radioset_' + widgetId" type="radio" aria-label="radio options" [attr.data-attr-index]="i"
+               [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/><!--Todo aria-label value same as value attr-->
+        <span class="caption" [textContent]="item.label"></span>
+    </label>
+</li>
+
+<input [disabled]="disabled" hidden class="model-holder">
+<div *ngIf="readonly || disabled" aria-readonly="true" class="readonly-wrapper"></div>

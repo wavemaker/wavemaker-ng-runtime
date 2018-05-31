@@ -1,0 +1,311 @@
+import { Directive, Injector, OnInit, Optional, ContentChildren, Attribute, AfterContentInit } from '@angular/core';
+
+import { BaseComponent } from '../../base/base.component';
+import { getDataTableFilterWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
+import { registerProps } from './table-column.props';
+import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { TableComponent } from '../table.component';
+import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
+import { $watch, DataSource, FormWidgetType, isDefined } from '@wm/core';
+import { applyFilterOnField, fetchRelatedFieldData, getDistinctValues, getDistinctValuesForField } from '../../../../utils/data-utils';
+
+declare const _;
+
+registerProps();
+
+const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
+
+@Directive({
+    selector: '[wmTableColumn]',
+    providers: [
+        provideAsWidgetRef(TableColumnDirective)
+    ]
+})
+export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit {
+
+    @ContentChildren('filterWidget') _filterWidget;
+    @ContentChildren('inlineWidget') _inlineWidget;
+
+    private filterWidget;
+    private inlineWidget;
+    private IsPropsInitialized;
+    private _filterDataSet;
+    private _dataSet;
+    private _isRowFilter;
+    private _isInlineEditable;
+
+    backgroundcolor;
+    binding;
+    caption;
+    defaultvalue;
+    disabled;
+    editWidgetType;
+    filterwidget;
+    field;
+    formatpattern;
+    generator;
+    limit;
+    mobiledisplay;
+    pcdisplay;
+    readonly;
+    required;
+    searchable;
+    show;
+    sortable;
+    textalignment;
+    textcolor;
+    type;
+    width;
+    filterdatafield;
+    filterdisplayfield;
+    filterdisplaylabel;
+    filtersearchkey;
+    filterplaceholder;
+    datafield;
+    displayfield;
+    displayName;
+    pcDisplay;
+    mobileDisplay;
+    textAlignment;
+    backgroundColor;
+    textColor;
+    primaryKey;
+    relatedEntityName;
+    style;
+    class;
+    ngclass;
+    filterOn;
+    filterControl;
+    isDataSetBound;
+    isFilterDataSetBound;
+
+    constructor(
+        inj: Injector,
+        @Optional() public table: TableComponent,
+        @Optional() public group: TableColumnGroupDirective,
+        @Attribute('filterdataset.bind') public bindfilterdataset,
+        @Attribute('dataset.bind') public binddataset
+    ) {
+        super(inj, WIDGET_CONFIG);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+
+        // Set the default values and register with table
+        this.populateFieldDef();
+        this.table.registerColumns(this.widget);
+
+        this._isRowFilter = this.table.filtermode === 'multicolumn' && this.searchable;
+        this._isInlineEditable = !this.readonly && (this.table.editmode !== 'dialog' && this.table.editmode !== 'form');
+        this.setUpControls();
+
+        // Register column with header config to create group structure
+        setHeaderConfigForTable(this.table.headerConfig, {
+            field: this.field,
+            displayName: this.displayName
+        }, this.group && this.group.name);
+
+        this.IsPropsInitialized = true;
+
+    }
+
+    ngAfterContentInit() {
+        if (this._isRowFilter) {
+            // Listen on the inner row filter widget and setup the widget
+            this.registerDestroyListener(this._filterWidget.changes.subscribe((val) => {
+                this.filterWidget = val.first && val.first.widget;
+                this.setUpFilterWidget();
+            }));
+        }
+
+        if (this._isInlineEditable) {
+            this.registerDestroyListener(this._inlineWidget.changes.subscribe((val) => {
+                // Listen on the inner inline widget and setup the widget
+                this.inlineWidget = val.first && val.first.widget;
+                this.setUpInlineWidget();
+            }));
+        }
+    }
+
+    // Setup the inline edit and filter widget
+    setUpControls() {
+        if (this._isInlineEditable) {
+            this.table.ngform.addControl(this.binding, this.table.fb.control(''));
+            const control = this.table.ngform.controls[this.binding];
+            if (control) {
+                control.valueChanges.subscribe(this.onValueChange.bind(this));
+            }
+        }
+
+        if (this._isRowFilter) {
+            const filterName = this.binding + '_filter';
+            this.table.ngform.addControl(filterName, this.table.fb.control(''));
+            this.filterControl = this.table.ngform.controls[filterName];
+            if (this.filterControl) {
+                this.filterControl.valueChanges.subscribe(this.onFilterValueChange.bind(this));
+            }
+        }
+    }
+
+    // Reset the row filter value
+    resetFilter() {
+        if (this.filterControl) {
+            this.filterControl.setValue('');
+        }
+    }
+
+    // On field value change, propagate event to parent form
+    onFilterValueChange(val) {
+        this.table.rowFilter[this.field].value = val;
+    }
+
+    // On field value change, apply cascading filter
+    onValueChange(val) {
+        if (val !== null && isDataSetWidget(this['edit-widget-type'])) {
+            applyFilterOnField(this.table.datasource, this.widget, this.table.fieldDefs, val);
+        }
+    }
+
+    initializeFilter() {
+        // If filterdataset is not bound, get the data implicitly
+        if (this._isRowFilter && isDataSetWidget(this.filterwidget) && !this.bindfilterdataset) {
+            // For live variable, get the data using distinct API
+            if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
+                getDistinctValues(this.table.datasource, this.widget, 'filterwidget').then((res: any) => {
+                    this._filterDataSet = _.pull(_.map(res.data.content, res.aliasColumn), null);
+                    this.setFilterWidgetDataSet();
+                });
+            } else {
+                // For other datasources, get the data from datasource bound to table
+                this.registerDestroyListener($watch(this.table.binddataset, this.viewParent, {},
+                        nv => this.widget.filterdataset = nv, getWatchIdentifier(this.widgetId, 'filterdataset')));
+            }
+        }
+    }
+
+    initializeInlineWidget() {
+        // If dataset is not bound, get the data implicitly
+        if (isDataSetWidget(this['edit-widget-type']) && !this.binddataset && !this.readonly) {
+            const dataSource = this.table.datasource;
+            if (this['related-entity-name'] && this['primary-key']) {
+                // Fetch the data for the related fields
+                this.isDataSetBound = true;
+                const bindings = _.split(this.binding, '.');
+                fetchRelatedFieldData(dataSource, this.widget, {
+                    relatedField: _.head(bindings),
+                    datafield: _.last(bindings)
+                });
+            } else if (dataSource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
+                getDistinctValuesForField(dataSource, this.widget, {
+                    widget: 'edit-widget-type'
+                });
+            }
+        }
+    }
+
+    // On table datasource change, get the data for row filters
+    onDataSourceChange() {
+        this.initializeFilter();
+        this.initializeInlineWidget();
+    }
+
+    // Set the data on the row filter widget
+    setFilterWidgetDataSet() {
+        if (this.filterWidget) {
+            this.filterWidget.dataset = this._filterDataSet;
+        }
+    }
+
+    // Set the props on the row filter widget
+    setUpFilterWidget() {
+        this.filterWidget.registerReadyStateListener(() => {
+            if (isDataSetWidget(this.filterwidget)) {
+                this.filterWidget.dataset = this._filterDataSet;
+                this.filterWidget.datafield = this.filterdatafield || this.binding;
+                this.filterWidget.displayfield = this.filterdisplayfield || this.binding;
+                if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
+                    this.filterWidget.displaylabel = this.filterdisplaylabel || this.binding;
+                    this.filterWidget.searchkey = this.filtersearchkey || this.binding;
+                }
+            }
+            if (this.filterwidget === FormWidgetType.TIME) {
+                this.filterWidget.timepattern = 'hh:mm:ss a'; // TODO: Set application time format
+            }
+            this.filterWidget.placeholder = this.filterplaceholder || '';
+        });
+    }
+
+    // Set the props on the inline edit widget
+    setInlineWidgetProp(prop, nv) {
+        if (this.inlineWidget) {
+            this.inlineWidget[prop] = nv;
+        }
+    }
+
+    // Initialize the inline edit widget
+    setUpInlineWidget() {
+        this.inlineWidget.registerReadyStateListener(() => {
+            if (isDataSetWidget(this['edit-widget-type'])) {
+                this.inlineWidget.dataset = this._dataSet;
+                this.inlineWidget.datafield = this.datafield;
+                this.inlineWidget.displayfield = this.displayfield;
+            }
+        });
+    }
+
+    getStyleDef() {
+        return `{width: ${this.width || ''}; background-color: ${this.backgroundcolor || ''}; color: ${this.textcolor || ''}};`;
+    }
+
+    populateFieldDef() {
+        this.width = this.width === 'px' ?  '' : (this.width || '');
+        this.field = this.binding;
+        this.displayName =  this.caption || '';
+        this.pcDisplay =  this.pcdisplay;
+        this.mobileDisplay =  this.mobiledisplay;
+        this.textAlignment =  this.textalignment;
+        this.backgroundColor =  this.backgroundcolor;
+        this.textColor =  this.textcolor;
+        this.primaryKey =  this['primary-key'];
+        this.relatedEntityName =  this['related-entity-name'];
+        this.style =  this.getStyleDef();
+        this.class =  this['col-class'];
+        this.ngclass =  this['col-ng-class'];
+        this.formatpattern =  this.formatpattern === 'toNumber' ? 'numberToString'  :  this.formatpattern;
+        this.searchable =  (this.type === 'blob' || this.type === 'clob') ? false  :  this.searchable;
+        this.limit =  this.limit ? +this.limit  :  undefined;
+        this.editWidgetType =  this['edit-widget-type'];
+        this.filterOn =  this['filter-on'];
+        this.readonly =  isDefined(this.readonly) ? this.readonly  :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
+        this.filterwidget =  this.filterwidget || getDataTableFilterWidget(this.type || 'string');
+        this.isFilterDataSetBound = !!this.bindfilterdataset;
+    }
+
+    onPropertyChange(key, nv) {
+        if (!this.IsPropsInitialized) {
+            return;
+        }
+        switch (key) {
+            case 'caption':
+                this.displayName = nv || '';
+                this.table.callDataGridMethod('setColumnProp', this.binding, 'displayName', nv);
+                break;
+            case 'show':
+                this.table.redraw(true);
+                break;
+            case 'filterdataset':
+                this._filterDataSet = nv;
+                this.setFilterWidgetDataSet();
+                break;
+            case 'dataset':
+                this._dataSet = nv;
+                this.setInlineWidgetProp(key, nv);
+                break;
+            case 'datafield':
+            case 'displayfield':
+                this.setInlineWidgetProp(key, nv);
+                break;
+        }
+    }
+}

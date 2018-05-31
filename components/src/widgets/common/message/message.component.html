@@ -1,0 +1,5 @@
+<i [title]="type + 'Alert'" [ngClass]="[type, 'icon', messageIconClass]"></i>
+<span [innerHtml]="caption | trustAs: 'html'"></span>
+<button title="Close" type="button" class="btn-transparent close" [hidden]="hideclose" (click)="dismiss($event)" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+</button>

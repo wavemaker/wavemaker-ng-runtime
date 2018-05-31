@@ -1,24 +1,64 @@
-import { Directive, ElementRef, Inject, Self, ViewContainerRef } from '@angular/core';
-import { PageUtils } from '../../services/page-utils.service';
+import { Attribute, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
+
+import { WidgetRef } from '@wm/components';
+import { noop } from '@wm/core';
+
+import { RenderUtilsService } from '../../services/render-utils.service';
+
+declare const _;
 
 @Directive({
-    selector: '[partialContainer]:not([content="inline"])'
+    selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]'
 })
 export class PartialContainerDirective {
     get name() {
-        return this.widget.name;
+        return this.componentInstance.name;
     }
 
-    constructor(@Self() @Inject('@Widget') public widget, public pageUtils: PageUtils, public vcRef: ViewContainerRef, public elRef: ElementRef) {
+    renderPartial(nv, vcRef, componentInstance) {
+        this.vcRef.clear();
 
-        widget.propertyChange$.subscribe(({key, nv, ov}) => {
+        const $target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
+
+        $target.innerHTML = '';
+
+        return this.renderUtils.renderPartial(
+            nv,
+            vcRef,
+            $target,
+            componentInstance,
+            () => (this.inj as any).view.component._resolveFragment()
+        );
+    }
+
+    onLoadSuccess() {
+        this.componentInstance.invokeEventCallback('load');
+    }
+
+    constructor(
+        @Self() @Inject(WidgetRef) public componentInstance,
+        public renderUtils: RenderUtilsService,
+        public vcRef: ViewContainerRef,
+        public elRef: ElementRef,
+        public inj: Injector,
+        @Attribute('content') _content: string
+    ) {
+
+        if (_content) {
+            (this.inj as any).view.component._registerFragment();
+        }
+
+        componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
             if (key === 'content') {
-                this.pageUtils.renderPage(
-                    nv,
-                    widget.name,
-                    vcRef,
-                    this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement
-                );
+                if (componentInstance.$lazyLoad) {
+                    componentInstance.$lazyLoad = () => {
+                        this.renderPartial(nv, vcRef, componentInstance)
+                            .then(() => this.onLoadSuccess());
+                        componentInstance.$lazyLoad = noop;
+                    };
+                } else {
+                    this.renderPartial(nv, vcRef, componentInstance).then(() => this.onLoadSuccess());
+                }
             }
         });
     }

@@ -1,0 +1,13 @@
+<li [ngClass]="['checkbox', 'app-checkbox', itemclass]"
+    [class.active]="item.selected"
+    *ngFor="let item of datasetItems; let i = index"
+    (click)="onCheckboxLabelClick($event, item.key)">
+    <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled}" [title]="item.label">
+        <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
+            [disabled]="disabled" [attr.data-attr-index]="i"
+            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
+        <span class="caption" [textContent]="item.label"></span>
+    </label>
+</li>
+<input [disabled]="disabled" hidden class="model-holder">
+<div *ngIf="readonly || disabled" class="readonly-wrapper"></div>

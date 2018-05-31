@@ -67,6 +67,7 @@
                     <a href="javascript:void(0)" (click)="toggleNav('datawidgets')"><i class="glyphicon" [ngClass]="{'glyphicon-chevron-down': !toggleConfig.datawidgets, 'glyphicon-chevron-right': toggleConfig.datawidgets}"></i>Data Widgets</a>
                     <ul class="nav navbar-nav sub-menu" [ngClass]="{'active': !toggleConfig.datawidgets}" [style.opacity]="toggleConfig.datawidgets ? '0': '1'" [style.visibility]="toggleConfig.datawidgets ? 'hidden': 'visible'">
                         <li routerLinkActive="active"><a [routerLink]="['./table']">Table<span class="sr-only">(current)</span></a></li>
+                        <li routerLinkActive="active"><a [routerLink]="['./list']">list<span class="sr-only">(current)</span></a></li>
                         <li routerLinkActive="active"><a [routerLink]="['./pagination']">Pagination<span class="sr-only">(current)</span></a></li>
                         <li routerLinkActive="active"><a [routerLink]="['./form']">Form<span class="sr-only">(current)</span></a></li>
                     </ul>

@@ -1,0 +1,14 @@
+<label [ngClass]="{'unchecked': !proxyModel, 'disabled': (disabled || readonly), 'required': (required && _caption)}" role="button">
+    <input type="checkbox" aria-describedby="checkbox"
+           [(ngModel)]="proxyModel"
+           [readonly]="readonly"
+           [required]="required"
+           [disabled]="disabled || readonly"
+           [attr.accesskey]="shortcutkey"
+           [tabindex]="tabindex"
+           (blur)="invokeOnTouched($event)"
+           (ngModelChange)="handleChange($event)">
+    <span class="caption" [innerHtml]="_caption"></span>
+    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>
+</label>
+<input type="hidden" class="ng-hide model-holder" [disabled]="disabled" [value]="proxyModel">

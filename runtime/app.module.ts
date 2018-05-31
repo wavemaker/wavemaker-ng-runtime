@@ -1,39 +1,80 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+
+import { $parseExpr, App } from '@wm/core';
+import { HttpServiceModule } from '@wm/http';
+import { MobileAppModule } from '@wm/mobile/runtime';
+import { OAuthModule } from '@wm/oAuth';
+import { VariablesModule } from '@wm/variables';
+import { WmComponentsModule } from '@wm/components';
+import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { AppComponent } from './app.component';
-import { PipeProvider } from './services/pipe-provider.service';
-import { WmComponentsModule } from '@components/components.module';
-import { PageUtils } from './services/page-utils.service';
-import { PageWrapperComponent } from './components/page-wrapper.component';
-import { HttpClientModule } from '@angular/common/http';
-
-import { VariablesModule } from '@variables/variables.module';
-import { VariablesService } from '@variables/services/variables.service';
-
-import { MetadataResolve } from './resolves/metadata.resolve';
 import { AppJSResolve } from './resolves/app-js.resolve';
-import { App } from './services/app.service';
+import { AppManagerService } from './services/app.manager.service';
+import { AppRef } from './services/app.service';
+import { AppResourceManagerService } from './services/app-resource-manager.service';
+import { AppVariablesResolve } from './resolves/app-variables.resolve';
+import { CommonPageComponent } from './components/common-page.component';
+import { I18nResolve } from './resolves/i18n.resolve';
+import { I18nService } from './services/i18n.service';
+import { MetadataResolve } from './resolves/metadata.resolve';
+import { PageWrapperComponent } from './components/page-wrapper.component';
+import { PipeProvider } from './services/pipe-provider.service';
+import { PrefabManagerService } from './services/prefab-manager.service';
+import { PrefabPreviewManagerService } from './services/prefab-preview-manager.service';
+import { RenderUtilsService } from './services/render-utils.service';
+import { SecurityConfigResolve } from './resolves/security-config.resolve';
+
+
+declare const $;
+declare const _WM_APP_PROPERTIES;
+
+const securityConfigResolve = {
+    securityConfig: SecurityConfigResolve,
+};
+
+const appVariablesResolve = {
+    appVariables: AppVariablesResolve
+};
+
+const pageDependenciesResolve = {
+    securityConfig: SecurityConfigResolve,
+    metadata: MetadataResolve,
+    appJS: AppJSResolve,
+    i18n: I18nResolve
+};
 
 const routes = [
     {
-        path: ':pageName',
+        path: '',
         component: PageWrapperComponent,
         pathMatch: 'full',
-        resolve: {
-            metadata: MetadataResolve,
-            appJS: AppJSResolve
-        }
+        resolve: securityConfigResolve
+    },
+    {
+        path: ':pageName',
+        pathMatch: 'full',
+        resolve: pageDependenciesResolve,
+        children: [
+            {
+                path: '',
+                component: PageWrapperComponent,
+                resolve: appVariablesResolve
+            }
+        ]
     }
 ];
 
 @NgModule({
     declarations: [
         AppComponent,
-        PageWrapperComponent
+        PageWrapperComponent,
+        CommonPageComponent
     ],
     imports: [
         BrowserModule,
@@ -42,19 +83,39 @@ const routes = [
         ReactiveFormsModule,
         WmComponentsModule,
         VariablesModule,
+        OAuthModule,
         RouterModule,
         HttpClientModule,
-        RouterModule.forRoot(routes, {useHash: true})
+        HttpServiceModule,
+        RouterModule.forRoot(routes, {useHash: true}),
+        HttpClientXsrfModule.withOptions({
+            cookieName: 'wm_xsrf_token',
+            headerName: _WM_APP_PROPERTIES.xsrf_header_name
+        }),
+        WmMobileComponentsModule,
+        MobileAppModule
     ],
     providers: [
+        {provide: App, useClass: AppRef},
         PipeProvider,
-        PageUtils,
-        VariablesService,
+        RenderUtilsService,
         MetadataResolve,
-        App,
-        AppJSResolve
+        AppJSResolve,
+        AppVariablesResolve,
+        I18nService,
+        I18nResolve,
+        AppManagerService,
+        AppResourceManagerService,
+        PrefabManagerService,
+        PrefabPreviewManagerService,
+        SecurityConfigResolve,
+        DecimalPipe,
+        DatePipe
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent, CommonPageComponent]
 })
 export class AppModule {
+    constructor () {
+        $.fn.swipeAnimation.expressionEvaluator = $parseExpr;
+    }
 }

@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.json",
+    "exclude": [],
+    "compilerOptions": {
+        "outDir" : "../../dist/out-tsc/mobile"
+    },
+    "angularCompilerOptions": {
+        "genDir": "./dist",
+        "debug": false,
+        "skipTemplateCodegen": true
+    }
+}

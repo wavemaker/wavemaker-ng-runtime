@@ -1,0 +1,28 @@
+<div dropdown [isOpen]="status.isopen" [autoClose]="false" style="display: inherit">
+    <input class="form-control app-textbox display-input" aria-label="Set the time"
+           type="text"
+           [value]="displayValue"
+           [disabled]="disabled || readonly || isCurrentTime"
+           [required]="required"
+           [attr.placeholder]="placeholder"
+           [required]="required"
+           (click)="toggleDropdown($event)">
+    <span class="input-group-btn dropdown-toggle" (click)="toggleDropdown($event)">
+      <button type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
+    </span>
+    <div *dropdownMenu class="dropdown-menu">
+        <timepicker class="model-holder"
+                    [showMeridian]="!ismeridian"
+                    [readonlyInput]="isDisabled"
+                    [(ngModel)]="bsTimeValue"
+                    [disabled]="disabled || readonly || isCurrentTime"
+                    [min]="minTime"
+                    [max]="maxTime"
+                    [hourStep]="hourstep"
+                    [minuteStep]="minutestep"
+                    [secondsStep]="secondsstep"
+                    [mousewheel]="true"
+                    [arrowkeys]="true"
+                    [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
+    </div>
+</div>

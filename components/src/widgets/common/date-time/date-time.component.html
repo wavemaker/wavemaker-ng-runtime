@@ -1,0 +1,40 @@
+<div dropdown [isOpen]="isTimeOpen" [autoClose]="false" (onShown)="addClickListener()" style="display: inherit;">
+    <input class="form-control app-textbox display-input" aria-label="Set the date and time"
+           type="text"
+           [value]="displayValue"
+           (click)="datepicker.toggle()"
+           [disabled]="disabled || readonly || isCurrentDate"
+           [required]="required"
+           [attr.placeholder]="placeholder">
+    <span class="input-group-btn">
+    <button type="button" class="btn btn-default btn-time" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="datepicker.toggle();"><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
+    <button type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
+</span>
+    <div style="height: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">
+        <input class="model-holder"
+               [container]="'body'"
+               [bsConfig]="_dateOptions"
+               [isOpen]="isDateOpen"
+               (onShown)="onDatePickerOpen()"
+               (onHidden)="isDateOpen = !isDateOpen;"
+               #datepicker=bsDatepicker
+               bsDatepicker
+               [isDisabled]="disabled || readonly || isCurrentDate"
+               [bsValue]="bsDateValue"
+               (bsValueChange)="onModelUpdate($event, 'date')">
+    </div>
+    <div *dropdownMenu class="dropdown-menu" aria-label="timepicker dropdown" aria-controls="time">
+        <timepicker class="model-holder"
+                    [showMeridian]="!ismeridian"
+                    [readonlyInput]="disabled || readonly || isCurrentDate"
+                    [(ngModel)]="bsTimeValue"
+                    [min]="minTime"
+                    [max]="maxTime"
+                    [hourStep]="hourstep"
+                    [minuteStep]="minutestep"
+                    [secondsStep]="secondsstep"
+                    [mousewheel]="true"
+                    [arrowkeys]="true"
+                    [showSeconds]="showseconds" (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
+    </div>
+</div>

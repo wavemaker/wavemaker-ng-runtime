@@ -1,0 +1,40 @@
+<div class="app-wizard-heading">
+    <ul class="app-wizard-steps nav nav-pills {{stepClass}}">
+        <li class="app-wizard-step" *ngFor="let step of steps" [hidden]="!step.show"
+            [ngClass]="{active: step.done, current: step.active, disabled: step.disabled}"
+            (click)="onWizardHeaderClick($event, step)">
+            <a href="javascript:void(0)">
+                <span class="arrow"></span>
+                <i class="app-icon {{step.iconclass}}" *ngIf="step.iconclass"></i>
+                <span class="step-title" [textContent]="step.title"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="app-wizard-body panel-body">
+    <p wmMessage *ngIf="message.caption" caption.bind="message.caption" type.bind="message.type"></p>
+    <ng-content select="form[wmWizardStep]"></ng-content>
+</div>
+<div class="app-wizard-actions panel-footer {{actionsalignment}}">
+    <a class="app-wizard-skip" name="skipStep_{{name}}" *ngIf="currentStep?.enableskip" title="Skip step" (click)="skip()">Skip &raquo;</a>
+    <div class="app-wizard-actions-right">
+        <button type="button" name="cancelBtn_{{name}}" class="btn app-button btn-secondary" *ngIf="cancelable"
+                (click)="cancel()" [title]="cancelbtnlabel" [textContent]="cancelbtnlabel"></button>
+        <button type="button" name="previousBtn_{{name}}" class="btn app-button btn-secondary"
+                *ngIf="hasPrevStep" (click)="prev()" [disabled]="!enablePrev">
+            <i class="app-icon wi wi-chevron-left"></i>
+            <span class="btn-caption" [textContent]="previousbtnlabel"></span>
+        </button>
+        <button type="button" name="nextBtn_{{name}}" class="btn app-button btn-primary"
+                *ngIf="hasNextStep" (click)="next()" [disabled]="!enableNext">
+            <span class="btn-caption" [textContent]="nextbtnlabel"></span>
+            <i class="app-icon wi wi-chevron-right"></i>
+        </button>
+        <button type="button" name="doneBtn_{{name}}" class="btn app-button btn-success"
+                *ngIf="showDoneBtn" (click)="done()"
+                [disabled]="!enableDone">
+            <i class="app-icon wi wi-done"></i>
+            <span class="btn-caption" [textContent]="donebtnlabel"></span>
+        </button>
+    </div>
+</div>

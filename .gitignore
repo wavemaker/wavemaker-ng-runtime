@@ -12,7 +12,6 @@
 /.idea
 *.iml
 .project
-/package-lock.json
 .classpath
 .c9/
 *.launch

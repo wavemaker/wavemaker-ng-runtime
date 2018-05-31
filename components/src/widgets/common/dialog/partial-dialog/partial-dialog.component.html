@@ -1,0 +1,15 @@
+<ng-template #dialogTemplate>
+    <div wmDialogHeader [closable]="closable"
+         [iconclass]="iconclass"
+         [iconwidth]="iconwidth"
+         [iconheight]="iconheight"
+         [iconmargin]="iconmargin"
+         [heading]="title"
+    ></div>
+    <div wmDialogBody>
+        <ng-container *ngTemplateOutlet="dialogContent"></ng-container>
+    </div>
+    <div wmDialogFooter *ngIf="showactions">
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
+    </div>
+</ng-template>

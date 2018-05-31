@@ -1,0 +1,68 @@
+<ng-template #customItemTemplate let-model="item" let-index="index">
+    <a>
+        <img [src]="model.imgSrc" alt="Search" *ngIf="model.imgSrc" [style.width]="imagewidth">
+        <span [title]="model.label" [textContent]="model.label"></span>
+    </a>
+</ng-template>
+
+<ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
+    <ul class="app-search dropdown-menu" scrollable>
+    <li *ngFor="let match of matches" [ngClass]="{active: match.isActive }" (mouseleave)="match.isActive = false;" (mouseenter)="match.isActive = true;" (click)="typeaheadOnSelect($event, match)">
+        <span *ngIf="match.isHeader()">
+            <!-- this is the group name -->
+        </span>
+        <!-- itemTemplate comes from the <input> -->
+        <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate" [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
+        </ng-container>
+    </li>
+        <div class="status" [hidden]="!showFooter">
+            <span>This is footer </span>
+        </div>
+    </ul>
+</ng-template>
+
+<ng-template *ngIf="navsearchbar; else searchTemplate">
+    <input [title]="query" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder"
+           [(ngModel)]="query"
+           [typeahead]="dataSource"
+           [typeaheadItemTemplate]="customItemTemplate"
+           [optionsListTemplate]="customListTemplate"
+           (input)="onInputChange()"
+           (typeaheadOnSelect)="typeaheadOnSelect($event)"
+           [typeaheadMinLength]="minLength"
+           [typeaheadOptionsLimit]="limit"
+           (typeaheadLoading)="_loadingItems"
+           [typeaheadScrollable]="typeaheadScrollable"
+           [typeaheadOptionsInScrollableView]="optionsLimitInScrollableView"
+    />
+</ng-template>
+<ng-template #searchTemplate>
+    <span class="wi wi-arrow-left form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"></span>
+    <span class="sr-only">Back button</span>
+    <input [title]="query" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder"
+           container="body"
+           autocomplete="off"
+           [(ngModel)]="query"
+           [typeahead]="dataSource"
+           [typeaheadItemTemplate]="customItemTemplate"
+           [optionsListTemplate]="customListTemplate"
+           (input)="onInputChange()"
+           (typeaheadOnSelect)="typeaheadOnSelect($event)"
+           [typeaheadMinLength]="minLength"
+           [typeaheadOptionsLimit]="limit"
+           (typeaheadLoading)="_loadingItems"
+           [typeaheadScrollable]="typeaheadScrollable"
+           [typeaheadOptionsInScrollableView]="optionsLimitInScrollableView"
+    />
+    <input class="model-holder" ng-model="_model_" ng-required="required" tabindex="-1">
+    <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
+    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch()"></span>
+    <span class="sr-only">Clear button</span>
+    <span class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}" *ngIf="showsearchicon">
+        <form>
+            <button title="Search" [disabled]="disabled" class="app-search-button wi wi-search" type="submit"
+                    (click)="typeaheadOnSelect($event)"></button>
+        </form>
+    </span>
+</ng-template>
+

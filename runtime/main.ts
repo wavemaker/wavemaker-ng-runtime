@@ -18,3 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => console.log(err));
 });
+
+// exports
+export * from './services/i18n.service';

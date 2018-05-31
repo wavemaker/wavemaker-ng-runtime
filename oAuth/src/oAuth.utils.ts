@@ -1,0 +1,270 @@
+declare const _WM_APP_PROPERTIES, moment, _;
+
+import { CONSTANTS, VARIABLE_CONSTANTS } from '../../variables/src/constants/variables.constants';
+import { _WM_APP_PROJECT, isIE } from '@wm/core';
+import { parseConfig } from '../../variables/src/util/variable/live-variable.http.utils';
+
+const listeners = {},
+    ACCESSTOKEN_PLACEHOLDERS = {
+        'STUDIO': 'WM_STUDIO_',
+        'RUN': 'WM_RUN_'
+    },
+    newWindowProps = 'width=400,height=600';
+
+/**
+ * This function remove the accessToken for a provider
+ * @param provider
+ */
+export const removeAccessToken = (provider) => {
+    const accessTokenKey = getAccessTokenPlaceholder(provider);
+    sessionStorage.removeItem(accessTokenKey);
+};
+
+// Todo[Shubham]: oAuth Mobile
+/*function listenForExternalOAuthMessage(providerId, callback) {
+ let deregister, timerId;
+ deregister = ExtAppMessageService.addMessageListener('^services/oauth/' + providerId + '$', function (message) {
+ callback(message.data.access_token);
+ deregister();
+ clearTimeout(timerId);
+ });
+ timerId = setTimeout(function () {
+ deregister();
+ callback();
+ }, 60000);
+ }*/
+
+/**
+ * This function returns the accesstoken placeholder based on the studio or run mode for the project
+ * @param provider
+ * @returns {*}
+ */
+function getAccessTokenPlaceholder(provider) {
+    let accessTokenKey;
+    accessTokenKey = ACCESSTOKEN_PLACEHOLDERS.RUN + _WM_APP_PROJECT.id + '_' + provider + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT;
+    return accessTokenKey;
+}
+
+/**
+ * This function performs the fake local storage update, so the IE gets the latest token instead of returning the cached localStorageValue
+ */
+function performFakeLocalStorageUpdate() {
+    const dummy_key = 'dummy_key';
+    localStorage.setItem(dummy_key, dummy_key);
+    localStorage.removeItem(dummy_key);
+}
+
+/**
+ * This function sets the accessToken
+ * @param provider
+ * @param accesstoken
+ */
+function setAccessToken(provider, accesstoken) {
+    const accessTokenKey = getAccessTokenPlaceholder(provider);
+    sessionStorage.setItem(accessTokenKey, accesstoken);
+}
+
+/**
+ * this is a callback function to check if the authentication is done and invokes the successCallback
+ * @param providerId
+ * @param successCallback
+ * @param evt
+ */
+function checkAuthenticationStatus(providerId, successCallback, removeProviderConfigCallBack, evt) {
+    const accessTokenKey = providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT,
+        accessToken = localStorage.getItem(accessTokenKey);
+    if (evt && evt.origin !== window.location.origin) {
+        return;
+    }
+    if (accessToken) {
+        removeProviderConfigCallBack(providerId);
+        localStorage.removeItem(accessTokenKey);
+        setAccessToken(providerId, accessToken);
+        window.removeEventListener('message', listeners[providerId]);
+        setTimeout(() => {
+            delete listeners[providerId];
+            if (successCallback) {
+                successCallback(accessToken);
+            }
+        });
+    }
+}
+
+/**
+ * this function keeps on checking the accesstoken in the LocalStorage and updates it accordingly
+ * @param providerId
+ * @param onSuccess
+ * @param onError
+ * @param startTime
+ * @param loginObj
+ */
+function checkAccessTokenInWindow(providerId, onSuccess, onError, startTime, loginObj, removeProviderConfigCallBack) {
+    performFakeLocalStorageUpdate();
+    const currentTime = moment.duration(moment().format('HH:mm'), 'HH:mm'),
+        timeDiff = currentTime.subtract(startTime),
+        accessToken = getAccessToken(providerId, true);
+    if (accessToken) {
+        loginObj.accesstoken_retrieved = true;
+        setAccessToken(providerId, accessToken);
+        localStorage.removeItem(providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT);
+        removeProviderConfigCallBack(providerId);
+        if (onSuccess) {
+            onSuccess();
+        }
+    } else if (timeDiff.minutes() > 1 && onSuccess && !loginObj.accesstoken_retrieved) {
+        onSuccess('error');
+    } else {
+        setTimeout(() => {
+            checkAccessTokenInWindow(providerId, onSuccess, onError, startTime, loginObj, removeProviderConfigCallBack);
+        }, 3000);
+    }
+}
+
+/**
+ * checks for the window existence i.e if the window is manually closed by the user or any such
+ * @param oAuthWindow
+ * @param provider
+ * @param callback
+ */
+function checkForWindowExistence(oAuthWindow, provider, callback) {
+    if (oAuthWindow && listeners[provider]) {
+        if (!oAuthWindow.closed) { // .closed is supported across major browser vendors however for IE the user has to enable protected mode from security options
+            setTimeout(checkForWindowExistence.bind(undefined, oAuthWindow, provider, callback), 3000);
+        } else {
+            window.removeEventListener('message', listeners[provider]);
+            delete listeners[provider];
+            if (callback) {
+                callback('error');
+            }
+        }
+    }
+}
+/**
+ * this functions handles the logic related to the window operations in IE
+ * @param url
+ * @param providerId
+ * @param onSuccess
+ * @param onError
+ */
+function handleLoginForIE(url, providerId, onSuccess, onError, removeProviderConfigCallBack) {
+    const loginObj = {
+        'accesstoken_retrieved': false
+    };
+    window.open(url, '_blank', newWindowProps);
+    checkAccessTokenInWindow(providerId, onSuccess, onError, moment.duration(moment().format('HH:mm'), 'HH:mm'), loginObj, removeProviderConfigCallBack);
+}
+
+/**
+ * this function adds the listener on the window and assigns the listener
+ * @param provider
+ * @param callback
+ */
+function onAuthWindowOpen(provider, callback, removeProviderConfigCallBack) {
+    listeners[provider] = checkAuthenticationStatus.bind(undefined, provider, callback, removeProviderConfigCallBack);
+    window.addEventListener('message', listeners[provider], false);
+}
+
+/**
+ * this function is a callback function which enables the listener and checks for the window existence
+ * @param providerId
+ * @param onSuccess
+ * @param url
+ */
+function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack) {
+    let oAuthWindow;
+    /*Todo [Shubham]: Implementation in Mobile
+     if (CONSTANTS.hasCordova) {
+     window.open(url, '_system');
+     listenForExternalOAuthMessage(providerId, function (accessToken) {
+     const key = providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT;
+     if (accessToken) {
+     localStorage.setItem(key, accessToken);
+     checkAuthenticationStatus(providerId, onSuccess, removeProviderConfigCallBack);
+     } else {
+     onSuccess('error');
+     }
+     });
+     } else { */
+    oAuthWindow = window.open(url, '_blank', newWindowProps);
+    onAuthWindowOpen(providerId, onSuccess, removeProviderConfigCallBack);
+    checkForWindowExistence(oAuthWindow, providerId, onSuccess);
+}
+
+/**
+ * function to get the authorization url
+ * @param params provider id for which the auth url has to be fetched
+ * @param successCallback callback to be invoked upon successful fetch of the providers
+ * @param failureCallback callback to be invoked upon error
+ * @returns {*}
+ */
+function getAuthorizationUrl(params, http) {
+    const action = CONSTANTS.isStudioMode ? 'getStudioAuthorizationUrl' : 'getAuthorizationUrl',
+        serviceSettings = parseConfig({
+            target: 'oauthConfiguration',
+            action: action,
+            urlParams: {
+                projectId: _WM_APP_PROJECT.id,
+                providerId: params.providerId
+            },
+            params: {
+                'requestSourceType': params.requestSourceType
+            }
+        });
+    return http.send(serviceSettings);
+}
+
+/**
+ * this function retrieves the accessToken based on the run/studiomode
+ * @param provider
+ * @returns {*}
+ */
+export const getAccessToken = (provider, checkLocalStorage) => {
+    const accessTokenKey = getAccessTokenPlaceholder(provider);
+    if (checkLocalStorage) {
+        return localStorage.getItem(provider + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT);
+    }
+    return sessionStorage.getItem(accessTokenKey);
+};
+
+
+/**
+ * this function is used to perform the authorization by opening the window and having active listeners
+ * @param url
+ * @param providerId
+ * @param onSuccess
+ * @returns {*}
+ */
+export const performAuthorization = (url, providerId, onSuccess, onError, http, addProviderConfigCallBack, removeProviderConfigCallBack) => {
+    let requestSourceType = 'WEB';
+    if (url) {
+        if (isIE()) { // handling for IE
+            handleLoginForIE(url, providerId, onSuccess, onError, removeProviderConfigCallBack);
+        } else {
+            postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack);
+        }
+    } else {
+        if (CONSTANTS.isWaveLens) {
+            requestSourceType = 'WAVELENS';
+        } else if (CONSTANTS.hasCordova) {
+            requestSourceType = 'MOBILE';
+        }
+        return getAuthorizationUrl({
+            'providerId': providerId,
+            'requestSourceType': requestSourceType
+        }, http).then((response) => {
+            if (!CONSTANTS.isStudioMode) {
+                addProviderConfigCallBack({
+                    name: providerId,
+                    url: response.body,
+                    invoke: () => {
+                        if (isIE()) { // handling for IE
+                            handleLoginForIE(response, providerId, onSuccess, onError, removeProviderConfigCallBack);
+                        } else {
+                            postGetAuthorizationURL(response.body, providerId, onSuccess, removeProviderConfigCallBack);
+                        }
+                    }
+                });
+            }
+        });
+    }
+};

@@ -1,0 +1,4 @@
+<div class="multi-bar progress-bar {{bar.cls}}" *ngFor="let bar of data" [style.width]="bar.progressBarWidth" role="progressbar"
+     [attr.aria-valuenow]="datavalue" [attr.aria-valuemin]="minvalue" [attr.aria-valuemax]="maxvalue">
+    <span class="app-progress-label" [attr.data-caption-placement]="captionplacement">{{bar.displayValue}}</span>
+</div>

@@ -27,15 +27,21 @@
             "scripts": [
                 "../../../node_modules/lodash/lodash.min.js",
                 "../../../node_modules/moment/min/moment.min.js",
+                "../../../node_modules/x2js/x2js.js",
                 "../../../node_modules/jquery/dist/jquery.min.js",
                 "../../../node_modules/fullcalendar/dist/fullcalendar.min.js",
                 "../../../node_modules/jquery-ui/ui/disable-selection.js",
                 "../../../node_modules/jquery-ui/ui/version.js",
                 "../../../node_modules/jquery-ui/ui/widget.js",
                 "../../../node_modules/jquery-ui/ui/plugin.js",
+                "../../../node_modules/jquery-ui/ui/scroll-parent.js",
+                "../../../node_modules/jquery-ui/ui/data.js",
                 "../../../node_modules/jquery-ui/ui/widgets/mouse.js",
                 "../../../node_modules/jquery-ui/ui/widgets/resizable.js",
-                "../../../components/widgets/table/datatable.js"
+                "../../../node_modules/jquery-ui/ui/widgets/sortable.js",
+                "../../../node_modules/jquery-ui/ui/widgets/droppable.js",
+                "../../../node_modules/hammerjs/hammer.min.js",
+                "../../../components/src/widgets/common/table/datatable.js"
             ],
             "environmentSource": "environments/environment.ts",
             "environments": {
