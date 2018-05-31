@@ -16,7 +16,7 @@ const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-anchor',
     hostClass: DEFAULT_CLS,
-    displayType: DISPLAY_TYPE.INLINE
+    displayType: DISPLAY_TYPE.INLINE_BLOCK
 };
 
 @Component({
