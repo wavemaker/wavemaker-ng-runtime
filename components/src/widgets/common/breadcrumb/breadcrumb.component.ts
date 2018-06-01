@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import {$appDigest, getRouteFromNavLink, getUrlParams, openLink} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './breadcrumb.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareNavComponent, NavNode } from '../base/dataset-aware-nav.component';
-import { $appDigest } from '@wm/core';
 
 registerProps();
 
@@ -87,30 +87,16 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent implements Aft
     }
 
     onItemClick ($item) {
-        let link = $item.link || '';
-        const canNavigate = !(this.invokeEventCallback('beforenavigate', {$item}) === false);
-        const params = {};
-
-        if (link && canNavigate) {
-            /* removing spl characters from the beginning of the path.
-               1. #/Main  -> Main
-               2. .#/Main/abc -> Main/abc
-            */
-            link = _.first(link.match(/[\w]+.*/g));
-
-            // If url params are present, construct params object and pass it to search
-            const index = link.indexOf('?');
-            if (index !== -1) {
-                const queryParams = _.split(link.substring(index + 1, link.length), '&');
-                link = link.substring(0, index);
-                queryParams.forEach((param) => {
-                    param = _.split(param, '=');
-                    params[param[0]] = param[1];
-                });
+        const canNavigate = !(this.invokeEventCallback('beforenavigate', {$item: this.trimNode($item)}) === false);
+        let itemLink = $item.link;
+        if (itemLink && canNavigate) {
+            if (itemLink.startsWith('#/')) {
+                const queryParams = getUrlParams(itemLink);
+                itemLink = getRouteFromNavLink(itemLink);
+                this.route.navigate([itemLink], { queryParams});
+            } else {
+                openLink(itemLink);
             }
-            // search method is passed with empty object to remove url parameters.
-            // TODO: navigate to the link. using angular route
-            window.location.href = link;
         }
     }
 

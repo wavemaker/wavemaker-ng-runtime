@@ -38,9 +38,8 @@ const DEFAULT_CLS = 'dropdown-menu';
     templateUrl: './menu-dropdown.component.html'
 })
 export class MenuDropdownComponent implements AfterViewInit {
-    private _menuAlign = '';
+    private _menuAlign;
     private nativeElement;
-
 
     @Input()
     set menualign(nv) {
@@ -61,9 +60,9 @@ export class MenuDropdownComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         const animation = this.parentMenu.animateitems;
-        const menuPosition = this.parentMenu.menuposition;
         addClass(this.nativeElement, 'dropdown-menu', true);
         if (animation) {
+            const menuPosition = this.parentMenu.menuposition;
             // If animation is set then add animation class based on menu position, if not set it to default
             const animationClass = animated + (animationClasses[animation][menuPosition] || animationClasses[animation].name);
             addClass(this.nativeElement, animationClass);

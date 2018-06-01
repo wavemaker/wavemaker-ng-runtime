@@ -1,5 +1,5 @@
-import { Attribute, Injector, OnInit } from '@angular/core';
-import { $appDigest, findValueOf, isObject, validateAccessRoles } from '@wm/core';
+import { Injector, OnInit } from '@angular/core';
+import { $appDigest, findValueOf, isObject, validateAccessRoles, isDefined } from '@wm/core';
 
 import { createArrayFrom } from '../../../utils/data-utils';
 import { getEvaluatedData } from '../../../utils/widget-utils';
@@ -7,6 +7,18 @@ import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from './stylable.component';
 
 declare const _;
+
+const getValidLink = (link) => {
+    const routRegex = /^[./#]+.*/;
+    if (link) {
+        if (routRegex.test(link)) {
+            link = _.first(link.match(/[\w]+.*/g)) || '';
+            return `#/${link}`;
+        } else {
+            return link;
+        }
+    }
+};
 
 export class DatasetAwareNavComponent extends StylableComponent implements OnInit {
 
@@ -35,8 +47,7 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
     private binditemlink: string | null;
     private binduserrole: string | null;
 
-    constructor(inj: Injector,
-                WIDGET_CONFIG) {
+    constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
 
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
@@ -65,7 +76,7 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
             icon     : getEvaluatedData(node, {expression: 'itemicon', bindExpression: this.binditemicon}) || node[fields.iconField],
             id       : getEvaluatedData(node, {expression: 'itemid', bindExpression: this.binditemid}) || node[fields.idField],
             label    : getEvaluatedData(node, {expression: 'itemlabel', bindExpression: this.binditemlabel}) || node[fields.labelField],
-            link     : getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}) || node[fields.linkField],
+            link     : getValidLink(getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}) || node[fields.linkField]),
             role     : getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}),
             // older projects have display field & data field property for menu.
             value    : this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
@@ -154,6 +165,16 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
                 this._resetNodes();
                 break;
         }
+    }
+
+    protected trimNode(item) {
+        const result = {};
+        _.forEach(item, (value, key) => {
+            if (isDefined(value) && ['children', 'value'].indexOf(key) === -1) {
+                result[key] = value;
+            }
+        });
+        return result;
     }
 
     ngOnInit() {

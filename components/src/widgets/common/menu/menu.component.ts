@@ -1,5 +1,4 @@
 import { Component, Injector, OnDestroy, OnInit, Input } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
 
 import { addClass, removeClass } from '@wm/core';
 import { styler } from '../../framework/styler';
@@ -19,8 +18,6 @@ const POSITION = {
     UP_LEFT: 'up,left',
     INLINE: 'inline'
 };
-
-const WIDGET_CONFIG = {widgetType: 'wm-menu', hostClass: 'dropdown app-menu'};
 const CARET_CLS = {
     UP: 'fa-caret-up',
     DOWN: 'fa-caret-down'
@@ -29,6 +26,8 @@ const PULL_CLS = {
     LEFT: 'pull-left',
     RIGHT: 'pull-right'
 };
+
+const WIDGET_CONFIG = {widgetType: 'wm-menu', hostClass: 'dropdown app-menu'};
 @Component({
     selector: '[wmMenu]',
     templateUrl: './menu.component.html',
@@ -41,24 +40,38 @@ const PULL_CLS = {
 export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy {
 
     public menualign: string;
-    public linktarget: string;
-    public animateitems: string;
-    public menuclass: string = '';
-    public iconclass: string = '';
     public menuposition: string;
     public menulayout: string;
+    public menuclass: string;
+
+    public linktarget: string;
+    public iconclass: string;
+
     public autoclose: string;
+    public animateitems: string;
 
     private menuCaret: string = 'fa-caret-down';
 
     @Input() isDataComputed: boolean = false;
 
-    select = new Subject();
     constructor(
         inj: Injector
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        this.setMenuPosition();
+    }
+
+    onPropertyChange(key, newVal, oldVal?) {
+        if (!this.isDataComputed) {
+            super.onPropertyChange(key, newVal, oldVal);
+        } else if (key === 'dataset') {
+            this.nodes = newVal;
+        }
     }
 
     private setMenuPosition() {
@@ -90,22 +103,8 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     }
 
     public onSelect(args) {
-        // emit the values to the subscribers as menu is also used as a dynamic component
-        this.select.next(args);
+        args.$item = this.trimNode(args.$item);
         this.invokeEventCallback('select', args);
     }
 
-    onPropertyChange(key, newVal, oldVal?) {
-        if (!this.isDataComputed) {
-            super.onPropertyChange(key, newVal, oldVal);
-        } else if (key === 'dataset') {
-            this.nodes = newVal;
-        }
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        this.setMenuPosition();
-        this.registerDestroyListener(() => this.select.complete());
-    }
 }

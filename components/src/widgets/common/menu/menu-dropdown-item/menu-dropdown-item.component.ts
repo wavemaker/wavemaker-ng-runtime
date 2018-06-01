@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ElementRef, HostListener, Inject, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { addClass, openLink } from '@wm/core';
+import {addClass, evalExp, getRouteFromNavLink, getUrlParams, openLink} from '@wm/core';
 
 import { MenuRef } from '../../../framework/types';
 import { MenuComponent } from '../menu.component';
 import { MenuDropdownComponent } from '../menu-dropdown/menu-dropdown.component';
-import { isActiveNavItem } from '@wm/components';
+import { isActiveNavItem} from '../../../../utils/widget-utils';
 
 declare const $, _;
 
@@ -61,7 +61,8 @@ export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    @HostListener('click', ['$event', 'item']) onSelect = ($event, item) => {
+    @HostListener('click', ['$event', 'item'])
+    onSelect = ($event, item) => {
         if (this.element.nativeElement !== $event.target.closest('[wmmenudropdownitem]')) {
             return;
         }
@@ -69,27 +70,21 @@ export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
         if (this.parent.autoclose === 'outsideClick') {
             $event.stopPropagation();
         }
-        const args = {$event, $item: item.value || item.label};
-        const itemAction = args.$item.action,
-            linkTarget = this.parent.linktarget;
-        let menuLink = this.item.link;
-
-        // If link starts with # and not with #/ replace with #/
-        if (menuLink && _.startsWith(menuLink, '#') && !_.startsWith(menuLink, '#/')) {
-            menuLink = _.replace(menuLink, '#', '#/');
-        }
-
+        const args = {$event, $item: item};
+        const linkTarget = this.parent.linktarget;
+        const itemAction = item.action;
+        let menuLink = item.link;
         this.parent.onSelect(args);
         if (itemAction) {
-            // TODO: Implement evalExp for the Actions of the menu
-           /* evalExp(this.parent, itemAction).then(function () {
-                if (this.menuLink) {
-                    openLink(this.menuLink, linkTarget);
-                }
-            });*/
+            // evalExp(itemAction, item, (this.parent.inj as any).view.context);
         } else if (menuLink) {
-            // If action is not present and link is there
-            openLink(menuLink, linkTarget);
+            if (menuLink.startsWith('#/')) {
+                const queryParams = getUrlParams(menuLink);
+                menuLink = getRouteFromNavLink(menuLink);
+                this.route.navigate([menuLink], { queryParams});
+            } else {
+                openLink(menuLink, linkTarget);
+            }
         }
     }
 }
