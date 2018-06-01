@@ -1,8 +1,8 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional } from '@angular/core';
-
-import { addClass, removeClass } from '@wm/core';
+import { AfterViewInit, Component, ElementRef, Inject, Input } from '@angular/core';
+import { addClass } from '@wm/core';
 
 import { MenuRef } from '../../../framework/types';
+import { MenuComponent } from '../menu.component';
 
 declare const $, _;
 
@@ -38,55 +38,35 @@ const DEFAULT_CLS = 'dropdown-menu';
     templateUrl: './menu-dropdown.component.html'
 })
 export class MenuDropdownComponent implements AfterViewInit {
-    animation;
-    _animateClass = '';
-    animateitems;
-    menuposition;
-    _menulayout = '';
-    _menualign = '';
-    $el;
+    private _menuAlign = '';
+    private nativeElement;
 
-    @Input()
-    set animateClass(nv) {
-        removeClass(this.$el, this._animateClass);
-        addClass(this.$el, nv);
-        this._animateClass = nv;
-    }
-
-    get animateClass() {
-        return this.parentMenu && this.parentMenu.animateClass;
-    }
 
     @Input()
     set menualign(nv) {
-        removeClass(this.$el, this._menualign);
-        addClass(this.$el, nv);
-        this._menualign = nv;
+        addClass(this.nativeElement, nv);
+        this._menuAlign = nv;
     }
 
     get menualign() {
-        return this.parentMenu && this.parentMenu.menualign;
-    }
-
-    get linktarget() {
-        return this.parentMenu && this.parentMenu.linktarget;
+        return this._menuAlign;
     }
 
     @Input() items;
 
-    constructor(private el: ElementRef, @Inject(MenuRef) @Optional() private parentMenu) {
-        this.$el = el.nativeElement;
-        addClass(this.$el, DEFAULT_CLS);
+    constructor(private el: ElementRef, @Inject(MenuRef) private parentMenu: MenuComponent) {
+        this.nativeElement = el.nativeElement;
+        addClass(this.nativeElement, DEFAULT_CLS);
     }
 
     ngAfterViewInit() {
-        this.animation = this.parentMenu.animateitems;
-        this.menuposition = this.parentMenu.menuposition;
-        if (this.animation) { // If animation is set then add animation class based on menu position, if not set it to default
-            this.animateClass = animated + (animationClasses[this.animation][this.menuposition] || animationClasses[this.animation].name);
-        } else if (this.items && this.parentMenu.animateClass) {
-            // Set same animation to sub menu items of that of the parent.
-            this.animateClass = this.parentMenu.animateClass;
+        const animation = this.parentMenu.animateitems;
+        const menuPosition = this.parentMenu.menuposition;
+        addClass(this.nativeElement, 'dropdown-menu', true);
+        if (animation) {
+            // If animation is set then add animation class based on menu position, if not set it to default
+            const animationClass = animated + (animationClasses[animation][menuPosition] || animationClasses[animation].name);
+            addClass(this.nativeElement, animationClass);
         }
     }
 }

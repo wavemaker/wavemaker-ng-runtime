@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ComponentFactoryResolver, ElementRef, HostListener, Inject, Input, OnDestroy, Optional, SkipSelf, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ElementRef, HostListener, Inject, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { openLink } from '@wm/core';
+import { addClass, openLink } from '@wm/core';
 
 import { MenuRef } from '../../../framework/types';
 import { MenuComponent } from '../menu.component';
@@ -14,58 +14,50 @@ declare const $, _;
     templateUrl: './menu-dropdown-item.component.html',
 })
 export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
-
     @Input() item;
+    @Input() menualign;
 
-    $el;
-    menuLink;
+    private nativeElement;
+    private dropdownCompRef: ComponentRef<MenuDropdownComponent>;
 
-    get menulayout () {
-        return this.parent && this.parent.menulayout;
+    @ViewChild('menuDropdownContainer', {read: ViewContainerRef}) dropDownContainer;
+
+    constructor(
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private vcr: ViewContainerRef,
+        private element: ElementRef,
+        private route: Router,
+        @Inject(MenuRef) private parent: MenuComponent
+    ) {
+        this.nativeElement = this.element.nativeElement;
     }
-
-    get menualign () {
-        return this.parent && this.parent.menualign;
-    }
-
-    get linktarget () {
-        return this.parent && this.parent.linktarget;
-    }
-
-    childMenuDropdownComponent;
-
-    @ViewChild('menuDropdownTemp', {read: ViewContainerRef}) dropdownTemplateRef;
-
-    constructor(private componentFactoryResolver: ComponentFactoryResolver,
-                private vcr: ViewContainerRef,
-                private element: ElementRef,
-                private route: Router,
-                @SkipSelf() @Optional() @Inject(MenuRef) private parent: MenuComponent) {}
 
     ngOnDestroy() {
-        if (this.childMenuDropdownComponent) {
-            this.childMenuDropdownComponent.destroy();
+        if (this.dropdownCompRef) {
+            this.dropdownCompRef.destroy();
         }
+    }
+
+    private createDropDown(): ComponentRef<MenuDropdownComponent> {
+        this.dropDownContainer.clear();
+        const factory = this.componentFactoryResolver.resolveComponentFactory(MenuDropdownComponent);
+        return this.dropDownContainer.createComponent(factory);
     }
 
     ngAfterViewInit() {
-        this.menuLink = this.item[this.parent['itemLink'] || 'link'];
-        this.$el = $(this.element.nativeElement);
-        if (this.$el.closest('.app-nav-item').length && this.menuLink) {
-            if (isActiveNavItem(this.menuLink, this.route.url)) {
-                this.$el.addClass('active');
+        // add active class to the item only if it is in nav component.
+        if (this.nativeElement.closest('.app-nav-item')) {
+            if (isActiveNavItem(this.item.link, this.route.url)) {
+                addClass(this.nativeElement, 'active');
             }
         }
-        if (this.item.children && this.item.children.length) {
-            const viewRef = this.dropdownTemplateRef;
-            viewRef.clear();
-            const factory = this.componentFactoryResolver.resolveComponentFactory(MenuDropdownComponent);
-            this.childMenuDropdownComponent = viewRef.createComponent(factory);
-            const childMenuCmp = this.childMenuDropdownComponent;
-            const childMenuCmpIns = childMenuCmp.instance;
-            childMenuCmpIns.items = this.item.children;
-            childMenuCmpIns.menualign = this.menualign;
-            childMenuCmp.changeDetectorRef.detectChanges();
+        if (this.item.children.length) {
+            this.dropdownCompRef = this.createDropDown();
+
+            const childDropdown: MenuDropdownComponent = this.dropdownCompRef.instance;
+            childDropdown.items = this.item.children;
+            childDropdown.menualign = this.parent.menualign;
+            this.dropdownCompRef.changeDetectorRef.detectChanges();
         }
     }
 
@@ -73,13 +65,18 @@ export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
         if (this.element.nativeElement !== $event.target.closest('[wmmenudropdownitem]')) {
             return;
         }
+        // prevent event event propagation if auto close is outside click.
+        if (this.parent.autoclose === 'outsideClick') {
+            $event.stopPropagation();
+        }
         const args = {$event, $item: item.value || item.label};
-        const itemAction = args.$item[this.parent.itemaction || 'action'],
-            linkTarget = this.linktarget;
+        const itemAction = args.$item.action,
+            linkTarget = this.parent.linktarget;
+        let menuLink = this.item.link;
 
         // If link starts with # and not with #/ replace with #/
-        if (this.menuLink && _.startsWith(this.menuLink, '#') && !_.startsWith(this.menuLink, '#/')) {
-            this.menuLink = _.replace(this.menuLink, '#', '#/');
+        if (menuLink && _.startsWith(menuLink, '#') && !_.startsWith(menuLink, '#/')) {
+            menuLink = _.replace(menuLink, '#', '#/');
         }
 
         this.parent.onSelect(args);
@@ -90,9 +87,9 @@ export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
                     openLink(this.menuLink, linkTarget);
                 }
             });*/
-        } else if (this.menuLink) {
+        } else if (menuLink) {
             // If action is not present and link is there
-            openLink(this.menuLink, linkTarget);
+            openLink(menuLink, linkTarget);
         }
     }
 }

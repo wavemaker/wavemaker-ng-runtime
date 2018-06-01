@@ -1,4 +1,4 @@
-import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, Input } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { addClass, removeClass } from '@wm/core';
@@ -35,7 +35,8 @@ const PULL_CLS = {
     providers: [
         provideAsWidgetRef(MenuComponent),
         provideAs(MenuComponent, MenuRef)
-    ]
+    ],
+    exportAs: 'wmMenu'
 })
 export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy {
 
@@ -46,8 +47,11 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public iconclass: string = '';
     public menuposition: string;
     public menulayout: string;
+    public autoclose: string;
 
     private menuCaret: string = 'fa-caret-down';
+
+    @Input() isDataComputed: boolean = false;
 
     select = new Subject();
     constructor(
@@ -92,7 +96,11 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     }
 
     onPropertyChange(key, newVal, oldVal?) {
-        super.onPropertyChange(key, newVal, oldVal);
+        if (!this.isDataComputed) {
+            super.onPropertyChange(key, newVal, oldVal);
+        } else if (key === 'dataset') {
+            this.nodes = newVal;
+        }
     }
 
     ngOnInit() {
