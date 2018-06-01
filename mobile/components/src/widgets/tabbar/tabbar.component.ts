@@ -31,11 +31,11 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
     public layout = {};
 
     private readonly _layouts = [
-        {'minwidth' : 2048, 'max': 12},
-        {'minwidth' : 1024, 'max': 10},
-        {'minwidth' : 768,  'max': 7},
-        {'minwidth' : 480,  'max': 5},
-        {'minwidth' : 0,    'max': 4}
+        {minwidth : 2048, max: 12},
+        {minwidth : 1024, max: 10},
+        {minwidth : 768, max: 7},
+        {minwidth : 480, max: 5},
+        {minwidth : 0, max: 4}
     ];
 
     constructor(private page: PageDirective,
@@ -75,8 +75,8 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
 
     private getItems(itemArray: any[]): TabItem[] {
         return itemArray.map(item => ({
-            'label': item,
-            'icon': 'wi wi-' + item
+            label: item,
+            icon: 'wi wi-' + item
         }));
     }
 
@@ -92,10 +92,10 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
                     const link = getEvaluatedData(item, {expression: 'itemlink', 'bindExpression': this.binditemlink}) || item.link;
                     const activePageName = window.location.hash.substr(2);
                     return {
-                        'label': getEvaluatedData(item, {expression: 'itemlabel', bindExpression: this.binditemlabel}) || item.label,
-                        'icon': getEvaluatedData(item, {expression: 'itemicon', bindExpression: this.binditemicon}) || item.icon,
-                        'link': link,
-                        'active' : _.includes([activePageName, '#' + activePageName, '#/' + activePageName], link)
+                        label: getEvaluatedData(item, {expression: 'itemlabel', bindExpression: this.binditemlabel}) || item.label,
+                        icon: getEvaluatedData(item, {expression: 'itemicon', bindExpression: this.binditemicon}) || item.icon,
+                        link: link,
+                        active: _.includes([activePageName, '#' + activePageName, '#/' + activePageName], link)
                     };
                 });
             } else {

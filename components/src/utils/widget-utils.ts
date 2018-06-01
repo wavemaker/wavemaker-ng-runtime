@@ -1,7 +1,7 @@
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { forwardRef } from '@angular/core';
 
-import { encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith, FormWidgetType } from '@wm/core';
+import {encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr} from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
 
 declare const _;
@@ -110,21 +110,11 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
         expressionValue = bindExpr.replace('bind:', '');
         // parse the expressionValue for replacing all the expressions with values in the object
         expressionValue = getUpdatedExpr(expressionValue);
-
-        // TODO: Optimize the behavior
-        const f = new Function('__1', '__2', '__3', 'return ' + expressionValue);
-        // evaluate the expression in the given scope and return the value
-        return f(_.assign({}, dataObj, {'__1': dataObj}));
-    }
-    // expression is given but no bindexpression
-    if (expr) {
-        return getEvaluatedExprValue(dataObj, expr);
+    } else {
+        expressionValue = field ? field : expr;
     }
 
-    // If value is passed
-    if (field) {
-        return getObjValueByKey(dataObj, field);
-    }
+    return $parseExpr(expressionValue)(dataObj, {__1: dataObj});
 };
 
 export const isActiveNavItem = (link, routeName) => {
