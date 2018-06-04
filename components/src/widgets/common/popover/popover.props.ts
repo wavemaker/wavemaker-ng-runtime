@@ -5,9 +5,9 @@ export const registerProps = () => {
         'wm-popover',
         new Map(
             [
-                ['animation', PROP_STRING],
                 ['badgevalue', PROP_STRING],
-                ['caption', {value: 'Link', ... PROP_STRING}],
+                ['caption', {value: 'Link', ...PROP_STRING}],
+                ['class', PROP_STRING],
                 ['content', PROP_STRING_NOTIFY],
                 ['contentanimation', PROP_STRING],
                 ['contentsource', PROP_STRING],
@@ -21,13 +21,14 @@ export const registerProps = () => {
                 ['iconurl', PROP_STRING],
                 ['iconwidth', PROP_STRING],
                 ['interaction', {value: 'click', ...PROP_STRING}],
+                ['name', PROP_STRING],
                 ['popoverarrow', {value: true, ...PROP_BOOLEAN}],
                 ['popoverheight', {value: '360', ...PROP_STRING}],
                 ['popoverplacement', {value: 'bottom', ... PROP_STRING}],
                 ['popoverwidth', {value: '240', ...PROP_STRING}],
                 ['shortcutkey', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['tabindex', PROP_NUMBER],
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING]
 
             ]

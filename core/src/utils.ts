@@ -867,7 +867,7 @@ export const retryIfFails = (fn: () => any, interval: number, maxRetries: number
  * @returns {*} angular defer object
  */
 export const getAbortableDefer = () => {
-    const defer = {
+    const defer: any = {
         promise: null,
         reject: null,
         resolve: null,
@@ -884,4 +884,9 @@ export const getAbortableDefer = () => {
         defer.isAborted = true;
     };
     return defer;
+};
+
+export const createCSSRule = (ruleSelector: string, rules: string) => {
+    const stylesheet = document.styleSheets[0];
+    stylesheet.insertRule(`${ruleSelector} { ${rules} }`);
 };

@@ -1,10 +1,11 @@
-import { Component, ContentChild, Injector, Input, OnInit, TemplateRef } from '@angular/core';
-import { formatStyle } from '@wm/core';
+import { AfterContentInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { addClass, setAttr, setCSSFromObj } from '@wm/core';
 
 import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './popover.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -12,22 +13,26 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 const eventsMap = {
-    click : 'click',
-    hover : 'mouseenter',
-    default : 'click mouseenter'
+    click: 'click',
+    hover: 'mouseenter:click',
+    default: 'click mouseenter'
 };
 
+let activePopover: PopoverComponent;
+
 @Component({
-    selector: '[wmPopover]',
+    selector: 'wm-popover',
     templateUrl: './popover.component.html',
-    exportAs: 'wmPopover'
+    providers: [
+        provideAsWidgetRef(PopoverComponent)
+    ]
 })
 
-export class PopoverComponent extends StylableComponent implements OnInit {
+export class PopoverComponent extends StylableComponent implements OnInit, AfterContentInit {
     private event: string;
-    private popoverAnimation: string;
     private isOpen: boolean = false;
-    private timeOut;
+    private closePopoverTimeout;
+    private readonly popoverContainerCls;
 
     public interaction: string;
     public popoverarrow: boolean;
@@ -35,75 +40,78 @@ export class PopoverComponent extends StylableComponent implements OnInit {
     public popoverheight: string;
     public contentanimation: string;
 
+
+    @ViewChild('anchor') anchorRef: ElementRef;
     @ContentChild(TemplateRef) popoverTemplate;
-    @Input() popoverId;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+
+        this.popoverContainerCls = `app-popover-${this.widgetId}`;
+    }
+
+    // Trigger on hiding popover
+    private onHidden() {
+        this.invokeEventCallback('hide');
+        this.anchorRef.nativeElement.focus();
+    }
+
+    // Trigger on showing popover
+    private onShown() {
+        if (activePopover && activePopover.isOpen) {
+            activePopover.isOpen = false;
+        }
+
+        activePopover = this;
+        activePopover.isOpen = true;
+
+        const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
+        setCSSFromObj(popoverContainer, {
+            height: this.popoverheight,
+            width:  this.popoverwidth
+        });
+        if (!this.popoverarrow) {
+            addClass(popoverContainer.querySelector('.arrow') as HTMLElement, 'hidden');
+        }
+
+        this.invokeEventCallback('show');
+
+        if (this.interaction === 'hover' || this.interaction === 'default') {
+
+            // do not use addEventListener here
+            // attaching the event this way will override the existing event handlers
+            popoverContainer.onmouseenter = () => clearTimeout(this.closePopoverTimeout);
+            popoverContainer.onmouseleave = () => this.hidePopover();
+            this.anchorRef.nativeElement.onmouseenter = () => clearTimeout(this.closePopoverTimeout);
+            this.anchorRef.nativeElement.onmouseleave = () => this.hidePopover();
+        }
+
+        const deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
+            this.isOpen = false;
+            deRegister();
+        });
+
+        setAttr(popoverContainer, 'tabindex', 0);
+        setTimeout(() => popoverContainer.focus(), 50);
+    }
+
+    private hidePopover() {
+        this.closePopoverTimeout = setTimeout(() => this.isOpen = false, 500);
     }
 
     ngOnInit() {
         super.ngOnInit();
         this.event = eventsMap[this.interaction];
-        this.popoverAnimation = `animated ${this.contentanimation}`;
-    }
-    // returns classes(animation and popover id) for popover
-    getContainerClass() {
-       return `${this.popoverAnimation} ${this.popoverId}`;
-    }
-    // Trigger on hiding popover
-    private onHidden() {
-        this.invokeEventCallback('hide');
     }
 
-    // Trigger on showing popover
-    private onShown() {
-        this.isOpen = true;
-        const popover: HTMLElement = document.querySelector(`.${this.popoverId}`);
-        popover.style.height = formatStyle(this.popoverheight, 'px');
-        popover.style.width = formatStyle(this.popoverwidth, 'px');
-        if (!this.popoverarrow) {
-            document.querySelector('.arrow').classList.add('hidden');
-        }
-        const popoverContent: HTMLElement = popover.querySelector('.popover-content');
-        popoverContent.onkeydown = (event: any) => {
-            // Check for Esc key
-            if (event.keyCode === 27) {
-                this.hidePopover();
-            }
-        };
-        this.invokeEventCallback('show');
-        if (this.interaction === 'hover' || this.interaction === 'default') {
-            popover.onmouseenter = () => {
-                clearTimeout(this.timeOut);
-            };
-            popover.onmouseleave = () => {
-                this.hidePopover();
-            };
-        }
-        const popoverStartBtn: HTMLElement = popover.querySelector('.popover-start');
-        popoverStartBtn.focus();
-    }
+    ngAfterContentInit() {
+        super.ngAfterContentInit();
 
-    private popoverEnd(event: any) {
-        // Check for Tab key
-        if (!event.shiftKey && event.keyCode === 9) {
-            this.hidePopover();
+        if (!this.popoverTemplate){
+            this.event = '';
         }
-    }
-
-    private popoverStart(event: any) {
-        // Check for Shift+Tab key
-        if (event.shiftKey && event.keyCode === 9) {
-            this.hidePopover();
-        }
-    }
-
-    private hidePopover() {
-        this.timeOut = setTimeout(() => {
-            this.isOpen = false;
-            this.$element.find('a').focus();
-        }, 500);
     }
 }
+
+// todo(swathi) keyboard events

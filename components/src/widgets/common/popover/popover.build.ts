@@ -1,30 +1,53 @@
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { IDGenerator } from '@wm/core';
+import { Element } from '@angular/compiler';
 
-const tagName = 'div';
-const idGen = new IDGenerator('wm_popover_ref_');
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+
+const tagName = 'wm-popover';
 
 register('wm-popover', (): IBuildTaskDef => {
     return {
-        pre: attrs => {
-            const counter = idGen.nextUid();
-            let markup = '';
-            // check if the content is partial
-            if (attrs.has('content')) {
-                const contentsource = attrs.get('contentsource');
-                const content = attrs.get('content');
+        template: (node: Element, shared) => shared.set('hasChildren', !!node.children.length),
+        pre: (attrs: Map<string, string>, shared: Map<string, any>) => {
+            const contentSource = attrs.get('contentsource');
+            let popoverTemplate;
 
-                if (contentsource !== 'inline') {
-                    markup = `<div wmContainer partialContainer content=${content}></div>`;
+            if (contentSource !== 'inline') {
+                const content = attrs.get('content');
+                const bindContent = attrs.get('content.bind');
+
+                let contentMarkup = '';
+
+                if (content) {
+                    contentMarkup = `content="${content}"`;
+                } else if (bindContent) {
+                    contentMarkup = `content.bind="${bindContent}"`;
                 }
+
+                popoverTemplate = `<div wmContainer partialContainer ${contentMarkup}></div>`;
+                shared.set('hasChildren', false);
             }
 
-            return `<${tagName} popoverId="${counter}" wmPopover #${counter}="wmPopover"  ${getAttrMarkup(attrs)}><ng-template>
-                        <button class="popover-start" (keydown)="${counter}.popoverStart($event)"></button>
-                        ${markup}
-                        <button class="popover-end" (keydown)="${counter}.popoverEnd($event)"></button>`;
+            let markup = `<${tagName} wmPopover ${getAttrMarkup(attrs)}>`;
+
+            if (popoverTemplate || !!shared.get('hasChildren')) {
+                markup += `<ng-template>`;
+            }
+
+            // todo keyboard navigation - tab
+            if (popoverTemplate) {
+                markup += `${popoverTemplate ? popoverTemplate : ''}</ng-template>`;
+            }
+
+            return markup;
         },
-        post: () => `</ng-template></${tagName}>`
+        post: (attrs: Map<string, string>, shared: Map<string, any>) => {
+            let markup = '';
+            if (!!shared.get('hasChildren')) {
+                markup += `</ng-template>`;
+            }
+
+            return `${markup}</${tagName}>`;
+        }
     };
 });
 

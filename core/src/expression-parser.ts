@@ -24,6 +24,8 @@ const plus = (a, b) => void 0 === a ? b : void 0 === b ? a : a + b;
 const minus = (a, b) => ifDef(a, 0) - ifDef(b, 0);
 const noop = () => {};
 
+export type ParseExprResult = (data?: any, locals?: any) => any;
+
 const exprFnCache = new Map();
 const eventFnCache = new Map();
 const purePipes = new Map();
@@ -456,7 +458,7 @@ enum ExpressionType {
     Action
 }
 
-export function $parseExpr(expr) {
+export function $parseExpr(expr: string): ParseExprResult {
 
     if (!pipeProvider) {
         console.log('set pipe provider');

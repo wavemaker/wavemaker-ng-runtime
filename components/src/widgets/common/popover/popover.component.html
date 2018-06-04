@@ -5,10 +5,12 @@
    [triggers]="event"
    (onShown)="onShown()"
    (onHidden)="onHidden()"
-   [containerClass]="getContainerClass()"
+   containerClass="animated {{contentanimation}} {{popoverContainerCls}}"
    container="body"
-   [isOpen] = "isOpen"
+   [isOpen]="isOpen"
 
+   #anchor
+   name.bind="name"
    wmAnchor
    animation.bind="animation"
    badgevalue.bind="badgevalue"
