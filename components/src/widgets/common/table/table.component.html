@@ -45,41 +45,4 @@
     <ng-container #inlineEdit></ng-container>
 </div>
 
-<div #rowActionsContainer>
-
-</div>
-
-<ng-template #rowActions>
-    <span class="row__actions">
-        <button type="button" data-action-key="updaterow"
-                class="row-action row-action-button app-button btn btn-transparent edit edit-row-button "
-                title="Edit" ng-disabled="false"
-                (click)="editRow()">
-            <i class="app-icon wi wi-pencil"></i>
-        </button>
-        <button type="button" class="save row-action-button btn app-button btn-transparent save-edit-row-button hidden"
-                title="Save">
-            <i class="wi wi-done"></i>
-        </button>
-        <button type="button"
-                class="cancel row-action-button btn app-button btn-transparent cancel-edit-row-button hidden"
-                title="Cancel">
-            <i class="wi wi-cancel"></i>
-        </button>
-        <button type="button" data-action-key="deleterow"
-                class="row-action row-action-button app-button btn btn-transparent delete delete-row-button "
-                title="Delete" ng-disabled="false"  (click)="deleteRow()">
-            <i class="app-icon wi wi-trash"></i>
-        </button>
-
-          <!--<button *ngFor="let action of rowActions;" type="button"-->
-                  <!--class="row-action row-action-button app-button btn {{action.class}}"-->
-                  <!--[ngClass]="{'edit edit-row-button': action.action.indexOf('editRow()') !== -1, 'delete delete-row-button': action.action.indexOf('deleteRow()') !== -1}"-->
-                  <!--[hidden]="!action.show"-->
-                  <!--[tabindex]="action.tabindex"-->
-                  <!--[title]="action.title" [disabled]="action.disabled">-->
-            <!--<i class="app-icon {{action.iconclass}}"></i>-->
-            <!--<span class="btn-caption" *ngIf="action.displayName">{{action.displayName}}</span>-->
-        <!--</button>-->
-    </span>
-</ng-template>
+<ng-container #rowActions></ng-container>

@@ -1660,7 +1660,7 @@ $.widget('wm.datatable', {
                         return;
                     }
 
-                    $requiredEls = $editableElements.find('.ng-invalid-required');
+                    $requiredEls = $editableElements.find('.ng-invalid');
                     //If required fields are present and value is not filled, return here
                     if ($requiredEls.length > 0) {
                         $requiredEls.addClass('ng-touched');
@@ -2123,23 +2123,8 @@ $.widget('wm.datatable', {
             }
         }
         if (this.options.rowActions.length) {
-            $htm.find('.row-action').on('click', {action: 'edit'}, this._handleCustomEvents.bind(this));
             $htm.find('.cancel-edit-row-button').on('click', {action: 'cancel'}, this.toggleEditRow.bind(this));
             $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
-        } else {
-            if ((this.options.editmode !== this.CONSTANTS.FORM && this.options.editmode !== this.CONSTANTS.DIALOG) || (rowOperationsCol && _.includes(rowOperationsCol.operations, 'update'))) {
-                $htm.find('.edit-row-button').on('click', {action: 'edit'}, this.toggleEditRow.bind(this));
-                $htm.find('.cancel-edit-row-button').on('click', {action: 'cancel'}, this.toggleEditRow.bind(this));
-                $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
-            }
-
-            if (rowOperationsCol && _.includes(rowOperationsCol.operations, 'delete')) {
-                deleteRowHandler = this.deleteRowAndUpdateSelectAll;
-                if (!this.options.multiselect) {
-                    deleteRowHandler = this.deleteRow;
-                }
-                $htm.find('td .delete-row-button').on('click', deleteRowHandler.bind(this));
-            }
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
             //On tab out of a row, save the current row and make next row editable
@@ -2389,85 +2374,35 @@ $.widget('wm.datatable', {
     },
 
     //Generates markup for row operations
-    _getRowActionsTemplate: function () {
-        var saveCancelTemplateAdded = false,
-            self = this,
-            rowOperationsCol,
-            actionsTemplate = '<span> ',
-            saveCancelTemplate = '<button type="button" class="save row-action-button btn app-button btn-transparent save-edit-row-button hidden" title="Save"><i class="wi wi-done"></i></button> ' +
-                '<button type="button" class="cancel row-action-button btn app-button btn-transparent cancel-edit-row-button hidden" title="Cancel"><i class="wi wi-cancel"></i></button> ';
-
-        //Generate the expression for properties which have binding expression
-        function generateBindExpr(val) {
-            if (_.startsWith(val, 'bind:')) {
-                return '{{' + _.replace(val, 'bind:', '') + '}}';
-            }
-            return val;
-        }
-
-        if (this.options.rowActions.length) {
-            _.forEach(this.options.rowActions, function (def) {
-                var clsAttr = 'row-action row-action-button app-button btn ' + def.class,
-                    ngShowAttr = '',
-                    ngDisabled = def.disabled ? ' ng-disabled="' + _.replace(def.disabled, 'bind:', '') + '" ' : '';
-                if (def.show === 'true' || def.show === 'false') {
-                    clsAttr += def.show === 'true' ? '' : ' hidden ';
-                } else if (_.includes(def.show, 'bind:')) {
-                    ngShowAttr = _.replace(def.show, 'bind:', '');
-                }
-                //Adding 'edit' class if at least one of the action is 'editRow()'
-                if (_.includes(def.action, 'editRow()')) {
-                    clsAttr += ' edit edit-row-button ';
-                    self.options.actionsEnabled.edit = true;
-                } else if (_.includes(def.action, 'deleteRow()')) {
-                    clsAttr += ' delete delete-row-button ';
-                    self.options.actionsEnabled.delete = true;
-                }
-
-                actionsTemplate += '<button type="button" data-action-key="' + def.key + '" class="' + clsAttr + '" title="' + generateBindExpr(def.title) + '" ' + (ngShowAttr ? ' ng-show="' + ngShowAttr + '"' : '') + (def.tabindex ? (' tabindex="' + def.tabindex + '"') : '') + ngDisabled + '>'
-                    + '<i class="app-icon ' + def.iconclass + '"></i>';
-                if (def.displayName) {
-                    actionsTemplate += '<span class="btn-caption">' + generateBindExpr(def.displayName) + '</span>';//Appending display name
-                }
-                actionsTemplate += '</button>';
-                if (_.includes(def.action, 'editRow()')) {
-                    actionsTemplate += !saveCancelTemplateAdded ? saveCancelTemplate : '';
-                    saveCancelTemplateAdded = true;
-                }
-            });
-        } else {
-            //Appending old template for old projects depending on grid level attributes
-            rowOperationsCol = this._getRowActionsColumnDef() || {};
-            if (_.includes(rowOperationsCol.operations, 'update')) {
+    _setActionsEnabled: function () {
+        var self = this;
+        _.forEach(this.options.rowActions, function (def) {
+            if (_.includes(def.action, 'editRow(')) {
                 self.options.actionsEnabled.edit = true;
-                actionsTemplate += '<button type="button" class="row-action-button btn app-button btn-transparent edit edit-row-button" title="Edit Row"><i class="wi wi-pencil"></i></button> ' +
-                    saveCancelTemplate;
-            }
-            if (_.includes(rowOperationsCol.operations, 'delete')) {
+            } else if (_.includes(def.action, 'deleteRow(')) {
                 self.options.actionsEnabled.delete = true;
-                actionsTemplate += '<button type="button" class="row-action-button btn app-button btn-transparent delete delete-row-button" title="Delete Record"><i class="wi wi-trash"></i></button> ';
             }
-        }
-        actionsTemplate += '</span>';
-        return actionsTemplate;
+        });
     },
 
     //Appends row operations markup to grid template
     _appendRowActions: function ($htm, isNewRow, rowData) {
         var self, template,
             rowOperationsCol = this._getRowActionsColumnDef();
-        this.options.clearViewRef();
         if (this.options.rowActions.length || rowOperationsCol) {
+            this._setActionsEnabled();
             self = this;
-            template = self._getRowActionsTemplate();
             $htm.find("[data-identifier='actionButtons']").each(function (index) {
-                //TODO: Change this
-                $(this).empty().append(self.options.getCompiledTemplate());
-                // if (isNewRow) {
-                //     $(this).empty().append(self.options.getCompiledTemplate(template, rowData, rowOperationsCol));
-                // } else {
-                //     $(this).empty().append(self.options.getCompiledTemplate(template, self.preparedData[index], rowOperationsCol));
-                // }
+                var _rowData, $row, rowId;
+                if (isNewRow) {
+                    _rowData = rowData;
+                } else {
+                    $row = $(this).closest('tr');
+                    rowId = $row.attr('data-row-id');
+                    _rowData = self.options.data[rowId];
+                }
+                self.options.generateRowActions(index, _rowData);
+                $(this).empty().append(self.options.getRowAction(index));
             });
         }
     },
@@ -2485,6 +2420,7 @@ $.widget('wm.datatable', {
         }
         this.gridBody = this.gridElement.find('tbody');
         this._findAndReplaceCompiledTemplates();
+        this.options.clearRowActions();
         this._appendRowActions($htm);
         this.attachEventHandlers($htm);
         this.__setStatus();

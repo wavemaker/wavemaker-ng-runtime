@@ -16,10 +16,51 @@ const OPERATION = {
 export class TableCUDDirective {
 
     constructor(@Self() @Inject(TableComponent) private table) {
+        table.initiateSelectItem = this.initiateSelectItem.bind(this);
         table.updateVariable = this.updateVariable.bind(this);
         table.updateRecord = this.updateRecord.bind(this);
         table.deleteRecord = this.deleteRecord.bind(this);
         table.insertRecord = this.insertRecord.bind(this);
+        table.editRow = this.editRow.bind(this);
+        table.addNewRow = this.addNewRow.bind(this);
+        table.deleteRow = this.deleteRow.bind(this);
+        table.onRecordDelete = this.onRecordDelete.bind(this);
+        table.hideEditRow = this.hideEditRow.bind(this);
+        table.saveRow = this.saveRow.bind(this);
+        table.cancelRow = this.cancelRow.bind(this);
+    }
+
+    private selectItemOnSuccess(row, skipSelectItem, callBack) {
+        /*$timeout is used so that by then $is.dataset has the updated value.
+         * Selection of the item is done in the callback of page navigation so that the item that needs to be selected actually exists in the grid.*/
+        /*Do not select the item if skip selection item is specified*/
+        setTimeout(() => {
+            if (!skipSelectItem) {
+                this.table.selectItem(row, this.table.dataset && this.table.dataset.data);
+            }
+            triggerFn(callBack);
+        }, undefined, false);
+    }
+
+    initiateSelectItem(index, row, skipSelectItem?, isStaticVariable?, callBack?) {
+        /*index === "last" indicates that an insert operation has been successfully performed and navigation to the last page is required.
+         * Hence increment the "dataSize" by 1.*/
+        if (index === 'last') {
+            if (!isStaticVariable) {
+                this.table.dataNavigator.dataSize += 1;
+            }
+            /*Update the data in the current page in the grid after insert/update operations.*/
+            if (!this.table.shownavigation) {
+                index = 'current';
+            }
+        }
+        /*Re-calculate the paging values like pageCount etc that could change due to change in the dataSize.*/
+        this.table.dataNavigator.calculatePagingValues();
+        this.table.dataNavigator.navigatePage(index, null, true, () => {
+            if (this.table.shownavigation || isStaticVariable) {
+                this.selectItemOnSuccess(row, skipSelectItem, callBack);
+            }
+        });
     }
 
     updateVariable(row?, callBack?) {
@@ -138,6 +179,22 @@ export class TableCUDDirective {
         }
     }
 
+    onRecordDelete(callBack?) {
+        let index;
+        /*Check for sanity*/
+        if (this.table.dataNavigator) {
+            this.table.dataNavigator.dataSize -= 1;
+            this.table.dataNavigator.calculatePagingValues();
+            /*If the current page does not contain any records due to deletion, then navigate to the previous page.*/
+            index = this.table.dataNavigator.pageCount < this.table.dataNavigator.dn.currentPage ? 'prev' : undefined;
+            this.table.dataNavigator.navigatePage(index, null, true, () => {
+                setTimeout(() => {
+                    triggerFn(callBack);
+                }, undefined, false);
+            });
+        }
+    }
+
     private deleteSuccessHandler(row, response?, evt?, callBack?) {
         /* check the response whether the data successfully deleted or not , if any error occurred show the
          * corresponding error , other wise remove the row from grid */
@@ -145,7 +202,7 @@ export class TableCUDDirective {
             this.table.toggleMessage(true, 'error', this.table.errormessage || response.error);
             return;
         }
-        this.table.onRecordDelete(callBack);
+        this.onRecordDelete(callBack);
         if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_CRUD)) {
             this.updateVariable(row, callBack);
         }
@@ -164,7 +221,7 @@ export class TableCUDDirective {
                 this.deleteSuccessHandler(row, undefined, evt, callBack);
                 return;
             }
-            dataSource.execute(DataSource.Operation.UPDATE_RECORD, {
+            dataSource.execute(DataSource.Operation.DELETE_RECORD, {
                 row : row,
                 skipNotification : true
             }).then(response => {
@@ -180,12 +237,12 @@ export class TableCUDDirective {
         triggerFn(cancelRowDeleteCallback);
     }
 
-    deleteRecord(row, cancelRowDeleteCallback, evt, callBack) {
-        if (!this.table.confirmdelete) {
-            this.deleteFn(row, cancelRowDeleteCallback, evt, callBack);
-            triggerFn(cancelRowDeleteCallback);
-            return;
-        }
+    deleteRecord(row, cancelRowDeleteCallback?, evt?, callBack?) {
+        // if (!this.table.confirmdelete) {
+        this.deleteFn(row, cancelRowDeleteCallback, evt, callBack);
+        triggerFn(cancelRowDeleteCallback);
+        return;
+        // }
         // TODO: App confirm dialog
         // DialogService._showAppConfirmDialog({
         //     'caption'   : _.get(appLocale, 'MESSAGE_DELETE_RECORD') || 'Delete Record',
@@ -204,6 +261,74 @@ export class TableCUDDirective {
         //         }
         //     }
         // });
+    }
+
+    editRow(evt?) {
+        let row;
+        if (evt && evt.target) {
+            this.table.callDataGridMethod('toggleEditRow', evt, {'selectRow': true, action: 'edit'});
+        } else {
+            // For live form, call the update function with selected item
+            if (this.table.editmode === 'form' || this.table.editmode === 'dialog') {
+                row = evt || this.table.selectedItems[0];
+                this.table.gridOptions.beforeRowUpdate(row);
+            } else {
+                // Wait for the selected item to get updated
+                setTimeout(() => {
+                    row = this.table.datagridElement.find('tr.active');
+                    if (row.length) {
+                        this.table.callDataGridMethod('toggleEditRow', undefined, {$row: row, action: 'edit'});
+                    }
+                });
+            }
+        }
+    }
+
+    addNewRow() {
+        if (!this.table.isGridEditMode) { // If grid is already in edit mode, do not add new row
+            this.table.callDataGridMethod('addNewRow');
+            if (this.table._liveTableParent) {
+                this.table._liveTableParent.addNewRow();
+            }
+        }
+    }
+
+    deleteRow(evt) {
+        let row;
+        if (evt && evt.target) {
+            this.table.callDataGridMethod('deleteRowAndUpdateSelectAll', evt);
+        } else {
+            if (this.table._liveTableParent) {
+                this.table._liveTableParent.deleteRow(this.table.selectedItems[0]);
+                return;
+            }
+            // Wait for the selected item to get updated
+            setTimeout(() => {
+                row = evt || this.table.selectedItems[0];
+                this.deleteRecord(row);
+            });
+        }
+    }
+
+    // Function to hide the edited row
+    hideEditRow() {
+        const $row = this.table.datagridElement.find('tr.row-editing');
+        if ($row.length) {
+            this.table.callDataGridMethod('hideRowEditMode', $row);
+        }
+    }
+
+    // Function to save the row
+    saveRow() {
+        this.table.callDataGridMethod('saveRow');
+    }
+
+    // Function to cancel the edit
+    cancelRow() {
+        const $row = this.table.datagridElement.find('tr.row-editing');
+        if ($row.length) {
+            this.table.callDataGridMethod('cancelEdit', $row);
+        }
     }
 }
 

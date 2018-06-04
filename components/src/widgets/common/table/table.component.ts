@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, ContentChildren, QueryList } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, ContentChildren, QueryList, Self, Inject } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -20,6 +20,13 @@ registerProps();
 
 const DEFAULT_CLS = 'app-grid app-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
+
+const EDIT_MODE = {
+    'QUICK_EDIT': 'quickedit',
+    'INLINE'    : 'inline',
+    'FORM'      : 'form',
+    'DIALOG'    : 'dialog'
+};
 
 const rowOperations = {
     'update': {
@@ -59,14 +66,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ViewChild(PaginationComponent) dataNavigator;
 
     @ViewChild('datagridElement') private _tableElement: ElementRef;
-    @ViewChild('rowActions') rowActionsTmpl: TemplateRef<any>;
-    @ViewChild('rowActionsContainer', {read: ViewContainerRef}) rowActionsContainer: ViewContainerRef;
+
+    @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
+    @ViewChild('rowActions', {read: ViewContainerRef}) rowActionsTl: ViewContainerRef;
 
     @ContentChildren('filterTmpl') filterTmpl: QueryList<any>;
     @ViewChild('multiColumnFilter', {read: ViewContainerRef}) multiColumnFilterTl: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmpl') inlineWidgetTmpl: QueryList<any>;
     @ViewChild('inlineEdit', {read: ViewContainerRef}) inlineEditTl: ViewContainerRef;
+
+    rowActionsCompiledTl: any  = {};
 
     columns = {};
     datagridElement;
@@ -117,6 +127,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     shownavigation = false;
     dataset;
     _liveTableParent;
+    isPartOfLiveGrid;
+    gridElement;
+    isMobile;
 
     fieldDefs = [];
     private fullFieldDefs = [];
@@ -152,6 +165,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     onFilterConditionSelect = noop;
     showClearIcon = noop;
     clearRowFilter = noop;
+    getNavigationTargetBySortInfo: Function;
+    refreshData: Function;
 
     // Inline Edit
     ngform: FormGroup;
@@ -159,6 +174,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     updateRecord: Function;
     deleteRecord: Function;
     insertRecord: Function;
+    editRow: Function;
+    addNewRow: Function;
+    deleteRow: Function;
+    onRecordDelete: Function;
+    initiateSelectItem: Function;
+    hideEditRow: Function;
+    saveRow: Function;
+    cancelRow: Function;
 
     private gridOptions = {
         'data': [],
@@ -259,16 +282,24 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         onBeforeFormRender: () => {
         },
-        clearViewRef: () => {
-            this.rowActionsContainer.clear();
+        clearRowActions: () => {
+            this.rowActionsTl.clear();
         },
         getCompiledTemplate: () => {
-            // TODO: Demo code. Need to change
-            this.rowActionsContainer.createEmbeddedView(this.rowActionsTmpl);
-            return $(this.nativeElement).find('.row__actions')[0];
+        },
+        generateRowActions: (index, row) => {
+            this.rowActionsCompiledTl[index] = [];
+            // For all the columns inside the table, generate the inline widget
+            this.rowActionTmpl.forEach((tmpl) => {
+                this.rowActionsCompiledTl[index].push(...this.rowActionsTl.createEmbeddedView(tmpl, {
+                    row: row
+                }).rootNodes);
+            });
+        },
+        getRowAction: (index) => {
+            return this.rowActionsCompiledTl[index];
         },
         generateInlineEditRow: () => {
-            $appDigest();
             // Clear the view container ref
             this.inlineEditTl.clear();
             this.ngform.reset();
@@ -309,7 +340,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         getBindDataSet: () => {
         },
-        setGridEditMode: () => {
+        setGridEditMode: (val) => {
+            this.isGridEditMode = val;
+            $appDigest();
         },
         setGridState: () => {
         },
@@ -325,7 +358,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         searchHandler: this.searchSortHandler.bind(this),
         sortHandler: this.searchSortHandler.bind(this),
-        timeoutCall: () => {
+        timeoutCall: (fn, delay) => {
+            setTimeout(fn, delay);
         },
         safeApply: () => {
         }
@@ -355,10 +389,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (!gridOptions.colDefs.length && this.fieldDefs.length) {
                 this.setDataGridOption('colDefs', getClonedObject(this.fieldDefs));
             }
-            // Map the col defs to columns
-            _.map(gridOptions.colDefs, column => {
-                this.columns[column.field] = column;
-            });
             // If data and colDefs are present, call on before data render event
             if (!_.isEmpty(newValue) && gridOptions.colDefs.length) {
                 this.invokeEventCallback('beforedatarender', {$data: newValue, $columns: this.columns});
@@ -389,7 +419,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     constructor(inj: Injector,
                 public fb: FormBuilder,
-                @Attribute('dataset.bind') public binddataset) {
+                @Attribute('dataset.bind') public binddataset,
+                @Attribute('readonlygrid') public readonlygrid) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
@@ -410,7 +441,24 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             'gridfirstrowselect': 'selectFirstRow'
         };
 
+        if (this._liveTableParent) {
+            this.isPartOfLiveGrid = true;
+        }
+
+        if (this.readonlygrid || !this.editmode) {
+            if (this.readonlygrid === 'true') {
+                this.editmode = '';
+            } else {
+                if (this.isPartOfLiveGrid) {
+                    this.editmode = this.isPartOfLiveGrid.formlayout === 'inline' ? EDIT_MODE.FORM : EDIT_MODE.DIALOG;
+                } else {
+                    this.editmode = this.readonlygrid ? EDIT_MODE.INLINE : '';
+                }
+            }
+        }
+
         this.gridOptions.colDefs = this.fullFieldDefs;
+        this.gridOptions.rowActions = this.rowActions;
         this.gridOptions.headerConfig = this.headerConfig;
         this.gridOptions.rowNgClass = this.rowngclass;
         this.gridOptions.rowClass = this.rowclass;
@@ -418,17 +466,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.name = this.name;
+        this.gridOptions.messages       = {
+            'selectField': 'Select Field'
+        };
         this.datagridElement = $(this._tableElement.nativeElement);
+
+        this.gridElement = this.$element;
 
         _.forEach(runModeInitialProperties, (value, key) => {
             if (isDefined(this[key])) {
                 this.gridOptions[value] = (this[key] === 'true' || this[key] === true);
             }
-        });
-
-        // This is expose columns property to user so that he can programatically use columns to do some custom logic
-        this.gridOptions.colDefs.map(column => {
-            this.columns[column.field] = column;
         });
 
         this.renderOperationColumns();
@@ -731,7 +779,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     onDataSourceChange() {
         this.fieldDefs.forEach(col => {
-           triggerFn(col.onDataSourceChange.bind(col));
+           triggerFn(col.onDataSourceChange && col.onDataSourceChange.bind(col));
         });
     }
 
@@ -870,6 +918,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.rowFilter[tableColumn.field] = {
             value: undefined
         };
+        this.fieldDefs.forEach(col => {
+            this.columns[col.field] = col;
+        });
     }
 
     registerActions(tableAction) {
@@ -879,73 +930,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     registerRowActions(tableRowAction) {
         this.rowActions.push(tableRowAction);
-    }
-
-    editRow(evt) {
-        let row;
-        if (evt && evt.target) {
-            this.callDataGridMethod('toggleEditRow', evt, {'selectRow': true});
-        } else {
-            // For live form, call the update function with selected item
-            if (this.editmode === 'form' || this.editmode === 'dialog') {
-                row = evt || this.selectedItems[0];
-                this.gridOptions.beforeRowUpdate(row);
-            } else {
-                // Wait for the selected item to get updated
-                // setTimeout(() => {
-                //     row = this.datagridElement.find('tr.active');
-                //     if (row.length) {
-                //         this.callDataGridMethod('toggleEditRow', undefined, {$row: row, action: 'edit'});
-                //     }
-                // });
-            }
-        }
-    }
-
-    addNewRow() {
-        if (!this.isGridEditMode) { // If grid is already in edit mode, do not add new row
-            this.callDataGridMethod('addNewRow');
-            if (this._liveTableParent) {
-                this._liveTableParent.addNewRow();
-            }
-        }
-    }
-
-    deleteRow(evt) {
-        let row;
-        if (evt && evt.target) {
-            this.callDataGridMethod('deleteRowAndUpdateSelectAll', evt);
-        } else {
-            if (this._liveTableParent) {
-                this._liveTableParent.deleteRow(this.selectedItems[0]);
-                return;
-            }
-            // Wait for the selected item to get updated
-            setTimeout(() => {
-                row = evt || this.selectedItems[0];
-                // deleteRecord(row);
-            });
-        }
-    }
-
-    onRecordDelete(callBack?) {
-        let index;
-        /*Check for sanity*/
-        if (this.dataNavigator) {
-            this.dataNavigator.dataSize -= 1;
-            this.dataNavigator.calculatePagingValues();
-            /*If the current page does not contain any records due to deletion, then navigate to the previous page.*/
-            index = this.dataNavigator.pageCount < this.dataNavigator.dn.currentPage ? 'prev' : undefined;
-            this.dataNavigator.navigatePage(index, null, true, () => {
-                setTimeout(() => {
-                    triggerFn(callBack);
-                }, undefined, false);
-            });
-        }
-    }
-
-    getNavigationTargetBySortInfo() {
-        return this.sortInfo && this.sortInfo.direction === 'desc' && _.includes(this.primaryKey, this.sortInfo.field) ? 'first' : 'last';
     }
 
     selectItem(item, data) {
@@ -964,39 +948,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     /* deselect the given item*/
     deselectItem(item) {
         this.callDataGridMethod('deselectRow', item);
-    }
-
-    selectItemOnSuccess(row, skipSelectItem, callBack) {
-        /*$timeout is used so that by then $is.dataset has the updated value.
-         * Selection of the item is done in the callback of page navigation so that the item that needs to be selected actually exists in the grid.*/
-        /*Do not select the item if skip selection item is specified*/
-        setTimeout(() => {
-            if (!skipSelectItem) {
-                this.selectItem(row, this.dataset && this.dataset.data);
-            }
-            triggerFn(callBack);
-        }, undefined, false);
-    }
-
-    initiateSelectItem(index, row, skipSelectItem?, isStaticVariable?, callBack?) {
-        /*index === "last" indicates that an insert operation has been successfully performed and navigation to the last page is required.
-         * Hence increment the "dataSize" by 1.*/
-        if (index === 'last') {
-            if (!isStaticVariable) {
-                this.dataNavigator.dataSize += 1;
-            }
-            /*Update the data in the current page in the grid after insert/update operations.*/
-            if (!this.shownavigation) {
-                index = 'current';
-            }
-        }
-        /*Re-calculate the paging values like pageCount etc that could change due to change in the dataSize.*/
-        this.dataNavigator.calculatePagingValues();
-        this.dataNavigator.navigatePage(index, null, true, () => {
-            if (this.shownavigation || isStaticVariable) {
-                this.selectItemOnSuccess(row, skipSelectItem, callBack);
-            }
-        });
     }
 
     onDataNavigatorDataSetChange(nv) {

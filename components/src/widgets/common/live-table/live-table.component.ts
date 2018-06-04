@@ -33,10 +33,9 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     private dialogId;
     private $queue = [];
 
-    private tableOptions = {
+    private tableOptions: any = {
         'multiselect': false,
-        'setGridEditMode': '',
-        'onRowDelete': this.deleteRow
+        'setGridEditMode': ''
     };
 
     constructor(
@@ -52,6 +51,8 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         if (layoutType === 'dialog') {
             this.isLayoutDialog = true;
             this.dialogId = dialogId;
+        } else {
+            this.tableOptions.onRowDelete = this.deleteRow.bind(this);
         }
     }
 
@@ -65,7 +66,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
                 .debounceTime(250)
                 .subscribe(this.onSelectedItemChange.bind(this));
 
-            if (!this.form) {
+            if (!this.isLayoutDialog && !this.form) {
                 this.table.datagridElement.datatable('option', {
                     'beforeRowUpdate' : () => {
                         this.showErrorMessage();

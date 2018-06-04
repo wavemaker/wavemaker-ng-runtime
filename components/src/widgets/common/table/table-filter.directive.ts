@@ -120,6 +120,14 @@ export class TableFilterSortDirective {
         table.matchModeTypesMap = getMatchModeTypesMap();
         table.matchModeMsgs = getMatchModeMsgs();
         table.emptyMatchModes = emptyMatchModes;
+        table.getNavigationTargetBySortInfo = this.getNavigationTargetBySortInfo.bind(this);
+        table.refreshData = this.refreshData.bind(this);
+    }
+
+    // Get first or last page based on sort info of primary key
+    getNavigationTargetBySortInfo() {
+        return this.table.sortInfo && this.table.sortInfo.direction === 'desc' &&
+                    _.includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
     }
 
     // Get the filter fields as required by datasource
@@ -211,7 +219,7 @@ export class TableFilterSortDirective {
     }
 
     // This method handles the client side sort and search
-    handleClientSideSortSearch(searchSortObj, e, type) {
+    private handleClientSideSortSearch(searchSortObj, e, type) {
         this.table._isClientSearch = true;
 
         let data;
@@ -243,7 +251,7 @@ export class TableFilterSortDirective {
     }
 
     // This method handles the search for pageable datasource
-    handleSinglePageSearch(searchObj) {
+    private handleSinglePageSearch(searchObj) {
         this.table._isPageSearch = true;
 
         let data  = getClonedObject(this.table.gridData);
@@ -273,7 +281,7 @@ export class TableFilterSortDirective {
     }
 
     // This method handles the search for server side variables
-    handleServerSideSearch(searchObj) {
+    private handleServerSideSearch(searchObj) {
         this.table.filterInfo = searchObj;
 
         const sortInfo     = this.table.sortInfo;
@@ -291,7 +299,7 @@ export class TableFilterSortDirective {
     }
 
     // This method handles the sort for server side variables
-    handleSeverSideSort(sortObj, e) {
+    private handleSeverSideSort(sortObj, e) {
         // Update the sort info for passing to datagrid
         this.table.gridOptions.sortInfo.field = sortObj.field;
         this.table.gridOptions.sortInfo.direction = sortObj.direction;
@@ -312,7 +320,7 @@ export class TableFilterSortDirective {
         });
     }
 
-    searchHandler(searchSortObj, e, type) {
+    private searchHandler(searchSortObj, e, type) {
         const dataSource = this.table.datasource;
         if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
             this.handleServerSideSearch(searchSortObj);
@@ -325,7 +333,7 @@ export class TableFilterSortDirective {
         }
     }
 
-    sortHandler(searchSortObj, e, type) {
+    private sortHandler(searchSortObj, e, type) {
         const dataSource = this.table.datasource;
         if (dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
             this.handleSeverSideSort(searchSortObj, e);
@@ -379,7 +387,7 @@ export class TableFilterSortDirective {
     }
 
     // Method to get the updated values when filter on field is changed for multicolumn filter
-    getFilterOnFieldValues(filterDef) {
+    private getFilterOnFieldValues(filterDef) {
         if (!this.table.datasource || !this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
             return;
         }
@@ -440,6 +448,18 @@ export class TableFilterSortDirective {
         if (field) {
             this.getFilterOnFieldValues(field);
         }
+    }
+
+    refreshData(isSamePage) {
+        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
+        const sortInfo     = this.table.sortInfo;
+        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
+        const filterFields = this.getFilterFields(this.table.filterInfo);
+        refreshDataSource(this.table.datasource, {
+            'page': page,
+            'filterFields' : filterFields,
+            'orderBy' : sortOptions
+        });
     }
 }
 
