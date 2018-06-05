@@ -1,6 +1,6 @@
 import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef } from '@angular/core';
 
-import { $invokeWatchers, _WM_APP_PROJECT, setAppRef, setPipeProvider } from '@wm/core';
+import { $invokeWatchers, _WM_APP_PROJECT, hasCordova, setAppRef, setPipeProvider } from '@wm/core';
 import { DialogService } from '@wm/components';
 import { OAuthService } from '@wm/oAuth';
 
@@ -19,7 +19,8 @@ import { PipeProvider } from './services/pipe-provider.service';
             <button wmButton class="btn-primary" caption="Close" click.event="closeDialog()" name="button4"></button>
         </div>
     </div>
-    <div wmNetworkInfoToaster></div>`
+    <div wmNetworkInfoToaster></div>
+    <div wmAppUpdate></div>`
 })
 export class AppComponent implements DoCheck, AfterViewInit {
     constructor(_pipeProvider: PipeProvider, _appRef: ApplicationRef, private elRef: ElementRef, private oAuthService: OAuthService, private dialogService: DialogService) {
@@ -52,13 +53,20 @@ export class AppComponent implements DoCheck, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        const networkInfoEle = $(this.elRef.nativeElement).find('>[wmNetworkInfoToaster]'),
-            target = $('body >[wmNetworkInfoToaster]');
-        if (target.length > 0) {
-            networkInfoEle.insertAfter(target);
-            target.remove();
+        const $eleRef = $(this.elRef.nativeElement),
+            networkInfoEle = $eleRef.find('>[wmNetworkInfoToaster]'),
+            appUpdateEle = $eleRef.find('>[wmAppUpdate]'),
+            target = $('body >wm-network-info-toaster');
+        if (hasCordova()) {
+            appUpdateEle.appendTo('body:first');
+            if (target.length > 0) {
+                networkInfoEle.insertAfter(target);
+                target.remove();
+            }
         } else {
             networkInfoEle.remove();
+            appUpdateEle.remove();
+            target.remove();
         }
     }
 }

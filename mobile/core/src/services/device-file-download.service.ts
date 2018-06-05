@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file';
 
 import { DeviceFileService } from './device-file.service';
+import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
+import { Observer } from 'rxjs/Observer';
 
 const MAX_CONCURRENT_DOWNLOADS = 2;
 
@@ -12,16 +14,19 @@ export class DeviceFileDownloadService {
     private _downloadQueue = [];
     private _concurrentDownloads = 0;
 
-    constructor(private cordovaFile: File, private deviceFileService: DeviceFileService) {
+    constructor(
+        private cordovaFile: File,
+        private http: HttpClient,
+        private deviceFileService: DeviceFileService) {
 
     }
 
-    public download(url: string, isPersistent: boolean, destFolder?: string, destFile?: string): Promise<string> {
-        return this.addToDownloadQueue(url, isPersistent, destFolder, destFile);
+    public download(url: string, isPersistent: boolean, destFolder?: string, destFile?: string, progressObserver?: Observer<any>): Promise<string> {
+        return this.addToDownloadQueue(url, isPersistent, destFolder, destFile, progressObserver);
     }
 
     // Adds to download request queue
-    private addToDownloadQueue(url: string, isPersistent: boolean, destFolder?: string, destFile?: string): Promise<string> {
+    private addToDownloadQueue(url: string, isPersistent: boolean, destFolder?: string, destFile?: string, progressObserver?: Observer<any>): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             this._downloadQueue.push({
                 url: url,
@@ -29,7 +34,8 @@ export class DeviceFileDownloadService {
                 destFolder: destFolder,
                 destFile: destFile,
                 resolve: resolve,
-                reject: reject
+                reject: reject,
+                progressObserver: progressObserver
             });
             if (this._concurrentDownloads < MAX_CONCURRENT_DOWNLOADS) {
                 this.downloadNext();
@@ -65,7 +71,7 @@ export class DeviceFileDownloadService {
             .then(newFileName => {
                 fileName = newFileName;
                 filePath = req.destFolder + newFileName;
-                return this.sendHttpRequest(req.url);
+                return this.sendHttpRequest(req.url, req.progressObserver);
             }).then((blob) => {
                 return this.cordovaFile.writeFile(req.destFolder, fileName, blob);
             }).then(() => {
@@ -78,24 +84,24 @@ export class DeviceFileDownloadService {
             });
     }
 
-    private sendHttpRequest(url: string): Promise<Blob> {
-        return new Promise<Blob>( (resolve, reject) => {
-            // TODO: instead of xhr, use http-service
-            const oReq = new XMLHttpRequest();
-            oReq.open('GET', url, true);
-            // Define how you want the XHR data to come back
-            oReq.responseType = 'blob';
-            oReq.onload = oEvent => {
-                const blob = oReq.response; // Note: not oReq.responseText
-                if (blob) {
-                    resolve(blob);
-                } else {
-                    reject('Not able to download');
-                }
-            };
-            oReq.onerror = reject;
-            oReq.onabort = reject;
-            oReq.send();
+    private sendHttpRequest(url: string, progressObserver: Observer<HttpEvent<any>>): Promise<Blob> {
+        const req = new HttpRequest('GET', url, {
+            responseType: 'blob',
+            reportProgress: progressObserver != null
         });
+        return this.http.request(req)
+            .map(e => {
+                if (progressObserver && progressObserver.next && e.type === HttpEventType.DownloadProgress) {
+                    progressObserver.next(e);
+                }
+                return e;
+            }).filter(e => e.type === HttpEventType.Response)
+            .map( e => {
+                if (progressObserver && progressObserver.complete) {
+                    progressObserver.complete();
+                }
+                return (e as HttpResponse<Blob>).body;
+            })
+            .toPromise();
     }
 }
