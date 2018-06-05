@@ -1053,12 +1053,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     export($item) {
         let filterFields;
         const sortOptions = _.isEmpty(this.sortInfo) ? '' : this.sortInfo.field + ' ' + this.sortInfo.direction;
-        const fields = [];
+        const columns = {};
         let isValid;
         let requestData;
         this.fieldDefs.forEach(fieldDef => {
             // Do not add the row operation actions column to the exported file.
-            if (fieldDef.field === ROW_OPS_FIELD) {
+            if (fieldDef.field === ROW_OPS_FIELD || !fieldDef.show) {
                 return;
             }
             const option = {
@@ -1067,26 +1067,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // If column has exportexpression, then send form the expression as required by backend.
             // otherwise send the field name.
             if (fieldDef.exportexpression) {
-                (<any>option).expression = '${' + fieldDef.exportexpression + '}';
+                (<any>option).expression = fieldDef.exportexpression;
             } else {
                 (<any>option).field = fieldDef.field;
             }
-            fields.push(option);
+            columns[fieldDef.field] = option;
         });
         filterFields = this.getFilterFields(this.filterInfo);
         requestData = {
-            'matchMode'    : 'anywhere',
-            'filterFields' : filterFields,
-            'orderBy'      : sortOptions,
-            'exportType'   : $item.label,
-            'logicalOp'    : 'AND',
-            'size'         : this.exportdatasize,
-            'fields'       : fields
+            matchMode : 'anywhere',
+            filterFields : filterFields,
+            orderBy : sortOptions,
+            exportType : $item.label,
+            logicalOp : 'AND',
+            size : this.exportdatasize,
+            columns : columns
         };
         isValid = this.invokeEventCallback('beforeexport', {$data: requestData});
         if (isValid === false) {
             return;
         }
+        requestData.fields = _.values(requestData.columns);
         this.datasource.execute(DataSource.Operation.DOWNLOAD, requestData);
     }
 

@@ -276,23 +276,23 @@ export class LiveFilterDirective {
             }
         });
 
-        if (options.exportFormat) {
+        if (options.exportType) {
             return this.form.datasource.execute(DataSource.Operation.DOWNLOAD, {
-                'matchMode'    : 'anywhere',
-                'filterFields' : formFields,
-                'orderBy'      : orderBy,
-                'exportFormat' : options.exportFormat,
-                'logicalOp'    : 'AND',
-                'size'         : options.exportdatasize
+                matchMode : 'anywhere',
+                filterFields : formFields,
+                orderBy : orderBy,
+                exportType : options.exportType,
+                logicalOp : 'AND',
+                size : options.exportdatasize
             });
         }
         return this.form.datasource.execute(DataSource.Operation.LIST_RECORDS, {
-            'filterFields'       : formFields,
-            'orderBy'            : orderBy,
-            'page'               : page,
-            'pagesize'           : this.form.pagesize || 20,
-            'skipDataSetUpdate'  : true, // dont update the actual variable dataset,
-            'inFlightBehavior'   : 'executeAll'
+            filterFields : formFields,
+            orderBy : orderBy,
+            page : page,
+            pagesize : this.form.pagesize || 20,
+            skipDataSetUpdate : true, // dont update the actual variable dataset,
+            inFlightBehavior : 'executeAll'
         }).then(response => {
             const result = <any>{};
             const data = response.data;
