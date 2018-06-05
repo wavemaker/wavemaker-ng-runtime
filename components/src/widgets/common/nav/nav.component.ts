@@ -1,12 +1,11 @@
-import { AfterViewInit, Component, ViewChildren, Injector, OnInit, QueryList } from '@angular/core';
-
-import { addClass, switchClass } from '@wm/core';
+import {AfterViewInit, ChangeDetectorRef, Component, Injector, OnInit} from '@angular/core';
+import { Router } from '@angular/router';
+import {addClass, switchClass, openLink, getUrlParams, getRouteFromNavLink, evalExp} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import {provideAsWidgetRef} from '../../../utils/widget-utils';
 import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
-import { MenuComponent } from '../menu/menu.component';
 
 registerProps();
 
@@ -32,15 +31,11 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
     public type;
     public layout;
     public autoclose;
-    public isOpen;
-
-    private menuSubscribers = [];
-
-    // to query all the menu components in the view.
-    @ViewChildren(MenuComponent) menus: QueryList<MenuComponent>;
 
     constructor(
-        inj: Injector
+        inj: Injector,
+        private cd: ChangeDetectorRef,
+        private route: Router
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
@@ -60,21 +55,21 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
             switchClass(childNode, '', 'active');
         });
         addClass(nodeRef, 'active');
-        this.invokeEventCallback('select', {$event, $item: node});
-        this.selecteditem = node;
+        this.selecteditem = this.trimNode(node);
+        this.invokeEventCallback('select', {$event, $item: this.selecteditem});
         if (node) {
-            const itemLink: string   = node[this.itemlink] || node.link;
-            const itemAction: string = node[this.itemaction] || node.action;
+            let itemLink: string   = node.link;
+            const itemAction: string = node.action;
             if (itemAction) {
-                // TODO: Evaluating the action expression
-                /*Utils.evalExp($el.scope(), itemAction).then(function () {
-                    if (itemLink) {
-                        $window.location.href = itemLink;
-                    }
-                });*/
+                evalExp(itemAction, node, (this.inj as any).view.context);
             } else if (itemLink) {
-                // If action is not present and link is there
-                window.location.href = itemLink;
+                if (itemLink.startsWith('#/')) {
+                    const queryParams = getUrlParams(itemLink);
+                    itemLink = getRouteFromNavLink(itemLink);
+                    this.route.navigate([itemLink], { queryParams});
+                } else {
+                    openLink(itemLink);
+                }
             }
         }
     }
@@ -91,26 +86,20 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
 
     /**
      * invoked from the menu widget when a menu item is selected.
-     * @param e
+     * @param $event
+     * @param widget
      * @param $item
      */
-    _onMenuItemSelect(e, $item) {
-        this.selecteditem = $item;
-        this.invokeEventCallback('select', {$event: e, $item});
+    onMenuItemSelect($event, widget, $item) {
+        this.selecteditem = this.trimNode($item);
+        this.invokeEventCallback('select', {$event, $item: this.selecteditem});
+    }
+
+    onMenuHide() {
+        this.cd.detectChanges();
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        // subscribe to the menuItemSelect event on the menu.
-        this.menus.changes.subscribe((menus) => {
-            // menu subscribes list.
-            this.menuSubscribers.forEach((subscriber) => subscriber.unsubscribe());
-            this.menuSubscribers.length = 0;
-            menus.forEach( (menu) => {
-                this.menuSubscribers.push(menu.select.asObservable().subscribe((e: any) => {
-                    this._onMenuItemSelect(e.$event, e.$item);
-                }));
-            });
-        });
     }
 }

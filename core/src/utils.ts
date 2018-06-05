@@ -1,4 +1,5 @@
 import { DataType } from './enums';
+import { $watch } from '@wm/core';
 
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
@@ -22,8 +23,9 @@ const REGEX = {
     PAGE_RESOURCE_PATH: /^\/pages\/.*\.(js|css|html|json)$/,
     MIN_PAGE_RESOURCE_PATH: /.*(page.min.html)$/,
     VALID_EMAIL: /^[a-zA-Z][\w.+]+@[a-zA-Z_]+?\.[a-zA-Z.]{1,4}[a-zA-Z]$/,
-    VALID_WEB_URL: /^(http[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9=:?\/\.\-]+(\.[a-zA-Z]{2,5}[\.]{0,1})?/,  // ref : http://stackoverflow.com/questions/4314741/url-regex-validation
-    VALID_WEBSOCKET_URL: /^(ws[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9=:?\/\.\-]+(\.[a-zA-Z]{2,5}[\.]{0,1})?/,  // ref : http://stackoverflow.com/questions/4314741/url-regex-validation
+    VALID_WEB_URL: /^(http[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9=:?\/\.\-]+(\.[a-zA-Z]{2,5}[\.]{0,1})?/,
+    VALID_WEBSOCKET_URL: /^(ws[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9=:?\/\.\-]+(\.[a-zA-Z]{2,5}[\.]{0,1})?/,
+    VALID_RELATIVE_URL: /^(?!www\.|(?:http|ftp)s?:\/\/|[A-Za-z]:\\|\/\/).*/,
     REPLACE_PATTERN: /\$\{([^\}]+)\}/g,
     ZIP_FILE: /\.zip$/i,
     EXE_FILE: /\.exe$/i,
@@ -175,8 +177,8 @@ export const prettifyLabel = label => {
 /*Accepts an array or a string separated with symbol and returns prettified result*/
 export const prettifyLabels = (names, separator?) => {
     let modifiedNames,
-        namesArray = [],
-        isArray    = _.isArray(names);
+        namesArray = [];
+    const isArray    = _.isArray(names);
     separator = separator || ',';
 
     if (!isArray) {
@@ -889,4 +891,52 @@ export const getAbortableDefer = () => {
 export const createCSSRule = (ruleSelector: string, rules: string) => {
     const stylesheet = document.styleSheets[0];
     stylesheet.insertRule(`${ruleSelector} { ${rules} }`);
+};
+
+export const getUrlParams = (link) => {
+    const params = {};
+    // If url params are present, construct params object and pass it to search
+    const index = link.indexOf('?');
+    if (index !== -1) {
+        const queryParams = _.split(link.substring(index + 1, link.length), '&');
+        queryParams.forEach((param) => {
+            param = _.split(param, '=');
+            params[param[0]] = param[1];
+        });
+    }
+    return params;
+};
+
+export const getRouteFromNavLink = (link) => {
+    link  = link.replace('#/', '/');
+    const index = link.indexOf('?');
+    if (index !== -1) {
+        link = link.substring(0, index);
+    }
+    return link;
+};
+
+const isVariableOrActionEvent = (expr) => {
+    return _.startsWith(expr, 'Variables.') || _.startsWith(expr, 'Actions.') || _.startsWith(expr, 'Variables[') || _.startsWith(expr, 'Actions[') ;
+};
+
+
+export const evalExp = (evtValue, scope, parentScope) => {
+    return new Promise((resolve) => {
+        // Modifying expression in to array notation for variables with special characters in name
+        if (_.includes(evtValue, 'Variables.') || _.includes(evtValue, 'Actions.')) {
+            const parts = evtValue.split('.');
+            evtValue = parts[0] + '["' + parts[1] + '"].' + parts[2];
+        }
+        // Evaluating in timeout so that the binding get updated
+        setTimeout(() => {
+            // Evaluating for Variables,Widgets and Form events inside list
+            if (isVariableOrActionEvent(evtValue) || _.startsWith(evtValue, 'Widgets.') || !_.includes(evtValue, '.')) {
+                const unWatcher = $watch(evtValue, scope, parentScope, noop);
+                unWatcher();
+            }
+            resolve();
+        });
+    });
+
 };
