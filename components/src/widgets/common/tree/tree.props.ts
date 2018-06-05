@@ -5,7 +5,7 @@ export const registerProps = () => {
         'wm-tree',
         new Map(
             [
-                ['dataset', {value: 'node1, node2, node3', ...PROP_STRING_NOTIFY}],
+                ['dataset', {value: 'node1, node2, node3', notify: true}],
                 ['datavalue', PROP_STRING_NOTIFY],
                 ['levels', {value: 0, ...PROP_NUMBER}],
                 ['nodeaction', PROP_STRING],

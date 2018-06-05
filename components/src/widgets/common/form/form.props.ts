@@ -9,7 +9,7 @@ const propsMap = new Map(
         ['captionwidth', {value: 'xs-12 sm-3 md-3 lg-3', ...PROP_STRING_NOTIFY}],
         ['class', PROP_STRING],
         ['collapsible', PROP_BOOLEAN],
-        ['dataset', PROP_STRING],
+        ['dataset', {notify: true}],
         ['datasource', PROP_STRING_NOTIFY],
         ['expanded', {value: true, ...PROP_BOOLEAN}],
         ['iconclass', PROP_STRING],

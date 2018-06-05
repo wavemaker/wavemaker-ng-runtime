@@ -5,7 +5,7 @@ export const registerProps = () => {
         'wm-media-list',
         new Map(
             [
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['layout', {value: 'Single-row', ...PROP_STRING_NOTIFY}],
                 ['mediaurl', PROP_STRING],
                 ['thumbnailheight', {value: '100pt', ...PROP_STRING}],

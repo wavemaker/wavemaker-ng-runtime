@@ -6,7 +6,7 @@ export const searchProps = new Map(
         ['class', PROP_STRING],
         ['datacompletemsg', {value: 'No more data to load', ...PROP_STRING}],
         ['datafield', {value: 'All Fields', ...PROP_STRING_NOTIFY}],
-        ['dataset', PROP_STRING_NOTIFY],
+        ['dataset', {notify: true}],
         ['datavalue', PROP_STRING_NOTIFY],
         ['disabled', PROP_BOOLEAN],
         ['displayimagesrc', PROP_STRING_NOTIFY],

@@ -4,7 +4,7 @@ export const checkboxsetProps = new Map(
     [
         ['class', PROP_STRING],
         ['datafield', PROP_STRING_NOTIFY],
-        ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_STRING_NOTIFY}],
+        ['dataset', {value: 'Option 1, Option 2, Option 3', notify: true}],
         ['datavalue', PROP_STRING_NOTIFY],
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING_NOTIFY],

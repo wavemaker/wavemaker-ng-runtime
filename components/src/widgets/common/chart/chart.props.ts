@@ -12,7 +12,7 @@ export const registerProps = () => {
                 ['bubblesize', PROP_STRING],
                 ['centerlabel', {value: false, ...PROP_BOOLEAN}],
                 ['customcolors', PROP_STRING],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['donutratio', {value: 'medium', ...PROP_STRING}],
                 ['formattype', {value: '', PROP_STRING}],
                 ['groupby', PROP_STRING],

@@ -5,7 +5,7 @@ export const ratingProps = new Map(
         ['caption', PROP_STRING],
         ['class', PROP_STRING],
         ['datafield', PROP_STRING_NOTIFY],
-        ['dataset', PROP_STRING_NOTIFY],
+        ['dataset', {notify: true}],
         ['datavalue', PROP_STRING_NOTIFY],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING_NOTIFY],

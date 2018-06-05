@@ -8,7 +8,7 @@ export const registerProps = () => {
                 ['boundarylinks', {value: false, ...PROP_BOOLEAN}],
                 ['class', {...PROP_STRING}],
                 ['datasource', PROP_STRING_NOTIFY],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['disableitem', PROP_BOOLEAN_NOTIFY],
                 ['enablereorder', PROP_BOOLEAN],

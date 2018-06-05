@@ -1,4 +1,5 @@
 import { Directive, Injector } from '@angular/core';
+
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
 import { registerProps } from './nav-item.props';
 import { StylableComponent } from '../../base/stylable.component';

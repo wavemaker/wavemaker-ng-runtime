@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['confirmdelete', {value: 'Are you sure you want to delete this?', ...PROP_STRING}],
                 ['datasource', PROP_STRING_NOTIFY],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['deletemessage', {value: 'Record deleted successfully', ...PROP_STRING}],
                 ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['editmode', PROP_STRING],

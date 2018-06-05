@@ -87,7 +87,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent implements Aft
     }
 
     onItemClick ($item) {
-        const canNavigate = !(this.invokeEventCallback('beforenavigate', {$item: this.trimNode($item)}) === false);
+        const canNavigate = !(this.invokeEventCallback('beforenavigate', {$item: _.omit($item, ['children', 'value'])}) === false);
         let itemLink = $item.link;
         if (itemLink && canNavigate) {
             if (itemLink.startsWith('#/')) {

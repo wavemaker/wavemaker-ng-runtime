@@ -13,7 +13,7 @@ export const navbarProps = new Map(
         ['backgroundrepeat', PROP_STRING],
         ['backgroundsize', PROP_STRING],
         ['datafield', PROP_STRING],
-        ['dataset', PROP_STRING_NOTIFY],
+        ['dataset', {notify: true}],
         ['datavalue', PROP_STRING],
         ['defaultview', PROP_STRING_NOTIFY],
         ['displayimagesrc', PROP_STRING],

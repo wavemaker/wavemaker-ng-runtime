@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['class', PROP_STRING],
                 // TODO: all nav related properties can be grouped.
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['itemlabel', PROP_STRING_NOTIFY],
                 ['itemid', PROP_STRING_NOTIFY],
                 ['itemlink', PROP_STRING_NOTIFY],

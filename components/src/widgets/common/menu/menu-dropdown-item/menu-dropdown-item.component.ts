@@ -30,7 +30,7 @@ export class MenuDropdownItemComponent implements OnInit {
     constructor(
         private route: Router,
         private menuRef: MenuComponent,
-        private userExecutionContext: UserDefinedExecutionContext,
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Optional() private parentNav: NavComponent,
         elRef: ElementRef,
     ) {
@@ -72,7 +72,7 @@ export class MenuDropdownItemComponent implements OnInit {
                 this.itemActionFn = $parseEvent(itemAction);
             }
 
-            this.itemActionFn(this.userExecutionContext, Object.create(item));
+            this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
         } else if (menuLink) {
             if (menuLink.startsWith('#/')) {
                 const queryParams = getUrlParams(menuLink);

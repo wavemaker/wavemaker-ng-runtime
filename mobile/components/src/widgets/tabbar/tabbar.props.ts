@@ -5,7 +5,7 @@ export const registerProps = () => {
         'wm-mobile-tabbar',
         new Map(
             [
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['itemicon', PROP_STRING],
                 ['itemlabel', PROP_STRING],
                 ['itemlink', PROP_STRING],

@@ -14,7 +14,7 @@ export const registerProps = () => {
                 ['colNgClass', PROP_STRING],
                 ['currencypattern', PROP_STRING],
                 ['datafield', PROP_STRING_NOTIFY],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['datepattern', PROP_STRING],
                 ['defaultvalue', PROP_STRING_NOTIFY],
                 ['disabled', PROP_BOOLEAN_NOTIFY],

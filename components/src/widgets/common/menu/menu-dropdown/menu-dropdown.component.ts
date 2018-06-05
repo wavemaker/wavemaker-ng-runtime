@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input } from '@angular/core';
 
 import { addClass } from '@wm/core';
+
 import { MenuComponent } from '../menu.component';
 
 const animationClasses = {

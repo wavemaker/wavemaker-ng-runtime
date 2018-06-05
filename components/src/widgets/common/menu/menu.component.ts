@@ -9,6 +9,8 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './menu.props';
 import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
 
+declare const _;
+
 registerProps();
 
 const POSITION = {
@@ -98,7 +100,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     }
 
     public onMenuItemSelect(args) {
-        args.$item = this.trimNode(args.$item);
+        args.$item = _.omit(args.$item, ['children', 'value']);
         this.invokeEventCallback('select', args);
     }
 }

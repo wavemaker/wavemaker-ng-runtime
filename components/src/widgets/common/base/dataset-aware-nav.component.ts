@@ -1,5 +1,6 @@
-import { Injector, OnInit } from '@angular/core';
-import { $appDigest, findValueOf, isObject, validateAccessRoles, isDefined } from '@wm/core';
+import { Injector } from '@angular/core';
+
+import { $appDigest, findValueOf, isObject, validateAccessRoles } from '@wm/core';
 
 import { createArrayFrom } from '../../../utils/data-utils';
 import { getEvaluatedData } from '../../../utils/widget-utils';
@@ -20,7 +21,7 @@ const getValidLink = (link) => {
     }
 };
 
-export class DatasetAwareNavComponent extends StylableComponent implements OnInit {
+export class DatasetAwareNavComponent extends StylableComponent {
 
     public nodes: Array<NavNode> = [];
     public dataset: any;
@@ -68,18 +69,18 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
     private getNode(fields, node): NavNode {
         const children = getEvaluatedData(node, {expression: 'itemchildren', bindExpression: this.binditemchildren}) || node[fields.childrenField];
         return {
-            action   : getEvaluatedData(node, {expression: 'itemaction', bindExpression: this.binditemaction}) || node[fields.actionField],
-            badge    : getEvaluatedData(node, {expression: 'itembadge', bindExpression: this.binditembadge}) || node[fields.badgeField],
-            children : Array.isArray(children) ? this.getNodes(children) : [],
-            class    : node[fields.classField],
-            disabled : node.disabled,
-            icon     : getEvaluatedData(node, {expression: 'itemicon', bindExpression: this.binditemicon}) || node[fields.iconField],
-            id       : getEvaluatedData(node, {expression: 'itemid', bindExpression: this.binditemid}) || node[fields.idField],
-            label    : getEvaluatedData(node, {expression: 'itemlabel', bindExpression: this.binditemlabel}) || node[fields.labelField],
-            link     : getValidLink(getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}) || node[fields.linkField]),
-            role     : getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}),
+            action: getEvaluatedData(node, {expression: 'itemaction', bindExpression: this.binditemaction}) || node[fields.actionField],
+            badge: getEvaluatedData(node, {expression: 'itembadge', bindExpression: this.binditembadge}) || node[fields.badgeField],
+            children: Array.isArray(children) ? this.getNodes(children) : [],
+            class: node[fields.classField],
+            disabled: node.disabled,
+            icon: getEvaluatedData(node, {expression: 'itemicon', bindExpression: this.binditemicon}) || node[fields.iconField],
+            id: getEvaluatedData(node, {expression: 'itemid', bindExpression: this.binditemid}) || node[fields.idField],
+            label: getEvaluatedData(node, {expression: 'itemlabel', bindExpression: this.binditemlabel}) || node[fields.labelField],
+            link: getValidLink(getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}) || node[fields.linkField]),
+            role: getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}),
             // older projects have display field & data field property for menu.
-            value    : this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
+            value: this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
         };
     }
 
@@ -90,14 +91,14 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
     getItemFieldsMap() {
         if (!this._itemFieldMap) {
             this._itemFieldMap = {
-                idField : this.itemid || 'itemid',
-                iconField : this.itemicon || 'icon',
-                labelField : this.itemlabel || 'label',
-                linkField : this.itemlink || 'link',
-                badgeField : this.itembadge || 'badge',
-                childrenField : this.itemchildren || 'children',
-                classField : this.itemclass || 'class',
-                actionField : this.itemaction || 'action'
+                idField: this.itemid || 'itemid',
+                iconField: this.itemicon || 'icon',
+                labelField: this.itemlabel || 'label',
+                linkField: this.itemlink || 'link',
+                badgeField: this.itembadge || 'badge',
+                childrenField: this.itemchildren || 'children',
+                classField: this.itemclass || 'class',
+                actionField: this.itemaction || 'action'
             };
         }
         return this._itemFieldMap;
@@ -165,20 +166,6 @@ export class DatasetAwareNavComponent extends StylableComponent implements OnIni
                 this._resetNodes();
                 break;
         }
-    }
-
-    protected trimNode(item) {
-        const result = {};
-        _.forEach(item, (value, key) => {
-            if (isDefined(value) && ['children', 'value'].indexOf(key) === -1) {
-                result[key] = value;
-            }
-        });
-        return result;
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 }
 

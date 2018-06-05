@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['boundarylinks', {value: false, ...PROP_BOOLEAN}],
                 ['class', PROP_STRING],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['forceellipses', {value: true, ...PROP_BOOLEAN}],
                 ['maxResults', PROP_NUMBER_NOTIFY],

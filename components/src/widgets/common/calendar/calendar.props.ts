@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['controls', {value: 'navigation, today, year, month, week, day', ...PROP_STRING}],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['datavalue', PROP_STRING],
                 ['eventallday', PROP_STRING],
                 ['eventclass', PROP_STRING],

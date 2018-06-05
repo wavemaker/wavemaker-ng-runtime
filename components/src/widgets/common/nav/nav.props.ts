@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['autoclose', Object.assign({value: 'always'}, PROP_STRING)],
                 ['class', PROP_STRING],
-                ['dataset', PROP_STRING_NOTIFY],
+                ['dataset', {notify: true}],
                 ['itemlabel', PROP_STRING_NOTIFY],
                 ['itemlink', PROP_STRING_NOTIFY],
                 ['itemicon', PROP_STRING_NOTIFY],

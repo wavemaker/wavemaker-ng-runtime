@@ -1,13 +1,15 @@
-<ng-template #menuRef let-node="node" let-index="index">
-    <div wmMenu dropdown (onHidden)="onMenuHide()" type="anchor" autoclose.bind="autoclose"
-         caption.bind="node.label" dataset.bind="node.children" select.event="onMenuItemSelect($event, widget, $item)"></div>
+<ng-template #menuRef let-item="item" let-index="index">
+    <div wmMenu dropdown (onHidden)="triggerDigest()" (onShown)="triggerDigest()" type="anchor" autoclose.bind="autoclose"
+         caption.bind="item.label" dataset.bind="item.children" select.event="onMenuItemSelect($event, widget, $item)"></div>
 </ng-template>
-<li class="app-nav-item {{node.class}}" *ngFor="let node of nodes; let index = index;" #nodeRef>
-    <a class="app-anchor" href="javascript:void(0)" *ngIf="!node.children.length" (click)="onNavSelect($event, node, nodeRef)">
-        <i class="app-nav-icon" [ngClass]="node.icon"></i>
-        <span class="anchor-caption" [textContent]="node.label"></span>
-        <span class="badge" [textContent]="node.badge"></span>
+
+<li class="app-nav-item {{item.class}}" *ngFor="let item of nodes; let index = index;" #liRef>
+    <a class="app-anchor" href="javascript:void(0)" *ngIf="!item.children.length" (click)="onNavSelect($event, item, liRef)">
+        <i class="app-nav-icon" [ngClass]="item.icon"></i>
+        <span class="anchor-caption" [textContent]="item.label"></span>
+        <span class="badge" [textContent]="item.badge"></span>
     </a>
-    <ng-container [ngTemplateOutlet]="menuRef" [ngTemplateOutletContext]="{node:node, index:index}" *ngIf="node.children.length"></ng-container>
+    <ng-container [ngTemplateOutlet]="menuRef" [ngTemplateOutletContext]="{item: item, index:index}" *ngIf="item.children.length"></ng-container>
 </li>
+
 <ng-content *ngIf="!nodes.length" select="[wmNavItem]"></ng-content>
