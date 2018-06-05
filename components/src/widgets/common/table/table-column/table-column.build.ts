@@ -1,6 +1,6 @@
 import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { DataType, FormWidgetType, getFormWidgetTemplate } from '@wm/core';
-import { getDataTableFilterWidget } from '../../../../utils/live-utils';
+import { DataType, getFormWidgetTemplate } from '@wm/core';
+import { getDataTableFilterWidget, getEditModeWidget} from '../../../../utils/live-utils';
 
 const tagName = 'div';
 
@@ -38,7 +38,11 @@ const getFilterTemplate = (attrs, pCounter)  => {
 // get the inline widget template
 const getInlineEditWidgetTmpl = (attrs) => {
     const fieldName = attrs.get('binding');
-    const widget = attrs.get('edit-widget-type') || FormWidgetType.TEXT;
+    const widget = attrs.get('edit-widget-type') || getEditModeWidget({
+        'type': attrs.get('type'),
+        'related-entity-name': attrs.get('related-entity-name'),
+        'primary-key': attrs.get('primary-key')
+    });
     const innerTmpl = `#inlineWidget data-col-identifier="${fieldName}" data-field-name="${fieldName}" formControlName="${fieldName}"`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs);
 

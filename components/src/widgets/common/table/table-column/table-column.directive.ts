@@ -1,7 +1,7 @@
 import { Directive, Injector, OnInit, Optional, ContentChildren, Attribute, AfterContentInit } from '@angular/core';
 
 import { BaseComponent } from '../../base/base.component';
-import { getDataTableFilterWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
+import { getDataTableFilterWidget, setHeaderConfigForTable, getEditModeWidget, getDefaultValue } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
 import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
@@ -14,6 +14,9 @@ declare const _;
 registerProps();
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
+
+const inlineWidgetProps = ['datafield', 'displayfield', 'disabled', 'required', 'placeholder', 'searchkey', 'displaylabel',
+                            'checkedvalue', 'uncheckedvalue', 'showdropdownon'];
 
 @Directive({
     selector: '[wmTableColumn]',
@@ -28,7 +31,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     private filterWidget;
     private inlineWidget;
-    private IsPropsInitialized;
+    private _IsPropsInitialized;
     private _filterDataSet;
     private _dataSet;
     private _isRowFilter;
@@ -56,6 +59,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     textcolor;
     type;
     width;
+    editdatepattern;
     filterdatafield;
     filterdisplayfield;
     filterdisplaylabel;
@@ -106,7 +110,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             displayName: this.displayName
         }, this.group && this.group.name);
 
-        this.IsPropsInitialized = true;
+        this._IsPropsInitialized = true;
 
     }
 
@@ -248,9 +252,11 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.inlineWidget.registerReadyStateListener(() => {
             if (isDataSetWidget(this['edit-widget-type'])) {
                 this.inlineWidget.dataset = this._dataSet;
-                this.inlineWidget.datafield = this.datafield;
-                this.inlineWidget.displayfield = this.displayfield;
             }
+            inlineWidgetProps.forEach(key => {
+                this.setInlineWidgetProp(key, this[key]);
+            });
+            this.setInlineWidgetProp('datepattern', this.editdatepattern);
         });
     }
 
@@ -275,21 +281,25 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.formatpattern =  this.formatpattern === 'toNumber' ? 'numberToString'  :  this.formatpattern;
         this.searchable =  (this.type === 'blob' || this.type === 'clob') ? false  :  this.searchable;
         this.limit =  this.limit ? +this.limit  :  undefined;
-        this.editWidgetType =  this['edit-widget-type'];
+        this.editWidgetType = this['edit-widget-type'] =  this['edit-widget-type'] || getEditModeWidget(this);
         this.filterOn =  this['filter-on'];
         this.readonly =  isDefined(this.readonly) ? this.readonly  :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
         this.filterwidget =  this.filterwidget || getDataTableFilterWidget(this.type || 'string');
         this.isFilterDataSetBound = !!this.bindfilterdataset;
+        this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
     }
 
     onPropertyChange(key, nv) {
-        if (!this.IsPropsInitialized) {
+        if (!this._IsPropsInitialized) {
             return;
         }
         switch (key) {
             case 'caption':
                 this.displayName = nv || '';
                 this.table.callDataGridMethod('setColumnProp', this.binding, 'displayName', nv);
+                break;
+            case 'defaultvalue':
+                this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
                 break;
             case 'show':
                 this.table.redraw(true);
@@ -302,9 +312,13 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 this._dataSet = nv;
                 this.setInlineWidgetProp(key, nv);
                 break;
-            case 'datafield':
-            case 'displayfield':
-                this.setInlineWidgetProp(key, nv);
+            case 'editdatepattern':
+                this.setInlineWidgetProp('datepattern', nv);
+                break;
+            default:
+                if (inlineWidgetProps.includes(key)) {
+                    this.setInlineWidgetProp(key, nv);
+                }
                 break;
         }
     }

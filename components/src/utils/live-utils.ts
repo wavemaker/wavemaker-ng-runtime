@@ -163,3 +163,75 @@ export const getDataTableFilterWidget = type => {
     return FormWidgetType.TEXT;
 };
 
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.getEditModeWidget
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * This function returns the default widget for grid
+ *
+ * @param {object} colDef field definition
+ */
+export const getEditModeWidget = colDef => {
+    if (colDef['related-entity-name'] && colDef['primary-key']) {
+        return FormWidgetType.SELECT;
+    }
+    return (fieldTypeWidgetTypeMap[colDef.type] && fieldTypeWidgetTypeMap[colDef.type][0]) || FormWidgetType.TEXT;
+};
+
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.LiveWidgetUtils#formatBooleanValue
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * return the formatted boolean value
+ *
+ * @param {string} value value to be formatted
+ */
+const formatBooleanValue = value => {
+    if (value === 'true') {
+        return true;
+    }
+    if (value === 'false') {
+        return false;
+    }
+    if (/^\d+$/.test(value)) { // Check if the value is a string of number type like '123'
+        return +value;
+    }
+    return value;
+};
+
+/**
+ * @ngdoc function
+ * @name wm.widgets.live.LiveWidgetUtils#getDefaultValue
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * return the formatted default value
+ *
+ * @param {string} value value to be formatted
+ * @param {string} type column type of the value
+ */
+export const getDefaultValue = (value, type, widget) => {
+    if (widget) {
+        if (widget === FormWidgetType.NUMBER || widget === FormWidgetType.SLIDER || widget === FormWidgetType.CURRENCY) {
+            return isNaN(Number(value)) ? null : Number(value);
+        }
+        if (widget === FormWidgetType.CHECKBOX || widget === FormWidgetType.TOGGLE) {
+            return formatBooleanValue(value);
+        }
+        return value;
+    }
+    if (isNumberType(type)) {
+        return isNaN(Number(value)) ? null : Number(value);
+    }
+    if (type === DataType.BOOLEAN) {
+        return formatBooleanValue(value);
+    }
+    return value;
+};
