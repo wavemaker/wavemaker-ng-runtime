@@ -32,18 +32,18 @@ export class MessageComponent extends StylableComponent {
         styler(this.nativeElement, this);
     }
 
-    public show(caption: string, type: string) {
+    public showMessage(caption: string, type: string) {
         this.caption = caption;
         this.setWidgetProperty('type', type);
         this.setWidgetProperty('show', true);
     }
 
-    public hide() {
+    public hideMessage() {
         this.setWidgetProperty('show', false);
     }
 
     private dismiss($event) {
-        this.hide();
+        this.hideMessage();
         this.invokeEventCallback('close', {$event});
     }
 

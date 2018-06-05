@@ -60,6 +60,7 @@ export class AppRef {
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
 
         this.appLocale = this.i18nService.getAppLocale();
+        this.httpService.setLocale(this.appLocale);
     }
 
     public notify(eventName: string, data?: any) {

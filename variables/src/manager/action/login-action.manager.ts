@@ -1,53 +1,92 @@
+import { removeErrorMarkup } from 'tslint/lib/verify/parse';
+
 declare const _;
 
-import { triggerFn } from '@wm/core';
+import { getClonedObject, triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { initiateCallback, routerService, securityService, dialogService, appManager } from '../../util/variable/variables.utils';
 
 export class LoginActionManager extends BaseActionManager {
-    login(variable, options, success, error) {
-        options = options || {};
-        let params: any = {},
-            errMsg,
-            paramKey,
-            output,
-            loginInfo = {};
 
-        /* If login info provided along explicitly with options, don't look into the variable bindings for the same */
-        loginInfo = options.loginInfo || options.input || variable.dataBinding;
+    private validate(params:any) {
+        let err, paramKey, remembermeKey;
+        const LOGIN_PARAM_REMEMBER_ME = 'remember-me';
+        const LOGIN_PARAM_REMEMBER_ME_OLD = ['rememberme', 'remembermecheck'];
 
-        for (paramKey in loginInfo) {
-            // TODO[VIBHU]: check if this logic is required
-            if (loginInfo.hasOwnProperty(paramKey) &&
-                (loginInfo[paramKey] === '' || loginInfo[paramKey] === undefined) &&
-                paramKey !== 'rememberme') {
-                errMsg = 'Please provide ' + paramKey + '.';
+        // for older projects
+        LOGIN_PARAM_REMEMBER_ME_OLD.forEach((old_key)=> {
+            if (_.isBoolean(params[old_key])) {
+                remembermeKey = old_key;
+            }
+        });
+
+        remembermeKey =  remembermeKey || LOGIN_PARAM_REMEMBER_ME;
+
+        // check remember me
+        params[remembermeKey] = _.isBoolean(params[remembermeKey]) ? params[remembermeKey] : false;
+
+        for (paramKey in params) {
+            if (params.hasOwnProperty(paramKey) &&
+                (params[paramKey] === '' || params[paramKey] === undefined)) {
+                err = 'Please provide ' + paramKey + '.';
                 break;
             }
-            params[paramKey] = loginInfo[paramKey];
         }
+
+        return err;
+    }
+
+    private migrateOldParams(params) {
+        const loginParams = {},
+            paramMigrationMap = {
+            'usernametext': 'j_username',
+            'username': 'j_username',
+            'passwordtext': 'j_password',
+            'password': 'j_password',
+            'remembermecheck': 'remember-me',
+            'rememberme': 'remember-me'
+        };
+
+        _.each(params, function(value, key) {
+            if(paramMigrationMap[key]) {
+                loginParams[paramMigrationMap[key]] = value;
+            } else {
+                loginParams[key] = value;
+            }
+        });
+        return loginParams;
+    }
+
+    login(variable, options, success, error) {
+        options = options || {};
+
+        // If login info provided along explicitly with options, don't look into the variable bindings for the same
+        const loginInfo: any = options.loginInfo || options.input || variable.dataBinding;
+
+        // client side validation
+        const errMsg = this.validate(loginInfo);
 
         /* if error message initialized, return error */
         if (errMsg) {
-            /* if in RUN mode, trigger error events associated with the variable */
-            if (CONSTANTS.isRunMode) {
-                triggerFn(error, errMsg);
-                initiateCallback('onError', variable, errMsg);
-            }
+            triggerFn(error, errMsg);
+            initiateCallback('onError', variable, errMsg);
             return;
         }
 
         // Triggering 'onBeforeUpdate' and considering
-        output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, params);
+        let params: any = getClonedObject(loginInfo);
+        const output: any = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, params);
         if (_.isObject(output)) {
             params = output;
         } else if (output === false) {
             triggerFn(error);
             return;
         }
-        // $rootScope.$emit('toggle-variable-state', variable, true);
+
+        // migrate old params to new
+        params = this.migrateOldParams(params);
 
         // get previously loggedInUser name (if any)
         const lastLoggedInUsername = _.get(securityService.get(), 'userInfo.userName');
@@ -70,7 +109,7 @@ export class LoginActionManager extends BaseActionManager {
                 /* handle navigation if defaultSuccessHandler on variable is true */
                 if (variable.useDefaultSuccessHandler) {
                     // if first time user logging in or same user re-logging in, execute n/w calls failed before logging in
-                    if (!lastLoggedInUsername || lastLoggedInUsername === params.username) {
+                    if (!lastLoggedInUsername || lastLoggedInUsername === params['j_username']) {
                         appManager.executeSessionFailureRequests();
                     }
                     // get redirectTo page from URL and remove it from URL
@@ -90,7 +129,7 @@ export class LoginActionManager extends BaseActionManager {
                         // if redirect page found and same user logs in again, just navigate to redirect page
                         if (!_.isEmpty(redirectPage)) {
                             // same user logs in again, just redirect to the redirectPage
-                            if (lastLoggedInUsername === params.username) {
+                            if (lastLoggedInUsername === params['j_username']) {
                                 routerService.navigate([`/${redirectPage}`]);
                             } else {
                                 // different user logs in, reload the app and discard the redirectPage

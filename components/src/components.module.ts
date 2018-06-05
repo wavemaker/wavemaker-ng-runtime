@@ -111,6 +111,7 @@ import { FilterPipe, NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixP
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { WizardComponent } from './widgets/common/wizard/wizard.component';
 import { WizardStepDirective } from './widgets/common/wizard/wizard-step/wizard-step.directive';
+import { LoginDialogDirective } from './widgets/common/dialog/login-dialog/login-dialog.directive';
 
 const wmComponents = [
     AccordionDirective,
@@ -142,6 +143,7 @@ const wmComponents = [
     DialogFooterDirective,
     DialogHeaderComponent,
     FooterDirective,
+    LoginDialogDirective,
     FormActionDirective,
     FormComponent,
     FormFieldDirective,

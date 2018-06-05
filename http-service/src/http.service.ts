@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpXsrfTokenExtractor } from '@angular/common/http';
 import { Subject } from 'rxjs/Subject';
+import { getClonedObject, replace } from '@wm/core';
 
 declare const _;
 
@@ -9,6 +10,7 @@ export class HttpService {
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
     sessionTimeoutObservable = new Subject();
     sessionTimeoutQueue = [];
+    localeObject: any;
 
     constructor(private httpClient: HttpClient) {}
 
@@ -53,10 +55,10 @@ export class HttpService {
         return new Promise((resolve, reject) => {
             this.httpClient.request(req).toPromise().then((response) => {
                 resolve(response);
-            } , (error) => {
+            } , (response) => {
                 // In case of 401, do not reject the promise.
                 // push it into the queue, which will be resolved post login
-                if (this.isPlatformSessionTimeout(error)) {
+                if (this.isPlatformSessionTimeout(response)) {
                     this.sessionTimeoutQueue.push({
                         requestInfo: options,
                         resolve: resolve,
@@ -64,10 +66,49 @@ export class HttpService {
                     });
                     this.on401();
                 } else {
-                    reject(error);
+                    let errorDetails = response.error,
+                        errMsg;
+                    if (errorDetails.errors) {
+                        errMsg = this.parseErrors(errorDetails.errors);
+                    } else {
+                        errMsg = 'Service Call Failed';
+                    }
+                    reject(errMsg);
                 }
             });
         });
+    }
+
+    setLocale(locale) {
+        this.localeObject = locale;
+    }
+
+    getLocale() {
+        return this.localeObject;
+    }
+
+    parseErrors(errors) {
+        let errMsg = '';
+        errors.error.forEach((errorDetails, i) => {
+            errMsg += this.parseError(errorDetails) + (i > 0 ? "\n" : "");
+        });
+        return errMsg;
+    }
+
+    parseError(errorObj) {
+        let errMsg,
+            localeObject = this.getLocale();
+        /*Check for local resources and code in the resource */
+        if (!localeObject || !localeObject[errorObj.messageKey]) {
+            errMsg = errorObj.message || (errorObj.parameters && errorObj.parameters[0]) || "";
+            return errMsg;
+        }
+
+        /*Assigning the error message*/
+        errMsg = getClonedObject(localeObject[errorObj.messageKey]);
+        /*Replace the parameters in the error code with the actual strings.*/
+        errMsg = replace(errMsg, errorObj.parameters);
+        return errMsg;
     }
 
     getHeader(error, headerKey) {

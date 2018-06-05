@@ -1,4 +1,2 @@
-<p wmMessage dataset.bind="loginMessage" class="app-login-message" show="false"></p>
-<form autocomplete="off" class="app-form app-login-form" method="post">
-    <ng-content></ng-content>
-</form>
+<p wmMessage class="app-login-message" show.bind="loginMessage.show" caption.bind="loginMessage.caption" type.bind="loginMessage.type"></p>
+<ng-content></ng-content>

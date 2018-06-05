@@ -25,6 +25,7 @@ export * from './widgets/common/dialog/confirm-dialog/confirm-dialog.build';
 export * from './widgets/common/dialog/base/dialog-footer/dialog-footer.build';
 export * from './widgets/common/dialog/design-dialog/dialog.build';
 export * from './widgets/common/dialog/iframe-dialog/iframe-dialog.build';
+export * from './widgets/common/dialog/login-dialog/login-dialog.build';
 export * from './widgets/common/dialog/partial-dialog/partial-dialog.build';
 export * from './widgets/common/footer/footer.build';
 export * from './widgets/common/form/form-field/form-field.build';

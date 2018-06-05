@@ -274,16 +274,11 @@ export class SecurityService {
     }
 
     appLogin(params, successCallback, failureCallback) {
-        const rememberme = _.isUndefined(params.rememberme) ? false : params.rememberme,
-            loginParams = ['username', 'password', 'rememberme'],
-            self = this;
-        let customParams = '';
+        let payload = '';
 
-        // process extra data if passed. TODO[VIBHU], this logic needs validation
+        // encode all parameters
         _.each(params, function (value, name) {
-            if (!_.includes(loginParams, name)) {
-                customParams += '&' + encodeURIComponent(name) + '=' + encodeURIComponent(value);
-            }
+            payload += (payload ? '&': '') + encodeURIComponent(name) + '=' + encodeURIComponent(value);
         });
 
         return this.$http.send({
@@ -292,10 +287,7 @@ export class SecurityService {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             url: 'j_spring_security_check',
-            'data': 'j_username=' + encodeURIComponent(params.username) +
-            '&j_password=' + encodeURIComponent(params.password) +
-            '&remember-me=' + rememberme +
-            customParams
+            'data': payload
         }).then((response) => {
             const config = this.get(),
                 xsrfCookieValue = response[XSRF_COOKIE_NAME];

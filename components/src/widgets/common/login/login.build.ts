@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-login', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmLogin ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmLogin ${getAttrMarkup(attrs)} eventsource.bind="Actions.loginAction">`,
         post: () => `</${tagName}>`
     };
 });
