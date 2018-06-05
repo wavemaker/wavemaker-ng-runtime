@@ -1,6 +1,6 @@
 <ng-template #menuRef let-node="node" let-index="index">
-    <div wmMenu dropdown (onHidden)="onMenuHide()" [autoClose]="autoclose !== 'disabled'" type="anchor" autoclose.bind="autoclose"
-         caption.bind="node.label" dataset.bind="node.children" [isDataComputed]="true" select.event="onMenuItemSelect($event, widget, $item)"></div>
+    <div wmMenu dropdown (onHidden)="onMenuHide()" type="anchor" autoclose.bind="autoclose"
+         caption.bind="node.label" dataset.bind="node.children" select.event="onMenuItemSelect($event, widget, $item)"></div>
 </ng-template>
 <li class="app-nav-item {{node.class}}" *ngFor="let node of nodes; let index = index;" #nodeRef>
     <a class="app-anchor" href="javascript:void(0)" *ngIf="!node.children.length" (click)="onNavSelect($event, node, nodeRef)">

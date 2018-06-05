@@ -9,7 +9,7 @@ import { BsDropdownModule, CarouselModule, PopoverModule } from 'ngx-bootstrap';
 import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
-import { App, getValidJSON } from '@wm/core';
+import { App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
@@ -46,7 +46,7 @@ interface IPageMinJSON {
     variables: string;
 }
 
-const getDynamicComponent = (selector: string, template: string, styles: Array<string>, providers: Array<any>, postConstructFn: Function) => {
+const getDynamicComponent = (selector: string, template: string, styles: Array<string>, providers: Array<any> = [], postConstructFn: Function) => {
 
     @Component({
         selector,
@@ -78,6 +78,8 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
             this._onDestroy.complete();
         }
     }
+
+    providers.push({provide: UserDefinedExecutionContext, useExisting: DynamicComponent});
 
     return DynamicComponent;
 };

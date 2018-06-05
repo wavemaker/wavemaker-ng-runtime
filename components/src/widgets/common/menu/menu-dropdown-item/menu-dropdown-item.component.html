@@ -1,8 +1,10 @@
-<a tabindex="0" href="javascript:void(0);" [title]="item.label" [target]="parent.linktarget">
-    <span *ngIf="item.children.length" class="pull-right fa caret"
-          [ngClass]="{'fa-caret-left': menualign === 'pull-right', 'fa-caret-right': menualign === 'pull-left' || !menualign,
-          'fa-caret-down': menualign === 'dropinline-menu'}"></span>
+<a tabindex="0" href="javascript:void(0);" [title]="item.label" [target]="menuRef.linktarget">
+    <span *ngIf="item.children.length" class="pull-right fa caret {{menualign}}"></span>
     <i class="app-icon {{item.icon}}"></i>
     {{item.label}}
 </a>
-<ng-container #menuDropdownContainer></ng-container>
+<ng-container [ngTemplateOutlet]="nestedMenuDropdown" *ngIf="item.children.length" [ngTemplateOutletContext]="{item: item}"></ng-container>
+
+<ng-template #nestedMenuDropdown let-item="item">
+    <ul wmMenuDropdown [items]="item.children"></ul>
+</ng-template>

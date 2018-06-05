@@ -52,13 +52,13 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
 
     // Trigger on hiding popover
-    private onHidden() {
-        this.invokeEventCallback('hide');
+    public onHidden() {
+        this.invokeEventCallback('hide', {$event: {type: 'show'}});
         this.anchorRef.nativeElement.focus();
     }
 
     // Trigger on showing popover
-    private onShown() {
+    public onShown() {
         if (activePopover && activePopover.isOpen) {
             activePopover.isOpen = false;
         }
@@ -75,7 +75,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             addClass(popoverContainer.querySelector('.arrow') as HTMLElement, 'hidden');
         }
 
-        this.invokeEventCallback('show');
+        this.invokeEventCallback('show', {$event: {type: 'show'}});
 
         if (this.interaction === 'hover' || this.interaction === 'default') {
 
@@ -108,7 +108,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     ngAfterContentInit() {
         super.ngAfterContentInit();
 
-        if (!this.popoverTemplate){
+        if (!this.popoverTemplate) {
             this.event = '';
         }
     }

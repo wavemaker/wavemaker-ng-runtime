@@ -1,82 +1,78 @@
-import { AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ElementRef, HostListener, Inject, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
 import { Router } from '@angular/router';
-import {addClass, evalExp, getRouteFromNavLink, getUrlParams, openLink} from '@wm/core';
 
-import { MenuRef } from '../../../framework/types';
+import { $parseEvent, addClass, getRouteFromNavLink, getUrlParams, openLink, UserDefinedExecutionContext } from '@wm/core';
+
 import { MenuComponent } from '../menu.component';
-import { MenuDropdownComponent } from '../menu-dropdown/menu-dropdown.component';
-import { isActiveNavItem} from '../../../../utils/widget-utils';
+import { isActiveNavItem } from '../../../../utils/widget-utils';
+import { NavComponent } from '../../nav/nav.component';
 
-declare const $, _;
+const menuAlignClass = {
+    'pull-right' : 'fa-caret-left',
+    'dropinline-menu' : 'fa-caret-down',
+    'pull-left' : 'fa-caret-right'
+};
 
 @Component({
     selector: 'li[wmMenuDropdownItem]',
     templateUrl: './menu-dropdown-item.component.html',
 })
-export class MenuDropdownItemComponent implements AfterViewInit, OnDestroy {
+export class MenuDropdownItemComponent implements OnInit {
+
+    public menualign: string;
+
+    private itemActionFn: Function;
+
     @Input() item;
-    @Input() menualign;
 
-    private nativeElement;
-    private dropdownCompRef: ComponentRef<MenuDropdownComponent>;
-
-    @ViewChild('menuDropdownContainer', {read: ViewContainerRef}) dropDownContainer;
+    private readonly nativeElement;
 
     constructor(
-        private componentFactoryResolver: ComponentFactoryResolver,
-        private vcr: ViewContainerRef,
-        private element: ElementRef,
         private route: Router,
-        @Inject(MenuRef) private parent: MenuComponent
+        private menuRef: MenuComponent,
+        private userExecutionContext: UserDefinedExecutionContext,
+        @Optional() private parentNav: NavComponent,
+        elRef: ElementRef,
     ) {
-        this.nativeElement = this.element.nativeElement;
+        this.nativeElement = elRef.nativeElement;
+        addClass(this.nativeElement, 'app-menu-item');
+
+        this.menualign = menuAlignClass[this.menuRef.menualign] || menuAlignClass['pull-left'];
     }
 
-    ngOnDestroy() {
-        if (this.dropdownCompRef) {
-            this.dropdownCompRef.destroy();
-        }
-    }
-
-    private createDropDown(): ComponentRef<MenuDropdownComponent> {
-        this.dropDownContainer.clear();
-        const factory = this.componentFactoryResolver.resolveComponentFactory(MenuDropdownComponent);
-        return this.dropDownContainer.createComponent(factory);
-    }
-
-    ngAfterViewInit() {
+    ngOnInit() {
         // add active class to the item only if it is in nav component.
-        if (this.nativeElement.closest('.app-nav-item')) {
+        if (this.parentNav) {
             if (isActiveNavItem(this.item.link, this.route.url)) {
                 addClass(this.nativeElement, 'active');
             }
-        }
-        if (this.item.children.length) {
-            this.dropdownCompRef = this.createDropDown();
-
-            const childDropdown: MenuDropdownComponent = this.dropdownCompRef.instance;
-            childDropdown.items = this.item.children;
-            childDropdown.menualign = this.parent.menualign;
-            this.dropdownCompRef.changeDetectorRef.detectChanges();
         }
     }
 
     @HostListener('click', ['$event', 'item'])
     onSelect = ($event, item) => {
-        if (this.element.nativeElement !== $event.target.closest('[wmmenudropdownitem]')) {
+        if (this.nativeElement !== $event.target.closest('.app-menu-item')) {
             return;
         }
         // prevent event event propagation if auto close is outside click.
-        if (this.parent.autoclose === 'outsideClick') {
+        if (this.menuRef.autoclose === 'outsideClick') {
             $event.stopPropagation();
         }
+
         const args = {$event, $item: item};
-        const linkTarget = this.parent.linktarget;
+        const linkTarget = this.menuRef.linktarget;
         const itemAction = item.action;
+
         let menuLink = item.link;
-        this.parent.onSelect(args);
+
+        this.menuRef.onMenuItemSelect(args);
+
         if (itemAction) {
-            // evalExp(itemAction, item, (this.parent.inj as any).view.context);
+            if (!this.itemActionFn) {
+                this.itemActionFn = $parseEvent(itemAction);
+            }
+
+            this.itemActionFn(this.userExecutionContext, Object.create(item));
         } else if (menuLink) {
             if (menuLink.startsWith('#/')) {
                 const queryParams = getUrlParams(menuLink);

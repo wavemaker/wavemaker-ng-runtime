@@ -18,8 +18,6 @@ export type ChangeListener = (key: string, nv: any, ov?: any) => void;
 
 export abstract class WidgetRef {}
 
-export abstract class MenuRef {}
-
 export abstract class DialogRef<T extends BaseComponent> {}
 
 export const Context = new InjectionToken('Context Provider Reference');

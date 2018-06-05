@@ -915,28 +915,3 @@ export const getRouteFromNavLink = (link) => {
     }
     return link;
 };
-
-const isVariableOrActionEvent = (expr) => {
-    return _.startsWith(expr, 'Variables.') || _.startsWith(expr, 'Actions.') || _.startsWith(expr, 'Variables[') || _.startsWith(expr, 'Actions[') ;
-};
-
-
-export const evalExp = (evtValue, scope, parentScope) => {
-    return new Promise((resolve) => {
-        // Modifying expression in to array notation for variables with special characters in name
-        if (_.includes(evtValue, 'Variables.') || _.includes(evtValue, 'Actions.')) {
-            const parts = evtValue.split('.');
-            evtValue = parts[0] + '["' + parts[1] + '"].' + parts[2];
-        }
-        // Evaluating in timeout so that the binding get updated
-        setTimeout(() => {
-            // Evaluating for Variables,Widgets and Form events inside list
-            if (isVariableOrActionEvent(evtValue) || _.startsWith(evtValue, 'Widgets.') || !_.includes(evtValue, '.')) {
-                const unWatcher = $watch(evtValue, scope, parentScope, noop);
-                unWatcher();
-            }
-            resolve();
-        });
-    });
-
-};

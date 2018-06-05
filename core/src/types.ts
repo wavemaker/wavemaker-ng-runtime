@@ -61,3 +61,8 @@ export abstract class App {
     deployedUrl: string;
     subscribe: (eventName, callback: (data: any) => void) => () => void;
 }
+
+
+export abstract class UserDefinedExecutionContext {
+
+}

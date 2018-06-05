@@ -1,10 +1,10 @@
-import {AfterViewInit, ChangeDetectorRef, Component, Injector, OnInit} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {addClass, switchClass, openLink, getUrlParams, getRouteFromNavLink, evalExp} from '@wm/core';
+import { addClass, switchClass, openLink, getUrlParams, getRouteFromNavLink } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
-import {provideAsWidgetRef} from '../../../utils/widget-utils';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
 
 registerProps();
@@ -12,10 +12,10 @@ registerProps();
 const DEFAULT_CLS = 'nav app-nav';
 const WIDGET_CONFIG = {widgetType: 'wm-nav', hostClass: DEFAULT_CLS};
 
-const NavClassMap =  {
-    pills : 'nav-pills',
-    tabs : 'nav-tabs',
-    navbar : 'navbar-nav'
+const NavClassMap = {
+    pills: 'nav-pills',
+    tabs: 'nav-tabs',
+    navbar: 'navbar-nav'
 };
 
 @Component({
@@ -51,22 +51,22 @@ export class NavComponent extends DatasetAwareNavComponent implements AfterViewI
     }
 
     public onNavSelect($event, node, nodeRef) {
-        Array.prototype.forEach.call(nodeRef.parentNode.children, function(childNode) {
+        Array.prototype.forEach.call(nodeRef.parentNode.children, function (childNode) {
             switchClass(childNode, '', 'active');
         });
         addClass(nodeRef, 'active');
         this.selecteditem = this.trimNode(node);
         this.invokeEventCallback('select', {$event, $item: this.selecteditem});
         if (node) {
-            let itemLink: string   = node.link;
+            let itemLink: string = node.link;
             const itemAction: string = node.action;
             if (itemAction) {
-                evalExp(itemAction, node, (this.inj as any).view.context);
+                // evalExp(itemAction, node, (this.inj as any).view.context);
             } else if (itemLink) {
                 if (itemLink.startsWith('#/')) {
                     const queryParams = getUrlParams(itemLink);
                     itemLink = getRouteFromNavLink(itemLink);
-                    this.route.navigate([itemLink], { queryParams});
+                    this.route.navigate([itemLink], {queryParams});
                 } else {
                     openLink(itemLink);
                 }

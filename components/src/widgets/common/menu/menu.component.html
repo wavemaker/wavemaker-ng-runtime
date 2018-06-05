@@ -1,24 +1,24 @@
-<ng-container *ngIf="type === 'anchor'; else menutemplate">
-    <a [title]="hint" href="javascript:void(0);" role="button" class="app-anchor dropdown-toggle {{menuclass}}"
-       dropdownToggle aria-haspopup="true" aria-expanded="false" [attr.accesskey]="shortcutkey" [tabindex]="tabindex">
-        <ng-container [ngTemplateOutlet]="buttonContent"></ng-container>
-    </a>
-</ng-container>
-
-<ng-template #menutemplate>
+<ng-template #menuTemplate>
     <button [title]="hint" class="btn app-button dropdown-toggle {{menuclass}}" dropdownToggle [attr.accesskey]="shortcutkey"
             aria-haspopup="true" aria-expanded="false" [tabindex]="tabindex">
-        <ng-container [ngTemplateOutlet]="buttonContent"></ng-container>
+        <ng-container [ngTemplateOutlet]="innerTemplate"></ng-container>
     </button>
 </ng-template>
 
-<ul wmMenuDropdown [items]="nodes" [menualign]="menualign" [ngClass]="menulayout" *dropdownMenu aria-labelledby="dropdownmenu"></ul>
-
-<ng-template #buttonContent>
+<ng-template #innerTemplate>
     <i class="app-icon {{iconclass}}"></i>
-    <span class="caption">{{caption}}</span>
+    <span class="caption" [textContent]="caption"></span>
     <span>
         <ng-content></ng-content>
     </span>
     <span class="pull-right caret fa {{menuCaret}}"></span>
 </ng-template>
+
+<ng-container *ngIf="type === 'anchor'; else menuTemplate">
+    <a [title]="hint" href="javascript:void(0);" role="button" class="app-anchor dropdown-toggle {{menuclass}}"
+       dropdownToggle aria-haspopup="true" aria-expanded="false" [attr.accesskey]="shortcutkey" [tabindex]="tabindex">
+        <ng-container [ngTemplateOutlet]="innerTemplate"></ng-container>
+    </a>
+</ng-container>
+
+<ul wmMenuDropdown [items]="nodes" [ngClass]="menulayout" *dropdownMenu aria-labelledby="dropdownmenu"></ul>

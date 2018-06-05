@@ -1,15 +1,15 @@
-import { Component, Injector, OnDestroy, OnInit, Input } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
+
+import { BsDropdownDirective } from 'ngx-bootstrap';
 
 import { addClass, removeClass } from '@wm/core';
+
 import { styler } from '../../framework/styler';
-import { MenuRef } from '../../framework/types';
-import { provideAs, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './menu.props';
 import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
 
 registerProps();
-
-declare const $, _;
 
 const POSITION = {
     DOWN_RIGHT: 'down,right',
@@ -32,10 +32,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-menu', hostClass: 'dropdown app-menu'};
     selector: '[wmMenu]',
     templateUrl: './menu.component.html',
     providers: [
-        provideAsWidgetRef(MenuComponent),
-        provideAs(MenuComponent, MenuRef)
-    ],
-    exportAs: 'wmMenu'
+        provideAsWidgetRef(MenuComponent)
+    ]
 })
 export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy {
 
@@ -43,19 +41,16 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public menuposition: string;
     public menulayout: string;
     public menuclass: string;
-
     public linktarget: string;
     public iconclass: string;
-
-    public autoclose: string;
     public animateitems: string;
+    public autoclose: string;
 
     private menuCaret: string = 'fa-caret-down';
 
-    @Input() isDataComputed: boolean = false;
-
     constructor(
-        inj: Injector
+        inj: Injector,
+        @Self() @Optional() private dropdown: BsDropdownDirective
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
@@ -66,11 +61,11 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         this.setMenuPosition();
     }
 
-    onPropertyChange(key, newVal, oldVal?) {
-        if (!this.isDataComputed) {
-            super.onPropertyChange(key, newVal, oldVal);
-        } else if (key === 'dataset') {
-            this.nodes = newVal;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'autoclose') {
+            this.dropdown.autoClose = nv !== 'disabled';
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -102,9 +97,8 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         }
     }
 
-    public onSelect(args) {
+    public onMenuItemSelect(args) {
         args.$item = this.trimNode(args.$item);
         this.invokeEventCallback('select', args);
     }
-
 }
