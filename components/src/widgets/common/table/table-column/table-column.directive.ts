@@ -1,7 +1,7 @@
 import { Directive, Injector, OnInit, Optional, ContentChildren, Attribute, AfterContentInit } from '@angular/core';
 
 import { BaseComponent } from '../../base/base.component';
-import { getDataTableFilterWidget, setHeaderConfigForTable, getEditModeWidget, getDefaultValue } from '../../../../utils/live-utils';
+import { getDataTableFilterWidget, setHeaderConfigForTable, getEditModeWidget, getDefaultValue, EDIT_MODE } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
 import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
@@ -16,7 +16,7 @@ registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 const inlineWidgetProps = ['datafield', 'displayfield', 'disabled', 'required', 'placeholder', 'searchkey', 'displaylabel',
-                            'checkedvalue', 'uncheckedvalue', 'showdropdownon'];
+                            'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataset'];
 
 @Directive({
     selector: '[wmTableColumn]',
@@ -28,18 +28,21 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     @ContentChildren('filterWidget') _filterWidget;
     @ContentChildren('inlineWidget') _inlineWidget;
+    @ContentChildren('inlineWidgetNew') _inlineWidgetNew;
 
     private filterWidget;
     private inlineWidget;
+    private inlineWidgetNew;
     private _IsPropsInitialized;
     private _filterDataSet;
-    private _dataSet;
     private _isRowFilter;
     private _isInlineEditable;
+    private _isNewEditableRow;
 
     backgroundcolor;
     binding;
     caption;
+    dataset;
     defaultvalue;
     disabled;
     editWidgetType;
@@ -101,7 +104,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.table.registerColumns(this.widget);
 
         this._isRowFilter = this.table.filtermode === 'multicolumn' && this.searchable;
-        this._isInlineEditable = !this.readonly && (this.table.editmode !== 'dialog' && this.table.editmode !== 'form');
+        this._isInlineEditable = !this.readonly && (this.table.editmode !== EDIT_MODE.DIALOG && this.table.editmode !== EDIT_MODE.FORM);
+        this._isNewEditableRow = this._isInlineEditable && this.table.editmode === EDIT_MODE.QUICK_EDIT && this.table.shownewrow;
         this.setUpControls();
 
         // Register column with header config to create group structure
@@ -127,25 +131,50 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.registerDestroyListener(this._inlineWidget.changes.subscribe((val) => {
                 // Listen on the inner inline widget and setup the widget
                 this.inlineWidget = val.first && val.first.widget;
-                this.setUpInlineWidget();
+                this.setUpInlineWidget('inlineWidget');
             }));
+
+            if (this._isNewEditableRow) {
+                this.registerDestroyListener(this._inlineWidgetNew.changes.subscribe((val) => {
+                    // Listen on the inner inline widget and setup the widget
+                    this.inlineWidgetNew = val.first && val.first.widget;
+                    this.setUpInlineWidget('inlineWidgetNew');
+                }));
+            }
         }
+    }
+
+    addFormControl(name) {
+        this.table.ngform.addControl(name, this.table.fb.control(''));
+    }
+
+    getFormControl(name) {
+        return this.table.ngform.controls[name];
     }
 
     // Setup the inline edit and filter widget
     setUpControls() {
         if (this._isInlineEditable) {
-            this.table.ngform.addControl(this.binding, this.table.fb.control(''));
-            const control = this.table.ngform.controls[this.binding];
+            this.addFormControl(this.binding);
+            const control = this.getFormControl(this.binding);
             if (control) {
                 control.valueChanges.subscribe(this.onValueChange.bind(this));
+            }
+
+            if (this._isNewEditableRow) {
+                const ctrlName = this.binding + '_new';
+                this.addFormControl(ctrlName);
+                const newControl = this.getFormControl(ctrlName);
+                if (newControl) {
+                    newControl.valueChanges.subscribe(this.onValueChange.bind(this));
+                }
             }
         }
 
         if (this._isRowFilter) {
             const filterName = this.binding + '_filter';
-            this.table.ngform.addControl(filterName, this.table.fb.control(''));
-            this.filterControl = this.table.ngform.controls[filterName];
+            this.addFormControl(filterName);
+            this.filterControl = this.getFormControl(filterName);
             if (this.filterControl) {
                 this.filterControl.valueChanges.subscribe(this.onFilterValueChange.bind(this));
             }
@@ -241,22 +270,22 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     }
 
     // Set the props on the inline edit widget
-    setInlineWidgetProp(prop, nv) {
-        if (this.inlineWidget) {
-            this.inlineWidget[prop] = nv;
+    setInlineWidgetProp(widget, prop, nv) {
+        if (this[widget]) {
+            this[widget][prop] = nv;
         }
     }
 
     // Initialize the inline edit widget
-    setUpInlineWidget() {
-        this.inlineWidget.registerReadyStateListener(() => {
+    setUpInlineWidget(widget) {
+        this[widget].registerReadyStateListener(() => {
             if (isDataSetWidget(this['edit-widget-type'])) {
-                this.inlineWidget.dataset = this._dataSet;
+                this[widget].dataset = this.dataset;
             }
             inlineWidgetProps.forEach(key => {
-                this.setInlineWidgetProp(key, this[key]);
+                this.setInlineWidgetProp(widget, key, this[key]);
             });
-            this.setInlineWidgetProp('datepattern', this.editdatepattern);
+            this.setInlineWidgetProp(widget, 'datepattern', this.editdatepattern);
         });
     }
 
@@ -308,16 +337,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 this._filterDataSet = nv;
                 this.setFilterWidgetDataSet();
                 break;
-            case 'dataset':
-                this._dataSet = nv;
-                this.setInlineWidgetProp(key, nv);
-                break;
             case 'editdatepattern':
-                this.setInlineWidgetProp('datepattern', nv);
+                this.setInlineWidgetProp('inlineWidget', 'datepattern', nv);
+                this.setInlineWidgetProp('inlineWidgetNew', 'datepattern', nv);
                 break;
             default:
                 if (inlineWidgetProps.includes(key)) {
-                    this.setInlineWidgetProp(key, nv);
+                    this.setInlineWidgetProp('inlineWidget', key, nv);
+                    this.setInlineWidgetProp('inlineWidgetNew', key, nv);
                 }
                 break;
         }

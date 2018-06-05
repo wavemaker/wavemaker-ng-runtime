@@ -1,7 +1,7 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { TableComponent } from './table.component';
-import { DataSource, triggerFn } from '@wm/core';
+import { $appDigest, DataSource, triggerFn } from '@wm/core';
 import { refreshDataSource } from '../../../utils/data-utils';
 
 const OPERATION = {
@@ -39,7 +39,7 @@ export class TableCUDDirective {
                 this.table.selectItem(row, this.table.dataset && this.table.dataset.data);
             }
             triggerFn(callBack);
-        }, undefined, false);
+        }, 250);
     }
 
     initiateSelectItem(index, row, skipSelectItem?, isStaticVariable?, callBack?) {
@@ -78,6 +78,7 @@ export class TableCUDDirective {
             refreshDataSource(dataSource, {
                 page: 1
             }).then(() => {
+                $appDigest();
                 this.table.selectItemOnSuccess(row, true, callBack);
             });
         }

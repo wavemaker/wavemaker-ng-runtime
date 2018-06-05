@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, Component, ElementRef, Injector, TemplateRef, ViewChild, ViewContainerRef, ContentChildren, QueryList, Self, Inject } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy, ViewChild, ViewContainerRef, ContentChildren, QueryList } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -8,7 +8,7 @@ import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
-import { getRowOperationsColumn } from '../../../utils/live-utils';
+import { getRowOperationsColumn, EDIT_MODE } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
 import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -20,13 +20,6 @@ registerProps();
 
 const DEFAULT_CLS = 'app-grid app-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
-
-const EDIT_MODE = {
-    'QUICK_EDIT': 'quickedit',
-    'INLINE'    : 'inline',
-    'FORM'      : 'form',
-    'DIALOG'    : 'dialog'
-};
 
 const rowOperations = {
     'update': {
@@ -54,6 +47,18 @@ const ROW_OPS_FIELD = 'rowOperations';
 
 const noop = () => {};
 
+const isInputBodyWrapper = target => {
+    const classes = ['.dropdown-menu', '.uib-typeahead-match', '.modal-dialog', '.toast'];
+    let isInput = false;
+    classes.forEach(cls => {
+        if (target.closest(cls).length) {
+            isInput = true;
+            return false;
+        }
+    });
+    return isInput;
+};
+
 @Component({
     selector: '[wmTable]',
     templateUrl: './table.component.html',
@@ -61,7 +66,7 @@ const noop = () => {};
         provideAsWidgetRef(TableComponent)
     ]
 })
-export class TableComponent extends StylableComponent implements AfterContentInit {
+export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy {
 
     @ViewChild(PaginationComponent) dataNavigator;
 
@@ -74,9 +79,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ViewChild('multiColumnFilter', {read: ViewContainerRef}) multiColumnFilterTl: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmpl') inlineWidgetTmpl: QueryList<any>;
+    @ContentChildren('inlineWidgetTmplNew') inlineWidgetTmplNew: QueryList<any>;
     @ViewChild('inlineEdit', {read: ViewContainerRef}) inlineEditTl: ViewContainerRef;
+    @ViewChild('inlineEditNew', {read: ViewContainerRef}) inlineEditTlNew: ViewContainerRef;
 
-    rowActionsCompiledTl: any  = {};
+    private rowActionsCompiledTl: any  = {};
+    private rowFilterCompliedTl: any = {};
+    private inlineCompliedTl: any = {};
+    private inlineNewCompliedTl: any = {};
 
     columns = {};
     datagridElement;
@@ -109,6 +119,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     showrowindex;
     subheading;
     title;
+    shownewrow;
 
     selectedItemChange = new Subject();
     selectedItemChange$ = this.selectedItemChange.asObservable();
@@ -130,6 +141,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     isPartOfLiveGrid;
     gridElement;
     isMobile;
+    documentClickBind = noop;
 
     fieldDefs = [];
     private fullFieldDefs = [];
@@ -292,49 +304,79 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // For all the columns inside the table, generate the inline widget
             this.rowActionTmpl.forEach((tmpl) => {
                 this.rowActionsCompiledTl[index].push(...this.rowActionsTl.createEmbeddedView(tmpl, {
-                    row: row
+                    row: row,
+                    $rowData: row
                 }).rootNodes);
             });
         },
         getRowAction: (index) => {
             return this.rowActionsCompiledTl[index];
         },
-        generateInlineEditRow: () => {
+        generateInlineEditRow: (alwaysNewRow, row) => {
+            if (alwaysNewRow) {
+                // Clear the view container ref
+                this.inlineEditTlNew.clear();
+                this.inlineNewCompliedTl = {};
+                // For all the columns inside the table, generate the inline widget
+                this.inlineWidgetTmplNew.forEach(tmpl => {
+                    const rootNode = this.inlineEditTlNew.createEmbeddedView(tmpl, {
+                        row: row,
+                        rowData: row
+                    }).rootNodes[0];
+                    this.inlineNewCompliedTl[rootNode.getAttribute('data-col-identifier')] = rootNode;
+                });
+                this.clearForm(true);
+                return;
+            }
             // Clear the view container ref
             this.inlineEditTl.clear();
-            this.ngform.reset();
+            this.inlineCompliedTl = {};
+            this.clearForm();
             // For all the columns inside the table, generate the inline widget
             this.inlineWidgetTmpl.forEach(tmpl => {
-                this.inlineEditTl.createEmbeddedView(tmpl);
+                const rootNode = this.inlineEditTl.createEmbeddedView(tmpl, {
+                    row: row,
+                    rowData: row
+                }).rootNodes[0];
+                this.inlineCompliedTl[rootNode.getAttribute('data-col-identifier')] = rootNode;
             });
         },
-        getInlineEditWidget: (fieldName, value) => {
+        getInlineEditWidget: (fieldName, value, alwaysNewRow) => {
+            if (alwaysNewRow) {
+                this.gridOptions.setFieldValue(fieldName + '_new', value);
+                return this.inlineNewCompliedTl[fieldName];
+            }
+            this.gridOptions.setFieldValue(fieldName, value);
+            return this.inlineCompliedTl[fieldName];
+        },
+        setFieldValue: (fieldName, value) => {
             const control = this.ngform.controls && this.ngform.controls[fieldName];
             if (control) {
                 control.setValue(value);
             }
-            return $(this.nativeElement).find(`.inline-edit-widgets [data-col-identifier='${fieldName}']`)[0];
         },
-        getFieldValue: (fieldName) => {
+        getFieldValue: fieldName => {
             const control = this.ngform.controls && this.ngform.controls[fieldName];
             return control && control.value;
         },
         generateFilterRow: () => {
             // Clear the view container ref
             this.multiColumnFilterTl.clear();
+            this.rowFilterCompliedTl = {};
             // For all the columns inside the table, generate the compiled filter template
             this.filterTmpl.forEach((tmpl) => {
-                this.multiColumnFilterTl.createEmbeddedView(tmpl, {
+                const rootNode = this.multiColumnFilterTl.createEmbeddedView(tmpl, {
                     changeFn: this.onRowFilterChange.bind(this),
                     isDisabled: (fieldName) => {
                         return this.emptyMatchModes.indexOf(this.rowFilter[fieldName] && this.rowFilter[fieldName].matchMode) > -1;
                     }
-                });
+                }).rootNodes[0];
+                this.rowFilterCompliedTl[rootNode.getAttribute('data-col-identifier')] = rootNode;
             });
         },
         getFilterWidget: (fieldName) => {
             // Move the generated filter template to the filter row
-            return $(this.nativeElement).find(`.multi-column-filter [data-col-identifier='${fieldName}']`)[0];
+            return this.rowFilterCompliedTl[fieldName];
         },
         compileTemplateInGridScope: () => {
         },
@@ -488,6 +530,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.watchVariableDataSet(this.dataset);
 
         this.applyProps.forEach(args => this.callDataGridMethod(...args));
+
+        if (this.editmode === EDIT_MODE.QUICK_EDIT) {
+            this.documentClickBind = this._documentClickBind.bind(this);
+            document.addEventListener('click', this.documentClickBind);
+        }
+    }
+
+    ngOnDestroy() {
+        document.removeEventListener('click', this.documentClickBind);
+        super.ngOnDestroy();
     }
 
     execute(operation, options) {
@@ -495,6 +547,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return false;
         }
         return this.datasource.execute(operation, options);
+    }
+
+    clearForm(newRow?) {
+        const ctrls = this.ngform.controls;
+        _.keys(this.ngform.controls).forEach(key => {
+            if (newRow) {
+                if (key.endsWith('_new')) {
+                    ctrls[key].setValue('');
+                }
+                return;
+            }
+            ctrls[key].setValue('');
+        });
     }
 
     /* Check whether it is non-empty row. */
@@ -1023,6 +1088,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
         this.datasource.execute(DataSource.Operation.DOWNLOAD, requestData);
+    }
+
+    private _documentClickBind(event) {
+        const $target = event.target;
+        // If click triggered from same grid or a dialog, do not save the row
+        if (this.$element[0].contains($target) || event.target.doctype || isInputBodyWrapper($($target))) {
+            return;
+        }
+        this.callDataGridMethod('saveRow');
     }
 
     private _redraw(forceRender) {

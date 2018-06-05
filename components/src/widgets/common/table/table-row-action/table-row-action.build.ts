@@ -41,7 +41,7 @@ const getRowActionTmpl = (attrs) => {
     const saveCancelTmpl = action && action.includes('editRow(') ? getSaveCancelTemplate() : '';
     const btnClass = action.includes('editRow(') ? 'edit edit-row-button' :
                         (action.includes('deleteRow(') ? 'delete delete-row-button' : '');
-    return `<ng-template #rowActionTmpl let-row="row">
+    return `<ng-template #rowActionTmpl let-row="row" let-$rowData="$rowData">
                <button wmButton data-action-key="${attrs.get('key')}"
                     ${getRowActionAttrs(attrs)}
                     class="row-action row-action-button app-button btn ${attrs.get('class')} ${btnClass}"

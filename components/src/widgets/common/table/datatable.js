@@ -1,5 +1,4 @@
 /*global $, window, angular, moment, _, document, parseInt, navigator*/
-/*jslint todo: true*/
 /**
  * JQuery Datagrid widget.
  */
@@ -59,16 +58,9 @@ $.widget('wm.datatable', {
             'edit': true,
             'new': true
         },
-        searchHandler: function noop() {
+        searchHandler: function () {
         },
-        sortHandler: function (sortInfo, e) {
-            /* Local sorting if server side sort handler is not provided. */
-            e.stopPropagation();
-            var data = $.extend(true, [], this.options.data);
-            this._setOption('data', _.orderBy(data, sortInfo.field, sortInfo.direction));
-            if ($.isFunction(this.options.afterSort)) {
-                this.options.afterSort(e);
-            }
+        sortHandler: function () {
         }
     },
     customColumnDefs: {
@@ -811,6 +803,7 @@ $.widget('wm.datatable', {
     /* Inserts a new blank row in the table. */
     addNewRow: function (skipFocus, alwaysNewRow) {
         var rowId = this.gridBody.find('tr:visible').length || 99999, //Dummy value if rows are not there
+            self = this,
             rowData = {},
             $row,
             $gridBody,
@@ -858,14 +851,16 @@ $.widget('wm.datatable', {
                 this.setDefaultRowData(rowData);
 
                 $row.addClass('always-new-row').addClass('row-editing');
-                this.makeRowEditable($row, rowData, 'new');
+                this.makeRowEditable($row, rowData, true);
             } else {
                 $row.trigger('click', [undefined, {action: 'edit', operation: 'new', skipFocus: skipFocus}]);
             }
 
             this.updateSelectAllCheckboxState();
             this.addOrRemoveScroll();
-            this.setColGroupWidths();
+            this.options.timeoutCall(function () {
+                self.setColGroupWidths();
+            }, 100);
         }
     },
 
@@ -1250,7 +1245,6 @@ $.widget('wm.datatable', {
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
         options = options || {};
-        e.stopPropagation();
         var rowId,
             rowData,
             data,
@@ -1354,10 +1348,10 @@ $.widget('wm.datatable', {
             }
         }
     },
-    getTextValue: function (fieldName) {
-        return this.options.getFieldValue(fieldName);
+    getTextValue: function (fieldName, alwaysNewRow) {
+        return this.options.getFieldValue(alwaysNewRow ? fieldName + '_new' : fieldName);
     },
-    isDataModified: function ($editableElements, rowData) {
+    isDataModified: function ($editableElements, rowData, alwaysNewRow) {
         var isDataChanged = false,
             self = this;
 
@@ -1369,7 +1363,7 @@ $.widget('wm.datatable', {
             var $el = $(this),
                 colId = $el.attr('data-col-id'),
                 colDef = self.preparedHeaderData[colId],
-                text = self.getTextValue(colDef.field),
+                text = self.getTextValue(colDef.field, alwaysNewRow),
                 originalData = _.get(rowData, colDef.field);
             if (colDef.editWidgetType === 'upload') {
                 //For upload widget, check if any file is uploaded
@@ -1469,13 +1463,13 @@ $.widget('wm.datatable', {
         });
     },
     //Method to make row editable with widgets
-    makeRowEditable: function ($row, rowData, operation) {
+    makeRowEditable: function ($row, rowData, alwaysNewRow) {
         var self = this,
             $originalElements = $row.find('td.app-datagrid-cell'),
             rowId = parseInt($row.attr('data-row-id'), 10),
             $editableElements;
 
-        this.options.generateInlineEditRow();
+        this.options.generateInlineEditRow(alwaysNewRow, rowData);
 
         $originalElements.each(function () {
             var $el = $(this),
@@ -1487,7 +1481,7 @@ $.widget('wm.datatable', {
 
             if (!colDef.readonly) {
                 value = _.get(rowData, colDef.field);
-                editableTemplate = self.options.getInlineEditWidget(colDef.field, value);
+                editableTemplate = self.options.getInlineEditWidget(colDef.field, value, alwaysNewRow);
                 if (!(colDef.customExpression || colDef.formatpattern)) {
                     $el.addClass('cell-editing').html(editableTemplate).data('originalText', cellText);
                 } else {
@@ -1541,6 +1535,7 @@ $.widget('wm.datatable', {
             isDataChanged = false,
             isValid,
             $requiredEls,
+            alwaysNewRow = $row.hasClass('always-new-row'),
             advancedEdit = self.options.editmode === self.CONSTANTS.QUICK_EDIT;
 
         //On success of update or delete
@@ -1594,7 +1589,7 @@ $.widget('wm.datatable', {
             this._setGridEditMode(true);
             this.disableActions(true);
             $deleteButton.removeClass('disabled-action');
-            this.makeRowEditable($row, rowData, options.operation);
+            this.makeRowEditable($row, rowData);
             // Show editable row.
             $editButton.addClass('hidden');
             $cancelButton.removeClass('hidden');
@@ -1615,7 +1610,7 @@ $.widget('wm.datatable', {
                 if (isNewRow) {
                     isDataChanged = true;
                 } else {
-                    isDataChanged = this.isDataModified($editableElements, rowData);
+                    isDataChanged = this.isDataModified($editableElements, rowData, alwaysNewRow);
                 }
 
                 if (isDataChanged) {
@@ -1625,7 +1620,7 @@ $.widget('wm.datatable', {
                             colDef = self.preparedHeaderData[colId],
                             fields = _.split(colDef.field, '.'),
                             text;
-                        text = self.getTextValue(colDef.field);
+                        text = self.getTextValue(colDef.field, alwaysNewRow);
                         if (fields.length === 1 && colDef.editWidgetType === 'upload') {
                             _.set(rowData, colDef.field, _.get(document.forms, [$el.attr('form-name'), colDef.field, 'files', 0]));
                         } else {
@@ -1954,8 +1949,8 @@ $.widget('wm.datatable', {
         //Set the default values for widgets in the row
         $row.find('[data-field-name]').each(function () {
             var $input = $(this),
-                fieldName = $input.attr('data-field-name');
-            _.set($input.isolateScope(), 'datavalue', rowData[fieldName]);
+                fieldName = $input.attr('data-field-name') + '_new';
+            self.options.setFieldValue(fieldName, rowData[fieldName] || '')
         });
         //Remove ng touched classes
         $row.find('.ng-touched').removeClass('ng-touched');
@@ -2017,7 +2012,6 @@ $.widget('wm.datatable', {
             //Stop the enter keypress from submitting any parent form. If target is button, event should not be stopped as this stops click event on button
             if (!$target.is('button')) {
                 event.stopPropagation();
-                event.preventDefault();
             }
             return;
         }

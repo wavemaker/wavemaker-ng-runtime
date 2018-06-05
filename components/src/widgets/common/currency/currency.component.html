@@ -1,6 +1,7 @@
 <span class="input-group-addon" [textContent]="currencySymbol"></span>
 <!-- todo: Lovin localize aria text -->
 <input type="number" class="form-control app-textbox app-currency-input" aria-label="Currency (in dollars)"
+       focus-target
        [(ngModel)]="datavalue"
        (ngModelChange)="handleChange($event);"
        [ngModelOptions]="{updateOn: 'blur'}"

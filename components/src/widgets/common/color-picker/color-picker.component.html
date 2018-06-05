@@ -1,5 +1,6 @@
 <input class="form-control app-textbox" aria-label="Enter the color code" aria-haspopup="true" aria-expanded="false"
        #input
+       focus-target
        [(colorPicker)]="datavalue"
        (colorPickerChange)="handleChange($event);"
        [cpPosition]="'bottom'"

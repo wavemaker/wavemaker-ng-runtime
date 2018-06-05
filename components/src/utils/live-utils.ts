@@ -3,8 +3,15 @@ import { isNumberType, FormWidgetType, DataType } from '@wm/core';
 declare const _;
 
 const  VIEW_MODE_OPTIONS = {
-    'DEFAULT'   : 'default',
-    'LABEL'     : 'label'
+    DEFAULT : 'default',
+    LABEL : 'label'
+};
+
+export const EDIT_MODE = {
+    QUICK_EDIT : 'quickedit',
+    INLINE : 'inline',
+    FORM : 'form',
+    DIALOG : 'dialog'
 };
 
 // Method to set the header config of the data table

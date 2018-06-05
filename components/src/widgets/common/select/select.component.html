@@ -1,14 +1,15 @@
 <select role="input" aria-haspopup="true" aria-expanded="false" #select
-  [ngClass]="['app-select form-control', class]"
-  [disabled]="disabled"
-  [required]="required"
-  [tabindex]="tabindex"
-  [(ngModel)]="modelByKey"
-  [multiple]="multiple"
-  (change)="onSelectValueChange($event)"
-  >
-    <option selected [ngValue]="undefined" *ngIf="placeholder">{{placeholder}}</option>
-    <option
-      *ngFor="let item of datasetItems"
-      [value]="item.key" [selected]="item.selected">{{item.label}}</option>
+        focus-target
+        [ngClass]="['app-select form-control', class]"
+        [disabled]="disabled"
+        [required]="required"
+        [tabindex]="tabindex"
+        [(ngModel)]="modelByKey"
+        [multiple]="multiple"
+        (change)="onSelectValueChange($event)"
+>
+  <option selected [ngValue]="undefined" *ngIf="placeholder">{{placeholder}}</option>
+  <option
+          *ngFor="let item of datasetItems"
+          [value]="item.key" [selected]="item.selected">{{item.label}}</option>
 </select>

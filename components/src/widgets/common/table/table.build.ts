@@ -17,6 +17,7 @@ register('wm-table', (): IBuildTaskDef => {
             provider.set('table_reference', shared.get('counter'));
             provider.set('filtermode', attrs.get('filtermode'));
             provider.set('editmode', attrs.get('editmode'));
+            provider.set('shownewrow', attrs.get('shownewrow'));
             return provider;
         }
     };

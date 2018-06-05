@@ -1,6 +1,6 @@
 import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
 import { DataType, getFormWidgetTemplate } from '@wm/core';
-import { getDataTableFilterWidget, getEditModeWidget} from '../../../../utils/live-utils';
+import { getDataTableFilterWidget, getEditModeWidget, EDIT_MODE } from '../../../../utils/live-utils';
 
 const tagName = 'div';
 
@@ -35,18 +35,32 @@ const getFilterTemplate = (attrs, pCounter)  => {
     </span></ng-template>`;
 };
 
+const getEventsTmpl = attrs => {
+    let tmpl = '';
+    attrs.forEach((val, key) => {
+        if (key.endsWith('.event')) {
+            tmpl += `${key}="${val}" `;
+        }
+    });
+    return tmpl;
+};
+
 // get the inline widget template
-const getInlineEditWidgetTmpl = (attrs) => {
+const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
     const fieldName = attrs.get('binding');
     const widget = attrs.get('edit-widget-type') || getEditModeWidget({
         'type': attrs.get('type'),
         'related-entity-name': attrs.get('related-entity-name'),
         'primary-key': attrs.get('primary-key')
     });
-    const innerTmpl = `#inlineWidget data-col-identifier="${fieldName}" data-field-name="${fieldName}" formControlName="${fieldName}"`;
+    const widgetRef = isNewRow ? '#inlineWidgetNew' : '#inlineWidget';
+    const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
+    const formControl = isNewRow ? `formControlName="${fieldName}_new"` : `formControlName="${fieldName}"`;
+    const eventsTmpl = getEventsTmpl(attrs);
+    const innerTmpl = `${widgetRef} data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs);
 
-    return `<ng-template #inlineWidgetTmpl>
+    return `<ng-template ${tmplRef} let-row="row" let-rowData="rowData">
                  ${widgetTmpl}
             </ng-template>`;
 };
@@ -58,11 +72,14 @@ register('wm-table-column', (): IBuildTaskDef => {
             const pCounter = parentTable.get('table_reference');
             const rowFilterTmpl = (parentTable.get('filtermode') === 'multicolumn' && attrs.get('searchable') !== 'false') ? getFilterTemplate(attrs, pCounter) : '';
             const editMode = parentTable.get('editmode');
-            const inlineEditTmpl = (editMode === 'dialog' || editMode === 'form' || attrs.get('readonly') === 'true') ? '' : getInlineEditWidgetTmpl(attrs);
+            const isInlineEdit = (editMode !== EDIT_MODE.DIALOG && editMode !== EDIT_MODE.FORM && attrs.get('readonly') !== 'true');
+            const inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs) : '';
+            const inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
 
             return `<${tagName} wmTableColumn ${getAttrMarkup(attrs)} [formGroup]="${pCounter}.ngform">
                     ${rowFilterTmpl}
-                    ${inlineEditTmpl}`;
+                    ${inlineEditTmpl}
+                    ${inlineNewEditTmpl}`;
         },
         post: () => `</${tagName}>`
     };
