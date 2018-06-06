@@ -34,13 +34,15 @@
     (keydown.shift.arrowleft)="handleKeyDown($event, 'selectPrev')"
     (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
 >
-    <li *ngFor="let item of fieldDefs; let i = index;" class="app-list-item clearfix "
-        [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
-        [wmListItem]="item"
-        #listItemRef="listItemRef"
-        tabindex="-1">
-        <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index: i}"></ng-container>
-    </li>
+    <ng-template *ngIf="!groupby; else groupedListTemplate">
+        <li *ngFor="let item of fieldDefs; let i = index;" class="app-list-item clearfix "
+            [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
+            [wmListItem]="item"
+            #listItemRef="listItemRef"
+            tabindex="-1">
+            <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i}"></ng-container>
+        </li>
+    </ng-template>
 </ul>
 
 <div class="no-data-msg" *ngIf="noDataFound && !variableInflight" [textContent]="nodatamessage"></div>
@@ -83,3 +85,25 @@
        [textContent]="ondemandmessage"
     ></a>
 </div>
+
+<!--This template will be displayed when groupby is specified-->
+<ng-template #groupedListTemplate>
+    <li *ngFor="let groupObj of groupedData" class="app-list-item-group clearfix">
+        <ul class="list-group item-group" [ngClass]="listclass">
+            <li class="app-list-item-header list-item list-group-header" (click)="handleHeaderClick($event)" [ngClass]="{'collapsible-content': collapsible}">
+            <h4>{{groupObj.key}}
+                <div class="header-action">
+                    <i class="app-icon wi action wi-chevron-up" *ngIf="collapsible"></i>
+                    <span *ngIf="showcount" class="label label-default">{{groupObj.data.length}}</span>
+                    </div>
+                </h4>
+            </li>
+            <li *ngFor="let item of groupObj.data; let i = index;" tabindex="0"
+                class="app-list-item group-list-item"
+                [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
+                [wmListItem]="item" #listItemRef="listItemRef">
+                <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i}"></ng-container>
+            </li>
+        </ul>
+    </li>
+</ng-template>

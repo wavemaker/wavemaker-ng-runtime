@@ -5,12 +5,13 @@ import { Subscription } from 'rxjs/Subscription';
 import { $appDigest, DataSource, getClonedObject, isDefined, isObject } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './list.props';
 import { NAVIGATION_TYPE, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
-import { getOrderedDataset } from '../../../utils/form-utils';
+import { getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 
 declare const _;
 declare const $;
@@ -71,6 +72,13 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     public itemsperrow: string;
     public itemclass: string;
 
+    public handleHeaderClick: ($event) => void;
+    public toggleAllHeaders: void;
+
+    private match: string;
+    private dateformat: string;
+    private groupedData: {};
+
     public get selecteditem() {
         if (this.multiselect) {
             return getClonedObject(this._items);
@@ -94,12 +102,19 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
+        public datePipe: ToDatePipe,
         @Attribute('itemclass.bind') public binditemclass,
         @Attribute('disableitem.bind') public binddisableitem,
-        @Attribute('dataset.bind') public binddataset
+        @Attribute('dataset.bind') public binddataset,
+        @Attribute('groupby') protected groupby: string
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
+
+        if (this.groupby) {
+            this.handleHeaderClick = handleHeaderClick;
+            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
+        }
 
         this.debouncedFetchNextDatasetOnScroll = _.debounce(() => this.fetchNextDatasetOnScroll, 50);
     }
@@ -290,6 +305,11 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
 
         if (this.orderby) {
             this.fieldDefs = getOrderedDataset(this.fieldDefs, this.orderby);
+        }
+
+
+        if (this.groupby) {
+            this.groupedData = groupData(this.fieldDefs, this.groupby, this.match, this.orderby, this.dateformat, this.datePipe);
         }
 
         if (!this.fieldDefs.length) {

@@ -782,7 +782,12 @@ export const hasCordova = () => {
     return !!window['cordova'];
 };
 
-export const INT_MAX_VALUE = 2147483647;
+// TODO: Create AppDefaults Service and include the getter setter for key / value pairs.
+export const AppDefaults = {
+    INT_MAX_VALUE: 2147483647,
+    dateFormat: 'MM/dd/yyyy',
+    timeFormat: 'HH:mm'
+} ;
 
 export const openLink = (link: string, target: string = '_self') => {
     if ( hasCordova() && _.startsWith(link, '#')) {
