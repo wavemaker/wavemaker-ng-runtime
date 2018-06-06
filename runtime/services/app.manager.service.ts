@@ -13,6 +13,8 @@ declare const _;
 @Injectable()
 export class AppManagerService {
 
+    private appVariablesLoaded = false;
+
     constructor(
         private $http: HttpService,
         private $security: SecurityService,
@@ -53,8 +55,12 @@ export class AppManagerService {
     }
 
     loadAppVariables() {
+        if (this.appVariablesLoaded) {
+            return Promise.resolve();
+        }
         return this.$http.get('./app.variables.json')
             .then(response => {
+                this.appVariablesLoaded = true;
                 const data = this.$variables.register('app', response, this.$app);
                 this.$app.Variables = data.Variables;
                 this.$app.Actions = data.Actions;

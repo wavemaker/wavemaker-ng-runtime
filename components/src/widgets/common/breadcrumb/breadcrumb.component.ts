@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {$appDigest, getRouteFromNavLink, getUrlParams, openLink} from '@wm/core';
+
+import { getRouteFromNavLink, getUrlParams, openLink } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './breadcrumb.props';
@@ -22,7 +23,7 @@ declare const _;
         provideAsWidgetRef(BreadcrumbComponent)
     ]
 })
-export class BreadcrumbComponent extends DatasetAwareNavComponent implements AfterViewInit, OnInit {
+export class BreadcrumbComponent extends DatasetAwareNavComponent {
 
     constructor(
         inj: Injector,
@@ -77,17 +78,13 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent implements Aft
         // get path only if the widget have id property.
         if (this.itemid) {
             this.nodes = this.getPath({key: this.getCurrentRoute(), isPathFound: false}, this.nodes);
-            $appDigest();
         }
 
     }
 
-    onPropertyChange(key, nv, ov) {
-        super.onPropertyChange(key, nv, ov);
-    }
-
-    onItemClick ($item) {
-        const canNavigate = !(this.invokeEventCallback('beforenavigate', {$item: _.omit($item, ['children', 'value'])}) === false);
+    onItemClick ($event: Event, $item: any) {
+        const locals = {$item: _.omit($item, ['children', 'value']), $event};
+        const canNavigate = !(this.invokeEventCallback('beforenavigate', locals) === false);
         let itemLink = $item.link;
         if (itemLink && canNavigate) {
             if (itemLink.startsWith('#/')) {
@@ -100,11 +97,4 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent implements Aft
         }
     }
 
-    ngOnInit() {
-        super.ngOnInit();
-    }
-
-    ngAfterViewInit() {
-        super.ngAfterViewInit();
-    }
 }
