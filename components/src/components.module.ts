@@ -92,6 +92,7 @@ import { ScrollableDirective } from './widgets/common/search/scrollable.directiv
 import { SelectComponent } from './widgets/common/select/select.component';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SliderComponent } from './widgets/common/slider/slider.component';
+import { SmoothScrollDirective } from './widgets/common/smooth-scroll/smooth-scroll.directive';
 import { SpinnerComponent } from './widgets/common/spinner/spinner.component';
 import { SwitchComponent } from './widgets/common/switch/switch.component';
 import { TableActionDirective } from './widgets/common/table/table-action/table-action.directive';
@@ -198,6 +199,7 @@ const wmComponents = [
     SelectComponent,
     ShowInDeviceDirective,
     SliderComponent,
+    SmoothScrollDirective,
     SpinnerComponent,
     SwitchComponent,
     TableActionDirective,

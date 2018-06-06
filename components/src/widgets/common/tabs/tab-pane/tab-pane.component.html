@@ -1,4 +1,4 @@
-<div class="tab-body" partial-container-target (swipeleft)="handleSwipeLeft($event);" (swiperight)="handleSwipeRight($event);">
+<div class="tab-body" partial-container-target [wmSmoothscroll]="smoothscroll" (swipeleft)="handleSwipeLeft($event);" (swiperight)="handleSwipeRight($event);">
     <ng-content></ng-content>
 </div>
 
