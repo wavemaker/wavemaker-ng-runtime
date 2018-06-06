@@ -107,10 +107,12 @@ import { TimeComponent } from './widgets/common/time/time.component';
 import { TopNavDirective } from './widgets/common/top-nav/top-nav.directive';
 import { TreeDirective } from './widgets/common/tree/tree.directive';
 import { VideoComponent } from './widgets/common/video/video.component';
-import { FilterPipe, NumberToStringPipe, PrefixPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
+import { FileIconClassPipe, FileSizePipe, FilterPipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { WizardComponent } from './widgets/common/wizard/wizard.component';
 import { WizardStepDirective } from './widgets/common/wizard/wizard-step/wizard-step.directive';
+import { OnFileSelectDirective } from './widgets/common/file-upload/common.directive';
+import { FileUploadComponent } from './widgets/common/file-upload/file-upload.component';
 import { LoginDialogDirective } from './widgets/common/dialog/login-dialog/login-dialog.directive';
 
 const wmComponents = [
@@ -157,6 +159,7 @@ const wmComponents = [
     InputEmailComponent,
     InputNumberComponent,
     InputTextComponent,
+    FileUploadComponent,
     FormWidgetDirective,
     LabelDirective,
     LayoutGridColumnDirective,
@@ -177,6 +180,7 @@ const wmComponents = [
     NavbarComponent,
     NavComponent,
     NavItemDirective,
+    OnFileSelectDirective,
     PageContentDirective,
     PageDirective,
     PaginationComponent,
@@ -219,13 +223,16 @@ const wmComponents = [
 
 const PIPES = [
     ToDatePipe,
+    FileIconClassPipe,
     FilterPipe,
+    FileSizePipe,
     ToNumberPipe,
     ToCurrencyPipe,
     PrefixPipe,
     SuffixPipe,
     TimeFromNowPipe,
     NumberToStringPipe,
+    StateClassPipe,
     StringToNumberPipe,
     TrustAsPipe,
     ImagePipe

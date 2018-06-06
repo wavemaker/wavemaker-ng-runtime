@@ -255,6 +255,14 @@ export const isImageFile = (fileName) => {
     return (REGEX.SUPPORTED_IMAGE_FORMAT).test(fileName);
 };
 
+export const isAudioFile = (fileName) => {
+    return (REGEX.SUPPORTED_AUDIO_FORMAT).test(fileName);
+};
+
+export const isVideoFile = (fileName) => {
+    return (REGEX.SUPPORTED_VIDEO_FORMAT).test(fileName);
+};
+
 export const isValidWebURL = (url: string): boolean => {
     return (REGEX.VALID_WEB_URL).test(url);
 };

@@ -126,3 +126,81 @@ export class FilterPipe implements PipeTransform {
         });
     }
 }
+
+@Pipe({
+    name: 'filesize'
+})
+export class FileSizePipe implements PipeTransform {
+    transform(bytes: number, precision: number) {
+        const units = [
+            'bytes',
+            'KB',
+            'MB',
+            'GB',
+            'TB',
+            'PB'
+        ];
+
+        /*Todo[shubham]
+        if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {
+            return isMobile() ? '' : '?';
+        }*/
+        let unit = 0;
+        while (bytes >= 1024) {
+            bytes /= 1024;
+            unit++;
+        }
+        return bytes.toFixed(+precision) + ' ' + units[unit];
+    }
+}
+
+@Pipe({
+    name: 'fileIconClass'
+})
+export class FileIconClassPipe implements PipeTransform {
+    transform(fileExtension: any) {
+        const fileClassMapping = {
+            'zip'       :   'fa-file-zip-o',
+            'pdf'       :   'fa-file-pdf-o',
+            'rar'       :   'fa-file-archive-o',
+            'txt'       :   'fa-file-text-o',
+            'ppt'       :   'fa-file-powerpoint-o',
+            'pot'       :   'fa-file-powerpoint-o',
+            'pps'       :   'fa-file-powerpoint-o',
+            'pptx'      :   'fa-file-powerpoint-o',
+            'potx'      :   'fa-file-powerpoint-o',
+            'ppsx'      :   'fa-file-powerpoint-o',
+            'mpg'       :   'fa-file-movie-o',
+            'mp4'       :   'fa-file-movie-o',
+            'mov'       :   'fa-file-movie-o',
+            'avi'       :   'fa-file-movie-o',
+            'mp3'       :   'fa-file-audio-o',
+            'docx'      :   'fa-file-word-o',
+            'js'        :   'fa-file-code-o',
+            'md'        :   'fa-file-code-o',
+            'html'      :   'fa-file-code-o',
+            'css'       :   'fa-file-code-o',
+            'xlsx'      :   'fa-file-excel-o',
+            'png'       :   'fa-file-image-o',
+            'jpg'       :   'fa-file-image-o',
+            'jpeg'      :   'fa-file-image-o',
+            'file'      :   'fa-file-o',
+            'default'   :   'fa-file-o'
+        };
+
+        return 'fa ' + (fileClassMapping[fileExtension] || 'fa-file-o');
+    }
+}
+
+@Pipe({
+    name: 'stateClass'
+})
+export class StateClassPipe implements PipeTransform {
+    transform(state) {
+        const stateClassMap = {
+            'success'   : 'wi wi-done text-success',
+            'error'     : 'wi wi-cancel text-danger'
+        };
+        return stateClassMap[state.toLowerCase()];
+    }
+}

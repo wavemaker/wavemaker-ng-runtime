@@ -2,6 +2,7 @@ import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTA
 import { isFileUploadSupported } from './variables.utils';
 import { extractType, formatDate, getBlob, isDateTimeType, } from '@wm/core';
 import { getAccessToken } from './../oAuth.utils';
+import { metadataService } from '@wm/variables';
 
 declare const _, window;
 
@@ -284,9 +285,7 @@ export class ServiceVariableUtils {
         // Setting appropriate content-Type for request accepting request body like POST, PUT, etc
         if (!_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, _.toUpper(method))) {
             /*Based on the formData browser will automatically set the content type to 'multipart/form-data' and webkit boundary*/
-            if (operationInfo.consumes && (operationInfo.consumes[0] === WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA)) {
-                headers['Content-Type'] = undefined;
-            } else {
+            if (!(operationInfo.consumes && (operationInfo.consumes[0] === WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA))) {
                 headers['Content-Type'] = (operationInfo.consumes && operationInfo.consumes[0]) || 'application/json';
             }
         }
@@ -336,5 +335,14 @@ export class ServiceVariableUtils {
         };
 
         return invokeParams;
+    }
+
+    static isFileUploadRequest(variable) {
+        const methodInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+        if (methodInfo && methodInfo.consumes) {
+            return methodInfo.consumes[0] === WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA;
+        } else {
+            return false;
+        }
     }
 }

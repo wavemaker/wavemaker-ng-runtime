@@ -11,6 +11,8 @@ const getManager = (): ServiceVariableManager => {
 
 export class ServiceVariable extends ApiAwareVariable implements IDataSource {
 
+    _progressObservable;
+
     constructor(variable: any) {
         super();
         Object.assign(this as any, variable);

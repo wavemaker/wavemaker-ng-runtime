@@ -117,7 +117,7 @@ export class HttpService {
 
     isPlatformSessionTimeout(error) {
         const MSG_SESSION_NOT_FOUND = 'Session Not Found';
-        return error.status === 401 && this.getHeader(error,'x-wm-login-errormessage') === MSG_SESSION_NOT_FOUND;
+        return error.status === 401 && this.getHeader(error, 'x-wm-login-errormessage') === MSG_SESSION_NOT_FOUND;
     }
 
     get(url: string, options?: any) {
@@ -134,12 +134,22 @@ export class HttpService {
         return this.send(options);
     }
 
+    upload(url, data, options) {
+        const req = new HttpRequest('POST', url, data, {
+            reportProgress: true // for progress data
+        });
+        return this.httpClient.request(req);
+        // return this.httpClient.post(url, data, {
+        //     reportProgress: true
+        // });
+    }
+
     /**
      * registers a callback to be trigerred on session timeout
      * @param callback
      */
     registerOnSessionTimeout(callback) {
-        this.sessionTimeoutObservable.asObservable().subscribe(callback)
+        this.sessionTimeoutObservable.asObservable().subscribe(callback);
     }
 
     /**
@@ -160,7 +170,7 @@ export class HttpService {
             that.send(data.requestInfo).then(function(response) {
                 data.resolve(response);
             }, function(response){
-                data.reject(response)
+                data.reject(response);
             });
         });
     }

@@ -1,7 +1,5 @@
-
-declare const _;
-
-import { findValueOf, getBlob, getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/core';
+import { upload } from '../../util/file-upload.util';
+import { $appDigest, getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/core';
 import { ServiceVariable } from '../../model/variable/service-variable';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 import { $queue } from '../../util/inflight-queue';
@@ -11,7 +9,14 @@ import { setInput } from './../../util/variable/variables.utils';
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 
+declare const _;
+
 export class ServiceVariableManager extends BaseVariableManager {
+
+    fileUploadResponse: any = [];
+    fileUploadCount = 0;
+    successFileUploadCount = 0;
+    failedFileUploadCount = 0;
 
     /**
      * function to process error response from a service
@@ -83,7 +88,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         /* trigger success callback */
         triggerFn(success, response);
 
-        setTimeout(function () {
+        setTimeout(() => {
             // EVENT: ON_SUCCESS
             initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, options.xhrObj);
 
@@ -98,6 +103,48 @@ export class ServiceVariableManager extends BaseVariableManager {
         });
 
         return variable.dataSet;
+    }
+
+    private uploadFileInFormData(variable: ServiceVariable, options: any, success: Function, error: Function, file, requestParams, fileCount) {
+        const promise = upload(file, {
+            fileParamName: 'files',
+            url: requestParams.url
+        });
+        (promise as any).then((data) => {
+            this.fileUploadCount++;
+            this.successFileUploadCount++;
+            this.fileUploadResponse.push(data);
+            if (fileCount === this.fileUploadCount) {
+                if (this.failedFileUploadCount === 0) {
+                    this.processSuccessResponse(this.fileUploadResponse, variable, options, success);
+                    this.fileUploadResponse = [];
+                } else {
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, this.fileUploadResponse);
+                    this.fileUploadResponse = [];
+                }
+                this.fileUploadCount = 0;
+                this.successFileUploadCount = 0;
+            }
+            return data;
+        }, (e) => {
+            this.fileUploadCount++;
+            this.failedFileUploadCount++;
+            this.fileUploadResponse.push(e);
+            if (fileCount === this.fileUploadCount) {
+                this.processErrorResponse(variable, this.fileUploadResponse, error, options.xhrObj, options.skipNotification);
+                this.fileUploadResponse = [];
+                this.fileUploadCount = 0;
+                this.failedFileUploadCount = 0;
+            }
+            return e;
+        }, (data) => {
+            if (variable._progressObservable) {
+                variable._progressObservable.next({'progress': data, 'status': VARIABLE_CONSTANTS.EVENT.PROGRESS, 'fileName': file.name});
+            }
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.PROGRESS, variable, data);
+            return data;
+        });
+        return promise;
     }
 
     /**
@@ -194,6 +241,39 @@ export class ServiceVariableManager extends BaseVariableManager {
         return httpService.send(params);
     }
 
+    // Makes the call for Uploading file/ files
+    private uploadFile(variable, options, success, error, inputFields, requestParams ) {
+        let fileParamCount = 0;
+        const fileArr: any = [], promArr: any = [];
+        _.forEach(inputFields, (inputField) => {
+            if (_.isArray(inputField)) {
+                if (inputField[0] instanceof File) {
+                    fileParamCount++;
+                }
+                _.forEach(inputField, (input) => {
+                    if (input instanceof File) {
+                        fileArr.push(input);
+                    }
+                });
+            } else {
+                if (inputField instanceof File) {
+                    fileParamCount++;
+                    fileArr.push(inputField);
+                }
+            }
+        });
+        if (fileParamCount === 1) {
+            if (inputFields.files.length > 1) {
+                _.forEach(fileArr, (file) => {
+                    promArr.push(this.uploadFileInFormData(variable, options, success, error, file, requestParams, inputFields.files.length));
+                });
+                return Promise.all(promArr);
+            } else {
+                return this.uploadFileInFormData(variable, options, success, error, fileArr[0], requestParams, 1);
+            }
+        }
+    }
+
     /**
      * proxy for the invoke call
      * Request Info is constructed
@@ -207,15 +287,22 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @private
      */
     private _invoke (variable: ServiceVariable, options: any, success: Function, error: Function) {
-        const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
-        const operationInfo = this.getMethodInfo(variable, inputFields, options);
-        const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields),
-            _this = this;
+        const inputFields = getClonedObject(options.inputFields || variable.dataBinding),
+            operationInfo = this.getMethodInfo(variable, inputFields, options),
+            requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
 
         // check errors
         if (requestParams.error) {
             this.handleRequestMetaError(requestParams, variable, error, options);
             return;
+        }
+
+        // file upload
+        if (ServiceVariableUtils.isFileUploadRequest(variable)) {
+            const uploadPromise = this.uploadFile(variable, options, success, error, inputFields, requestParams);
+            if (uploadPromise) {
+                return uploadPromise;
+            }
         }
 
         // file download
@@ -231,12 +318,12 @@ export class ServiceVariableManager extends BaseVariableManager {
         }
 
         // make the call
-        return this.makeCall(requestParams).then(function (response) {
-            const data = _this.processSuccessResponse(response.body, variable, options, success);
+        return this.makeCall(requestParams).then((response) => {
+            const data = this.processSuccessResponse(response.body, variable, options, success);
             initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
             return Promise.resolve(data);
-        }, function (e) {
-            _this.processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
+        }, (e) => {
+            this.processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
         });
     }
 
