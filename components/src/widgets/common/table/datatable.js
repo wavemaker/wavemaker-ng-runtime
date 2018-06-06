@@ -1600,7 +1600,7 @@ $.widget('wm.datatable', {
             }
             //Event for on before form render. User can access form widgets here.
             if ($.isFunction(this.options.onFormRender)) {
-                this.options.onFormRender($row, e, options.operation || action);
+                this.options.onFormRender($row, e, options.operation || action, $row.hasClass('always-new-row'));
             }
         } else {
             $editableElements = $row.find('td.cell-editing');

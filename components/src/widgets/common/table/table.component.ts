@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy, ViewChild, ViewContainerRef, ContentChildren, QueryList } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy, ViewChild, ViewContainerRef, ContentChildren, QueryList, HostListener } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -131,16 +131,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     };
     exportOptions = [];
     exportdatasize;
+    formWidgets;
     headerConfig = [];
     items = [];
     navControls = 'Basic';
     rowActions = [];
+    selectedColumns;
     shownavigation = false;
     dataset;
     _liveTableParent;
     isPartOfLiveGrid;
     gridElement;
     isMobile;
+    isLoading;
     documentClickBind = noop;
 
     fieldDefs = [];
@@ -252,22 +255,32 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.items.length = 0;
                 this.items.push(rowData);
             }
+            this.invokeEventCallback('select', {$data: rowData, $event: e, $rowData: rowData});
+            this.invokeEventCallback('rowclick', {$data: rowData, $event: e, $rowData: rowData});
             $appDigest();
         },
-        onRowDblClick: () => {
+        onRowDblClick: (rowData, e) => {
+            this.invokeEventCallback('rowdblclick', {$data: rowData, $event: e, $rowData: rowData});
         },
         onRowDeselect: (rowData, e) => {
             if (this.multiselect) {
                 this.items = _.pullAllWith(this.items, [rowData], _.isEqual);
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
+                this.invokeEventCallback('deselect', {$data: rowData, $event: e, $rowData: rowData});
             }
             $appDigest();
         },
-        onColumnSelect: () => {
+        onColumnSelect: (col, e) => {
+            this.selectedColumns = this.callDataGridMethod('getSelectedColumns');
+            this.invokeEventCallback('columnselect', {$data: col, $event: e});
         },
-        onColumnDeselect: () => {
+        onColumnDeselect: (col, e) => {
+            this.selectedColumns = this.callDataGridMethod('getSelectedColumns');
+            this.invokeEventCallback('columndeselect', {$data: col, $event: e});
         },
-        onHeaderClick: () => {
+        onHeaderClick: (col, e) => {
+            // if onSort function is registered invoke it when the column header is clicked
+            this.invokeEventCallback('headerclick', {$event: e, $data: col});
         },
         onRowDelete: (rowData, cancelRowDeleteCallback, e, callBack) => {
             this.deleteRecord(rowData, cancelRowDeleteCallback, e, callBack);
@@ -290,14 +303,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onBeforeRowInsert: (rowData, e) => {
             return this.invokeEventCallback('beforerowinsert', {$event: e, $data: rowData, $rowData: rowData});
         },
-        onFormRender: () => {
+        onFormRender: ($row, e, operation, alwaysNewRow) => {
+            const widget = alwaysNewRow ? 'inlineWidgetNew' : 'inlineWidget';
+            setTimeout(() => {
+                this.formWidgets = {};
+                this.fieldDefs.forEach(col => {
+                    if (col[widget]) {
+                        this.formWidgets[col.field] = col[widget];
+                    }
+                });
+                this.invokeEventCallback('formrender', {$event: e, formWidgets: this.formWidgets, $operation: operation});
+            }, 250);
         },
-        onBeforeFormRender: () => {
+        onBeforeFormRender: (rowData, e, operation) => {
+            return this.invokeEventCallback('beforeformrender', {$event: e, $rowData: rowData, $operation: operation});
         },
         clearRowActions: () => {
             this.rowActionsTl.clear();
-        },
-        getCompiledTemplate: () => {
         },
         generateRowActions: (index, row) => {
             this.rowActionsCompiledTl[index] = [];
@@ -378,25 +400,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // Move the generated filter template to the filter row
             return this.rowFilterCompliedTl[fieldName];
         },
-        compileTemplateInGridScope: () => {
-        },
-        getBindDataSet: () => {
-        },
         setGridEditMode: (val) => {
             this.isGridEditMode = val;
             $appDigest();
         },
-        setGridState: () => {
+        setGridState: (val) => {
+            this.isLoading = val === 'loading';
         },
         noChangesDetected: () => {
-        },
-        afterSort: () => {
-        },
-        // Function to loop through events and trigger
-        handleCustomEvents: () => {
+            this.toggleMessage(true, 'info', 'No Changes Detected');
         },
         // Function to redraw the widgets on resize of columns
         redrawWidgets: () => {
+            this.fieldDefs.forEach(col => {
+                triggerFn(col.inlineWidget && col.inlineWidget.redraw);
+                triggerFn(col.inlineWidgetNew && col.inlineWidgetNew.redraw);
+                triggerFn(col.filterWidget && col.filterWidget.redraw);
+            });
         },
         searchHandler: this.searchSortHandler.bind(this),
         sortHandler: this.searchSortHandler.bind(this),
@@ -404,6 +424,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             setTimeout(fn, delay);
         },
         safeApply: () => {
+            $appDigest();
         }
     };
 
@@ -457,6 +478,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // Select the rows in the table based on the new selected items passed
         this.items.length = 0;
         this.callDataGridMethod('selectRows', val);
+    }
+
+    @HostListener('keypress', ['$event']) onKeyPress ($event: any) {
+        if ($event.which === 13) {
+            this.invokeEventCallback('enterkeypress', {$event, $data: this.gridData});
+        }
     }
 
     constructor(inj: Injector,
@@ -1044,9 +1071,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 message: msg,
                 class: type
             });
-            // wmToaster.show(type, WM.isDefined(header) ? header : type.toUpperCase(), msg);
-        } else {
-            // wmToaster.hide();
         }
     }
 

@@ -335,7 +335,11 @@ export class PaginationComponent extends StylableComponent {
 
     invokeSetRecord(event, data) {
         // Trigger the event handler if exists.
-        this.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage});
+        if (this.parent) {
+            this.parent.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage});
+        } else {
+            this.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage});
+        }
     }
 
     /*Function to validate the page input.
