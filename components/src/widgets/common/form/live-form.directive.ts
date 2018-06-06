@@ -155,7 +155,7 @@ export class LiveFormDirective {
             } else if (field.type === DataType.BLOB) {
                 this.resetFileUploadWidget(field, true);
                 field.href  = this.getBlobURL(dataObj, field.key, value);
-                field.value = value;
+                field.value = _.isString(value) ? '' : value;
             } else {
                 field.value = value;
             }

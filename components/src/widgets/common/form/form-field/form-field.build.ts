@@ -23,7 +23,7 @@ const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isM
     const formControl = isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
     const tmplRef = isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl} ${eventsTmpl} ${tmplRef}`;
-    return getFormWidgetTemplate(widgetType, defaultTmpl, attrs, counter, pCounter);
+    return getFormWidgetTemplate(widgetType, defaultTmpl, attrs, {counter, pCounter});
 };
 
 

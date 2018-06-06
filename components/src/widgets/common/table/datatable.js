@@ -1351,6 +1351,9 @@ $.widget('wm.datatable', {
     getTextValue: function (fieldName, alwaysNewRow) {
         return this.options.getFieldValue(alwaysNewRow ? fieldName + '_new' : fieldName);
     },
+    getUploadedFiles: function ($el, fieldName) {
+        return _.get(document.forms, [$el.find('form').attr('name'), fieldName, 'files', 0]);
+    },
     isDataModified: function ($editableElements, rowData, alwaysNewRow) {
         var isDataChanged = false,
             self = this;
@@ -1367,7 +1370,7 @@ $.widget('wm.datatable', {
                 originalData = _.get(rowData, colDef.field);
             if (colDef.editWidgetType === 'upload') {
                 //For upload widget, check if any file is uploaded
-                isDataChanged = document.forms[$el.attr('form-name')][colDef.field].files.length > 0;
+                isDataChanged = self.getUploadedFiles($el, colDef.field) instanceof File;
             } else {
                 //If new value and old value are not defined, then data is not changed
                 if (!self.Utils.isDefined(text) && (originalData === null || originalData === undefined)) {
@@ -1622,7 +1625,7 @@ $.widget('wm.datatable', {
                             text;
                         text = self.getTextValue(colDef.field, alwaysNewRow);
                         if (fields.length === 1 && colDef.editWidgetType === 'upload') {
-                            _.set(rowData, colDef.field, _.get(document.forms, [$el.attr('form-name'), colDef.field, 'files', 0]));
+                            _.set(rowData, colDef.field, self.getUploadedFiles($el, colDef.field));
                         } else {
                             text = ((fields.length === 1 || isNewRow) && text === '') ? undefined : text; //Set empty values as undefined
                             if (self.Utils.isDefined(text)) {

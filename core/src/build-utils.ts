@@ -1,7 +1,7 @@
 import { FormWidgetType } from '@wm/core';
 
 // Method to get the form widget template
-export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, attrs?: Map<string, string>, counter?: string, pCounter?: string) => {
+export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, attrs?: Map<string, string>, options: any = {}) => {
     let tmpl;
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
@@ -69,13 +69,22 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmDateTime ${innerTmpl} role="input"></div>`;
             break;
         case FormWidgetType.UPLOAD:
-            tmpl = `<a class="form-control-static" href="{{${counter}.href}}" target="_blank" *ngIf="${counter}.filetype === 'image' && ${counter}.href">
+            const counter = options.counter;
+            const pCounter = options.pCounter;
+            const uploadProps = options.uploadProps;
+            if (uploadProps) {
+                tmpl = `<form name="${uploadProps.formName}" ${innerTmpl}>
+                            <input focus-target class="file-upload" type="file" name="${uploadProps.name}"/>
+                        </form>`;
+            } else {
+                tmpl = `<a class="form-control-static" href="{{${counter}.href}}" target="_blank" *ngIf="${counter}.filetype === 'image' && ${counter}.href">
                         <img style="height:2em" class="wi wi-file" [src]="${counter}.href"/></a>
                         <a class="form-control-static" target="_blank" href="{{${counter}.href}}" *ngIf="${counter}.filetype !== 'image' && ${counter}.href">
                         <i class="wi wi-file"></i></a>
                         <input ${innerTmpl} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}"
                         [required]="${counter}.required" type="file" name="${attrs.get('key') || attrs.get('name')}_formWidget" [readonly]="${counter}.readonly"
-                        [class.hidden]="!${pCounter}.isUpdateMode" [(ngModel)]="${counter}.value" [accept]="${counter}.permitted">`;
+                        [class.hidden]="!${pCounter}.isUpdateMode" [accept]="${counter}.permitted">`;
+            }
             break;
         default:
             tmpl = `<wm-input ${innerTmpl} aria-describedby="Enter text" type="text"></wm-input>`;
