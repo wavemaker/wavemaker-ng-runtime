@@ -1,4 +1,4 @@
-import { register, PROP_STRING, PROP_STRING_NOTIFY, PROP_BOOLEAN } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -6,7 +6,6 @@ export const registerProps = () => {
         new Map(
             [
                 ['class', PROP_STRING],
-                // TODO: all nav related properties can be grouped.
                 ['dataset', {notify: true}],
                 ['itemlabel', PROP_STRING_NOTIFY],
                 ['itemid', PROP_STRING_NOTIFY],
