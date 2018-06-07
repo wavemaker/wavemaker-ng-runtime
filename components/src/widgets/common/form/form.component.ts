@@ -224,16 +224,17 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         }
     }
 
-    toggleMessage(show, msg?, type?, header?) {
+    toggleMessage(show, msg?, type?) {
         let template;
         if (show && msg) {
+            template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
             if (this.messagelayout === 'Inline') {
-                template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
                 this.statusMessage = {'caption': template || '', type: type};
             } else {
-                template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
-                // TODO: use default Notification action
-                // wmToaster.show(type, WM.isDefined(header) ? header : type.toUpperCase(), template, undefined, 'trustedHtml');
+                this.viewParent.App.Actions.appNotification.invoke({
+                    message: template,
+                    class: type
+                });
             }
         } else {
             this.statusMessage.caption = '';

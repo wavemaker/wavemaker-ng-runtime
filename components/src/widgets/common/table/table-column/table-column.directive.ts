@@ -30,14 +30,15 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     @ContentChildren('inlineWidget') _inlineWidget;
     @ContentChildren('inlineWidgetNew') _inlineWidgetNew;
 
-    private filterWidget;
-    private inlineWidget;
-    private inlineWidgetNew;
     private _IsPropsInitialized;
     private _filterDataSet;
     private _isRowFilter;
     private _isInlineEditable;
     private _isNewEditableRow;
+
+    filterWidget;
+    inlineWidget;
+    inlineWidgetNew;
 
     backgroundcolor;
     binding;
