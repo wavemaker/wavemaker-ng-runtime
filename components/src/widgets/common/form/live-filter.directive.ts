@@ -42,6 +42,7 @@ export class LiveFilterDirective {
         form.onDataSourceChange = this.onDataSourceChange.bind(this);
         form.onFieldValueChange = this.onFieldValueChange.bind(this);
         form.submitForm = this.submitForm.bind(this);
+        form.registerFormWidget = this.registerFormWidget.bind(this);
 
         this.form.result = {
             data: [],
@@ -337,6 +338,11 @@ export class LiveFilterDirective {
         if (defaultObj && this.form.result) {
             this._filter(this.form.result.options);
         }
+    }
+
+    registerFormWidget(widget) {
+        const name = widget.key || widget.name;
+        this.form.filterWidgets[name] = widget;
     }
 }
 

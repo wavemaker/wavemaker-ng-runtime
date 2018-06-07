@@ -1,7 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass, App } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -45,6 +45,8 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     isUpdateMode = true;
     formFields = [];
     formfields = {};
+    formWidgets = {};
+    filterWidgets = {};
     buttonArray = [];
     dataoutput;
     datasource;
@@ -114,6 +116,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     constructor(
         inj: Injector,
         private fb: FormBuilder,
+        private app: App,
         @SkipSelf() @Optional() public parentForm: FormComponent,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
@@ -231,7 +234,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             if (this.messagelayout === 'Inline') {
                 this.statusMessage = {'caption': template || '', type: type};
             } else {
-                this.viewParent.App.Actions.appNotification.invoke({
+                this.app.Actions.appNotification.invoke({
                     message: template,
                     class: type
                 });
@@ -254,9 +257,15 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         $appDigest();
     }
 
+    registerFormWidget(widget) {
+        const name = widget.key || widget.name;
+        this.formWidgets[name] = widget;
+    }
+
     registerFormFields(formField) {
         this.formFields.push(formField);
         this.formfields[formField.key] = formField;
+        this.registerFormWidget(formField);
     }
 
     registerActions(formAction) {

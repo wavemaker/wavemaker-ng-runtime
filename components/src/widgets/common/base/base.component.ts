@@ -447,6 +447,22 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     /**
+     * Sets the focus on the widget
+     */
+    protected focus(): void {
+        /**
+         * Check for the nodes having focus-target attribute inside the element
+         * If found, focus the first node (eg, date widget)
+         * else, focus the element (eg, text widget)
+         */
+        let $target = this.$element.find('[focus-target]');
+        if (!$target.length) {
+            $target = this.$element;
+        }
+        $target.first().focus();
+    }
+
+    /**
      * nativeElement will be available by this time
      * if the delayInit is false, properties meta will be available by this time
      * Invoke the setInitProps if the delayInit is false

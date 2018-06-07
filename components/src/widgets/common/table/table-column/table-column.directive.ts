@@ -18,6 +18,29 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 const inlineWidgetProps = ['datafield', 'displayfield', 'disabled', 'required', 'placeholder', 'searchkey', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataset'];
 
+class FieldDef {
+    widget;
+
+    constructor(widget) {
+        this.widget = widget;
+    }
+
+    focus() {
+        this.widget.focus();
+    }
+
+    setProperty(prop, newval) {
+        // Get the scope of the current editable widget and set the value
+        prop = prop === 'value' ? 'datavalue' : prop;
+        this.widget[prop] = newval;
+    }
+
+    getProperty(prop) {
+        prop = prop === 'value' ? 'datavalue' : prop;
+        return this.widget[prop];
+    }
+}
+
 @Directive({
     selector: '[wmTableColumn]',
     providers: [
@@ -132,6 +155,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.registerDestroyListener(this._inlineWidget.changes.subscribe((val) => {
                 // Listen on the inner inline widget and setup the widget
                 this.inlineWidget = val.first && val.first.widget;
+                this.table.registerFormField(this.binding, new FieldDef(this.inlineWidget));
                 this.setUpInlineWidget('inlineWidget');
             }));
 
@@ -351,6 +375,15 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                     this.setInlineWidgetProp('inlineWidgetNew', key, nv);
                 }
                 break;
+        }
+    }
+
+    setProperty(property, nv) {
+        this[property] = nv;
+        if (property === 'displayName') {
+            this.table.callDataGridMethod('setColumnProp', this.field, property, nv);
+        } else {
+            this.table.redraw(true);
         }
     }
 }

@@ -378,10 +378,9 @@ export class TableFilterSortDirective {
             if (isDefined(this.table.rowFilter[fieldName].value) && this.table.rowFilter[fieldName].value !== '') {
                 this.table.onRowFilterChange();
             } else {
-                // TODO: Focus element on function
-                // setTimeout(() => {
-                //     this.Widgets[name + '_filter_' + field].focus();
-                // });
+                setTimeout(() => {
+                    this.table.columns[fieldName].filterWidget.focus();
+                });
             }
         }
     }

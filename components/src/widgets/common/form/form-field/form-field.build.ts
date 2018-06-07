@@ -9,8 +9,19 @@ const idGen = new IDGenerator('formfield_');
 
 const getEventsTemplate = (attrs) => {
     const eventAttrs = new Map();
+    if (!attrs.has('focus.event')) {
+        attrs.set('focus.event', '');
+    }
+    if (!attrs.has('blur.event')) {
+        attrs.set('blur.event', '');
+    }
     attrs.forEach((value, key) => {
        if (key.endsWith('.event')) {
+           if (key === 'focus.event') {
+               value = `_onFocusField($event);${value}`;
+           } else if (key === 'blur.event') {
+               value = `_onBlurField($event);${value}`;
+           }
            eventAttrs.set(key, value);
            attrs.delete(key);
        }

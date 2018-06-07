@@ -1,9 +1,9 @@
 import {getClonedObject, triggerFn} from '@wm/core';
 
 import { BaseVariableManager } from './base-variable.manager';
-import {setInput, initiateCallback, formatExportExpression} from '../../util/variable/variables.utils';
+import { setInput, initiateCallback, formatExportExpression } from '../../util/variable/variables.utils';
 import LiveVariableUtils from '../../util/variable/live-variable.utils';
-import {$queue} from '../../util/inflight-queue';
+import { $queue } from '../../util/inflight-queue';
 import * as LVService from '../../util/variable/live-variable.http.utils';
 import { $rootScope, VARIABLE_CONSTANTS, CONSTANTS } from '../../constants/variables.constants';
 

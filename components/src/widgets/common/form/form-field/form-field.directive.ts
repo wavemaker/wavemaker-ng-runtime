@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Self, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { DataType, FormWidgetType, toBoolean, removeClass } from '@wm/core';
@@ -9,6 +9,7 @@ import { getEvaluatedData, provideAsWidgetRef } from '../../../../utils/widget-u
 import { getDefaultViewModeWidget } from '../../../../utils/live-utils';
 import { StylableComponent } from '../../base/stylable.component';
 import { FormComponent } from '../form.component';
+import { Context } from '../../../framework/types';
 
 declare const _;
 
@@ -27,7 +28,8 @@ const FILE_TYPES = {
     selector: '[wmFormField]',
     exportAs: 'wmFormField',
     providers: [
-        provideAsWidgetRef(FormFieldDirective)
+        provideAsWidgetRef(FormFieldDirective),
+        {provide: Context, useValue: {}, multi: true}
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
@@ -82,12 +84,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     constructor(
         inj: Injector,
-        @Optional() form: FormComponent,
+        form: FormComponent,
         fb: FormBuilder,
         @Attribute('dataset.bind') binddataset,
         @Attribute('widgettype') _widgetType,
         @Attribute('name') name,
         @Attribute('key') key,
+        @Self() @Inject(Context) contexts: Array<any>
     ) {
 
         const WIDGET_CONFIG = {widgetType: _widgetType, hostClass: ''};
@@ -110,6 +113,18 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (this.binddataset) {
             this.isDataSetBound = true;
         }
+
+        contexts[0]._onFocusField = this._onFocusField.bind(this);
+        contexts[0]._onBlurField = this._onBlurField.bind(this);
+    }
+
+    _onFocusField($evt) {
+        $($evt.target).closest('.live-field').addClass('active');
+    }
+
+    _onBlurField($evt) {
+        $($evt.target).closest('.live-field').removeClass('active');
+        this.setUpValidators();
     }
 
     // Expression to be evaluated in view mode of form field

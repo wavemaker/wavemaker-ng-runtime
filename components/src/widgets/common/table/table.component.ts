@@ -2,7 +2,7 @@ import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, isEmptyObject, isPageable, triggerFn } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, isPageable, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -89,6 +89,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private inlineNewCompliedTl: any = {};
 
     columns = {};
+    formfields = {};
     datagridElement;
     datasource;
     editmode;
@@ -488,6 +489,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     constructor(inj: Injector,
                 public fb: FormBuilder,
+                private app: App,
                 @Attribute('dataset.bind') public binddataset,
                 @Attribute('readonlygrid') public readonlygrid) {
         super(inj, WIDGET_CONFIG);
@@ -1015,6 +1017,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
     }
 
+    registerFormField(name, formField) {
+        this.formfields[name] = formField;
+    }
+
     registerActions(tableAction) {
         this.actions.push(tableAction);
         this.populateActions();
@@ -1065,9 +1071,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     toggleMessage(show, type, msg) {
-        // TODO: Use app notifcation
         if (show && msg) {
-            this.viewParent.App.Actions.appNotification.invoke({
+            this.app.Actions.appNotification.invoke({
                 message: msg,
                 class: type
             });
