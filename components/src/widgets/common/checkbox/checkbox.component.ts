@@ -52,8 +52,8 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
     private proxyModel: boolean;
     private _caption = '&nbsp';
-    private readonly _checkedvalue;
-    private readonly _uncheckedvalue;
+    private _checkedvalue;
+    private _uncheckedvalue;
 
     @ViewChild(NgModel) ngModel: NgModel;
 
@@ -69,36 +69,33 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
     constructor(
         inj: Injector,
-        @Attribute('checkedvalue') checkedVal,
-        @Attribute('uncheckedvalue') uncheckedVal,
-        @Attribute('datavalue') defaultVal,
         @Attribute('type') type
     ) {
         super(inj, WIDGET_CONFIG);
-
-        this._checkedvalue = unStringify(checkedVal, true);
-        this._uncheckedvalue = unStringify(uncheckedVal, false);
-
-        this.datavalue = unStringify(defaultVal, false);
 
         // if the type of the checkbox is toggle update the related classes on the host node
         toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');
     }
 
-    protected processAttr(attrName: string, attrValue: any) {
-        // default datavalue is handled in the constructor, do not set it again
-        if (attrName !== 'datavalue') {
-            super.processAttr(attrName, attrValue);
-        }
-    }
-
     onPropertyChange(key, nv, ov) {
-        if  (key === 'caption') {
-            if (!isDefined(nv) || nv === '') {
-                this._caption = '&nbsp;';
-            } else {
-                this._caption = nv;
-            }
+        switch (key) {
+            case 'caption':
+                if (!isDefined(nv) || nv === '') {
+                    this._caption = '&nbsp;';
+                } else {
+                    this._caption = nv;
+                }
+                break;
+            case 'checkedvalue':
+                this._checkedvalue = unStringify(nv, true);
+                break;
+            case 'uncheckedvalue':
+                this._uncheckedvalue = unStringify(nv, false);
+                break;
+            case 'datavalue':
+                this.datavalue = unStringify(nv, false);
+                break;
+
         }
     }
 

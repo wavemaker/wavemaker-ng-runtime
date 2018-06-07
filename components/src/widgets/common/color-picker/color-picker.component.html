@@ -3,6 +3,7 @@
        focus-target
        [(colorPicker)]="datavalue"
        (colorPickerChange)="handleChange($event);"
+       (cpToggleChange)="colorPickerToggleChange($event)"
        [cpPosition]="'bottom'"
        [attr.placeholder]="placeholder"
        [disabled]="readonly || disabled"

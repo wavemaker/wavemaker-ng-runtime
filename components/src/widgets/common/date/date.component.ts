@@ -33,6 +33,10 @@ export class DateComponent extends BaseFormCustomComponent {
 
     bsDataValue;
 
+    get timestamp() {
+        return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
+    }
+
     get displayValue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
     }

@@ -6,6 +6,7 @@ import { styler } from '../../framework/styler';
 import { registerProps } from './color-picker.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
+import { addClass, removeClass } from '@wm/core';
 
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
@@ -33,6 +34,12 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    // To remove space occupied by colorpicker when it is closed
+    private colorPickerToggleChange(isOpen: boolean) {
+        const colorPickerContainer: HTMLElement = this.nativeElement.querySelector(`.color-picker`);
+        (!isOpen) ? addClass(colorPickerContainer, 'hidden') : removeClass(colorPickerContainer, 'hidden');
     }
 
     // change and blur events are added from the template

@@ -3,7 +3,7 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } 
 export const checkboxProps = new Map(
     [
         ['caption', PROP_STRING_NOTIFY],
-        ['checkedvalue', PROP_STRING],
+        ['checkedvalue', {value: true, ...PROP_STRING_NOTIFY}],
         ['datavalue', PROP_STRING_NOTIFY],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
@@ -13,7 +13,7 @@ export const checkboxProps = new Map(
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['uncheckedvalue', PROP_STRING]
+        ['uncheckedvalue', {value: false, ...PROP_STRING_NOTIFY}]
     ]
 );
 

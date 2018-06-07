@@ -1,6 +1,6 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 
-import { $appDigest, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate } from '@wm/core';
+import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject } from '@wm/core';
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -38,6 +38,10 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
      */
     outputformat: string;
 
+    get timestamp() {
+        return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
+    }
+
     get datavalue(): any {
         return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat) || '';
     }
@@ -48,12 +52,12 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
     set datavalue(newVal: any) {
         if (newVal) {
             if (newVal === CURRENT_TIME) {
-                this.bsTimeValue = getDateObj(newVal);
+                this.bsTimeValue = getValidDateObject(newVal);
                 this.isCurrentTime = true;
                 this.setTimeInterval();
             } else {
                 this.clearTimeInterval();
-                this.bsTimeValue = getDateObj(newVal);
+                this.bsTimeValue = getValidDateObject(newVal);
                 this.isCurrentTime = false;
             }
         } else {
@@ -107,10 +111,10 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
     onPropertyChange(key, newVal, oldVal) {
         switch (key) {
             case 'mintime':
-                this.minTime = getDateObj(newVal); // TODO it is supposed to be time conversion, not to the day
+                this.minTime = getValidDateObject(newVal); // TODO it is supposed to be time conversion, not to the day
                 break;
             case 'maxtime':
-                this.maxTime = getDateObj(newVal);
+                this.maxTime = getValidDateObject(newVal);
                 break;
         }
     }
