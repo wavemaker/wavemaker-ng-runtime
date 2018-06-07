@@ -156,6 +156,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Setup the inline edit and filter widget
     setUpControls() {
         if (this._isInlineEditable) {
+            if (this.editWidgetType === FormWidgetType.UPLOAD) {
+                return;
+            }
             this.addFormControl(this.binding);
             const control = this.getFormControl(this.binding);
             if (control) {

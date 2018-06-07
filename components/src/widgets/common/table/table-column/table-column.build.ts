@@ -1,8 +1,9 @@
 import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import { DataType, getFormWidgetTemplate } from '@wm/core';
+import {DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator} from '@wm/core';
 import { getDataTableFilterWidget, getEditModeWidget, EDIT_MODE } from '../../../../utils/live-utils';
 
 const tagName = 'div';
+const idGen = new IDGenerator('data_table_form_');
 
 // get the filter template (widget and filter menu) to be displayed in filter row
 const getFilterTemplate = (attrs, pCounter)  => {
@@ -47,18 +48,30 @@ const getEventsTmpl = attrs => {
 
 // get the inline widget template
 const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
+    const options: any = {};
     const fieldName = attrs.get('binding');
     const widget = attrs.get('edit-widget-type') || getEditModeWidget({
         'type': attrs.get('type'),
         'related-entity-name': attrs.get('related-entity-name'),
         'primary-key': attrs.get('primary-key')
     });
-    const widgetRef = isNewRow ? '#inlineWidgetNew' : '#inlineWidget';
+    let widgetRef;
+    let formControl;
+    if (widget === FormWidgetType.UPLOAD) {
+        options.uploadProps = {
+            formName: idGen.nextUid(),
+            name: fieldName
+        };
+        widgetRef = '';
+        formControl = '';
+    } else {
+        widgetRef = isNewRow ? '#inlineWidgetNew' : '#inlineWidget';
+        formControl = isNewRow ? `formControlName="${fieldName}_new"` : `formControlName="${fieldName}"`;
+    }
     const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
-    const formControl = isNewRow ? `formControlName="${fieldName}_new"` : `formControlName="${fieldName}"`;
     const eventsTmpl = getEventsTmpl(attrs);
     const innerTmpl = `${widgetRef} data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
-    const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs);
+    const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
 
     return `<ng-template ${tmplRef} let-row="row" let-rowData="rowData">
                  ${widgetTmpl}
