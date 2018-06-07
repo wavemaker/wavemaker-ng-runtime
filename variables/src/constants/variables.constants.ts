@@ -249,7 +249,7 @@ export const VARIABLE_URLS = {
             method: 'POST'
     },
     exportTableData: {
-        url: '/:service/:dataModelName/:entityName/export/:exportFormat?size=:size&:sort',
+        url: '/services/:dataModelName/:entityName/export?:sort',
             method: 'POST'
     },
     readTableRelatedData: {

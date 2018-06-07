@@ -734,3 +734,17 @@ export const getEvaluatedOrderBy = (varOrder, optionsOrder) => {
     varOrderBy = varOrder.length ? ',' + _.join(varOrder, ',') : '';
     return _.join(optionsOrder, ',') + varOrderBy;
 };
+
+/**
+ * formatting the expression as required by backend which was enclosed by ${<expression>}.
+ * @param fieldDefs
+ * returns fieldDefs
+ */
+export const formatExportExpression = fieldDefs => {
+    _.forEach(fieldDefs, function (fieldDef) {
+        if (fieldDef.expression) {
+            fieldDef.expression = '${' + fieldDef.expression + '}';
+        }
+    });
+    return fieldDefs;
+};

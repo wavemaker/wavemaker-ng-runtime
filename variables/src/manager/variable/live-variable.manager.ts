@@ -1,7 +1,7 @@
 import {getClonedObject, triggerFn} from '@wm/core';
 
 import { BaseVariableManager } from './base-variable.manager';
-import { setInput, initiateCallback } from '../../util/variable/variables.utils';
+import {setInput, initiateCallback, formatExportExpression} from '../../util/variable/variables.utils';
 import LiveVariableUtils from '../../util/variable/live-variable.utils';
 import {$queue} from '../../util/inflight-queue';
 import * as LVService from '../../util/variable/live-variable.http.utils';
@@ -279,10 +279,16 @@ export class LiveVariableManager extends BaseVariableManager {
     public download(variable, options) {
         options = options || {};
         let tableOptions;
-        const dbOperation = 'exportTableData',
-            projectID   = $rootScope.project.id || $rootScope.projectName;
+        const data: any = {};
+        const dbOperation = 'exportTableData';
+        const projectID   = $rootScope.project.id || $rootScope.projectName;
         options.searchWithQuery = true; // For export, query api is used. So set this flag to true
+        options.skipEncode = true;
         tableOptions = LiveVariableUtils.prepareTableOptions(variable, options, undefined);
+        data.query = tableOptions.query ? tableOptions.query : '';
+        data.exportSize = options.size;
+        data.exportType = options.exportType;
+        data.fields = formatExportExpression(options.fields);
         LVService[dbOperation]({
             'projectID'     : projectID,
             'service'       : variable._prefabName ? '' : 'services',
@@ -290,10 +296,12 @@ export class LiveVariableManager extends BaseVariableManager {
             'entityName'    : variable.type,
             'sort'          : tableOptions.sort,
             'url'           : variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
-            'data'          : tableOptions.query ? ('q=' + tableOptions.query) : '',
-            'filterMeta'    : tableOptions.filter,
-            'exportFormat'  : options.exportFormat,
-            'size'          : options.size
+            'data'          : data,
+            'filterMeta'    : tableOptions.filter
+        }).then(response => {
+            window.location.href = response.body.result;
+        }, (response, xhrObj) => {
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, xhrObj);
         });
     }
 

@@ -95,8 +95,7 @@ const initiateAction = function (action, params, successCallback?, failureCallba
         relatedFieldName : params.relatedFieldName,
         page             : params.page,
         size             : params.size,
-        sort             : params.sort,
-        exportFormat     : params.exportFormat
+        sort             : params.sort
     };
     if (params.url && isStudioMode && !noproxy) {
 /*
@@ -174,20 +173,16 @@ const initiateAction = function (action, params, successCallback?, failureCallba
             }
         };
 
-        if (action === 'exportTableData') {
-            simulateFileDownload(parseConfig(connectionParams), connectionParams.urlParams.entityName, connectionParams.urlParams.exportFormat, null, null);
-        } else {
-            connectionParams = parseConfig(connectionParams);
-            // TODO: Remove after backend fix
-            connectionParams.url = connectionParams.url.replace('//', '/');
-            console.log('making call from Live variable');
-            return httpService.send({
-                url: connectionParams.url,
-                method: connectionParams.method,
-                data: connectionParams.data,
-                headers: connectionParams.headers
-            }, successCallback, failureCallback);
-        }
+        connectionParams = parseConfig(connectionParams);
+        // TODO: Remove after backend fix
+        connectionParams.url = connectionParams.url.replace('//', '/');
+        console.log('making call from Live variable');
+        return httpService.send({
+            url: connectionParams.url,
+            method: connectionParams.method,
+            data: connectionParams.data,
+            headers: connectionParams.headers
+        }, successCallback, failureCallback);
     }
 };
 

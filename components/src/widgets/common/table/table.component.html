@@ -10,8 +10,8 @@
         <div class="panel-actions app-datagrid-actions" *ngIf="exportOptions.length || _actions.header.length">
             <ng-container *ngFor="let btn of _actions.header" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
             </ng-container>
-            <!--<div wmMenu caption="Export" *ngIf="exportOptions.length"-->
-                <!--dataset.bind="exportOptions" select.event="export($item)" menuposition="down,left"></div>-->
+            <div wmMenu dropdown caption="Export" *ngIf="exportOptions.length"  autoclose="always" attr.name="{{name}}-export"
+                dataset.bind="exportOptions" select.event="export($item)" menuposition="down,left"></div>
         </div>
     </h3>
 </div>
