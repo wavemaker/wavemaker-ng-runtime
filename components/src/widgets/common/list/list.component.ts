@@ -1,8 +1,8 @@
-import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 
-import { $appDigest, DataSource, getClonedObject, isDefined, isObject } from '@wm/core';
+import {$appDigest, DataSource, getClonedObject, isDefined, isObject, isPageable} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -12,6 +12,7 @@ import { NAVIGATION_TYPE, provideAsWidgetRef } from '../../../utils/widget-utils
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
 import { getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
+import { WidgetRef } from '../../framework/types';
 
 declare const _;
 declare const $;
@@ -28,7 +29,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(ListComponent)
     ]
 })
-export class ListComponent extends StylableComponent implements AfterViewInit {
+export class ListComponent extends StylableComponent implements OnInit, AfterViewInit {
 
     @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
 
@@ -71,6 +72,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
     public enablereorder: boolean;
     public itemsperrow: string;
     public itemclass: string;
+    public selectedItemWidgets: Array<WidgetRef> | WidgetRef;
 
     public handleHeaderClick: ($event) => void;
     public toggleAllHeaders: void;
@@ -326,9 +328,16 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
             this.noDataFound = false;
             newVal = newVal.data || newVal;
 
-            if (isObject(newVal) && !_.isArray(newVal)) {
-                newVal = _.isEmpty(newVal) ? [] : [newVal];
+            if (isObject(newVal)) {
+                // If the data is a pageable object, then display the content.
+                if (isPageable(newVal)) {
+                    newVal = newVal.content;
+                }
+                if (!_.isArray(newVal)) {
+                    newVal = _.isEmpty(newVal) ? [] : [newVal];
+                }
             }
+
             if (_.isString(newVal)) {
                 newVal = newVal.split(',');
             }
@@ -415,6 +424,21 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
         }) || null;
     }
 
+    private updateSelectedItemsWidgets() {
+        if (this.multiselect) {
+            (this.selectedItemWidgets as Array<WidgetRef>).length = 0;
+        }
+        this.listItems.forEach((item: ListItemDirective) => {
+            if (item.isActive) {
+                if (this.multiselect) {
+                    (this.selectedItemWidgets as Array<WidgetRef>).push(item.currentItemWidgets);
+                } else {
+                    this.selectedItemWidgets = item.currentItemWidgets;
+                }
+            }
+        });
+    }
+
     /**
      * Selects the listItem and updates selecteditem property.
      * If the listItem is already a selected selected item then deselects the item.
@@ -434,6 +458,7 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
                 this._items.push(item);
                 $listItem.isActive = true;
             }
+            this.updateSelectedItemsWidgets();
         }
     }
 
@@ -483,6 +508,14 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
             this.onListRender(listItems);
             $appDigest();
         });
+        // handle click event in capturing phase.
+        this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', ($event) => {
+            const target = $($event.target).closest('.app-list-item');
+            if (target[0]) {
+                const listItemContext = target.data('listItemContext');
+                this.onItemClick($event, listItemContext);
+            }
+        }, true);
     }
 
     // configures reordering the list items.
@@ -688,7 +721,11 @@ export class ListComponent extends StylableComponent implements AfterViewInit {
                 }
             );
         }
+    }
 
+    ngOnInit() {
+        super.ngOnInit();
+        this.selectedItemWidgets = this.multiselect ? [] : {};
     }
 
     ngAfterViewInit() {

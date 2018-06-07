@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $appDigest, $parseEvent, addClass, getRouteFromNavLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
+import { $parseEvent, addClass, getRouteFromNavLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
@@ -104,10 +104,5 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     onMenuItemSelect($event, widget, $item) {
         this.selecteditem = _.omit($item, ['children', 'value']);
         this.invokeEventCallback('select', {$event, $item: this.selecteditem});
-    }
-
-    triggerDigest() {
-        // force the menu to close/open
-        $appDigest();
     }
 }

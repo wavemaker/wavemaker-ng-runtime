@@ -1,8 +1,8 @@
-import { Component, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
+import { Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 
 import { BsDropdownDirective } from 'ngx-bootstrap';
 
-import { addClass, removeClass } from '@wm/core';
+import { $appDigest, addClass, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -49,6 +49,11 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public autoclose: string;
 
     private menuCaret: string = 'fa-caret-down';
+
+    @HostListener('onShown')
+    @HostListener('onHidden') triggerDigest () {
+        $appDigest();
+    }
 
     constructor(
         inj: Injector,

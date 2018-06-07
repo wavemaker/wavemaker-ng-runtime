@@ -34,7 +34,7 @@
     (keydown.shift.arrowleft)="handleKeyDown($event, 'selectPrev')"
     (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
 >
-    <ng-template *ngIf="!groupby; else groupedListTemplate">
+    <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
         <li *ngFor="let item of fieldDefs; let i = index;" class="app-list-item clearfix "
             [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
             [wmListItem]="item"
@@ -76,7 +76,7 @@
          boundarylinks.bind="boundarylinks"
          forceellipses.bind="forceellipses"
          directionlinks.bind="directionlinks"
-         show.bind="onDemandLoad"
+         show.bind="!onDemandLoad"
     ></nav>
     <a *ngIf="onDemandLoad" href="javascript:void(0);"
        (click)="dataNavigator.navigatePage('next', $event)"

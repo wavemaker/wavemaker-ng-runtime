@@ -1,5 +1,5 @@
 <ng-template #menuRef let-item="item" let-index="index">
-    <div wmMenu dropdown (onHidden)="triggerDigest()" (onShown)="triggerDigest()" type="anchor" autoclose.bind="autoclose"
+    <div wmMenu dropdown type="anchor" autoclose.bind="autoclose"
          caption.bind="item.label" dataset.bind="item.children" select.event="onMenuItemSelect($event, widget, $item)"></div>
 </ng-template>
 
