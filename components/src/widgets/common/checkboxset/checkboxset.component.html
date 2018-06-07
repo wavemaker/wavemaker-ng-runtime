@@ -1,13 +1,42 @@
-<li [ngClass]="['checkbox', 'app-checkbox', itemclass]"
-    [class.active]="item.selected"
-    *ngFor="let item of datasetItems; let i = index"
-    (click)="onCheckboxLabelClick($event, item.key)">
-    <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled}" [title]="item.label">
-        <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
-            [disabled]="disabled" [attr.data-attr-index]="i"
-            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
-        <span class="caption" [textContent]="item.label"></span>
-    </label>
-</li>
+<ng-template *ngIf="!groupby; else groupedListTemplate">
+    <li [ngClass]="['checkbox', 'app-checkbox', itemclass]"
+        [class.active]="item.selected"
+        *ngFor="let item of datasetItems; let i = index"
+        (click)="onCheckboxLabelClick($event, item.key)">
+        <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled}" [title]="item.label">
+            <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
+                [disabled]="disabled" [attr.data-attr-index]="i"
+                [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
+            <span class="caption" [textContent]="item.label"></span>
+        </label>
+    </li>
+</ng-template>
 <input [disabled]="disabled" hidden class="model-holder">
 <div *ngIf="readonly || disabled" class="readonly-wrapper"></div>
+
+<!-- This template will be displayed when groupby is specified. -->
+<ng-template #groupedListTemplate>
+    <li *ngFor="let groupObj of groupedData" class="app-list-item-group">
+        <ul class="item-group">
+            <li class="list-group-header" (click)="handleHeaderClick($event)" [title]="groupObj.key" ngClass="{'collapsible-content' : collapsible}">
+                <h4 class="group-title">{{groupObj.key}}
+                    <div class="header-action">
+                        <i class="app-icon wi action wi-chevron-up" *ngIf="collapsible" title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"></i>
+                        <span *ngIf="showcount" class="label label-default" [textContent]="groupObj.data.length"></span>
+                    </div>
+                </h4>
+            </li>
+            <li *ngFor="let item of groupObj.data; let i = index;"
+                [ngClass]="['checkbox', 'app-checkbox', 'group-list-item', itemclass]"
+                [class.active]="item.selected"
+                (click)="onCheckboxLabelClick($event, item)">
+                <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled}" [title]="item.label">
+                    <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
+                           [disabled]="disabled" [attr.data-attr-index]="i"
+                           [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
+                    <span class="caption" [textContent]="item.label"></span>
+                </label>
+            </li>
+        </ul>
+    </li>
+</ng-template>

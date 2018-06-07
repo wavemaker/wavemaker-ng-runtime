@@ -1,11 +1,13 @@
-import { Component, Injector } from '@angular/core';
+import { Attribute, Component, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from '../checkboxset/checkboxset.props';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
+import { toggleAllHeaders, convertDataToObject, groupData, handleHeaderClick } from '../../../utils/form-utils';
 
 registerProps();
 const DEFAULT_CLS = 'app-checkboxset list-group';
@@ -25,10 +27,27 @@ declare const _;
 export class CheckboxsetComponent extends DatasetAwareFormComponent {
     public layout = '';
 
-    constructor(inj: Injector) {
+    protected match: string;
+    protected dateformat: string;
+    protected groupedData: any[];
+
+    public handleHeaderClick: ($event) => void;
+    private toggleAllHeaders: void;
+
+    constructor(inj: Injector, @Attribute('groupby') protected groupby: string, public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this.multiple = true;
+
+        // If groupby is set, get the groupedData from the datasetItems.
+        if (this.groupby) {
+            this.dataset$.subscribe(() => {
+                this.groupedData = groupData(convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject');
+            });
+            // adding the handler for header click and toggle headers.
+            this.handleHeaderClick = handleHeaderClick;
+            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
+        }
     }
 
     onCheckboxLabelClick($event, key) {
@@ -57,6 +76,10 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
                 break;
             case 'layout':
                 switchClass(this.nativeElement, nv, ov);
+                break;
+            case 'groupby':
+            case 'match':
+                this.groupedData = this.datasetItems.length ? groupData(convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, 'dataObject') : [];
                 break;
         }
     }

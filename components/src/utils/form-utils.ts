@@ -1,15 +1,47 @@
-import { isDefined, isEqualWithFields } from '@wm/core';
+import {AppDefaults, getClonedObject, getFormattedDate, isDefined, isEqualWithFields} from '@wm/core';
 
 import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 
 import { ALLFIELDS } from './data-utils';
+import { ToDatePipe } from '../pipes/custom-pipes';
 
 declare const _;
+declare const moment;
+
+const momentLocale = moment.localeData();
+const momentCalendarOptions = getClonedObject(momentLocale._calendar);
+const momentCalendarDayOptions = momentLocale._calendarDay || {
+        lastDay: '[Yesterday]',
+        lastWeek: '[Last] dddd',
+        nextDay: '[Tomorrow]',
+        nextWeek: 'dddd',
+        sameDay: '[Today]',
+        sameElse: 'L'
+    };
+const GROUP_BY_OPTIONS = {
+        ALPHABET: 'alphabet',
+        WORD: 'word',
+        OTHERS: 'Others'
+    };
+const TIME_ROLLUP_OPTIONS = {
+        HOUR: 'hour',
+        DAY: 'day',
+        WEEK: 'week',
+        MONTH: 'month',
+        YEAR: 'year'
+    };
+const ROLLUP_PATTERNS = {
+        DAY: 'yyyy-MM-dd',
+        WEEK: 'w \'Week\',  yyyy',
+        MONTH: 'MMM, yyyy',
+        YEAR: 'YYYY',
+        HOUR: 'hh:mm a'
+    };
 
 /**
  * function to get the ordered dataset based on the given orderby
  */
-export const getOrderedDataset = (dataSet: any, orderBy: string) => {
+export const getOrderedDataset = (dataSet: any, orderBy: string, innerItem?) => {
     if (!orderBy) {
         return _.cloneDeep(dataSet);
     }
@@ -20,7 +52,7 @@ export const getOrderedDataset = (dataSet: any, orderBy: string) => {
         directions = [];
     items.forEach(obj => {
         const item = obj.split(':');
-        fields.push(item[0]);
+        fields.push(innerItem ? innerItem + '.' + item[0] : item[0]);
         directions.push(item[1]);
     });
     return _.orderBy(dataSet, fields, directions);
@@ -74,21 +106,24 @@ export const convertDataToObject = dataResult => {
  */
 export const transformData = (dataSet: any, myDataField: string, displayOptions, startIndex?: number): Array<DataSetItem> => {
     const data = [];
+    if (!dataSet) {
+        return;
+    }
     dataSet = convertDataToObject(dataSet);
 
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
-            data.push({'key': option, 'value': option, 'label': option, 'index': index + 1});
+            data.push({key: option, value: option, label: option, index: index + 1});
         });
     } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
         dataSet.forEach((option, index) => {
-            data.push({'key': option, 'value': option, 'label': option, 'index': index + 1});
+            data.push({key: option, value: option, label: option, index: index + 1});
         });
     } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
         const i = 0;
         _.forEach(dataSet, (value, key) => {
-            data.push({'key': _.trim(key), 'value': key, 'label': value, 'index': i + 1});
+            data.push({key: _.trim(key), value: key, label: value, index: i + 1});
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
@@ -115,6 +150,7 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
                     key: key,
                     label: label,
                     value: myDataField === ALLFIELDS ? option : key,
+                    dataObject: option, // represents the object when datafield is ALLFIELDS. This is used as innerItem while grouping the datasetItems.
                     index: index + 1
                 };
                 if (myDisplayImgSrc) {
@@ -128,126 +164,6 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
         });
     }
     return data;
-};
-
-
-/**
- * This function iterates over the modelProxy and returns the model value. Here model is array of values.
- * If datafield is ALLFIELDS, modelProxy is 0, then model will be retrieved from dataObject in displayOptions
- * If datafield is other than ALLFIELDS, the modelProxy and model will be retrieved from key in displayOptions
- */
-export const assignModelForMultiSelect = (displayOptions: any, datafield: any, modelProxy: any, _model_: any, _isChangedManually: boolean, _dataVal: any, callback?: (obj: any) => void) => {
-    let selectedOption;
-    const selectedCheckboxValue = modelProxy;
-
-    // ModelProxy is undefined or [] , then update the _dataVal which can be used when latest dataset is obtained.
-    if (!_isChangedManually && !_.isUndefined(_model_) && (_.isUndefined(selectedCheckboxValue) || (_.isArray(selectedCheckboxValue) && !selectedCheckboxValue.length))) {
-        _dataVal = _model_;
-        _model_ = selectedCheckboxValue;
-
-        // todo  remove this prop.
-        // this._ngModelOldVal = _dataVal;
-    } else if (selectedCheckboxValue) {
-        _model_ = [];
-        selectedCheckboxValue.forEach(value => {
-            selectedOption = _.find(displayOptions, {key: value});
-            if (selectedOption) {
-                selectedOption.isChecked = true;
-            }
-            if (selectedOption && datafield === 'All Fields') {
-                _model_.push(selectedOption.dataObject);
-            } else {
-                _model_.push(value);
-            }
-        });
-    }
-
-    // clear _dataVal when model is defined.
-    if (_model_ && _model_.length && !_.isUndefined(_dataVal)) {
-        _dataVal = undefined;
-    }
-    callback({'_dataVal': _dataVal, 'model': _model_});
-};
-
-/**
- * function to update the checked values, which selects/ de-selects the values in radioset/ checkboxset
- */
-export const updatedCheckedValues = (displayOptions: any[], _model_: any, modelProxy: any, usekeys: boolean, callback?: (modelProxy: any) => void) => {
-    const model = _model_;
-    let _modelProxy,
-        selectedOption,
-        filterField;
-
-    // reset isChecked flag for displayOptions.
-    if (displayOptions) {
-        displayOptions.forEach(dataObj => {
-            dataObj.isChecked = false;
-        });
-    }
-
-    // If model is null, reset the modelProxy and displayValue.
-    if (_.isNull(model) || _.isUndefined(model)) {
-        if (_.isArray(modelProxy)) {
-            _modelProxy = [];
-        } else {
-            _modelProxy = undefined;
-        }
-        callback(_modelProxy);
-        return;
-    }
-
-    if (isDefined(displayOptions) && displayOptions.length && !usekeys) {
-        // set the filterField depending on whether displayOptions contain 'dataObject', if not set filterField to 'key'
-        filterField = _.get(displayOptions[0], 'dataObject') ? 'dataObject' : 'key';
-        if (_.isArray(model)) {
-            _modelProxy = [];
-            model.forEach(modelVal => {
-                selectedOption = _.find(displayOptions, obj => {
-                    if (filterField === 'dataObject') {
-                        return _.isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(modelVal)));
-                    }
-                    return _.toString(obj[filterField]) === _.toString(modelVal);
-                });
-                if (selectedOption) {
-                    selectedOption.isChecked = true;
-                    _modelProxy.push(selectedOption.key);
-                }
-            });
-        } else {
-            _modelProxy = undefined;
-            selectedOption = _.find(displayOptions, obj => {
-                if (filterField === 'dataObject') {
-                    return _.isEqual(JSON.parse(JSON.stringify(obj[filterField])), JSON.parse(JSON.stringify(model)));
-                }
-                return _.toString(obj[filterField]) === _.toString(model);
-            });
-            if (selectedOption) {
-                selectedOption.isChecked = true;
-                _modelProxy = selectedOption.key;
-            }
-        }
-    } else {
-        _modelProxy = model;
-    }
-
-    callback(_modelProxy);
-};
-
-/**
- * This function retrieves the displayValue from displayOptions.
- */
-export const getDisplayValues = (displayOptions: any[]) => {
-    let displayValue;
-    const selectedOptions = _.filter(displayOptions, {'isChecked': true});
-
-    if (selectedOptions.length === 1) {
-        displayValue = selectedOptions[0].value;
-    } else {
-        selectedOptions.forEach(option => {
-            displayValue.push(option.value);
-        });
-    }
-    return displayValue;
 };
 
 /**
@@ -290,6 +206,223 @@ export const setItemByCompare = (datasetItems, compareWithDataObj, compareByFiel
     });
 };
 
+/**
+ * This method returns sorted data based to groupkey.
+ * Returns a array of objects, each object containing key which is groupKey and data is the sorted data which is sorted by groupby field in the data.
+ *
+ * @param groupedLiData, grouped data object with key as the groupKey and its value as the array of objects grouped under the groupKey.
+ * @param groupBy, string groupby property
+ * @returns {any[]}
+ */
+const getSortedGroupedData = (groupedLiData, groupBy) => {
+    const _groupedData = [];
+    _.forEach(_.keys(groupedLiData), (groupkey, index) => {
+        const liData = groupedLiData[groupkey];
+        _groupedData.push({
+            key: groupkey,
+            data: _.sortBy(liData, data => {
+                data._groupIndex = index + 1;
+                return data[groupBy];
+            })
+        });
+    });
+    return _groupedData;
+};
+
+/**
+ * This method gets the groupedData using groupby property and match and returns the sorted array of objects.
+ *
+ * @param data represents the dataset i.e array of objects.
+ * @param groupby, string groupby property
+ * @param match, string match property
+ * @param orderby, string orderby property
+ * @param dateformat, string dateFormat property
+ * @param innerItem, represents the innerItem on which groupby has to be applied. Incase of datasetItems, 'dataObject' contains the full object. Here innerItem is dataObject.
+ * @returns {any[]} groupedData, array of objects, each object having key and data.
+ */
+export const groupData = (data, groupby, match, orderby, dateformat, datePipe, innerItem?) => {
+    let groupedLiData = {};
+    if (_.includes(groupby, '(')) {
+        const groupDataByUserDefinedFn = this[groupby.split('(')[0]];
+        groupedLiData = _.groupBy(data, groupDataByUserDefinedFn);
+    } else {
+        groupedLiData = getGroupedData(data, groupby, match, orderby, dateformat, datePipe, innerItem);
+    }
+
+    return getSortedGroupedData(groupedLiData, groupby);
+};
+
+/**
+ * This method prepares the grouped data.
+ *
+ * @param fieldDefs array of objects i.e. dataset
+ * @param groupby string groupby
+ * @param match string match
+ * @param orderby string orderby
+ * @param dateFormat string date format
+ * @param innerItem, item to look for in the passed data
+ */
+export const getGroupedData = (fieldDefs, groupby, match, orderby, dateFormat, datePipe, innerItem?) => {
+    // For day, set the relevant moment calendar options
+    if (match === TIME_ROLLUP_OPTIONS.DAY) {
+        momentLocale._calendar = momentCalendarDayOptions;
+    }
+
+    // handling case-in-sensitive scenario
+    // ordering the data based on groupby field. If there is innerItem then apply orderby using the innerItem's containing the groupby field.
+    fieldDefs = _.orderBy(fieldDefs, fieldDef => {
+        const groupKey = _.get(innerItem ? fieldDef[innerItem] : fieldDef, groupby);
+        if (groupKey) {
+            return _.toLower(groupKey);
+        }
+    });
+
+    // extract the grouped data based on the field obtained from 'groupDataByField'.
+    const groupedLiData = _.groupBy(fieldDefs, groupDataByField.bind(undefined, groupby, match, innerItem, dateFormat, datePipe));
+
+    momentLocale._calendar = momentCalendarOptions; // Reset to default moment calendar options
+
+    return groupedLiData;
+};
+
+// Format the date with given date format
+export const filterDate = (value, format, defaultFormat, datePipe) => {
+    if (format === 'timestamp') { // For timestamp format, return the epoch value
+        return value;
+    }
+
+    return getFormattedDate(datePipe, value, format || defaultFormat);
+};
+
+
+/**
+ * This method returns the groupkey based on the rollup (match) passed
+ *
+ * @param concatStr, string containing groupby field value
+ * @param rollUp string containing the match property.
+ * @param dateformat string containing the date format to display the date.
+ */
+export const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: string, datePipe?) => {
+    let groupByKey,
+        strMoment  = moment(concatStr),
+        dateFormat = dateformat;
+
+    const currMoment = moment(),
+        getSameElseFormat = function () { // Set the sameElse option of moment calendar to user defined pattern
+            return '[' + filterDate(this.valueOf(), dateFormat, ROLLUP_PATTERNS.DAY, datePipe) + ']';
+        };
+
+    switch (rollUp) {
+        case TIME_ROLLUP_OPTIONS.HOUR:
+            dateFormat = dateFormat || AppDefaults.timeFormat;
+
+            // If date is invalid, check if data is in form of hh:mm a
+            if (!strMoment.isValid()) {
+                strMoment = moment(new Date().toDateString() + ' ' + concatStr);
+
+                if (strMoment.isValid()) {
+                    // As only time is present, roll up at the hour level with given time format
+                    momentLocale._calendar.sameDay = function () {
+                        return '[' + filterDate(this.valueOf(), dateFormat, ROLLUP_PATTERNS.HOUR, datePipe) + ']';
+                    };
+                }
+            }
+            // round off to nearest last hour
+            strMoment = strMoment.startOf('hour');
+            momentLocale._calendar.sameElse = getSameElseFormat;
+            groupByKey = strMoment.calendar(currMoment);
+            break;
+        case TIME_ROLLUP_OPTIONS.WEEK:
+            groupByKey = filterDate(strMoment.valueOf(), dateFormat, ROLLUP_PATTERNS.WEEK, datePipe);
+            break;
+        case TIME_ROLLUP_OPTIONS.MONTH:
+            groupByKey = filterDate(strMoment.valueOf(), dateFormat, ROLLUP_PATTERNS.MONTH, datePipe);
+            break;
+        case TIME_ROLLUP_OPTIONS.YEAR:
+            groupByKey = strMoment.format(ROLLUP_PATTERNS.YEAR);
+            break;
+        case TIME_ROLLUP_OPTIONS.DAY:
+            dateFormat = dateFormat || AppDefaults.dateFormat;
+            strMoment = strMoment.startOf('day'); // round off to current day
+            momentLocale._calendar.sameElse = getSameElseFormat;
+            groupByKey = strMoment.calendar(currMoment);
+            break;
+    }
+    // If invalid date is returned, Categorize it as Others.
+    if (groupByKey === 'Invalid date') {
+        return GROUP_BY_OPTIONS.OTHERS;
+    }
+    return groupByKey;
+};
+
+
+// groups the fields based on the groupby value.
+export const groupDataByField = (groupby, match, innerItem, dateFormat, datePipe, liData) => {
+    // get the groupby field value from the liData or innerItem in the liData.
+    let concatStr = _.get(innerItem ? liData[innerItem] : liData, groupby);
+
+    // by default set the undefined groupKey as 'others'
+    if (_.isUndefined(concatStr) || _.isNull(concatStr)) {
+        return GROUP_BY_OPTIONS.OTHERS;
+    }
+
+    // if match prop is alphabetic ,get the starting alphabet of the word as key.
+    if (match === GROUP_BY_OPTIONS.ALPHABET) {
+        concatStr = concatStr.substr(0, 1);
+    }
+
+    // if match contains the time options then get the concatStr using 'getTimeRolledUpString'
+    if (_.includes(_.values(TIME_ROLLUP_OPTIONS), match)) {
+        concatStr = getTimeRolledUpString(concatStr, match, dateFormat, datePipe);
+    }
+
+    return concatStr;
+};
+
+/**
+ * This method toggles all the list items inside the each list group.
+ * @param el, component reference on which groupby is applied.
+ */
+export const toggleAllHeaders = (el) => {
+    const groups = $(el.nativeElement).find('.item-group');
+
+    groups.find('.group-list-item').toggle();
+
+    // toggle the collapse icon on list header.
+    const groupIcons = groups.find('li.list-group-header .app-icon');
+
+    if (groupIcons) {
+        _.forEach(groupIcons, (icon) => {
+            icon = $(icon);
+            if (icon.hasClass('wi-chevron-down')) {
+                icon.removeClass('wi-chevron-down').addClass('wi-chevron-up');
+            } else {
+                icon.removeClass('wi-chevron-up').addClass('wi-chevron-down');
+            }
+        });
+    }
+};
+
+/**
+ * On list header click, toggle the list items in this group.
+ * and also toggle the header icon.
+ * @param $event
+ */
+export const handleHeaderClick = ($event) => {
+    const selectedGroup   = $($event.target).closest('.item-group'),
+        selectedAppIcon = selectedGroup.find('li.list-group-header .app-icon');
+
+    if (selectedAppIcon.hasClass('wi-chevron-down')) {
+        selectedAppIcon.removeClass('wi-chevron-down').addClass('wi-chevron-up');
+    } else {
+        selectedAppIcon.removeClass('wi-chevron-up').addClass('wi-chevron-down');
+    }
+
+    selectedGroup.find('.group-list-item').toggle();
+};
+
+
+
 // Todo: convert to Class
 interface DataSetProps {
     datafield: string;
@@ -303,6 +436,7 @@ interface DataSetProps {
  * key represents the datafield value
  * label represents display value or expression value
  * value displayValue for primitives and data object for allFields
+ * dataObject represent the object from the dataset when datafield is ALLFIELDS. This is used as innerItem while grouping the datasetItems.
  * imgSrc picture source
  * selected represents boolean to notify selected item.
  */
@@ -310,6 +444,7 @@ export class DataSetItem {
     key: any;
     label: any;
     value: any;
+    dataObject?: Object;
     index?: number;
     imgSrc?: string;
     selected?: boolean = false;
