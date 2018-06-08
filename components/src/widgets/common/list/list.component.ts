@@ -706,7 +706,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     this.firstSelectedItem = this.lastSelectedItem = $listItem;
                 }
             }
-            // TODO: updateSelectedItemsWidgets
             $appDigest();
         }
     }
@@ -748,4 +747,4 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 }
 
 
-// Todo(punith) -- groupby, setlectItemWidgets, currentItemWidgets, mobileRelatedChanges
+// Todo(punith) -- mobileRelatedChanges

@@ -8,14 +8,9 @@ import { getEvaluatedData, provideAsWidgetRef } from '../../../utils/widget-util
 import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from '../base/stylable.component';
 
-const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
-
 registerProps();
-
 declare const _, $;
-
 const defaultTreeIconClass = 'plus-minus';
-
 const ICON_CLASSES = {
     'folder': {
         'expanded' : 'wi-folder-open',
@@ -47,6 +42,8 @@ const ICON_CLASSES = {
     }
 };
 
+const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
+
 @Directive({
     selector: 'div[wmTree]',
     providers: [
@@ -54,19 +51,19 @@ const ICON_CLASSES = {
     ]
 })
 export class TreeDirective extends StylableComponent implements IRedrawableComponent {
-    datavalue: any;
-    treeicons: string;
-    nodeid: any;
-    _selectNode: any;
-    orderby: string;
-    nodes: any;
-    selecteditem: any | {};
-    nodeaction: string;
-    nodeclick: string;
-    selecteddata: {};
-    nodelabel: any;
-    nodeicon;
-    nodechildren;
+    private _selectNode: HTMLElement;
+    private nodes: Array<any>;
+
+    public datavalue: string;
+    public treeicons: string;
+    public selecteditem: any;
+    public nodeid: string;
+    public nodeaction: string;
+    public nodeclick: string;
+    public nodelabel: string;
+    public nodeicon: string;
+    public nodechildren: string;
+    public orderby: string;
 
     constructor(inj: Injector,
                 @Attribute('datavalue.bind') private binddatavalue,
@@ -78,18 +75,18 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         this.bindEvents();
     }
 
-    onPropertyChange(key, nv, ov) {
+    onPropertyChange(key: string, nv: any, ov?: any) {
         switch (key) {
             case 'dataset':
                 this.nodes = this.getNodes(nv.data || nv);
                 this._selectNode = undefined;
-                this._renderTree();
+                this.renderTree();
                 break;
             case 'nodeicon':
             case 'nodelabel':
             case 'nodechildren':
             case 'orderby':
-                this._renderTree();
+                this.renderTree();
                 break;
             case 'treeicons':
                 this.changeTreeIcons(nv, ov);
@@ -126,7 +123,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
             $li.data('nodedata', node)
                 .append($iconNode)
-                .append('<span class="title">' + nodeLabel + '</span>')
+                .append(`<span class="title">${nodeLabel}</span>`)
                 .appendTo($ul);
 
 
@@ -160,8 +157,8 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             }
 
             if (nodeChildren && nodeChildren.length) { // parent node
-                $li.addClass('parent-node ' + _cls);
-                expandCollapseIcon = $('<i class="wi ' + _iconCls  + ' "></i>');
+                $li.addClass(`parent-node ${_cls}`);
+                expandCollapseIcon = $(`<i class="wi ${_iconCls}"></i>`);
                 if (nodeIcon) {
                     $iconNode.addClass(nodeIcon);
                 }
@@ -215,17 +212,17 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             };
 
         if ($i.hasClass('collapsed')) {
-            $i.removeClass('collapsed ' + treeIcons.collapsed).addClass('expanded ' + treeIcons.expanded);
+            $i.removeClass(`collapsed ${treeIcons.collapsed}`).addClass(`expanded ${treeIcons.expanded}`);
             $li.removeClass('collapsed').addClass('expanded');
             this.invokeEventCallback('expand', eventParams);
         } else if ($i.hasClass('expanded')) {
-            $i.removeClass('expanded ' + treeIcons.expanded).addClass('collapsed ' + treeIcons.collapsed);
+            $i.removeClass(`expanded ${treeIcons.expanded}`).addClass(`collapsed ${treeIcons.collapsed}`);
             $li.removeClass('expanded').addClass('collapsed');
             this.invokeEventCallback('collapse', eventParams);
         }
     }
 
-    private _renderTree(forceRender?) {
+    private renderTree(forceRender?) {
         let docFrag,
             $li,
             $liPath,
@@ -263,7 +260,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
                         $title   = $current.children('.title');
                     this.toggleExpandCollapseNode(undefined, $i, $current);
 
-                    path = '/' + $title.text() + path;
+                    path = `/${$title.text() + path}`;
                 });
 
             this.selecteditem = getClonedObject(data) || {};
@@ -277,7 +274,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     private selectNode(evt, value) {
         const target = evt && $(evt.target),
             $el = $(this.nativeElement),
-            $li = _.isObject(value) ? value : $el.find('li[id="' + value + '"]:first');
+            $li = _.isObject(value) ? value : $el.find(`li[id="${value}"]:first`);
         let data,
             path = '',
             $liPath,
@@ -297,16 +294,15 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         $liPath
             .each(() => {
                 const current = $(this).children('.title').text();
-                path = '/' + current + path;
+                path = `/${current + path}`;
             });
 
         // expand the current node till the viewParent level which is collapsed
-        const that = this;
-        $li.parentsUntil($el, 'li.viewParent-node.collapsed')
-            .each(() => {
-                const $current = $(this),
+        $li.parentsUntil($el, 'li.parent-node.collapsed')
+            .each((index, el) => {
+                const $current = $(el),
                     $i = $current.children('i.collapsed');
-                that.toggleExpandCollapseNode(undefined, $i, $current);
+                this.toggleExpandCollapseNode(undefined, $i, $current);
             });
 
         this.selecteditem      = getClonedObject(data) || {};
@@ -349,18 +345,12 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         });
     }
 
-    renderTree = _.debounce(this._renderTree, 20);
-
-    redraw() {
-        this._renderTree(true);
-    }
-
-    selectNodeById(value?) {
+    private selectNodeById(value?) {
         this.selectNode(undefined, value);
     }
-
-    deselectNode() {
-        this.selecteddata = {};
-        this.selectNodeById();
+    public redraw() {
+        this.renderTree(true);
     }
+
+
 }
