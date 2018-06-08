@@ -37,12 +37,12 @@ register('wm-carousel', (): IBuildTaskDef => {
             // generating unique Id for the carousel
             const counter = idGen.nextUid();
             shared.set('carousel_ref', counter);
-            return `<${carouselTagName} wmCarousel #${counter}="wmCarousel"  ${getAttrMarkup(attrs)} [interval]="${counter}.interval" [ngClass]="${counter}.navigationClass">`;
+            return `<${carouselTagName} wmCarousel #${counter}="wmCarousel"  ${getAttrMarkup(attrs)} interval="0" [ngClass]="${counter}.navigationClass">`;
         },
         post: () => `</${carouselTagName}>`,
         template: (node: Element) => {
             // check if the carousel is dynamic
-            if(isDynamicCarousel(node)) {
+            if (isDynamicCarousel(node)) {
                 const bindDataset = getBindDataset(node);
                 if (bindDataset) {
                     replaceBind(node.children, bindDataset);
