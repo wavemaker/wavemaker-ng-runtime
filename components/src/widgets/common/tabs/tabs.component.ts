@@ -2,6 +2,7 @@ import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren,
 
 import { addClass, appendNode, removeClass, setCSS, setCSSFromObj } from '@wm/core';
 
+import { TabsAnimator } from './tabs.animator';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './tabs.props';
@@ -35,6 +36,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     private vertical: boolean;
     private activeTab: TabPaneComponent;
     private readonly promiseResolverFn: Function;
+    private tabsAnimator: TabsAnimator;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
@@ -98,7 +100,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     // Returns the active tab index from tabs.
-    private getActivePaneIndex(): number {
+    public getActivePaneIndex(): number {
         return this.getPaneIndexByRef(this.activeTab);
     }
 
@@ -244,6 +246,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
+        this.tabsAnimator = new TabsAnimator(this);
     }
 
     ngAfterViewInit() {

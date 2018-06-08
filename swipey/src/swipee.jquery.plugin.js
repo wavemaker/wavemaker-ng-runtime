@@ -34,17 +34,11 @@ window.requestAnimationFrame = (function () {
         touchEndListeners = [],
 
         onTouch = function (e) {
-            if (touchMoveListeners.length) {
-                e.preventDefault();
-            }
             $.each(touchMoveListeners, function (i, fn) {
                 return fn(e);
             });
         },
         onTouchEnd = function (e) {
-            if (touchEndListeners.length) {
-                e.preventDefault();
-            }
             $.each(touchEndListeners, function (i, fn) {
                 return fn(e);
             });

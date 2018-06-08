@@ -1,4 +1,6 @@
-import { Directive, Injector, OnInit } from '@angular/core';
+import { AfterContentInit, Directive, Injector, OnDestroy, OnInit } from '@angular/core';
+
+import { CarouselComponent } from 'ngx-bootstrap';
 
 import { isPageable } from '@wm/core';
 
@@ -6,6 +8,7 @@ import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './carousel.props';
+import { CarouselAnimator } from './carousel.animator';
 
 declare const _;
 
@@ -27,7 +30,8 @@ const navigationClassMap = {
     selector: '[wmCarousel]',
     exportAs: 'wmCarousel'
 })
-export class CarouselDirective extends StylableComponent implements OnInit {
+export class CarouselDirective extends StylableComponent implements AfterContentInit, OnDestroy, OnInit {
+    private animator;
     private navigationClass;
     private fieldDefs;
     private interval;
@@ -36,9 +40,21 @@ export class CarouselDirective extends StylableComponent implements OnInit {
     public animation;
     public controls;
 
-    constructor(inj: Injector) {
+    constructor(public component: CarouselComponent, inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    ngAfterContentInit() {
+        setTimeout(() => {
+            this.animator = new CarouselAnimator(this, this.interval);
+        }, 50);
+    }
+
+    ngOnDestroy() {
+        if (this.animator) {
+            this.animator.stop();
+        }
     }
 
     ngOnInit() {

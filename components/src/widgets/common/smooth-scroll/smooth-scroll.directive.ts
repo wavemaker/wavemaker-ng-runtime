@@ -36,7 +36,7 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
     @Input()
     set wmSmoothscroll(val: string) {
         if (val === 'true') {
-            if (!this._smoothScrollInstance && isMobile() && !isKitkatDevice()) {
+            if (!this._smoothScrollInstance) {
                 this._smoothScrollInstance = this.applySmoothScroll();
             }
         } else {
@@ -45,6 +45,9 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
     }
 
     private applySmoothScroll($events?: any[]) {
+        if (!isMobile() && isKitkatDevice()) {
+            return null;
+        }
         // Set the fadeScrollbars to true only when content is scrollable inside the smoothscroll-container
         const scrollOptions = {
             scrollbars: true,
