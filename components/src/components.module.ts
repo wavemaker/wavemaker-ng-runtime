@@ -28,6 +28,7 @@ import { CarouselTemplateDirective } from './widgets/common/carousel/carousel-te
 import { ChartComponent } from './widgets/common/chart/chart.component';
 import { CheckboxComponent } from './widgets/common/checkbox/checkbox.component';
 import { CheckboxsetComponent } from './widgets/common/checkboxset/checkboxset.component';
+import { ChipsComponent } from './widgets/common/chips/chips.component';
 import { ColorPickerComponent } from './widgets/common/color-picker/color-picker.component';
 import { CompositeDirective } from './widgets/common/composite/composite.directive';
 import { ConfirmDialogComponent } from './widgets/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -147,6 +148,7 @@ const wmComponents = [
     ContentComponent,
     CurrencyComponent,
     CheckboxsetComponent,
+    ChipsComponent,
     DateComponent,
     DatetimeComponent,
     DialogComponent,

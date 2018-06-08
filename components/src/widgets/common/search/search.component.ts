@@ -48,6 +48,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private isLastPage: boolean;
     private formattedDataset: any;
 
+    public tabindex: number;
+    public startIndex: number;
+    public acceptsArray: boolean;
+    public binddisplaylabel: string;
+
     @ViewChild(TypeaheadDirective) typeahead: TypeaheadDirective;
 
     constructor(
@@ -97,6 +102,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
         });
 
+        this.dataset$.subscribe(() => {
+            // set the next item index.
+            this.startIndex = this.datasetItems.length;
+            this.updateQueryModel(this.datavalue);
+        });
+
         this.dataProvider = new DataProvider();
     }
 
@@ -108,7 +119,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.query = item.label;
 
         // As item.key can vary from key in the datasetItems
-        this.datavalue = item.value;
+        this.modelByKey = item.key;
 
         this.invokeOnTouched();
         this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});
@@ -124,7 +135,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.page = 1;
     }
 
-    protected getTransformedData(data): DataSetItem[] {
+    public getTransformedData(data, itemIndex?): DataSetItem[] {
+        if (isDefined(itemIndex)) {
+            itemIndex++;
+        }
+
         return transformData(
             data,
             this.datafield,
@@ -134,25 +149,25 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 bindDisplayExpr: this.binddisplayexpression,
                 bindDisplayImgSrc: this.binddisplayimagesrc,
                 displayImgSrc: this.displayimagesrc
-            }
+            },
+            itemIndex
         );
     }
 
-    // This function returns an observable containing the search results.
-    // if searchKey is defined, then variable call is made using the searchkey and other filterfields
-    // else local data search is performed.
-    protected getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
+    // This method returns a promise that provides the filtered data from the datasource.
+    public getDataSource(query, searchOnDataField?, nextItemIndex?): Promise<DataSetItem[]> {
         if (this.dataset) {
             this.formattedDataset = convertDataToObject(this.dataset);
         }
 
+        // For default datavalue, search key as to be on datafield to get the default data from the filter call.
         const dataConfig: IDataProviderConfig = {
             dataset: this.formattedDataset,
             binddataset: this.binddataset,
             datasource: this.datasource,
             datafield: this.datafield,
             query: query,
-            searchKey: this.searchkey,
+            searchKey: searchOnDataField ? this.datafield : this.searchkey,
             casesensitive: this.casesensitive,
             orderby: this.orderby,
             limit: this.limit,
@@ -160,17 +175,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             page: this.page
         };
 
-        if (this.dataProvider.hasNoMoreData) {
-            // converting array to observable using "observable.to".
-            return Observable.of(this.getTransformedData(this.result));
-        }
-
-        this._loadingItems = true;
-
-        // converting promise to observable of datasetItem using "observable.from".
-        return Observable.from(
-            this.dataProvider.filter(dataConfig)
-                .then((response: any) => {
+        return this.dataProvider.filter(dataConfig)
+            .then((response: any) => {
 
                     response = response.data || response;
 
@@ -187,32 +193,36 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
                     this.noMoreData = this.isLastPage;
 
-                    return this.getTransformedData(this.result);
+                    return this.getTransformedData(this.result, nextItemIndex);
                 }, (error) => {
                     this._loadingItems = false;
                     return [];
                 }
-            )
-        );
+            );
     }
 
-    private updateQueryModel(data, startIndex?) {
+    // This function returns an observable containing the search results.
+    // if searchKey is defined, then variable call is made using the searchkey and other filterfields
+    // else local data search is performed.
+    public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
+        if (this.dataProvider.hasNoMoreData) {
+            // converting array to observable using "observable.to".
+            return Observable.of(this.getTransformedData(this.result));
+        }
+
+        this._loadingItems = true;
+
+        // converting promise to observable of datasetItem using "observable.from".
+        return Observable.from(this.getDataSource(query));
+    }
+
+
+    public updateQueryModel(data) {
         // Todo: [bandhavya] verify after this change.
         if (!_.isArray(data)) {
             data = [data];
         }
-        this.queryModel = transformData(
-            data,
-            this.datafield,
-            {
-                displayField: this.displayfield || this.displaylabel,
-                displayExpr: this.displayexpression,
-                bindDisplayExpr: this.binddisplayexpression,
-                bindDisplayImgSrc: this.binddisplayimagesrc,
-                displayImgSrc: this.displayimagesrc
-            },
-            startIndex
-        );
+        this.queryModel = this.getTransformedData(data);
 
         // Show the label value on input.
         this.query = this.queryModel[0].label;

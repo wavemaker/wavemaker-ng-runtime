@@ -2,7 +2,7 @@ import { Injector } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
-import { convertDataToObject, DataSetItem, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 
 declare const _;
@@ -25,7 +25,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public displayValue: Array<string> | string;
 
     protected datasetItems: DataSetItem[] = [];
-    protected acceptsArray = false; // set to true if proxyModel on widget accepts array type.
+    public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
     protected dataset$ = new Subject();
     protected datavalue$ = new Subject();
 
@@ -43,7 +43,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     // triggers on ngModel change. This function extracts the datavalue value.
     protected set modelByKey(val: any) {
         this.selectByKey(val);
-        this._modelByKey = val;
+
         // invoke on datavalue change.
         this.invokeOnChange(this._modelByValue);
     }
@@ -55,7 +55,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     // triggers on setting the datavalue. This function extracts the model value.
     public set datavalue(val: any) {
         this.selectByValue(val);
-        this._modelByValue = val;
+
         // invoke on datavalue change.
         this.invokeOnChange(val);
 
@@ -71,7 +71,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
         this._debouncedInitDatasetItems = _.debounce(() => {
             this.initDatasetItems();
-        }, 50);
+        }, 150);
     }
 
     /**
@@ -89,6 +89,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (this.multiple && !_.isArray(keys)) {
             keys = [keys];
         }
+
+        // Set the _modelByKey to the modified keys.
+        this._modelByKey = keys;
 
         if (this.multiple) {
             this._modelByValue = [];
@@ -134,21 +137,24 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             return;
         }
 
+        if (this.acceptsArray && !_.isArray(values)) {
+            values = extractDataAsArray(values);
+        }
+
+        // Set the _modelByValue to the modified values.
+        this._modelByValue = values;
+
         // preserve the datavalue if datasetItems are empty.
         if (!this.datasetItems.length && !_.isUndefined(values)) {
             this.toBeProcessedDatavalue = values;
             return;
         }
 
-        if (this.acceptsArray && !_.isArray(values)) {
-            values = [values];
-        }
-
         if (_.isArray(values)) {
             this._modelByKey = [];
             values.forEach(val => {
                 const itemByValue = _.find(this.datasetItems, item => {
-                    return (_.isObject(item) ? _.isEqual(item.value, val) : item.value === val);
+                    return (_.isObject(item.value) ? _.isEqual(item.value, val) : _.toString(item.value) === _.toString(val));
                 });
                 if (itemByValue) {
                     itemByValue.selected = true;
@@ -158,7 +164,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         } else {
             this._modelByKey = undefined;
             const itemByValue = _.find(this.datasetItems, item => {
-                return (_.isObject(item)  ? _.isEqual(item.value, values) : _.toString(item.value) === _.toString(values));
+                return (_.isObject(item.value)  ? _.isEqual(item.value, values) : _.toString(item.value) === _.toString(values));
             });
             if (itemByValue) {
                 itemByValue.selected = true;
@@ -238,6 +244,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             case 'dataset':
             case 'datafield':
             case 'displayfield':
+            case 'displaylabel':
             case 'displayexpression':
             case 'orderby':
             case 'usekeys':

@@ -81,6 +81,24 @@ export const transformDataWithKeys = (dataSet: any) => {
     return data;
 };
 
+// Converts any type of data to array.
+export const extractDataAsArray = data => {
+
+    if (_.isUndefined(data) || _.isNull(data)) {
+        return [];
+    }
+
+    if (_.isString(data)) {
+        data = _.split(data, ',').map(str => str.trim());
+    }
+
+    if (!_.isArray(data)) {
+        data = [data];
+    }
+
+    return data;
+};
+
 // This function return always an object containing dataset details.
 export const convertDataToObject = dataResult => {
     // TODO: [bandhavya] remove check for data property
@@ -104,26 +122,31 @@ export const convertDataToObject = dataResult => {
  * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
  * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
  */
-export const transformData = (dataSet: any, myDataField: string, displayOptions, startIndex?: number): Array<DataSetItem> => {
+export const transformData = (dataSet: any, myDataField?: string, displayOptions?, startIndex?: number): Array<DataSetItem> => {
     const data = [];
     if (!dataSet) {
         return;
     }
     dataSet = convertDataToObject(dataSet);
 
+    // startIndex is the index of the next new item.
+    if (_.isUndefined(startIndex)) {
+        startIndex = 1;
+    }
+
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: option, index: index + 1});
+            data.push({key: option, value: option, label: option, index: startIndex + index});
         });
     } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: option, index: index + 1});
+            data.push({key: option, value: option, label: option, index: startIndex + index});
         });
     } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
         const i = 0;
         _.forEach(dataSet, (value, key) => {
-            data.push({key: _.trim(key), value: key, label: value, index: i + 1});
+            data.push({key: _.trim(key), value: key, label: value, index: startIndex});
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
@@ -133,11 +156,7 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
         const myDisplayImgSrc = displayOptions.displayImgSrc;
 
         dataSet.forEach((option, index) => {
-            // startIndex is the index of the next new item.
-            if (!_.isUndefined(startIndex)) {
-                index = index + startIndex;
-            }
-            const key = myDataField === ALLFIELDS ? index : getObjValueByKey(option, myDataField);
+            const key = myDataField === ALLFIELDS ? startIndex + index : getObjValueByKey(option, myDataField);
 
             // Omit all the items whose datafield (key) is null or undefined.
             if (!_.isUndefined(key) && !_.isNull(key)) {
@@ -151,7 +170,7 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
                     label: label,
                     value: myDataField === ALLFIELDS ? option : key,
                     dataObject: option, // represents the object when datafield is ALLFIELDS. This is used as innerItem while grouping the datasetItems.
-                    index: index + 1
+                    index: startIndex + index
                 };
                 if (myDisplayImgSrc) {
                     (dataSetItem as any).imgSrc = getEvaluatedData(option, {
@@ -169,7 +188,7 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
 /**
  * Private method to get the unique objects by the data field
  */
-export const getUniqObjsByDataField = (data: Array<any>, dataField: string, displayField: string, isLocalSearch?: boolean) => {
+export const getUniqObjsByDataField = (data: Array<DataSetItem>, dataField: string, displayField: string, isLocalSearch?: boolean) => {
     let uniqData;
     const isAllFields = dataField === ALLFIELDS;
 

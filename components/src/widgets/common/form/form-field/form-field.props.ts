@@ -6,6 +6,7 @@ import { checkboxProps } from '../../checkbox/checkbox.props';
 import { colorPickerProps } from '../../color-picker/color-picker.props';
 import { currencyProps } from '../../currency/currency.props';
 import { checkboxsetProps } from '../../checkboxset/checkboxset.props';
+import { chipsProps } from '../../chips/chips.props';
 import { dateTimeProps } from '../../date-time/date-time.props';
 import { inputCalendarTypeProps } from '../../text/calendar/input-calendar.props';
 import { inputNumberTypeProps } from '../../text/number/input-number.props';
@@ -32,7 +33,7 @@ const widgetPropsMap = new Map(
         [FormWidgetType.AUTOCOMPLETE, searchProps],
         [FormWidgetType.CHECKBOX, checkboxProps],
         [FormWidgetType.CHECKBOXSET, checkboxsetProps],
-        // TODO: [FormWidgetType.CHIPS, chipsProps],
+        [FormWidgetType.CHIPS, chipsProps],
         [FormWidgetType.COLORPICKER, colorPickerProps],
         [FormWidgetType.CURRENCY, currencyProps],
         [FormWidgetType.DATE, inputCalendarTypeProps],
