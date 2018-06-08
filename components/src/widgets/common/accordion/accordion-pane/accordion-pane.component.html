@@ -20,8 +20,7 @@
     </div>
 </div>
 <div class="panel-collapse collapse" role="tabpanel" aria-labelledby="panel description" [ngClass]="isActive ? 'collapse in' : 'collapse'">
-    <!--TODO: Bandhavya Implement smoothscroll directive and wm-navigable-element directive-->
-    <div class="panel-body" partial-container-target>
+    <div class="panel-body" [wmSmoothscroll]="smoothscroll" partial-container-target>
         <ng-content></ng-content>
     </div>
 </div>

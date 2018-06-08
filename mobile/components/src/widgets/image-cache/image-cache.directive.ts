@@ -34,7 +34,7 @@ export class ImageCacheDirective implements DoCheck {
 
     @Input()
     set wmImageCache(val: string) {
-        this._isEnabled = val === 'true';
+        this._isEnabled = (hasCordova() && val === 'true');
     }
 
     private getLocalPath(val: string) {

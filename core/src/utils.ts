@@ -77,6 +77,15 @@ export const isIpod = () => REGEX.IPOD.test(userAgent);
 export const isIpad = () => REGEX.IPAD.test(userAgent);
 export const isIos = () => isIphone() || isIpod() || isIpad();
 
+export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
+
+export const getAndroidVersion = () => {
+    const match = (navigator.userAgent.toLowerCase()).match(/android\s([0-9\.]*)/);
+    return match ? match[1] : '';
+};
+
+export const isKitkatDevice = () => isAndroid() && parseInt(getAndroidVersion(), 10) === 4;
+
 /**
  * this method encodes the url and returns the encoded string
  */
