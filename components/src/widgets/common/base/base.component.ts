@@ -137,6 +137,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.context = (inj as any).view.context;
         this.widget = WidgetProxyProvider.create(this, this.widgetSubType, getWidgetPropsByType(this.widgetSubType));
         this.eventManager = inj.get(EventManager);
+        (this.nativeElement as any).widget = this.widget;
 
         this.appLocale = inj.get(App).appLocale || {};
 

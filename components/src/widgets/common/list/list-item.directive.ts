@@ -30,8 +30,9 @@ export class ListItemDirective {
     @ContentChildren(WidgetRef) _currentItemWidgets: QueryList<WidgetRef>;
 
     get currentItemWidgets () {
-        return this._currentItemWidgets.toArray().reduce((result, comp: any) => {
-            result[comp.name] = comp;
+        const componentElements = Array.from(this.nativeElement.querySelectorAll('[widget-id]'));
+        return componentElements.reduce((result, comp: any) => {
+            result[comp.widget.name] = comp.widget;
             return result;
         }, {});
     }
