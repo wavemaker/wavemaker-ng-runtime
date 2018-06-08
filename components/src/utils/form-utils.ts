@@ -1,4 +1,4 @@
-import {AppDefaults, getClonedObject, getFormattedDate, isDefined, isEqualWithFields} from '@wm/core';
+import { AppDefaults, getClonedObject, getFormattedDate, isEqualWithFields } from '@wm/core';
 
 import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 
@@ -169,7 +169,7 @@ export const transformData = (dataSet: any, myDataField: string, displayOptions,
 /**
  * Private method to get the unique objects by the data field
  */
-export const getUniqObjsByDataField = (data, dataField, displayField, isLocalSearch?) => {
+export const getUniqObjsByDataField = (data: Array<any>, dataField: string, displayField: string, isLocalSearch?: boolean) => {
     let uniqData;
     const isAllFields = dataField === ALLFIELDS;
 
@@ -195,7 +195,7 @@ export const getUniqObjsByDataField = (data, dataField, displayField, isLocalSea
  * @param compareWithDataObj represents the datavalue (object) whose properties are to be checked against each property of datasetItem.
  * @param compareByField specifies the property names on which datasetItem has to be compared against datavalue object.
  */
-export const setItemByCompare = (datasetItems, compareWithDataObj, compareByField) => {
+export const setItemByCompare = (datasetItems: Array<DataSetItem>, compareWithDataObj: Object, compareByField: string) => {
     // compare the fields based on fields given to compareby property.
     datasetItems.some(function (opt) {
         if (isEqualWithFields(opt.value, compareWithDataObj, compareByField)) {
@@ -214,7 +214,7 @@ export const setItemByCompare = (datasetItems, compareWithDataObj, compareByFiel
  * @param groupBy, string groupby property
  * @returns {any[]}
  */
-const getSortedGroupedData = (groupedLiData, groupBy) => {
+const getSortedGroupedData = (groupedLiData: Object, groupBy: string) => {
     const _groupedData = [];
     _.forEach(_.keys(groupedLiData), (groupkey, index) => {
         const liData = groupedLiData[groupkey];
@@ -240,7 +240,7 @@ const getSortedGroupedData = (groupedLiData, groupBy) => {
  * @param innerItem, represents the innerItem on which groupby has to be applied. Incase of datasetItems, 'dataObject' contains the full object. Here innerItem is dataObject.
  * @returns {any[]} groupedData, array of objects, each object having key and data.
  */
-export const groupData = (data, groupby, match, orderby, dateformat, datePipe, innerItem?) => {
+export const groupData = (data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string) => {
     let groupedLiData = {};
     if (_.includes(groupby, '(')) {
         const groupDataByUserDefinedFn = this[groupby.split('(')[0]];
@@ -262,7 +262,7 @@ export const groupData = (data, groupby, match, orderby, dateformat, datePipe, i
  * @param dateFormat string date format
  * @param innerItem, item to look for in the passed data
  */
-export const getGroupedData = (fieldDefs, groupby, match, orderby, dateFormat, datePipe, innerItem?) => {
+export const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateFormat: string, datePipe: ToDatePipe, innerItem?: string) => {
     // For day, set the relevant moment calendar options
     if (match === TIME_ROLLUP_OPTIONS.DAY) {
         momentLocale._calendar = momentCalendarDayOptions;
@@ -286,7 +286,7 @@ export const getGroupedData = (fieldDefs, groupby, match, orderby, dateFormat, d
 };
 
 // Format the date with given date format
-export const filterDate = (value, format, defaultFormat, datePipe) => {
+export const filterDate = (value: string | number, format: string, defaultFormat: string, datePipe: ToDatePipe) => {
     if (format === 'timestamp') { // For timestamp format, return the epoch value
         return value;
     }
@@ -302,7 +302,7 @@ export const filterDate = (value, format, defaultFormat, datePipe) => {
  * @param rollUp string containing the match property.
  * @param dateformat string containing the date format to display the date.
  */
-export const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: string, datePipe?) => {
+export const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: string, datePipe?: ToDatePipe) => {
     let groupByKey,
         strMoment  = moment(concatStr),
         dateFormat = dateformat;
@@ -357,7 +357,7 @@ export const getTimeRolledUpString = (concatStr: string, rollUp: string, datefor
 
 
 // groups the fields based on the groupby value.
-export const groupDataByField = (groupby, match, innerItem, dateFormat, datePipe, liData) => {
+export const groupDataByField = (groupby: string, match: string, innerItem: string, dateFormat: string, datePipe: ToDatePipe, liData: Object) => {
     // get the groupby field value from the liData or innerItem in the liData.
     let concatStr = _.get(innerItem ? liData[innerItem] : liData, groupby);
 

@@ -79,7 +79,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
                 break;
             case 'groupby':
             case 'match':
-                this.groupedData = this.datasetItems.length ? groupData(convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, 'dataObject') : [];
+                this.groupedData = this.datasetItems.length ? groupData(convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];
                 break;
         }
     }
