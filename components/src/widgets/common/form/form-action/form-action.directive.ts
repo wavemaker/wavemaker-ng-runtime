@@ -1,7 +1,7 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
+import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './form-action.props';
-import { StylableComponent } from '../../base/stylable.component';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { FormComponent } from '../form.component';
 
@@ -17,7 +17,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
         provideAsWidgetRef(FormActionDirective)
     ]
 })
-export class FormActionDirective extends StylableComponent implements OnInit {
+export class FormActionDirective extends BaseComponent implements OnInit {
     accessroles;
     action;
     binding;
@@ -34,8 +34,9 @@ export class FormActionDirective extends StylableComponent implements OnInit {
     title;
     type;
     updateMode;
+    buttonDef;
 
-    public buttonDef;
+    private _propsInitialized: boolean;
 
     constructor(inj: Injector, @Optional() public form: FormComponent) {
         super(inj, WIDGET_CONFIG);
@@ -45,25 +46,39 @@ export class FormActionDirective extends StylableComponent implements OnInit {
         this.buttonDef = {
             key: this.key || this.binding,
             displayName: this['display-name'],
-            show: this.show || 'false',
+            show: this.show,
             class: this.class || '',
             iconclass: this.iconclass || '',
             title: _.isUndefined(this.title) ? (this['display-name'] || '') : this.title,
             action: this.action,
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,
-            disabled: this.disabled || 'false',
-            tabindex: this.tabindex ? +this.tabindex : undefined,
+            disabled: this.disabled,
+            tabindex: this.tabindex,
             iconname: this.iconname,
-            type: this.type || 'button',
+            type: this.type,
             updateMode: this['update-mode'] === true || this['update-mode'] === 'true',
-            position: this.position || 'footer'
+            position: this.position
         };
+        this._propsInitialized = true;
     }
 
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
         this.form.registerActions(this.buttonDef);
+    }
+
+    onPropertyChange(key, nv) {
+        if (!this._propsInitialized) {
+            return;
+        }
+        switch (key) {
+            case 'display-name':
+                this.buttonDef.displayName = nv;
+            default:
+                this.buttonDef[key] = nv;
+            break;
+        }
     }
 }

@@ -2,7 +2,7 @@ import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, isPageable, triggerFn } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, isPageable, triggerFn, $parseEvent } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -153,7 +153,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private dataNavigatorWatched;
     private navigatorResultWatch;
     private navigatorMaxResultWatch;
-    private gridVariable;
     private filterInfo;
     private sortInfo;
     private serverData;
@@ -496,6 +495,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         styler(this.nativeElement, this);
 
         this.ngform = fb.group({});
+        this.addEventsToContext(this.context);
     }
 
     ngAfterContentInit() {
@@ -536,6 +536,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.editmode = this.editmode;
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
+        // TODO: this.gridOptions.isMobile   = isMobile();
+        // TODO: App defaults
         this.gridOptions.name = this.name;
         this.gridOptions.messages       = {
             'selectField': 'Select Field'
@@ -568,7 +570,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     ngOnDestroy() {
         document.removeEventListener('click', this.documentClickBind);
+        if (this.navigatorResultWatch) {
+            this.navigatorResultWatch.unsubscribe();
+        }
+        if (this.navigatorMaxResultWatch) {
+            this.navigatorMaxResultWatch.unsubscribe();
+        }
         super.ngOnDestroy();
+    }
+
+    addEventsToContext(context) {
+        context.addNewRow = () => this.addNewRow();
+        context.deleteRow = () => this.deleteRow();
+        context.editRow = () => this.editRow();
     }
 
     execute(operation, options) {
@@ -823,9 +837,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
 
         result = getValidJSON(newVal);
-
-        /*Reset the values to undefined so that they are calculated each time.*/
-        this.gridVariable = '';
 
         // Converting newval to object if it is an Object that comes as a string "{"data" : 1}"
         if (result) {
@@ -1140,10 +1151,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
-    callEvent(event) {
-        // TODO: Change logic to handle all scenarios
-        if (event) {
-            this[event.substring(0, event.indexOf('('))]();
-        }
+    invokeActionEvent($event, expression: string) {
+        const fn = $parseEvent(expression);
+        fn(this.viewParent, Object.assign(this.context, {$event}));
     }
 }

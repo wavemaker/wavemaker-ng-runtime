@@ -53,7 +53,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     @ContentChildren('inlineWidget') _inlineWidget;
     @ContentChildren('inlineWidgetNew') _inlineWidgetNew;
 
-    private _IsPropsInitialized;
+    private _propsInitialized: boolean;
     private _filterDataSet;
     private _isRowFilter;
     private _isInlineEditable;
@@ -138,7 +138,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             displayName: this.displayName
         }, this.group && this.group.name);
 
-        this._IsPropsInitialized = true;
+        this._propsInitialized = true;
 
     }
 
@@ -347,7 +347,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     }
 
     onPropertyChange(key, nv) {
-        if (!this._IsPropsInitialized) {
+        if (!this._propsInitialized) {
             return;
         }
         switch (key) {

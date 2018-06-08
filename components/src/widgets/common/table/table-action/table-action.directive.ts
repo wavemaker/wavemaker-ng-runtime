@@ -1,6 +1,6 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { StylableComponent } from '../../base/stylable.component';
+import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './table-action.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
@@ -17,7 +17,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
         provideAsWidgetRef(TableActionDirective)
     ]
 })
-export class TableActionDirective extends StylableComponent implements OnInit {
+export class TableActionDirective extends BaseComponent implements OnInit {
     accessroles;
     action;
     caption;
@@ -32,8 +32,11 @@ export class TableActionDirective extends StylableComponent implements OnInit {
     tabindex;
     title;
     key;
+    hyperlink
+    target;
+    buttonDef;
 
-    public buttonDef;
+    private _propsInitialized: boolean;
 
     constructor(inj: Injector, @Optional() public table: TableComponent) {
         super(inj, WIDGET_CONFIG);
@@ -51,15 +54,32 @@ export class TableActionDirective extends StylableComponent implements OnInit {
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,
             disabled: this.disabled,
-            tabindex: this.tabindex ? +this.tabindex : undefined,
+            tabindex: this.tabindex,
             icon: this.icon,
-            position: this.position || 'footer'
+            position: this.position,
+            widgetType: this['widget-type'],
+            hyperlink: this.hyperlink,
+            target: this.target
         };
+        this._propsInitialized = true;
     }
 
     ngOnInit() {
         super.ngOnInit();
         this.populateAction();
         this.table.registerActions(this.buttonDef);
+    }
+
+    onPropertyChange(key, nv) {
+        if (!this._propsInitialized) {
+            return;
+        }
+        switch (key) {
+            case 'display-name':
+                this.buttonDef.displayName = nv;
+            default:
+                this.buttonDef[key] = nv;
+                break;
+        }
     }
 }

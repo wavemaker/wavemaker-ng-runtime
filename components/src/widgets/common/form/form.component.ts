@@ -1,7 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -143,6 +143,20 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             .debounceTime(500)
             .subscribe(this.updateDataOutput.bind(this));
         this.elScope = this;
+
+        this.addEventsToContext(this.context);
+    }
+
+    addEventsToContext(context) {
+        context.cancel = () => this.cancel();
+        context.reset = () => this.reset();
+        context.save = evt => this.save(evt);
+        context.saveAndNew = () => this.saveAndNew();
+        context.saveAndView = () => this.saveAndView();
+        context.delete = () => this.delete();
+        context.new = () => this.new();
+        context.edit = () => this.edit();
+        context.highlightInvalidFields = () => this.highlightInvalidFields();
     }
 
     // This method loops through the form fields and set touched state as touched
@@ -416,10 +430,8 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         return this.ngform && this.ngform.touched;
     }
 
-    callEvent(event) {
-        // TODO: Change logic to handle all scenarios
-        if (event) {
-            this[event.substring(0, event.indexOf('('))]();
-        }
+    invokeActionEvent($event, expression: string) {
+        const fn = $parseEvent(expression);
+        fn(this.viewParent, Object.assign(this.context, {$event}));
     }
 }
