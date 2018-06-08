@@ -12,7 +12,7 @@ export class LoginActionManager extends BaseActionManager {
 
     private validate(params:any) {
         let err, paramKey, remembermeKey;
-        const LOGIN_PARAM_REMEMBER_ME = 'remember-me';
+        const LOGIN_PARAM_REMEMBER_ME = 'j_rememberme';
         const LOGIN_PARAM_REMEMBER_ME_OLD = ['rememberme', 'remembermecheck'];
 
         // for older projects
@@ -45,8 +45,8 @@ export class LoginActionManager extends BaseActionManager {
             'username': 'j_username',
             'passwordtext': 'j_password',
             'password': 'j_password',
-            'remembermecheck': 'remember-me',
-            'rememberme': 'remember-me'
+            'remembermecheck': 'j_rememberme',
+            'rememberme': 'j_rememberme'
         };
 
         _.each(params, function(value, key) {
