@@ -6,7 +6,8 @@ export const registerProps = () => {
         new Map(
             [
                 ['boundarylinks', {value: false, ...PROP_BOOLEAN}],
-                ['class', {...PROP_STRING}],
+                ['class', PROP_STRING],
+                ['collapsible', PROP_BOOLEAN],
                 ['dateformat', PROP_STRING_NOTIFY],
                 ['dataset', {notify: true}],
                 ['datasource', {notify: true}],

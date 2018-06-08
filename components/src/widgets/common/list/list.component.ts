@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, E
 
 import { Subscription } from 'rxjs/Subscription';
 
-import {$appDigest, DataSource, getClonedObject, isDefined, isObject, isPageable} from '@wm/core';
+import {$appDigest, DataSource, getClonedObject, isDefined, isObject, isPageable, noop} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -74,8 +74,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public itemclass: string;
     public selectedItemWidgets: Array<WidgetRef> | WidgetRef;
 
-    public handleHeaderClick: ($event) => void;
+    public handleHeaderClick: Function;
     public toggleAllHeaders: void;
+    public groupby: string;
+    public collapsible: string;
 
     private match: string;
     private dateformat: string;
@@ -107,17 +109,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         public datePipe: ToDatePipe,
         @Attribute('itemclass.bind') public binditemclass,
         @Attribute('disableitem.bind') public binddisableitem,
-        @Attribute('dataset.bind') public binddataset,
-        @Attribute('groupby') protected groupby: string
+        @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
-
-        if (this.groupby) {
-            this.handleHeaderClick = handleHeaderClick;
-            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
-        }
-
         this.debouncedFetchNextDatasetOnScroll = _.debounce(() => this.fetchNextDatasetOnScroll, 50);
     }
 
@@ -575,6 +570,15 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return this.listItems.toArray()[index];
     }
 
+    /**
+     * return index of an (listItemDirective) in the listItem
+     * @param {ListItemDirective} item
+     * @returns {number}
+     */
+    private getListItemIndex(item: ListItemDirective) {
+        return this.listItems.toArray().indexOf(item);
+    }
+
     // this method is called form other data widgets like table.
     public execute(operation, options) {
         if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
@@ -586,14 +590,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public handleKeyDown($event, action: string) {
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
-        const presentIndex: number = this.lastSelectedItem.context.index;
+        const presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
 
         if (this.multiselect) {
-            const firstIndex: number = this.firstSelectedItem.context.index;
+            const firstIndex: number = this.getListItemIndex(this.firstSelectedItem);
             const selectCount: number = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
             if (action === 'selectPrev') {
                 if (presentIndex > 0) {
-                    if ((presentIndex === firstIndex || presentIndex < firstIndex) && this.checkSelectionLimit(selectCount)) {
+                    if ((presentIndex <= firstIndex) && this.checkSelectionLimit(selectCount)) {
                         this.lastSelectedItem = this.getQueryListItemByIndex( presentIndex - 1);
                         this.toggleListItemSelection(this.lastSelectedItem);
                     } else if (presentIndex > firstIndex) {
@@ -605,7 +609,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 }
             } else if (action === 'selectNext') {
                 if (presentIndex < listItems.length - 1) {
-                    if ((presentIndex === firstIndex || presentIndex > firstIndex) && this.checkSelectionLimit(selectCount)) {
+                    if ((presentIndex >= firstIndex) && this.checkSelectionLimit(selectCount)) {
                         this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
                         this.toggleListItemSelection(this.lastSelectedItem);
                     } else if (presentIndex < firstIndex) {
@@ -726,6 +730,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     ngOnInit() {
         super.ngOnInit();
         this.selectedItemWidgets = this.multiselect ? [] : {};
+        this.handleHeaderClick = noop;
+        if (this.groupby && this.collapsible) {
+            this.handleHeaderClick = handleHeaderClick;
+            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
+        }
     }
 
     ngAfterViewInit() {
