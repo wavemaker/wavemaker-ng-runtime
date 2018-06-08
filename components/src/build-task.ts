@@ -17,6 +17,7 @@ export * from './widgets/common/carousel/carousel-template/carousel-template.bui
 export * from './widgets/common/chart/chart.build';
 export * from './widgets/common/checkbox/checkbox.build';
 export * from './widgets/common/checkboxset/checkboxset.build';
+export * from './widgets/common/chips/chips.build';
 export * from './widgets/common/color-picker/color-picker.build';
 export * from './widgets/common/composite/composite.build';
 export * from './widgets/common/container/container.build';

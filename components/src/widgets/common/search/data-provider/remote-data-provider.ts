@@ -51,6 +51,7 @@ export class RemoteDataProvider implements IDataProvider {
     }
 
     protected onFilterFailure() {
+        return [];
     }
 
     /**
