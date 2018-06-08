@@ -30,8 +30,6 @@ export class DatetimeComponent extends BaseFormCustomComponent {
      */
     outputformat: string;
 
-    timestamp;
-
     /**
      * The below propeties prefixed with "bs" always holds the value that is selected from the datepicker.
      * The bsDateTimeValue = bsDateValue + bsTimeValue.
@@ -39,6 +37,10 @@ export class DatetimeComponent extends BaseFormCustomComponent {
     private bsDateTimeValue: any;
     private bsDateValue;
     private bsTimeValue;
+
+    get timestamp() {
+        return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
+    }
 
     /**
      * The displayValue is the display value of the bsDateTimeValue after applying the datePattern on it.
@@ -93,9 +95,8 @@ export class DatetimeComponent extends BaseFormCustomComponent {
             this.bsDateValue = this.bsDateValue || getDateObj(newVal);
             this.bsTimeValue = this.bsTimeValue || getDateObj(newVal);
             this.bsDateTimeValue = getDateObj(newVal);
-            this.timestamp = this.bsDateTimeValue.valueOf();
         } else {
-            this.bsDateValue = this.bsTimeValue = this.bsDateTimeValue = this.timestamp = undefined;
+            this.bsDateValue = this.bsTimeValue = this.bsDateTimeValue = undefined;
         }
         this.invokeOnChange(this.datavalue);
         $appDigest();
@@ -190,11 +191,9 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         const dateObj = getDateObj(newVal);
         if (type === 'date') {
             this.bsDateValue = dateObj.toDateString();
+            this.bsTimeValue = dateObj.toTimeString();
             if (this.isDateOpen) {
                 this.toggleTimePicker(true);
-            }
-            if (!this.bsTimeValue) {
-                this.bsTimeValue = dateObj.toTimeString();
             }
             this.bsDateTimeValue = new Date(`${this.bsDateValue} ${this.bsTimeValue}`);
         } else {
