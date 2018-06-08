@@ -51,8 +51,6 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         if (layoutType === 'dialog') {
             this.isLayoutDialog = true;
             this.dialogId = dialogId;
-        } else {
-            this.tableOptions.onRowDelete = this.deleteRow.bind(this);
         }
     }
 
@@ -99,11 +97,6 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
 
     onDialogOpen() {
         this.focusFirstInput();
-    }
-
-    deleteRow(row, callBackFn?) {
-        this.form.getWidget().formdata = row;
-        this.form.delete(callBackFn);
     }
 
     private _addNewRow() {

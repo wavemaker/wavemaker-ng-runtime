@@ -62,4 +62,8 @@ export class DialogService {
             dialogRef.close();
         });
     }
+
+    public showAppConfirmDialog(initState?: any) {
+        this.open('_app-confirm-dialog', initState);
+    }
 }

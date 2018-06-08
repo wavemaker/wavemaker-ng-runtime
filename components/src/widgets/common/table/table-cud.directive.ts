@@ -3,6 +3,7 @@ import { Directive, Inject, Self } from '@angular/core';
 import { TableComponent } from './table.component';
 import { $appDigest, DataSource, triggerFn } from '@wm/core';
 import { refreshDataSource } from '../../../utils/data-utils';
+import { DialogService } from '../dialog/dialog.service';
 
 const OPERATION = {
     'NEW': 'new',
@@ -15,7 +16,8 @@ const OPERATION = {
 })
 export class TableCUDDirective {
 
-    constructor(@Self() @Inject(TableComponent) private table) {
+    constructor(@Self() @Inject(TableComponent) private table,
+                private dialogService: DialogService) {
         table.initiateSelectItem = this.initiateSelectItem.bind(this);
         table.updateVariable = this.updateVariable.bind(this);
         table.updateRecord = this.updateRecord.bind(this);
@@ -239,29 +241,24 @@ export class TableCUDDirective {
     }
 
     deleteRecord(row, cancelRowDeleteCallback?, evt?, callBack?) {
-        // if (!this.table.confirmdelete) {
-        this.deleteFn(row, cancelRowDeleteCallback, evt, callBack);
-        triggerFn(cancelRowDeleteCallback);
-        return;
-        // }
-        // TODO: App confirm dialog
-        // DialogService._showAppConfirmDialog({
-        //     'caption'   : _.get(appLocale, 'MESSAGE_DELETE_RECORD') || 'Delete Record',
-        //     'iconClass' : 'wi wi-delete fa-lg',
-        //     'content'   : this.table.confirmdelete,
-        //     'oktext'    : this.table.deleteoktext,
-        //     'canceltext': this.table.deletecanceltext,
-        //     'resolve'   : {
-        //         'confirmActionOk': function () {
-        //             return deleteFn;
-        //         },
-        //         'confirmActionCancel': function () {
-        //             return function () {
-        //                 triggerFn(cancelRowDeleteCallback);
-        //             };
-        //         }
-        //     }
-        // });
+        if (!this.table.confirmdelete) {
+            this.deleteFn(row, cancelRowDeleteCallback, evt, callBack);
+            triggerFn(cancelRowDeleteCallback);
+            return;
+        }
+        this.dialogService.showAppConfirmDialog({
+            title: 'Delete Record',
+            iconclass: 'wi wi-delete fa-lg',
+            message: this.table.confirmdelete,
+            oktext: this.table.deleteoktext,
+            canceltext: this.table.deletecanceltext,
+            onOk: () => {
+                this.deleteFn(row, cancelRowDeleteCallback, evt, callBack);
+            },
+            onClose: () => {
+                triggerFn(cancelRowDeleteCallback);
+            }
+        });
     }
 
     editRow(evt?) {

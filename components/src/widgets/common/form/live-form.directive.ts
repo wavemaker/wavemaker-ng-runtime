@@ -427,7 +427,7 @@ export class LiveFormDirective {
         this.save($event);
     }
 
-    save(event?, updateMode?, newForm?, callBackFn?) {
+    save(event?, updateMode?, newForm?) {
         let data, prevData, requestData, operationType, isValid;
 
         operationType = this.form.operationType = this.form.operationType || this.findOperationType();

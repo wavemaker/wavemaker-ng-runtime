@@ -19,6 +19,8 @@ import { PipeProvider } from './services/pipe-provider.service';
             <button wmButton class="btn-primary" caption="Close" click.event="closeDialog()" name="button4"></button>
         </div>
     </div>
+    <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext" canceltext.bind="canceltext"
+            iconclass.bind="iconclass" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()"></div>
     <div wmNetworkInfoToaster></div>
     <div wmAppUpdate></div>`
 })
