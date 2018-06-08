@@ -76,17 +76,18 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
 
         if ($events) {
             // map all events on previous iscroll to the newly created iscroll.
-            _.forEach($events, (val, key)  => {
-                iScroll._events[key] = val;
+            _.forEach($events, (listeners, key)  => {
+                _.forEach(listeners, l => {
+                    iScroll.on(key, l);
+                });
             });
-            iScroll.refresh();
-        } else {
             iScroll.on('scrollStart', function () {
                 this._scrolling = true;
             });
             iScroll.on('scrollEnd', function () {
                 this._scrolling = false;
             });
+            iScroll.refresh();
         }
 
         // refresh the indicators.
