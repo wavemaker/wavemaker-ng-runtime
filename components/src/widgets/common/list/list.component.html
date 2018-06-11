@@ -35,8 +35,7 @@
     (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
 >
     <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
-        <li *ngFor="let item of fieldDefs; let i = index;" class="app-list-item clearfix "
-            [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
+        <li *ngFor="let item of fieldDefs; let i = index;" class="app-list-item clearfix {{itemsPerRowClass}} {{listItemRef.itemClass}}"
             [wmListItem]="item"
             #listItemRef="listItemRef"
             tabindex="-1">

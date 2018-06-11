@@ -288,14 +288,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             if (!isDefined(this.fieldDefs) || this.dataNavigator.isFirstPage()) {
                 this.fieldDefs = [];
             }
-            _.forEach(newVal, item => this.fieldDefs.push(item));
-
-            setTimeout(() => {
-                // functionality of On-Demand and Scroll will be same except we don't attach scroll events
-                if (this.fieldDefs.length && !this.onDemandLoad) {
-                    this.bindScrollEvt();
-                }
-            }, 100);
+            this.fieldDefs = [...this.fieldDefs, ...newVal];
         } else {
             this.fieldDefs = newVal;
         }
@@ -303,8 +296,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.orderby) {
             this.fieldDefs = getOrderedDataset(this.fieldDefs, this.orderby);
         }
-
-
         if (this.groupby) {
             this.groupedData = groupData(this.fieldDefs, this.groupby, this.match, this.orderby, this.dateformat, this.datePipe);
         }
@@ -362,14 +353,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.navigatorResultWatch.unsubscribe();
         }
         /*Register a watch on the "result" property of the "dataNavigator" so that the paginated data is displayed in the live-list.*/
-        this.navigatorResultWatch = dataNavigator.resultEmitter.subscribe((val) => {
-            /* Check for sanity. */
-            if (isDefined(val)) {
-                this.onDataChange(val);
-            } else {
-                this.onDataChange(undefined);
-            }
-        }, true);
+        this.navigatorResultWatch = dataNavigator.resultEmitter.subscribe((newVal: any) => this.onDataChange(newVal), true);
         /*De-register the watch if it is exists */
         if (this.navigatorMaxResultWatch) {
             this.navigatorMaxResultWatch.unsubscribe();
@@ -495,6 +479,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     listItem.isActive = true;
                 }
             });
+        }
+
+        if (this.fieldDefs.length && this.infScroll) {
+            this.bindScrollEvt();
         }
     }
 
