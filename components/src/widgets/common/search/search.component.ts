@@ -1,12 +1,12 @@
-import { Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 
 import { Observable } from 'rxjs/Rx';
-import { TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
+import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
 import { isDefined } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { convertDataToObject, DataSetItem, transformData } from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, transformData} from '../../../utils/form-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 import { registerProps } from './search.props';
 import { ALLFIELDS } from '../../../utils/data-utils';
@@ -26,7 +26,7 @@ registerProps();
         provideAsWidgetRef(SearchComponent)
     ]
 })
-export class SearchComponent extends DatasetAwareFormComponent implements OnInit {
+export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
 
     public casesensitive: boolean;
     public searchkey: string;
@@ -52,8 +52,17 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public startIndex: number;
     public acceptsArray: boolean;
     public binddisplaylabel: string;
+    public typeaheadContainer: TypeaheadContainerComponent;
 
     @ViewChild(TypeaheadDirective) typeahead: TypeaheadDirective;
+    @ViewChild('ulElement') ulElement: ElementRef;
+    @ViewChildren('liElements') liElements: QueryList<ElementRef>;
+
+    private typeaheadScrollable: boolean = true; // Default check for container methods to access.
+
+    get typeaheadContainerInstance() {
+        return (this.typeaheadContainer as any).instance;
+    }
 
     constructor(
         inj: Injector,
@@ -82,7 +91,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
             const query = (_.isArray(val) ? val[0] : val) as string;
 
-            if (_.isUndefined(query) || query === null) {
+            if (_.isUndefined(query) || query === null || query === '') {
+                this._modelByValue = '';
                 return;
             }
 
@@ -112,7 +122,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
-    protected typeaheadOnSelect($event, match: TypeaheadMatch): void {
+    protected typeaheadOnSelect(match, $event): void {
         const item = match.item;
         this.queryModel = item;
         item.selected = true;
@@ -182,23 +192,29 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
                     this._loadingItems = false;
 
-                    // Todo: concat the dataset with the response.
                     if (this.dataProvider.hasMoreData) {
                         this.formattedDataset = this.formattedDataset.concat(response);
                     } else {
                         this.formattedDataset = response;
                     }
 
-                    this.result = this.formattedDataset;
+                    this.result = response;
 
                     this.noMoreData = this.isLastPage;
 
-                    return this.getTransformedData(this.result, nextItemIndex);
+                    return this.getTransformedData(this.formattedDataset, nextItemIndex);
                 }, (error) => {
                     this._loadingItems = false;
                     return [];
                 }
-            );
+            ).then(result => {
+                // When no result is found, set the datavalue to empty.
+                if (!result.length) {
+                    this.datavalue = '';
+                    this.queryModel = query;
+                }
+                return result;
+            });
     }
 
     // This function returns an observable containing the search results.
@@ -207,7 +223,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
         if (this.dataProvider.hasNoMoreData) {
             // converting array to observable using "observable.to".
-            return Observable.of(this.getTransformedData(this.result));
+            return Observable.of(this.getTransformedData(this.formattedDataset));
         }
 
         this._loadingItems = true;
@@ -218,14 +234,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
 
     public updateQueryModel(data) {
-        // Todo: [bandhavya] verify after this change.
-        if (!_.isArray(data)) {
-            data = [data];
-        }
-        this.queryModel = this.getTransformedData(data);
+        this.queryModel = this.getTransformedData(extractDataAsArray(data));
 
         // Show the label value on input.
-        this.query = this.queryModel[0].label;
+        this.query = this.queryModel.length ? this.queryModel[0].label : '';
     }
 
 
@@ -268,6 +280,17 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // by default for autocomplete do not show the search icon
         // by default show the searchicon for type = search
         this.showsearchicon = isDefined(this.showsearchicon) ? this.showsearchicon : (this.type === 'search');
+    }
+
+    public ngAfterViewInit() {
+        super.ngAfterViewInit();
+        this.typeaheadContainer = (this.typeahead as any)._typeahead;
+
+        // setting the ulElements, liElement on typeaheadContainer with custom options template, as the typeaheadContainer implements the key events and scroll.
+        this.liElements.changes.subscribe((data) => {
+           this.typeaheadContainerInstance.liElements = data;
+           this.typeaheadContainerInstance.ulElement = this.ulElement;
+        });
     }
 }
 

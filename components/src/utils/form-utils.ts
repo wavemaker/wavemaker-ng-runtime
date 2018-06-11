@@ -84,7 +84,7 @@ export const transformDataWithKeys = (dataSet: any) => {
 // Converts any type of data to array.
 export const extractDataAsArray = data => {
 
-    if (_.isUndefined(data) || _.isNull(data)) {
+    if (_.isUndefined(data) || _.isNull(data) || _.trim(data) === '') {
         return [];
     }
 

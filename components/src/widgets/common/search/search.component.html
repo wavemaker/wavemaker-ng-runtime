@@ -5,15 +5,11 @@
     </a>
 </ng-template>
 
-<ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query" let-index="3">
-    <ul class="app-search dropdown-menu" scrollable>
-        <li *ngFor="let match of matches" [ngClass]="{active: match.isActive }" (mouseleave)="match.isActive = false;"
-            (mouseenter)="match.isActive = true;"
-            (click)="typeaheadOnSelect($event, match)"
-            (keydown)="onKeyDown($event, match)">
-            <span *ngIf="match.isHeader()">
-                <!-- this is the group name -->
-            </span>
+<ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
+    <ul #ulElement class="app-search dropdown-menu" scrollable>
+        <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainerInstance.isActive(match)}"
+            (mouseenter)="typeaheadContainerInstance.selectActive(match);"
+            (click)="typeaheadOnSelect(match, $event)">
             <!-- itemTemplate comes from the <input> -->
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
@@ -38,7 +34,7 @@
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange()"
-           (typeaheadOnSelect)="typeaheadOnSelect($event)"
+           (typeaheadOnSelect)="typeaheadOnSelect($event, match)"
            [typeaheadMinLength]="minlength"
            [typeaheadOptionsLimit]="limit"
            (typeaheadLoading)="_loadingItems"
@@ -59,7 +55,7 @@
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange()"
-           (typeaheadOnSelect)="typeaheadOnSelect($event)"
+           (typeaheadOnSelect)="typeaheadOnSelect($event, match)"
            [typeaheadMinLength]="minlength"
            [typeaheadOptionsLimit]="limit"
            (typeaheadLoading)="_loadingItems"
