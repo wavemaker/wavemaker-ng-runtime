@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, E
 
 import { Subscription } from 'rxjs/Subscription';
 
-import {$appDigest, DataSource, getClonedObject, isDefined, isObject, isPageable, noop} from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, isDefined, isObject, isPageable, noop, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -113,7 +113,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
-        this.debouncedFetchNextDatasetOnScroll = _.debounce(() => this.fetchNextDatasetOnScroll, 50);
+        this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, 50);
     }
 
     private resetNavigation() {
@@ -650,6 +650,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 }
                 break;
             case 'navigation':
+                // Support for older projects where navigation type was advanced instead of clasic
+                if (nv === 'Advanced') {
+                    this.navigation = 'Classic';
+                    return;
+                }
+                switchClass(this.nativeElement, nv, ov);
                 this.onNavigationTypeChange(nv);
                 if (this.dataNavigator) {
                     this.dataNavigator.navigationClass = this.paginationclass;
