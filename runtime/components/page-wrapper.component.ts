@@ -72,7 +72,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
             // there is only one route
             this.renderPrefabPreviewPage();
         } else {
-            this.subscription = this.route.params.subscribe(({pageName}) => {
+            this.subscription = this.route.params.subscribe(({pageName}: any) => {
                 if (pageName) {
                     if (pageName === 'prefab-preview') {
                         this.renderPrefabPreviewPage();

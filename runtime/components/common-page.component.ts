@@ -1,21 +1,23 @@
-import { ApplicationRef, Component, DoCheck, ElementRef, ViewContainerRef } from '@angular/core';
-import { $invokeWatchers } from '@wm/core';
+import { Component, ElementRef, ViewContainerRef } from '@angular/core';
+
+import { App } from '@wm/core';
+
 import { RenderUtilsService } from '../services/render-utils.service';
 
 @Component({
-    selector: 'div#wm-common-content',
+    selector: 'app-common-page',
     template: '<div></div>'
 })
-export class CommonPageComponent implements DoCheck {
-    constructor(private appRef: ApplicationRef,
-                private vcRef: ViewContainerRef,
-                private elRef: ElementRef,
-                private renderUtils: RenderUtilsService) {
-        console.log('common page load');
-        this.renderUtils.renderPage('Common', this.vcRef, this.elRef.nativeElement);
-    }
+export class CommonPageComponent {
+    constructor(
+        private vcRef: ViewContainerRef,
+        private elRef: ElementRef,
+        private renderUtils: RenderUtilsService,
+        private app: App
+    ) {
 
-    ngDoCheck() {
-        $invokeWatchers();
+        if (this.app.isApplicationType) {
+            this.renderUtils.renderPage('Common', this.vcRef, this.elRef.nativeElement);
+        }
     }
 }
