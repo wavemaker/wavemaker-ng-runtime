@@ -54,7 +54,7 @@ export class PaginationComponent extends StylableComponent {
     navigationsize;
     showrecordcount;
 
-    navcontrols = 'Basic';
+    navcontrols;
     navigation;
 
     boundarylinks;
