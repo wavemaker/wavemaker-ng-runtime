@@ -45,7 +45,7 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
     }
 
     private applySmoothScroll($events?: any[]) {
-        if (!isMobile() && isKitkatDevice()) {
+        if (!isMobile() || isKitkatDevice()) {
             return null;
         }
         // Set the fadeScrollbars to true only when content is scrollable inside the smoothscroll-container
