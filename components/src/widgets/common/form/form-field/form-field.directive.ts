@@ -149,7 +149,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (_.isObject(value)) {
             if (_.isArray(value)) {
                 _.forEach(value, obj => {
-                    caption.push(this.evaluateExpr(obj, displayExpr));
+                    if (_.isObject(obj)) {
+                        caption.push(this.evaluateExpr(obj, displayExpr));
+                    }
                 });
             } else {
                 caption.push(this.evaluateExpr(value, displayExpr));
