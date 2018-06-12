@@ -46,7 +46,7 @@ interface IPageMinJSON {
     variables: string;
 }
 
-const getDynamicComponent = (selector: string, template: string, styles: Array<string>, providers: Array<any> = [], postConstructFn: Function) => {
+const getDynamicComponent = (selector: string, template: string, styles: Array<string>, providers: Array<any> = [], postConstructFn: Function, context) => {
 
     @Component({
         selector,
@@ -63,6 +63,12 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
         constructor(inj: Injector) {
             // create new subject and assign it to the component(page/partial/prefab) context
             this._onDestroy = new Subject();
+
+            if (context) {
+                Object.keys(context).forEach(key => {
+                    this[key] = context[key];
+                });
+            }
 
             postConstructFn(this, inj);
         }
@@ -160,7 +166,12 @@ export class RenderUtilsService {
         private route: ActivatedRoute,
         private resouceMngr: AppResourceManagerService,
         private i18nService: I18nService
-    ) {}
+    ) {
+        app.subscribe('renderResource', options => {
+            this.renderResource(options.selector, options.markup, options.styles, options.providers,
+                options.postConstructFn, options.vcRef, options.$target, options.context);
+        });
+    }
 
     getComponentFactory(componentDef, moduleDef) {
         return this.compiler
@@ -188,10 +199,11 @@ export class RenderUtilsService {
         providers: Array<any>,
         postConstructFn: Function,
         vcRef: ViewContainerRef,
-        $target: HTMLElement
+        $target: HTMLElement,
+        context?
     ): Promise<void> {
 
-        const componentDef = getDynamicComponent(selector, markup, [styles], providers, postConstructFn);
+        const componentDef = getDynamicComponent(selector, markup, [styles], providers, postConstructFn, context);
         const moduleDef = getDynamicModule(componentDef);
         const componentRef = this.getComponentFactory(componentDef, moduleDef);
         const component = vcRef.createComponent(componentRef);
