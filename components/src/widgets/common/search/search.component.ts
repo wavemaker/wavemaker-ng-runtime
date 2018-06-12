@@ -8,6 +8,9 @@ import { isDefined } from '@wm/core';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, extractDataAsArray, transformData} from '../../../utils/form-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
+
+import { styler } from '../../framework/styler';
+
 import { registerProps } from './search.props';
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
@@ -284,6 +287,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     public ngAfterViewInit() {
         super.ngAfterViewInit();
+
+        styler(this.nativeElement as HTMLElement, this);
+
         this.typeaheadContainer = (this.typeahead as any)._typeahead;
 
         // setting the ulElements, liElement on typeaheadContainer with custom options template, as the typeaheadContainer implements the key events and scroll.
