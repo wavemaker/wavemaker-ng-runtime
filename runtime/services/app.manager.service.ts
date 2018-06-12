@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { DialogService } from '@wm/components';
-import { MetadataService, VariablesService } from '@wm/variables';
+import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
 
 import { App } from '@wm/core';
 
@@ -206,5 +206,9 @@ export class AppManagerService {
      */
     executeSessionFailureRequests() {
         this.$http.executeSessionFailureRequests();
+    }
+
+    public getDeployedURL() {
+        return this.$app.deployedUrl ? this.$app.deployedUrl : $rootScope.project.deployedUrl;
     }
 }

@@ -1,4 +1,4 @@
-import {getClonedObject, triggerFn} from '@wm/core';
+import { getClonedObject, triggerFn } from '@wm/core';
 
 import { BaseVariableManager } from './base-variable.manager';
 import { setInput, initiateCallback, formatExportExpression } from '../../util/variable/variables.utils';
@@ -6,13 +6,14 @@ import LiveVariableUtils from '../../util/variable/live-variable.utils';
 import { $queue } from '../../util/inflight-queue';
 import * as LVService from '../../util/variable/live-variable.http.utils';
 import { $rootScope, VARIABLE_CONSTANTS, CONSTANTS } from '../../constants/variables.constants';
+import { appManager } from '@wm/variables';
 
 declare const _;
 const emptyArr = [];
 
 export class LiveVariableManager extends BaseVariableManager {
 
-    private updateDataset (variable, data, propertiesMap, pagingOptions) {
+    private updateDataset(variable, data, propertiesMap, pagingOptions) {
         variable.dataSet = {data, propertiesMap, pagingOptions};
     }
 
@@ -44,8 +45,7 @@ export class LiveVariableManager extends BaseVariableManager {
     }
 
     private getEntityData(variable, options, success, error) {
-        const dataObj: any = {},
-            _this = this;
+        const dataObj: any = {};
         let tableOptions,
             dbOperation,
             promiseObj,
@@ -89,11 +89,11 @@ export class LiveVariableManager extends BaseVariableManager {
             'data': requestData,
             'filterMeta': tableOptions.filter,
             'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
-        }).then(function (response, xhrObj) {
+        }).then((response, xhrObj) => {
             response = response.body;
 
             if ((response && response.error) || !response || !_.isArray(response.content)) {
-                _this.handleError(variable, error, response.error, options);
+                this.handleError(variable, error, response.error, options);
                 return Promise.reject(response.error);
             }
 
@@ -114,9 +114,9 @@ export class LiveVariableManager extends BaseVariableManager {
                     dataObj.data = newDataSet;
                 }
                 /* update the dataSet against the variable */
-                _this.updateDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
+                this.updateDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
 
-                _this.setVariableOptions(variable, options);
+                this.setVariableOptions(variable, options);
                 //  EVENT: ON_SUCCESS
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data);
                 //  EVENT: ON_CAN_UPDATE
@@ -124,9 +124,9 @@ export class LiveVariableManager extends BaseVariableManager {
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
             }
             return Promise.resolve({data: dataObj.data, propertiesMap: variable.propertiesMap, pagingOptions: dataObj.pagingOptions});
-        }, function (errorMsg, details, xhrObj) {
-            _this.setVariableOptions(variable, options);
-            _this.handleError(variable, error, errorMsg, options);
+        }, (errorMsg, details, xhrObj) => {
+            this.setVariableOptions(variable, options);
+            this.handleError(variable, error, errorMsg, options);
 
             return Promise.reject(errorMsg);
         });
@@ -138,17 +138,47 @@ export class LiveVariableManager extends BaseVariableManager {
     private performCUD(operation, variable, options, success, error) {
         options = options || {};
         options.inputFields = options.row || getClonedObject(variable.inputFields);
-        return $queue.submit(variable).then(function(){
+        return $queue.submit(variable).then(() => {
             return LiveVariableUtils.doCUD(operation, variable, options, success, error)
-                .then(function(response) {
+                .then((response) => {
                     $queue.process(variable);
                     return Promise.resolve(response);
-                }, function(err) {
+                }, (err) => {
                     $queue.process(variable);
                     return Promise.reject(err);
                 });
         }, error);
     }
+
+    private aggregateData(deployedUrl, variable, options, success, error) {
+        let tableOptions;
+        const dbOperation = 'executeAggregateQuery';
+        options = options || {};
+        options.skipEncode = true;
+        if (variable.filterFields) {
+            tableOptions = LiveVariableUtils.prepareTableOptions(variable, options);
+            options.aggregations.filter = tableOptions.query;
+        }
+
+        return LVService[dbOperation]({
+            'dataModelName': variable.liveSource,
+            'entityName': variable.type,
+            'page': options.page || 1,
+            'size': options.size || variable.maxResults,
+            'sort': options.sort || '',
+            'url': deployedUrl,
+            'data': options.aggregations
+        }, (response) => {
+            if ((response && response.error) || !response) {
+                triggerFn(error, response.error);
+                return;
+            }
+            triggerFn(success, response);
+        }, (errorMsg) => {
+            triggerFn(error, errorMsg);
+        });
+    }
+
 
     // *********************************************************** PUBLIC ***********************************************************//
 
@@ -164,13 +194,12 @@ export class LiveVariableManager extends BaseVariableManager {
     public listRecords(variable, options, success, error) {
         options = options || {};
         options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
-        const _this = this;
-        return $queue.submit(variable).then(function() {
-            return _this.getEntityData(variable, options, success, error)
-                .then(function(response) {
+        return $queue.submit(variable).then(() => {
+            return this.getEntityData(variable, options, success, error)
+                .then((response) => {
                     $queue.process(variable);
                     return Promise.resolve(response);
-                }, function(err) {
+                }, (err) => {
                     $queue.process(variable);
                     return Promise.reject(err);
                 });
@@ -262,7 +291,7 @@ export class LiveVariableManager extends BaseVariableManager {
         }
         targetObj = variable.filterFields;
 
-        _.forEach(paramObj, function (paramVal, paramKey) {
+        _.forEach(paramObj, (paramVal, paramKey) => {
             targetObj[paramKey] = {
                 'value': paramVal
             };
@@ -431,17 +460,25 @@ export class LiveVariableManager extends BaseVariableManager {
         });
     }
 
+    /*Function to get the aggregated data based on the fields chosen*/
+    public getAggregatedData(variable, options, success, error) {
+        const deployedURL = appManager.getDeployedURL();
+        if (deployedURL) {
+            return this.aggregateData(deployedURL, variable, options, success, error);
+        }
+    }
+
     public defineFirstLastRecord(variable) {
         if (variable.operation === 'read') {
             Object.defineProperty(variable, 'firstRecord', {
                 'configurable': true,
-                'get': function () {
+                'get': () => {
                     return _.get(variable.dataSet, 'data[0]', {});
                 }
             });
             Object.defineProperty(variable, 'lastRecord', {
                 'configurable': true,
-                'get': function () {
+                'get': () => {
                     const data = _.get(variable.dataSet, 'data', []);
                     return data[data.length - 1];
                 }
@@ -468,7 +505,7 @@ export class LiveVariableManager extends BaseVariableManager {
             searchValue = options.searchValue,
             formFields = {};
 
-        _.forEach(searchKeys, function (colName) {
+        _.forEach(searchKeys, (colName) => {
             formFields[colName] = {
                 value: searchValue,
                 logicalOp: 'AND'

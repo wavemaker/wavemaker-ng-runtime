@@ -12,11 +12,11 @@ export default class LiveVariableUtils {
 
     static isCompositeKey = (primaryKey) => {
         return !primaryKey || (primaryKey && (!primaryKey.length || primaryKey.length > 1));
-    };
+    }
 
     static isNoPrimaryKey = (primaryKey) => {
         return (!primaryKey || (primaryKey && !primaryKey.length));
-    };
+    }
 
     // Generate the URL based on the primary keys and their values
     static getCompositeIDURL = (primaryKeysData) => {
@@ -27,13 +27,13 @@ export default class LiveVariableUtils {
         });
         compositeId = compositeId.slice(0, -1);
         return compositeId;
-    };
+    }
 
 
     // Check if table has blob column
     static hasBlob = (variable) => {
         return _.find(_.get(variable, ['propertiesMap', 'columns']), {'type': 'blob'});
-    };
+    }
 
     static getPrimaryKey = (variable) => {
         if (!variable.propertiesMap) {
@@ -56,7 +56,7 @@ export default class LiveVariableUtils {
             }
         });
         return primaryKey;
-    };
+    }
 
     //  Construct the URL for blob columns and set it in the data, so that widgets can use this
     static processBlobColumns = (responseData, variable) => {
@@ -94,7 +94,7 @@ export default class LiveVariableUtils {
                 });
             }
         });
-    };
+    }
 
     static getHibernateOrSqlType = (variable, fieldName, type) => {
         const columns = variable.propertiesMap.columns;
@@ -115,12 +115,12 @@ export default class LiveVariableUtils {
             return col.fieldName === fieldName || col.relatedColumnName === fieldName;
         });
         return column && column[type];
-    };
+    }
 
     /*Function to get the sqlType of the specified field.*/
     static getSqlType = (variable, fieldName) => {
         return LiveVariableUtils.getHibernateOrSqlType(variable, fieldName, 'type');
-    };
+    }
 
     /*Function to check if the specified field has a one-to-many relation or not.*/
     static isRelatedFieldMany = (variable, fieldName) => {
@@ -138,18 +138,18 @@ export default class LiveVariableUtils {
             }
         }
         return true;
-    };
+    }
 
     static isStringType = (type) => {
         return _.includes(['text', 'string'], _.toLower(type));
-    };
+    }
 
     static getSQLFieldType = (variable, options) => {
         if (_.includes(['timestamp', 'datetime', 'date'], options.type)) {
             return options.type;
         }
         return LiveVariableUtils.getSqlType(variable, options.fieldName) || options.type;
-    };
+    }
 
     static getAttributeName = (variable, fieldName) => {
         let attrName = fieldName;
@@ -159,14 +159,14 @@ export default class LiveVariableUtils {
             }
         });
         return attrName;
-    };
+    }
 
     static getFilterCondition = (filterCondition) => {
         if (_.includes(DB_CONSTANTS.DATABASE_RANGE_MATCH_MODES, filterCondition)) {
             return filterCondition;
         }
         return DB_CONSTANTS.DATABASE_MATCH_MODES['exact'];
-    };
+    }
 
     static getFilterOptions = (variable, filterFields, options) => {
         const filterOptions = [],
@@ -248,7 +248,7 @@ export default class LiveVariableUtils {
             }
         });
         return filterOptions;
-    };
+    }
 
     // Wrap the field name and value in lower() in ignore case scenario
     // TODO: Change the function name to represent the added functionality of identifiers for datetime, timestamp and float types. Previously only lower was warapped.
@@ -274,7 +274,7 @@ export default class LiveVariableUtils {
             return 'lower(' + value + ')';
         }
         return value;
-    };
+    }
 
     static encodeAndAddQuotes = (value, type, skipEncode) => {
         let encodedValue = skipEncode ? value : encodeURIComponent(value);
@@ -285,7 +285,7 @@ export default class LiveVariableUtils {
             return encodedValue;
         }
         return '\'' + encodedValue + '\'';
-    };
+    }
 
     static getParamValue = (value, options, ignoreCase, skipEncode) => {
         let param;
@@ -331,7 +331,7 @@ export default class LiveVariableUtils {
                 break;
         }
         return !_.isUndefined(param) ? param : '';
-    };
+    }
 
     static getSearchQuery = (filterOptions, operator, ignoreCase, skipEncode?) => {
         let query;
@@ -361,7 +361,7 @@ export default class LiveVariableUtils {
         });
         query = _.join(params, operator); // empty space added intentionally around OR
         return query;
-    };
+    }
 
     static prepareTableOptions = (variable, options, clonedFields?) => {
         if (_.isUndefined(options.searchWithQuery)) {
@@ -415,7 +415,7 @@ export default class LiveVariableUtils {
             'sort': orderByOptions,
             'query': query
         };
-    };
+    }
 
     /* Function to check if specified field is of type date*/
     static getFieldType = (fieldName, variable, relatedField?) => {
@@ -436,7 +436,7 @@ export default class LiveVariableUtils {
             fieldType = result && result.type;
         }
         return fieldType;
-    };
+    }
 
     // Prepare formData for blob columns
     static prepareFormData = (variableDetails, rowObject) => {
@@ -460,7 +460,7 @@ export default class LiveVariableUtils {
             type: 'application/json'
         }));
         return formData;
-    };
+    }
 
     static doCUD = (action, variable, options, success, error) => {
         const projectID = $rootScope.project.id || $rootScope.projectName,

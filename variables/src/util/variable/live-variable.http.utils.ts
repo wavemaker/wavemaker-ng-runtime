@@ -190,6 +190,10 @@ export const searchTableDataWithQuery = function (params, successCallback, failu
     return initiateAction('searchTableDataWithQuery', params, successCallback, failureCallback, null);
 };
 
+export const executeAggregateQuery = function (params, successCallback, failureCallback) {
+    return initiateAction('executeAggregateQuery', params, successCallback, failureCallback, null);
+};
+
 export const searchTableData = function (params, successCallback, failureCallback) {
     return initiateAction('searchTableData', params, successCallback, failureCallback, null);
 };

@@ -72,6 +72,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS:
                 returnVal = this.getDistinctDataByFields(options);
                 break;
+            case DataSource.Operation.GET_AGGREGATED_DATA:
+                returnVal = this.getAggregatedData(options);
+                break;
             case DataSource.Operation.GET_MATCH_MODE:
                 returnVal = this.matchMode;
                 break;
@@ -154,6 +157,10 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     getDistinctDataByFields(options, success?, error?) {
         return getManager().getDistinctDataByFields(this, options, success, error);
+    }
+
+    getAggregatedData(options, success?, error?) {
+        return getManager().getAggregatedData(this, options, success, error);
     }
 
     getPrimaryKey() {
