@@ -17,10 +17,8 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['oktext', {value: 'OK', ...PROP_STRING}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['title', {value: 'Alert', ...PROP_STRING}]
+                ['title', {value: 'Confirm', ...PROP_STRING}]
             ]
         )
     );
 };
-
-
