@@ -63,9 +63,10 @@ const getBooleanValue = val => {
 
 // returns orderby columns and their orders in two separate arrays
 const getLodashOrderByFormat = orderby => {
-    let orderByColumns = [],
-        orders = [],
-        columns;
+    let columns;
+    const orderByColumns = [],
+        orders = [];
+
     _.forEach(_.split(orderby, ','), function (col) {
         columns = _.split(col, ':');
         orderByColumns.push(columns[0]);
@@ -82,12 +83,12 @@ const getValidAliasName = aliasName => aliasName ? aliasName.replace(/\./g, '$')
 
 // Applying the font related styles for the chart
 const setTextStyle = (properties, id) => {
-    let charttext = d3.select('#wmChart' + id + ' svg').selectAll('text');
+    const charttext = d3.select('#wmChart' + id + ' svg').selectAll('text');
     charttext.style(properties);
 };
 
 const angle = d => {
-    let a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+    const a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
     return a > 90 ? a - 180 : a;
 };
 
@@ -255,11 +256,11 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // Returns the single data point based on the type of the data chart accepts
     valueFinder(dataObj, xKey, yKey, index?, shape?) {
-        let xVal = this.getxAxisVal(dataObj, xKey, index),
+        const xVal = this.getxAxisVal(dataObj, xKey, index),
             value = _.get(dataObj, yKey),
             yVal = parseFloat(value) || value,
-            dataPoint: any = {},
             size = parseFloat(dataObj[this.bubblesize]) || 2;
+        let dataPoint: any = {};
 
         if (isChartDataJSON(this.type)) {
             dataPoint.x = xVal;
@@ -302,12 +303,12 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
 
         let datum = [],
-            xAxisKey = this.xaxisdatakey,
-            yAxisKeys = this.yaxisdatakey ? this.yaxisdatakey.split(',') : [],
-            dataSet = this.chartData,
             yAxisKey,
             shapes: any = [],
             values: any = [];
+        const xAxisKey = this.xaxisdatakey,
+            yAxisKeys = this.yaxisdatakey ? this.yaxisdatakey.split(',') : [],
+            dataSet = this.chartData;
 
         if (_.isArray(dataSet)) {
             if (isPieType(this.type)) {
@@ -341,11 +342,11 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // constructing the grouped data based on the selection of orderby, x & y axis
     getVisuallyGroupedData(queryResponse, groupingColumn) {
-        let chartData: any = [],
-            groupData: any = {},
+        let groupData: any = {},
             groupValues: any = [],
             orderByDetails,
-            maxLength,
+            maxLength;
+        const chartData: any = [],
             _isAreaChart = isAreaChart(this.type),
             yAxisKey = _.first(_.split(this.yaxisdatakey, ','));
         this.xDataKeyArr = [];
@@ -380,10 +381,10 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             let isVisuallyGrouped = false,
                 visualGroupingColumn,
                 groupingExpression,
-                groupbyColumns = this.groupby && this.groupby !== NONE ? this.groupby.split(',') : [],
-                yAxisKeys = this.yaxisdatakey ? this.yaxisdatakey.split(',') : [],
-                groupingColumnIndex,
-                columns: any = [];
+                columns: any = [],
+                groupingColumnIndex;
+            const groupbyColumns = this.groupby && this.groupby !== NONE ? this.groupby.split(',') : [],
+                yAxisKeys = this.yaxisdatakey ? this.yaxisdatakey.split(',') : [];
 
             if (groupbyColumns.length > 1) {
                 /*Getting the group by column which is not selected either in x or y axis*/
@@ -434,10 +435,10 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // Function to get the aggregated data after applying the aggregation & group by or order by operations.
     getAggregatedData(callback) {
-        let variable: any = this.datasource,
+        const variable: any = this.datasource,
             yAxisKeys = this.yaxisdatakey ? this.yaxisdatakey.split(',') : [],
-            data: any = {},
-            sortExpr,
+            data: any = {};
+        let sortExpr,
             columns: any = [],
             colAlias,
             orderByColumns,
@@ -464,9 +465,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             data.groupByFields = groupByFields;
             data.aggregations =  [
                 {
-                    "field": this.aggregationcolumn,
-                    "type":  aggregationFnMap[this.aggregation],
-                    "alias": getValidAliasName(this.aggregationcolumn)
+                    'field': this.aggregationcolumn,
+                    'type':  aggregationFnMap[this.aggregation],
+                    'alias': getValidAliasName(this.aggregationcolumn)
                 }
             ];
         }
@@ -476,26 +477,26 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             'sort'         : sortExpr
         }).then(response => {
             // Transform the result into a format supported by the chart.
-            let chartData: any = [],
+            const chartData: any = [],
                 aggregationAlias: any = getValidAliasName(this.aggregationcolumn),
                 xAxisAliasKey = getValidAliasName(this.xaxisdatakey),
                 yAxisAliasKeys = [];
 
             yAxisKeys.forEach(yAxisKey => yAxisAliasKeys.push(getValidAliasName(yAxisKey)));
 
-            _.forEach(response.content, data => {
-                let obj = {};
+            _.forEach(response.body.content, (responseContent) => {
+                const obj = {};
                 // Set the response in the chartData based on 'aggregationColumn', 'xAxisDataKey' & 'yAxisDataKey'.
                 if (this.isAggregationEnabled()) {
-                    obj[this.aggregationcolumn] = data[aggregationAlias];
-                    obj[this.aggregationcolumn] = _.get(data, aggregationAlias) || _.get(data, this.aggregationcolumn);
+                    obj[this.aggregationcolumn] = responseContent[aggregationAlias];
+                    obj[this.aggregationcolumn] = _.get(responseContent, aggregationAlias) || _.get(responseContent, this.aggregationcolumn);
                 }
 
-                obj[this.xaxisdatakey] = _.get(data, xAxisAliasKey) || _.get(data, this.xaxisdatakey);
+                obj[this.xaxisdatakey] = _.get(responseContent, xAxisAliasKey) || _.get(responseContent, this.xaxisdatakey);
 
                 yAxisKeys.forEach((yAxisKey, index) => {
-                    obj[yAxisKey] = data[yAxisAliasKeys[index]];
-                    obj[yAxisKey] = _.get(data, yAxisAliasKeys[index]) || _.get(data, yAxisKey);
+                    obj[yAxisKey] = responseContent[yAxisAliasKeys[index]];
+                    obj[yAxisKey] = _.get(responseContent, yAxisAliasKeys[index]) || _.get(responseContent, yAxisKey);
                 });
 
                 chartData.push(obj);
@@ -522,18 +523,18 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             maxNoLabels,
             nthElement,
             labelsAvailableWidth,
-            fontsize = parseInt(this.fontsize, 10) || 12,
-            isBarchart = isBarChart(this.type),
             barWrapper,
             yAxisWrapper,
             svgWrapper;
+        const fontsize = parseInt(this.fontsize, 10) || 12,
+            isBarchart = isBarChart(this.type);
         // getting the x ticks in the chart
         xTicks = $('#wmChart' + this.$id + ' svg').find('g.nv-x').find('g.tick').find('text');
 
         // getting the distance between the two visible ticks associated with visible text
         xTicks.each(function () {
-            var xTick = $(this),
-                xTransform,
+            const xTick = $(this);
+            let xTransform,
                 tickDist;
             if (xTick.text() && xTick.css('opacity') === '1') {
                 xTransform = xTick.parent().attr('transform').split(',');
@@ -573,7 +574,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 nthElement = Math.ceil(this.chartData.length / maxNoLabels);
                 // showing up only some labels
                 d3.select('#wmChart' + this.$id + ' svg').select('g.nv-x').selectAll('g.tick').select('text').each(function (text, i) {
-                    //hiding every non nth element
+                    // hiding every non nth element
                     if (i % nthElement !== 0) {
                         d3.select(this).attr('opacity', 0);
                     }
@@ -596,12 +597,12 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // Returns the columns of that can be choosen in the x and y axis
     getDefaultColumns() {
-        let defaultColumns = [],
-            type,
+        let type,
             stringColumn,
-            columns = this.datasource.execute('getPropertiesMapColumns') || [],
             i,
             temp;
+        const defaultColumns = [],
+            columns = this.datasource.execute('getPropertiesMapColumns') || [];
 
         for (i = 0; i < columns.length && defaultColumns.length <= 2; i += 1) {
             type = columns[i].type;
@@ -831,7 +832,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // sets the default x and y axis options
     setDefaultAxisOptions() {
-        let defaultColumns = this.getDefaultColumns();
+        const defaultColumns = this.getDefaultColumns();
         // If we get the valid default columns then assign them as the x and y axis
         // In case of service variable we may not get the valid columns because we cannot know the datatypes
         this.xaxisdatakey = defaultColumns[0] || null;
@@ -839,7 +840,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     }
 
     getCutomizedOptions(prop, fields) {
-        var groupByColumns = _.split(this.groupby, ','),
+        const groupByColumns = _.split(this.groupby, ','),
             aggColumns = _.split(this.aggregationcolumn, ',');
         if (!this.binddataset) {
             return fields;
@@ -847,7 +848,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         if (!this.axisoptions) {
             this.axisoptions = fields;
         }
-        var newOptions;
+        let newOptions;
         switch (prop) {
             case 'xaxisdatakey':
                 // If group by enabled, columns chosen in groupby will be populated in x axis options
