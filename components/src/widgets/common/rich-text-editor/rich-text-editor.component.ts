@@ -1,10 +1,10 @@
 import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './rich-text-editor.props';
-import { BaseFormComponent } from '../base/base-form.component';
+import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
@@ -28,10 +28,11 @@ declare const _, $;
     selector: 'div[wmRichTextEditor]',
     templateUrl: './rich-text-editor.component.html',
     providers: [
+        provideAsNgValueAccessor(RichTextEditorComponent),
         provideAsWidgetRef(RichTextEditorComponent)
     ]
 })
-export class RichTextEditorComponent extends BaseFormComponent implements OnInit, OnDestroy {
+export class RichTextEditorComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
 
     $richTextEditor;
     $hiddenInputEle;
@@ -70,6 +71,7 @@ export class RichTextEditorComponent extends BaseFormComponent implements OnInit
             onChange: (contents, editable) => {
                 this._model_ = this.domSanitizer.bypassSecurityTrustHtml(contents.toString());
                 this.invokeOnChange(contents, getChangeEvt());
+                this.invokeOnTouched();
             }
         },
         fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Merriweather'],
@@ -84,6 +86,12 @@ export class RichTextEditorComponent extends BaseFormComponent implements OnInit
 
     get datavalue() {
         return this.htmlcontent;
+    }
+
+    set datavalue(nv) {
+        this.$hiddenInputEle.val(nv);
+        this.performEditorOperation('reset');
+        this.performEditorOperation('insertText', nv);
     }
 
     constructor(inj: Injector, private domSanitizer: DomSanitizer) {
@@ -109,11 +117,6 @@ export class RichTextEditorComponent extends BaseFormComponent implements OnInit
                 this.performEditorOperation({
                     placeholder: nv
                 });
-                break;
-            case 'datavalue':
-                this.$hiddenInputEle.val(nv);
-                this.performEditorOperation('reset');
-                this.performEditorOperation('insertText', nv);
                 break;
             case 'disabled':
             case 'readonly':

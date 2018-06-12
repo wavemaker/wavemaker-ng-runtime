@@ -9,6 +9,7 @@ import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component'
 import { DataSetItem, extractDataAsArray, getUniqObjsByDataField } from '../../../utils/form-utils';
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { IWidgetConfig } from '../../framework/types';
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -21,7 +22,11 @@ registerProps();
 
 @Component({
     selector: '[wmChips]',
-    templateUrl: './chips.component.html'
+    templateUrl: './chips.component.html',
+    providers: [
+        provideAsNgValueAccessor(ChipsComponent),
+        provideAsWidgetRef(ChipsComponent)
+    ]
 })
 export class ChipsComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
 

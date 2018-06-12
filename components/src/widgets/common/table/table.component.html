@@ -19,7 +19,6 @@
 <div class="app-datagrid" #datagridElement></div>
 <div class="panel-footer clearfix" [hidden]="!shownavigation && !_actions.footer.length">
     <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation">
-        <div #pagination></div>
         <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign"
              navigationsize.bind="navigationSize"
              navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize"

@@ -18,13 +18,13 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<ul wmCheckboxset ${innerTmpl}></ul>`;
             break;
         case FormWidgetType.CHIPS:
-            /*TODO*/
+            tmpl = `<ul wmChips role="input" ${innerTmpl}></ul>`;
             break;
         case FormWidgetType.COLORPICKER:
             tmpl = `<div wmColorPicker ${innerTmpl}></div>`;
             break;
         case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${innerTmpl}}></div>`;
+            tmpl = `<div wmCurrency ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATE:
             tmpl = `<div wmDate ${innerTmpl}></div>`;
@@ -45,7 +45,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmRating ${innerTmpl}></div>`;
             break;
         case FormWidgetType.RICHTEXT:
-            /*TODO*/
+            tmpl = `<div wmRichTextEditor role="textbox" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.SELECT:
             tmpl = `<wm-select ${innerTmpl}></wm-select>`;

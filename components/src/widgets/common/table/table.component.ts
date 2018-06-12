@@ -135,7 +135,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     formWidgets;
     headerConfig = [];
     items = [];
-    navControls = 'Basic';
+    navControls;
     rowActions = [];
     selectedColumns;
     shownavigation = false;
