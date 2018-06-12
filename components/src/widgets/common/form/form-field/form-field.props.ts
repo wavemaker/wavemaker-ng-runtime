@@ -55,39 +55,43 @@ const widgetPropsMap = new Map(
         [FormWidgetType.UPLOAD, uploadProps]
     ]
 );
-export const registerProps = (widgetType) => {
-    const propsMap = new Map(
-        [
-            ['defaultvalue', PROP_STRING_NOTIFY],
-            ['displayname', PROP_STRING],
-            ['display-name', PROP_STRING],
-            ['field', PROP_STRING],
-            ['hint', PROP_STRING],
-            ['is-range', PROP_BOOLEAN],
-            ['is-related', PROP_BOOLEAN],
-            ['key', PROP_STRING],
-            ['lookup-type', PROP_STRING],
-            ['lookup-field', PROP_STRING],
-            ['name', PROP_STRING],
-            ['maxdefaultvalue', PROP_STRING_NOTIFY],
-            ['maxplaceholder', PROP_STRING_NOTIFY],
-            ['primary-key', PROP_STRING_NOTIFY],
-            ['related-entity-name', PROP_STRING],
-            ['required', PROP_BOOLEAN],
-            ['show', {value: true, ...PROP_BOOLEAN}],
-            ['validationmessage', PROP_STRING],
-            ['viewmodewidget', PROP_STRING],
-            ['widgettype', PROP_STRING]
-        ]
-    );
-    const widgetProps = widgetPropsMap.get(widgetType);
-    widgetProps.forEach((v: any, k) => {
-        v = {...v};
-        v.notify = true;
-        propsMap.set(k, v);
+const formFieldMap = new Map(
+    [
+        ['defaultvalue', PROP_STRING_NOTIFY],
+        ['displayname', PROP_STRING],
+        ['display-name', PROP_STRING],
+        ['field', PROP_STRING],
+        ['hint', PROP_STRING],
+        ['is-range', PROP_BOOLEAN],
+        ['is-related', PROP_BOOLEAN],
+        ['key', PROP_STRING],
+        ['lookup-type', PROP_STRING],
+        ['lookup-field', PROP_STRING],
+        ['name', PROP_STRING],
+        ['maxdefaultvalue', PROP_STRING_NOTIFY],
+        ['maxplaceholder', PROP_STRING_NOTIFY],
+        ['primary-key', PROP_STRING_NOTIFY],
+        ['related-entity-name', PROP_STRING],
+        ['required', PROP_BOOLEAN],
+        ['show', {value: true, ...PROP_BOOLEAN}],
+        ['validationmessage', PROP_STRING],
+        ['viewmodewidget', PROP_STRING],
+        ['widgettype', PROP_STRING]
+    ]
+);
+
+export const registerProps = () => {
+    const propsMap = new Map(formFieldMap);
+    widgetPropsMap.forEach((val, key) => {
+        const widgetProps = widgetPropsMap.get(key);
+        widgetProps.forEach((v: any, k) => {
+            v = {...v};
+            v.notify = true;
+            propsMap.set(k, v);
+        });
+        register(
+            'wm-form-field-' + key,
+            propsMap
+        );
     });
-    register(
-        widgetType,
-        propsMap
-    );
 };
