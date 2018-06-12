@@ -174,7 +174,7 @@ export class PaginationComponent extends StylableComponent {
 
     /*Function to check if the variable bound to the data-navigator has paging.*/
     isDataSourceHasPaging() {
-        return this.datasource.execute(DataSource.Operation.IS_PAGEABLE);
+        return this.datasource && this.datasource.execute(DataSource.Operation.IS_PAGEABLE);
     }
 
     // Set the result for client side pagination
@@ -187,7 +187,7 @@ export class PaginationComponent extends StylableComponent {
         maxResults = (this.pagingOptions && this.pagingOptions.maxResults) || dataSize;
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
-        if (this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
             currentPage = 1;
         } else {
             currentPage = this.dn.currentPage || 1;
