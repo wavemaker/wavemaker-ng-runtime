@@ -20,7 +20,8 @@ const OVERRIDES = {
     'showindevice': 'showInDevice'
 };
 
-export const getBoundToExpr = value => {
+export const getBoundToExpr = (value: string) => {
+    value = value.trim();
     const match = BIND_REG_EX.exec(value);
     BIND_REG_EX.lastIndex = 0;
     return match && match[1];

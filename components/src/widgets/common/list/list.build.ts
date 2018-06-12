@@ -1,4 +1,5 @@
-import { Attribute, Element } from '@angular/compiler';
+import { Element } from '@angular/compiler';
+import { updateTemplateAttrs } from '@wm/core';
 
 import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/transpiler';
 
@@ -11,6 +12,7 @@ register(wmListTag, (): IBuildTaskDef => {
         template: (node: Element) => {
 
             const datasetAttr = node.attrs.find(attr => attr.name === dataSetKey);
+            const widgetNameAttr = node.attrs.find(attr => attr.name === 'name');
 
             if (!datasetAttr) {
                 return;
@@ -20,22 +22,7 @@ register(wmListTag, (): IBuildTaskDef => {
             if (!boundExpr) {
                 return;
             }
-
-            // replace bound attrs with item
-            const replaceBind = (children: Array<Element> = []) => {
-                children.forEach((childNode: Element) => {
-                    if (childNode.name) {
-                        replaceBind(childNode.children as Array<Element>);
-                        // return if the child Element is of wm-list .
-                        childNode.attrs.forEach((attr: Attribute) => {
-                            if (attr.value.startsWith(`bind:${boundExpr}`)) {
-                                attr.value = attr.value.replace(boundExpr, 'item');
-                            }
-                        });
-                    }
-                });
-            };
-            replaceBind(node.children as Array<Element>);
+            updateTemplateAttrs(node.children as Array<Element>, boundExpr, widgetNameAttr.value);
         },
         pre: (attrs) => `<${listTagName} wmList ${getAttrMarkup(attrs)}>`,
         post: () => `</${listTagName}>`

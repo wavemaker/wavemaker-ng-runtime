@@ -1,4 +1,7 @@
 import { FormWidgetType } from '@wm/core';
+import { Element } from '@angular/compiler';
+
+declare const _;
 
 // Method to get the form widget template
 export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, attrs?: Map<string, string>, options: any = {}) => {
@@ -91,4 +94,43 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             break;
     }
     return tmpl;
+};
+
+// The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
+export const  updateTemplateAttrs = (children: Array<Element>, parentDataSet: string, widgetName: string) => {
+
+    const regex = new RegExp('(' + parentDataSet + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
+    let currentItemRegEx;
+    let currentItemWidgetsRegEx;
+
+    if (widgetName) {
+        currentItemRegEx = new RegExp(`(Widgets.${widgetName}.currentItem)\\b`, 'g');
+        currentItemWidgetsRegEx = new RegExp(`(Widgets.${widgetName}.currentItemWidgets)\\b`, 'g');
+    }
+
+    children.forEach((childNode: Element) => {
+        if (childNode.name) {
+            childNode.attrs.forEach((attr) => {
+                let value = attr.value;
+                if (_.startsWith(value, 'bind:')) {
+                    /*if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx" */
+                    if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet) {
+                        value = value.replace('bind:', '');
+                        value = value.replace(regex, 'item');
+                        value = 'bind:' + value;
+                    }
+                    // Replace item if widget property is bound to livelist currentItem
+                    if (currentItemRegEx && currentItemRegEx.test(value)) {
+                        value = value.replace(currentItemRegEx, 'item');
+                    }
+                    if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
+                        value = value.replace(currentItemWidgetsRegEx, 'currentItemWidgets');
+                    }
+
+                    attr.value = value;
+                }
+            });
+            updateTemplateAttrs(childNode.children as Array<Element>, parentDataSet, widgetName);
+        }
+    });
 };
