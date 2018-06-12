@@ -110,7 +110,7 @@ export const createElement = (nodeType: string, attrs: any, sync?: boolean): HTM
 
 // for width and height if a numeric value is specified return in px
 // else return the same value
-const toDimension = (v: string | number) => {
+export const toDimension = (v: string | number) => {
     // @ts-ignore
     if (v == +v) {
         return `${v}px`;

@@ -2,7 +2,7 @@ import { Directive, ElementRef, HostBinding, Inject } from '@angular/core';
 
 import { BsModalService } from 'ngx-bootstrap';
 
-import { addClass, setCSS } from '@wm/core';
+import { addClass, setCSS, toDimension } from '@wm/core';
 
 import { DialogRef } from '../../../../framework/types';
 import { BaseDialog } from '../base-dialog';
@@ -15,7 +15,7 @@ const DEFAULT_CLS = 'app-dialog-body modal-body';
 export class DialogBodyDirective {
     @HostBinding('style.height')
     get height () {
-        return (this.dialogRef as any).height;
+        return toDimension((this.dialogRef as any).height);
     }
 
     constructor(
