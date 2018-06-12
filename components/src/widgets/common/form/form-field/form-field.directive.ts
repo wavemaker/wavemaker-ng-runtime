@@ -24,6 +24,8 @@ const FILE_TYPES = {
     'audio' : 'audio/*'
 };
 
+registerProps();
+
 @Directive({
     selector: '[wmFormField]',
     exportAs: 'wmFormField',
@@ -93,9 +95,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Self() @Inject(Context) contexts: Array<any>
     ) {
 
-        const WIDGET_CONFIG = {widgetType: _widgetType, hostClass: ''};
-
-        registerProps(_widgetType);
+        const WIDGET_CONFIG = {
+            widgetType: 'wm-form-field',
+            hostClass: '',
+            widgetSubType: 'wm-form-field-' + _widgetType
+        };
 
         super(inj, WIDGET_CONFIG);
 
