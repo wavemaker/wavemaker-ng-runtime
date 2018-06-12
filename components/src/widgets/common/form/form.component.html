@@ -31,3 +31,5 @@
              (click)="invokeActionEvent($event, btn.action)" type.bind="btn.type" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey" disabled.bind="btn.disabled"
              tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
 </ng-template>
+
+<ng-container #dynamicForm></ng-container>

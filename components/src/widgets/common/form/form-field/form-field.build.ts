@@ -75,7 +75,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
         pre: (attrs, shared, parentForm, parentLiveForm, parentFilter) => {
             const counter = idGen.nextUid();
             const parent = parentForm || parentLiveForm || parentFilter;
-            const pCounter = parent.get('form_reference');
+            const pCounter = (parent && parent.get('form_reference')) || 'form';
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
@@ -84,7 +84,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const eventsTmpl = getEventsTemplate(attrs);
             attrs.delete('widget');
             shared.set('counter', counter);
-            return `<${tagName} data-role="${dataRole}" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" [class.hidden]="!${counter}.show" ${getAttrMarkup(attrs)}>
+            return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" [class.hidden]="!${counter}.show" ${getAttrMarkup(attrs)}>
                         <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="${widgetType}">
                             <label *ngIf="${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,

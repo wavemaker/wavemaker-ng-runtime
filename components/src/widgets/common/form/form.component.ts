@@ -1,7 +1,8 @@
-import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional } from '@angular/core';
+import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent } from '@wm/core';
+import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -20,6 +21,17 @@ const LIVE_FILTER_CONFIG = {widgetType: 'wm-livefilter', hostClass: 'panel app-p
 
 const getWidgetConfig = (isLiveForm, isLiveFilter) => (isLiveForm !== null ? LIVE_FORM_CONFIG : (isLiveFilter !== null ? LIVE_FILTER_CONFIG : WIDGET_CONFIG));
 
+// Generate the form field with given field definition. Add a grid column wrapper around the form field.
+const setMarkupForFormField = (field, columnWidth) =>  {
+    let propsTmpl = '';
+    _.forEach(field, (value, key) => {
+        propsTmpl = `${propsTmpl} ${key}="${value}"`;
+    });
+    return `<wm-gridcolumn columnwidth="${columnWidth}">
+                  <wm-form-field ${propsTmpl}></wm-form-field>
+            </wm-gridcolumn>`;
+};
+
 @Component({
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
@@ -28,6 +40,8 @@ const getWidgetConfig = (isLiveForm, isLiveFilter) => (isLiveForm !== null ? LIV
     ]
 })
 export class FormComponent extends StylableComponent implements OnDestroy {
+
+    @ViewChild('dynamicForm', {read: ViewContainerRef}) dynamicFormRef: ViewContainerRef;
 
     autoupdate;
     captionAlignClass: string;
@@ -60,6 +74,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         type: ''
     };
     messagelayout;
+    metadata;
     errormessage;
     primaryKey;
     postmessage;
@@ -120,6 +135,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         @SkipSelf() @Optional() public parentForm: FormComponent,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
+        @Attribute('beforerender.event') public onBeforeRenderEvt,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('wmLiveForm') isLiveForm,
         @Attribute('wmLiveFilter') isLiveFilter,
@@ -225,6 +241,9 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 break;
             case 'datasource':
                 this.onDataSourceChange();
+                break;
+            case 'metadata':
+                this.generateFormFields();
                 break;
         }
     }
@@ -414,6 +433,67 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
     // On form field value change. This method is overridden by live form and live filter
     onFieldValueChange() {
+    }
+
+    // Function to generate and compile the form fields from the metadata
+    generateFormFields() {
+        const $gridLayout = this.$element.find('.form-elements .app-grid-layout:first');
+        const noOfColumns = Number($gridLayout.attr('columns')) || 1;
+        const columnWidth = 12 / noOfColumns;
+        let fieldTemplate = '';
+        let colCount = 0;
+        let index;
+        let userFields;
+        let fields = this.metadata ? this.metadata.data || this.metadata : [];
+
+        this.formFields = []; // empty the form fields
+
+        if (_.isEmpty(fields)) {
+            return;
+        }
+
+        if (this.onBeforeRenderEvt) {
+            userFields = this.invokeEventCallback('beforerender', {$metadata: fields});
+            if (userFields) {
+                fields = userFields;
+            }
+        }
+
+        if (!_.isArray(fields)) {
+            return;
+        }
+
+        while (fields[colCount]) {
+            let colTmpl = '';
+            for (index = 0; index < noOfColumns; index++) {
+                if (fields[colCount]) {
+                    colTmpl += setMarkupForFormField(fields[colCount], columnWidth);
+                }
+                colCount++;
+            }
+            fieldTemplate += `<wm-gridrow>${colTmpl}</wm-gridrow>`;
+        }
+
+        $gridLayout.empty(); // Remove any elements from the grid
+        this.dynamicFormRef.clear();
+
+        this.app.notify('renderResource', {
+            selector: 'app-form-' + this.widgetId,
+            markup: transpile(fieldTemplate),
+            styles: '',
+            providers: undefined,
+            postConstructFn: () => {
+                setTimeout(() => {
+                    $appDigest();
+                }, 250);
+            },
+            vcRef: this.dynamicFormRef,
+            $target: $gridLayout[0],
+            context: {
+                form: this
+            }
+        });
+        this.setFormData(this.formdata);
     }
 
     get mode() {

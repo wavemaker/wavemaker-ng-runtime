@@ -25,7 +25,7 @@ const propsMap = new Map(
 const formMap = new Map(propsMap);
 formMap.set('action', PROP_STRING);
 formMap.set('defaultmode', {value: 'Edit', ...PROP_STRING_NOTIFY});
-formMap.set('metadata', PROP_STRING);
+formMap.set('metadata', PROP_STRING_NOTIFY);
 formMap.set('method', PROP_STRING);
 formMap.set('postmessage', {value: 'Data posted successfully', ...PROP_STRING});
 formMap.set('target', PROP_STRING);
