@@ -157,6 +157,8 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         context.new = () => this.new();
         context.edit = () => this.edit();
         context.highlightInvalidFields = () => this.highlightInvalidFields();
+        context.filter = () => this.filter();
+        context.clearFilter = () => this.clearFilter();
     }
 
     // This method loops through the form fields and set touched state as touched
