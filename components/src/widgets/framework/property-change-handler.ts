@@ -8,7 +8,7 @@ import { getWatchIdentifier } from '../../utils/widget-utils';
 // set of boolean attrs
 const BOOLEAN_ATTRS = new Set([
     'readonly', 'autofocus', 'disabled', 'startchecked', 'multiple',
-    'selected', 'required', 'controls', 'autoplay', 'loop', 'muted'
+    'selected', 'required', 'controls', 'autoplay', 'loop', 'muted', 'show'
 ]);
 
 /**

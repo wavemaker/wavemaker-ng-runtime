@@ -146,7 +146,7 @@ export class TableFilterSortDirective {
     // Reset the sort based on sort returned by the call
     resetSortStatus(variableSort) {
         let gridSortString;
-        if (!_.isEmpty(this.table.sortInfo)) {
+        if (!_.isEmpty(this.table.sortInfo) && this.table.datasource) {
             gridSortString = this.table.sortInfo.field + ' ' + this.table.sortInfo.direction;
             variableSort = this.table.datasource.execute(DataSource.Operation.GET_OPTIONS).orderBy || variableSort;
             if (variableSort) { // If multiple order by fields are present, compare with the first one
@@ -183,6 +183,9 @@ export class TableFilterSortDirective {
 
     // Check the filters applied and remove if dat does not contain any filters
     checkFiltersApplied(variableSort) {
+        if (!this.table.datasource) {
+            return;
+        }
         if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
             if (_.isEmpty(this.table.datasource.execute(DataSource.Operation.GET_OPTIONS).filterFields)) {
                 this.clearFilter(true);

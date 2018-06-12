@@ -405,9 +405,10 @@ $.widget('wm.datatable', {
             $htm.append(self._getColumnTemplate(row, colIndex, current));
         });
 
-        if (rowNgClass) {
-            return gridOptions.getCompiledTemplate($htm, row);
-        }
+        // TODO: Handle row ng class
+        // if (rowNgClass) {
+        //     return gridOptions.getCompiledTemplate($htm, row);
+        // }
         return $htm;
     },
 
@@ -560,16 +561,17 @@ $.widget('wm.datatable', {
             }
         }
 
-        if (ngClass) {
-            $htm.attr('data-ng-class', ngClass);
-            isCellCompiled = true;
-        }
+        // TODO: Handle col ng class
+        // if (ngClass) {
+        //     $htm.attr('data-ng-class', ngClass);
+        //     isCellCompiled = true;
+        // }
 
         //If cell needs to be compiled and row is not compiled, call the compile function
-        if (isCellCompiled && !isRowCompiled) {
-            $htm.attr('data-compiled-template', ctId);
-            this.compiledCellTemplates[ctId] = this.options.getCompiledTemplate($htm, row, colDef, true) || '';
-        }
+        // if (isCellCompiled && !isRowCompiled) {
+        //     $htm.attr('data-compiled-template', ctId);
+        //     this.compiledCellTemplates[ctId] = this.options.getCompiledTemplate($htm, row, colDef, true) || '';
+        // }
         return $htm;
     },
     //Get event related template for editable widget
@@ -1725,7 +1727,7 @@ $.widget('wm.datatable', {
             } else {
                 originalValue = value;
                 if (originalValue.template) {
-                    template = self.options.getCompiledTemplate(originalValue.template, originalValue.rowData, originalValue.colDef);
+                    template = originalValue.template; // TODO: self.options.getCompiledTemplate(originalValue.template, originalValue.rowData, originalValue.colDef);
                     $el.html(template);
                 } else {
                     $el.html(originalValue || '');
@@ -1774,7 +1776,7 @@ $.widget('wm.datatable', {
             } else {
                 originalValue = value;
                 if (originalValue.template) {
-                    template = self.options.getCompiledTemplate(originalValue.template, originalValue.rowData, originalValue.colDef, true);
+                    template = originalValue.template; // TODO: self.options.getCompiledTemplate(originalValue.template, originalValue.rowData, originalValue.colDef, true);
                     $el.html(template);
                 } else {
                     $el.html(originalValue || '');
