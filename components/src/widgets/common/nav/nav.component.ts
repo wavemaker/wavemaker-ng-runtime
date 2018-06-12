@@ -40,7 +40,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
-        private route: Router,
+        private router: Router,
         private userDefinedExecutionContext: UserDefinedExecutionContext
     ) {
         super(inj, WIDGET_CONFIG);
@@ -82,7 +82,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
             if (itemLink.startsWith('#/')) {
                 const queryParams = getUrlParams(itemLink);
                 itemLink = getRouteFromNavLink(itemLink);
-                this.route.navigate([itemLink], {queryParams});
+                this.router.navigate([itemLink], {queryParams});
             } else {
                 openLink(itemLink);
             }

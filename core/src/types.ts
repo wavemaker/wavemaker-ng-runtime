@@ -36,11 +36,6 @@ export const DataSource = {
     Operation
 };
 
-export interface IAppInternals {
-    activePageName: string;
-    lastActivePageName: string;
-}
-
 export abstract class App {
     appLocale: any;
     Variables: any;
@@ -53,7 +48,6 @@ export abstract class App {
     isPrefabType: boolean;
     isApplicationType: boolean;
     isTemplateBundleType: boolean;
-    internals: IAppInternals;
     changeLocale: Function;
     reload: Function;
     on401: Function;
@@ -61,6 +55,9 @@ export abstract class App {
     notify: (eventName: string, data?: any) => void;
     deployedUrl: string;
     subscribe: (eventName, callback: (data: any) => void) => () => void;
+
+    activePageName: string;
+    lastActivePageName: string;
 }
 
 

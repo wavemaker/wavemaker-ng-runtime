@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApplicationRef, Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { ApplicationRef, Component, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
@@ -27,7 +27,8 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         private metadataService: MetadataService,
         private securityService: SecurityService,
         private appManager: AppManagerService,
-        private app: App
+        private app: App,
+        private ngZone: NgZone
     ) {}
 
     getTargetNode() {
@@ -50,10 +51,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
                     pageName,
                     this.vcRef,
                     $target
-                ).then(() => {
-                    this.app.internals.lastActivePageName = this.app.internals.activePageName;
-                    this.app.internals.activePageName = pageName;
-                });
+                );
             });
     }
 
@@ -73,13 +71,15 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
             this.renderPrefabPreviewPage();
         } else {
             this.subscription = this.route.params.subscribe(({pageName}: any) => {
-                if (pageName) {
-                    if (pageName === 'prefab-preview') {
-                        this.renderPrefabPreviewPage();
-                    } else {
-                        this.renderPage(pageName);
+                this.ngZone.run(() => {
+                    if (pageName) {
+                        if (pageName === 'prefab-preview') {
+                            this.renderPrefabPreviewPage();
+                        } else {
+                            this.renderPage(pageName);
+                        }
                     }
-                }
+                });
             });
         }
     }

@@ -1,6 +1,6 @@
-import { Attribute, Directive, HostBinding, Injector, SecurityContext } from '@angular/core';
+import { Attribute, Directive, Injector, SecurityContext } from '@angular/core';
 
-import { setCSS } from '@wm/core';
+import { setCSS, setProperty } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -25,16 +25,10 @@ registerProps();
 })
 export class HtmlDirective extends StylableComponent {
 
-    public content;
-
-    @HostBinding('innerHTML')
-    get _content() {
-        return this.trustAsPipe.transform(this.content, SecurityContext.HTML);
-    }
-
     constructor(
         inj: Injector,
         @Attribute('height') height: string,
+        @Attribute('content.bind') private boundContent: string,
         private trustAsPipe: TrustAsPipe,
     ) {
         super(inj, WIDGET_CONFIG);
@@ -45,5 +39,11 @@ export class HtmlDirective extends StylableComponent {
         }
 
         styler(this.nativeElement, this);
+    }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'content') {
+            setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
+        }
     }
 }

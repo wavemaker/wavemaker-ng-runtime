@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { EventNotifier, IAppInternals } from '@wm/core';
+import { EventNotifier } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { HttpService } from '@wm/http';
 
@@ -32,11 +32,6 @@ export class AppRef {
     isTemplateBundleType: boolean;
 
     appLocale: any;
-
-    internals: IAppInternals = {
-        activePageName: undefined,
-        lastActivePageName: undefined
-    };
 
     changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
 

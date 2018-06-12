@@ -19,6 +19,7 @@ import { I18nService } from './i18n.service';
 import { AccessrolesDirective } from '../directives/accessroles.directive';
 
 const scriptCache = new Map<string, Function>();
+const componentCache = new Map<string, any>();
 const noop = (...args) => {};
 
 @NgModule({
@@ -141,7 +142,11 @@ const execScript = (script, identifier, ctx, instance, app, inj) => {
         fn = new Function(ctx, 'App', 'Injector', script);
         scriptCache.set(identifier, fn);
     }
-    fn(instance, app, inj);
+    try {
+        fn(instance, app, inj);
+    } catch (e) {
+        console.warn('error executing script of ${identifier}');
+    }
 };
 
 const monitorFragments = (instance, onParseEnd: Promise<void>, onReadyFn) => {
@@ -181,7 +186,7 @@ export class RenderUtilsService {
     }
 
     loadMinJson(url, pageName?): Promise<IPageMinJSON> {
-        return this.resouceMngr.get(url, pageName)
+        return this.resouceMngr.get(url, true)
             .then(({markup, script, styles, variables}: IPageMinJSON) => {
                 return {
                     markup: transpile(_decodeURIComponent(markup)),
@@ -203,11 +208,18 @@ export class RenderUtilsService {
         context?
     ): Promise<void> {
 
-        const componentDef = getDynamicComponent(selector, markup, [styles], providers, postConstructFn, context);
-        const moduleDef = getDynamicModule(componentDef);
-        const componentRef = this.getComponentFactory(componentDef, moduleDef);
+        let componentRef = componentCache.get(selector);
+
+        if (!componentRef) {
+            const componentDef = getDynamicComponent(selector, markup, [styles], providers, postConstructFn, context);
+            const moduleDef = getDynamicModule(componentDef);
+            componentRef = this.getComponentFactory(componentDef, moduleDef);
+            componentCache.set(selector, componentRef);
+        }
+
         const component = vcRef.createComponent(componentRef);
 
+        component.changeDetectorRef.detectChanges();
         $target.appendChild(component.location.nativeElement);
 
         return Promise.resolve();
@@ -242,8 +254,12 @@ export class RenderUtilsService {
 
             monitorFragments(pageInstance, parseEndPromise, () => {
                 (pageInstance.onReady || noop)();
-                (this.app.onPageReady || noop)(this.app.internals.activePageName, pageInstance);
+                (this.app.onPageReady || noop)(pageName, pageInstance);
             });
+
+            this.app.lastActivePageName = this.app.activePageName;
+            this.app.activePageName = pageName;
+            pageInstance.activePageName = pageName;
 
             this.route.queryParams.subscribe(params => pageInstance.pageParams = params);
         };
@@ -278,6 +294,7 @@ export class RenderUtilsService {
             execScript(script, `partial-${partialName}`, 'Partial', partialInstance, this.app, inj);
 
             partialInstance.App = this.app;
+            partialInstance.activePageName = this.app.activePageName;
             containerWidget.Widgets = partialInstance.Widgets;
             containerWidget.Variables = partialInstance.Variables;
             containerWidget.Actions = partialInstance.Actions;
