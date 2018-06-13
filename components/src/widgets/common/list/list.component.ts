@@ -749,6 +749,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterCon
         this.promiseResolverFn();
         this.propsInitPromise.then(() => {
             this.selectedItemWidgets = this.multiselect ? [] : {};
+            if (this.enablereorder) {
+                this.configureDnD();
+            }
+            this.setListClass();
         });
 
     }
@@ -756,10 +760,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterCon
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.setupHandlers();
-        this.setListClass();
-        if (this.enablereorder) {
-           this.configureDnD();
-        }
     }
 }
 
