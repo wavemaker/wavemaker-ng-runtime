@@ -15,7 +15,10 @@ import { MetadataService } from './service/metadata-service/metadata.service';
 @NgModule({
     imports: [
         CommonModule,
-        ToastrModule.forRoot(),
+        ToastrModule.forRoot({
+            maxOpened: 1,
+            autoDismiss: true
+        }),
         HttpClientModule,
         HttpServiceModule,
         OAuthModule,
