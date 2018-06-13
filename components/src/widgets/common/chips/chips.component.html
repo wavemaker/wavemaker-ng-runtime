@@ -2,7 +2,6 @@
     [ngClass]="{'active': item.active, 'disabled': disabled}">
     <a class="app-chip" href="javascript:void(0);" tabindex="-1"
        (click)="handleChipClick($event, item)"
-       (keydown.enter)="onEnter($event)"
        (keydown.delete)="onDelete($event, item, index)"
        (keydown.backspace)="onBackspace($event, item, index)"
        (keydown.arrowleft)="onArrowLeft(item, index)"
@@ -32,7 +31,6 @@
          showsearchicon.bind="showsearchicon"
          tabindex.bind="tabindex"
          (keydown.delete)="onTextDelete($event)"
-         (keydown.enter)="onEnter($event)"
          (keydown.backspace)="onInputClear($event)"
          (keydown.arrowleft)="onArrowLeft()"
          (keydown.arrowright)="onArrowRight()">

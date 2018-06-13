@@ -34,7 +34,7 @@
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange()"
-           (typeaheadOnSelect)="typeaheadOnSelect($event, match)"
+           (keydown.enter)="onSelect($event)"
            [typeaheadMinLength]="minlength"
            [typeaheadOptionsLimit]="limit"
            (typeaheadLoading)="_loadingItems"
@@ -55,7 +55,7 @@
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange()"
-           (typeaheadOnSelect)="typeaheadOnSelect($event, match)"
+           (keydown.enter)="onSelect($event)"
            [typeaheadMinLength]="minlength"
            [typeaheadOptionsLimit]="limit"
            (typeaheadLoading)="_loadingItems"
@@ -69,7 +69,7 @@
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>
             <button title="Search" [disabled]="disabled" class="app-search-button wi wi-search" type="submit"
-                    (click)="typeaheadOnSelect($event)"></button>
+                    (click)="onSelect($event)"></button>
         </form>
     </span>
 </ng-template>

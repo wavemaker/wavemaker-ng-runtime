@@ -5,7 +5,7 @@ export const selectProps = new Map(
         ['autofocus', PROP_BOOLEAN],
         ['class', {value: '', ...PROP_STRING}],
         ['datafield', PROP_STRING_NOTIFY],
-        ['dataset', {value: 'Option 1, Option 2, Option 3', notify: true}],
+        ['dataset', {notify: true}],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING_NOTIFY],

@@ -402,7 +402,7 @@ export const groupDataByField = (groupby: string, match: string, innerItem: stri
  * This method toggles all the list items inside the each list group.
  * @param el, component reference on which groupby is applied.
  */
-export const toggleAllHeaders = (el) => {
+export const toggleAllHeaders = (el: any) => {
     const groups = $(el.nativeElement).find('.item-group');
 
     groups.find('.group-list-item').toggle();
@@ -427,8 +427,8 @@ export const toggleAllHeaders = (el) => {
  * and also toggle the header icon.
  * @param $event
  */
-export const handleHeaderClick = ($event) => {
-    const selectedGroup   = $($event.target).closest('.item-group'),
+export const handleHeaderClick = ($event: Event) => {
+    const selectedGroup   = $($event.target as any).closest('.item-group'),
         selectedAppIcon = selectedGroup.find('li.list-group-header .app-icon');
 
     if (selectedAppIcon.hasClass('wi-chevron-down')) {
@@ -440,7 +440,27 @@ export const handleHeaderClick = ($event) => {
     selectedGroup.find('.group-list-item').toggle();
 };
 
+/**
+ * configures reordering the items.
+ * @param $el element to be sortable
+ * @param options object containing the sortable options.
+ * @param startCb callback on drag start on the element.
+ * @param updateCb callback triggerred when sorting is stopped and the DOM position has changed.
+ */
+export const configureDnD = ($el: any, options: object, startCb: Function, updateCb: Function) => {
+    const sortOptions = Object.assign({
+        containment: $el,
+        delay: 100,
+        opacity: 0.8,
+        helper: 'clone',
+        zIndex: 1050,
+        tolerance: 'pointer',
+        start: startCb,
+        update: updateCb
+    }, options);
 
+    $el.sortable(sortOptions);
+};
 
 // Todo: convert to Class
 interface DataSetProps {

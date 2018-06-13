@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Attribute, ChangeDetectorRef, Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { $appDigest, isAppleProduct, isDefined, toBoolean } from '@wm/core';
 
@@ -6,7 +6,7 @@ import { registerProps } from './chips.props';
 import { styler } from '../../framework/styler';
 import { SearchComponent } from '../search/search.component';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { DataSetItem, extractDataAsArray, getUniqObjsByDataField } from '../../../utils/form-utils';
+import { configureDnD, DataSetItem, getUniqObjsByDataField } from '../../../utils/form-utils';
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { IWidgetConfig } from '../../framework/types';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -39,11 +39,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private saturate: boolean;
     private nextItemIndex: number;
     private getTransformedData: (data, itemIndex?) => DataSetItem[];
+    private inputposition: string;
+    private showsearchicon: boolean;
 
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
 
     constructor(
         inj: Injector,
+        private cdRef: ChangeDetectorRef,
         @Attribute('displayfield.bind') private bindDisplayField,
         @Attribute('displayexpression.bind') private bindDisplayExpr,
         @Attribute('displayimagesrc.bind') private bindDisplayImgSrc,
@@ -51,6 +54,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+
+        // set the showsearchicon as false by default.
+        if (_.isUndefined(this.showsearchicon)) {
+            this.showsearchicon = false;
+        }
 
         this.dataset$.subscribe(() => this.nextItemIndex = this.datasetItems.length);
     }
@@ -68,19 +76,24 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.getTransformedData = this.searchComponent.getTransformedData;
     }
 
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+
+        if (this.enablereorder) {
+            this.configureDnD();
+        }
+    }
+
     private removeDuplicates() {
         this.chipsList = getUniqObjsByDataField(this.chipsList, this.datafield, this.displayfield || this.displaylabel);
     }
 
     // This method updates the queryModel.
-    private updateQueryModel(data, nextItemIndex?) {
+    private updateQueryModel(data: any) {
         if (!this.datasetItems.length || !data) {
             return;
         }
-        // Todo: [bandhavya] verify after this change.
-        if (!_.isArray(data)) {
-            data = extractDataAsArray(data);
-        }
+
         // clone the data as the updations on data will change the datavalue.
         const dataValue = _.clone(data);
 
@@ -144,7 +157,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Add the newItem to the list
-    private addItem($event, widget?, selectedValue?, selectedItem?) {
+    private addItem($event: Event, widget?: SearchComponent) {
         const searchComponent = widget;
         let allowAdd;
         let chipObj;
@@ -180,9 +193,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.chipsList.push(chipObj);
 
         if (!this.datavalue) {
-            this.datavalue = [chipObj.value];
+            this._modelByValue = [chipObj.value];
         } else {
-            this.datavalue.push(chipObj.value);
+            this._modelByValue = [...this._modelByValue, chipObj.value];
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue);
@@ -196,7 +209,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Prepare datavalue object from a string(junk) value when datafield is allFields.
-    private createCustomDataModel(val) {
+    private createCustomDataModel(val: string) {
         const key = this.displayfield || (this.datafield !== ALLFIELDS ? this.datafield : undefined);
 
         if (key) {
@@ -207,7 +220,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Check if newItem already exists
-    private isDuplicate(item) {
+    private isDuplicate(item: DataSetItem) {
         if (this.datafield === ALLFIELDS) {
             return _.findIndex(this.chipsList, {value: item.value}) > -1;
         }
@@ -220,47 +233,39 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Makes call to searchComponent to filter the dataSource based on the query.
-    protected getDefaultModel(query) {
+    protected getDefaultModel(query: string) {
         return this.searchComponent.getDataSource(query, true);
     }
 
-    private handleChipClick($event, chip) {
+    private handleChipClick($event: Event, chip: DataSetItem) {
         if (this.readonly) {
             return;
         }
-        $event.currentTarget.focus();
+        ($event.currentTarget as any).focus();
         this.invokeEventCallback('chipclick', {$event, $item: chip});
     }
 
-    private handleChipFocus($event, chip) {
+    private handleChipFocus($event: Event, chip: DataSetItem) {
         if (this.readonly) {
             return;
         }
-        chip.active = true;
+        (chip as any).active = true;
         this.invokeEventCallback('chipselect', {$event, $item: chip});
-        // $appDigest();
     }
 
     // To avoid form submit on pressing enter key
-    private stopEvent($event) {
+    private stopEvent($event: Event) {
         $event.stopPropagation();
         $event.preventDefault();
     }
 
-    private onEnter($event) {
-        if (_.trim(this.searchComponent.query)) {
-            this.addItem($event);
-            this.stopEvent($event);
-        }
-    }
-
-    private onTextDelete($event) {
+    private onTextDelete($event: Event) {
         if (isAppleProduct) {
             this.onInputClear($event);
         }
     }
 
-    private onInputClear($event) {
+    private onInputClear($event: Event) {
         if (!this.chipsList || !this.chipsList.length || this.searchComponent.query) {
             return;
         }
@@ -268,21 +273,21 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.stopEvent($event);
     }
 
-    private onBackspace($event, $item: DataSetItem, $index) {
+    private onBackspace($event: Event, $item: DataSetItem, $index: number) {
         if (this.readonly) {
             return;
         }
         this.removeItem($event, $item, $index, true);
     }
 
-    private onDelete($event, $item: DataSetItem, $index) {
+    private onDelete($event: Event, $item: DataSetItem, $index: number) {
         if (this.readonly) {
             return;
         }
-        this.removeItem($event, $item, $index, true);
+        this.removeItem($event, $item, $index);
     }
 
-    private onArrowLeft($item?: DataSetItem, $index?) {
+    private onArrowLeft($item?: DataSetItem, $index?: number) {
         if (this.readonly) {
             return;
         }
@@ -300,7 +305,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
     }
 
-    private onArrowRight($item?: DataSetItem, $index?) {
+    private onArrowRight($item?: DataSetItem, $index?: number) {
         if (this.readonly) {
             return;
         }
@@ -325,7 +330,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Remove the item from list
-    private removeItem($event, item: DataSetItem, index: number, canFocus: boolean = true) {
+    private removeItem($event: Event, item: DataSetItem, index: number, canFocus?: boolean) {
         $event.stopPropagation();
 
         const indexes = _.isArray(index) ? index : [index];
@@ -351,26 +356,29 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         });
 
         // focus next chip after deletion.
-        setTimeout(() => {
-            const chipsLength = this.chipsList.length;
-            const $chipsList = this.$element.find('li.chip-item > a.app-chip');
+        const chipsLength = this.chipsList.length;
+        const $chipsList = this.$element.find('li.chip-item > a.app-chip');
 
-            // if there are no chips in the list focus search box
-            if (!chipsLength || !canFocus) {
-                this.focusSearchBox();
-            } else if ((chipsLength - 1) < focusIndex) {
-                // if focus index is greater than chips length select last chip
-                $chipsList.get(chipsLength - 1).focus();
-            } else {
-                // manually set the succeeding chip as active if there is a chip next to the current chip.
-                this.chipsList[focusIndex].active = true;
-                $chipsList.get(focusIndex).focus();
-            }
-        });
+        // if there are no chips in the list focus search box
+        if (!chipsLength || !canFocus) {
+            this.focusSearchBox();
+        } else if ((chipsLength - 1) < focusIndex) {
+            // if focus index is greater than chips length select last chip
+            $chipsList.get(chipsLength - 1).focus();
+        } else {
+            // manually set the succeeding chip as active if there is a chip next to the current chip.
+            this.chipsList[focusIndex].active = true;
+            $chipsList.get(focusIndex).focus();
+        }
 
         this.updateMaxSize();
 
         this.invokeEventCallback('remove', {$event, widget: this, item: items.length === 1 ? items[0] : items});
+    }
+
+    // Adds the custom chip when datavalue is undefined.
+    public notifyEmptyValues($event: Event) {
+        this.addItem($event);
     }
 
     /**
@@ -379,53 +387,85 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
      * @param newIndex :- new index for the element to be placed
      * @param currentIndex :- the current index of the element.
      */
-    private swapElementsInArray(data, newIndex, currentIndex) {
+    private swapElementsInArray(data: Array<any>, newIndex: number, currentIndex: number) {
         const draggedItem = _.pullAt(data, currentIndex)[0];
         data.splice(newIndex, 0, draggedItem);
     }
 
     /**
      * Cancels the reorder by reseting the elements to the original position.
-     * @param $ulEle :- The set of the elements that are reordable.
-     * @param $dragEl :- The dragged element.
      */
-    private resetReorder($ulEle, $dragEl) {
-        // cancel the sort even. as the data model is changed Angular will render the list.
-        $ulEle.sortable('cancel');
-        $dragEl.removeData('oldIndex');
-    }
-
-    // Configures the reordable feature in chips widgets.
-
-    private configureDnD() {
-        // Todo: check the dnd functionality.
+    private resetReorder() {
+        this.$element.removeData('oldIndex');
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (eventName === 'remove' || eventName === 'beforeremove' || eventName === 'chipselect'
-            || eventName === 'chipclick' || eventName === 'add') {
+            || eventName === 'chipclick' || eventName === 'add' || eventName === 'reorder') {
             return;
         }
 
         super.handleEvent(node, eventName, eventCallback, locals);
     }
 
-    // Define the property change handler. This function will be triggered when there is a change in the widget property
-    onPropertyChange(key, nv, ov) {
-        super.onPropertyChange(key, nv, ov);
-        switch (key) {
-            case 'enablereorder':
-                const $el = this.$element;
-                const isSortable = $el.hasClass('ui-sortable');
-                if (this.enablereorder && !this.readonly) {
-                    if (isSortable) {
-                        $el.sortable('enable');
-                    } else {
-                        this.configureDnD();
-                    }
-                } else if (isSortable) {
-                    $el.sortable('disable');
-                }
+    // Configures the reordable feature in chips widgets.
+    private configureDnD() {
+        const options = {
+            items: '> li:not(.app-chip-search)',
+            placeholder: 'chip-placeholder'
+        };
+
+        configureDnD(this.$element, options, this.onReorderStart.bind(this), this.update.bind(this));
+    }
+
+    // Triggered on drag start while reordering.
+    private onReorderStart(evt: Event, ui: Object) {
+        const helper = (ui as any).helper;
+        // increasing the width of the dragged item by 1
+        helper.width(helper.width() + 1);
+        this.$element.data('oldIndex', (ui as any).item.index() - (this.inputposition === 'first' ? 1 : 0));
+    }
+
+    // updates the chipsList and datavalue on reorder.
+    private update($event: Event, ui: Object) {
+        let changedItem,
+            newIndex,
+            oldIndex;
+
+        // Get the index of the item at position before drag and after the reorder.
+        newIndex = (ui as any).item.index() - (this.inputposition === 'first' ? 1 : 0);
+        oldIndex = this.$element.data('oldIndex');
+
+        newIndex = this.chipsList.length === newIndex ? newIndex - 1 : newIndex;
+        changedItem = {
+            oldIndex: oldIndex,
+            newIndex: newIndex,
+            item: this.chipsList[oldIndex]
+        };
+
+        if (newIndex === oldIndex) {
+            this.resetReorder();
+            return;
         }
+        changedItem.item = this.chipsList[oldIndex];
+
+        const allowReorder = this.invokeEventCallback('beforereorder', {$event, $data: this.chipsList, $changedItem: changedItem});
+
+        if (isDefined(allowReorder) && toBoolean(allowReorder) === false) {
+            this.resetReorder();
+            return;
+        }
+
+        // modify the chipsList and datavalue after the reorder.
+        this.swapElementsInArray(this.chipsList, newIndex, oldIndex);
+        this.swapElementsInArray(this._modelByValue, newIndex, oldIndex);
+
+        changedItem.item = this.chipsList[newIndex];
+
+        this.chipsList = [...this.chipsList];
+        this.cdRef.detectChanges();
+
+        this.resetReorder();
+        this.invokeEventCallback('reorder', {$event, $data: this.chipsList, $changedItem: changedItem});
     }
 }

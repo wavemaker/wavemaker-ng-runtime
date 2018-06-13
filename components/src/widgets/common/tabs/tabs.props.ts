@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['tabsposition', {value: 'top', ...PROP_STRING_NOTIFY}],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['transition', {value: 'slide', ...PROP_STRING}]
+                ['transition', PROP_STRING]
             ]
         )
     );

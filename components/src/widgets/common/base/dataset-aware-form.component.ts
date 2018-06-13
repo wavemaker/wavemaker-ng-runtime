@@ -105,7 +105,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 });
                 if (itemByKey) {
                     itemByKey.selected = true;
-                    this._modelByValue.push(itemByKey.value);
+                    this._modelByValue = [...this._modelByValue, itemByKey.value];
                 }
             });
         } else {

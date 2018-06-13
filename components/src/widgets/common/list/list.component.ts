@@ -11,7 +11,7 @@ import { registerProps } from './list.props';
 import { NAVIGATION_TYPE, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
-import { getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
+import { configureDnD, getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 import { WidgetRef } from '../../framework/types';
 
 declare const _;
@@ -86,6 +86,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterCon
     private cdRef: ChangeDetectorRef;
     private promiseResolverFn: Function;
     private propsInitPromise: Promise<any>;
+    private $ulEle: any;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -507,51 +508,51 @@ export class ListComponent extends StylableComponent implements OnInit, AfterCon
         }, true);
     }
 
+    // Triggers on drag start while reordering.
+    private onReorderStart(evt, ui) {
+        ui.placeholder.height(ui.item.height());
+        this.$ulEle.data('oldIndex', ui.item.index());
+    }
+
+    // Triggers after the sorting.
+    private onUpdate(evt, ui) {
+        const data = this.fieldDefs;
+        const newIndex = ui.item.index();
+        const oldIndex = this.$ulEle.data('oldIndex');
+
+        const minIndex = _.min([newIndex, oldIndex]);
+        const maxIndex = _.max([newIndex, oldIndex]);
+
+        const draggedItem = _.pullAt(data, oldIndex)[0];
+
+        this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
+        this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
+
+        data.splice(newIndex, 0, draggedItem);
+
+        this.cdRef.markForCheck();
+        this.cdRef.detectChanges();
+        const $changedItem = {
+            oldIndex: oldIndex,
+            newIndex: newIndex,
+            item: data[newIndex]
+        };
+        this.invokeEventCallback('reorder', {$event: evt, widget: this, $changedItem});
+        this.$ulEle.removeData('oldIndex');
+    }
+
     // configures reordering the list items.
     private configureDnD() {
-        const $el = $(this.nativeElement);
-        const $ulEle = $el.find('.app-livelist-container');
-        const $is = this;
-        $ulEle.sortable({
+        const options = {
             appendTo: 'body',
-            containment: $ulEle,
-            delay: 100,
-            opacity: 0.8,
-            helper: 'clone',
-            zIndex: 1050,
-            tolerance: 'pointer',
-            start: function (evt, ui) {
-                ui.placeholder.height(ui.item.height());
-                $(this).data('oldIndex', ui.item.index());
-            },
-            update: function (evt, ui) {
-                const data = $is.fieldDefs;
-                const $dragEl = $(this);
-                const newIndex = ui.item.index();
-                const oldIndex = $dragEl.data('oldIndex');
+        };
 
-                const minIndex = _.min([newIndex, oldIndex]);
-                const maxIndex = _.max([newIndex, oldIndex]);
+        const $el = $(this.nativeElement);
+        this.$ulEle = $el.find('.app-livelist-container');
 
-                const draggedItem = _.pullAt(data, oldIndex)[0];
+        configureDnD(this.$ulEle, options, this.onReorderStart.bind(this), this.onUpdate.bind(this));
 
-                $is.reorderProps.minIndex = _.min([minIndex, $is.reorderProps.minIndex]);
-                $is.reorderProps.maxIndex = _.max([maxIndex, $is.reorderProps.maxIndex]);
-
-                data.splice(newIndex, 0, draggedItem);
-                // cancel the sort even. as the data model is changed Angular will render the list.
-                $ulEle.sortable('cancel');
-                $is.cdRef.detectChanges();
-                const $changedItem = {
-                    oldIndex: oldIndex,
-                    newIndex: newIndex,
-                    item: data[newIndex]
-                };
-                $is.invokeEventCallback('reorder', {$event: evt, widget: this, $changedItem});
-                $dragEl.removeData('oldIndex');
-            }
-        });
-        $el.find('.app-livelist-container').droppable({'accept': '.app-list-item'});
+        this.$ulEle.droppable({'accept': '.app-list-item'});
     }
 
     // returns true if the selection limit is reached.

@@ -14,6 +14,7 @@ import { styler } from '../../framework/styler';
 import { registerProps } from './search.props';
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
+import { ChipsComponent } from '../chips/chips.component';
 
 declare const _;
 
@@ -33,7 +34,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     public casesensitive: boolean;
     public searchkey: string;
-    public queryModel: DataSetItem[];
+    public queryModel: DataSetItem[] | string;
     public query: string;
     public limit: any;
     public showsearchicon: boolean;
@@ -61,8 +62,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     @ViewChild('ulElement') ulElement: ElementRef;
     @ViewChildren('liElements') liElements: QueryList<ElementRef>;
 
-    private typeaheadScrollable: boolean = true; // Default check for container methods to access.
+    private typeaheadScrollable: boolean = true;
+    private allowonlyselect: boolean;
+    private class: string;
 
+    private parentRef: ChipsComponent; // used when search is inside chips.
+
+    // Default check for container methods to access.
     get typeaheadContainerInstance() {
         return (this.typeaheadContainer as any).instance;
     }
@@ -125,7 +131,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
-    protected typeaheadOnSelect(match, $event): void {
+    protected typeaheadOnSelect(match: TypeaheadMatch, $event: Event): void {
         const item = match.item;
         this.queryModel = item;
         item.selected = true;
@@ -148,7 +154,27 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.page = 1;
     }
 
-    public getTransformedData(data, itemIndex?): DataSetItem[] {
+    // Triggerred when typeahead option is selected.
+    private onSelect($event: Event) {
+        // when matches are available.
+        if (this.typeaheadContainerInstance && this.typeaheadContainerInstance.liElements.length) {
+            this.typeaheadContainerInstance.selectActiveMatch();
+            this.typeaheadOnSelect(this.typeaheadContainerInstance._active, $event);
+        } else if (this.allowonlyselect) {
+            // matches are empty set the datavalue to undefined.
+            this.queryModel = this.query;
+            this._modelByValue = undefined;
+        } else {
+            // Used by chips, if allowonlyselect is false, set the datavalue to query.
+            this.queryModel = this.query;
+            this._modelByValue = this.query;
+
+            // adds custom chip object to the chipsList.
+            this.notifyParent($event);
+        }
+    }
+
+    public getTransformedData(data: any, itemIndex?: number): DataSetItem[] {
         if (isDefined(itemIndex)) {
             itemIndex++;
         }
@@ -168,7 +194,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // This method returns a promise that provides the filtered data from the datasource.
-    public getDataSource(query, searchOnDataField?, nextItemIndex?): Promise<DataSetItem[]> {
+    public getDataSource(query: string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
         if (this.dataset) {
             this.formattedDataset = convertDataToObject(this.dataset);
         }
@@ -236,7 +262,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
 
-    public updateQueryModel(data) {
+    public updateQueryModel(data: any) {
         this.queryModel = this.getTransformedData(extractDataAsArray(data));
 
         // Show the label value on input.
@@ -245,7 +271,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
 
     // OptionsListTemplate listens to the scroll event and triggers this function.
-    public onScroll($scrollEl, evt: Event) {
+    public onScroll($scrollEl: Element, evt: Event) {
         const totalHeight = $scrollEl.scrollHeight,
             clientHeight = $scrollEl.clientHeight;
 
@@ -270,6 +296,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         });
     }
 
+    // Triggers the method on the parent.
+    private notifyParent($event) {
+        if (this.parentRef) {
+            this.parentRef.notifyEmptyValues($event);
+        }
+    }
+
     public ngOnInit() {
         super.ngOnInit();
 
@@ -292,11 +325,25 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         this.typeaheadContainer = (this.typeahead as any)._typeahead;
 
+        if (this.class = 'app-chip-input') {
+            this.parentRef = this.viewParent;
+        }
+
         // setting the ulElements, liElement on typeaheadContainer with custom options template, as the typeaheadContainer implements the key events and scroll.
         this.liElements.changes.subscribe((data) => {
-           this.typeaheadContainerInstance.liElements = data;
-           this.typeaheadContainerInstance.ulElement = this.ulElement;
+            if (this.typeaheadContainerInstance) {
+                this.typeaheadContainerInstance.liElements = data;
+                this.typeaheadContainerInstance.ulElement = this.ulElement;
+            }
         });
+    }
+
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        if (eventName === 'select' || eventName === 'submit') {
+            return;
+        }
+
+        super.handleEvent(node, eventName, eventCallback, locals);
     }
 }
 
