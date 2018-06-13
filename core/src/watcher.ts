@@ -41,7 +41,22 @@ const triggerWatchers = () => {
 };
 
 export const setAppRef = appRef => {
-    $appDigest = debounce(appRef.tick.bind(appRef), 100);
+    $appDigest = (() => {
+        let hasQueuedDigest = false;
+        return () => {
+            if (hasQueuedDigest) {
+                return;
+            } else {
+                hasQueuedDigest = true;
+                window.requestAnimationFrame(() => {
+                    appRef.tick();
+                    hasQueuedDigest = false;
+                });
+            }
+        };
+    })();
+
+    // $appDigest = debounce(appRef.tick.bind(appRef), 100);
 };
 
 export const isChangeFromWatch = () => changedByWatch;
