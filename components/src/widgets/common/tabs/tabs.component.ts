@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
-import { addClass, appendNode, removeClass, setCSS, setCSSFromObj } from '@wm/core';
+import { addClass, appendNode, noop, removeClass, setCSS, setCSSFromObj } from '@wm/core';
 
 import { TabsAnimator } from './tabs.animator';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
@@ -25,7 +25,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(TabsComponent)
     ]
 })
-
 export class TabsComponent extends StylableComponent implements AfterContentInit, OnInit, AfterViewInit {
 
     public defaultpaneindex: number;
@@ -46,7 +45,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         @Attribute('tabsposition') _tabsPosition: string
     ) {
         // handle to the promise resolver
-        let resolveFn: Function;
+        let resolveFn: Function = noop;
 
         super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
 
@@ -58,6 +57,23 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
+    animateIn (element: HTMLElement) {
+        const tabHeader = $(element);
+        // when the animation is not present toggle the active class.
+        tabHeader.siblings('.active').removeClass('active');
+        tabHeader.addClass('active');
+
+        const ul = this.nativeElement.querySelector('ul.nav.nav-tabs');
+
+        // move the tabheader into the viewport
+        const $prevHeaderEle = tabHeader.prev();
+        if ($prevHeaderEle.length) {
+            ul.scrollLeft = $prevHeaderEle[0].offsetLeft;
+        } else {
+            ul.scrollLeft = 0;
+        }
+    }
+
     /**
      * TabPane children components invoke this method to communicate with the parent
      * if the evt argument is defined on-change callback will be invoked.
@@ -67,6 +83,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             return;
         }
 
+        let headerElement;
         // invoke deselect event callback on the preset active tab
         if (this.activeTab) {
             this.activeTab.deselect();
@@ -85,6 +102,14 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
 
         this.activeTab = paneRef;
+        if (evt) {
+            headerElement = $(evt.target).closest('li.tab-header');
+        } else {
+            headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
+        }
+        this.animateIn(headerElement);
+
+        // this.setTabsLeftPosition(this.getPaneIndexByRef(this.activeTab), this.panes.length);
         this.transitionTabIntoView();
     }
 

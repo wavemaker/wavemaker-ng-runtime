@@ -272,7 +272,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         // Monitoring changes for properties and accordingly handling respective changes
         switch (key) {
             case 'stepstyle':
-                this.stepClass = nv && nv === 'justified' ? 'nav-justified' : '';
+                this.stepClass =  nv === 'justified' ? 'nav-justified' : '';
                 break;
             case 'defaultstep':
                 this.setDefaultStep(this.getStepRefByName(nv));
