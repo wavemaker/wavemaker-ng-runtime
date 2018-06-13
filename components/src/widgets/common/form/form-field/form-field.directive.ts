@@ -1,7 +1,7 @@
-import { AfterContentInit, Attribute, ContentChild, Directive, Injector, OnInit, Self, Inject } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Self } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { DataType, FormWidgetType, toBoolean, removeClass } from '@wm/core';
+import { DataType, debounce, FormWidgetType, removeClass, toBoolean } from '@wm/core';
 
 import { styler } from '../../../framework/styler';
 import { registerProps } from './form-field.props';
@@ -39,8 +39,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     @ContentChild('formWidget') formWidget;
     @ContentChild('formWidgetMax') formWidgetMax;
 
-    // applyProps is used to store the props to be applied on inner form widget, after it is initialized
-    private applyProps;
     private fb;
     // excludeProps is used to store the props that should not be applied on inner widget
     private excludeProps;
@@ -84,6 +82,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     regexp;
     validationmessage;
 
+    private _debounceSetUpValidators;
+    private _initPropsRes;
+
     constructor(
         inj: Injector,
         form: FormComponent,
@@ -101,10 +102,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             widgetSubType: 'wm-form-field-' + _widgetType
         };
 
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, new Promise(res => this._initPropsRes = res));
 
         this._validators = [];
-        this.applyProps = new Set();
         this.class = '';
         this.binddataset = binddataset;
         this.form = form;
@@ -120,6 +120,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         contexts[0]._onFocusField = this._onFocusField.bind(this);
         contexts[0]._onBlurField = this._onBlurField.bind(this);
+
+        this._debounceSetUpValidators = debounce(() => this.setUpValidators(), 500);
     }
 
     _onFocusField($evt) {
@@ -196,17 +198,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // Method to set the properties on inner form widget
     setFormWidget(key, val) {
-        setTimeout(() => {
-            this.formWidget.widget[key] = val;
-        });
+        this.formWidget.widget[key] = val;
     }
 
     // Method to set the properties on inner max form widget (when range is selected)
     setMaxFormWidget(key, val) {
         if (this.formWidgetMax) {
-            setTimeout(() => {
-                this.formWidgetMax.widget[key] = val;
-            });
+            this.formWidgetMax.widget[key] = val;
         }
     }
 
@@ -215,15 +213,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             return;
         }
 
-        if (!this.formWidget) {
-            this.applyProps.add(key);
-            return;
-        }
-
         // As upload widget is an HTML widget, only required property is setup
         if (this.widgettype === FormWidgetType.UPLOAD) {
             if (key === 'required') {
-                this.setUpValidators();
+                this._debounceSetUpValidators();
             }
             return;
         }
@@ -253,7 +246,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             case 'maxvalue':
             case 'regexp':
             case 'show':
-                this.setUpValidators();
+                this._debounceSetUpValidators();
                 break;
             case 'primary-key':
                 this.primarykey = toBoolean(newVal);
@@ -320,7 +313,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         this.ngform = this.form.ngform;
         this.ngform.addControl(fieldName, this.createControl());
-
         this._control.valueChanges
             .debounceTime(200)
             .subscribe(this.onValueChange.bind(this));
@@ -335,12 +327,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     ngAfterContentInit() {
         super.ngAfterContentInit();
+
         if (this.formWidget) {
-            setTimeout(() => {
-                this.applyProps.forEach((key) => {
-                    this.onPropertyChange(key, this[key]);
-                });
-            });
+            this._initPropsRes();
         }
         this.key = this.key || this.target || this.binding || this.name;
         this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);

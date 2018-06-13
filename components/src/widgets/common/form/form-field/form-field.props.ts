@@ -81,8 +81,8 @@ const formFieldMap = new Map(
 );
 
 export const registerProps = () => {
-    const propsMap = new Map(formFieldMap);
     widgetPropsMap.forEach((val, key) => {
+        const propsMap = new Map(formFieldMap);
         const widgetProps = widgetPropsMap.get(key);
         widgetProps.forEach((v: any, k) => {
             v = {...v};

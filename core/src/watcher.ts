@@ -40,23 +40,23 @@ const triggerWatchers = () => {
     });
 };
 
+const $RAF = window.requestAnimationFrame;
+
 export const setAppRef = appRef => {
     $appDigest = (() => {
-        let hasQueuedDigest = false;
+        let queued = false;
         return () => {
-            if (hasQueuedDigest) {
+            if (queued) {
                 return;
             } else {
-                hasQueuedDigest = true;
-                window.requestAnimationFrame(() => {
+                queued = true;
+                window['__zone_symbol__requestAnimationFrame'](() => {
                     appRef.tick();
-                    hasQueuedDigest = false;
+                    queued = false;
                 });
             }
         };
     })();
-
-    // $appDigest = debounce(appRef.tick.bind(appRef), 100);
 };
 
 export const isChangeFromWatch = () => changedByWatch;

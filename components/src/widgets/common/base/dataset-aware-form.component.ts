@@ -4,6 +4,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
+import { debounce } from '@wm/core';
 
 declare const _;
 
@@ -72,9 +73,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
         this.binddisplayimagesrc = this.nativeElement.getAttribute('displayimagesrc.bind');
 
-        this._debouncedInitDatasetItems = _.debounce(() => {
-            this.initDatasetItems();
-        }, 150);
+        this._debouncedInitDatasetItems = debounce(() => this.initDatasetItems(), 150);
     }
 
     /**
