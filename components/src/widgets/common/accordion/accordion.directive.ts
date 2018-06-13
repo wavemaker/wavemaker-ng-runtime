@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
-import { isNumber } from '@wm/core';
+import {isNumber, noop} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -29,12 +29,14 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     public closeothers: boolean;
 
     private activePaneIndex: number;
+    private promiseResolverFn: Function;
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
 
-    constructor(inj: Injector, @Attribute('defaultpaneindex.bind') private hasDefaultPaneIndexBinding: number) {
-        super(inj, WIDGET_CONFIG);
-
+    constructor(inj: Injector) {
+        let resolveFn: Function = noop;
+        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
@@ -121,9 +123,6 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     ngAfterContentInit() {
         super.ngAfterContentInit();
-        // if the defaultPaneIndex is not bound, expand the pane otherwise wait till the binding is resolved
-        if (!this.hasDefaultPaneIndexBinding) {
-            this.expandDefaultPane();
-        }
+        this.promiseResolverFn();
     }
 }
