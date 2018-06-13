@@ -71,7 +71,10 @@ const dateList = ['01/01/2001', '01/01/2002', '01/01/2003'],
             }
         }
     },
-    basicProperties = ['xaxislabel', 'yaxislabel', 'xunits', 'yunits', 'xnumberformat', 'xdateformat', 'ynumberformat', 'showvalues', 'showlabels', 'viewtype', 'areaviewtype', 'staggerlabels', 'reducexticks', 'offsettop', 'offsetbottom', 'offsetright', 'offsetleft', 'barspacing', 'xaxislabeldistance', 'yaxislabeldistance', 'theme', 'labeltype', 'donutratio', 'showlabelsoutside', 'showxdistance', 'showydistance', 'shape', 'nodatamessage', 'captions', 'showxaxis', 'showyaxis', 'centerlabel', 'customcolors', 'showlegend', 'legendtype', 'xdomain', 'ydomain', 'tooltips', 'linethickness', 'highlightpoints', 'interpolation', 'labelthreshold'],
+    basicProperties = ['xaxislabel', 'yaxislabel', 'xunits', 'yunits', 'xnumberformat', 'xdateformat', 'ynumberformat',
+        'showvalues', 'showlabels', 'viewtype', 'areaviewtype', 'staggerlabels', 'reducexticks', 'offsettop', 'offsetbottom', 'offsetright', 'offsetleft',
+        'barspacing', 'xaxislabeldistance', 'yaxislabeldistance', 'theme', 'labeltype', 'donutratio', 'showlabelsoutside', 'showxdistance', 'showydistance', 'shape', 'nodatamessage', 'captions', 'showxaxis', 'showyaxis',
+        'centerlabel', 'customcolors', 'showlegend', 'legendtype', 'xdomain', 'ydomain', 'tooltips', 'linethickness', 'highlightpoints', 'interpolation', 'labelthreshold'],
     barSpacingMap = {
         'small' : 0.3,
         'medium' : 0.5,
@@ -99,9 +102,9 @@ const dateList = ['01/01/2001', '01/01/2002', '01/01/2003'],
         }
     },
     chartId = '#preview-chart',
-    dataTypeJSON = ['Column', 'Line', 'Pie', 'Bar', 'Donut', 'Bubble'],    //Charts that supports the data to be JSON;
-    lineTypeCharts = ['Line', 'Area', 'Cumulative Line'],   //Charts that does not supports the string type of data in the xaxis in the nvd3;
-    dataTypeArray = ['Cumulative Line', 'Area'],     //Charts that supports the data to be Array
+    dataTypeJSON = ['Column', 'Line', 'Pie', 'Bar', 'Donut', 'Bubble'],    // Charts that supports the data to be JSON;
+    lineTypeCharts = ['Line', 'Area', 'Cumulative Line'],   // Charts that does not supports the string type of data in the xaxis in the nvd3;
+    dataTypeArray = ['Cumulative Line', 'Area'],     // Charts that supports the data to be Array
     SAMPLE_DATA = {
         'group1' : 'Europe',
         'group2' : 'Asia',
@@ -142,10 +145,10 @@ export const isChartDataArray = type => _.includes(dataTypeArray, type);
 // returns true is the chart type is 'line', 'area' or 'cumulative line' else false
 export const isLineTypeChart = type => _.includes(lineTypeCharts, type);
 
-//X/Y Domain properties are supported only for Column and Area charts
+// X/Y Domain properties are supported only for Column and Area charts
 export const isAxisDomainSupported = type => isColumnChart(type) || isAreaChart(type);
 
-//Returns bar spacing value
+// Returns bar spacing value
 export const getBarSpacingValue = (value, prop) => {
     if (prop === 'value') {
         return barSpacingMap[value];
@@ -155,7 +158,7 @@ export const getBarSpacingValue = (value, prop) => {
     }
 };
 
-//Returns radius value
+// Returns radius value
 export const getRadiusValue = (value, prop) => {
     if (prop === 'value') {
         return donutRatioMap[value];
@@ -165,9 +168,9 @@ export const getRadiusValue = (value, prop) => {
     }
 };
 
-//Returns labels config
+// Returns labels config
 export const getLabelValues = (showlabels, showlabelsoutside, prop) => {
-    let labelsConfig: any = {};
+    const labelsConfig: any = {};
     switch (showlabels) {
         case 'hide':
             labelsConfig.showlabels = false;
@@ -184,7 +187,7 @@ export const getLabelValues = (showlabels, showlabelsoutside, prop) => {
     return labelsConfig;
 };
 
-//Construct the sample data
+// Construct the sample data
 export const constructSampleData = (dataType, yaxisLength, shape) => {
     let first_series = [],
         second_series = [],
@@ -343,7 +346,7 @@ export const constructSampleData = (dataType, yaxisLength, shape) => {
 };
 
 export const getDataType = widgetContext => {
-    let type = widgetContext.type;
+    const type = widgetContext.type;
     if (isLineChart(type)) {
         return 'lineChartFormat';
     }
@@ -359,7 +362,7 @@ export const getDataType = widgetContext => {
 // Sample data to populate when no data is bound
 export const getSampleData = widgetContext => constructSampleData(getDataType(widgetContext), _.split(widgetContext.yaxisdatakey, ',').length, widgetContext.shape);
 
-//Check whether X/Y Domain was set to Min and is supported for the present chart
+// Check whether X/Y Domain was set to Min and is supported for the present chart
 export const isAxisDomainValid = (widgetContext, axis) => {
     if (widgetContext[axis + 'domain'] === 'Min' && (isAxisDomainSupported(widgetContext.type))) {
         return true;
@@ -367,7 +370,7 @@ export const isAxisDomainValid = (widgetContext, axis) => {
     return false;
 };
 
-//Check whether min and max values are finite or not
+// Check whether min and max values are finite or not
 export const areMinMaxValuesValid = values => {
     if (_.isFinite(values.min) && _.isFinite(values.max)) {
         return true;
@@ -376,15 +379,15 @@ export const areMinMaxValuesValid = values => {
 };
 
 export const getYScaleMinValue = value => {
-    let _min = Math.floor(value);
+    const _min = Math.floor(value);
     /* If the number has a) decimal part returning floor value - 0.1
      b) no decimal part returning floor value - 1 */
     return Math.abs(value) - _min > 0 ? value - 0.1 : _min - 1;
 };
 
-//Chooses the data points of line/cumulative line/area chart and highlights them
+// Chooses the data points of line/cumulative line/area chart and highlights them
 export const highlightPoints = (id, highlightpoints) => {
-    let chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
+    const chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
     if (highlightpoints) {
         chartSvg.selectAll('.nv-point').style({'stroke-width': '6px', 'fill-opacity': '.95', 'stroke-opacity': '.95'});
     } else {
@@ -392,14 +395,14 @@ export const highlightPoints = (id, highlightpoints) => {
     }
 };
 
-//Chooses the line of line/cumulative line and increases the thickness of it
+// Chooses the line of line/cumulative line and increases the thickness of it
 export const setLineThickness = (id, thickness) => {
-    let chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
+    const chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
     thickness = thickness || 1.5;
     chartSvg.selectAll('.nv-line').style({'stroke-width': thickness});
 };
 
-//Constructing a common key value map for preview and canvas mode
+// Constructing a common key value map for preview and canvas mode
 export const initProperties = (widgetContext, propertyValueMap) => {
     if (!propertyValueMap || isEmptyObject(propertyValueMap)) {
         propertyValueMap = {};
@@ -417,36 +420,36 @@ export const getNumberValue = (value, callback) => {
     return isNaN(parseInt(value, 10)) ? callback(value, 'value') : value;
 };
 
-//Formats the given value according to date format
+// Formats the given value according to date format
 export const getDateFormatedData = (dateFormat, d) => {
     dateFormat = dateFormat || '%x';
     return d3.time.format(dateFormat)(new Date(d));
 };
 
-//Formats the given value according to number format
+// Formats the given value according to number format
 export const getNumberFormatedData = (numberFormat, d) => {
     let formattedData,
         divider,
         prefix;
     formattedData = d3.format(numberFormat)(d);
-    //formatting the data based on number format selected
+    // formatting the data based on number format selected
     if (numberFormat) {
-        //Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
+        // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
         divider = (tickformats[numberFormat] && tickformats[numberFormat].divider) || 0;
         prefix = tickformats[numberFormat] && tickformats[numberFormat].prefix;
         if (prefix && divider !== 0) {
             formattedData = d3.format('.2f')(d / divider) + prefix;
         }
     } else {
-        //Auto formatting the data when no formating option is chosen
+        // Auto formatting the data when no formating option is chosen
         formattedData = d >= 1000 ? d3.format('.1s')(d) : d;
     }
     return formattedData;
 };
 
-//Set the visibility property of the chart x,y axis due to a bug in the nvd3
+// Set the visibility property of the chart x,y axis due to a bug in the nvd3
 export const toggleAxisShow = (property, value) => {
-    let $xAxis = d3.select(chartId + ' g.nv-axis.nv-x'),
+    const $xAxis = d3.select(chartId + ' g.nv-axis.nv-x'),
         $yAxis = d3.select(chartId + ' g.nv-axis.nv-y');
     if (property === 'showxaxis') {
         $xAxis.style('visibility', value ? 'visible' : 'hidden');
@@ -456,22 +459,22 @@ export const toggleAxisShow = (property, value) => {
 };
 
 export const modifyLegendPosition = (widgetContext, position, id) => {
-    let showLegend = isShowLegend(widgetContext.showlegend),
+    const showLegend = isShowLegend(widgetContext.showlegend),
         chart_Id = id ? '#wmChart' + id : chartId,
         legendWrap = d3.select(chart_Id + ' .nv-legendWrap'),
         legendPadding = 5;
-    //Return when showlegend is false
+    // Return when showlegend is false
     if (!showLegend || !legendWrap[0][0]) {
         return;
     }
     if (position === 'bottom') {
-        let legendWrapHeight = legendWrap[0][0].getBoundingClientRect().height,
+        const legendWrapHeight = legendWrap[0][0].getBoundingClientRect().height,
             wrap = d3.select(chart_Id + ' .nv-wrap'),
             wrapTransform = (wrap && wrap.attr('transform')) ? wrap.attr('transform').replace(/, /g, ',') : '',
             coordinates = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(wrapTransform),
             getChartHeight = () => {
                 let chartHeight = $(chart_Id + ' svg>.nvd3.nv-wrap')[0].getBoundingClientRect().height;
-                if (chartHeight === 0) { //fix for IE
+                if (chartHeight === 0) { // fix for IE
                     chartHeight = ($(chart_Id + ' svg')[0].getBoundingClientRect().height - (legendWrapHeight + 15));
                 }
                 return chartHeight;
@@ -483,16 +486,16 @@ export const modifyLegendPosition = (widgetContext, position, id) => {
     }
 };
 
-//Returns value if legend need to shown or not
+// Returns value if legend need to shown or not
 export const isShowLegend = value => {
-    //Old projects will have either true or false
+    // Old projects will have either true or false
     if (value === 'false' || value === false) {
         return false;
     }
     if (value === 'true' || value === true) {
         return true;
     }
-    //New projects will have either 'Hide Legend', 'Show Top', 'Show Bottom'
+    // New projects will have either 'Hide Legend', 'Show Top', 'Show Bottom'
     return value === 'hide' ? false : true;
 };
 
@@ -505,7 +508,7 @@ export const customiseTooltip = (chart, propertyValueMap, widgetContext, label?)
     chart.tooltip.contentGenerator(key => {
         let xValue = key.data.x, yValue;
         yValue = getNumberFormatedData(propertyValueMap.ynumberformat, key.data.y);
-        if(isPieType(widgetContext.type)) {
+        if (isPieType(widgetContext.type)) {
             label = key.data.x;
             xValue = '';
         }
@@ -526,8 +529,9 @@ export const customiseTooltip = (chart, propertyValueMap, widgetContext, label?)
 // intializes the chart obejct
 export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyValueMap, isPreview) => {
     propertyValueMap =  initProperties(widgetContext, propertyValueMap);
-    let chart, xValue: any = {}, yValue: any = {}, colors = [], xaxislabel, yaxislabel, labelConfig, radius, barSpacing,
+    let chart, colors = [], xaxislabel, yaxislabel, labelConfig, radius, barSpacing,
         showLegend, xAxisValue, hasMultipleYValues;
+    const xValue: any = {}, yValue: any = {};
     switch (widgetContext.type) {
         case 'Column':
             barSpacing = getNumberValue(propertyValueMap.barspacing, getBarSpacingValue) || barSpacingMap.medium;
@@ -566,8 +570,8 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
         case 'Bar':
             barSpacing = getNumberValue(propertyValueMap.barspacing, getBarSpacingValue) || barSpacingMap.medium;
             chart = nv.models.multiBarHorizontalChart()
-                .x(d => d[0])
-                .y(d => d[1])
+                .x(d => d.x)
+                .y(d => d.y)
                 .showControls(false)
                 .stacked(propertyValueMap.viewtype === 'Stacked' ?  true : false)
                 .showValues(propertyValueMap.showvalues)
@@ -606,27 +610,27 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     if (xDomainValues) {
         xValue.min = xDomainValues.min.x || xDomainValues.min[0];
         xValue.max = xDomainValues.max.x || xDomainValues.max[0];
-        //If the values on the x axis are string then min max values gives Infinity
+        // If the values on the x axis are string then min max values gives Infinity
         if (areMinMaxValuesValid(xValue)) {
-            //Reducing the min value to 0.1 so the min value is not missed out
+            // Reducing the min value to 0.1 so the min value is not missed out
             xValue.min = getYScaleMinValue(xValue.min);
             chart.xDomain([xValue.min, xValue.max]);
         }
     }
 
     if (yDomainValues) {
-        //Reducing the min value to 1 so the min value is not missed out
+        // Reducing the min value to 1 so the min value is not missed out
         yValue.min = yDomainValues.min.y || yDomainValues.min[1];
         yValue.max = yDomainValues.max.y || yDomainValues.max[1];
-        //If the values on the y axis are string or invalid then min max values gives Infinity
+        // If the values on the y axis are string or invalid then min max values gives Infinity
         if (areMinMaxValuesValid(yValue)) {
-            //Reducing the min value to 1 so the min value is not missed out
+            // Reducing the min value to 1 so the min value is not missed out
             yValue.min = getYScaleMinValue(yValue.min);
             chart.yDomain([yValue.min, yValue.max]);
         }
     }
 
-    //Setting the legend type choosen by user or default it will be furious
+    // Setting the legend type choosen by user or default it will be furious
     chart.legend.vers((propertyValueMap.legendtype && propertyValueMap.legendtype.toLowerCase()) || 'furious');
 
     if (!_.includes(chartTypes, widgetContext.type)) {
@@ -637,32 +641,32 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
 
 
     if (isPieType(widgetContext.type)) {
-        //In case of pie/donut chart formatting the values of it
+        // In case of pie/donut chart formatting the values of it
         if (propertyValueMap.labeltype === 'percent') {
             chart.valueFormat(d3.format('%'));
         } else {
             chart.valueFormat(d => getNumberFormatedData(propertyValueMap.ynumberformat, d));
         }
-        //Customizing the tooltips in case of the pie and donut when labelType is value
+        // Customizing the tooltips in case of the pie and donut when labelType is value
         customiseTooltip(chart, propertyValueMap, widgetContext);
     } else {
         chart.showXAxis(propertyValueMap.showxaxis)
             .showYAxis(propertyValueMap.showyaxis);
 
-        //Setting the labels if they are specified explicitly or taking the axiskeys chosen
+        // Setting the labels if they are specified explicitly or taking the axiskeys chosen
         xaxislabel = propertyValueMap.xaxislabel || prettifyLabels(widgetContext.xaxisdatakey) || 'x caption';
         yaxislabel = propertyValueMap.yaxislabel || prettifyLabels(widgetContext.yaxisdatakey) || 'y caption';
 
-        //Checking if y axis has multiple values
+        // Checking if y axis has multiple values
         if (widgetContext.yaxisdatakey && widgetContext.yaxisdatakey.split(',').length > 1) {
             hasMultipleYValues = true;
         }
-        //Customizing the tooltip to show yaxislabel, only if the y axis contains one value
-        if(!hasMultipleYValues && !isBubbleChart(widgetContext.type)) {
-            customiseTooltip(chart,propertyValueMap, widgetContext, yaxislabel);
+        // Customizing the tooltip to show yaxislabel, only if the y axis contains one value
+        if (!hasMultipleYValues && !isBubbleChart(widgetContext.type)) {
+            customiseTooltip(chart, propertyValueMap, widgetContext, yaxislabel);
         }
 
-        //Adding the units to the captions if they are specified
+        // Adding the units to the captions if they are specified
         xaxislabel += propertyValueMap.xunits ? '(' + propertyValueMap.xunits + ')' : '';
         yaxislabel += propertyValueMap.yunits ? '(' + propertyValueMap.yunits + ')' : '';
 
@@ -675,7 +679,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
         if (propertyValueMap.xdateformat || (isPreview && !isBubbleChart(widgetContext.type))) {
             if (isLineTypeChart(widgetContext.type)) {
                 chart.xAxis.tickFormat(d => {
-                    //get the actual value
+                    // get the actual value
                     xAxisValue = isPreview ? dateList[d - 1] : widgetContext.xDataKeyArr[d];
                     return getDateFormatedData(propertyValueMap.xdateformat, xAxisValue);
                 });
@@ -700,7 +704,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
         }
     }
 
-    //Support for custom colors if user gives direct string of colors in text box
+    // Support for custom colors if user gives direct string of colors in text box
     if (_.isString(propertyValueMap.customcolors) && propertyValueMap.customcolors) {
         colors = _.split(propertyValueMap.customcolors, ',');
     }
@@ -715,7 +719,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
 
     chart.tooltip.enabled(propertyValueMap.tooltips);
     widgetContext.message = propertyValueMap.nodatamessage || 'No data found';
-    //setting the no data message
+    // setting the no data message
     chart.noData(widgetContext.message);
 
     if (isLineTypeChart(widgetContext.type) && widgetContext.highlightpoints) {
@@ -728,13 +732,13 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
 };
 
 export const postPlotChartProcess = (widgetContext, isPreview?) => {
-    let id = isPreview ? null : widgetContext.$id;
-    //If user sets to highlight the data points and increase the thickness of the line
+    const id = isPreview ? null : widgetContext.$id;
+    // If user sets to highlight the data points and increase the thickness of the line
     if (isLineTypeChart(widgetContext.type)) {
         setLineThickness(id, widgetContext.linethickness);
         highlightPoints(id, widgetContext.highlightpoints);
     }
-    //Modifying the legend position only when legend is shown
+    // Modifying the legend position only when legend is shown
     if (widgetContext.showlegend) {
         modifyLegendPosition(widgetContext, widgetContext.showlegend, id);
     }
