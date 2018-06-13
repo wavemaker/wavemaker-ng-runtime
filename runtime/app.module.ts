@@ -97,7 +97,7 @@ const routes = [
         DecimalPipe,
         DatePipe
     ],
-    bootstrap: [AppComponent, CommonPageComponent]
+    bootstrap: [AppComponent]
 })
 export class AppModule {
     constructor () {
