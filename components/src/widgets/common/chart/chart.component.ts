@@ -686,7 +686,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                     });
                 });
                 pieLabels.each(function (d, i) {
-                    let group = d3.select(this);
+                    const group = d3.select(this);
                     $(group[0][0]).find('text').attr('transform', 'rotate(' + angleArray[i] + ')');
                 });
             }
