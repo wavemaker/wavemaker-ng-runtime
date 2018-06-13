@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit, AfterContentInit } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 
@@ -29,7 +29,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(ListComponent)
     ]
 })
-export class ListComponent extends StylableComponent implements OnInit, AfterViewInit {
+export class ListComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
 
     @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
 
@@ -43,18 +43,15 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private navigatorResultWatch: Subscription;
     private navControls: string;
     private onDemandLoad: boolean;
-    private _items: Array<any> = [];
-    private dataNavigatorWatched: boolean = false;
+    private _items: Array<any>;
+    private dataNavigatorWatched: boolean;
     private datasource: any;
     private showNavigation: boolean;
     private noDataFound: boolean;
     private debouncedFetchNextDatasetOnScroll: Function;
-    private reorderProps: any = {
-        minIndex: null,
-        maxIndex: null
-    };
+    private reorderProps: any;
 
-    public fieldDefs: Array<any> = [];
+    public fieldDefs: Array<any>;
     public disableitem;
     public navigation: string;
     public navigationalign: string;
@@ -78,10 +75,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public toggleAllHeaders: void;
     public groupby: string;
     public collapsible: string;
+    public datePipe: ToDatePipe;
+    public binditemclass: string;
+    public binddisableitem: string;
+    public binddataset: string;
 
     private match: string;
     private dateformat: string;
-    private groupedData: {};
+    private groupedData: any;
+    private cdRef: ChangeDetectorRef;
+    private promiseResolverFn: Function;
+    private propsInitPromise: Promise<any>;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -105,15 +109,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     constructor(
         inj: Injector,
-        private cdRef: ChangeDetectorRef,
-        public datePipe: ToDatePipe,
-        @Attribute('itemclass.bind') public binditemclass,
-        @Attribute('disableitem.bind') public binddisableitem,
-        @Attribute('dataset.bind') public binddataset
+        cdRef: ChangeDetectorRef,
+        datePipe: ToDatePipe
     ) {
-        super(inj, WIDGET_CONFIG);
+        let resolveFn: Function = noop;
+        const propsInitPromise = new Promise(res => resolveFn = res);
+        super(inj, WIDGET_CONFIG, propsInitPromise);
+        this.propsInitPromise = propsInitPromise;
+        this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
-        this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, 50);
+        this.cdRef = cdRef;
+        this.datePipe = datePipe;
     }
 
     private resetNavigation() {
@@ -722,12 +728,29 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     ngOnInit() {
         super.ngOnInit();
-        this.selectedItemWidgets = this.multiselect ? [] : {};
         this.handleHeaderClick = noop;
+        this._items = [];
+        this.fieldDefs = [];
+        this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, 50);
+        this.binditemclass = this.nativeElement.getAttribute('itemclass.bind');
+        this.binddisableitem = this.nativeElement.getAttribute('disableitem.bind');
+        this.binddataset = this.nativeElement.getAttribute('dataset.bind');
+        this.reorderProps = {
+            minIndex: null,
+            maxIndex: null
+        };
         if (this.groupby && this.collapsible) {
             this.handleHeaderClick = handleHeaderClick;
             this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
         }
+    }
+
+    ngAfterContentInit() {
+        this.promiseResolverFn();
+        this.propsInitPromise.then(() => {
+            this.selectedItemWidgets = this.multiselect ? [] : {};
+        });
+
     }
 
     ngAfterViewInit() {
