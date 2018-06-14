@@ -9,7 +9,7 @@
     <ul #ulElement class="app-search dropdown-menu" scrollable>
         <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainerInstance.isActive(match)}"
             (mouseenter)="typeaheadContainerInstance.selectActive(match);"
-            (click)="typeaheadOnSelect(match, $event)">
+            (click)="selectMatch(match, $event)">
             <!-- itemTemplate comes from the <input> -->
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">

@@ -130,6 +130,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataProvider = new DataProvider();
     }
 
+    // On click of the typeahead item, invoke the container's selectMatch and set the queryModel, datavalue.
+    private selectMatch(match: TypeaheadMatch, $event: Event) {
+        this.typeaheadContainerInstance.selectMatch(match, $event);
+        this.typeaheadOnSelect(match, $event);
+    }
+
     // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
     protected typeaheadOnSelect(match: TypeaheadMatch, $event: Event): void {
         const item = match.item;
