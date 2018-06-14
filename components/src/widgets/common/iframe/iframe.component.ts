@@ -63,8 +63,7 @@ export class IframeComponent extends StylableComponent {
                 this.hintMsg = this.errorMsg;
             }
 
-            // iframe dialog opening was not instant without the delay
-            setTimeout(() => this._iframesrc = trustedUrl, 100);
+            this._iframesrc = trustedUrl;
         }
     }
 

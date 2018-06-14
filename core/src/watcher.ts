@@ -50,7 +50,7 @@ export const setAppRef = appRef => {
                 return;
             } else {
                 queued = true;
-                window['__zone_symbol__requestAnimationFrame'](() => {
+                $RAF(() => {
                     appRef.tick();
                     queued = false;
                 });
