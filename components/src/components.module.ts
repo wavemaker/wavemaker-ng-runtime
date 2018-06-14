@@ -108,6 +108,7 @@ import { TableCUDDirective } from './widgets/common/table/table-cud.directive';
 import { TableFilterSortDirective } from './widgets/common/table/table-filter.directive';
 import { TableRowActionDirective } from './widgets/common/table/table-row-action/table-row-action.directive';
 import { TextareaComponent } from './widgets/common/textarea/textarea.component';
+import { TextContentDirective } from './widgets/common/base/text-content.directive';
 import { TileDirective } from './widgets/common/tile/tile.directive';
 import { TimeComponent } from './widgets/common/time/time.component';
 import { TopNavDirective } from './widgets/common/top-nav/top-nav.directive';
@@ -224,6 +225,7 @@ const wmComponents = [
     TableFilterSortDirective,
     TableRowActionDirective,
     TextareaComponent,
+    TextContentDirective,
     TileDirective,
     TimeComponent,
     TopNavDirective,
