@@ -910,12 +910,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             case 'searchlabel':
                 this.setDataGridOption('searchLabel', newVal);
                 break;
-            case 'rowngclass':
-                this.setDataGridOption('rowNgClass', newVal);
-                break;
-            case 'rowclass':
-                this.setDataGridOption('rowClass', newVal);
-                break;
             case 'navigation':
                 if (newVal === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
                     this.navigation = 'Classic';
@@ -923,21 +917,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 if (newVal !== 'None') {
                     this.shownavigation = true;
-                    // this.enablePageNavigation();
                 }
                 this.navControls = newVal;
-                break;
-            case 'showheader':
-                this.setDataGridOption('showHeader', newVal);
-                break;
-            case 'multiselect':
-                this.setDataGridOption('multiselect', newVal);
-                break;
-            case 'radioselect':
-                this.setDataGridOption('showRadioColumn', newVal);
-                break;
-            case 'showrowindex':
-                this.setDataGridOption('showRowIndex', newVal);
                 break;
             case 'gridfirstrowselect':
                 this.setDataGridOption('selectFirstRow', newVal);
@@ -953,9 +934,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 break;
             case 'loadingicon':
                 this.callDataGridMethod('option', 'loadingicon', newVal);
-                break;
-            case 'filternullrecords':
-                this.callDataGridMethod('option', 'filterNullRecords', newVal);
                 break;
             case 'spacing':
                 this.callDataGridMethod('option', 'spacing', newVal);
