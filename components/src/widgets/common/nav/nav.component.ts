@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $parseEvent, addClass, getRouteFromNavLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
+import { $parseEvent, addClass, App, getRouteFromNavLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
@@ -36,12 +36,16 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
 
     private activeNavLINode: HTMLElement;
     private itemActionFn: Function;
+    private get activePageName() {
+        return this.app.activePageName;
+    }
 
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
         private router: Router,
-        private userDefinedExecutionContext: UserDefinedExecutionContext
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
+        private app: App
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
