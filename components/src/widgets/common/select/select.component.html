@@ -8,7 +8,7 @@
         [multiple]="multiple"
         (change)="onSelectValueChange($event)"
 >
-  <option selected [ngValue]="undefined" [textContent]="placeholder"></option>
+  <option selected value="" [textContent]="placeholder" [hidden]="!placeholder" ></option>
   <option
           *ngFor="let item of datasetItems"
           [value]="item.key" [selected]="item.selected" [textContent]="item.label"></option>

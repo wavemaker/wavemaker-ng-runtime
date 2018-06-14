@@ -1,4 +1,4 @@
-<ng-template *ngIf="!groupby; else groupedListTemplate">
+<ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
     <li [ngClass]="['checkbox', 'app-checkbox', itemclass]"
         [class.active]="item.selected"
         *ngFor="let item of datasetItems; let i = index"

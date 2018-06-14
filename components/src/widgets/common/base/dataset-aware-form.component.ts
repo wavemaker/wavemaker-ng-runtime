@@ -2,9 +2,10 @@ import { Injector } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
+import { $appDigest, debounce } from '@wm/core';
+
 import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
-import { debounce } from '@wm/core';
 
 declare const _;
 
@@ -73,7 +74,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
         this.binddisplayimagesrc = this.nativeElement.getAttribute('displayimagesrc.bind');
 
-        this._debouncedInitDatasetItems = debounce(() => this.initDatasetItems(), 150);
+        this._debouncedInitDatasetItems = debounce(() => {
+            this.initDatasetItems();
+            $appDigest();
+        }, 150);
     }
 
     /**
@@ -109,7 +113,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 }
             });
         } else {
-            this._modelByValue = undefined;
+            this._modelByValue = '';
             const itemByKey = _.find(this.datasetItems, item => {
                 // not triple equal, as the instance type can be different.
                 // only value comparison should be done.
