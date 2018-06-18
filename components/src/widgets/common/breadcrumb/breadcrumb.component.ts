@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { getRouteFromNavLink, getUrlParams, openLink } from '@wm/core';
+import { getRouteNameFromLink, getUrlParams, openLink } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './breadcrumb.props';
@@ -89,7 +89,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
         if (itemLink && canNavigate) {
             if (itemLink.startsWith('#/')) {
                 const queryParams = getUrlParams(itemLink);
-                itemLink = getRouteFromNavLink(itemLink);
+                itemLink = getRouteNameFromLink(itemLink);
                 this.route.navigate([itemLink], { queryParams});
             } else {
                 openLink(itemLink);

@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $parseEvent, addClass, getRouteFromNavLink, getUrlParams, openLink, UserDefinedExecutionContext } from '@wm/core';
+import { $parseEvent, addClass, getRouteNameFromLink, getUrlParams, openLink, UserDefinedExecutionContext } from '@wm/core';
 
 import { MenuComponent } from '../menu.component';
 import { isActiveNavItem } from '../../../../utils/widget-utils';
@@ -76,7 +76,7 @@ export class MenuDropdownItemComponent implements OnInit {
         } else if (menuLink) {
             if (menuLink.startsWith('#/')) {
                 const queryParams = getUrlParams(menuLink);
-                menuLink = getRouteFromNavLink(menuLink);
+                menuLink = getRouteNameFromLink(menuLink);
                 this.route.navigate([menuLink], { queryParams});
             } else {
                 openLink(menuLink, linkTarget);

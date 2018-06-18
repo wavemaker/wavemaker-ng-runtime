@@ -1,5 +1,4 @@
 import { DataType } from './enums';
-import { $watch } from '@wm/core';
 
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
@@ -929,7 +928,7 @@ export const getUrlParams = (link) => {
     return params;
 };
 
-export const getRouteFromNavLink = (link) => {
+export const getRouteNameFromLink = (link) => {
     link  = link.replace('#/', '/');
     const index = link.indexOf('?');
     if (index !== -1) {

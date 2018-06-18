@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $parseEvent, addClass, App, getRouteFromNavLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
+import { $parseEvent, addClass, App, getUrlParams, openLink, removeClass, UserDefinedExecutionContext, getRouteNameFromLink } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
@@ -85,7 +85,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         } else if (itemLink) {
             if (itemLink.startsWith('#/')) {
                 const queryParams = getUrlParams(itemLink);
-                itemLink = getRouteFromNavLink(itemLink);
+                itemLink = getRouteNameFromLink(itemLink);
                 this.router.navigate([itemLink], {queryParams});
             } else {
                 openLink(itemLink);
