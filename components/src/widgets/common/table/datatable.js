@@ -385,15 +385,18 @@ $.widget('wm.datatable', {
         var self = this,
             $tbody = $('<tbody class="' + this.options.cssClassNames.gridBody + '"></tbody>');
 
-        _.forEach(this.preparedData, function (row) {
-            $tbody.append(self._getRowTemplate(row));
+        this.options.clearCustomExpression();
+
+        _.forEach(this.preparedData, function (row, index) {
+            self.options.generateCustomExpressions(index, row);
+            $tbody.append(self._getRowTemplate(row, index));
         });
 
         return $tbody;
     },
 
     /* Returns the table row template. */
-    _getRowTemplate: function (row) {
+    _getRowTemplate: function (row, rowIndex) {
         var $htm,
             self = this,
             gridOptions = self.options,
@@ -402,7 +405,7 @@ $.widget('wm.datatable', {
 
         $htm = $('<tr tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '" ' + rowNgClassExpr + '></tr>');
         this.preparedHeaderData.forEach(function (current, colIndex) {
-            $htm.append(self._getColumnTemplate(row, colIndex, current));
+            $htm.append(self._getColumnTemplate(row, colIndex, current, rowIndex));
         });
 
         // TODO: Handle row ng class
@@ -446,7 +449,7 @@ $.widget('wm.datatable', {
     },
 
     /* Returns the table cell template. */
-    _getColumnTemplate: function (row, colId, colDef) {
+    _getColumnTemplate: function (row, colId, colDef, rowIndex) {
         var $htm,
             columnValue,
             innerTmpl,
@@ -454,77 +457,14 @@ $.widget('wm.datatable', {
             ngClass = colDef.ngclass || '',
             colExpression = colDef.customExpression,
             ctId = row.$$pk + '-' + colId,
-            isCellCompiled = false,
-            formatPattern = colDef.formatpattern,
-            datePattern = colDef.datepattern,
             isRowCompiled = !!this.options.rowNgClass;
 
         $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" style="text-align: ' + colDef.textAlignment + ';"></td>');
 
         columnValue = _.get(row, colDef.field);
 
-        if (!formatPattern) {
-            if (colDef.type === 'date' && this.options.dateFormat) {
-                formatPattern = 'toDate';
-                datePattern = this.options.dateFormat;
-            } else if (colDef.type === 'time' && this.options.timeFormat) {
-                formatPattern = 'toDate';
-                datePattern = this.options.timeFormat;
-            } else if (colDef.type === 'datetime' && this.options.dateTimeFormat) {
-                formatPattern = 'toDate';
-                datePattern = this.options.dateTimeFormat;
-            }
-        }
-
-        /*constructing the expression based on the choosen format options*/
-        if (formatPattern && formatPattern !== "None" && !colExpression) {
-            switch (formatPattern) {
-                case 'toDate':
-                    if (datePattern) {
-                        if (colDef.type === 'datetime') {
-                            columnValue = columnValue ? moment(columnValue).valueOf() : undefined;
-                        }
-                        colExpression = "{{'" + columnValue + "' | toDate:'" + datePattern + "'}}";
-                    }
-                    break;
-                case 'toCurrency':
-                    if (colDef.currencypattern) {
-                        colExpression = "{{'" + columnValue + "' | toCurrency:'" + colDef.currencypattern;
-                        if (colDef.fractionsize) {
-                            colExpression += "':'" + colDef.fractionsize + "'}}";
-                        } else {
-                            colExpression += "'}}";
-                        }
-                    }
-                    break;
-                case 'numberToString':
-                    if (colDef.fractionsize) {
-                        colExpression = "{{'" + columnValue + "' | numberToString:'" + colDef.fractionsize + "'}}";
-                    }
-                    break;
-                case 'stringToNumber':
-                    colExpression = "{{'" + columnValue + "' | stringToNumber}}";
-                    break;
-                case 'timeFromNow':
-                    colExpression = "{{'" + columnValue + "' | timeFromNow}}";
-                    break;
-                case 'prefix':
-                    if (colDef.prefix) {
-                        colExpression = "{{'" + columnValue + "' | prefix:'" + colDef.prefix + "'}}";
-                    }
-                    break;
-                case 'suffix':
-                    if (colDef.suffix) {
-                        colExpression = "{{'" + columnValue + "' | suffix:'" + colDef.suffix + "'}}";
-                    }
-                    break;
-            }
-            $htm.attr('title', colExpression);
-        }
-
         if (colExpression) {
-            isCellCompiled = true;
-            $htm.html(colExpression);
+            $htm.html(this.options.getCustomExpression(colDef.field, rowIndex));
         } else {
             if (colDef.type !== 'custom') {
                 columnValue = _.get(row, colDef.field);

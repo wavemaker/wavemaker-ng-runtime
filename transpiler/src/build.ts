@@ -17,8 +17,14 @@ export const BIND_REG_EX = /^\s*bind:(.*)$/g;
 const OVERRIDES = {
     'accessroles': '*accessroles',
     'ng-if': '*ngIf',
-    'showindevice': 'showInDevice'
+    'showindevice': 'showInDevice',
+    'ng-class': '[ngClass]',
+    'data-ng-class': '[ngClass]',
+    'data-ng-src': 'src',
+    'ng-src': 'src'
 };
+
+const selfClosingTags = new Set(['img']);
 
 export const getBoundToExpr = (value: string) => {
     value = value.trim();
@@ -255,7 +261,7 @@ const processNode = (node, providers?: Array<IProviderInfo>) => {
             }
             markup += (<any>post)(attrMap, shared, ...requiredProviders);
         } else {
-            if (node.endSourceSpan) {
+            if (node.endSourceSpan && !selfClosingTags.has(node.name)) {
                 markup += `</${node.name}>`;
             }
         }

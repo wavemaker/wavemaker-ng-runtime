@@ -1,5 +1,6 @@
+import { Element } from '@angular/compiler';
 import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
-import {DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator} from '@wm/core';
+import { DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator } from '@wm/core';
 import { getDataTableFilterWidget, getEditModeWidget, EDIT_MODE } from '../../../../utils/live-utils';
 
 const tagName = 'div';
@@ -78,9 +79,59 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
             </ng-template>`;
 };
 
+const getFormatExpression = (attrs) => {
+    const columnValue = `row.getProperty('${attrs.get('binding')}')`;
+    const formatPattern = attrs.get('formatpattern');
+    let colExpression = '';
+    switch (formatPattern) {
+        case 'toDate':
+            const datePattern = attrs.get('datepattern');
+            if (datePattern) {
+                colExpression = `{{${columnValue} | toDate: '${datePattern}'}}`;
+            }
+            break;
+        case 'toCurrency':
+            if (attrs.get('currencypattern')) {
+                colExpression = `{{${columnValue} | toCurrency: '${attrs.get('currencypattern')}`;
+
+                if (attrs.get('fractionsize')) {
+                    colExpression += `': ${attrs.get('fractionsize')}}}`;
+                } else {
+                    colExpression += `'}}`;
+                }
+            }
+            break;
+        case 'numberToString':
+            if (attrs.get('fractionsize')) {
+                colExpression = `{{${columnValue} | numberToString: '${attrs.get('fractionsize')}'}}`;
+            }
+            break;
+        case 'stringToNumber':
+            colExpression = `{{${columnValue} | stringToNumber}}`;
+            break;
+        case 'timeFromNow':
+            colExpression = `{{${columnValue} | timeFromNow}}`;
+            break;
+        case 'prefix':
+            if (attrs.get('prefix')) {
+                colExpression = `{{${columnValue} | prefix: '${attrs.get('prefix')}'}}`;
+            }
+            break;
+        case 'suffix':
+            if (attrs.get('suffix')) {
+                colExpression = `{{${columnValue} | suffix: '${attrs.get('suffix')}'}}`;
+            }
+            break;
+    }
+    return colExpression;
+};
+
 register('wm-table-column', (): IBuildTaskDef => {
     return {
         requires: ['wm-table'],
+        template: (node: Element, shared) => {
+            shared.set('customExpression', node.children.length > 0);
+        },
         pre: (attrs, shared, parentTable) => {
             const pCounter = parentTable.get('table_reference');
             const rowFilterTmpl = (parentTable.get('filtermode') === 'multicolumn' && attrs.get('searchable') !== 'false') ? getFilterTemplate(attrs, pCounter) : '';
@@ -88,13 +139,39 @@ register('wm-table-column', (): IBuildTaskDef => {
             const isInlineEdit = (editMode !== EDIT_MODE.DIALOG && editMode !== EDIT_MODE.FORM && attrs.get('readonly') !== 'true');
             const inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs) : '';
             const inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
+            const formatPattern = attrs.get('formatpattern');
+            const customExpr = `<ng-template #customExprTmpl let-row="row" let-columnValue="columnValue" let-colDef="colDef" let-selectedItemData="selectedItemData">`;
+            let customExprTmpl = '';
+            let formatExprTmpl = '';
+
+            if (shared.get('customExpression')) {
+                attrs.set('customExpression', 'true');
+                customExprTmpl = `${customExpr}<div data-col-identifier="${attrs.get('binding')}">`;
+            } else if (formatPattern) {
+                if (formatPattern !== 'None') {
+                    formatExprTmpl = getFormatExpression(attrs);
+                    if (formatExprTmpl) {
+                        shared.set('customExpression', true);
+                        attrs.set('customExpression', 'true');
+                        customExprTmpl = `${customExpr}<div data-col-identifier="${attrs.get('binding')}" title="${formatExprTmpl}">${formatExprTmpl}`;
+                    }
+                }
+            }
 
             return `<${tagName} wmTableColumn ${getAttrMarkup(attrs)} [formGroup]="${pCounter}.ngform">
                     ${rowFilterTmpl}
                     ${inlineEditTmpl}
-                    ${inlineNewEditTmpl}`;
+                    ${inlineNewEditTmpl}
+                    ${customExprTmpl}`;
         },
-        post: () => `</${tagName}>`
+        post: (attrs, shared) => {
+            let customExprTmpl = '';
+
+            if (shared.get('customExpression')) {
+                customExprTmpl = `</div></ng-template>`;
+            }
+            return `${customExprTmpl}</${tagName}>`;
+        }
     };
 });
 

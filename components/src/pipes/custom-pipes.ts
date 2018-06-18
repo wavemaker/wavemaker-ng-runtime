@@ -46,7 +46,7 @@ export class ToDatePipe implements PipeTransform {
 })
 export class ToNumberPipe implements PipeTransform {
     transform(data, fracSize) {
-        if (!String(fracSize).match(/^(\d+)?\.((\d+)(-(\d+))?)?$/)) {
+        if (fracSize && !String(fracSize).match(/^(\d+)?\.((\d+)(-(\d+))?)?$/)) {
             fracSize = '1.' + fracSize + '-' + fracSize;
         }
         return this.decimalPipe.transform(data, fracSize);

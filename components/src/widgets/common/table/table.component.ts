@@ -73,20 +73,25 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ViewChild('datagridElement') private _tableElement: ElementRef;
 
     @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
-    @ViewChild('rowActions', {read: ViewContainerRef}) rowActionsTl: ViewContainerRef;
+    @ViewChild('rowActionsView', {read: ViewContainerRef}) rowActionsViewRef: ViewContainerRef;
 
     @ContentChildren('filterTmpl') filterTmpl: QueryList<any>;
-    @ViewChild('multiColumnFilter', {read: ViewContainerRef}) multiColumnFilterTl: ViewContainerRef;
+    @ViewChild('multiColumnFilterView', {read: ViewContainerRef}) filterViewRef: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmpl') inlineWidgetTmpl: QueryList<any>;
-    @ContentChildren('inlineWidgetTmplNew') inlineWidgetTmplNew: QueryList<any>;
-    @ViewChild('inlineEdit', {read: ViewContainerRef}) inlineEditTl: ViewContainerRef;
-    @ViewChild('inlineEditNew', {read: ViewContainerRef}) inlineEditTlNew: ViewContainerRef;
+    @ViewChild('inlineEditView', {read: ViewContainerRef}) inlineEditViewRef: ViewContainerRef;
+
+    @ContentChildren('inlineWidgetTmplNew') inlineWidgetNewTmpl: QueryList<any>;
+    @ViewChild('inlineEditNewView', {read: ViewContainerRef}) inlineEditNewViewRef: ViewContainerRef;
+
+    @ContentChildren('customExprTmpl') customExprTmpl: QueryList<any>;
+    @ViewChild('customExprView', {read: ViewContainerRef}) customExprViewRef: ViewContainerRef;
 
     private rowActionsCompiledTl: any  = {};
     private rowFilterCompliedTl: any = {};
     private inlineCompliedTl: any = {};
     private inlineNewCompliedTl: any = {};
+    private customExprCompiledTl: any = {};
 
     columns = {};
     formfields = {};
@@ -318,14 +323,37 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onBeforeFormRender: (rowData, e, operation) => {
             return this.invokeEventCallback('beforeformrender', {$event: e, $rowData: rowData, $operation: operation});
         },
+        clearCustomExpression: () => {
+            this.customExprViewRef.clear();
+        },
+        generateCustomExpressions: (index, row) => {
+            const rowData = getClonedObject(row);
+            rowData.getProperty = field => {
+                return _.get(row, field);
+            };
+            this.customExprCompiledTl[index] = [];
+            // For all the columns inside the table, generate the inline widget
+            this.customExprTmpl.forEach(tmpl => {
+                const customExprView = this.customExprViewRef.createEmbeddedView(tmpl, {
+                    row: rowData,
+                    selectedItemData: row
+                });
+                const rootNode = customExprView.rootNodes[0];
+                const fieldName = rootNode.getAttribute('data-col-identifier');
+                this.customExprCompiledTl[fieldName + index] = rootNode;
+            });
+        },
+        getCustomExpression: (fieldName, index) => {
+            return this.customExprCompiledTl[fieldName + index];
+        },
         clearRowActions: () => {
-            this.rowActionsTl.clear();
+            this.rowActionsViewRef.clear();
         },
         generateRowActions: (index, row) => {
             this.rowActionsCompiledTl[index] = [];
             // For all the columns inside the table, generate the inline widget
             this.rowActionTmpl.forEach((tmpl) => {
-                this.rowActionsCompiledTl[index].push(...this.rowActionsTl.createEmbeddedView(tmpl, {
+                this.rowActionsCompiledTl[index].push(...this.rowActionsViewRef.createEmbeddedView(tmpl, {
                     row: row,
                     $rowData: row
                 }).rootNodes);
@@ -337,11 +365,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         generateInlineEditRow: (alwaysNewRow, row) => {
             if (alwaysNewRow) {
                 // Clear the view container ref
-                this.inlineEditTlNew.clear();
+                this.inlineEditNewViewRef.clear();
                 this.inlineNewCompliedTl = {};
                 // For all the columns inside the table, generate the inline widget
-                this.inlineWidgetTmplNew.forEach(tmpl => {
-                    const rootNode = this.inlineEditTlNew.createEmbeddedView(tmpl, {
+                this.inlineWidgetNewTmpl.forEach(tmpl => {
+                    const rootNode = this.inlineEditNewViewRef.createEmbeddedView(tmpl, {
                         row: row,
                         rowData: row
                     }).rootNodes[0];
@@ -351,12 +379,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 return;
             }
             // Clear the view container ref
-            this.inlineEditTl.clear();
+            this.inlineEditViewRef.clear();
             this.inlineCompliedTl = {};
             this.clearForm();
             // For all the columns inside the table, generate the inline widget
             this.inlineWidgetTmpl.forEach(tmpl => {
-                const rootNode = this.inlineEditTl.createEmbeddedView(tmpl, {
+                const rootNode = this.inlineEditViewRef.createEmbeddedView(tmpl, {
                     row: row,
                     rowData: row
                 }).rootNodes[0];
@@ -383,11 +411,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         generateFilterRow: () => {
             // Clear the view container ref
-            this.multiColumnFilterTl.clear();
+            this.filterViewRef.clear();
             this.rowFilterCompliedTl = {};
             // For all the columns inside the table, generate the compiled filter template
             this.filterTmpl.forEach((tmpl) => {
-                const rootNode = this.multiColumnFilterTl.createEmbeddedView(tmpl, {
+                const rootNode = this.filterViewRef.createEmbeddedView(tmpl, {
                     changeFn: this.onRowFilterChange.bind(this),
                     isDisabled: (fieldName) => {
                         return this.emptyMatchModes.indexOf(this.rowFilter[fieldName] && this.rowFilter[fieldName].matchMode) > -1;
@@ -545,6 +573,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.datagridElement = $(this._tableElement.nativeElement);
 
         this.gridElement = this.$element;
+        this.$element.css({'position': 'relative'});
 
         _.forEach(runModeInitialProperties, (value, key) => {
             if (isDefined(this[key])) {
