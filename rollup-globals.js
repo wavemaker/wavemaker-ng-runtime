@@ -39,7 +39,9 @@ export default {
     'ngx-bootstrap/pagination': 'ngxBootstrap',
     'ngx-color-picker': 'zef.ngxColorPicker',
     'ngx-mask': 'ngxMask',
+    'ngx-toastr': 'ngxToastr',
     'rxjs/Subject': 'Rx',
+    'rxjs/Observable': 'Rx',
     'rxjs/ReplaySubject': 'Rx',
     'tslib': 'tslib'
 };

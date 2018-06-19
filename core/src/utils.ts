@@ -834,7 +834,7 @@ export const fetchContent = (dataType, url: string, inSync: boolean = false, suc
 };
 
 /**
- * If the given object is a promise, then object is returned. Otherwise, a promise is resoved with the given object.
+ * If the given object is a promise, then object is returned. Otherwise, a promise is resolved with the given object.
  * @param {Promise<T> | T} a
  * @returns {Promise<T>}
  */

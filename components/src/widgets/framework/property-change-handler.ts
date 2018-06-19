@@ -55,6 +55,7 @@ const parseValue = (key: string, value: any, type: PROP_TYPE): any => {
 const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv: any, ov: any): void => {
     const el = component.getNativeElement();
 
+    // todo handle array and object cases in conditionalclass
     if (key === 'class' || key === 'conditionalclass') {
         switchClass(el, nv, ov);
     } else if (key === 'name') {
