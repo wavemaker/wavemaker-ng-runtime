@@ -28,6 +28,8 @@ import { PrefabManagerService } from './services/prefab-manager.service';
 import { PrefabPreviewManagerService } from './services/prefab-preview-manager.service';
 import { RenderUtilsService } from './services/render-utils.service';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
+import { AppSpinnerComponent } from './components/app-spinner.component';
+import { SpinnerService } from './services/spinner.service';
 
 
 declare const $;
@@ -60,7 +62,8 @@ const routes = [
         AppComponent,
         PageWrapperComponent,
         CommonPageComponent,
-        EmptyPageComponent
+        EmptyPageComponent,
+        AppSpinnerComponent
     ],
     imports: [
         BrowserModule,
@@ -95,7 +98,8 @@ const routes = [
         PrefabPreviewManagerService,
         SecurityConfigResolve,
         DecimalPipe,
-        DatePipe
+        DatePipe,
+        SpinnerService
     ],
     bootstrap: [AppComponent]
 })

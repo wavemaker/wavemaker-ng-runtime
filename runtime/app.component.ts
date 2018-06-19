@@ -1,17 +1,20 @@
-import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef } from '@angular/core';
 
 import { $invokeWatchers, _WM_APP_PROJECT, hasCordova, setAppRef, setPipeProvider } from '@wm/core';
 import { DialogService } from '@wm/components';
 import { OAuthService } from '@wm/oAuth';
 
 import { PipeProvider } from './services/pipe-provider.service';
+import { SpinnerService } from './services/spinner.service';
+
+type SPINNER = {show: boolean, message: string};
 
 @Component({
     selector: 'app-root',
     template: `
         <router-outlet></router-outlet>
         <app-common-page></app-common-page>
-        <!--<wm-spinner name="globalspinner" classname="global-spinner" caption=""></wm-spinner>-->
+        <app-spinner [show]="spinner.show" [caption]="spinner.message"></app-spinner>
         <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'">
             <ul style="list-style: none" class="list-items">
                 <li style="padding-bottom: 10px;" class="list-item" *ngFor="let provider of providersConfig">
@@ -28,7 +31,8 @@ import { PipeProvider } from './services/pipe-provider.service';
         <div wmAppUpdate></div>`
 })
 export class AppComponent implements DoCheck, AfterViewInit {
-    constructor(_pipeProvider: PipeProvider, _appRef: ApplicationRef, private elRef: ElementRef, private oAuthService: OAuthService, private dialogService: DialogService) {
+    spinner: SPINNER = {show: false, message: ''};
+    constructor(_pipeProvider: PipeProvider, _appRef: ApplicationRef, private elRef: ElementRef, private oAuthService: OAuthService, private dialogService: DialogService, private spinnerService: SpinnerService) {
         setPipeProvider(_pipeProvider);
         setAppRef(_appRef);
         _WM_APP_PROJECT.id = location.href.split('/')[3];
@@ -40,6 +44,15 @@ export class AppComponent implements DoCheck, AfterViewInit {
             } else {
                 this.closeOAuthDialog();
             }
+        });
+
+        // Subscribe to the message source to show/hide app spinner
+        this.spinnerService.getMessageSource().asObservable().subscribe((data:any) => {
+            // setTimeout is to avoid 'ExpressionChangedAfterItHasBeenCheckedError'
+            setTimeout(() => {
+                this.spinner.show = data.show;
+                this.spinner.message = data.message;
+            });
         });
     }
 

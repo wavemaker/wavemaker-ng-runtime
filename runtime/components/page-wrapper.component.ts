@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApplicationRef, Component, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { ApplicationRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
@@ -8,6 +8,7 @@ import { App } from '@wm/core';
 import { RenderUtilsService } from '../services/render-utils.service';
 import { Subscription } from 'rxjs/Subscription';
 import { AppManagerService } from '../services/app.manager.service';
+import { SpinnerService } from '../services/spinner.service';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -28,11 +29,13 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         private securityService: SecurityService,
         private appManager: AppManagerService,
         private app: App,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private elRef: ElementRef,
+        private spinnerService: SpinnerService
     ) {}
 
     getTargetNode() {
-        return this.appRef.components[0].location.nativeElement;
+        return this.elRef.nativeElement;
     }
 
     resetViewContainer() {
@@ -45,13 +48,18 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.resetViewContainer();
         const $target = this.getTargetNode();
 
+        const spinnerId = this.spinnerService.show('');
+
         this.appManager.loadAppVariables()
             .then( () => {
                 this.renderUtils.renderPage(
                     pageName,
                     this.vcRef,
                     $target
-                );
+                )
+                    .then(() => {
+                        this.spinnerService.hide(spinnerId)
+                    });
             });
     }
 

@@ -7,6 +7,7 @@ import { DialogService } from '@wm/components';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
 
 import { App } from '@wm/core';
+import { SpinnerService } from './spinner.service';
 
 declare const _;
 
@@ -22,12 +23,28 @@ export class AppManagerService {
         private $router: Router,
         private $app: App,
         private $variables: VariablesService,
-        private $metadata: MetadataService
+        private $metadata: MetadataService,
+        private $spinner: SpinnerService
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
 
         this.$variables.registerDependency('appManager', this);
+
+        this.$app.subscribe('toggle-variable-state', (data) => {
+            const variable = data.variable,
+                active = data.active;
+            if (!_.isEmpty(_.trim(variable.spinnerContext))) {
+                if (active) {
+                    variable._spinnerId = this.$spinner.show(variable.spinnerMessage,
+                        variable._id,// + variable.activeScope.$id,
+                        variable.spinnerclass,
+                        variable.spinnerContext);
+                } else {
+                    this.$spinner.hide(variable._spinnerId);
+                }
+            }
+        });
     }
 
     /**
@@ -210,5 +227,9 @@ export class AppManagerService {
 
     public getDeployedURL() {
         return this.$app.deployedUrl ? this.$app.deployedUrl : $rootScope.project.deployedUrl;
+    }
+
+    notify(eventName, data) {
+        this.$app.notify(eventName, data);
     }
 }
