@@ -13,14 +13,14 @@ export class TrustAsPipe implements PipeTransform {
             if (!content) {
                 return;
             }
-            return this.domSanitizer.bypassSecurityTrustResourceUrl(content);
+            return this.domSanitizer.sanitize(SecurityContext.HTML, this.domSanitizer.bypassSecurityTrustResourceUrl(content));
         }
 
         if (as === 'html' || as === SecurityContext.HTML) {
             if (content === null || content === undefined) {
                 return '';
             }
-            return this.domSanitizer.bypassSecurityTrustHtml(content);
+            return this.domSanitizer.sanitize(SecurityContext.HTML, this.domSanitizer.bypassSecurityTrustHtml(content));
         }
     }
 }
