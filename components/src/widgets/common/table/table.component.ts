@@ -75,16 +75,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
     @ViewChild('rowActionsView', {read: ViewContainerRef}) rowActionsViewRef: ViewContainerRef;
 
-    @ContentChildren('filterTmpl') filterTmpl: QueryList<any>;
+    @ContentChildren('filterTmpl', {descendants: true}) filterTmpl: QueryList<any>;
     @ViewChild('multiColumnFilterView', {read: ViewContainerRef}) filterViewRef: ViewContainerRef;
 
-    @ContentChildren('inlineWidgetTmpl') inlineWidgetTmpl: QueryList<any>;
+    @ContentChildren('inlineWidgetTmpl', {descendants: true}) inlineWidgetTmpl: QueryList<any>;
     @ViewChild('inlineEditView', {read: ViewContainerRef}) inlineEditViewRef: ViewContainerRef;
 
-    @ContentChildren('inlineWidgetTmplNew') inlineWidgetNewTmpl: QueryList<any>;
+    @ContentChildren('inlineWidgetTmplNew', {descendants: true}) inlineWidgetNewTmpl: QueryList<any>;
     @ViewChild('inlineEditNewView', {read: ViewContainerRef}) inlineEditNewViewRef: ViewContainerRef;
 
-    @ContentChildren('customExprTmpl') customExprTmpl: QueryList<any>;
+    @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
     @ViewChild('customExprView', {read: ViewContainerRef}) customExprViewRef: ViewContainerRef;
 
     private rowActionsCompiledTl: any  = {};
