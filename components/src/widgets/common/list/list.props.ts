@@ -19,7 +19,7 @@ export const registerProps = () => {
                 ['iconclass', PROP_STRING],
                 ['itemclass', {value: '', ...PROP_STRING}],
                 ['itemsperrow', PROP_STRING],
-                ['listclass', PROP_STRING],
+                ['listclass', {value: 'list-group', ...PROP_STRING}],
                 ['multiselect', PROP_BOOLEAN],
                 ['loadingdatamsg', {value : 'Loading...', ...PROP_STRING}],
                 ['loadingicon', {value : 'fa fa-circle-o-notch', ...PROP_STRING}],

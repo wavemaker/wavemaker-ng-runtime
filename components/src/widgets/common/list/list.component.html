@@ -21,7 +21,7 @@
     </ul>
 </nav>
 
-<ul tabindex="0" class="app-livelist-container clearfix" [ngClass]="listclass"
+<ul tabindex="0" class="app-livelist-container clearfix {{listclass}}"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
     (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
