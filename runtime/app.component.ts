@@ -13,7 +13,7 @@ type SPINNER = {show: boolean, message: string};
     selector: 'app-root',
     template: `
         <router-outlet></router-outlet>
-        <app-common-page></app-common-page>
+        <app-common-page hidden></app-common-page>
         <app-spinner [show]="spinner.show" [caption]="spinner.message"></app-spinner>
         <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'">
             <ul style="list-style: none" class="list-items">
