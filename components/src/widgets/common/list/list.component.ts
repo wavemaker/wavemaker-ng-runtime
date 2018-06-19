@@ -471,7 +471,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterCon
         this.firstSelectedItem = this.lastSelectedItem = null;
 
         // selectfirst item when the pagination in the first page.
-        if (this.selectfirstitem && !(_.get(this, ['dataNavigator', 'dn', 'currentPage']) !== 1 && this.multiselect)) {
+        if (listItems.length && this.selectfirstitem && !(_.get(this, ['dataNavigator', 'dn', 'currentPage']) !== 1 && this.multiselect)) {
             const $firstItem: ListItemDirective = listItems.first;
             if (!$firstItem.disableItem) {
                 this.clearSelectedItems();

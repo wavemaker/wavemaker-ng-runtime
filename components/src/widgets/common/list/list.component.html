@@ -65,7 +65,7 @@
     </ul>
 </nav>
 
-<div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation">
+<div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext)">
     <nav wmPagination
          navigationalign.bind="navigationalign"
          navigationsize.bind="navigationSize"
