@@ -666,7 +666,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterCon
         let selectCount: number;
 
         if (!$listItem.disableItem) {
-            $listItem.nativeElement.focus();
             this.firstSelectedItem = this.firstSelectedItem || $listItem;
             // Setting selectCount value based number of items selected.
             selectCount = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
