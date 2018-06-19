@@ -97,23 +97,30 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
 };
 
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
-export const  updateTemplateAttrs = (children: Array<Element>, parentDataSet: string, widgetName: string) => {
+export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string) => {
 
     const regex = new RegExp('(' + parentDataSet + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
     let currentItemRegEx;
     let currentItemWidgetsRegEx;
+    let nodes: Array<Element>;
 
     if (widgetName) {
         currentItemRegEx = new RegExp(`(Widgets.${widgetName}.currentItem)\\b`, 'g');
         currentItemWidgetsRegEx = new RegExp(`(Widgets.${widgetName}.currentItemWidgets)\\b`, 'g');
     }
 
-    children.forEach((childNode: Element) => {
+    if (!_.isArray(rootNode)) {
+        nodes = [rootNode as Element];
+    } else {
+        nodes = rootNode as Array<Element>;
+    }
+
+    nodes.forEach((childNode: Element) => {
         if (childNode.name) {
             childNode.attrs.forEach((attr) => {
                 let value = attr.value;
                 if (_.startsWith(value, 'bind:')) {
-                    /*if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx" */
+                    // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                     if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet) {
                         value = value.replace('bind:', '');
                         value = value.replace(regex, 'item');
