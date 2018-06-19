@@ -4,7 +4,7 @@ import { EventManager } from '@angular/platform-browser';
 import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
-import { $parseEvent, $unwatch, $watch, addClass, App, isDefined, setAttr } from '@wm/core';
+import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, isDefined, setAttr } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
@@ -362,6 +362,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             const locals = callbackInfo.locals || {};
 
             if (fn) {
+                $invokeWatchers(true);
                 return fn(Object.assign(locals, extraLocals));
             }
         }

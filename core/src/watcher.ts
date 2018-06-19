@@ -45,15 +45,20 @@ const $RAF = window.requestAnimationFrame;
 export const setAppRef = appRef => {
     $appDigest = (() => {
         let queued = false;
-        return () => {
-            if (queued) {
-                return;
+        return (force?: boolean) => {
+            if (force) {
+                appRef.tick();
+                queued = false;
             } else {
-                queued = true;
-                $RAF(() => {
-                    appRef.tick();
-                    queued = false;
-                });
+                if (queued) {
+                    return;
+                } else {
+                    queued = true;
+                    $RAF(() => {
+                        appRef.tick();
+                        queued = false;
+                    });
+                }
             }
         };
     })();
@@ -64,6 +69,13 @@ export const resetChangeFromWatch = () => changedByWatch = false;
 
 (<any>window).watchRegistry = registry;
 
-export const $invokeWatchers = debounce(triggerWatchers, 100);
+const debouncedTriggerWatchers = debounce(triggerWatchers, 100);
+export const $invokeWatchers = (force?: boolean) => {
+    if (force) {
+        triggerWatchers();
+    } else {
+        debouncedTriggerWatchers();
+    }
+};
 
-export let $appDigest = () => {};
+export let $appDigest = (force?: boolean) => {};
