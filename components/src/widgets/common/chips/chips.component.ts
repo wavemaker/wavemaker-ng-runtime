@@ -44,6 +44,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
 
+    // When datavalue is not available check value in "toBeProcessedDatavalue" property.
+    set toBeProcessedDatavalue(val) {
+        this.searchComponent.toBeProcessedDatavalue = val;
+    }
+
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
@@ -71,6 +76,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.displayimagesrc = this.displayimagesrc;
         this.searchComponent.binddisplayexpression = this.bindDisplayExpr;
         this.searchComponent.displaylabel = this.displayfield;
+        this.searchComponent.datafield = this.bindDataField;
 
         this.searchComponent.updateQueryModel = _.debounce(this.updateQueryModel.bind(this), 50);
         this.getTransformedData = this.searchComponent.getTransformedData;

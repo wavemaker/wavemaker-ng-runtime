@@ -49,6 +49,7 @@
     <input [title]="query" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder"
            focus-target
            container="body"
+           [attr.disabled]="disabled"
            autocomplete="off"
            [(ngModel)]="query"
            [typeahead]="typeaheadDataSource"

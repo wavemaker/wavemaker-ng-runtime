@@ -75,8 +75,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     constructor(
         inj: Injector,
-        @Attribute('datavalue.bind') private binddatavalue,
-        @Attribute('dataset.bind') private binddataset
+        @Attribute('datavalue.bind') public binddatavalue,
+        @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
 
@@ -124,7 +124,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataset$.subscribe(() => {
             // set the next item index.
             this.startIndex = this.datasetItems.length;
-            this.updateQueryModel(this.datavalue);
+            this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
         });
 
         this.dataProvider = new DataProvider();
@@ -144,7 +144,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.query = item.label;
 
         // As item.key can vary from key in the datasetItems
-        this.modelByKey = item.key;
+        this._modelByKey = item.key;
+        this._modelByValue = item.value;
 
         this.invokeOnTouched();
         this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});

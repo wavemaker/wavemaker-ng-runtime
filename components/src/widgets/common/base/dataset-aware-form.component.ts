@@ -35,7 +35,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected _modelByValue: any;
 
     // this field contains the initial datavalue which needs to be processed once the dataset is available
-    private toBeProcessedDatavalue: any;
+    public toBeProcessedDatavalue: any;
     private readonly _debouncedInitDatasetItems: Function;
 
     protected get modelByKey() {
@@ -56,9 +56,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     // triggers on setting the datavalue. This function extracts the model value.
     public set datavalue(val: any) {
-        if (this.multiple) {
-            val = extractDataAsArray(val);
-        }
         this.selectByValue(val);
 
         // invoke on datavalue change.
@@ -136,6 +133,11 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
      */
     protected selectByValue(values: Array<any> | any) {
         this.resetDatasetItems();
+
+        if (this.multiple) {
+            values = extractDataAsArray(values);
+        }
+        this._modelByValue = values;
 
         // if datavalue is not defined or empty then set the model as undefined.
         if (_.isUndefined(values) || _.isNull(values) || (values instanceof Array && !values.length)) {

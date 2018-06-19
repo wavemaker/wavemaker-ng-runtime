@@ -1,3 +1,5 @@
+import { DataSource } from '@wm/core';
+
 import { LocalDataProvider } from './local-data-provider';
 import { RemoteDataProvider } from './remote-data-provider';
 
@@ -44,10 +46,10 @@ export class DataProvider implements IDataProvider {
         let promise: Promise<any>;
 
         /**
-         * Make call to remoteDataProvider when searchkey is available.
+         * Make call to remoteDataProvider when searchkey is available and data is not from local / model variable.
          * Otherwise use localDataProvider
          */
-        if (config.searchKey) {
+        if (config.datasource.execute(DataSource.Operation.IS_API_AWARE) && config.searchKey) {
             promise = DataProvider.remoteDataProvider.filter(config);
         } else {
             promise = DataProvider.localDataProvider.filter(config);
