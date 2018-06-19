@@ -1,5 +1,6 @@
+import { getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/core';
+
 import { upload } from '../../util/file-upload.util';
-import { $appDigest, getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/core';
 import { ServiceVariable } from '../../model/variable/service-variable';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 import { $queue } from '../../util/inflight-queue';
@@ -317,12 +318,19 @@ export class ServiceVariableManager extends BaseVariableManager {
             });
         }
 
+        // notify variable progress
+        this.notifyInflight(variable,true);
+
         // make the call
         return this.makeCall(requestParams).then((response) => {
             const data = this.processSuccessResponse(response.body, variable, options, success);
+            // notify variable success
+            this.notifyInflight(variable,false, data);
             initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
             return Promise.resolve(data);
         }, (e) => {
+            // notify variable error
+            this.notifyInflight(variable,false);
             this.processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
         });
     }

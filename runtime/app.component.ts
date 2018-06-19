@@ -7,14 +7,14 @@ import { OAuthService } from '@wm/oAuth';
 import { PipeProvider } from './services/pipe-provider.service';
 import { SpinnerService } from './services/spinner.service';
 
-type SPINNER = {show: boolean, message: string};
+type SPINNER = {show: boolean, messages: Array<string>};
 
 @Component({
     selector: 'app-root',
     template: `
         <router-outlet></router-outlet>
         <app-common-page hidden></app-common-page>
-        <app-spinner [show]="spinner.show" [caption]="spinner.message"></app-spinner>
+        <app-spinner [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
         <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'">
             <ul style="list-style: none" class="list-items">
                 <li style="padding-bottom: 10px;" class="list-item" *ngFor="let provider of providersConfig">
@@ -31,7 +31,7 @@ type SPINNER = {show: boolean, message: string};
         <div wmAppUpdate></div>`
 })
 export class AppComponent implements DoCheck, AfterViewInit {
-    spinner: SPINNER = {show: false, message: ''};
+    spinner: SPINNER = {show: false, messages: []};
     constructor(_pipeProvider: PipeProvider, _appRef: ApplicationRef, private elRef: ElementRef, private oAuthService: OAuthService, private dialogService: DialogService, private spinnerService: SpinnerService) {
         setPipeProvider(_pipeProvider);
         setAppRef(_appRef);
@@ -51,7 +51,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
             // setTimeout is to avoid 'ExpressionChangedAfterItHasBeenCheckedError'
             setTimeout(() => {
                 this.spinner.show = data.show;
-                this.spinner.message = data.message;
+                this.spinner.messages = data.messages;
             });
         });
     }

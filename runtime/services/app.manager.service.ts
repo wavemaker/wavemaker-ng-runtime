@@ -37,7 +37,7 @@ export class AppManagerService {
             if (!_.isEmpty(_.trim(variable.spinnerContext))) {
                 if (active) {
                     variable._spinnerId = this.$spinner.show(variable.spinnerMessage,
-                        variable._id,// + variable.activeScope.$id,
+                        variable._id + '_' + Date.now(),
                         variable.spinnerclass,
                         variable.spinnerContext);
                 } else {

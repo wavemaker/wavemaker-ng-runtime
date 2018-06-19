@@ -7,6 +7,7 @@ declare const _;
 export class SpinnerService {
     spinnerId;
     messageSource = new Subject();
+    messagesByContext = {};
 
     constructor() {
     }
@@ -31,12 +32,26 @@ export class SpinnerService {
      * @param msg
      * @returns {string}
      */
-    showAppSpinner(msg) {
+    showAppSpinner(msg, id) {
+        const ctx = 'page';
+        this.messagesByContext[ctx] = this.messagesByContext[ctx] || {};
+        this.messagesByContext[ctx][id] = msg;
+
         this.messageSource.next({
             show: true,
-            message: msg
+            message: msg,
+            messages: _.values(this.messagesByContext[ctx])
         });
-        return 'globalSpinner';
+    }
+
+    /**
+     * hides the spinner on a particular container(context)
+     * yet to implement
+     * @param ctx
+     * @param id
+     */
+    hideContextSpinner(ctx, id) {
+        
     }
 
     /**
@@ -57,18 +72,35 @@ export class SpinnerService {
             return this.showContextSpinner();
         }
 
-        return this.showAppSpinner(message);
+        this.showAppSpinner(message, id);
+        return id;
     }
 
     /**
      * hide the spinner
      * @param spinnerId
      */
-    hide(spinnerId) {
-        if (spinnerId === 'globalSpinner') {
+    hide(id) {
+        //find the spinner context of the id from the messagesByContext
+        const ctx = _.findKey(this.messagesByContext, function (obj) {
+            return _.includes(_.keys(obj), id);
+        });
+
+        //if spinnerContext exists just remove the spinner from the reference and destroy the scope associated.
+        if (ctx && ctx !== 'page') {
+            this.hideContextSpinner(ctx, id);
+            return;
+        }
+
+        if (id) {
+            delete this.messagesByContext[ctx][id];
+            const messages = _.values(this.messagesByContext[ctx]);
             this.messageSource.next({
-                show: false
-            })
+                show: messages.length ? true : false,
+                messages: _.values(this.messagesByContext[ctx])
+            });
+        } else {
+            this.messagesByContext[ctx] = {};
         }
     }
 }

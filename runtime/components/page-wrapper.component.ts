@@ -48,7 +48,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.resetViewContainer();
         const $target = this.getTargetNode();
 
-        const spinnerId = this.spinnerService.show('');
+        const spinnerId = this.spinnerService.show('', 'globalSpinner');
 
         this.appManager.loadAppVariables()
             .then( () => {

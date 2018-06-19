@@ -6,13 +6,15 @@ import { Component, Input } from '@angular/core';
         <div class="app-spinner" *ngIf="show">
             <div class="spinner-message" aria-label="loading gif">
                 <i class="spinner-image animated infinite fa fa-circle-o-notch fa-spin"></i>
-                <span class="spinner-text" [innerHTML]="caption"></span>
+                <div class="spinner-messages">
+                    <p *ngFor="let value of spinnermessages" [textContent]="value"></p>
+                </div>
             </div>
         </div>
     `
 })
 export class AppSpinnerComponent {
     @Input() show: boolean;
-    @Input() caption: string;
+    @Input() spinnermessages: Array<string>;
     constructor() {}
 }
