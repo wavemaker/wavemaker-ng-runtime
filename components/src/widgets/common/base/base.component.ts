@@ -201,6 +201,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if (ctx) {
             fn = fn.bind(ctx);
         }
+        if (this.readyState.isStopped) {
+            fn();
+            return;
+        }
         this.readyState.subscribe(() => fn());
     }
 
