@@ -38,15 +38,11 @@ export class CardComponent extends StylableComponent implements OnInit, AfterVie
         styler(this.cardContainerElRef.nativeElement, this, APPLY_STYLES_TYPE.INNER_SHELL);
     }
 
-    onPropertyChange(key, newValue) {
-        switch (key) {
-            case 'title':
-            case 'subheading':
-            case 'iconclass':
-            case 'iconurl':
-            case 'actions':
-               this.showHeader = !!(this.title || this.subheading || this.iconclass || this.iconurl || this.actions);
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'title' || key === 'subheading' || key === 'iconclass' || key === 'iconurl' || key === 'actions') {
+            this.showHeader = !!(this.title || this.subheading || this.iconclass || this.iconurl || this.actions);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

@@ -528,7 +528,7 @@ export function $parseExpr(expr: string): ParseExprResult {
     return boundFn;
 }
 
-export function $parseEvent(expr) {
+export function $parseEvent(expr): ParseExprResult {
     if (!isString(expr)) {
         return noop;
     }

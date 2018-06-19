@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -6,12 +6,12 @@ export const registerProps = () => {
         new Map(
             [
                 ['class', PROP_STRING],
-                ['dataset', {notify: true}],
-                ['itemlabel', PROP_STRING_NOTIFY],
-                ['itemid', PROP_STRING_NOTIFY],
-                ['itemlink', PROP_STRING_NOTIFY],
-                ['itemicon', PROP_STRING_NOTIFY],
-                ['itemchildren', PROP_STRING_NOTIFY],
+                ['dataset', PROP_ANY],
+                ['itemlabel', PROP_STRING],
+                ['itemid', PROP_STRING],
+                ['itemlink', PROP_STRING],
+                ['itemicon', PROP_STRING],
+                ['itemchildren', PROP_STRING],
                 ['itemclass', PROP_STRING],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}]

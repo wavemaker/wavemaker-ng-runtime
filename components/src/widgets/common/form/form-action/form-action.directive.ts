@@ -69,7 +69,7 @@ export class FormActionDirective extends BaseComponent implements OnInit {
         this.form.registerActions(this.buttonDef);
     }
 
-    onPropertyChange(key, nv) {
+    onPropertyChange(key, nv, ov) {
         if (!this._propsInitialized) {
             return;
         }

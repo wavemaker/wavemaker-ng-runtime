@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, ElementRef, HostListener, Injector } from
 import { Camera } from '@ionic-native/camera';
 import { MediaCapture } from '@ionic-native/media-capture';
 
-import { APPLY_STYLES_TYPE, provideAsWidgetRef, IWidgetConfig, StylableComponent, styler } from '@wm/components';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 import { convertToBlob, hasCordova } from '@wm/core';
 
 import { registerProps } from './camera.props';
@@ -52,26 +52,26 @@ export class CameraComponent extends StylableComponent {
     }
 
     onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'capturetype':
-                if (nv === CAPTURE_TYPE.IMAGE) {
-                    this._cameraOptions = {
-                        quality           : this.imagequality,
-                        destinationType   : 1, // 0-data url,1- file url
-                        sourceType        : 1, // only camera
-                        allowEdit         : this.allowedit,
-                        correctOrientation: this.correctorientation,
-                        encodingType      : this.imageencodingtype === ENCODING_TYPE.JPEG ? 0 : 1,
-                        saveToPhotoAlbum  : this.savetogallery,
-                        targetWidth       : this.imagetargetwidth,
-                        targetHeight      : this.imagetargetheight
-                    };
-                } else {
-                    this._cameraOptions = {
-                        limit: 1
-                    };
-                }
-                break;
+        if (key === 'capturetype') {
+            if (nv === CAPTURE_TYPE.IMAGE) {
+                this._cameraOptions = {
+                    quality           : this.imagequality,
+                    destinationType   : 1, // 0-data url,1- file url
+                    sourceType        : 1, // only camera
+                    allowEdit         : this.allowedit,
+                    correctOrientation: this.correctorientation,
+                    encodingType      : this.imageencodingtype === ENCODING_TYPE.JPEG ? 0 : 1,
+                    saveToPhotoAlbum  : this.savetogallery,
+                    targetWidth       : this.imagetargetwidth,
+                    targetHeight      : this.imagetargetheight
+                };
+            } else {
+                this._cameraOptions = {
+                    limit: 1
+                };
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

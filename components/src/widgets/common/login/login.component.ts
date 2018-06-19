@@ -11,7 +11,7 @@ const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
 registerProps();
 
-declare const _, $;
+declare const _;
 
 @Component({
     selector: 'div[wmLogin]',
@@ -49,7 +49,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
         this.invokeEventCallback('error');
     }
 
-    getLoginDetails() : any {
+    getLoginDetails(): any {
         return this.formCmp.dataoutput;
     }
 
@@ -70,9 +70,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
         super.ngAfterViewInit();
 
         // suppresses the default form submission (in browsers like Firefox)
-        this.formCmp.getNativeElement().addEventListener('submit', function(e){
-            e.preventDefault();
-        });
+        this.formCmp.getNativeElement().addEventListener('submit', e => e.preventDefault());
 
         // get login button component
         this.buttonComponents.forEach(cmp => {

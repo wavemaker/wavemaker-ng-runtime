@@ -103,7 +103,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         this.activeTab = paneRef;
         if (evt) {
-            headerElement = $(evt.target).closest('li.tab-header');
+            headerElement = $(evt.target as HTMLElement).closest('li.tab-header');
         } else {
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
         }
@@ -240,11 +240,13 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
     }
 
-    onPropertyChange(key: string, nv: any) {
+    onPropertyChange(key: string, nv: any, ov) {
 
         if (key === 'defaultpaneindex') {
             // If no active tab is set ie.. no isdefaulttab then honor the defaultpaneindex
             setTimeout(() => this.selectDefaultPaneByIndex(nv || 0), 20);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -280,5 +282,3 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
 }
-
-// todo: bandhavya - implement swipey

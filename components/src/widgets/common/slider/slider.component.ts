@@ -44,4 +44,11 @@ export class SliderComponent extends BaseFormCustomComponent {
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'tabindex') {
+            return;
+        }
+
+        super.onPropertyChange(key, nv, ov);
+    }
 }

@@ -4,7 +4,7 @@ import { EventManager } from '@angular/platform-browser';
 import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
-import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, isDefined, setAttr } from '@wm/core';
+import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
@@ -14,7 +14,17 @@ import { ATTR_SKIP_LIST, DISPLAY_TYPE, EVENTS_MAP } from '../../framework/consta
 import { WidgetProxyProvider } from '../../framework/widget-proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
 
-declare const $;
+declare const $, _;
+
+// Gets list of classes to add and remove and applies on the $el
+const updateClasses = (toAdd, toRemove, el) => {
+    if (toRemove && toRemove.length) {
+        removeClass(el, _.join(toRemove, ' '));
+    }
+    if (toAdd && toAdd.length) {
+        addClass(el, _.join(toAdd, ' '));
+    }
+};
 
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
@@ -269,14 +279,34 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     /**
-     * Default property change handler
+     * Handles the common functionality across the components
+     * eg,
+     *  1. value of the class property will be applied on the host element
+     *  2. based on the value of show property component is shown/hidden
+     *
+     * @param {string} key
+     * @param nv
+     * @param ov
      */
-    protected onPropertyChange(key: string, nv: any, ov: any) {}
+    protected onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'show') {
+            this.nativeElement.hidden = !nv;
+        } else if (key === 'hint') {
+            setAttr(this.nativeElement, 'title', nv);
+        } else if (key === 'class') {
+            switchClass(this.nativeElement, nv, ov);
+        } else if (key === 'name' || key === 'tabindex') {
+            setAttr(this.nativeElement, key, nv);
+        } else if (key === 'conditionalclass') {
+            // update classes if old and nv value are different
+            updateClasses(nv.toAdd, nv.toRemove, this.nativeElement);
+        }
+    }
 
     /**
      * Default style change handler
      */
-    protected onStyleChange(k: string, nv: any, ov: any) {}
+    protected onStyleChange(k: string, nv: any, ov?: any) {}
 
     /**
      * Register the widget with the widgetRegistry
@@ -392,6 +422,13 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         } else if (meta === 'event') {
             this.processEventAttr(propName, attrValue);
         } else if (length === 1) {
+            // remove class and name attributes. Component will set them on the proper node
+            if (attrName === 'class') {
+                removeClass(this.nativeElement, attrValue);
+            } else if (attrName === 'tabindex' || attrName === 'name') {
+                removeAttr(this.nativeElement, attrName);
+            }
+
             this.initState.set(propName, attrValue);
         } else {
             // custom attributes provided on elDef;
@@ -468,11 +505,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
          * If found, focus the first node (eg, date widget)
          * else, focus the element (eg, text widget)
          */
-        let $target = this.$element.find('[focus-target]');
-        if (!$target.length) {
-            $target = this.$element;
+        let $target = this.$element[0].querySelector('[focus-target]');
+        if (!$target) {
+            $target = this.$element[0];
         }
-        $target.first().focus();
+        $target.focus();
     }
 
     /**

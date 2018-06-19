@@ -153,18 +153,13 @@ export class ProgressBarComponent extends StylableComponent {
         }
     }
 
-    onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'type':
-                this.onTypeChange();
-                break;
-            case 'minvalue':
-            case 'maxvalue':
-            case 'datavalue':
-            case 'dataset':
-            case 'displayformat':
-                this._prepareData();
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'type') {
+            this.onTypeChange();
+        } else if (key === 'minvalue' || key === 'maxvalue' || key === 'datavalue' || key === 'dataset' || key === 'displayformat') {
+            this._prepareData();
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

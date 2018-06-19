@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit, Attribute } from '@angular/core';
+import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 
@@ -656,33 +656,30 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
-        switch (key) {
-            case  'dataset' :
-                if (!nv) {
-                    return;
-                }
-                this.onDataSetChange(nv);
-                break;
-            case 'datasource':
-                if (this.dataset) {
-                    this.onDataSetChange(this.dataset);
-                }
-                break;
-            case 'navigation':
-                // Support for older projects where navigation type was advanced instead of clasic
-                if (nv === 'Advanced') {
-                    this.navigation = 'Classic';
-                    return;
-                }
-                switchClass(this.nativeElement, nv, ov);
-                this.onNavigationTypeChange(nv);
-                if (this.dataNavigator) {
-                    this.dataNavigator.navigationClass = this.paginationclass;
-                }
-                break;
-            case 'itemsperrow':
-                this.setListClass();
-                break;
+        if (key === 'dataset') {
+            if (!nv) {
+                return;
+            }
+            this.onDataSetChange(nv);
+        } else if (key === 'datasource') {
+            if (this.dataset) {
+                this.onDataSetChange(this.dataset);
+            }
+        } else if (key === 'navigation') {
+            // Support for older projects where navigation type was advanced instead of classic
+            if (nv === 'Advanced') {
+                this.navigation = 'Classic';
+                return;
+            }
+            switchClass(this.nativeElement, nv, ov);
+            this.onNavigationTypeChange(nv);
+            if (this.dataNavigator) {
+                this.dataNavigator.navigationClass = this.paginationclass;
+            }
+        } else if (key === 'itemsperrow') {
+            this.setListClass();
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -779,7 +776,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.setListClass();
         });
         this.setupHandlers();
-        styler(this.nativeElement.querySelector('ul.app-livelist-container'), this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(this.nativeElement.querySelector('ul.app-livelist-container') as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 }
 

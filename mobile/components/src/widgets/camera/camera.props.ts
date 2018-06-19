@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '@wm/components';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components';
 
 export const registerProps = () => {
     register(
@@ -6,7 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['allowedit', {value: false, ...PROP_BOOLEAN}],
-                ['capturetype', {value: 'IMAGE', ...PROP_STRING_NOTIFY}],
+                ['capturetype', {value: 'IMAGE', ...PROP_STRING}],
                 ['caption', {value: '', ...PROP_STRING}],
                 ['correctorientation', {value: false, ...PROP_BOOLEAN}],
                 ['datavalue', {value: '', ...PROP_STRING}],

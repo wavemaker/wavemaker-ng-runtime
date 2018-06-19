@@ -43,46 +43,44 @@ export class PictureDirective extends StylableComponent implements OnInit {
         this.imgSource = this.imagePipe.transform(this.picturesource, this.encodeurl, this.pictureplaceholder);
     }
 
-    onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'pictureaspect':
-                let width = '';
-                let height = '';
-                switch (nv) {
-                    case 'None':
-                        width = this.width;
-                        height = this.height;
-                        break;
-                    case 'H':
-                        width = '100%';
-                        break;
-                    case 'V':
-                        height = '100%';
-                        break;
-                    case 'Both':
-                        width = '100%';
-                        height = '100%';
-                        break;
-                }
-                setCSS(this.nativeElement, 'width', width);
-                setCSS(this.nativeElement, 'height', height);
-                break;
-            case 'encodeurl':
-            case 'pictureplaceholder':
-                this.setImgSource();
-                break;
-            case 'shape':
-                switchClass(this.nativeElement, `img-${nv}`, `img-${ov}`);
-                break;
-            case 'hint':
-                setAttr(this.nativeElement, 'alt', nv);
-                break;
+    onPropertyChange(key: string, nv: any, ov: any) {
+        if (key === 'pictureaspect') {
+            let width = '';
+            let height = '';
+            switch (nv) {
+                case 'None':
+                    width = this.width;
+                    height = this.height;
+                    break;
+                case 'H':
+                    width = '100%';
+                    break;
+                case 'V':
+                    height = '100%';
+                    break;
+                case 'Both':
+                    width = '100%';
+                    height = '100%';
+                    break;
+            }
+            setCSS(this.nativeElement, 'width', width);
+            setCSS(this.nativeElement, 'height', height);
+        } else if (key === 'encodeurl' || key === 'pictureplaceholder') {
+            this.setImgSource();
+        } else if (key === 'shape') {
+            switchClass(this.nativeElement, `img-${nv}`, `img-${ov}`);
+        } else if (key === 'hint') {
+            setAttr(this.nativeElement, 'alt', nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 
-    onStyleChange(key) {
+    onStyleChange(key: string, nv: any, ov?: any) {
         if (key === 'picturesource') {
             this.setImgSource();
+        } else {
+            super.onStyleChange(key, nv, ov);
         }
     }
 

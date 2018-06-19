@@ -78,24 +78,24 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     }
 
     onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'caption':
-                if (!isDefined(nv) || nv === '') {
-                    this._caption = '&nbsp;';
-                } else {
-                    this._caption = nv;
-                }
-                break;
-            case 'checkedvalue':
-                this._checkedvalue = unStringify(nv, true);
-                break;
-            case 'uncheckedvalue':
-                this._uncheckedvalue = unStringify(nv, false);
-                break;
-            case 'datavalue':
-                this.datavalue = unStringify(nv, false);
-                break;
+        if (key === 'tabindex') {
+            return;
+        }
 
+        if (key === 'caption') {
+            if (!isDefined(nv) || nv === '') {
+                this._caption = '&nbsp;';
+            } else {
+                this._caption = nv;
+            }
+        } else if (key === 'checkedvalue') {
+            this._checkedvalue = unStringify(nv, true);
+        } else if (key === 'uncheckedvalue') {
+            this._uncheckedvalue = unStringify(nv, false);
+        } else if (key === 'datavalue') {
+            this.datavalue = unStringify(nv, false);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

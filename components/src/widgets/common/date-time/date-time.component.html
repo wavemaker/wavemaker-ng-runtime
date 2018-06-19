@@ -1,6 +1,8 @@
 <div dropdown [isOpen]="isTimeOpen" [autoClose]="false" (onShown)="addClickListener()" style="display: inherit;">
     <input class="form-control app-textbox display-input" aria-label="Set the date and time"
            focus-target
+           [name]="name"
+           [tabindex]="tabindex"
            type="text"
            [value]="displayValue"
            (click)="datepicker.toggle()"
@@ -8,8 +10,12 @@
            [required]="required"
            [attr.placeholder]="placeholder">
     <span class="input-group-btn">
-    <button focus-target type="button" class="btn btn-default btn-time" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="datepicker.toggle();"><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
-    <button focus-target type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
+    <button focus-target type="button" class="btn btn-default btn-time" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="datepicker.toggle();">
+        <i aria-hidden="true" class="app-icon wi wi-calendar"></i>
+    </button>
+    <button focus-target type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)">
+        <i aria-hidden="true" class="app-icon wi wi-access-time"></i>
+    </button>
 </span>
     <div style="height: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">
         <input class="model-holder"

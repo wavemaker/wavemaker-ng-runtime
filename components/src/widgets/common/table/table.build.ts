@@ -1,4 +1,4 @@
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { IDGenerator } from '@wm/core';
 
 const tagName = 'div';

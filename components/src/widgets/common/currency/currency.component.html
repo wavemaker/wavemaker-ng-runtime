@@ -2,16 +2,17 @@
 <!-- todo: Lovin localize aria text -->
 <input type="number" class="form-control app-textbox app-currency-input" aria-label="Currency (in dollars)"
        focus-target
+       [attr.name]="name"
+       [tabindex]="tabindex"
        [(ngModel)]="datavalue"
        (ngModelChange)="handleChange($event);"
        [ngModelOptions]="{updateOn: 'blur'}"
        (blur)="invokeOnTouched($event)"
-       [step]="step"
-       [min]="minvalue"
-       [max]="maxvalue"
+       [attr.step]="step"
+       [attr.min]="minvalue"
+       [attr.max]="maxvalue"
        [required]="required"
        [disabled]="disabled"
        [readonly]="readonly"
        [attr.accesskey]="shortcutkey"
-       [tabindex]="tabindex"
        [attr.placeholder]="placeholder">

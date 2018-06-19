@@ -1,6 +1,6 @@
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
-const tagName = 'ul';
+const tagName = 'ol';
 
 register('wm-breadcrumb', (): IBuildTaskDef => {
     return {

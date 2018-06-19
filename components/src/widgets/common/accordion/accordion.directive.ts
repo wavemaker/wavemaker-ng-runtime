@@ -1,6 +1,6 @@
-import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
+import { AfterContentInit, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
-import {isNumber, noop} from '@wm/core';
+import { isNumber, noop } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -113,11 +113,13 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         this.expandPane(paneIndex);
     }
 
-    onPropertyChange(key: string, nv: any) {
+    onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'defaultpaneindex') {
             if (this.isValidPaneIndex(nv)) {
                 this.expandPane(nv);
             }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

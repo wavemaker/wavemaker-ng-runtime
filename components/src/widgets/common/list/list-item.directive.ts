@@ -1,4 +1,4 @@
-import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, QueryList, OnInit } from '@angular/core';
+import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, OnInit, QueryList } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import { Subject } from 'rxjs/Subject';

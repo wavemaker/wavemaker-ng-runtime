@@ -67,12 +67,11 @@ export class IframeComponent extends StylableComponent {
         }
     }
 
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'iframesrc':
-            case 'encodeurl':
-                this.computeIframeSrc();
-                break;
+    onPropertyChange(key, nv, ov?) {
+        if (key === 'iframesrc' || key === 'encodeurl') {
+            this.computeIframeSrc();
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

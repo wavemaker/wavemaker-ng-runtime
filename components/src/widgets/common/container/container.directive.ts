@@ -31,5 +31,3 @@ export class ContainerDirective extends StylableComponent {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }
-
-// Todo - Bandhavya smoothScroll

@@ -24,15 +24,17 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class RightPanelDirective extends StylableComponent {
 
-    onPropertyChange(key, nv, ov) {
-        if (key === 'columnwidth') {
-            switchClass(this.nativeElement, `col-sm-${nv}`, ov ? ` col-sm-${ov}` : '');
-        }
-    }
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+    }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'columnwidth') {
+            switchClass(this.nativeElement, `col-sm-${nv}`, ov ? ` col-sm-${ov}` : '');
+        } else {
+            super.onPropertyChange(key, nv, ov);
+        }
     }
 }

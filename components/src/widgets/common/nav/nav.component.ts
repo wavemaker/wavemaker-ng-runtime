@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $parseEvent, addClass, App, getUrlParams, openLink, removeClass, UserDefinedExecutionContext, getRouteNameFromLink } from '@wm/core';
+import { $parseEvent, addClass, App, getRouteNameFromLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';

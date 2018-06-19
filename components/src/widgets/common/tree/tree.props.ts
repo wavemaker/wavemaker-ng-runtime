@@ -1,24 +1,25 @@
-import { PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, PROP_BOOLEAN, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-tree',
         new Map(
             [
-                ['dataset', {value: 'node1, node2, node3', notify: true}],
-                ['datavalue', PROP_STRING_NOTIFY],
+                ['class', PROP_STRING],
+                ['dataset', {value: 'node1, node2, node3', ...PROP_ANY}],
+                ['datavalue', PROP_STRING],
                 ['levels', {value: 0, ...PROP_NUMBER}],
                 ['name', PROP_STRING],
                 ['nodeaction', PROP_STRING],
-                ['nodechildren', PROP_STRING_NOTIFY],
+                ['nodechildren', PROP_STRING],
                 ['nodeclick', {value: 'none', ...PROP_STRING}],
-                ['nodeicon', PROP_STRING_NOTIFY],
+                ['nodeicon', PROP_STRING],
                 ['nodeid', PROP_STRING],
-                ['nodelabel', PROP_STRING_NOTIFY],
-                ['orderby', PROP_STRING_NOTIFY],
+                ['nodelabel', PROP_STRING],
+                ['orderby', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['treeicons', PROP_STRING_NOTIFY]
+                ['treeicons', PROP_STRING]
             ]
         )
     );

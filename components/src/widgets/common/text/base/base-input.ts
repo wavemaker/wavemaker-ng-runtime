@@ -29,6 +29,10 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     protected onPropertyChange(key: string, nv: any, ov: any) {
         // set the class on the input element
+        if (key === 'tabindex') {
+            return;
+        }
+
         if (key === 'class') {
             if (this.inputEl.nativeElement) {
                 switchClass(this.inputEl.nativeElement, nv, ov);
@@ -41,15 +45,8 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
                 nv = 'change';
             }
             this.ngModelOptions.updateOn = nv;
-        }
-    }
-
-    // Prevent the class attribute being set on the host element
-    protected processAttr(attrName: string, attrValue: string) {
-        if (attrName === 'class') {
-            this.class = attrValue;
         } else {
-            super.processAttr(attrName, attrValue);
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 
-import { $appDigest, switchClass } from '@wm/core';
+import { switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './radioset.props';
@@ -46,14 +46,16 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     }
 
     onPropertyChange(key, nv, ov?) {
-        super.onPropertyChange(key, nv, ov);
-        switch (key) {
-            case 'selectedvalue':
-                this.datavalue = nv;
-                break;
-            case 'layout':
-                switchClass(this.nativeElement, nv, ov);
-                break;
+        if (key === 'tabindex') {
+            return;
+        }
+
+        if (key === 'selectedvalue') {
+            this.datavalue = nv;
+        } else if (key === 'layout') {
+            switchClass(this.nativeElement, nv, ov);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

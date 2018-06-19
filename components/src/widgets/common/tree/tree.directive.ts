@@ -65,12 +65,14 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     public nodechildren: string;
     public orderby: string;
 
-    constructor(inj: Injector,
-                @Attribute('datavalue.bind') private binddatavalue,
-                @Attribute('nodelabel.bind') private bindnodelabel,
-                @Attribute('nodeicon.bind') private bindnodeicon,
-                @Attribute('nodechildren.bind') private bindnodechildren,
-                @Attribute('nodeid.bind') private bindnodeid) {
+    constructor(
+        inj: Injector,
+        @Attribute('datavalue.bind') private binddatavalue,
+        @Attribute('nodelabel.bind') private bindnodelabel,
+        @Attribute('nodeicon.bind') private bindnodeicon,
+        @Attribute('nodechildren.bind') private bindnodechildren,
+        @Attribute('nodeid.bind') private bindnodeid
+    ) {
         super(inj, WIDGET_INFO);
         this.bindEvents();
     }
@@ -94,16 +96,18 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             case 'datavalue':
                 this.selectNodeById(nv);
                 break;
+            default:
+                super.onPropertyChange(key, nv, ov);
         }
     }
 
     private constructNodes(nodes, parent, levels, deep, _evalDataValue) {
 
-        const $ul           = $('<ul></ul>'),
-            _iconClses    = ICON_CLASSES[this.treeicons || defaultTreeIconClass],
-            _expr         = (this.binddatavalue || this.datavalue);
-        let _iconCls,
-            _cls;
+        const $ul = $('<ul></ul>');
+        const _iconClses = ICON_CLASSES[this.treeicons || defaultTreeIconClass];
+        const _expr = (this.binddatavalue || this.datavalue);
+
+        let _iconCls, _cls;
 
         _cls     = levels > 0 ? ' expanded ' : ' collapsed ';
         _iconCls = _cls + (levels > 0 ? _iconClses.expanded : _iconClses.collapsed);
@@ -112,13 +116,13 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
         parent.append($ul);
         nodes.forEach((node, idx) => {
-            const $li             = $('<li></li>'),
-                $iconNode       = $('<i></i>'),
-                nodeLabel       = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}) || node.label,
-                nodeIcon        = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}) || node.icon,
-                nodeChildren    = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}) || node.children,
-                nodeIdValue     = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}) || node.children;
-            let isNodeMatched   = false,
+            const $li = $('<li></li>'),
+                $iconNode = $('<i></i>'),
+                nodeLabel = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}) || node.label,
+                nodeIcon = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}) || node.icon,
+                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}) || node.children,
+                nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}) || node.children;
+            let isNodeMatched = false,
                 expandCollapseIcon;
 
             $li.data('nodedata', node)
@@ -351,6 +355,4 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     public redraw() {
         this.renderTree(true);
     }
-
-
 }

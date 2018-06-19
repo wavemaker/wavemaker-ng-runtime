@@ -3,13 +3,15 @@
 <input class="range-input" aria-label="slider range" aria-orientation="horizontal"
        focus-target
        type="range" [title]="datavalue"
-       [min]="minvalue"
-       [max]="maxvalue"
-       [step]="step"
+       [attr.min]="minvalue"
+       [attr.max]="maxvalue"
+       [attr.step]="step"
        [(ngModel)]="datavalue"
        [disabled]="disabled"
        [attr.accesskey]="shortcutkey"
        [tabindex]="tabindex"
        (blur)="invokeOnTouched($event)"
-       (ngModelChange)="handleChange($event)"/>
+       (ngModelChange)="handleChange($event)"
+       [attr.name]="name"
+       [tabindex]="tabindex"/>
 <div *ngIf="readonly || disabled" aria-readonly="true" class="readonly-wrapper"></div>

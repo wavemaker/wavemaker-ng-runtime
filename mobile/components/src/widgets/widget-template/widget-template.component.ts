@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 
@@ -18,15 +18,16 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-widget-template', hostClas
 })
 export class WidgetTemplateComponent extends StylableComponent {
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
     public onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'tabIndex':
-                break;
+        if (key === 'tabindex') {
+            return;
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

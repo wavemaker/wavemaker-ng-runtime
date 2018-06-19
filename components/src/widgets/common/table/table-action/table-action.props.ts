@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN_NOTIFY, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -9,17 +9,17 @@ export const registerProps = () => {
                 ['action', PROP_STRING],
                 ['caption', PROP_STRING],
                 ['class', PROP_STRING],
-                ['disabled', {value: false, ...PROP_BOOLEAN_NOTIFY}],
-                ['display-name', PROP_STRING_NOTIFY],
+                ['disabled', {value: false, ...PROP_BOOLEAN}],
+                ['display-name', PROP_STRING],
                 ['hyperlink', PROP_STRING],
                 ['icon', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['key', PROP_STRING],
                 ['position', {value: 'footer', ...PROP_STRING}],
                 ['shortcutkey', PROP_STRING],
-                ['show', {value: true, ...PROP_BOOLEAN_NOTIFY}],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['title', PROP_STRING_NOTIFY],
+                ['title', PROP_STRING],
                 ['target', PROP_STRING],
                 ['widget-type', {value: 'button', ...PROP_STRING}]
             ]

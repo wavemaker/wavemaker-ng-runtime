@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -12,7 +12,7 @@ export const registerProps = () => {
                 ['bubblesize', PROP_STRING],
                 ['centerlabel', {value: false, ...PROP_BOOLEAN}],
                 ['customcolors', PROP_STRING],
-                ['dataset', {notify: true}],
+                ['dataset', PROP_ANY],
                 ['donutratio', {value: 'medium', ...PROP_STRING}],
                 ['formattype', {value: '', PROP_STRING}],
                 ['groupby', PROP_STRING],
@@ -47,7 +47,7 @@ export const registerProps = () => {
                 ['theme', PROP_STRING],
                 ['title', PROP_STRING],
                 ['tooltips', {value: true, ...PROP_BOOLEAN}],
-                ['type', PROP_STRING_NOTIFY],
+                ['type', PROP_STRING],
                 ['viewtype', {value: 'Grouped', ...PROP_STRING}],
                 ['xaxisdatakey', PROP_STRING],
                 ['xaxislabel', PROP_STRING],

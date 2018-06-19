@@ -29,6 +29,10 @@ const OVERRIDES = {
 const selfClosingTags = new Set(['img']);
 
 export const getBoundToExpr = (value: string) => {
+    if (!value) {
+        return null;
+    }
+
     value = value.trim();
     const match = BIND_REG_EX.exec(value);
     BIND_REG_EX.lastIndex = 0;

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy } from '@angular/core';
+import { Component, Injector, OnDestroy } from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 
@@ -36,7 +36,7 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
 
     private _listenerDestroyer;
 
-    constructor(private networkService: NetworkService, app: App, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(private networkService: NetworkService, app: App, inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.$element, this);
         this.isServiceAvailable = <boolean> this.networkService.isAvailable();
@@ -75,5 +75,6 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
 
     public ngOnDestroy() {
         this._listenerDestroyer();
+        super.ngOnDestroy();
     }
 }

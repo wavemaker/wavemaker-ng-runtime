@@ -37,7 +37,7 @@ export class VideoComponent extends StylableComponent {
     }
 
     // DO NOT use ngIf binding for the track. As of v6.0.Beta7 there is an error creating a void track node
-    onPropertyChange(key: string, nv: string) {
+    onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'subtitlesource') {
             let track: HTMLElement = this.nativeElement.querySelector('track');
             if (track) {
@@ -54,5 +54,7 @@ export class VideoComponent extends StylableComponent {
 
             appendNode(track, this.nativeElement.querySelector('video'));
         }
+
+        super.onPropertyChange(key, nv, ov);
     }
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, HostBinding, Injector } from '@angular/core';
 
 import { noop, removeAttr } from '@wm/core';
 
@@ -97,12 +97,12 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     }
 
     onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'content':
-                if (this.isActive) {
-                    setTimeout(() => this.$lazyLoad(), 100);
-                }
-                break;
+        if (key === 'content') {
+            if (this.isActive) {
+                setTimeout(() => this.$lazyLoad(), 100);
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

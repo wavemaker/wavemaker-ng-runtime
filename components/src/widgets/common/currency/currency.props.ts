@@ -1,10 +1,10 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const currencyProps = new Map(
     [
         ['class', PROP_STRING],
-        ['currency', {value: 'USD', ...PROP_STRING_NOTIFY}],
-        ['datavalue', PROP_STRING_NOTIFY],
+        ['currency', {value: 'USD', ...PROP_STRING}],
+        ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
         ['maxvalue', PROP_NUMBER],

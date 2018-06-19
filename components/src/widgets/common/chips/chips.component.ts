@@ -476,4 +476,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.resetReorder();
         this.invokeEventCallback('reorder', {$event, $data: this.chipsList, $changedItem: changedItem});
     }
+
+    onPropertyChange(key: string, nv: any, ov: any) {
+        if (key === 'tabindex') {
+            return;
+        }
+        super.onPropertyChange(key, nv, ov);
+    }
 }

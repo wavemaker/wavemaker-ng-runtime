@@ -1,12 +1,13 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
+import { addClass, removeClass } from '@wm/core';
+
 import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
 import { registerProps } from './color-picker.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseFormCustomComponent } from '../base/base-form-custom.component';
-import { addClass, removeClass } from '@wm/core';
 
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
@@ -38,7 +39,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
 
     // To remove space occupied by colorpicker when it is closed
     private colorPickerToggleChange(isOpen: boolean) {
-        const colorPickerContainer: HTMLElement = this.nativeElement.querySelector(`.color-picker`);
+        const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
         (!isOpen) ? addClass(colorPickerContainer, 'hidden') : removeClass(colorPickerContainer, 'hidden');
     }
 
@@ -51,5 +52,12 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
 
     protected handleChange(newVal: boolean) {
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
+    }
+
+    protected onPropertyChange(key: string, nv: any, ov: any) {
+        if (key === 'tabindex') {
+            return;
+        }
+        super.onPropertyChange(key, nv, ov);
     }
 }

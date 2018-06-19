@@ -1,6 +1,4 @@
-import { Attribute, Element } from '@angular/compiler';
-
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'img';
 

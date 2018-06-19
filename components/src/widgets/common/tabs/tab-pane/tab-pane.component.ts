@@ -37,10 +37,11 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
     @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
 
-    constructor(inj: Injector,
-                private tabsRef: TabsComponent,
-                @Attribute('heading') public heading,
-                @Attribute('title') public title
+    constructor(
+        inj: Injector,
+        private tabsRef: TabsComponent,
+        @Attribute('heading') public heading,
+        @Attribute('title') public title
     ) {
         super(inj, WIDGET_CONFIG);
 
@@ -101,13 +102,13 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.tabsRef.selectPrev();
     }
 
-    onPropertyChange(key, nv, ov) {
-        switch (key) {
-            case 'content':
-                if (this.isActive) {
-                    setTimeout(() => this.$lazyLoad(), 100);
-                }
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'content') {
+            if (this.isActive) {
+                setTimeout(() => this.$lazyLoad(), 100);
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -122,7 +123,6 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
             this,
             APPLY_STYLES_TYPE.CONTAINER
         );
+        super.ngAfterViewInit();
     }
 }
-
-// Todo: Bandhavya - animate the tab

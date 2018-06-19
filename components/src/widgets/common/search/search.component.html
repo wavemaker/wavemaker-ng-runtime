@@ -42,7 +42,8 @@
            typeaheadWaitMs="100"
            [typeaheadScrollable]="typeaheadscrollable"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
-           [tabindex]="tabindex"/>
+           [tabindex]="tabindex"
+           [attr.name]="name"/>
 </ng-template>
 <!--This template is for both web and fullscreen mode in mobile.-->
 <ng-template #searchTemplate>
@@ -65,7 +66,8 @@
            (typeaheadLoading)="_loadingItems"
            [typeaheadScrollable]="typeaheadscrollable"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
-           [tabindex]="tabindex"/>
+           [tabindex]="tabindex"
+           [attr.name]="name"/>
     <input class="model-holder" ng-model="_model_" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
     <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch()"></span>

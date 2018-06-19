@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy } from '@angular/core';
+import { Component, Injector, OnDestroy } from '@angular/core';
 
-import { BaseComponent, IWidgetConfig, getImageUrl, PageDirective, LeftPanelDirective, provideAsWidgetRef } from '@wm/components';
+import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef } from '@wm/components';
 import { DeviceService } from '@wm/mobile/core';
 
 import { registerProps } from './mobile-navbar.props';
@@ -17,7 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass:
         provideAsWidgetRef(MobileNavbarComponent)
     ]
 })
-export class MobileNavbarComponent extends BaseComponent implements OnDestroy{
+export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
 
     public datavalue: string;
     public imagesrc: string;
@@ -27,9 +27,11 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy{
 
     private _backBtnListenerDestroyer;
 
-    constructor(private page: PageDirective,
-                private deviceService: DeviceService,
-                inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(
+        private page: PageDirective,
+        private deviceService: DeviceService,
+        inj: Injector
+    ) {
         super(inj, WIDGET_CONFIG);
         page.subscribe('wmLeftPanel:ready', (leftNavPanel: LeftPanelDirective) => {
             if (this.showLeftnavbtn) {
@@ -53,19 +55,18 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy{
 
     public ngOnDestroy() {
         this._backBtnListenerDestroyer();
+        super.ngOnDestroy();
     }
 
     public onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'imgsrc':
-                this.imagesrc = getImageUrl(nv);
-                break;
-            case 'dataset':
-                // $is._dataset = nv;
-                break;
-            case 'defaultview':
-                this.showSearchbar = (nv === 'searchview');
-                break;
+        if (key === 'imgsrc') {
+            this.imagesrc = getImageUrl(nv);
+        } else if (key === 'dataset') {
+            // $is._dataset = nv;
+        } else if (key === 'defaultview') {
+            this.showSearchbar = (nv === 'searchview');
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

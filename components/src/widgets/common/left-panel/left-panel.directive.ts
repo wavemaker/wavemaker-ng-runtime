@@ -12,14 +12,11 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
-declare const $;
-
 const DEFAULT_CLS = 'app-left-panel left-panel-collapsed';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-left-panel',
     hostClass: DEFAULT_CLS
 };
-
 
 export enum AnimationType {
     SLIDE_IN = 'slide-in',
@@ -127,6 +124,8 @@ export class LeftPanelDirective extends StylableComponent {
                     this.setPageWidthAndPosition(['xs'], nv, ov);
                 }
                 break;
+            default:
+                super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -174,5 +173,3 @@ export class LeftPanelDirective extends StylableComponent {
         });
     }
 }
-// Todo vinay -- incomplete.. animations.
-// Todo DeviceView

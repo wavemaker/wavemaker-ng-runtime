@@ -28,6 +28,3 @@ export class FooterDirective extends StylableComponent {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }
-
-// Todo - Vinay -- layout for mobile
-// element.scope().layout.footer = true;

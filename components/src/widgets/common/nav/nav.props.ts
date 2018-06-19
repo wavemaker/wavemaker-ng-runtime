@@ -1,4 +1,4 @@
-import { register, PROP_STRING, PROP_STRING_NOTIFY, PROP_BOOLEAN } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -7,19 +7,19 @@ export const registerProps = () => {
             [
                 ['autoclose', Object.assign({value: 'always'}, PROP_STRING)],
                 ['class', PROP_STRING],
-                ['dataset', {notify: true}],
-                ['itemlabel', PROP_STRING_NOTIFY],
-                ['itemlink', PROP_STRING_NOTIFY],
-                ['itemicon', PROP_STRING_NOTIFY],
-                ['itemchildren', PROP_STRING_NOTIFY],
-                ['itemaction', PROP_STRING_NOTIFY],
+                ['dataset', PROP_ANY],
+                ['itemlabel', PROP_STRING],
+                ['itemlink', PROP_STRING],
+                ['itemicon', PROP_STRING],
+                ['itemchildren', PROP_STRING],
+                ['itemaction', PROP_STRING],
                 ['itembadge', PROP_STRING],
-                ['layout', PROP_STRING_NOTIFY],
+                ['layout', PROP_STRING],
                 ['name', PROP_STRING],
                 ['orderby', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['type', PROP_STRING_NOTIFY],
-                ['userrole', PROP_STRING_NOTIFY]
+                ['type', PROP_STRING],
+                ['userrole', PROP_STRING]
             ]
         )
     );

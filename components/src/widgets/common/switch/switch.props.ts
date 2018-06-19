@@ -1,10 +1,11 @@
-import { PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const switchProps = new Map(
     [
+        ['class', PROP_STRING],
         ['compareby', PROP_STRING],
         ['datafield', PROP_STRING],
-        ['dataset', {value: 'yes, no, maybe', notify: true}],
+        ['dataset', {value: 'yes, no, maybe', ...PROP_ANY}],
         ['datavalue', PROP_STRING],
         ['displayfield', PROP_STRING],
         ['iconclass', PROP_STRING],

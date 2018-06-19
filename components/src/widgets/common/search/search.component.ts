@@ -6,11 +6,9 @@ import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 
 import { addClass, isDefined } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { convertDataToObject, DataSetItem, extractDataAsArray, transformData} from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, transformData } from '../../../utils/form-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-
 import { styler } from '../../framework/styler';
-
 import { registerProps } from './search.props';
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
@@ -359,6 +357,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
 
         super.handleEvent(node, eventName, eventCallback, locals);
+    }
+
+    onPropertyChange(key: string, nv: any, ov: any) {
+        if (key === 'tabindex') {
+            return;
+        }
+        super.onPropertyChange(key, nv, ov);
     }
 }
 

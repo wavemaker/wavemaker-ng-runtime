@@ -1,12 +1,12 @@
-import { register, PROP_STRING, PROP_STRING_NOTIFY, PROP_NUMBER_NOTIFY } from '../../framework/widget-props';
+import { PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-page-content',
         new Map(
             [
-                ['columnwidth', PROP_NUMBER_NOTIFY],
-                ['content', PROP_STRING_NOTIFY],
+                ['columnwidth', PROP_NUMBER],
+                ['content', PROP_STRING],
                 ['name', PROP_STRING],
             ]
         )

@@ -1,9 +1,10 @@
 import { Directive, Inject, Self } from '@angular/core';
 
-import { TableComponent } from './table.component';
 import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType } from '@wm/core';
-import { refreshDataSource } from '../../../utils/data-utils';
 import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget } from '@wm/components';
+
+import { TableComponent } from './table.component';
+import { refreshDataSource } from '../../../utils/data-utils';
 
 declare const _;
 declare const moment;
@@ -291,9 +292,9 @@ export class TableFilterSortDirective {
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterFields = this.getFilterFields(searchObj);
         refreshDataSource(this.table.datasource, {
-            'page': 1,
-            'filterFields' : filterFields,
-            'orderBy' : sortOptions
+            page: 1,
+            filterFields : filterFields,
+            orderBy : sortOptions
         }).then(() => {
             $appDigest();
         }, () => {
@@ -312,9 +313,9 @@ export class TableFilterSortDirective {
         const filterFields = this.getFilterFields(this.table.filterInfo);
 
         refreshDataSource(this.table.datasource, {
-            'page' : 1,
-            'filterFields' : filterFields,
-            'orderBy' : sortOptions
+            page : 1,
+            filterFields : filterFields,
+            orderBy : sortOptions
         }).then(() => {
             $appDigest();
             this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData});
@@ -437,10 +438,10 @@ export class TableFilterSortDirective {
                     value.matchMode = value.matchMode || _.get(this.table.matchModeTypesMap[value.type], 0);
                 }
                 searchObj.push({
-                    'field'     : key,
-                    'value'     : value.value,
-                    'matchMode' : value.matchMode,
-                    'type'      : value.type
+                    field: key,
+                    value: value.value,
+                    matchMode: value.matchMode,
+                    type: value.type
                 });
             }
         });
@@ -458,9 +459,9 @@ export class TableFilterSortDirective {
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterFields = this.getFilterFields(this.table.filterInfo);
         refreshDataSource(this.table.datasource, {
-            'page': page,
-            'filterFields' : filterFields,
-            'orderBy' : sortOptions
+            page: page,
+            filterFields : filterFields,
+            orderBy : sortOptions
         });
     }
 }

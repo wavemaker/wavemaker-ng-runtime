@@ -1,6 +1,6 @@
 import { Directive, DoCheck, ElementRef, Injector, Input, OnDestroy } from '@angular/core';
 
-import { isIos, isKitkatDevice, isMobile } from '@wm/core';
+import { debounce, isIos, isKitkatDevice, isMobile } from '@wm/core';
 
 declare const IScroll;
 declare const _;
@@ -158,7 +158,7 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
 }
 
 /**
- * Refreshs the given iScorll or all iScrolls in the page.
+ * Refreshes the given iScorll or all iScrolls in the page.
  * @param iScroll
  */
 const refreshIscrolls = function(iScroll?: any) {
@@ -188,4 +188,4 @@ const refreshIscrolls = function(iScroll?: any) {
 };
 
 // on window resize, recalculate the iscroll position and refresh scrollers.
-window.addEventListener('resize', refreshIscrolls);
+window.addEventListener('resize', debounce(refreshIscrolls, 200));

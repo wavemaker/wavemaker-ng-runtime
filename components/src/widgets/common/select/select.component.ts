@@ -44,4 +44,11 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         this.invokeOnTouched();
         this.invokeEventCallback('change', {$event, newVal: this.datavalue});
     }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'class' ||  key === 'tabindex') {
+            return;
+        }
+        super.onPropertyChange(key, nv, ov);
+    }
 }

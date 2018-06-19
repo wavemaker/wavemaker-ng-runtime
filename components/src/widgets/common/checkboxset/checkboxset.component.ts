@@ -1,17 +1,19 @@
 import { Attribute, Component, Injector } from '@angular/core';
 
-import { $appDigest, switchClass } from '@wm/core';
+import { switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { IWidgetConfig } from '../../framework/types';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from '../checkboxset/checkboxset.props';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { toggleAllHeaders, convertDataToObject, groupData, handleHeaderClick } from '../../../utils/form-utils';
+import { convertDataToObject, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
+
 
 registerProps();
 const DEFAULT_CLS = 'app-checkboxset list-group';
-const WIDGET_CONFIG = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
 declare const _;
 
 @Component({
@@ -69,18 +71,19 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     }
 
     onPropertyChange(key, nv, ov?) {
-        super.onPropertyChange(key, nv, ov);
-        switch (key) {
-            case 'selectedvalues':
-                this.datavalue = nv;
-                break;
-            case 'layout':
-                switchClass(this.nativeElement, nv, ov);
-                break;
-            case 'groupby':
-            case 'match':
-                this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];
-                break;
+
+        if (key === 'tabindex') {
+            return;
+        }
+
+        if (key === 'selectedvalues') {
+            this.datavalue = nv;
+        } else if (key === 'layout') {
+            switchClass(this.nativeElement, nv, ov);
+        } else if (key === 'groupby' || key === 'match') {
+            this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

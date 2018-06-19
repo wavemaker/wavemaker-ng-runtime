@@ -20,15 +20,17 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 })
 export class PageContentDirective extends StylableComponent {
 
-    onPropertyChange(key, nv, ov) {
-        if (key === 'columnwidth') {
-            switchClass(this.nativeElement, `col-md-${nv} col-sm-${nv}`, `col-md-${ov} col-sm-${ov}`);
-        }
-    }
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+    }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'columnwidth') {
+            switchClass(this.nativeElement, `col-md-${nv} col-sm-${nv}`, `col-md-${ov} col-sm-${ov}`);
+        } else {
+            super.onPropertyChange(key, nv, ov);
+        }
     }
 }

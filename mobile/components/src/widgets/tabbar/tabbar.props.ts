@@ -1,11 +1,11 @@
-import { PROP_STRING, PROP_STRING_NOTIFY, register } from '@wm/components';
+import { PROP_ANY, PROP_STRING, register } from '@wm/components';
 
 export const registerProps = () => {
     register(
         'wm-mobile-tabbar',
         new Map(
             [
-                ['dataset', {notify: true}],
+                ['dataset', PROP_ANY],
                 ['itemicon', PROP_STRING],
                 ['itemlabel', PROP_STRING],
                 ['itemlink', PROP_STRING],

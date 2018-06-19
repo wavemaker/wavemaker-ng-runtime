@@ -32,7 +32,7 @@ export class TableActionDirective extends BaseComponent implements OnInit {
     tabindex;
     title;
     key;
-    hyperlink
+    hyperlink;
     target;
     buttonDef;
 
@@ -74,12 +74,11 @@ export class TableActionDirective extends BaseComponent implements OnInit {
         if (!this._propsInitialized) {
             return;
         }
-        switch (key) {
-            case 'display-name':
-                this.buttonDef.displayName = nv;
-            default:
-                this.buttonDef[key] = nv;
-                break;
+
+        if (key === 'display-name') {
+            this.buttonDef.displayName = nv;
+        } else {
+            this.buttonDef[key] = nv;
         }
     }
 }

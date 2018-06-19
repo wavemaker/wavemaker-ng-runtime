@@ -1,4 +1,4 @@
-import { DataSource, findValueOf, AppDefaults, isPageable } from '@wm/core';
+import { AppDefaults, DataSource, findValueOf } from '@wm/core';
 
 import { convertDataToObject } from '../../../../utils/form-utils';
 import { IDataProvider, IDataProviderConfig } from './data-provider';

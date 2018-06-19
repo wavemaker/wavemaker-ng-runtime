@@ -11,10 +11,12 @@ export class MobileLeftPanelDirective implements OnDestroy {
 
     private _backBtnListenerDestroyer;
 
-    constructor(private page: PageDirective,
-                private leftPanelRef: LeftPanelDirective,
-                private deviceService: DeviceService,
-                elRef: ElementRef) {
+    constructor(
+        private page: PageDirective,
+        private leftPanelRef: LeftPanelDirective,
+        private deviceService: DeviceService,
+        elRef: ElementRef
+    ) {
         addClass(elRef.nativeElement, 'wm-mobile-app-left-panel');
         page.notify('wmLeftPanel:ready', leftPanelRef);
         page.subscribe('wmLeftPanel:expand', () => {

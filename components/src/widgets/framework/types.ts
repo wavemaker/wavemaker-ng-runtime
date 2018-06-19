@@ -1,5 +1,4 @@
 import { InjectionToken } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 
 import { BaseComponent } from '../common/base/base.component';
 

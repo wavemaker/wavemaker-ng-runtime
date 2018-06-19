@@ -46,10 +46,12 @@ export class TableColumnGroupDirective extends BaseComponent implements OnInit {
         };
     }
 
-    onPropertyChange(key, nv) {
+    onPropertyChange(key, nv, ov?) {
         if (key === 'caption') {
             this.config.displayName = nv || '';
             this.table.callDataGridMethod('setColumnProp', this.config.field, 'displayName', nv, true);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

@@ -29,6 +29,3 @@ export class HeaderComponent extends StylableComponent {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 }
-
-// Todo Vinay - mobile UI Related chanegs
-// element.scope().layout.header = true;

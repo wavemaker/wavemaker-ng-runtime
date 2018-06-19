@@ -1,4 +1,4 @@
-import { Directive, Injector, HostListener } from '@angular/core';
+import { Directive, HostListener, Injector } from '@angular/core';
 import { addClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';

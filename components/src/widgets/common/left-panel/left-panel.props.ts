@@ -1,17 +1,17 @@
-import { PROP_NUMBER_NOTIFY, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-left-panel',
         new Map(
             [
-                ['animation', {value: 'slide-in', ...PROP_STRING_NOTIFY}],
+                ['animation', {value: 'slide-in', ...PROP_STRING}],
                 ['class', PROP_STRING],
-                ['columnwidth', PROP_NUMBER_NOTIFY],
-                ['content', PROP_STRING_NOTIFY],
+                ['columnwidth', PROP_NUMBER],
+                ['content', PROP_STRING],
                 ['gestures', {value: 'on', ... PROP_STRING}],
                 ['name', PROP_STRING],
-                ['xscolumnwidth', { value: 10, ...PROP_NUMBER_NOTIFY}]
+                ['xscolumnwidth', { value: 10, ...PROP_NUMBER}]
             ]
         )
     );

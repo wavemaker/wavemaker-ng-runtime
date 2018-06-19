@@ -1,7 +1,7 @@
-import { Directive, Injector, OnInit, Optional, ContentChildren, Attribute, AfterContentInit } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
 
 import { BaseComponent } from '../../base/base.component';
-import { getDataTableFilterWidget, setHeaderConfigForTable, getEditModeWidget, getDefaultValue, EDIT_MODE } from '../../../../utils/live-utils';
+import { EDIT_MODE, getDataTableFilterWidget, getDefaultValue, getEditModeWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
 import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
@@ -170,6 +170,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 this.registerDestroyListener(() => s3.unsubscribe());
             }
         }
+        super.ngAfterContentInit();
     }
 
     addFormControl(name) {
@@ -356,7 +357,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
     }
 
-    onPropertyChange(key, nv) {
+    onPropertyChange(key, nv, ov) {
         if (!this._propsInitialized) {
             return;
         }
@@ -386,6 +387,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 }
                 break;
         }
+
+        super.onPropertyChange(key, nv, ov);
     }
 
     setProperty(property, nv) {

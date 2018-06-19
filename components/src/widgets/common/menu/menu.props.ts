@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -9,14 +9,14 @@ export const registerProps = () => {
                 ['animateitems', PROP_STRING],
                 ['autoclose', {value: 'always', ...PROP_STRING}],
                 ['caption', {value: 'Menu', ...PROP_STRING}],
-                ['dataset', {value: 'Menu Item 1, Menu Item 2, Menu Item 3', notify: true}],
+                ['dataset', {value: 'Menu Item 1, Menu Item 2, Menu Item 3', ...PROP_ANY}],
                 ['hint', {value: '', ...PROP_STRING}],
                 ['iconclass', PROP_STRING],
-                ['itemaction', PROP_STRING_NOTIFY],
-                ['itemchildren', PROP_STRING_NOTIFY],
-                ['itemicon', PROP_STRING_NOTIFY],
-                ['itemlabel', PROP_STRING_NOTIFY],
-                ['itemlink', PROP_STRING_NOTIFY],
+                ['itemaction', PROP_STRING],
+                ['itemchildren', PROP_STRING],
+                ['itemicon', PROP_STRING],
+                ['itemlabel', PROP_STRING],
+                ['itemlink', PROP_STRING],
                 ['linktarget', {value: '', ...PROP_STRING}],
                 ['menuclass', PROP_STRING],
                 ['menulayout', PROP_STRING],

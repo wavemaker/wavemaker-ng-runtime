@@ -2,6 +2,7 @@ import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '
 
 import { IWidgetConfig } from '@wm/components';
 import { toBoolean } from '@wm/core';
+
 import { registerProps } from './alert-dialog.props';
 import { BaseDialog } from '../base/base-dialog';
 import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
@@ -54,15 +55,6 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
 
     protected getTemplateRef(): TemplateRef<any> {
         return this.dialogTemplate;
-    }
-
-    protected processAttr(attrName: string, attrValue: string) {
-        // ignore the class attribute.
-        // Prevent the framework from setting the class on the host element.
-        if (attrName === 'class') {
-            return;
-        }
-        super.processAttr(attrName, attrValue);
     }
 
     /**

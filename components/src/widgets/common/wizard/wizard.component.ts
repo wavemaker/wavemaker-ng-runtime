@@ -270,13 +270,13 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     // Define the property change handler. This Method will be triggered when there is a change in the widget property
     onPropertyChange(key: string, nv: any, ov?: any) {
         // Monitoring changes for properties and accordingly handling respective changes
-        switch (key) {
-            case 'stepstyle':
-                this.stepClass =  nv === 'justified' ? 'nav-justified' : '';
-                break;
-            case 'defaultstep':
-                this.setDefaultStep(this.getStepRefByName(nv));
-                break;
+
+        if (key === 'stepstyle') {
+            this.stepClass =  nv === 'justified' ? 'nav-justified' : '';
+        } else if (key === 'defaultstep') {
+            this.setDefaultStep(this.getStepRefByName(nv));
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

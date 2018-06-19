@@ -33,12 +33,13 @@ export class LabelDirective extends StylableComponent {
     }
 
     onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'caption':
-                setProperty(this.nativeElement, 'textContent', nv);
-                break;
-            case 'required':
-                toggleClass(this.nativeElement, 'required', nv);
+
+        if (key === 'caption') {
+            setProperty(this.nativeElement, 'textContent', nv);
+        } else if (key === 'required') {
+            toggleClass(this.nativeElement, 'required', nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

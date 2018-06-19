@@ -38,10 +38,10 @@ export class LayoutGridColumnDirective extends StylableComponent {
     // Todo - isMobileApplicationType - use xs else sm
     onPropertyChange(key, nv, ov?) {
         const prefix = 'sm';
-        switch (key) {
-            case 'columnwidth':
-                switchClass(this.nativeElement, `col-${prefix}-${nv}`, ov ? `col-${prefix}-${ov}` : '');
-                break;
+        if (key === 'columnwidth') {
+            switchClass(this.nativeElement, `col-${prefix}-${nv}`, ov ? `col-${prefix}-${ov}` : '');
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

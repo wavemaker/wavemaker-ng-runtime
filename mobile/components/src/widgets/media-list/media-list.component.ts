@@ -1,7 +1,7 @@
 import { Component, ContentChild, ElementRef, Injector, TemplateRef } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
-import { isArray, isString, isObject, isPageable, $parseExpr, addClass, removeClass, $appDigest } from '@wm/core';
+import { $appDigest, $parseExpr, addClass, isArray, isObject, isString, removeClass } from '@wm/core';
 
 import { registerProps } from './media-list.props';
 
@@ -38,17 +38,16 @@ export class MediaListComponent extends StylableComponent {
     }
 
     public onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'dataset':
-                this.onDataChange(nv);
-                break;
-            case 'layout':
-                if (nv === Layout.SINGLE_ROW) {
-                    addClass(this.nativeElement, 'singlerow');
-                } else {
-                    removeClass(this.nativeElement, 'singlerow');
-                }
-                break;
+        if (key === 'dataset') {
+            this.onDataChange(nv);
+        } else if (key === 'layout') {
+            if (nv === Layout.SINGLE_ROW) {
+                addClass(this.nativeElement, 'singlerow');
+            } else {
+                removeClass(this.nativeElement, 'singlerow');
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

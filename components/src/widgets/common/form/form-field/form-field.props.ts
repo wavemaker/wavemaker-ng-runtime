@@ -1,6 +1,6 @@
 import { FormWidgetType } from '@wm/core';
 
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_STRING, register } from '../../../framework/widget-props';
 import { searchProps } from '../../search/search.props';
 import { checkboxProps } from '../../checkbox/checkbox.props';
 import { colorPickerProps } from '../../color-picker/color-picker.props';
@@ -57,9 +57,9 @@ const widgetPropsMap = new Map(
 );
 const formFieldMap = new Map(
     [
-        ['defaultvalue', PROP_STRING_NOTIFY],
+        ['defaultvalue', PROP_STRING],
         ['displayname', PROP_STRING],
-        ['display-name', PROP_STRING_NOTIFY],
+        ['display-name', PROP_STRING],
         ['field', PROP_STRING],
         ['hint', PROP_STRING],
         ['is-range', PROP_BOOLEAN],
@@ -68,9 +68,9 @@ const formFieldMap = new Map(
         ['lookup-type', PROP_STRING],
         ['lookup-field', PROP_STRING],
         ['name', PROP_STRING],
-        ['maxdefaultvalue', PROP_STRING_NOTIFY],
-        ['maxplaceholder', PROP_STRING_NOTIFY],
-        ['primary-key', PROP_STRING_NOTIFY],
+        ['maxdefaultvalue', PROP_STRING],
+        ['maxplaceholder', PROP_STRING],
+        ['primary-key', PROP_STRING],
         ['related-entity-name', PROP_STRING],
         ['required', PROP_BOOLEAN],
         ['show', {value: true, ...PROP_BOOLEAN}],
@@ -84,11 +84,7 @@ export const registerProps = () => {
     widgetPropsMap.forEach((val, key) => {
         const propsMap = new Map(formFieldMap);
         const widgetProps = widgetPropsMap.get(key);
-        widgetProps.forEach((v: any, k) => {
-            v = {...v};
-            v.notify = true;
-            propsMap.set(k, v);
-        });
+        widgetProps.forEach((v: any, k) => propsMap.set(k, v));
         register(
             'wm-form-field-' + key,
             propsMap

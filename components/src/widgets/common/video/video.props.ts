@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -15,8 +15,8 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['oggformat', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['subtitlelang', {value: 'en', ...PROP_STRING_NOTIFY}],
-                ['subtitlesource', PROP_STRING_NOTIFY],
+                ['subtitlelang', {value: 'en', ...PROP_STRING}],
+                ['subtitlesource', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['videoposter', {value: 'resources/images/imagelists/default-image.png', ...PROP_STRING}],
                 ['videopreload', {value: 'none', ...PROP_STRING}],

@@ -42,8 +42,14 @@ export class CurrencyComponent extends BaseFormCustomComponent implements OnInit
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'tabindex') {
+            return;
+        }
+
         if (key === 'currency') {
             this.currencySymbol = CURRENCY_INFO[this.currency || 'USD'].symbol;
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

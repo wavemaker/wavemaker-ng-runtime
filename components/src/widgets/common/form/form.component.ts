@@ -209,10 +209,10 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         return false;
     }
 
-    onPropertyChange(key, newVal, ov?) {
+    onPropertyChange(key, nv, ov?) {
         switch (key) {
             case 'captionalign':
-                this.captionAlignClass = 'align-' + newVal;
+                this.captionAlignClass = 'align-' + nv;
                 break;
             case 'captionposition':
                 this.setLayoutConfig();
@@ -221,18 +221,18 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 this.setLayoutConfig();
                 break;
             case 'captionsize':
-                this.captionsize = newVal;
+                this.captionsize = nv;
                 break;
             case 'novalidate':
                 //  Set validation type based on the novalidate property
-                this.widget.validationtype = (newVal === true || newVal === 'true') ? 'none' : 'default';
+                this.widget.validationtype = (nv === true || nv === 'true') ? 'none' : 'default';
                 break;
             case 'formdata':
-                this.setFormData(newVal);
+                this.setFormData(nv);
                 break;
             case 'defaultmode':
                 if (!this.isLayoutDialog) {
-                    if (newVal && newVal === 'Edit') {
+                    if (nv && nv === 'Edit') {
                         this.updateMode = true;
                     } else {
                         this.updateMode = false;
@@ -246,6 +246,8 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             case 'metadata':
                 this.generateFormFields();
                 break;
+            default:
+                super.onPropertyChange(key, nv, ov);
         }
     }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 
@@ -19,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segment-content', hostClas
 })
 export class SegmentContentComponent extends StylableComponent {
 
-    constructor(private segmentedControl: SegmentedControlComponent, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(private segmentedControl: SegmentedControlComponent, inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
         segmentedControl.addContent(this);

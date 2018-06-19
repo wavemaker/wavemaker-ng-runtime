@@ -166,6 +166,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
                 this._resetNodes();
                 break;
         }
+        super.onPropertyChange(key, nv, ov);
     }
 }
 

@@ -1,6 +1,7 @@
 <textarea class="form-control app-textarea"
           focus-target
           role="input"
+          [attr.name]="name"
           [(ngModel)]="datavalue"
           [ngModelOptions]="ngModelOptions"
           [readonly]="readonly"

@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const chipsProps = new Map(
     [
@@ -6,14 +6,14 @@ export const chipsProps = new Map(
         ['autofocus', PROP_BOOLEAN],
         ['chipclass', PROP_STRING],
         ['class', PROP_STRING],
-        ['datafield', {value: 'All Fields', ...PROP_STRING_NOTIFY}],
-        ['displayfield', PROP_STRING_NOTIFY],
-        ['dataset', {value: 'Option 1, Option 2, Option 3', notify: true}],
-        ['datavalue', {notify: true}],
+        ['datafield', {value: 'All Fields', ...PROP_STRING}],
+        ['displayfield', PROP_STRING],
+        ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_ANY}],
+        ['datavalue', PROP_ANY],
         ['disabled', PROP_BOOLEAN],
         ['displayimagesrc', PROP_STRING],
-        ['displaylabel', PROP_STRING_NOTIFY],
-        ['enablereorder', PROP_BOOLEAN_NOTIFY],
+        ['displaylabel', PROP_STRING],
+        ['enablereorder', PROP_BOOLEAN],
         ['imagewidth', {value: '16px', ...PROP_STRING}],
         ['inputposition', {value: 'last', ...PROP_STRING}],
         ['inputwidth', {value: 'default', ...PROP_STRING}],

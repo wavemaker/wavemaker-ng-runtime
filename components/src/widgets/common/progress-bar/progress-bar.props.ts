@@ -1,4 +1,4 @@
-import { PROP_NUMBER, PROP_NUMBER_NOTIFY, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -7,15 +7,15 @@ export const registerProps = () => {
             [
                 ['captionplacement', {value: 'hidden', ...PROP_STRING}],
                 ['class', PROP_STRING],
-                ['dataset', {notify: true}],
-                ['datavalue', PROP_STRING_NOTIFY],
-                ['displayformat', PROP_STRING_NOTIFY],
+                ['dataset', PROP_ANY],
+                ['datavalue', PROP_STRING],
+                ['displayformat', PROP_STRING],
                 ['hint', PROP_STRING],
-                ['maxvalue', {value: 100, ...PROP_NUMBER_NOTIFY}],
-                ['minvalue', {value: 0, ...PROP_NUMBER_NOTIFY}],
+                ['maxvalue', {value: 100, ...PROP_NUMBER}],
+                ['minvalue', {value: 0, ...PROP_NUMBER}],
                 ['name', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['type', PROP_STRING_NOTIFY]
+                ['type', PROP_STRING]
             ]
         )
     );

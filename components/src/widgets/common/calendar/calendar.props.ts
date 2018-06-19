@@ -1,15 +1,15 @@
-import { PROP_BOOLEAN, PROP_STRING, PROP_STRING_NOTIFY, PROP_NUMBER, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-calendar',
         new Map(
             [
-                ['calendartype', {value: 'basic', ...PROP_STRING_NOTIFY}],
+                ['calendartype', {value: 'basic', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['controls', {value: 'navigation, today, year, month, week, day', ...PROP_STRING}],
-                ['dataset', {notify: true}],
+                ['dataset', PROP_ANY],
                 ['datavalue', PROP_STRING],
                 ['eventallday', PROP_STRING],
                 ['eventclass', PROP_STRING],
@@ -19,8 +19,8 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
-                ['view', PROP_STRING_NOTIFY],
-                ['selectionmode', PROP_STRING_NOTIFY]
+                ['view', PROP_STRING],
+                ['selectionmode', PROP_STRING]
             ]
         )
     );

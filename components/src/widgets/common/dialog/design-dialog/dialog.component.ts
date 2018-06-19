@@ -64,15 +64,6 @@ export class DialogComponent extends BaseDialog implements OnInit {
         return this.dialogTemplate;
     }
 
-    protected processAttr(attrName: string, attrValue: string) {
-        // ignore the class attribute.
-        // Prevent the framework from setting the class on the host element.
-        if (attrName === 'class') {
-            return;
-        }
-        super.processAttr(attrName, attrValue);
-    }
-
     ngOnInit() {
         super.ngOnInit();
         this.register();

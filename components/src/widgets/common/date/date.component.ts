@@ -1,18 +1,23 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
+
+import { BsDatepickerDirective } from 'ngx-bootstrap';
 
 import { getDateObj, getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
+import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './date.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
-import { BsDatepickerConfig } from 'ngx-bootstrap';
+import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 registerProps();
 
 const DEFAULT_CLS = 'app-date input-group';
-const WIDGET_CONFIG = {widgetType: 'wm-date', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-date',
+    hostClass: DEFAULT_CLS
+};
 
 @Component({
     selector: '[wmDate]',
@@ -22,16 +27,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-date', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(DateComponent)
     ]
 })
-export class DateComponent extends BaseFormCustomComponent {
-    private outputFormat;
-    /**
-     * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
-     */
-    private _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
-
-    private isCurrentDate;
-
-    bsDataValue;
+export class DateComponent extends BaseDateTimeComponent {
+    private bsDataValue;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -42,7 +39,7 @@ export class DateComponent extends BaseFormCustomComponent {
     }
 
     get datavalue () {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputFormat) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat) || '';
     }
 
     // Todo[Shubham]: needs to be redefined
@@ -56,6 +53,8 @@ export class DateComponent extends BaseFormCustomComponent {
         this.invokeOnChange(this.datavalue);
     }
 
+    @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
+
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
     constructor(inj: Injector, public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
@@ -64,24 +63,14 @@ export class DateComponent extends BaseFormCustomComponent {
         this._dateOptions.showWeekNumbers = false;
     }
 
-    onPropertyChange(key, newVal, ov?) {
-        switch (key) {
-            case 'datepattern':
-                this._dateOptions.dateInputFormat = newVal;
-                break;
-            case 'outputformat':
-                this.outputFormat = newVal;
-                break;
-            case 'showweeks':
-                this._dateOptions.showWeekNumbers = newVal;
-                break;
-            case 'mindate':
-                this._dateOptions.minDate = getDateObj(newVal);
-                break;
-            case 'maxdate':
-                this._dateOptions.maxDate = getDateObj(newVal);
-                break;
+    // sets the dataValue and computes the display model values
+    private setDataValue(newVal): void {
+        if (newVal) {
+            this.bsDataValue = newVal;
+        } else {
+            this.bsDataValue = undefined;
         }
+        this.invokeOnChange(this.datavalue, {}, true);
     }
 
     onDatePickerOpen() {
@@ -93,15 +82,5 @@ export class DateComponent extends BaseFormCustomComponent {
      */
     onDateChange(newVal): void {
         this.setDataValue(newVal);
-    }
-
-    // sets the dataValue and computes the display model values
-    private setDataValue(newVal): void {
-        if (newVal) {
-            this.bsDataValue = newVal;
-        } else {
-            this.bsDataValue = undefined;
-        }
-        this.invokeOnChange(this.datavalue, {}, true);
     }
 }

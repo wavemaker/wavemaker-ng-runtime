@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -11,11 +11,11 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['closable', PROP_BOOLEAN],
                 ['collapsible', PROP_BOOLEAN],
-                ['conditionalclass', PROP_STRING],
-                ['content', PROP_STRING_NOTIFY],
+                ['conditionalclass', PROP_ANY],
+                ['content', PROP_STRING],
                 ['datafield', PROP_STRING],
                 ['enablefullscreen', PROP_BOOLEAN],
-                ['expanded', {value: true, ...PROP_BOOLEAN_NOTIFY}],
+                ['expanded', {value: true, ...PROP_BOOLEAN}],
                 ['fullscreen', PROP_BOOLEAN],
                 ['helptext', PROP_STRING],
                 ['iconclass', PROP_STRING],

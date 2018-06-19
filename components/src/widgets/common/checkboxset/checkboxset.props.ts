@@ -1,29 +1,29 @@
-import {PROP_STRING, register, PROP_STRING_NOTIFY, PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER} from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const checkboxsetProps = new Map(
     [
         ['class', PROP_STRING],
-        ['datafield', PROP_STRING_NOTIFY],
-        ['dataset', {value: 'Option 1, Option 2, Option 3', notify: true}],
-        ['datavalue', PROP_STRING_NOTIFY],
-        ['dateformat', PROP_STRING_NOTIFY],
+        ['datafield', PROP_STRING],
+        ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_ANY}],
+        ['datavalue', PROP_STRING],
+        ['dateformat', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
-        ['displayexpression', PROP_STRING_NOTIFY],
-        ['displayfield', PROP_STRING_NOTIFY],
-        ['groupby', PROP_STRING_NOTIFY],
+        ['displayexpression', PROP_STRING],
+        ['displayfield', PROP_STRING],
+        ['groupby', PROP_STRING],
         ['itemclass', {value: '', ...PROP_STRING}],
         ['listclass', {value: '', ...PROP_STRING}],
-        ['layout', {value: 'stacked', ...PROP_STRING_NOTIFY}],
-        ['match', PROP_STRING_NOTIFY],
+        ['layout', {value: 'stacked', ...PROP_STRING}],
+        ['match', PROP_STRING],
         ['name', PROP_STRING],
-        ['orderby', PROP_STRING_NOTIFY],
+        ['orderby', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
-        ['selectedvalues', {notify: true}],
+        ['selectedvalues', PROP_ANY],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showcount', PROP_BOOLEAN],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
-        ['usekeys', PROP_BOOLEAN_NOTIFY],
+        ['usekeys', PROP_BOOLEAN],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', PROP_STRING]
     ]

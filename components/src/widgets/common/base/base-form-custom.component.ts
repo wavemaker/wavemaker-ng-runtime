@@ -20,7 +20,8 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
             return;
         }
         if (this.hasOwnProperty('formControlName')) {
-            this.widget.datavalue = value;
+            this.datavalue = value;
+            this.onPropertyChange('datavalue', value);
             this.updatePrevDatavalue(value);
         }
     }

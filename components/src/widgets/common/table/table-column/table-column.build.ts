@@ -1,7 +1,9 @@
 import { Element } from '@angular/compiler';
-import { IBuildTaskDef, getAttrMarkup, register } from '@wm/transpiler';
+
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator } from '@wm/core';
-import { getDataTableFilterWidget, getEditModeWidget, EDIT_MODE } from '../../../../utils/live-utils';
+
+import { EDIT_MODE, getDataTableFilterWidget, getEditModeWidget } from '../../../../utils/live-utils';
 
 const tagName = 'div';
 const idGen = new IDGenerator('data_table_form_');

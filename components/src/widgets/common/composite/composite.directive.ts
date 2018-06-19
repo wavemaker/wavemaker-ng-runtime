@@ -45,18 +45,17 @@ export class CompositeDirective extends StylableComponent implements AfterViewIn
     /**
      * this is onPropertyChange handler for the form-group component
      * @param key
-     * @param newVal
-     * @param oldVal
+     * @param nv
+     * @param ov
      */
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'captionposition':
-                switchClass(this.nativeElement, CAPTION_POSITION[newVal], CAPTION_POSITION[oldVal]);
-                break;
-            case 'required':
-                this.required = newVal;
-                this.assignRequiredToSubComponents();
-                break;
+    onPropertyChange(key, nv, ov) {
+        if (key === 'captionposition') {
+            switchClass(this.nativeElement, CAPTION_POSITION[nv], CAPTION_POSITION[ov]);
+        } else if (key === 'required') {
+            this.required = nv;
+            this.assignRequiredToSubComponents();
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

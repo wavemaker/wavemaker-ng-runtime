@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['caption', PROP_STRING],
+                ['class', PROP_STRING],
                 ['hint', PROP_STRING],
                 ['iconclass', {value: 'wi wi-star-border', ...PROP_STRING}],
                 ['iconposition', {value: 'left', ...PROP_STRING}],

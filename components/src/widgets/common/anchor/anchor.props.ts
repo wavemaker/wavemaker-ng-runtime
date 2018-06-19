@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -8,10 +8,10 @@ export const registerProps = () => {
                 ['badgevalue', PROP_STRING],
                 ['caption', {value: 'Link', ...PROP_STRING}],
                 ['class', PROP_STRING],
-                ['conditionalclass', PROP_STRING],
+                ['conditionalclass', PROP_ANY],
                 ['encodeurl', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
-                ['hyperlink', PROP_STRING_NOTIFY],
+                ['hyperlink', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],

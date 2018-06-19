@@ -1,4 +1,6 @@
-import { Component, Injector } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+
+import { BsDatepickerDirective } from 'ngx-bootstrap';
 
 import { $appDigest, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate } from '@wm/core';
 
@@ -6,8 +8,7 @@ import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
-import { BsDatepickerConfig } from 'ngx-bootstrap';
+import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -24,11 +25,7 @@ registerProps();
         provideAsWidgetRef(DatetimeComponent)
     ]
 })
-export class DatetimeComponent extends BaseFormCustomComponent {
-    /**
-     * This property sets the output format for the selected date datavalue. This widget's output will always be the formatted value using this format.
-     */
-    outputformat: string;
+export class DatetimeComponent extends BaseDateTimeComponent implements AfterViewInit, OnDestroy {
 
     /**
      * The below propeties prefixed with "bs" always holds the value that is selected from the datepicker.
@@ -50,6 +47,8 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         return getFormattedDate(this.datePipe, this.bsDateTimeValue, this._dateOptions.dateInputFormat) || '';
     }
 
+    @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
+
     /**
      * This property checks if the timePicker is Open
      */
@@ -69,11 +68,6 @@ export class DatetimeComponent extends BaseFormCustomComponent {
      * This property is set to TRUE if the time component value is set to CURRENT_TIME; In this case the timer keeps changing the time value until the widget is available.
      */
     private isCurrentDate: boolean = false;
-
-    /**
-     * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
-     */
-    private _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
 
     get datavalue(): any {
         return getFormattedDate(this.datePipe, this.bsDateTimeValue, this.outputformat);
@@ -108,26 +102,6 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         styler(this.nativeElement, this);
         this._dateOptions.containerClass = 'theme-red';
         this._dateOptions.showWeekNumbers = false;
-    }
-
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'datepattern':
-                this._dateOptions.dateInputFormat = newVal;
-                break;
-            case 'outputformat':
-                this.outputformat = newVal;
-                break;
-            case 'mindate':
-                this._dateOptions.minDate = getDateObj(newVal);
-                break;
-            case 'maxdate':
-                this._dateOptions.maxDate = getDateObj(newVal);
-                break;
-            case 'showweeks':
-                this._dateOptions.showWeekNumbers = newVal;
-                break;
-        }
     }
 
     /**
@@ -174,7 +148,7 @@ export class DatetimeComponent extends BaseFormCustomComponent {
         }, 350);
     }
 
-    onDatePickerOpen() {
+    private onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
         this.invokeOnTouched();
     }

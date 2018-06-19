@@ -1,4 +1,4 @@
-import { Directive, Injector, OnInit, Optional, Inject, Self } from '@angular/core';
+import { Directive, Inject, Injector, OnInit, Optional, Self } from '@angular/core';
 
 import { BaseComponent } from '../../base/base.component';
 import { registerProps } from './table-row-action.props';

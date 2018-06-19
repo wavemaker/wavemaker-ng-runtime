@@ -1,27 +1,27 @@
-import { register, PROP_STRING_NOTIFY, PROP_STRING, PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const dateProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
-        ['datavalue', PROP_STRING_NOTIFY],
-        ['datepattern', {value: 'yyyy-MM-dd', ...PROP_STRING_NOTIFY}],
-        ['disabled', PROP_BOOLEAN_NOTIFY],
+        ['datavalue', PROP_STRING],
+        ['datepattern', {value: 'yyyy-MM-dd', ...PROP_STRING}],
+        ['disabled', PROP_BOOLEAN],
         ['excludedays', PROP_STRING], // TODO not addressed
-        ['excludedates', PROP_STRING_NOTIFY], // TODO not addressed
+        ['excludedates', PROP_STRING], // TODO not addressed
         ['hint', {value: '', ...PROP_STRING}],
-        ['maxdate', PROP_STRING_NOTIFY],
-        ['mindate', PROP_STRING_NOTIFY],
+        ['maxdate', PROP_STRING],
+        ['mindate', PROP_STRING],
         ['name', PROP_STRING],
-        ['outputformat', {value: 'yyyy-MM-dd', ...PROP_STRING_NOTIFY}],
+        ['outputformat', {value: 'yyyy-MM-dd', ...PROP_STRING}],
         ['placeholder', {value: 'Select Date', ...PROP_STRING}],
-        ['readonly', PROP_BOOLEAN_NOTIFY],
+        ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING], // TODO not addressed
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showbuttonbar', {value: true, ...PROP_BOOLEAN}], // TODO not addressed
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
-        ['showweeks', {value: false, ...PROP_BOOLEAN_NOTIFY}],
+        ['showweeks', {value: false, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]
 );

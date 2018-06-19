@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Injector, Output, SkipSelf, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, Injector, Output, SkipSelf } from '@angular/core';
 
-import { $watch, DataSource, isDefined, switchClass, triggerFn, $appDigest, debounce } from '@wm/core';
+import { $appDigest, $watch, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
 
 import { registerProps } from './pagination.props';
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
-import { getOrderByExpr, getWatchIdentifier, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { WidgetRef } from '../../framework/types';
 
 declare const _;
@@ -30,13 +30,6 @@ const sizeClasses = {
     }
 };
 
-/**
- * The pagination component
- * Pagination component. Can be used with data table and list
- * Example of usage:
- * <example-url>http://localhost:4200/pagination</example-url>
- *
- */
 @Component({
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
@@ -84,9 +77,7 @@ export class PaginationComponent extends StylableComponent {
     binddataset;
     pagingOptions;
 
-    private _debouncedApplyDataset = debounce(() => {
-        this.widget.dataset = this.dataset;
-    }, 250);
+    private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, 250);
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
         super(inj, WIDGET_CONFIG);
@@ -438,33 +429,28 @@ export class PaginationComponent extends StylableComponent {
     }
 
     onPropertyChange(key: string, nv, ov) {
-        switch (key) {
-            case 'dataset':
-                let data;
-                if (this.parent && this.parent.onDataNavigatorDataSetChange) {
-                    data = this.parent.onDataNavigatorDataSetChange(nv);
-                } else {
-                    data = nv;
-                }
-                this.setPagingValues(data);
-                break;
-            case 'navigation':
-                if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
-                    this.navigation = 'Classic';
-                }
-                this.updateNavSize();
-                this.navcontrols = nv;
-                break;
-            case 'navigationsize':
-                this.updateNavSize();
-                break;
-            case 'navigationalign':
-                switchClass(this.nativeElement, `text-${nv}`, `text-${ov}`);
-                break;
-            case 'maxResults':
-                this.setPagingValues(this.dataset);
-                break;
-
+        if (key === 'dataset') {
+            let data;
+            if (this.parent && this.parent.onDataNavigatorDataSetChange) {
+                data = this.parent.onDataNavigatorDataSetChange(nv);
+            } else {
+                data = nv;
+            }
+            this.setPagingValues(data);
+        } else if (key === 'navigation') {
+            if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
+                this.navigation = 'Classic';
+            }
+            this.updateNavSize();
+            this.navcontrols = nv;
+        } else if (key === 'navigationsize') {
+            this.updateNavSize();
+        } else if (key === 'navigationalign') {
+            switchClass(this.nativeElement, `text-${nv}`, `text-${ov}`);
+        } else if (key === 'maxResults') {
+            this.setPagingValues(this.dataset);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

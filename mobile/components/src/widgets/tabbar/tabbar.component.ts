@@ -1,6 +1,6 @@
-import {AfterViewInit, Attribute, ChangeDetectorRef, Component, ElementRef, Injector, OnDestroy} from '@angular/core';
+import { AfterViewInit, Attribute, Component, Injector, OnDestroy } from '@angular/core';
 
-import { styler, StylableComponent, IWidgetConfig, PageDirective, getEvaluatedData, provideAsWidgetRef } from '@wm/components';
+import { getEvaluatedData, IWidgetConfig, PageDirective, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 
 import { registerProps } from './tabbar.props';
 
@@ -31,30 +31,32 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
     public layout = {};
 
     private readonly _layouts = [
-        {minwidth : 2048, max: 12},
-        {minwidth : 1024, max: 10},
-        {minwidth : 768, max: 7},
-        {minwidth : 480, max: 5},
-        {minwidth : 0, max: 4}
+        {minwidth: 2048, max: 12},
+        {minwidth: 1024, max: 10},
+        {minwidth: 768, max: 7},
+        {minwidth: 480, max: 5},
+        {minwidth: 0, max: 4}
     ];
 
-    constructor(private page: PageDirective,
-                inj: Injector,
-                @Attribute('itemlabel.bind') public binditemlabel,
-                @Attribute('itemicon.bind') public binditemicon,
-                @Attribute('itemicon.bind') public binditemlink) {
+    constructor(
+        private page: PageDirective,
+        inj: Injector,
+        @Attribute('itemlabel.bind') public binditemlabel,
+        @Attribute('itemicon.bind') public binditemicon,
+        @Attribute('itemicon.bind') public binditemlink
+    ) {
         super(inj, WIDGET_CONFIG);
         styler(this.$element, this);
         page.notify('wmMobileTabbar:ready', this);
     }
 
     public onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'dataset':
-                if (nv) {
-                    this.tabItems = this.getTabItems(nv);
-                }
-                break;
+        if (key === 'dataset') {
+            if (nv) {
+                this.tabItems = this.getTabItems(nv);
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -63,10 +65,12 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
             this.layout = this.getSuitableLayout();
             $(window).on('resize.tabbar', _.debounce(() => this.layout = this.getSuitableLayout(), 20));
         });
+        super.ngAfterViewInit();
     }
 
     public ngOnDestroy() {
         $(window).off('.tabbar');
+        super.ngOnDestroy();
     }
 
     public onSelect($event, selectedItem: TabItem) {

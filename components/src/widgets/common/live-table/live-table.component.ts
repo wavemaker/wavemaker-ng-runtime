@@ -29,6 +29,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
 
     form;
     isLayoutDialog: boolean;
+
     private dialogId;
     private $queue = [];
 

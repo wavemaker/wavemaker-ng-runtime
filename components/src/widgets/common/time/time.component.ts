@@ -1,6 +1,7 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 
 import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject } from '@wm/core';
+
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -12,13 +13,7 @@ const DEFAULT_CLS = 'input-group app-timeinput';
 const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
 
 registerProps();
-/**
- * The time component
- * Represents Time widget with hourstep, minutestep, outputformat, timepattern etc properties.
- * Example of usage:
- * <example-url>http://localhost:4200/time</example-url>
- *
- */
+
 @Component({
     selector: '[wmTime]',
     templateUrl: './time.component.html',
@@ -108,14 +103,17 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
         this.registerDestroyListener(() => this.clearTimeInterval());
     }
 
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'mintime':
-                this.minTime = getValidDateObject(newVal); // TODO it is supposed to be time conversion, not to the day
-                break;
-            case 'maxtime':
-                this.maxTime = getValidDateObject(newVal);
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'tabindex') {
+            return;
+        }
+
+        if (key === 'mintime') {
+            this.minTime = getValidDateObject(nv); // TODO it is supposed to be time conversion, not to the day
+        } else if (key === 'maxtime') {
+            this.maxTime = getValidDateObject(nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

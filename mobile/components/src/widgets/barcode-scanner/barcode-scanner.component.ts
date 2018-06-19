@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, Injector } from '@angular/core';
+import { Component, HostListener, Injector } from '@angular/core';
 
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
-import { APPLY_STYLES_TYPE, provideAsWidgetRef, IWidgetConfig, StylableComponent, styler } from '@wm/components';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 import { hasCordova } from '@wm/core';
 
 import { registerProps } from './barcode-scanner.props';
@@ -24,7 +24,7 @@ export class BarcodeScannerComponent extends StylableComponent {
     public barcodeformat: string;
     public datavalue: string;
 
-    constructor(private scanner: BarcodeScanner, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(private scanner: BarcodeScanner, inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }

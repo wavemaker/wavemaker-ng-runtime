@@ -37,7 +37,6 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
     public hyperlink;
 
     @HostBinding('target') target: string;
-    @HostBinding('attr.tabindex') tabindex: number;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
 
@@ -76,7 +75,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
         }
     }
 
-    onPropertyChange(key: string, nv: any) {
+    onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'hyperlink') {
             if (this.encodeurl) {
                 nv = encodeUrl(nv);
@@ -86,6 +85,8 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
                 nv = `//${nv}`;
             }
             setAttr(this.nativeElement, 'href', nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

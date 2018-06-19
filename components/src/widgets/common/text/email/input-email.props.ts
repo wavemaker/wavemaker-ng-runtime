@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const textProps = new Map(
     [
@@ -18,7 +18,7 @@ export const textProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', PROP_STRING],
-        ['updateon', {value: 'blur', ...PROP_STRING_NOTIFY}]
+        ['updateon', {value: 'blur', ...PROP_STRING}]
     ]
 );
 

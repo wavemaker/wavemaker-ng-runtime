@@ -1,16 +1,16 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER_NOTIFY, PROP_STRING, PROP_STRING_NOTIFY, PROP_NUMBER, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
         'wm-fileupload',
         new Map(
             [
-                ['uploadpath', {...PROP_STRING_NOTIFY}],
-                ['contenttype', PROP_STRING_NOTIFY],
-                ['service', PROP_STRING_NOTIFY],
-                ['operation', PROP_STRING_NOTIFY],
-                ['mode', PROP_STRING_NOTIFY],
-                ['multiple', PROP_BOOLEAN_NOTIFY],
+                ['uploadpath', {...PROP_STRING}],
+                ['contenttype', PROP_STRING],
+                ['service', PROP_STRING],
+                ['operation', PROP_STRING],
+                ['mode', PROP_STRING],
+                ['multiple', PROP_BOOLEAN],
                 ['fileuploadmessage' , PROP_STRING],
                 ['tabindex', PROP_NUMBER],
                 ['selectedFiles', PROP_STRING],

@@ -1,6 +1,6 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
-import { $appDigest, generateGUId, setCSS } from '@wm/core';
+import { generateGUId, setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -18,13 +18,6 @@ const WIDGET_CONFIG = {widgetType: 'wm-rating', hostClass: DEFAULT_CLS};
 const MAX_RATING = 10;
 const DEFAULT_RATING = 5;
 
-/**
- * The rating component
- * Rating component allow users to input ratings as data.
- * Example of usage:
- * <example-url>http://localhost:4200/rating</example-url>
- *
- */
 @Component({
     selector: '[wmRating]',
     templateUrl: './rating.component.html',
@@ -58,11 +51,6 @@ export class RatingComponent extends DatasetAwareFormComponent {
 
         // listen to changes in datavalue.
         this.datavalue$.subscribe(() => this.onDatavalueChange(this.datavalue));
-    }
-
-    writeValue(value) {
-        this.datavalue = value;
-        this.onPropertyChange('datavalue', value);
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
@@ -185,19 +173,17 @@ export class RatingComponent extends DatasetAwareFormComponent {
         }
     }
 
-    onPropertyChange(key, nv, ov?) {
-        super.onPropertyChange(key, nv, ov);
-        switch (key) {
-            case 'readonly':
-                if (nv) {
-                    this.ratingsWidth = this.calculateRatingsWidth();
-                }
-                break;
-            case 'maxvalue':
-                this.prepareRatingDataset();
-                // reset all the items.
-                this.resetDatasetItems();
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'readonly') {
+            if (nv) {
+                this.ratingsWidth = this.calculateRatingsWidth();
+            }
+        } else if (key === 'maxvalue') {
+            this.prepareRatingDataset();
+            // reset all the items.
+            this.resetDatasetItems();
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

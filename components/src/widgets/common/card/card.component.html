@@ -30,8 +30,8 @@
 <div class="app-card-image" *ngIf="picturesource"  [ngStyle]="{'max-height':imageheight}">
    <img wmPicture class="card-image" picturesource.bind="picturesource" hint.bind="picturetitle" />
 </div>
-<div class="cardContentWrapper" #cardContainerWrapper>
-    <ng-content select="[wmCardContent]" ></ng-content>
+<div #cardContainerWrapper>
+    <ng-content select="[wmCardContent]"></ng-content>
 </div>
 <div>
     <ng-content select="[wmCardActions]"></ng-content>

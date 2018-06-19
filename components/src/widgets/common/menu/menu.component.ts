@@ -68,6 +68,11 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
+
+        if (key === 'tabindex') {
+            return;
+        }
+
         if (key === 'autoclose') {
             this.dropdown.autoClose = nv !== 'disabled';
         } else {
@@ -110,6 +115,6 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        styler(this.nativeElement.querySelector('.dropdown-toggle'), this);
+        styler(this.nativeElement.querySelector('.dropdown-toggle') as HTMLElement, this);
     }
 }

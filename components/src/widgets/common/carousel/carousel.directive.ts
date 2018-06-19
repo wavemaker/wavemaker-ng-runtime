@@ -22,9 +22,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 const navigationClassMap = {
-    indicators : 'hide-navs',
-    navs : 'hide-indicators',
-    none : 'hide-both'
+    indicators: 'hide-navs',
+    navs: 'hide-indicators',
+    none: 'hide-both'
 };
 
 @Directive({
@@ -78,6 +78,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     ngOnDestroy() {
         this.stopAnimation();
+        super.ngOnDestroy();
     }
 
     ngOnInit() {
@@ -92,9 +93,11 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     }
 
     // on property change handler
-    onPropertyChange(key, newValue) {
+    onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'dataset') {
-            this.onDataChange(newValue);
+            this.onDataChange(nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

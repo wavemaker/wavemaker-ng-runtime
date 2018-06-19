@@ -1,11 +1,12 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const richTextProps = new Map(
     [
+        ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
-        ['height', PROP_STRING_NOTIFY],
-        ['placeholder', PROP_STRING_NOTIFY],
-        ['readonly', PROP_BOOLEAN_NOTIFY],
+        ['height', PROP_STRING],
+        ['placeholder', PROP_STRING],
+        ['readonly', PROP_BOOLEAN],
         ['showpreview', {value: false, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]

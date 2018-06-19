@@ -1,4 +1,4 @@
-import { IBuildTaskDef, getAttrMarkup, register, getDataSource } from '@wm/transpiler';
+import { getAttrMarkup, getDataSource, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
 

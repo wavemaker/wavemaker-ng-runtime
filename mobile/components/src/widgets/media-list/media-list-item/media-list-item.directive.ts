@@ -1,6 +1,6 @@
 import { Directive, Input } from '@angular/core';
 
-import { provideAsWidgetRef} from '@wm/components';
+import { provideAsWidgetRef } from '@wm/components';
 
 @Directive({
     selector: '[wmMediaListItem]',

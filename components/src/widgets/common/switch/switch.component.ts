@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
 import { $appDigest, setCSS } from '@wm/core';
 
@@ -37,14 +37,15 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
 
-        this.dataset$.subscribe(() => {
-            this.updateSwitchOptions();
-        });
+        const datasetSubscription = this.dataset$.subscribe(() => this.updateSwitchOptions());
 
-        this.datavalue$.subscribe(() => {
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+
+        const datavalueSubscription = this.datavalue$.subscribe(() => {
             this.setSelectedValue();
             this.updateHighlighter(true);
         });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
 
     ngAfterViewInit() {
@@ -52,9 +53,11 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         styler(this.switchEl.nativeElement as HTMLElement, this);
     }
 
-    onStyleChange(key, newVal, oldVal) {
+    onStyleChange(key: string, nv: any, ov?: any) {
         if (key === 'height') {
-            setCSS(this.nativeElement, 'overflow', newVal ? 'auto' : '');
+            setCSS(this.nativeElement, 'overflow', nv ? 'auto' : '');
+        } else {
+            super.onStyleChange(key, nv, ov);
         }
     }
 

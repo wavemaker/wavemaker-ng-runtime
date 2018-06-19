@@ -81,6 +81,15 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
      * @returns {TemplateRef<any>}
      */
     protected abstract getTemplateRef(): TemplateRef<any>;
+
+    protected onPropertyChange(key: string, nv: any, ov?: any) {
+        // ignore the class attribute.
+        // Prevent the framework from setting the class on the host element.
+        if (key === 'class' || key === 'name' || key === 'tabindex') {
+            return;
+        }
+        super.onPropertyChange(key, nv, ov);
+    }
 }
 
 // Todo:Bandhavya - handle DeviceServie.onBackButtonTap

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 
@@ -22,7 +22,7 @@ export class SegmentedControlComponent extends StylableComponent {
     public contents: SegmentContentComponent[] = [];
     public currentSelectedIndex = 0;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
+    constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
         this.showContent(0);
@@ -41,9 +41,10 @@ export class SegmentedControlComponent extends StylableComponent {
     }
 
     public onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'tabIndex':
-                break;
+        if (key === 'tabindex') {
+            return;
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

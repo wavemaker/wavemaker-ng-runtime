@@ -1,6 +1,8 @@
 import { SwipeAnimation } from '@swipey';
-import { TabsComponent } from './tabs.component';
+
 import { $appDigest } from '@wm/core';
+
+import { TabsComponent } from './tabs.component';
 
 export class TabsAnimator extends SwipeAnimation {
 
@@ -18,10 +20,10 @@ export class TabsAnimator extends SwipeAnimation {
             noOfTabs = this._$el.find('>.tab-pane:visible').length,
             centerVal = -1 * activeTabIndex * w;
         return {
-            'strict': false,
-            'lower': activeTabIndex === noOfTabs - 1 ? 0 : -w,
-            'center': centerVal,
-            'upper': activeTabIndex === 0 ? centerVal : w
+            strict: false,
+            lower: activeTabIndex === noOfTabs - 1 ? 0 : -w,
+            center: centerVal,
+            upper: activeTabIndex === 0 ? centerVal : w
         };
     }
 

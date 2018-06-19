@@ -1,6 +1,8 @@
 <input class="form-control app-textbox app-dateinput display-input" aria-label="Select date"
        focus-target
        type="text"
+       [name]="name"
+       [tabindex]="tabindex"
        [value]="displayValue"
        (click)="datepicker.toggle()"
        [disabled]="disabled || readonly || isCurrentDate"

@@ -110,18 +110,16 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
     }
 
-    onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'placeholder':
-                this.EDITOR_DEFAULT_OPTIONS.placeholder = nv;
-                this.performEditorOperation({
-                    placeholder: nv
-                });
-                break;
-            case 'disabled':
-            case 'readonly':
-                this.performEditorOperation(nv ? 'disable' : 'enable');
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'placeholder') {
+            this.EDITOR_DEFAULT_OPTIONS.placeholder = nv;
+            this.performEditorOperation({
+                placeholder: nv
+            });
+        } else if (key === 'disabled' || key === 'readonly') {
+            this.performEditorOperation(nv ? 'disable' : 'enable');
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

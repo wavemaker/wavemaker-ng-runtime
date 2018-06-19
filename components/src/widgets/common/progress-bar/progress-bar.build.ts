@@ -1,5 +1,6 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { Element } from '@angular/compiler';
+
+import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/transpiler';
 
 declare const _;
 
@@ -14,20 +15,15 @@ const getAttrValue = (node: Element, attrName: string): string | undefined => {
     }
 };
 
-const isBound = v => _.startsWith(v, 'bind:');
-
-const getBoundExpr = v => v.substr(5);
-
 const getReplaceRegex = (v: string) => new RegExp(`bind:(${v}|${v}\\[\\$i])\\.`, 'g');
 
 register('wm-progress', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
             const dataset = getAttrValue(node, 'dataset');
+            const boundExpr = getBoundToExpr(dataset);
 
-            if (isBound(dataset)) {
-                const boundExpr = getBoundExpr(dataset);
-
+            if (boundExpr) {
                 let type = getAttrValue(node, 'type');
                 let datavalue = getAttrValue(node, 'datavalue');
 

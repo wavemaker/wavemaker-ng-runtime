@@ -1,11 +1,9 @@
-import { $appDigest, $unwatch, isChangeFromWatch, isObject, removeClass, resetChangeFromWatch, setAttr, switchClass, toBoolean, addClass } from '@wm/core';
+import { $appDigest, $unwatch, isChangeFromWatch, isObject, resetChangeFromWatch, toBoolean } from '@wm/core';
 
 import { BaseComponent } from '../common/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
 import { isStyle } from './styler';
 import { getConditionalClasses, getWatchIdentifier } from '../../utils/widget-utils';
-
-declare const _;
 
 // set of boolean attrs
 const BOOLEAN_ATTRS = new Set([
@@ -43,48 +41,6 @@ const parseValue = (key: string, value: any, type: PROP_TYPE): any => {
     return value;
 };
 
-// Gets list of classes to add and remove and applies on the $el
-const updateClasses = (toAdd, toRemove, el) => {
-    if (toRemove && toRemove.length) {
-        removeClass(el, _.join(toRemove, ' '));
-    }
-    if (toAdd && toAdd.length) {
-        addClass(el, _.join(toAdd, ' '));
-    }
-};
-
-/**
- * Handles the common functionality across the components
- * eg,
- *  1. value of the class property will be applied on the host element
- *  2. based on the value of show property component is shown/hidden
- *
- * @param {BaseComponent} component
- * @param {string} key
- * @param nv
- * @param ov
- */
-const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv: any, ov: any): void => {
-    const el = component.getNativeElement();
-    let classes;
-
-    // todo handle array and object cases in conditionalclass
-    if (key === 'class') {
-        switchClass(el, nv, ov);
-    } else if (key === 'conditionalclass') {
-        classes = getConditionalClasses(nv, ov);
-        // update classes if old and nv value are different
-        updateClasses(classes.toAdd, classes.toRemove, el);
-    } else if (key === 'name') {
-        setAttr(el, 'name', nv);
-    } else if (key === 'show') {
-        nv = parseValue(key, nv, PROP_TYPE.BOOLEAN);
-        component.getNativeElement().hidden = !nv;
-    } else if (key === 'hint') {
-        setAttr(el, 'title', nv);
-    }
-};
-
 
 /**
  * Whenever a property on a component changes through a proxy this method will be triggered
@@ -116,12 +72,17 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
     if (nv !== ov || isObject(nv) || isObject(ov)) {
         component[key] = nv;
 
-        defaultPropertyChangeHandler(component, key, nv, ov);
-
         if (isStyle(key)) {
             component.notifyStyleChange(key, nv, ov);
-        } else if (propInfo && propInfo.notify) {
-            component.notifyPropertyChange(key, nv, ov);
+        } else {
+
+            if (key === 'conditionalclass') {
+                nv = getConditionalClasses(nv, ov);
+            }
+
+            if (propInfo) {
+                component.notifyPropertyChange(key, nv, ov);
+            }
         }
 
         $appDigest();

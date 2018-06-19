@@ -1,4 +1,4 @@
-import { Directive, OnInit, Attribute, Inject, Self } from '@angular/core';
+import { Attribute, Directive, Inject, OnInit, Self } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FormComponent } from './form.component';
 import { WidgetRef } from '../../framework/types';

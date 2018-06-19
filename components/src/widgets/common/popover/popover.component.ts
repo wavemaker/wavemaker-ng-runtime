@@ -1,4 +1,5 @@
 import { AfterContentInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+
 import { addClass, formatStyle, setAttr, setCSSFromObj } from '@wm/core';
 
 import { IWidgetConfig } from '../../framework/types';
@@ -98,6 +99,13 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
     private hidePopover() {
         this.closePopoverTimeout = setTimeout(() => this.isOpen = false, 500);
+    }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'class' || key === 'tabindex') {
+            return;
+        }
+        super.onPropertyChange(key, nv, ov);
     }
 
     ngOnInit() {

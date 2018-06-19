@@ -44,6 +44,8 @@ export class HtmlDirective extends StylableComponent {
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'content') {
             setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

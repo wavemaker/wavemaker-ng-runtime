@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['badgetype', {value: 'default', ...PROP_STRING}],
                 ['badgevalue', PROP_STRING],
-                ['content', PROP_STRING_NOTIFY],
+                ['content', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['isdefaultpane', PROP_BOOLEAN],
                 ['name', PROP_STRING],

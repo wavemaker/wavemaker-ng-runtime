@@ -14,6 +14,7 @@ export default {
             '@angular/forms': 'ng.forms',
             '@angular/router': 'ng.router',
             'rxjs/observable/of': 'Rx.Observable',
+            'rxjs/operators': 'Rx.operators',
             'rxjs/operator/concatMap': 'Rx.Observable.prototype',
             'rxjs/operator/filter': 'Rx.Observable.prototype',
             'rxjs/operator/map': 'Rx.Observable.prototype',

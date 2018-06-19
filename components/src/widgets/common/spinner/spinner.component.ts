@@ -43,18 +43,17 @@ export class SpinnerComponent extends StylableComponent {
         styler(this.nativeElement, this);
     }
 
-    onPropertyChange(key, newVal, oldVal) {
-        switch (key) {
-            case 'image':
-                this.picture = this.imagePipe.transform(newVal);
-                break;
-            case 'animation':
-                if (newVal === 'spin') {
-                    this.animation = 'fa-spin';
-                } else {
-                    this.animation = newVal || '';
-                }
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'image') {
+            this.picture = this.imagePipe.transform(nv);
+        } else if (key === 'animation') {
+            if (nv === 'spin') {
+                this.animation = 'fa-spin';
+            } else {
+                this.animation = nv || '';
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

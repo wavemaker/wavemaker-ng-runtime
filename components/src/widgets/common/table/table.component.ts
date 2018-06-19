@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, triggerFn, $parseEvent, $watch, $unwatch, isDataSourceEqual } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, isDataSourceEqual, isDefined, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -22,25 +22,25 @@ const DEFAULT_CLS = 'app-grid app-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
 
 const rowOperations = {
-    'update': {
-        'config': {
-            'label': 'Update',
-            'value': 'update'
+    update: {
+        config: {
+            label: 'Update',
+            value: 'update'
         },
-        'property': 'updaterow'
+        property: 'updaterow'
     },
-    'delete': {
-        'config': {
-            'label': 'Delete',
-            'value': 'delete'
+    delete: {
+        config: {
+            label: 'Delete',
+            value: 'delete'
         },
-        'property': 'deleterow'
+        property: 'deleterow'
     }
 };
 
 const exportIconMapping = {
-    'EXCEL' : 'fa fa-file-excel-o',
-    'CSV'   : 'fa fa-file-text-o'
+    EXCEL: 'fa fa-file-excel-o',
+    CSV: 'fa fa-file-text-o'
 };
 
 const ROW_OPS_FIELD = 'rowOperations';
@@ -153,6 +153,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     documentClickBind = noop;
 
     fieldDefs = [];
+
     private fullFieldDefs = [];
     private __fullData;
     private dataNavigatorWatched;
@@ -204,25 +205,25 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     cancelRow: Function;
 
     private gridOptions = {
-        'data': [],
-        'colDefs': [],
-        'startRowIndex': 1,
-        'sortInfo': {
-            'field': '',
-            'direction': ''
+        data: [],
+        colDefs: [],
+        startRowIndex: 1,
+        sortInfo: {
+            field: '',
+            direction: ''
         },
-        'filtermode': '',
-        'rowActions': [],
-        'headerConfig': [],
-        'rowClass': '',
-        'editmode': '',
-        'formPosition': '',
-        'isMobile': false,
-        'dateFormat': '',
-        'timeFormat': '',
-        'name': '',
-        'messages': {
-            'selectField': 'Select Field'
+        filtermode: '',
+        rowActions: [],
+        headerConfig: [],
+        rowClass: '',
+        editmode: '',
+        formPosition: '',
+        isMobile: false,
+        dateFormat: '',
+        timeFormat: '',
+        name: '',
+        messages: {
+            selectField: 'Select Field'
         },
         onDataRender: () => {
             // select rows selected in previous pages. (Not finding intersection of data and selecteditems as it will be heavy)
@@ -556,15 +557,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     ngAfterContentInit() {
         super.ngAfterContentInit();
         const runModeInitialProperties = {
-            'showrowindex': 'showRowIndex',
-            'multiselect': 'multiselect',
-            'radioselect': 'showRadioColumn',
-            'filternullrecords': 'filterNullRecords',
-            'enablesort': 'enableSort',
-            'showheader': 'showHeader',
-            'enablecolumnselection': 'enableColumnSelection',
-            'shownewrow': 'showNewRow',
-            'gridfirstrowselect': 'selectFirstRow'
+            showrowindex: 'showRowIndex',
+            multiselect: 'multiselect',
+            radioselect: 'showRadioColumn',
+            filternullrecords: 'filterNullRecords',
+            enablesort: 'enableSort',
+            showheader: 'showHeader',
+            enablecolumnselection: 'enableColumnSelection',
+            shownewrow: 'showNewRow',
+            gridfirstrowselect: 'selectFirstRow'
         };
 
         if (this._liveTableParent) {
@@ -593,7 +594,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // TODO: this.gridOptions.isMobile   = isMobile();
         // TODO: App defaults
         this.gridOptions.name = this.name;
-        this.gridOptions.messages       = {
+        this.gridOptions.messages = {
             'selectField': 'Select Field'
         };
         this.datagridElement = $(this._tableElement.nativeElement);
@@ -978,7 +979,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
     }
 
-    onPropertyChange(key: string, newVal) {
+    onPropertyChange(key: string, nv: any, ov?: any) {
         let enableNewRow;
         switch (key) {
             case 'datasource':
@@ -989,45 +990,45 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (!this.datasource) {
                     return;
                 }
-                this.watchVariableDataSet(newVal);
+                this.watchVariableDataSet(nv);
                 break;
             case 'gridclass':
-                this.callDataGridMethod('option', 'cssClassNames.grid', newVal);
+                this.callDataGridMethod('option', 'cssClassNames.grid', nv);
                 break;
             case 'filtermode':
-                this.setDataGridOption('filtermode', newVal);
+                this.setDataGridOption('filtermode', nv);
                 break;
             case 'searchlabel':
-                this.setDataGridOption('searchLabel', newVal);
+                this.setDataGridOption('searchLabel', nv);
                 break;
             case 'navigation':
-                if (newVal === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
+                if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
                     this.navigation = 'Classic';
                     return;
                 }
-                if (newVal !== 'None') {
+                if (nv !== 'None') {
                     this.shownavigation = true;
                 }
-                this.navControls = newVal;
+                this.navControls = nv;
                 break;
             case 'gridfirstrowselect':
-                this.setDataGridOption('selectFirstRow', newVal);
+                this.setDataGridOption('selectFirstRow', nv);
                 break;
             case 'gridclass':
-                this.callDataGridMethod('option', 'cssClassNames.grid', newVal);
+                this.callDataGridMethod('option', 'cssClassNames.grid', nv);
                 break;
             case 'nodatamessage':
-                this.callDataGridMethod('option', 'dataStates.nodata', newVal);
+                this.callDataGridMethod('option', 'dataStates.nodata', nv);
                 break;
             case 'loadingdatamsg':
-                this.callDataGridMethod('option', 'dataStates.loading', newVal);
+                this.callDataGridMethod('option', 'dataStates.loading', nv);
                 break;
             case 'loadingicon':
-                this.callDataGridMethod('option', 'loadingicon', newVal);
+                this.callDataGridMethod('option', 'loadingicon', nv);
                 break;
             case 'spacing':
-                this.callDataGridMethod('option', 'spacing', newVal);
-                if (newVal === 'condensed') {
+                this.callDataGridMethod('option', 'spacing', nv);
+                if (nv === 'condensed') {
                     this.navigationSize = 'small';
                 } else {
                     this.navigationSize = '';
@@ -1035,33 +1036,34 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 break;
             case 'exportformat':
                 this.exportOptions = [];
-                if (newVal) {
+                if (nv) {
                     // Populate options for export drop down menu
-                    _.forEach(_.split(newVal, ','), type => {
+                    _.forEach(_.split(nv, ','), type => {
                         this.exportOptions.push({
-                            'label'      : type,
-                            'icon'       : exportIconMapping[type]
+                            label: type,
+                            icon: exportIconMapping[type]
                         });
                     });
                 }
                 break;
             case 'shownewrow':
                 // Enable new row if shownew is true or addNewRow buton is present
-                enableNewRow = newVal || _.some(this.actions, act => _.includes(act.action, 'addNewRow()'));
+                enableNewRow = nv || _.some(this.actions, act => _.includes(act.action, 'addNewRow()'));
                 this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
                 break;
             case 'show':
-                if (newVal) {
+                if (nv) {
                     this.invokeEventCallback('show');
                 } else {
                     this.invokeEventCallback('hide');
                 }
                 break;
-
+            default:
+                super.onPropertyChange(key, nv, ov);
         }
     }
 
-    onStyleChange(key, nv) {
+    onStyleChange(key, nv, ov) {
         switch (key) {
             case 'width':
                 this.callDataGridMethod('setGridDimensions', 'width', nv);
@@ -1070,6 +1072,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('setGridDimensions', 'height', nv);
                 break;
         }
+
+        super.onStyleChange(key, nv, ov);
     }
 
     populateActions() {

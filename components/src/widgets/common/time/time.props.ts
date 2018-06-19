@@ -1,13 +1,14 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const timeProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
+        ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
-        ['maxtime', PROP_STRING_NOTIFY],
-        ['mintime', PROP_STRING_NOTIFY],
+        ['maxtime', PROP_STRING],
+        ['mintime', PROP_STRING],
         ['minutestep', {value: 15, ...PROP_NUMBER}],
         ['name', PROP_STRING],
         ['outputformat', {value: 'HH:mm:ss', ...PROP_STRING}],

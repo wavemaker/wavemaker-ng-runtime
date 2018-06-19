@@ -952,6 +952,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     _plotChartProxy = _.debounce(this.plotChartProxy.bind(this), 100);
 
     onPropertyChange(key, newVal, oldVal?) {
+        super.onPropertyChange(key, newVal, oldVal);
         switch (key) {
             case 'dataset':
                 this.handleDataSet(newVal);
@@ -996,6 +997,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     onStyleChange(key, newVal, oldVal) {
         const styleObj = {};
+        super.onStyleChange(key, newVal, oldVal);
         switch (key) {
             case 'fontsize':
             case 'fontunit':

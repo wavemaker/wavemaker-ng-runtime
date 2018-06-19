@@ -480,20 +480,22 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
     }
 
-    onStyleChange(key, newVal, oldVal?) {
+    onStyleChange(key, nv, ov?) {
+        super.onStyleChange(key, nv, ov);
         if (key === 'height') {
-            this.calendarOptions.calendar.height = this.calculateHeight(newVal);
+            this.calendarOptions.calendar.height = this.calculateHeight(nv);
             this.updateCalendarOptions('option', 'height', this.calendarOptions.calendar.height);
         }
     }
 
-    onPropertyChange(key, newVal, ov?) {
+    onPropertyChange(key, nv, ov?) {
+        super.onPropertyChange(key, nv, ov);
         switch (key) {
             case 'selectionmode':
-                if (newVal !== SELECTION_MODES.NONE) {
+                if (nv !== SELECTION_MODES.NONE) {
                     this.calendarOptions.calendar.selectable = true;
                     this.updateCalendarOptions('option', 'selectable', true);
-                    if (newVal === SELECTION_MODES.SINGLE) {
+                    if (nv === SELECTION_MODES.SINGLE) {
                         this.calendarOptions.calendar.selectConstraint = {
                             start: '00:00',
                             end: '24:00'
@@ -505,16 +507,16 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
                 }
                 break;
             case 'view':
-                if (newVal !== 'month' || this.calendartype === VIEW_TYPES.LIST) {
-                    this.calendarOptions.calendar.defaultView = this.calendartype + _.capitalize(newVal);
+                if (nv !== 'month' || this.calendartype === VIEW_TYPES.LIST) {
+                    this.calendarOptions.calendar.defaultView = this.calendartype + _.capitalize(nv);
                 } else {
-                    this.calendarOptions.calendar.defaultView = newVal;
+                    this.calendarOptions.calendar.defaultView = nv;
                 }
                 this.updateCalendarOptions('changeView', this.calendarOptions.calendar.defaultView);
             // mobile newVal === 'week' defaultView = 'day'
                 break;
             case 'calendartype':
-                this.calendartype = newVal || 'basic';
+                this.calendartype = nv || 'basic';
                 this.updateCalendarHeaderOptions();
                 break;
             case 'dataset':
@@ -522,8 +524,8 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
                 const eventSet = [];
                 // triggerCalendarChange(); -> Mobile related
                 delete this.eventSources.events;
-                this.dataset = newVal;
-                dataSet = getClonedObject(newVal);
+                this.dataset = nv;
+                dataSet = getClonedObject(nv);
                 dataSet = _.isArray(dataSet) ? dataSet : _.isObject(dataSet) ? [dataSet] : [];
                 dataSet = this.constructCalendarDataset(dataSet);
                 if (_.includes(_.keys(dataSet[0]), 'start')) {

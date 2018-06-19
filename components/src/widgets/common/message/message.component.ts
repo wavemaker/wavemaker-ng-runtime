@@ -80,6 +80,8 @@ export class MessageComponent extends StylableComponent {
     onPropertyChange(key, nv, ov?) {
         if (key === 'type') {
             this.onMessageTypeChange(nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

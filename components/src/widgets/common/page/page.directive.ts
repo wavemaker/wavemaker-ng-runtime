@@ -6,7 +6,7 @@ import { EventNotifier } from '@wm/core';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './page.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { updateDeviceView} from '../../framework/deviceview';
+import { updateDeviceView } from '../../framework/deviceview';
 
 
 registerProps();
@@ -24,9 +24,11 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
 
     private _eventNotifier = new EventNotifier(false);
 
-    onPropertyChange(key, nv, ov) {
+    onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'pagetitle') {
             this.titleService.setTitle(nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 

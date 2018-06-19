@@ -59,7 +59,7 @@ export class PrefabDirective extends StylableComponent {
                 type = v.type;
             }
 
-            propsMap.set(k, {type, notify: true, value: v.value});
+            propsMap.set(k, {type, value: v.value});
         });
 
         registeredPropsSet.add(this.widgetType);

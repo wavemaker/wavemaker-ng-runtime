@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_NUMBER_NOTIFY, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['class', PROP_STRING],
                 ['closeothers', {value: true, ...PROP_BOOLEAN}],
-                ['defaultpaneindex', {value: 0, ...PROP_NUMBER_NOTIFY}],
+                ['defaultpaneindex', {value: 0, ...PROP_NUMBER}],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}]

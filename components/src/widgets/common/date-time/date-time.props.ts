@@ -1,20 +1,20 @@
-import { PROP_BOOLEAN, PROP_BOOLEAN_NOTIFY, PROP_NUMBER, PROP_STRING, PROP_STRING_NOTIFY, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const dateTimeProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
-        ['datepattern', {value: 'yyyy-MM-dd hh:mm:ss a', ...PROP_STRING_NOTIFY}],
+        ['datepattern', {value: 'yyyy-MM-dd hh:mm:ss a', ...PROP_STRING}],
         ['disabled', PROP_BOOLEAN],
         ['excludedays', PROP_STRING],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
         ['ismeridian', {value: true, ...PROP_BOOLEAN}],
-        ['maxdate', PROP_STRING_NOTIFY],
-        ['mindate', PROP_STRING_NOTIFY],
+        ['maxdate', PROP_STRING],
+        ['mindate', PROP_STRING],
         ['minutestep', {value: 15, ...PROP_NUMBER}],
         ['name', PROP_STRING],
-        ['outputformat', {value: 'timestamp', ...PROP_STRING_NOTIFY}],
+        ['outputformat', {value: 'timestamp', ...PROP_STRING}],
         ['placeholder', {value: 'Select date time', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
@@ -24,7 +24,7 @@ export const dateTimeProps = new Map(
         ['showbuttonbar', PROP_BOOLEAN],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['showseconds', {value: false, ...PROP_BOOLEAN}],
-        ['showweeks', PROP_BOOLEAN_NOTIFY],
+        ['showweeks', PROP_BOOLEAN],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['timestamp', PROP_STRING]
     ]

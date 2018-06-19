@@ -128,19 +128,17 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
         }, 100);
     }
 
-    onPropertyChange(key, nv, ov?) {
-        switch (key) {
-            case 'expanded':
-                this.expanded = nv;
-                break;
-            case 'content':
-                setTimeout(() => {
-                    if (this.expanded || !this.collapsible) {
-                        this.$lazyLoad();
-                    }
-                }, 20);
-
-                break;
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'expanded') {
+            this.expanded = nv;
+        } else if (key === 'content') {
+            setTimeout(() => {
+                if (this.expanded || !this.collapsible) {
+                    this.$lazyLoad();
+                }
+            }, 20);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -150,5 +148,3 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
         styler(this.panelBody.nativeElement as HTMLElement, this, APPLY_STYLES_TYPE.INNER_SHELL);
     }
 }
-
-// Todo Vinay - menu, action click event
