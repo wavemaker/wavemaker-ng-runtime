@@ -38,6 +38,7 @@ export default {
 
             'rxjs/scheduler/queue': 'Rx.Scheduler.prototype',
 
+            'rxjs': 'Rx',
             'rxjs/Observable': 'Rx',
             'rxjs/BehaviorSubject': 'Rx',
             'rxjs/Subject': 'Rx',
