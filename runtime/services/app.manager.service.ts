@@ -135,10 +135,9 @@ export class AppManagerService {
         // pageParams = that.getQueryString($location.search());
         pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
         // showing a redirecting message
-        document.body.textContent = 'Redirecting to sso login...';
+        document.body.textContent = _.get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
         // appending redirect to page and page params
         const ssoUrl = this.getDeployedURL() + SSO_URL + page + pageParams;
-        debugger;
         /*
          * remove iFrame when redirected to IdP login page.
          * this is being done as IDPs do not allow to get themselves loaded into iFrames.
@@ -245,5 +244,9 @@ export class AppManagerService {
 
     notify(eventName, data) {
         this.$app.notify(eventName, data);
+    }
+
+    getAppLocale() {
+        return this.$app.appLocale;
     }
 }
