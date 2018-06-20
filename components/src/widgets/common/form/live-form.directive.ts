@@ -217,7 +217,7 @@ export class LiveFormDirective {
                 if (field.value) {
                     dateTime = getValidDateObject(field.value);
                     if (field.outputformat === DataType.TIMESTAMP || field.type === DataType.TIMESTAMP) {
-                        fieldValue = field.value ? dateTime.getTime() : null;
+                        fieldValue = field.value ? dateTime : null;
                     } else if (field.outputformat) {
                         fieldValue = this.datePipe.transform(dateTime, field.outputformat);
                     } else {

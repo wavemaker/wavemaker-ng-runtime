@@ -27,8 +27,8 @@
         </div>
     </div>
 </div>
-<div class="app-card-image" *ngIf="picturesource">
-   <img wmPicture class="card-image" picturesource.bind="picturesource" hint.bind="picturetitle" height.bind="imageheight" />
+<div class="app-card-image" *ngIf="picturesource"  [ngStyle]="{'max-height':imageheight}">
+   <img wmPicture class="card-image" picturesource.bind="picturesource" hint.bind="picturetitle" />
 </div>
 <div class="cardContentWrapper" #cardContainerWrapper>
     <ng-content select="[wmCardContent]" ></ng-content>
