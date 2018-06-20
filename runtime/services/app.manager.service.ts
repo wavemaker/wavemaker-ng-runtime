@@ -122,6 +122,37 @@ export class AppManagerService {
         const supportedLocaleVar = _.get(this.$app, 'Variables.supportedLocale');
     }
 
+    handleSSOLogin(config) {
+        const SSO_URL = 'services/security/ssologin',
+            PREVIEW_WINDOW_NAME = 'WM_PREVIEW_WINDOW';
+        let page,
+            pageParams;
+
+        // do not provide redirectTo page if fetching HOME page resulted 401
+        // on app load, by default Home page is loaded
+        page = this.$security.getRedirectPage(config);
+        page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
+        // pageParams = that.getQueryString($location.search());
+        pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
+        // showing a redirecting message
+        document.body.textContent = 'Redirecting to sso login...';
+        // appending redirect to page and page params
+        const ssoUrl = this.getDeployedURL() + SSO_URL + page + pageParams;
+        debugger;
+        /*
+         * remove iFrame when redirected to IdP login page.
+         * this is being done as IDPs do not allow to get themselves loaded into iFrames.
+         * remove-toolbar has been assigned with a window name WM_PREVIEW_WINDOW, check if the iframe is our toolbar related and
+         * safely change the location of the parent toolbar with current url.
+         */
+        if (window.self !== window.top && window.parent.name === PREVIEW_WINDOW_NAME) {
+            window.parent.location.href = window.self.location.href;
+            window.parent.name = '';
+        } else {
+            window.location.href = ssoUrl;
+        }
+    }
+
     /**
      * Handles the app when a XHR request returns 401 response
      * If no user was logged in before 401 occurred, First time Login is simulated
@@ -135,9 +166,7 @@ export class AppManagerService {
         let sessionTimeoutConfig,
             sessionTimeoutMethod,
             loginConfig,
-            loginMethod,
-            ssoUrl,
-            pageParams;
+            loginMethod;
         const that = this,
             LOGIN_METHOD = {
                 'DIALOG' : 'DIALOG',
@@ -152,13 +181,19 @@ export class AppManagerService {
             config.authenticated = false;
             sessionTimeoutConfig = loginConfig.sessionTimeout || {'type': LOGIN_METHOD.DIALOG};
             sessionTimeoutMethod = sessionTimeoutConfig.type.toUpperCase();
-            if (sessionTimeoutMethod === LOGIN_METHOD.DIALOG) {
-                that.showLoginDialog();
-            } else if (sessionTimeoutMethod === LOGIN_METHOD.PAGE) {
-                if (!page) {
-                    page = that.$security.getCurrentRoutePage();
-                }
-                that.$router.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
+            switch(sessionTimeoutMethod) {
+                case LOGIN_METHOD.DIALOG:
+                    that.showLoginDialog();
+                    break;
+                case LOGIN_METHOD.PAGE:
+                    if (!page) {
+                        page = that.$security.getCurrentRoutePage();
+                    }
+                    that.$router.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
+                    break;
+                case LOGIN_METHOD.SSO:
+                    this.handleSSOLogin(config);
+                    break;
             }
         } else {
             // if no user found, 401 was thrown for first time login
@@ -177,28 +212,7 @@ export class AppManagerService {
                     that.$router.navigate([loginConfig.pageName], {queryParams: {redirectTo: page}});
                     break;
                 case LOGIN_METHOD.SSO:
-                    // do not provide redirectTo page if fetching HOME page resulted 401
-                    // on app load, by default Home page is loaded
-                    page = that.$security.getRedirectPage(config);
-                    page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
-                    // pageParams = that.getQueryString($location.search());
-                    pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
-                    // showing a redirecting message
-                    document.body.textContent = 'Redirecting to sso login...';
-                    // appending redirect to page and page params
-                    // ssoUrl = $rs.project.deployedUrl + SSO_URL + page + pageParams;
-                    // /*
-                    //  * remove iFrame when redirected to IdP login page.
-                    //  * this is being done as IDPs do not allow to get themselves loaded into iFrames.
-                    //  * remove-toolbar has been assigned with a window name WM_PREVIEW_WINDOW, check if the iframe is our toolbar related and
-                    //  * safely change the location of the parent toolbar with current url.
-                    //  */
-                    // if ($window.self !== $window.top && $window.parent.name === PREVIEW_WINDOW_NAME) {
-                    //     $window.parent.location.href = $window.self.location.href;
-                    //     $window.parent.name = '';
-                    // } else {
-                    //     $window.location.href = ssoUrl;
-                    // }
+                    this.handleSSOLogin(config);
                     break;
             }
         }
