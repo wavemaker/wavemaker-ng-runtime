@@ -181,7 +181,8 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (_.isUndefined(this._modelByKey) || !this._modelByKey.length) {
             this.toBeProcessedDatavalue = values;
         } else if (!_.isUndefined(this.toBeProcessedDatavalue)) {
-            this._modelByValue = this.toBeProcessedDatavalue;
+            // obtain the first array value when multiple is set to false.
+            this._modelByValue = (!this.multiple && _.isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
             this.toBeProcessedDatavalue = undefined;
         }
 
