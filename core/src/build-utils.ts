@@ -9,7 +9,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch ${innerTmpl}></div>`;
+            tmpl = `<div wmSearch type="autocomplete" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.CHECKBOX:
             tmpl = `<div wmCheckbox ${innerTmpl}></div>`;
