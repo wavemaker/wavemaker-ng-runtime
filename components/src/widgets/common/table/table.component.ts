@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy, ViewChild, ViewContainerRef, ContentChildren, QueryList, HostListener } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy, ViewChild, ViewContainerRef, ContentChildren, QueryList, HostListener, NgZone } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -288,7 +288,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.invokeEventCallback('headerclick', {$event: e, $data: col});
         },
         onRowDelete: (rowData, cancelRowDeleteCallback, e, callBack) => {
-            this.deleteRecord(rowData, cancelRowDeleteCallback, e, callBack);
+            this.ngZone.run(() => {
+                this.deleteRecord(rowData, cancelRowDeleteCallback, e, callBack);
+            });
         },
         onRowInsert: (rowData, e, callBack) => {
             this.insertRecord({'row': rowData, event: e, 'callBack': callBack});
@@ -514,11 +516,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
-    constructor(inj: Injector,
-                public fb: FormBuilder,
-                private app: App,
-                @Attribute('dataset.bind') public binddataset,
-                @Attribute('readonlygrid') public readonlygrid) {
+    constructor(
+        inj: Injector,
+        public fb: FormBuilder,
+        private app: App,
+        @Attribute('dataset.bind') public binddataset,
+        @Attribute('readonlygrid') public readonlygrid,
+        private ngZone: NgZone
+    ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 

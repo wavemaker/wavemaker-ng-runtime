@@ -318,7 +318,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     }
 
     getStyleDef() {
-        return `{width: ${this.width || ''}; background-color: ${this.backgroundcolor || ''}; color: ${this.textcolor || ''}};`;
+        return `width: ${this.width || ''}; background-color: ${this.backgroundcolor || ''}; color: ${this.textcolor || ''};`;
     }
 
     populateFieldDef() {

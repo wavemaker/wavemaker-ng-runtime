@@ -21,7 +21,9 @@ const OVERRIDES = {
     'ng-class': '[ngClass]',
     'data-ng-class': '[ngClass]',
     'data-ng-src': 'src',
-    'ng-src': 'src'
+    'ng-src': 'src',
+    'data-ng-href': 'href',
+    'ng-href': 'href'
 };
 
 const selfClosingTags = new Set(['img']);

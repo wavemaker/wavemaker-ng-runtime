@@ -13,7 +13,7 @@ export class TrustAsPipe implements PipeTransform {
             if (!content) {
                 return;
             }
-            return this.domSanitizer.sanitize(SecurityContext.RESOURCE_URL, this.domSanitizer.bypassSecurityTrustResourceUrl(content));
+            return this.domSanitizer.bypassSecurityTrustResourceUrl(content);
         }
 
         if (as === 'html' || as === SecurityContext.HTML) {
