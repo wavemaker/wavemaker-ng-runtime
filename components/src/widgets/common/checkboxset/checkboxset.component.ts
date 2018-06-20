@@ -1,6 +1,6 @@
 import { Attribute, Component, Injector } from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import { $appDigest, switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -63,6 +63,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
         });
 
         this.modelByKey = keys;
+
+        $appDigest();
 
         this.invokeOnTouched();
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});

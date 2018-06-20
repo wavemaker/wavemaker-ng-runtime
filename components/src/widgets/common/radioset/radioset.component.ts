@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import { $appDigest, switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './radioset.props';
@@ -41,6 +41,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
 
         this.modelByKey = key;
 
+        $appDigest();
         this.invokeOnTouched();
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});
     }
