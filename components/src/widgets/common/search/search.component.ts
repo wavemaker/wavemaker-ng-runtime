@@ -3,7 +3,7 @@ import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, Quer
 import { Observable } from 'rxjs/Observable';
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
-import { isDefined } from '@wm/core';
+import { addClass, isDefined } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, extractDataAsArray, transformData} from '../../../utils/form-utils';
@@ -18,7 +18,7 @@ import { ChipsComponent } from '../chips/chips.component';
 
 declare const _;
 
-const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'app-search input-group'};
+const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'input-group'};
 
 registerProps();
 
@@ -79,6 +79,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
+
+        addClass(this.nativeElement, 'app-search', true);
 
         /**
          * Listens for the change in the ngModel on every search and retrieves the data as observable.

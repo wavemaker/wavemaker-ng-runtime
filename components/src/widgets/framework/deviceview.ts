@@ -5,7 +5,8 @@ enum CLASS_NAME {
     RIGHT_PANEL = 'page-right-panel',
     SWIPE_ELEM = 'page-left-panel-icon',
     CONTENT = 'app-content-column',
-    HEADER = 'page-header'
+    HEADER = 'page-header',
+    SEARCH = 'app-search'
 }
 
 /**
@@ -50,7 +51,7 @@ const bindContentEvents = (leftNavEle: HTMLElement, pageContainer: HTMLElement, 
 
 const bindLeftPanelEvents = (leftNavEle: HTMLElement, searchEle: HTMLElement) => {
     // tap left to show/hide left panel
-    bindTapEvtHandler(roleSelector(CLASS_NAME.SWIPE_ELEM), function () {
+    bindTapEvtHandler(roleSelector(CLASS_NAME.SWIPE_ELEM), () => {
         if (leftNavEle) {
             (leftNavEle as any).widget.toggle();
 
@@ -75,14 +76,14 @@ const bindRightPanelEvents = (rightNavEle: HTMLElement) => {
 /**
  * toggles the search container
  */
-function toggleSearchContainer(searchEle, leftNavEle: HTMLElement) {
-    if (searchEle.css('display') === 'none') {
+const toggleSearchContainer = (searchEle: HTMLElement, leftNavEle: HTMLElement) => {
+    if ($(searchEle).css('display') === 'none') {
         hidePageContainers(leftNavEle);
-        searchEle.css('display', 'inline-table');
+        setCSS(searchEle, 'display', 'inline-table');
     } else {
         hidePageContainers(leftNavEle, searchEle);
     }
-}
+};
 
 /**
  * Bind event with Search icon in header
@@ -91,11 +92,10 @@ const bindSearchIconEvent = (searchElements, leftNavEle: HTMLElement) => {
 
     $(searchElements).each((index, ele) => {
         const searchEle = $('<a class="app-header-action"><i class="wi wi-search"></i></a>');
-        const element = $(ele);
-        element.before(searchEle);
+        $(ele).before(searchEle);
         // Tap icon to show/hide search box
-        bindTapEvtHandler(searchEle, function () {
-            toggleSearchContainer(element, leftNavEle);
+        bindTapEvtHandler(searchEle, () => {
+            toggleSearchContainer(ele, leftNavEle);
         });
     });
 
@@ -106,7 +106,7 @@ export const updateDeviceView  = (element: HTMLElement) => {
     const leftNavEle: HTMLElement = element.querySelector(roleSelector(CLASS_NAME.LEFT_PANEL));
     const rightNavEle: HTMLElement = element.querySelector(roleSelector(CLASS_NAME.RIGHT_PANEL));
     const headerEle: HTMLElement = element.querySelector(roleSelector(CLASS_NAME.HEADER));
-    const searchEle: HTMLElement =  headerEle.querySelector('[wmsearch]');
+    const searchEle: HTMLElement =  headerEle && headerEle.querySelector(`.${CLASS_NAME.SEARCH}`);
     const pageEle: HTMLElement = element.querySelector(`.${CLASS_NAME.CONTENT}`);
 
     bindContentEvents(leftNavEle, pageEle as HTMLElement, searchEle);

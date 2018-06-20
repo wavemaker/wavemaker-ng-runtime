@@ -31,7 +31,7 @@ register('wm-carousel', (): IBuildTaskDef => {
                 if (!boundExpr) {
                     return;
                 }
-                updateTemplateAttrs(node.children as Array<Element>, boundExpr, widgetNameAttr.value);
+                updateTemplateAttrs(node, boundExpr, widgetNameAttr.value);
             }
         },
         // To provide parent carousel reference for children

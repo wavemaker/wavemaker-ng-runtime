@@ -1,6 +1,6 @@
 import { AfterContentInit, Component, ContentChildren, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { $appDigest, noop, setCSS, toggleClass } from '@wm/core';
+import { $appDigest, noop, removeAttr, setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -63,6 +63,7 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
 
         this.fullScreenTitle = `${this.appLocale.LABEL_FULLSCREEN}/${this.appLocale.LABEL_EXITFULLSCREEN}`;
         this.expandCollapseTitle = `${this.appLocale.LABEL_COLLAPSE}/${this.appLocale.LABEL_EXPAND}`;
+        removeAttr(this.nativeElement, 'title');
     }
 
     // toggle the panel state between collapsed - expanded. invoke the respective callbacks
