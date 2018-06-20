@@ -6,6 +6,7 @@ import { EventNotifier } from '@wm/core';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './page.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { updateDeviceView} from '../../framework/deviceview';
 
 
 registerProps();
@@ -59,6 +60,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     public ngAfterViewInit() {
         setTimeout(() => {
             this._eventNotifier.start();
+            updateDeviceView(this.nativeElement);
         }, 1);
     }
 
