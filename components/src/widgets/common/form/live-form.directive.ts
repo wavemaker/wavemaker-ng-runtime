@@ -102,9 +102,7 @@ export class LiveFormDirective {
     }
 
     onFieldValueChange(field, nv) {
-        if (isDataSetWidget(field.widgettype)) {
-            applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
-        }
+        applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
     }
 
     getBlobURL(dataObj, key, value) {

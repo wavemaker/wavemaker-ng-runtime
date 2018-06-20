@@ -59,7 +59,7 @@ const formFieldMap = new Map(
     [
         ['defaultvalue', PROP_STRING_NOTIFY],
         ['displayname', PROP_STRING],
-        ['display-name', PROP_STRING],
+        ['display-name', PROP_STRING_NOTIFY],
         ['field', PROP_STRING],
         ['hint', PROP_STRING],
         ['is-range', PROP_BOOLEAN],

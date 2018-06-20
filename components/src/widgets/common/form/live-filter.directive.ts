@@ -69,9 +69,7 @@ export class LiveFilterDirective {
     }
 
     onFieldValueChange(field, nv) {
-        if (isDataSetWidget(field.widgettype)) {
-            applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
-        }
+        applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
         if (this.form.autoupdate) {
             this.filter();
         }

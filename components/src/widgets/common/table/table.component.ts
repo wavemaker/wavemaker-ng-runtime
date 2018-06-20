@@ -1156,7 +1156,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (forceRender) {
             this.datagridElement.datatable(this.gridOptions);
         } else {
-            setTimeout(function () {
+            setTimeout(() => {
                 this.callDataGridMethod('setColGroupWidths');
                 this.callDataGridMethod('addOrRemoveScroll');
             });

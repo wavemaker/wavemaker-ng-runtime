@@ -223,7 +223,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // On field value change, apply cascading filter
     onValueChange(val) {
-        if (val !== null && isDataSetWidget(this['edit-widget-type'])) {
+        if (val !== null) {
             applyFilterOnField(this.table.datasource, this.widget, this.table.fieldDefs, val);
         }
     }

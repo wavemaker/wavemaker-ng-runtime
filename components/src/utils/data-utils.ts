@@ -256,6 +256,10 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
     });
 }
 
+function isDefinedAndNotEmpty(val) {
+    return isDefined(val) && val !== '' && val !== null;
+}
+
 /**
  * @ngdoc function
  * @name wm.widgets.live.getRangeFieldValue
@@ -270,11 +274,11 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
  */
 export function getRangeFieldValue(minValue, maxValue) {
     let fieldValue;
-    if (isDefined(minValue) && isDefined(maxValue)) {
+    if (isDefinedAndNotEmpty(minValue) && isDefinedAndNotEmpty(maxValue)) {
         fieldValue = [minValue, maxValue];
-    } else if (isDefined(minValue)) {
+    } else if (isDefinedAndNotEmpty(minValue)) {
         fieldValue = minValue;
-    } else if (isDefined(maxValue)) {
+    } else if (isDefinedAndNotEmpty(maxValue)) {
         fieldValue = maxValue;
     }
     return fieldValue;
@@ -294,11 +298,11 @@ export function getRangeFieldValue(minValue, maxValue) {
 export function getRangeMatchMode(minValue, maxValue) {
     let matchMode;
     // If two values exists, then it is between. Otherwise, greater or lesser
-    if (isDefined(minValue) && isDefined(maxValue)) {
+    if (isDefinedAndNotEmpty(minValue) && isDefinedAndNotEmpty(maxValue)) {
         matchMode = MatchMode.BETWEEN;
-    } else if (isDefined(minValue)) {
+    } else if (isDefinedAndNotEmpty(minValue)) {
         matchMode = MatchMode.GREATER;
-    } else if (isDefined(maxValue)) {
+    } else if (isDefinedAndNotEmpty(maxValue)) {
         matchMode = MatchMode.LESSER;
     }
     return matchMode;

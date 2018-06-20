@@ -69,10 +69,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     filetype;
     extensions;
     permitted;
-
-    // Range values
-    minValue;
-    maxValue;
+    isRange;
 
     // Validation properties
     required;
@@ -93,6 +90,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('widgettype') _widgetType,
         @Attribute('name') name,
         @Attribute('key') key,
+        @Attribute('is-range') isRange,
         @Self() @Inject(Context) contexts: Array<any>
     ) {
 
@@ -111,6 +109,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.fb = fb;
         this.name = name;
         this.key = key;
+        this.isRange = isRange;
         this.excludeProps = new Set(['type']);
         this.widgettype = _widgetType;
 
@@ -282,9 +281,32 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.datavalue = val;
     }
 
+    get maxValue() {
+        return this.formWidgetMax && this.formWidgetMax.datavalue;
+    }
+
+    set maxValue(val) {
+        if (this._maxControl) {
+            this._maxControl.setValue(val);
+        }
+    }
+
+    get minValue() {
+        return this.value;
+    }
+
+    set minValue(val) {
+        this.value = val;
+    }
+
     // Get the reactive form control
     get _control() {
         return this.ngform && this.ngform.controls[this.key || this.name];
+    }
+
+    // Get the reactive max form control
+    get _maxControl() {
+        return this.ngform && this.ngform.controls[(this.key || this.name) + '_max'];
     }
 
     // Create the reactive form control
@@ -320,7 +342,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         super.ngOnInit();
         styler(this.nativeElement, this);
 
-        if (this['is-range']) {
+        if (this.isRange === 'true') {
             this.ngform.addControl(fieldName + '_max', this.createControl());
         }
     }
