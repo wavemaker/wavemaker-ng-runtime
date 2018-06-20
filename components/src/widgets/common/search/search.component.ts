@@ -334,7 +334,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         this.typeaheadContainer = (this.typeahead as any)._typeahead;
 
-        if (this.class = 'app-chip-input') {
+        if (this.class === 'app-chip-input') {
             this.parentRef = this.viewParent;
         }
 
