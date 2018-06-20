@@ -63,7 +63,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         if (this.datafield === 'All Fields' && this.compareby && this.compareby.length) {
             setItemByCompare(this.datasetItems, this.datavalue, this.compareby);
         }
-        const selectedItem =  _.find(this.datasetItems, {'selected' : true});
+        const selectedItem =  _.find(this.datasetItems, {value: this.datavalue});
 
         if (selectedItem) {
             this.selectedItem = selectedItem;
@@ -113,7 +113,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         this.invokeOnTouched();
         $event.preventDefault();
 
-        if ($index === (this.selectedItem.index - 1)) {
+        if (this.selectedItem && $index === (this.selectedItem.index - 1)) {
             if (this.datasetItems.length === 2) {
                 $index = $index === 1 ? 0 : 1;
             } else {
