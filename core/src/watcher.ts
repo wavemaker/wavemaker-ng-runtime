@@ -36,6 +36,10 @@ const triggerWatchers = () => {
             listener(nv, ov);
             resetChangeFromWatch();
             watchInfo.last = nv;
+
+            if (_.isObject(nv) && !(nv.proxy || nv instanceof Proxy)) {
+                watchInfo.last = _.clone(nv);
+            }
         }
     });
 };
