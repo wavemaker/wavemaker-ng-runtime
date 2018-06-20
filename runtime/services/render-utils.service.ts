@@ -301,12 +301,13 @@ export class RenderUtilsService {
             containerWidget.Variables = partialInstance.Variables;
             containerWidget.Actions = partialInstance.Actions;
 
+            this.route.queryParams.subscribe(params => partialInstance.pageParams = params);
+            partialInstance.pageParams = containerWidget.partialParams;
+
             monitorFragments(partialInstance, parseEndPromise, () => {
                 (partialInstance.onReady || noop)();
                 resolveFn();
             });
-
-            this.route.queryParams.subscribe(params => partialInstance.pageParams = params);
         };
 
         return this.renderResource(`app-partial-${partialName}`, markup, styles, undefined, postConstructFn, vcRef, $target)
@@ -346,7 +347,7 @@ export class RenderUtilsService {
                         containerWidget[key] = (...args) => {
                             try {
                                 prefabInstance[prop.method](...args);
-                            } catch {
+                            } catch (e) {
                                 console.warn(`error in executing prefab-${prefabName} method-${key}`);
                             }
                         };

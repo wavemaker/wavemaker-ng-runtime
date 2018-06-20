@@ -82,6 +82,7 @@ import { PaginationComponent } from './widgets/common/pagination/pagination.comp
 import { PanelComponent } from './widgets/common/panel/panel.component';
 import { PartialDialogComponent } from './widgets/common/dialog/partial-dialog/partial-dialog.component';
 import { PartialDirective } from './widgets/common/partial/partial.directive';
+import { PartialParamDirective, PartialParamHandlerDirective } from './widgets/common/partial-param/partial-param.directive';
 import { PrefabContainerDirective } from './widgets/common/prefab-container/prefab-container.directive';
 import { PictureDirective } from './widgets/common/picture/picture.directive';
 import { PopoverComponent } from './widgets/common/popover/popover.component';
@@ -199,6 +200,8 @@ const wmComponents = [
     PanelComponent,
     PartialDialogComponent,
     PartialDirective,
+    PartialParamHandlerDirective,
+    PartialParamDirective,
     PictureDirective,
     PopoverComponent,
     PrefabDirective,

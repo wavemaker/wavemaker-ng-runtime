@@ -57,7 +57,8 @@ export class PartialContainerDirective {
                         componentInstance.$lazyLoad = noop;
                     };
                 } else {
-                    this.renderPartial(nv, vcRef, componentInstance).then(() => this.onLoadSuccess());
+                    this.renderPartial(nv, vcRef, componentInstance)
+                        .then(() => this.onLoadSuccess());
                 }
             }
         });

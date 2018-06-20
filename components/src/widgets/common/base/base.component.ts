@@ -182,6 +182,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         return this.widget;
     }
 
+    public getViewParent(): any {
+        return this.viewParent;
+    }
+
     public notifyStyleChange(key: string, nv: any, ov: any) {
         this.styleChange.next({key, nv, ov});
     }

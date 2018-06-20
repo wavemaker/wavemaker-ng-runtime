@@ -59,6 +59,7 @@ export * from './widgets/common/page/page.build';
 export * from './widgets/common/pagination/pagination.build';
 export * from './widgets/common/panel/panel.build';
 export * from './widgets/common/partial/partial.build';
+export * from './widgets/common/partial-param/partial-param.build';
 export * from './widgets/common/picture/picture.build';
 export * from './widgets/common/popover/popover.build';
 export * from './widgets/common/prefab/prefab.build';
