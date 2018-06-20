@@ -159,7 +159,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     private resetSearchModel() {
-        this.searchComponent.query = undefined;
+        this.searchComponent.query = '';
+
+        this.focusSearchBox();
     }
 
     // Add the newItem to the list
