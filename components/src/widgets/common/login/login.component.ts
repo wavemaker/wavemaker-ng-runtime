@@ -69,6 +69,11 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     ngAfterViewInit() {
         super.ngAfterViewInit();
 
+        // suppresses the default form submission (in browsers like Firefox)
+        this.formCmp.getNativeElement().addEventListener('submit', function(e){
+            e.preventDefault();
+        });
+
         // get login button component
         this.buttonComponents.forEach(cmp => {
             if (cmp.getNativeElement().getAttribute('name') === 'loginButton' || _.includes(cmp.getNativeElement().classList, 'app-login-button')) {
