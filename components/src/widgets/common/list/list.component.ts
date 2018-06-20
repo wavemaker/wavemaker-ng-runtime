@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit, AfterContentInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 
@@ -29,7 +29,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(ListComponent)
     ]
 })
-export class ListComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
+export class ListComponent extends StylableComponent implements OnInit, AfterViewInit {
 
     @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
 
@@ -745,20 +745,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterCon
         }
     }
 
-    ngAfterContentInit() {
+    ngAfterViewInit() {
         this.promiseResolverFn();
         this.propsInitPromise.then(() => {
+            super.ngAfterViewInit();
             this.selectedItemWidgets = this.multiselect ? [] : {};
             if (this.enablereorder) {
                 this.configureDnD();
             }
             this.setListClass();
         });
-
-    }
-
-    ngAfterViewInit() {
-        super.ngAfterViewInit();
         this.setupHandlers();
     }
 }

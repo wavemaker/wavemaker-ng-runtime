@@ -91,14 +91,18 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+        if (this.hasNavigationToCurrentPageExpr) {
+            addClass(this.nativeElement, 'active');
+        }
         if (this.navItemRef) {
             setTimeout(() => {
-                if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === this.app.activePageName) {
+                if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`) {
                     this.setNavItemActive();
                 } else if (this.hasNavigationToCurrentPageExpr) {
                     this.setNavItemActive();
                 }
             });
         }
+
     }
 }
