@@ -6,8 +6,11 @@ import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './carousel-template.props';
 
 registerProps();
+
+const DEFAULT_CLS = 'app-carousel-item';
 const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-carousel-template'
+    widgetType: 'wm-carousel-template',
+    hostClass: DEFAULT_CLS
 };
 
 @Directive({

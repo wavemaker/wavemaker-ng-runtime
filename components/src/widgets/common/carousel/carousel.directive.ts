@@ -1,6 +1,6 @@
-import { AfterContentInit, Directive, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, ContentChildren, Directive, Injector, OnDestroy, OnInit, QueryList } from '@angular/core';
 
-import { CarouselComponent } from 'ngx-bootstrap';
+import { CarouselComponent, SlideComponent } from 'ngx-bootstrap';
 
 import { isPageable } from '@wm/core';
 
@@ -9,6 +9,7 @@ import { StylableComponent } from '../base/stylable.component';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './carousel.props';
 import { CarouselAnimator } from './carousel.animator';
+import { createArrayFrom } from '../../../utils/data-utils';
 
 declare const _;
 
@@ -40,21 +41,50 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     public animation;
     public controls;
 
+    @ContentChildren(SlideComponent) slides: QueryList<SlideComponent>;
+
     constructor(public component: CarouselComponent, inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 
-    ngAfterContentInit() {
+    private onDataChange(newVal) {
+        if (newVal.data) {
+            newVal = newVal.data;
+        }
+        // If the data is a pageable object, then display the content.
+        if (_.isObject(newVal) && isPageable(newVal)) {
+            newVal = newVal.content;
+        }
+        this.fieldDefs = createArrayFrom(newVal);
+    }
+
+    private stopAnimation() {
+        if (this.animator) {
+            this.animator.stop();
+        }
+    }
+
+    private onSlidesRender(slides) {
         setTimeout(() => {
             this.animator = new CarouselAnimator(this, this.interval);
         }, 50);
     }
 
+    private setupHandlers() {
+        this.slides.changes.subscribe( slides => {
+            this.stopAnimation();
+            this.onSlidesRender(slides);
+        });
+        this.slides.setDirty();
+    }
+
+    ngAfterContentInit() {
+        this.setupHandlers();
+    }
+
     ngOnDestroy() {
-        if (this.animator) {
-            this.animator.stop();
-        }
+        this.stopAnimation();
     }
 
     ngOnInit() {
@@ -66,30 +96,6 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
         // For showing controls
         this.navigationClass = navigationClassMap[this.controls];
-    }
-
-    private onDataChange(newVal) {
-        if (newVal.data) {
-            // TODO how to identify the incoming value contains the data. The "data" could be a field of an object.
-            newVal = newVal.data;
-        }
-
-        // If the data is a pageable object, then display the content.
-        if (_.isObject(newVal) && isPageable(newVal)) {
-            newVal = newVal.content;
-        }
-
-        if (_.isObject(newVal) && !_.isArray(newVal)) {
-            newVal = [newVal];
-        }
-
-        if (_.isString(newVal)) {
-            newVal = newVal.split(',');
-        }
-
-        if (_.isArray(newVal)) {
-            this.fieldDefs = newVal;
-        }
     }
 
     // on property change handler
