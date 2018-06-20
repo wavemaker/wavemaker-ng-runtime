@@ -3,8 +3,8 @@ import { BaseActionManager } from './base-action.manager';
 
 export class NavigationActionManager extends BaseActionManager {
 
-    invoke(variable) {
-        NVUtils.navigate(variable.dataBinding.pageName || variable.pageName, variable.dataSet);
+    invoke(variable, options) {
+        NVUtils.navigate(variable, options);
     }
 
 }
