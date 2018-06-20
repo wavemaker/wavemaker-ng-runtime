@@ -12,7 +12,6 @@ export class CarouselAnimator extends SwipeAnimation {
     private _intervalId;
     private _swiping;
     private _width;
-
     public constructor(private carousel: CarouselDirective, private interval: number) {
         super();
         const self = this;
@@ -27,10 +26,10 @@ export class CarouselAnimator extends SwipeAnimation {
            });
         });
         this._$el.find('>.left.carousel-control').on('click', () => {
-           this.goToLower();
+            this.goToUpper();
         });
         this._$el.find('>.right.carousel-control').on('click', () => {
-            this.goToUpper();
+            this.goToLower();
         });
         this.setActiveItem();
         if (this.interval) {
@@ -137,13 +136,16 @@ export class CarouselAnimator extends SwipeAnimation {
             items.eq(0).removeClass('left-item right-item');
             return;
         }
+
         this._indicators.find('>.active').removeClass('active');
-        this._indicators.children().eq((items.length + this._activeIndex) % items.length).addClass('active');
+        this._indicators.find('> li').eq((items.length + this._activeIndex) % items.length).addClass('active');
+
+
         items.filter('.active').removeClass('active');
         items.addClass('left-item');
         items.eq((items.length + left) % items.length).addClass('left-item').removeClass('right-item');
         items.eq((items.length + this._activeIndex) % items.length).removeClass('left-item right-item').addClass('active');
         items.eq((items.length + right) % items.length).addClass('right-item').removeClass('left-item');
-    }
+        }
 
 }
