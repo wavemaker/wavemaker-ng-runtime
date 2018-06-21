@@ -159,96 +159,120 @@ export default class LiveVariableUtils {
             }
         });
         return attrName;
-    }
+    };
 
     static getFilterCondition = (filterCondition) => {
         if (_.includes(DB_CONSTANTS.DATABASE_RANGE_MATCH_MODES, filterCondition)) {
             return filterCondition;
         }
         return DB_CONSTANTS.DATABASE_MATCH_MODES['exact'];
-    }
+    };
+    
+    static getFilterOption = (variable, fieldOptions, options) => {
+        let attributeName,
+            matchModes = DB_CONSTANTS.DATABASE_MATCH_MODES,
+            fieldName = fieldOptions.fieldName,
+            fieldValue = fieldOptions.value,
+            fieldRequired = fieldOptions.required || false,
+            fieldType = LiveVariableUtils.getSQLFieldType(variable, fieldOptions),
+            filterCondition = matchModes[fieldOptions.matchMode] || matchModes[fieldOptions.filterCondition] || fieldOptions.filterCondition,
+            filterOption;
+
+        fieldOptions.type = fieldType;
+        /* if the field value is an object(complex type), loop over each field inside and push only first level fields */
+        if (_.isObject(fieldValue) && !_.isArray(fieldValue)) {
+            let firstLevelValues = [];
+            _.forEach(fieldValue, function (subFieldValue, subFieldName) {
+                if (subFieldValue && !_.isObject(subFieldValue)) {
+                    firstLevelValues.push(fieldName + '.' + subFieldName + '=' + subFieldValue);
+                }
+            });
+            return firstLevelValues;
+        }
+
+        if (_.includes(DB_CONSTANTS.DATABASE_EMPTY_MATCH_MODES, filterCondition)) {
+            attributeName = LiveVariableUtils.getAttributeName(variable, fieldName);
+            //For non string types empty match modes are not supported, so convert them to null match modes.
+            if (fieldType && !LiveVariableUtils.isStringType(fieldType)) {
+                filterCondition = DB_CONSTANTS.DATABASE_NULL_EMPTY_MATCH[filterCondition];
+            }
+            filterOption = {
+                'attributeName': attributeName,
+                'attributeValue': '',
+                'attributeType': _.toUpper(fieldType),
+                'filterCondition': filterCondition,
+                'required': fieldRequired
+            };
+            if (options.searchWithQuery) {
+                filterOption.isVariableFilter = fieldOptions.isVariableFilter;
+            }
+            return filterOption;
+        }
+
+        if (!_.isUndefined(fieldValue) && fieldValue !== null && fieldValue !== '') {
+            /*Based on the sqlType of the field, format the value & set the filter condition.*/
+            if (fieldType) {
+                switch (fieldType) {
+                    case 'integer':
+                        fieldValue = _.isArray(fieldValue) ? _.reduce(fieldValue, function (result, value) {
+                            value = parseInt(value, 10);
+                            if(!_.isNaN(value)) {
+                                result.push(value);
+                            }
+                            return result;
+                        },[]) : parseInt(fieldValue, 10);
+                        filterCondition = filterCondition ? LiveVariableUtils.getFilterCondition(filterCondition) : matchModes['exact'];
+                        break;
+                    case 'date':
+                    case 'datetime':
+                    case 'timestamp':
+                        fieldValue = formatDate(fieldValue, fieldType);
+                        filterCondition = filterCondition ? LiveVariableUtils.getFilterCondition(filterCondition) : matchModes['exact'];
+                        break;
+                    case 'text':
+                    case 'string':
+                        if (_.isArray(fieldValue)) {
+                            filterCondition = matchModes['exact'];
+                        } else {
+                            filterCondition = filterCondition || matchModes['anywhereignorecase'];
+                        }
+                        break;
+                    default:
+                        filterCondition = filterCondition ? LiveVariableUtils.getFilterCondition(filterCondition) : matchModes['exact'];
+                        break;
+                }
+            } else {
+                filterCondition = _.isString(fieldValue) ? matchModes['anywhereignorecase'] : matchModes['exact'];
+            }
+            attributeName = LiveVariableUtils.getAttributeName(variable, fieldName);
+            filterOption = {
+                'attributeName': attributeName,
+                'attributeValue': fieldValue,
+                'attributeType': _.toUpper(fieldType),
+                'filterCondition': filterCondition,
+                'required': fieldRequired
+            };
+            if (options.searchWithQuery) {
+                filterOption.isVariableFilter = fieldOptions.isVariableFilter;
+            }
+            return filterOption;
+        }
+    };
 
     static getFilterOptions = (variable, filterFields, options) => {
-        const filterOptions = [],
-            matchModes = DB_CONSTANTS.DATABASE_MATCH_MODES;
+        const filterOptions = [];
         _.each(filterFields, function (fieldOptions) {
-            const fieldName = fieldOptions.fieldName,
-                fieldType = LiveVariableUtils.getSQLFieldType(variable, fieldOptions);
-            let attributeName,
-                fieldValue = fieldOptions.value,
-                filterCondition = fieldOptions.filterCondition,
-                filterOption;
-
-            fieldOptions.type = fieldType;
-            /* if the field value is an object(complex type), loop over each field inside and push only first level fields */
-            if (_.isObject(fieldValue) && !_.isArray(fieldValue)) {
-                _.forEach(fieldValue, function (subFieldValue, subFieldName) {
-                    if (subFieldValue && !_.isObject(subFieldValue)) {
-                        filterOptions.push(fieldName + '.' + subFieldName + '=' + subFieldValue);
-                    }
-                });
-            } else if (!_.isUndefined(fieldValue) && fieldValue !== null && fieldValue !== '') {
-                /*Based on the sqlType of the field, format the value & set the filter condition.*/
-                if (fieldType) {
-                    switch (fieldType) {
-                        case 'integer':
-                            fieldValue = _.isArray(fieldValue) ? _.map(fieldValue, function (value) {
-                                return parseInt(value, 10);
-                            }) : parseInt(fieldValue, 10);
-                            filterCondition = filterCondition ? LiveVariableUtils.getFilterCondition(filterCondition) : matchModes['exact'];
-                            break;
-                        case 'date':
-                        case 'datetime':
-                        case 'timestamp':
-                            fieldValue = formatDate(fieldValue, fieldType);
-                            filterCondition = filterCondition ? LiveVariableUtils.getFilterCondition(filterCondition) : matchModes['exact'];
-                            break;
-                        case 'text':
-                        case 'string':
-                            if (_.isArray(fieldValue)) {
-                                filterCondition = matchModes['exact'];
-                            } else {
-                                filterCondition = filterCondition || matchModes['anywhere'];
-                            }
-                            break;
-                        default:
-                            filterCondition = filterCondition ? LiveVariableUtils.getFilterCondition(filterCondition) : matchModes['exact'];
-                            break;
-                    }
+            let filterOption = LiveVariableUtils.getFilterOption(variable, fieldOptions, options);
+            if(!_.isNil(filterOption)) {
+                if (_.isArray(filterOption)) {
+                    filterOptions.concat(filterOption);
                 } else {
-                    filterCondition = _.isString(fieldValue) ? matchModes['anywhere'] : matchModes['exact'];
+                    filterOptions.push(filterOption);
                 }
-                attributeName = LiveVariableUtils.getAttributeName(variable, fieldName);
-                filterOption = {
-                    'attributeName': attributeName,
-                    'attributeValue': fieldValue,
-                    'attributeType': _.toUpper(fieldType),
-                    'filterCondition': filterCondition
-                };
-                if (options.searchWithQuery) {
-                    filterOption.isVariableFilter = fieldOptions.isVariableFilter;
-                }
-                filterOptions.push(filterOption);
-            } else if (_.includes(DB_CONSTANTS.DATABASE_EMPTY_MATCH_MODES, filterCondition)) {
-                attributeName = LiveVariableUtils.getAttributeName(variable, fieldName);
-                // For non string types empty match modes are not supported, so convert them to null match modes.
-                if (fieldType && !LiveVariableUtils.isStringType(fieldType)) {
-                    filterCondition = DB_CONSTANTS.DATABASE_NULL_EMPTY_MATCH[filterCondition];
-                }
-                filterOption = {
-                    'attributeName': attributeName,
-                    'attributeValue': '',
-                    'attributeType': _.toUpper(fieldType),
-                    'filterCondition': filterCondition
-                };
-                if (options.searchWithQuery) {
-                    filterOption.isVariableFilter = fieldOptions.isVariableFilter;
-                }
-                filterOptions.push(filterOption);
             }
         });
         return filterOptions;
-    }
+    };
 
     // Wrap the field name and value in lower() in ignore case scenario
     // TODO: Change the function name to represent the added functionality of identifiers for datetime, timestamp and float types. Previously only lower was warapped.
@@ -331,7 +355,7 @@ export default class LiveVariableUtils {
                 break;
         }
         return !_.isUndefined(param) ? param : '';
-    }
+    };
 
     static getSearchQuery = (filterOptions, operator, ignoreCase, skipEncode?) => {
         let query;
@@ -361,9 +385,170 @@ export default class LiveVariableUtils {
         });
         query = _.join(params, operator); // empty space added intentionally around OR
         return query;
-    }
+    };
+
+    /**
+     * creating the proper values from the actual object like for between,in matchModes value has to be an array like [1,2]
+     * @param rules recursive filterexpressions object
+     * @param variable variable object
+     * @param options options
+     */
+    static processFilterFields = (rules, variable, options) => {
+        _.remove(rules, function (rule) {
+            return rule && (_.isString(rule.value) && rule.value.indexOf("bind:") === 0 || (rule.matchMode === "between" ? (_.isString(rule.secondvalue) && rule.secondvalue.indexOf("bind:") === 0) : false));
+        });
+
+        _.forEach(rules, function (rule, index) {
+            if(rule) {
+                if (rule.rules) {
+                    LiveVariableUtils.processFilterFields(rule.rules, variable, options);
+                } else {
+                    if(!_.isNull(rule.target)) {
+                        let value = rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.between.toLowerCase()
+                            ? [rule.value, rule.secondvalue]
+                            : (rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.in.toLowerCase()
+                                ? (_.isArray(rule.value) ? rule.value : (rule.value ? rule.value.split(",") : ''))
+                                : rule.value);
+                        rules[index] = LiveVariableUtils.getFilterOption(variable, {
+                            'fieldName': rule.target,
+                            'type': rule.type,
+                            'value': value,
+                            'required': rule.required,
+                            'filterCondition': rule.matchMode || options.matchMode || variable.matchMode
+                        }, options);
+                    }
+                }
+            }
+        });
+    };
+
+    static getSearchField = (fieldValue, ignoreCase, skipEncode) => {
+        let fieldName = fieldValue.attributeName,
+            value = fieldValue.attributeValue,
+            filterCondition = fieldValue.filterCondition,
+            isValArray = _.isArray(value),
+            dbModes = DB_CONSTANTS.DATABASE_MATCH_MODES,
+            matchModeExpr,
+            paramValue;
+        // If value is an empty array, do not generate the query
+        // If values is NaN and number type, do not generate query for this field
+        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, function(val) {return (_.isNull(val) || _.isNaN(val) || val === "")})) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
+            return;
+        }
+        if (isValArray) {
+            //If array is value and mode is between, pass between. Else pass as in query
+            filterCondition = filterCondition === dbModes.between ? filterCondition : dbModes.in;
+            fieldValue.filterCondition = filterCondition;
+        }
+        matchModeExpr = DB_CONSTANTS.DATABASE_MATCH_MODES_WITH_QUERY[filterCondition];
+        paramValue = LiveVariableUtils.getParamValue(value, fieldValue, ignoreCase, skipEncode);
+        fieldName = LiveVariableUtils.wrapInLowerCase(fieldName, fieldValue, ignoreCase, true);
+        return replace(matchModeExpr, [fieldName, paramValue]);
+    };
+
+    /**
+     * this is used to identify whether to use ignorecase at each criteria level and not use the variable
+     * level isIgnoreCase flag and apply it to all the rules.
+     * Instead of adding an extra param to the criteria object, we have added few other matchmodes for string types like
+     * anywhere with anywhereignorecase, start with startignorecase, end with endignorecase, exact with exactignorecase,
+     * So while creating the criteria itseld user can choose whether to use ignore case or not for a particular column while querying
+     * @param matchMode
+     * @param ignoreCase
+     * @returns {*} boolean
+     */
+    static getIgnoreCase = (matchMode, ignoreCase) => {
+        let matchModes = DB_CONSTANTS.DATABASE_MATCH_MODES;
+        if(_.indexOf([matchModes['anywhere'], matchModes['start'], matchModes['end'], matchModes['exact']], matchMode) !== -1) {
+            return false;
+        }
+        if(_.indexOf([matchModes['anywhereignorecase'], matchModes['startignorecase'], matchModes['endignorecase'], matchModes['exactignorecase']], matchMode) !== -1) {
+            return true;
+        }
+        return ignoreCase;
+    };
+
+    static generateSearchQuery = (rules, condition, ignoreCase, skipEncode) => {
+        let params = [];
+        _.forEach(rules, function (rule) {
+            if(rule) {
+                if (rule.rules) {
+                    let query = LiveVariableUtils.generateSearchQuery(rule.rules, rule.condition, ignoreCase, skipEncode);
+                    if(query !== "") {
+                        params.push('(' + query + ')');
+                    }
+                } else {
+                    let searchField = LiveVariableUtils.getSearchField(rule, LiveVariableUtils.getIgnoreCase(rule.filterCondition, ignoreCase), skipEncode);
+                    if(!_.isNil(searchField)) {
+                        params.push(searchField);
+                    }
+                }
+            }
+        });
+        return _.join(params, ' ' + condition + ' ');
+    };
+
+    static prepareTableOptionsForFilterExps = (variable, options, clonedFields) => {
+        if (_.isUndefined(options.searchWithQuery)) {
+            options.searchWithQuery = true;//Using query api instead of  search api
+        }
+
+        let filterOptions = [],
+            orderByFields,
+            orderByOptions,
+            query,
+            clonedObj  = clonedFields || getClonedObject(variable.filterExpressions);
+
+        //if filterexpression from live filter is present use it to query
+        if(options.filterExpr && !_.isEmpty(options.filterExpr)) {
+            clonedObj = options.filterExpr;
+        }
+        //merge live filter runtime values
+        let filterRules:any = {};
+        if(!_.isEmpty(options.filterFields)) {
+            filterRules = {'condition': options.logicalOp || 'AND', 'rules': []};
+            _.forEach(options.filterFields, function (filterObj, filterName) {
+                if(!_.isNil(filterObj.value) && filterObj.value !== "") {
+                    let type = filterObj.type || LiveVariableUtils.getSqlType(variable, filterName);
+                    let ruleObj = {
+                        'target': filterName,
+                        'type': type,
+                        'matchMode': filterObj.matchMode || (LiveVariableUtils.isStringType(type) ? "startignorecase" : "exact"),
+                        'value': filterObj.value,
+                        'required': filterObj.required || false
+                    };
+                    filterRules.rules.push(ruleObj);
+                }
+            })
+        }
+        if(!_.isEmpty(clonedObj)) {
+            if(!_.isNil(filterRules.rules) && filterRules.rules.length) {
+                //combine both the rules using 'AND'
+                let tempRules = {'condition': 'AND', 'rules': []};
+                tempRules.rules.push(getClonedObject(clonedObj));
+                tempRules.rules.push(filterRules);
+                clonedObj = tempRules;
+            }
+        } else {
+            clonedObj = filterRules;
+        }
+
+        LiveVariableUtils.processFilterFields(clonedObj.rules, variable, options);
+        query = LiveVariableUtils.generateSearchQuery(clonedObj.rules, clonedObj.condition, variable.ignoreCase, options.skipEncode);
+
+        orderByFields = getEvaluatedOrderBy(variable.orderBy, options.orderBy);
+        orderByOptions = orderByFields ? 'sort=' + orderByFields : '';
+
+        return {
+            'filter' : filterOptions,
+            'sort'   : orderByOptions,
+            'query'  : query
+        };
+    };
 
     static prepareTableOptions = (variable, options, clonedFields?) => {
+        if(variable.operation == 'read') {
+            return LiveVariableUtils.prepareTableOptionsForFilterExps(variable, options, clonedFields);
+        }
         if (_.isUndefined(options.searchWithQuery)) {
             options.searchWithQuery = true; //  Using query api instead of  search api
         }
@@ -699,6 +884,58 @@ export default class LiveVariableUtils {
         });
 
         return variable.promise = promiseObj;
-    }
+    };
+
+    static traverseFilterExpressions = (filterExpressions, traverseCallbackFn) => {
+        if (filterExpressions.rules) {
+            _.forEach(filterExpressions.rules, function(filExpObj, i){
+                if(filExpObj.rules) {
+                    LiveVariableUtils.traverseFilterExpressions(filExpObj, traverseCallbackFn);
+                } else {
+                    return triggerFn(traverseCallbackFn, filterExpressions, filExpObj);
+                }
+            });
+        }
+    };
+
+    /**
+     * Traverses recursively the filterExpressions object and if there is any required field present with no value,
+     * then we will return without proceeding further. Its upto the developer to provide the mandatory value,
+     * if he wants to assign it in teh onbefore<delete/insert/update>function then make that field in
+     * the filter query section as optional
+     * @param filterExpressions - recursive rule Object
+     * @returns {Object} object or boolean. Object if everything gets validated or else just boolean indicating failure in the validations
+     */
+    static getFilterExprFields = (filterExpressions) => {
+        let isRequiredFieldAbsent = false;
+        let traverseCallbackFn = function (parentFilExpObj, filExpObj) {
+            if (filExpObj
+                && filExpObj.required
+                && ((_.indexOf(['null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'], filExpObj.matchMode) === -1) && filExpObj.value === "")) {
+                isRequiredFieldAbsent = true;
+                return false;
+            }
+        };
+        LiveVariableUtils.traverseFilterExpressions(filterExpressions, traverseCallbackFn);
+        return isRequiredFieldAbsent ? !isRequiredFieldAbsent : filterExpressions;
+    };
+
+    /**
+     *
+     * @param variable
+     * @param options
+     * @returns {function(*=): *} returns a function which should be called for the where clause.
+     * This return function can take a function as argument. This argument function can modify the filter fields
+     * before generating where clause.
+     */
+    static getWhereClauseGenerator = (variable, options) => {
+        return function (modifier) {
+            let clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(variable.filterExpressions));
+            if (modifier) {
+                modifier(clonedFields);
+            }
+            return LiveVariableUtils.prepareTableOptions(variable, options, clonedFields).query;
+        };
+    };
 }
 

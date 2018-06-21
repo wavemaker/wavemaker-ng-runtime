@@ -748,3 +748,5 @@ export const formatExportExpression = fieldDefs => {
     });
     return fieldDefs;
 };
+
+export const debounceVariableCall = _invoke;

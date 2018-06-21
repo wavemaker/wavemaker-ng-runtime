@@ -1,7 +1,7 @@
-import { getClonedObject, triggerFn } from '@wm/core';
+import { $watch, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
 
 import { BaseVariableManager } from './base-variable.manager';
-import { setInput, initiateCallback, formatExportExpression } from '../../util/variable/variables.utils';
+import { setInput, initiateCallback, formatExportExpression, debounceVariableCall } from '../../util/variable/variables.utils';
 import LiveVariableUtils from '../../util/variable/live-variable.utils';
 import { $queue } from '../../util/inflight-queue';
 import * as LVService from '../../util/variable/live-variable.http.utils';
@@ -12,6 +12,69 @@ declare const _;
 const emptyArr = [];
 
 export class LiveVariableManager extends BaseVariableManager {
+
+    public initFilterExpressionBinding(variable) {
+        console.log('---compute filter expressions on', variable.name, variable.filterExpressions)
+        let onSuccess = function (filterExpressions, newVal) {
+            if (variable.operation === 'read') {
+                /* if auto-update set for the variable with read operation only, get its data */
+                if (variable.autoUpdate && !_.isUndefined(newVal) && _.isFunction(variable.update)) {
+                    debounceVariableCall(variable, 'update');
+                }
+            } else {
+                /* if auto-update set for the variable with read operation only, get its data */
+                if (variable.autoUpdate && !_.isUndefined(newVal) && _.isFunction(variable[variable.operation + 'Record'])) {
+                    debounceVariableCall(variable, variable.operation + 'Record');
+                }
+            }
+        };
+
+        this.processFilterExpBindNode(variable._context, variable.filterExpressions, onSuccess);
+    }
+
+    /**
+     * This traverses the filterexpressions object recursively and process the bind string if any in the object
+     * @param variable variable object
+     * @param name name of the variable
+     * @param scope scope of the variable
+     */
+    private processFilterExpBindNode(scope, filterExpressions, success) {
+        let bindFilExpObj = function (obj, targetNodeKey) {
+            if (stringStartsWith(obj[targetNodeKey], "bind:")) {
+                $watch(obj[targetNodeKey].replace("bind:", ""), scope, {}, function (newVal, oldVal) {
+                    if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
+                        return;
+                    }
+                    //Skip cloning for blob column
+                    if (!_.includes(['blob', 'file'], obj.type)) {
+                        newVal = getClonedObject(newVal);
+                    }
+                    //setting value to the root node
+                    if (obj) {
+                        obj[targetNodeKey] = newVal;
+                    }
+
+                    triggerFn(success, filterExpressions, newVal);
+                });
+            }
+        };
+
+        let traverseFilterExpressions = function (filterExpressions) {
+            if (filterExpressions.rules) {
+                _.forEach(filterExpressions.rules, function (filExpObj, i) {
+                    if (filExpObj.rules) {
+                        traverseFilterExpressions(filExpObj);
+                    } else {
+                        if (filExpObj.matchMode === "between") {
+                            bindFilExpObj(filExpObj, "secondvalue");
+                        }
+                        bindFilExpObj(filExpObj, "value");
+                    }
+                });
+            }
+        };
+        traverseFilterExpressions(filterExpressions);
+    }
 
     private updateDataset(variable, data, propertiesMap, pagingOptions) {
         variable.dataSet = {data, propertiesMap, pagingOptions};
@@ -44,6 +107,28 @@ export class LiveVariableManager extends BaseVariableManager {
         initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
     }
 
+    /**
+     * Traverses recursively the filterExpressions object and if there is any required field present with no value,
+     * then we will return without proceeding further. Its upto the developer to provide the mandatory value,
+     * if he wants to assign it in teh onbefore<delete/insert/update>function then make that field in
+     * the filter query section as optional
+     * @param filterExpressions - recursive rule Object
+     * @returns {Object} object or boolean. Object if everything gets validated or else just boolean indicating failure in the validations
+     */
+    private getFilterExprFields = function(filterExpressions) {
+        let isRequiredFieldAbsent = false;
+        let traverseCallbackFn = function (parentFilExpObj, filExpObj) {
+            if (filExpObj
+                && filExpObj.required
+                && ((_.indexOf(['null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'], filExpObj.matchMode) === -1) && filExpObj.value === "")) {
+                isRequiredFieldAbsent = true;
+                return false;
+            }
+        };
+        LiveVariableUtils.traverseFilterExpressions(filterExpressions, traverseCallbackFn);
+        return isRequiredFieldAbsent ? !isRequiredFieldAbsent : filterExpressions;
+    };
+
     private getEntityData(variable, options, success, error) {
         const dataObj: any = {};
         let tableOptions,
@@ -54,7 +139,8 @@ export class LiveVariableManager extends BaseVariableManager {
             clonedFields,
             requestData;
 
-        clonedFields = getClonedObject(variable.filterFields);
+        clonedFields = this.getFilterExprFields(getClonedObject(variable.filterExpressions));
+        // clonedFields = getClonedObject(variable.filterFields);
         //  EVENT: ON_BEFORE_UPDATE
         output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
         if (output === false) {
@@ -87,7 +173,8 @@ export class LiveVariableManager extends BaseVariableManager {
             'size': options.pagesize || (CONSTANTS.isRunMode ? (variable.maxResults || 20) : (variable.designMaxResults || 20)),
             'sort': tableOptions.sort,
             'data': requestData,
-            'filterMeta': tableOptions.filter,
+            'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options),
+            //'filterMeta': tableOptions.filter,
             'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
         }).then((response, xhrObj) => {
             response = response.body;
@@ -326,7 +413,8 @@ export class LiveVariableManager extends BaseVariableManager {
             'sort'          : tableOptions.sort,
             'url'           : variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
             'data'          : data,
-            'filterMeta'    : tableOptions.filter
+            'filter'        : LiveVariableUtils.getWhereClauseGenerator(variable, options)
+            // 'filterMeta'    : tableOptions.filter
         }).then(response => {
             window.location.href = response.body.result;
         }, (response, xhrObj) => {
@@ -523,5 +611,70 @@ export class LiveVariableManager extends BaseVariableManager {
         };
 
         return this.listRecords(variable, requestParams, success, error);
+    }
+
+    /**
+     * used in onBeforeUpdate call - called last in the function - used in old Variables using dataBinding.
+     * This function migrates the old data dataBinding to filterExpressions equivalent format
+     * @param variable
+     * @param inputData
+     * @private
+     */
+    public upgradeInputDataToFilterExpressions(variable, response, inputData) {
+        if(_.isObject(response)) {
+            inputData = response;
+            inputData.condition = "AND";
+            inputData.rules = [];
+        }
+        /**
+         * if the user deletes a particular criteria, we need to remove this form our data aswell.
+         * so we are keeping a copy of it and the emptying the existing object and now fill it with the
+         * user set criteria. If its just modified, change the data and push it tohe rules or else just add a new criteria
+         */
+        let clonedRules = _.cloneDeep(inputData.rules);
+        inputData.rules = [];
+        _.forEach(inputData, function (valueObj, key) {
+            if(key !== 'condition' && key !== 'rules') {
+                let filteredObj = _.find(clonedRules, function(o) { return o.target === key; });
+                //if the key is found update the value, else create a new rule obj and add it to the existing rules
+                if(filteredObj) {
+                    filteredObj.value = valueObj.value;
+                    filteredObj.matchMode = valueObj.matchMode || valueObj.filterCondition || filteredObj.matchMode ||'';
+                    inputData.rules.push(filteredObj);
+                } else {
+                    inputData.rules.push({
+                        'target': key,
+                        'type': '',
+                        'matchMode': valueObj.matchMode || valueObj.filterCondition || '',
+                        'value': valueObj.value,
+                        'required': false
+                    });
+                }
+                delete inputData[key];
+            }
+        });
+        return inputData;
+    }
+
+    /**
+     * used in onBeforeUpdate call - called first in the function - used in old Variables using dataBinding.
+     * This function migrates the filterExpressions object to flat map structure
+     * @param variable
+     * @param inputData
+     * @private
+     */
+    public downgradeFilterExpressionsToInputData(variable, inputData) {
+        if(inputData.hasOwnProperty('getFilterFields')) {
+            inputData = inputData.getFilterFields();
+        }
+        _.forEach(inputData.rules, function(ruleObj) {
+            if(!_.isNil(ruleObj.target) && ruleObj.target !== "") {
+                inputData[ruleObj.target] = {
+                    'value': ruleObj.value,
+                    'matchMode': ruleObj.matchMode
+                };
+            }
+        });
+        return inputData;
     }
 }

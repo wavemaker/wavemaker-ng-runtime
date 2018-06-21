@@ -171,6 +171,14 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
         return getManager().searchRecords(this, options, success, error);
     }
 
+    _downgradeInputData(data) {
+        return getManager().downgradeFilterExpressionsToInputData(this, data);
+    }
+
+    _upgradeInputData(response, data) {
+        return getManager().upgradeInputDataToFilterExpressions(this, response, data);
+    }
+
     // legacy method
     update(options?, success?, error?) {
         return this.invoke(options, success, error);
@@ -178,9 +186,14 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     init() {
         getManager().initBinding(this, 'dataBinding', this.operation === 'read' ? 'filterFields' : 'inputFields');
+        if (this.operation === 'read') {
+            getManager().initFilterExpressionBinding(this);
+        }
         getManager().defineFirstLastRecord(this);
         if (this.startUpdate) {
-            this.invoke();
+            setTimeout(()=>{
+                this.invoke();
+            });
         }
     }
 }
