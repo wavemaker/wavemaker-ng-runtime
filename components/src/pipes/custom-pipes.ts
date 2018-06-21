@@ -49,7 +49,7 @@ export class ToNumberPipe implements PipeTransform {
         if (fracSize && !String(fracSize).match(/^(\d+)?\.((\d+)(-(\d+))?)?$/)) {
             fracSize = '1.' + fracSize + '-' + fracSize;
         }
-        return _.isNaN(data) ? '' : this.decimalPipe.transform(data, fracSize);
+        return _.isNaN(+data) ? '' : this.decimalPipe.transform(data, fracSize);
     }
     constructor(private decimalPipe: DecimalPipe) {}
 }
