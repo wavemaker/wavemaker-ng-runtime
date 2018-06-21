@@ -14,7 +14,6 @@ const emptyArr = [];
 export class LiveVariableManager extends BaseVariableManager {
 
     public initFilterExpressionBinding(variable) {
-        console.log('---compute filter expressions on', variable.name, variable.filterExpressions)
         let onSuccess = function (filterExpressions, newVal) {
             if (variable.operation === 'read') {
                 /* if auto-update set for the variable with read operation only, get its data */

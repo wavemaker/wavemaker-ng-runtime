@@ -176,7 +176,6 @@ const initiateAction = function (action, params, successCallback?, failureCallba
         connectionParams = parseConfig(connectionParams);
         // TODO: Remove after backend fix
         connectionParams.url = connectionParams.url.replace('//', '/');
-        console.log('making call from Live variable');
         return httpService.send({
             url: connectionParams.url,
             method: connectionParams.method,
