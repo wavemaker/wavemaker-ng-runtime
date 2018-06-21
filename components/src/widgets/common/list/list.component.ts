@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, QueryList, TemplateRef, ViewChild, ViewChildren, OnInit, Attribute } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 
@@ -79,6 +79,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public binditemclass: string;
     public binddisableitem: string;
     public binddataset: string;
+    public mouseEnterCB: string;
+    public mouseLeaveCB: string;
 
     private match: string;
     private dateformat: string;
@@ -111,7 +113,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     constructor(
         inj: Injector,
         cdRef: ChangeDetectorRef,
-        datePipe: ToDatePipe
+        datePipe: ToDatePipe,
+        @Attribute('itemclass.bind') binditemclass: string,
+        @Attribute('disableitem.bind') binddisableitem: string,
+        @Attribute('dataset.bind') binddataset: string,
+        @Attribute('mouseenter.event') mouseEnterCB: string,
+        @Attribute('mouseleave.event') mouseLeaveCB: string,
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -121,6 +128,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
         this.cdRef = cdRef;
         this.datePipe = datePipe;
+
+        this.binditemclass = binditemclass;
+        this.binddisableitem = binddisableitem;
+        this.binddataset = binddataset;
+        this.mouseEnterCB = mouseEnterCB;
+        this.mouseLeaveCB = mouseLeaveCB;
     }
 
     private resetNavigation() {
@@ -711,15 +724,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (_.includes(['click', 'tap', 'dblclick', 'doubletap', 'mouseenter', 'mouseleave'], eventName)) {
+        if (_.includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
             this.eventManager.addEventListener(
                 this.nativeElement,
                 eventName,
                 (evt) => {
                     const target = $(evt.target).closest('.app-list-item');
-                    if (target) {
-                        const listItemContext = target.data('listItemContext');
-                        this.invokeEventCallback(eventName, {$event: evt, item: listItemContext.item});
+                    if (target.length) {
+                        const listItemContext: ListItemDirective = target.data('listItemContext');
+                        if (!listItemContext.disableItem) {
+                            this.invokeEventCallback(eventName, {$event: evt, item: listItemContext.item});
+                        }
                     }
                 }
             );
@@ -732,9 +747,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this._items = [];
         this.fieldDefs = [];
         this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, 50);
-        this.binditemclass = this.nativeElement.getAttribute('itemclass.bind');
-        this.binddisableitem = this.nativeElement.getAttribute('disableitem.bind');
-        this.binddataset = this.nativeElement.getAttribute('dataset.bind');
         this.reorderProps = {
             minIndex: null,
             maxIndex: null

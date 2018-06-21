@@ -1,4 +1,4 @@
-import { Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 
 import { BsDropdownDirective } from 'ngx-bootstrap';
 
@@ -37,7 +37,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-menu', hostClass: 'dropdown app-menu'};
         provideAsWidgetRef(MenuComponent)
     ]
 })
-export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy {
+export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public menualign: string;
     public menuposition: string;
@@ -60,7 +60,6 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         @Self() @Optional() private dropdown: BsDropdownDirective
     ) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
     }
 
     ngOnInit() {
@@ -107,5 +106,10 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public onMenuItemSelect(args) {
         args.$item = _.omit(args.$item, ['children', 'value']);
         this.invokeEventCallback('select', args);
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        styler(this.nativeElement.querySelector('.dropdown-toggle'), this);
     }
 }

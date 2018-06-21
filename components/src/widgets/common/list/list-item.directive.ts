@@ -1,4 +1,4 @@
-import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, QueryList } from '@angular/core';
+import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, QueryList, OnInit } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import { Subject } from 'rxjs/Subject';
@@ -13,7 +13,7 @@ import { WidgetRef } from '../../framework/types';
     selector: '[wmListItem]',
     exportAs: 'listItemRef'
 })
-export class ListItemDirective {
+export class ListItemDirective implements OnInit {
 
     public item;
     public context;
@@ -68,6 +68,19 @@ export class ListItemDirective {
             this.registerWatch($list.binddisableitem, nv => this.disableItem = nv || false);
         } else {
             this.disableItem = $list.disableitem || false;
+        }
+    }
+
+    ngOnInit() {
+        if (this.listComponent.mouseEnterCB) {
+            this.nativeElement.addEventListener('mouseenter', ($event) => {
+                this.listComponent.invokeEventCallback('mouseenter', {$event});
+            });
+        }
+        if (this.listComponent.mouseLeaveCB) {
+            this.nativeElement.addEventListener('mouseleave', ($event) => {
+                this.listComponent.invokeEventCallback('mouseleave', {$event});
+            });
         }
     }
 }
