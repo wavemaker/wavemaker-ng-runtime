@@ -184,6 +184,10 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
         return this.invoke(options, success, error);
     }
 
+    createRecord(options?, success?, error?) {
+        return this.insertRecord(options, success, error);
+    }
+
     init() {
         getManager().initBinding(this, 'dataBinding', this.operation === 'read' ? 'filterFields' : 'inputFields');
         if (this.operation === 'read') {

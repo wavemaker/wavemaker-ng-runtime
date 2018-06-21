@@ -366,7 +366,6 @@ export class ServiceVariableManager extends BaseVariableManager {
             const data = this.processSuccessResponse(response.body, variable, options, success);
             // notify variable success
             this.notifyInflight(variable,false, data);
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, variable.dataSet);
             return Promise.resolve(data);
         }, (e) => {
             // notify variable error
