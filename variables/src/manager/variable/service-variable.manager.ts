@@ -1,4 +1,4 @@
-import { getClonedObject, getValidJSON, isDefined, triggerFn, xmlToJson } from '@wm/core';
+import { getClonedObject, getValidJSON, isDefined, isValidWebURL, triggerFn, xmlToJson } from '@wm/core';
 
 import { upload } from '../../util/file-upload.util';
 import { ServiceVariable } from '../../model/variable/service-variable';
@@ -6,7 +6,7 @@ import { ServiceVariableUtils } from '../../util/variable/service-variable.utils
 import { $queue } from '../../util/inflight-queue';
 import { BaseVariableManager } from './base-variable.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
-import { appManager, setInput } from './../../util/variable/variables.utils';
+import { appManager, formatExportExpression, setInput } from './../../util/variable/variables.utils';
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 
@@ -380,6 +380,42 @@ export class ServiceVariableManager extends BaseVariableManager {
         options = options || {};
         options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
         return $queue.submit(variable).then(this._invoke.bind(this, variable, options, success, error), error);
+    }
+
+    public download(variable, options, successHandler, errorHandler) {
+        options = options || {};
+        const inputParams  = getClonedObject(variable.dataBinding);
+        const inputData = options.data || {};
+        const methodInfo   = this.getMethodInfo(variable, inputParams, options);
+        let requestParams;
+
+        methodInfo.relativePath += '/export';
+        requestParams = ServiceVariableUtils.constructRequestParams(variable, methodInfo, inputParams);
+
+        requestParams.data = inputData;
+        requestParams.data.fields = formatExportExpression(inputData.fields || []);
+
+        // extra options provided, these may be used in future for integrating export feature with ext. services
+        requestParams.method = options.httpMethod || 'POST';
+        requestParams.url = options.url || requestParams.url;
+
+        // If request params returns error then show an error toaster
+        if (_.hasIn(requestParams, 'error.message')) {
+            triggerFn(errorHandler, requestParams.error.message);
+        } else {
+            httpService.send(requestParams).then(response => {
+                if (response && isValidWebURL(response.body.result)) {
+                    window.location.href = response.body.result;
+                    triggerFn(successHandler, response);
+                } else {
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
+                    triggerFn(errorHandler, response);
+                }
+            }, (response, xhrObj) => {
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, xhrObj);
+                triggerFn(errorHandler, response);
+            });
+        }
     }
 
     public setInput(variable, key, val, options) {

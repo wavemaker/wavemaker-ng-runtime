@@ -1160,7 +1160,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
         requestData.fields = _.values(requestData.columns);
-        this.datasource.execute(DataSource.Operation.DOWNLOAD, requestData);
+        this.datasource.execute(DataSource.Operation.DOWNLOAD, {data: requestData});
     }
 
     private _documentClickBind(event) {

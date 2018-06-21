@@ -130,8 +130,8 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
         return getManager().setFilter(this, key, val);
     }
 
-    download(options?) {
-        return getManager().download(this, options);
+    download(options, success?, error?) {
+        return getManager().download(this, options, success, error);
     }
 
     invoke(options?, success?, error?) {

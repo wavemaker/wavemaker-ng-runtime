@@ -51,6 +51,9 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.SEARCH_RECORDS:
                 returnVal = this.searchRecords(options);
                 break;
+            case DataSource.Operation.DOWNLOAD:
+                returnVal = this.download(options);
+                break;
             default :
                 returnVal = {};
                 break;
@@ -64,6 +67,10 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
 
     update(options, success?, error?) {
         return getManager().invoke(this, options, success, error);
+    }
+
+    download(options, success?, error?) {
+        return getManager().download(this, options, success, error);
     }
 
     setInput(key, val?, options?) {

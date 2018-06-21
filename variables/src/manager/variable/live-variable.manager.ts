@@ -391,19 +391,22 @@ export class LiveVariableManager extends BaseVariableManager {
      * @param variable
      * @param options
      */
-    public download(variable, options) {
+    public download(variable, options, successHandler, errorHandler) {
         options = options || {};
         let tableOptions;
         const data: any = {};
         const dbOperation = 'exportTableData';
         const projectID   = $rootScope.project.id || $rootScope.projectName;
-        options.searchWithQuery = true; // For export, query api is used. So set this flag to true
-        options.skipEncode = true;
-        tableOptions = LiveVariableUtils.prepareTableOptions(variable, options, undefined);
+        options.data.searchWithQuery = true; // For export, query api is used. So set this flag to true
+        options.data.skipEncode = true;
+        tableOptions = LiveVariableUtils.prepareTableOptions(variable, options.data, undefined);
         data.query = tableOptions.query ? tableOptions.query : '';
-        data.exportSize = options.size;
-        data.exportType = options.exportType;
-        data.fields = formatExportExpression(options.fields);
+        data.exportSize = options.data.size;
+        data.exportType = options.data.exportType;
+        data.fields = formatExportExpression(options.data.fields);
+        if (options.data.fileName) {
+            data.fileName = options.data.fileName;
+        }
         LVService[dbOperation]({
             'projectID'     : projectID,
             'service'       : variable._prefabName ? '' : 'services',
@@ -416,8 +419,10 @@ export class LiveVariableManager extends BaseVariableManager {
             // 'filterMeta'    : tableOptions.filter
         }).then(response => {
             window.location.href = response.body.result;
+            triggerFn(successHandler, response);
         }, (response, xhrObj) => {
             initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, xhrObj);
+            triggerFn(errorHandler, response);
         });
     }
 
