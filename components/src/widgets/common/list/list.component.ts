@@ -756,6 +756,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.setListClass();
         });
         this.setupHandlers();
+        styler(this.nativeElement.querySelector('ul.app-livelist-container'), this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 }
 
