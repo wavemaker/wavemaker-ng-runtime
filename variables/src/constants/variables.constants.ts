@@ -87,7 +87,9 @@ export const VARIABLE_CONSTANTS = {
         },
         ERR_TYPE: {
             NO_ACCESSTOKEN: 'missing_accesstoken',
-            NO_CREDENTIALS: 'no_credentials'
+            NO_CREDENTIALS: 'no_credentials',
+            METADATA_MISSING: 'metadata_missing',
+            USER_UNAUTHORISED: 'user_unauthorised'
         },
         UNCLOAKED_HEADERS: ['CONTENT-TYPE', 'ACCEPT', 'CONTENT-LENGTH', 'ACCEPT-ENCODING', 'ACCEPT-LANGUAGE'],
         PREFIX: {

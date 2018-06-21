@@ -1,5 +1,5 @@
 import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
-import { isFileUploadSupported } from './variables.utils';
+import { isFileUploadSupported, securityService } from './variables.utils';
 import { extractType, formatDate, getBlob, isDateTimeType, } from '@wm/core';
 import { getAccessToken } from './../oAuth.utils';
 import { metadataService } from '@wm/variables';
@@ -108,7 +108,6 @@ const cloakHeadersForProxy = (headers) => {
 };
 
 export class ServiceVariableUtils {
-
     /**
      * prepares the HTTP request info for a Service Variable
      * @param variable
@@ -118,6 +117,23 @@ export class ServiceVariableUtils {
      */
     static constructRequestParams(variable, operationInfo, inputFields) {
         variable = variable || {};
+
+        if(!operationInfo) {
+            return {
+                'error' : {
+                    'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.USER_UNAUTHORISED,
+                    'field': '_wmServiceOperationInfo'
+                }
+            }
+        } else if(_.isEmpty(operationInfo)) {
+            return {
+                'error' : {
+                    'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING,
+                    'field': '_wmServiceOperationInfo'
+                }
+            }
+        }
+
         const directPath = operationInfo.directPath || '',
         relativePath = operationInfo.basePath ? operationInfo.basePath + operationInfo.relativePath : operationInfo.relativePath,
         isBodyTypeQueryProcedure = isBodyTypeQueryOrProcedure(variable);
@@ -272,15 +288,15 @@ export class ServiceVariableUtils {
 
         // if required param not found, return error
         if (requiredParamMissing.length) {
-        return {
-        'error': {
-            'type': 'required_field_missing',
-            'field': requiredParamMissing.join(','),
-            'message': 'Required field(s) missing: "' + requiredParamMissing + '"',
-            'skipDefaultNotification': true
+            return {
+                'error': {
+                    'type': 'required_field_missing',
+                    'field': requiredParamMissing.join(','),
+                    'message': 'Required field(s) missing: "' + requiredParamMissing + '"',
+                    'skipDefaultNotification': true
+                }
+            };
         }
-    };
-    }
 
         // Setting appropriate content-Type for request accepting request body like POST, PUT, etc
         if (!_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, _.toUpper(method))) {

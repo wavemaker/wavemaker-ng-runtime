@@ -6,8 +6,8 @@ import { ServiceVariableUtils } from '../../util/variable/service-variable.utils
 import { $queue } from '../../util/inflight-queue';
 import { BaseVariableManager } from './base-variable.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
-import { setInput } from './../../util/variable/variables.utils';
-import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, simulateFileDownload } from '../../util/variable/variables.utils';
+import { appManager, setInput } from './../../util/variable/variables.utils';
+import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 
 declare const _;
@@ -35,7 +35,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         }
         const methodInfo = this.getMethodInfo(variable, {}, {}),
             securityDefnObj = _.get(methodInfo, 'securityDefinitions.0');
-        if (_.get(methodInfo.securityDefinitions, '0.type') === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2
+        if (_.get(securityDefnObj, 'type') === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2
             && _.includes([VARIABLE_CONSTANTS.HTTP_STATUS_CODE.UNAUTHORIZED, VARIABLE_CONSTANTS.HTTP_STATUS_CODE.FORBIDDEN], _.get(xhrObj, 'status'))) {
             removeAccessToken(securityDefnObj['x-WM-PROVIDER_ID']);
         }
@@ -149,6 +149,35 @@ export class ServiceVariableManager extends BaseVariableManager {
     }
 
     /**
+     * Checks if the user is logged in or not and returns appropriate error
+     * If user is not logged in, Session timeout logic is run, for user to login
+     * @param variable
+     * @returns {any}
+     */
+    private handleAuthError(variable) {
+        const isUserAuthenticated = _.get(securityService.get(), 'authenticated');
+        let info;
+
+        if (isUserAuthenticated) {
+            info = {
+                error: {
+                    message: 'You\'re not authorised to access the resource "' + variable.service + '".'
+                }
+            };
+        } else {
+            info = {
+                error: {
+                    message: 'You\'re not authenticated to access the resource "' + variable.service + '".',
+                    skipDefaultNotification: true
+                }
+            };
+            //BaseService.pushToErrorCallStack(null, variable.invoke.bind(variable, options, success, errorCB), WM.noop);
+            appManager.handle401();
+        }
+        return info;
+    }
+
+    /**
      * Handles error, when variable's metadata is not found. The reason for this can be:
      *  - API is secure and user is not logged in
      *  - API is secure and user is logged in but not authorized
@@ -159,15 +188,26 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param options
      */
     private handleRequestMetaError(info, variable, errorCB, options) {
-        if (info.error.type === VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN) {
-            performAuthorization(undefined, info.securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], this.invoke.bind(undefined, variable, options, null, errorCB), null);
-            this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, true, true);
-            return;
-        }
-        if (info.error.message) {
-            console.warn(info.error.message);
-            this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
-            return;
+        const err_type = _.get(info, 'error.type');
+
+        switch(err_type) {
+            case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN:
+                performAuthorization(undefined, info.securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], this.invoke.bind(undefined, variable, options, null, errorCB), null);
+                this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, true, true);
+                break;
+            case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.USER_UNAUTHORISED:
+                info = this.handleAuthError(variable);
+                this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
+                break;
+            case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING:
+                this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
+                break;
+            default:
+                if (info.error.message) {
+                    console.warn(info.error.message);
+                    this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
+                    return;
+                }
         }
     }
 
@@ -204,7 +244,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     private getMethodInfo(variable, inputFields, options) {
         const methodInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
         if (!methodInfo) {
-            return {};
+            return null;
         }
         const securityDefnObj = _.get(methodInfo.securityDefinitions, '0'),
             isOAuthTypeService = securityDefnObj && (securityDefnObj.type === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2);

@@ -19,8 +19,8 @@ const noop = (...args) => {};
 
 @Injectable()
 export class AppRef {
-    Variables: any;
-    Actions: any;
+    Variables: any = {};
+    Actions: any = {};
     onAppVariablesReady = noop;
     onSessionTimeout = noop;
     onPageReady = noop;

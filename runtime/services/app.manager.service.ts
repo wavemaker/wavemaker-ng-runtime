@@ -79,8 +79,9 @@ export class AppManagerService {
             .then(response => {
                 this.appVariablesLoaded = true;
                 const data = this.$variables.register('app', response, this.$app);
-                this.$app.Variables = data.Variables;
-                this.$app.Actions = data.Actions;
+                // not assigning directly to this.$app to keep the reference in tact
+                _.extend(this.$app.Variables, data.Variables);
+                _.extend(this.$app.Actions, data.Actions);
                 this.updateLoggedInUserVariable();
                 this.updateSupportedLocaleVariable();
             });
@@ -161,7 +162,7 @@ export class AppManagerService {
      * @param onSuccess success handler
      * @param onError error handler
      */
-    handle401(page, onSuccess?, onError?) {
+    handle401(page?, onSuccess?, onError?) {
         let sessionTimeoutConfig,
             sessionTimeoutMethod,
             loginConfig,
