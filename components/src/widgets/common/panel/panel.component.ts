@@ -105,7 +105,7 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
     private computeDimensions() {
         const headerHeight = this.panelHeader.nativeElement.offsetHeight;
         const footer = this.nativeElement.querySelector('.panel-footer') as HTMLElement;
-        const content = this.panelContent.nativeElement.children[0];
+        const content = this.panelContent.nativeElement;
         const vHeight = window.innerHeight;
 
         let inlineHeight;

@@ -1,5 +1,5 @@
 import { AfterContentInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { addClass, setAttr, setCSSFromObj } from '@wm/core';
+import { addClass, formatStyle, setAttr, setCSSFromObj } from '@wm/core';
 
 import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
@@ -68,8 +68,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
         const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
         setCSSFromObj(popoverContainer, {
-            height: this.popoverheight,
-            width:  this.popoverwidth
+            height: formatStyle(this.popoverheight),
+            minWidth:  formatStyle(this.popoverwidth)
         });
         if (!this.popoverarrow) {
             addClass(popoverContainer.querySelector('.arrow') as HTMLElement, 'hidden');
