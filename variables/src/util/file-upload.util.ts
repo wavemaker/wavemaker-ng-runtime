@@ -92,8 +92,18 @@ class AjaxFileTransferObject extends FileTransferObject {
 function uploadWithFileTransfer(file, url, options) {}
 
 /* upload file with ajax calling */
-function uploadWithAjax(file, url, options) {
-    const fd = new FormData();
+function uploadWithAjax(file, fd, url, options) {
+    fd.forEach((value, key) => {
+        if (_.isArray(value)) {
+            if (value[0] instanceof File) {
+               fd.delete(key);
+            }
+        } else {
+            if (value instanceof File) {
+                fd.delete(key);
+            }
+        }
+    });
     /* append file to form data */
     if (_.isArray(file)) {
         _.forEach(file, function (fileObject) {
@@ -156,11 +166,11 @@ function isMobileApp() {
  * @returns a promise to listen for success, event, onProgress.
  *  One can also abort the upload by simply calling abort function.
  */
-export function upload(files, config, options?) {
+export function upload(files, fd, config, options?) {
     options = _.extend({
         'paramName' : config.fileParamName
     }, options);
-    return uploadWithAjax(files, config.url, options);
+    return uploadWithAjax(files, fd, config.url, options);
     // let fileTransfers = [],
     //     url = config.uploadUrl;
     // options = _.extend({

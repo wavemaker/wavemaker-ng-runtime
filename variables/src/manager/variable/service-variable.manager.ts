@@ -107,7 +107,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     }
 
     private uploadFileInFormData(variable: ServiceVariable, options: any, success: Function, error: Function, file, requestParams, fileCount) {
-        const promise = upload(file, {
+        const promise = upload(file, requestParams.data, {
             fileParamName: 'files',
             url: requestParams.url
         });
@@ -171,7 +171,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                     skipDefaultNotification: true
                 }
             };
-            //BaseService.pushToErrorCallStack(null, variable.invoke.bind(variable, options, success, errorCB), WM.noop);
+            // BaseService.pushToErrorCallStack(null, variable.invoke.bind(variable, options, success, errorCB), WM.noop);
             appManager.handle401();
         }
         return info;
@@ -190,7 +190,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     private handleRequestMetaError(info, variable, errorCB, options) {
         const err_type = _.get(info, 'error.type');
 
-        switch(err_type) {
+        switch (err_type) {
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN:
                 performAuthorization(undefined, info.securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], this.invoke.bind(undefined, variable, options, null, errorCB), null);
                 this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, true, true);
@@ -359,17 +359,17 @@ export class ServiceVariableManager extends BaseVariableManager {
         }
 
         // notify variable progress
-        this.notifyInflight(variable,true);
+        this.notifyInflight(variable, true);
 
         // make the call
         return this.makeCall(requestParams).then((response) => {
             const data = this.processSuccessResponse(response.body, variable, options, success);
             // notify variable success
-            this.notifyInflight(variable,false, data);
+            this.notifyInflight(variable, false, data);
             return Promise.resolve(data);
         }, (e) => {
             // notify variable error
-            this.notifyInflight(variable,false);
+            this.notifyInflight(variable, false);
             this.processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
         });
     }
