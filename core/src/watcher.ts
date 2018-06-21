@@ -9,14 +9,15 @@ const registry = new Map<string, any>();
 
 const watchIdGenerator = new IDGenerator('watch-id-');
 
-export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid()) => {
+export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false) => {
     const fn = $parseExpr(expr);
 
     registry.set(identifier, {
         fn: fn.bind(expr, $scope, $locals),
         listener,
         last: undefined,
-        expr: expr
+        expr: expr,
+        doNotClone
     });
 
     return () => $unwatch(identifier);
@@ -37,6 +38,10 @@ const triggerWatchers = () => {
             listener(nv, ov);
             resetChangeFromWatch();
             watchInfo.last = nv;
+
+            if (watchInfo.doNotClone) {
+                return;
+            }
 
             if (_.isObject(nv) && !(nv.proxy || nv instanceof Proxy)) {
                 watchInfo.last = _.clone(nv);

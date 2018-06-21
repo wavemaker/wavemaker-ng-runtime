@@ -23,6 +23,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     public readonly widgetId: any;
 
+    public isDestroyed: boolean;
+
     /**
      * jQuery nativeElement reference of the component root
      */
@@ -342,7 +344,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.viewParent,
                 this.context,
                 nv => this.widget[propName] = nv,
-                getWatchIdentifier(this.widgetId, propName)
+                getWatchIdentifier(this.widgetId, propName),
+                propName === 'datasource'
             )
         );
     }
@@ -498,9 +501,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     ngAfterContentInit() {}
 
     ngOnDestroy() {
+        this.isDestroyed = true;
         this.styleChange.complete();
         this.propertyChange.complete();
-
         this.destroy.complete();
     }
 }

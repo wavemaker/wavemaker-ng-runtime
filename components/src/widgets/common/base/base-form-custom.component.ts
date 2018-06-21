@@ -16,6 +16,9 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
     }
 
     public writeValue(value) {
+        if (this.isDestroyed) {
+            return;
+        }
         if (this.hasOwnProperty('formControlName')) {
             this.widget.datavalue = value;
             this.updatePrevDatavalue(value);
