@@ -13,7 +13,7 @@ registerProps();
 
 declare const $, _, d3, nv;
 
-const WIDGET_CONFIG = {widgetType: 'wm-chart', hostClass: ''};
+const WIDGET_CONFIG = {widgetType: 'wm-chart', hostClass: 'app-chart'};
 
 const options = {
         'Bubble' : ['bubblesize', 'shape']
