@@ -305,6 +305,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         });
     }
 
+    // highlight the characters in the dropdown matching the query.
+    private hightlight(match: TypeaheadMatch, query: String) {
+        (match as any).value = match.item.label;
+        return this.typeaheadContainerInstance.hightlight(match, query);
+    }
+
     // Triggers the method on the parent.
     private notifyParent($event) {
         if (this.parentRef) {
