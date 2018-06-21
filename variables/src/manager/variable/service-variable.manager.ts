@@ -154,7 +154,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param variable
      * @returns {any}
      */
-    private handleAuthError(variable) {
+    private handleAuthError(variable, success, errorCB, options) {
         const isUserAuthenticated = _.get(securityService.get(), 'authenticated');
         let info;
 
@@ -171,7 +171,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                     skipDefaultNotification: true
                 }
             };
-            // BaseService.pushToErrorCallStack(null, variable.invoke.bind(variable, options, success, errorCB), WM.noop);
+            appManager.pushToSessionFailureRequests(variable.invoke.bind(variable, options, success, errorCB));
             appManager.handle401();
         }
         return info;
@@ -187,7 +187,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param errorCB
      * @param options
      */
-    private handleRequestMetaError(info, variable, errorCB, options) {
+    private handleRequestMetaError(info, variable, success, errorCB, options) {
         const err_type = _.get(info, 'error.type');
 
         switch (err_type) {
@@ -196,7 +196,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, true, true);
                 break;
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.USER_UNAUTHORISED:
-                info = this.handleAuthError(variable);
+                info = this.handleAuthError(variable, success, errorCB, options);
                 this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
                 break;
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING:
@@ -334,7 +334,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         // check errors
         if (requestParams.error) {
-            this.handleRequestMetaError(requestParams, variable, error, options);
+            this.handleRequestMetaError(requestParams, variable, success, error, options);
             return;
         }
 

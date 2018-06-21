@@ -14,7 +14,8 @@ declare const _;
 @Injectable()
 export class AppManagerService {
 
-    private appVariablesLoaded = false;
+    private appVariablesLoaded: boolean = false;
+    private _noRedirect: boolean = false;
 
     constructor(
         private $http: HttpService,
@@ -162,7 +163,7 @@ export class AppManagerService {
      * @param onSuccess success handler
      * @param onError error handler
      */
-    handle401(page?, onSuccess?, onError?) {
+    handle401(page?, options?) {
         let sessionTimeoutConfig,
             sessionTimeoutMethod,
             loginConfig,
@@ -202,7 +203,7 @@ export class AppManagerService {
                 case LOGIN_METHOD.DIALOG:
                     // Through loginDialog, user will remain in the current state and failed calls will be executed post login through LoginVariableService.
                     // NOTE: user will be redirected to respective landing page only if dialog is opened manually(not through a failed 401 call).
-                    // $rs._noRedirect = true;
+                    this.noRedirect(true);
                     that.showLoginDialog();
                     break;
                 case LOGIN_METHOD.PAGE:
@@ -232,11 +233,24 @@ export class AppManagerService {
         });
     }
 
+    noRedirect(value?: boolean) {
+        if (_.isUndefined(value)) {
+            return this._noRedirect;
+        }
+
+        this._noRedirect = value;
+        return this._noRedirect;
+    }
+
     /**
      * invokes session failure requests
      */
     executeSessionFailureRequests() {
         this.$http.executeSessionFailureRequests();
+    }
+
+    pushToSessionFailureRequests(callback) {
+        this.$http.pushToSessionFailureQueue(callback)
     }
 
     public getDeployedURL() {

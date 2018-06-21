@@ -159,6 +159,12 @@ export class HttpService {
         this.sessionTimeoutObservable.next();
     }
 
+    pushToSessionFailureQueue(callback) {
+        this.sessionTimeoutQueue.push({
+            callback: callback
+        });
+    }
+
     /**
      * Execute queued requests, failed due to session timeout
      */
@@ -167,11 +173,15 @@ export class HttpService {
             that = this;
         that.sessionTimeoutQueue = [];
         queue.forEach(function(data) {
-            that.send(data.requestInfo).then(function(response) {
-                data.resolve(response);
-            }, function(response){
-                data.reject(response);
-            });
+            if (_.isFunction(data.callback)) {
+                data.callback();
+            } else {
+                that.send(data.requestInfo).then(function(response) {
+                    data.resolve(response);
+                }, function(response){
+                    data.reject(response);
+                });
+            }
         });
     }
 }

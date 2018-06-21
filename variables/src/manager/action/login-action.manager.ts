@@ -113,14 +113,16 @@ export class LoginActionManager extends BaseActionManager {
                         appManager.executeSessionFailureRequests();
                     }
                     // get redirectTo page from URL and remove it from URL
-                    const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo');
+                    const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo'),
+                        noRedirect = appManager.noRedirect();
 
+                    appManager.noRedirect(false);
                     // first time login
                     if (!lastLoggedInUsername) {
                         // if redirect page found, navigate to it.
                         if (!_.isEmpty(redirectPage)) {
                             routerService.navigate([`/${redirectPage}`]);
-                        } else {
+                        } else if (!noRedirect) {
                             // simply reset the URL, route handling will take care of page redirection
                             routerService.navigate([`/`]);
                         }
