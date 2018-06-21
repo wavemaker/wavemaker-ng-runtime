@@ -1,9 +1,11 @@
-import {$appDigest, $unwatch, isChangeFromWatch, isObject, resetChangeFromWatch, setAttr, switchClass, toBoolean} from '@wm/core';
+import { $appDigest, $unwatch, isChangeFromWatch, isObject, removeClass, resetChangeFromWatch, setAttr, switchClass, toBoolean, addClass } from '@wm/core';
 
 import { BaseComponent } from '../common/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
 import { isStyle } from './styler';
-import { getWatchIdentifier } from '../../utils/widget-utils';
+import { getConditionalClasses, getWatchIdentifier } from '../../utils/widget-utils';
+
+declare const _;
 
 // set of boolean attrs
 const BOOLEAN_ATTRS = new Set([
@@ -41,6 +43,16 @@ const parseValue = (key: string, value: any, type: PROP_TYPE): any => {
     return value;
 };
 
+// Gets list of classes to add and remove and applies on the $el
+const updateClasses = (toAdd, toRemove, el) => {
+    if (toRemove && toRemove.length) {
+        removeClass(el, _.join(toRemove, ' '));
+    }
+    if (toAdd && toAdd.length) {
+        addClass(el, _.join(toAdd, ' '));
+    }
+};
+
 /**
  * Handles the common functionality across the components
  * eg,
@@ -54,10 +66,15 @@ const parseValue = (key: string, value: any, type: PROP_TYPE): any => {
  */
 const defaultPropertyChangeHandler = (component: BaseComponent, key: string, nv: any, ov: any): void => {
     const el = component.getNativeElement();
+    let classes;
 
     // todo handle array and object cases in conditionalclass
-    if (key === 'class' || key === 'conditionalclass') {
+    if (key === 'class') {
         switchClass(el, nv, ov);
+    } else if (key === 'conditionalclass') {
+        classes = getConditionalClasses(nv, ov);
+        // update classes if old and nv value are different
+        updateClasses(classes.toAdd, classes.toRemove, el);
     } else if (key === 'name') {
         setAttr(el, 'name', nv);
     } else if (key === 'show') {

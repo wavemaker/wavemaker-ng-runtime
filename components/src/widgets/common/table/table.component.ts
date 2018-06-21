@@ -1,8 +1,9 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, $parseEvent, App, DataSource, getClonedObject, getValidJSON, isDefined, isPageable, triggerFn } from '@wm/core';
+import {$appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, isPageable, triggerFn, $parseEvent, $watch, $unwatch } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -10,8 +11,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
-import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { getConditionalClasses, getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 declare var $: any;
@@ -215,7 +215,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         'rowActions': [],
         'headerConfig': [],
         'rowClass': '',
-        'rowNgClass': '',
         'editmode': '',
         'formPosition': '',
         'isMobile': false,
@@ -328,7 +327,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         clearCustomExpression: () => {
             this.customExprViewRef.clear();
         },
-        generateCustomExpressions: (index, row) => {
+        registerRowNgClassWatcher: (row, index) => {
+            if (!this.rowngclass) {
+                return;
+            }
+            const watchName = `${this.name}_rowNgClass_${index}`;
+            $unwatch(watchName);
+            this.registerDestroyListener($watch(this.rowngclass, this.viewParent, {row}, (nv, ov) => {
+                this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
+            }, watchName));
+        },
+        registerColNgClassWatcher: (row, colDef, rowIndex, colIndex) => {
+            if (!colDef['col-ng-class']) {
+                return;
+            }
+            const watchName = `${this.name}_colNgClass_${rowIndex}_${colIndex}`;
+            $unwatch(watchName);
+            this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
+                this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
+            }, watchName));
+        },
+        generateCustomExpressions: (row, index) => {
             const rowData = getClonedObject(row);
             rowData.getProperty = field => {
                 return _.get(row, field);
@@ -564,7 +583,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.colDefs = this.fullFieldDefs;
         this.gridOptions.rowActions = this.rowActions;
         this.gridOptions.headerConfig = this.headerConfig;
-        this.gridOptions.rowNgClass = this.rowngclass;
         this.gridOptions.rowClass = this.rowclass;
         this.gridOptions.editmode = this.editmode;
         this.gridOptions.formPosition = this.formposition;

@@ -26,7 +26,6 @@ $.widget('wm.datatable', {
         showRowIndex: false,
         enableRowSelection: true,
         enableColumnSelection: false,
-        rowNgClass: '',
         multiselect: false,
         filterNullRecords: true,
         cssClassNames: {
@@ -388,7 +387,8 @@ $.widget('wm.datatable', {
         this.options.clearCustomExpression();
 
         _.forEach(this.preparedData, function (row, index) {
-            self.options.generateCustomExpressions(index, row);
+            self.options.generateCustomExpressions(row, index);
+            self.options.registerRowNgClassWatcher(row, index);
             $tbody.append(self._getRowTemplate(row, index));
         });
 
@@ -399,19 +399,12 @@ $.widget('wm.datatable', {
     _getRowTemplate: function (row, rowIndex) {
         var $htm,
             self = this,
-            gridOptions = self.options,
-            rowNgClass = gridOptions.rowNgClass,
-            rowNgClassExpr = rowNgClass ? 'ng-class="' + rowNgClass + '"' : '';
+            gridOptions = self.options;
 
-        $htm = $('<tr tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '" ' + rowNgClassExpr + '></tr>');
+        $htm = $('<tr tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
         this.preparedHeaderData.forEach(function (current, colIndex) {
             $htm.append(self._getColumnTemplate(row, colIndex, current, rowIndex));
         });
-
-        // TODO: Handle row ng class
-        // if (rowNgClass) {
-        //     return gridOptions.getCompiledTemplate($htm, row);
-        // }
         return $htm;
     },
 
@@ -454,10 +447,7 @@ $.widget('wm.datatable', {
             columnValue,
             innerTmpl,
             classes = this.options.cssClassNames.tableCell + ' ' + (colDef.class || ''),
-            ngClass = colDef.ngclass || '',
-            colExpression = colDef.customExpression,
-            ctId = row.$$pk + '-' + colId,
-            isRowCompiled = !!this.options.rowNgClass;
+            colExpression = colDef.customExpression;
 
         $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" style="text-align: ' + colDef.textAlignment + ';"></td>');
 
@@ -500,18 +490,7 @@ $.widget('wm.datatable', {
                 $htm.html(innerTmpl);
             }
         }
-
-        // TODO: Handle col ng class
-        // if (ngClass) {
-        //     $htm.attr('data-ng-class', ngClass);
-        //     isCellCompiled = true;
-        // }
-
-        //If cell needs to be compiled and row is not compiled, call the compile function
-        // if (isCellCompiled && !isRowCompiled) {
-        //     $htm.attr('data-compiled-template', ctId);
-        //     this.compiledCellTemplates[ctId] = this.options.getCompiledTemplate($htm, row, colDef, true) || '';
-        // }
+        this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId);
         return $htm;
     },
     //Get event related template for editable widget
@@ -986,10 +965,6 @@ $.widget('wm.datatable', {
                     this.gridSearch.find('[data-element="dgSearchText"]').attr('placeholder', value);
                     this.gridSearch.find('[data-element="dgSearchButton"]').attr('title', value);
                 }
-                break;
-            case 'rowngclass':
-            case 'rowclass':
-                this.refreshGrid();
                 break;
             case 'selectFirstRow':
                 this.selectFirstRow(value);
@@ -2495,6 +2470,18 @@ $.widget('wm.datatable', {
                 }
                 break;
         }
+    },
+
+    applyRowNgClass: function (val, index) {
+        var $row = this.gridBody.find('tr.app-datagrid-row[data-row-id="' + index + '"]');
+        $row.removeClass(val.toRemove);
+        $row.addClass(val.toAdd);
+    },
+
+    applyColNgClass: function (val, rowIndex, colIndex) {
+        var $cell = this.gridBody.find('tr.app-datagrid-row[data-row-id="' + rowIndex + '"] td.app-datagrid-cell[data-col-id="' + colIndex + '"]');
+        $cell.removeClass(val.toRemove);
+        $cell.addClass(val.toAdd);
     },
 
     _destroy: function () {

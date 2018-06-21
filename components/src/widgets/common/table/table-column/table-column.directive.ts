@@ -363,7 +363,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         switch (key) {
             case 'caption':
                 this.displayName = nv || '';
-                this.table.callDataGridMethod('setColumnProp', this.binding, 'displayName', nv);
+                this.setProperty('displayName', this.displayName);
                 break;
             case 'defaultvalue':
                 this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
@@ -390,10 +390,12 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     setProperty(property, nv) {
         this[property] = nv;
-        if (property === 'displayName') {
-            this.table.callDataGridMethod('setColumnProp', this.field, property, nv);
-        } else {
-            this.table.redraw(true);
+        switch (property) {
+            case 'displayName':
+                this.table.callDataGridMethod('setColumnProp', this.field, property, nv);
+                break;
+            default:
+                this.table.redraw(true);
         }
     }
 }

@@ -261,3 +261,36 @@ const matchModeMsgs = {
 export const getMatchModeMsgs = () => {
     return matchModeMsgs;
 };
+
+// Returns array of classes that are evaluated true for given object or array
+const getClassesArray = classVal => {
+    let classes = [];
+
+    if (_.isArray(classVal)) {
+        classVal.forEach(v => {
+            classes = classes.concat(getClassesArray(v));
+        });
+        return classes;
+    }
+    if (_.isObject(classVal)) {
+        _.forEach(classVal, (val, key) => {
+            if (val) {
+                classes = classes.concat(key.split(' '));
+            }
+        });
+        return classes;
+    }
+};
+
+export const getConditionalClasses = (nv, ov?) => {
+    let toAdd;
+    let toRemove;
+    if (_.isObject(nv)) {
+        toAdd = _.isArray(nv) ? nv : getClassesArray(nv || []);
+        toRemove = ov ? (_.isArray(ov) ? ov : getClassesArray(ov)) : [];
+    } else {
+        toAdd = nv ? [nv] : [];
+        toRemove = ov ? [ov] : [];
+    }
+    return {toAdd, toRemove};
+};
