@@ -14,9 +14,7 @@ enum CLASS_NAME {
  * @param roleName
  * @returns {string}
  */
-const roleSelector = (roleName: string) => {
-    return `[data-role='${roleName}']`;
-};
+const roleSelector = (roleName: string) => `[data-role='${roleName}']`;
 
 /*setup touch event handler*/
 const bindTapEvtHandler = (selector, handler) => {
@@ -25,7 +23,7 @@ const bindTapEvtHandler = (selector, handler) => {
      * functionalities of other controls like input[type="range"].
      * So, replaced the hammer Js handler with click event handler.
      */
-    $(selector).off('click.deviewview').on('click.deviewview', handler);
+    $(selector).off('click.deviceview').on('click.deviceview', handler);
 };
 
 /**
@@ -34,7 +32,11 @@ const bindTapEvtHandler = (selector, handler) => {
 const hidePageContainers = (leftNavEle: HTMLElement, searchEle?: HTMLElement) => {
     // TODO: should be executed only if isMobile() is true;
     if (leftNavEle) {
-        (leftNavEle as any).widget.collapse();
+        try {
+            (leftNavEle as any).widget.collapse();
+        } catch (e) {
+            //
+        }
     }
     if (searchEle) {
         setCSS(searchEle, 'display', 'none');
@@ -90,26 +92,24 @@ const toggleSearchContainer = (searchEle: HTMLElement, leftNavEle: HTMLElement) 
  */
 const bindSearchIconEvent = (searchElements, leftNavEle: HTMLElement) => {
 
-    $(searchElements).each((index, ele) => {
-        const searchEle = $('<a class="app-header-action"><i class="wi wi-search"></i></a>');
+    $(searchElements).each((index, ele: HTMLElement) => {
+        const searchEle = $('<a class="app-header-action"><i class="wi wi-search"></i></a>') as JQuery<HTMLElement>;
         $(ele).before(searchEle);
         // Tap icon to show/hide search box
-        bindTapEvtHandler(searchEle, () => {
-            toggleSearchContainer(ele, leftNavEle);
-        });
+        bindTapEvtHandler(searchEle, () => toggleSearchContainer(ele, leftNavEle));
     });
 
 };
 
 export const updateDeviceView  = (element: HTMLElement) => {
 
-    const leftNavEle: HTMLElement = element.querySelector(roleSelector(CLASS_NAME.LEFT_PANEL));
-    const rightNavEle: HTMLElement = element.querySelector(roleSelector(CLASS_NAME.RIGHT_PANEL));
-    const headerEle: HTMLElement = element.querySelector(roleSelector(CLASS_NAME.HEADER));
-    const searchEle: HTMLElement =  headerEle && headerEle.querySelector(`.${CLASS_NAME.SEARCH}`);
-    const pageEle: HTMLElement = element.querySelector(`.${CLASS_NAME.CONTENT}`);
+    const leftNavEle = element.querySelector(roleSelector(CLASS_NAME.LEFT_PANEL)) as HTMLElement;
+    const rightNavEle = element.querySelector(roleSelector(CLASS_NAME.RIGHT_PANEL)) as HTMLElement;
+    const headerEle = element.querySelector(roleSelector(CLASS_NAME.HEADER)) as HTMLElement;
+    const searchEle =  headerEle && headerEle.querySelector(`.${CLASS_NAME.SEARCH}`) as HTMLElement;
+    const pageEle = element.querySelector(`.${CLASS_NAME.CONTENT}`) as HTMLElement;
 
-    bindContentEvents(leftNavEle, pageEle as HTMLElement, searchEle);
+    bindContentEvents(leftNavEle, pageEle, searchEle);
 
     if (leftNavEle) {
         bindLeftPanelEvents(leftNavEle, searchEle);
@@ -125,5 +125,4 @@ export const updateDeviceView  = (element: HTMLElement) => {
     if (searchEle) {
         bindSearchIconEvent(searchEle, leftNavEle);
     }
-
 };
