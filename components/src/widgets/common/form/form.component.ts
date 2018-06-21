@@ -1,7 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, isDefined } from '@wm/core';
 import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
@@ -262,7 +262,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         }
     }
 
-    toggleMessage(show, msg?, type?) {
+    toggleMessage(show, msg?, type?, header?) {
         let template;
         if (show && msg) {
             template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
@@ -271,7 +271,9 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             } else {
                 this.app.Actions.appNotification.invoke({
                     message: template,
-                    class: type
+                    title: isDefined(header) ? header : type.toUpperCase(),
+                    class: type,
+                    duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
                 });
             }
         } else {

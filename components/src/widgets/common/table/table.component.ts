@@ -1,17 +1,17 @@
-import { AfterContentInit, Attribute, Component, ElementRef, Injector, OnDestroy, ViewChild, ViewContainerRef, ContentChildren, QueryList, HostListener, NgZone } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ContentChildren, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, isPageable, triggerFn, $parseEvent } from '@wm/core';
+import { $appDigest, $parseEvent, App, DataSource, getClonedObject, getValidJSON, isDefined, isPageable, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
-import { getRowOperationsColumn, EDIT_MODE } from '../../../utils/live-utils';
+import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
 import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 declare const _;
 declare var $: any;
@@ -1093,11 +1093,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return nv;
     }
 
-    toggleMessage(show, type, msg) {
+    toggleMessage(show, type, msg, header?) {
         if (show && msg) {
             this.app.Actions.appNotification.invoke({
                 message: msg,
-                class: type
+                title: isDefined(header) ? header : type.toUpperCase(),
+                class: type,
+                duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
             });
         }
     }

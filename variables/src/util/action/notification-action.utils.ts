@@ -32,15 +32,21 @@ export const notify = (variable, options, success, error)  => {
     if (operation === 'toast') {
      const type = (options.class || variable.dataBinding.class || 'info').toLowerCase(),
         body = options.message || variable.dataBinding.text,
-        timeout = parseInt(variable.dataBinding.duration, null) || 3000,
+        title = options.title,
         positionClass = 'toast-' + (options.position || variable.dataBinding.toasterPosition || 'bottom right').replace(' ', '-'),
         content = variable.dataBinding.page;
+     let timeout = parseInt(variable.dataBinding.duration || options.duration, null);
         // toasterOptions.position = positionClass;
         // check the variable scope and call the callback functions accordingly
         if (variableOwner === VARIABLE_CONSTANTS.OWNER.APP) {
             scope = $rootScope || {};
         } else {
             scope = options.scope || {};
+        }
+        if (timeout === 0) {
+           timeout = undefined;
+        } else {
+            timeout = timeout || 3000;
         }
         // check for the older projects not having content property in the variable
         if (variable.dataBinding.content && variable.dataBinding.content === 'page') {
@@ -49,7 +55,7 @@ export const notify = (variable, options, success, error)  => {
                 wmToaster.createCustomNotification(content, variableName, variable.dataSet, timeout, positionClass, customNotificationOnClick, customNotificationOnHide);*/
             }
         } else {
-           const toaster = toasterService[type](body, null, { positionClass: positionClass, timeOut: timeout});
+           const toaster = toasterService[type](body, title || null, { positionClass: positionClass, timeOut: timeout});
             toaster.onHidden.subscribe( customNotificationOnHide );
             toaster.onTap.subscribe( customNotificationOnClick );
         }
