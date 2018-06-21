@@ -184,13 +184,29 @@ export class FileUploadComponent extends BaseComponent implements OnInit {
         return 'file';
     }
 
+    /**
+     * Calls select Event
+     * @param $event
+     * @param $files
+     */
+    onSelectEventCall ($event, $files) {
+            this.selectedFiles = $files;
+            setTimeout(() => {
+                this.invokeEventCallback('select', {
+                    $event: $.extend($event.$files || {}, $files)
+                });
+            });
+    }
+
     /*this function to append upload status dom elements to widget */
     onFileSelect ($event, $files) {
         const uploadOptions = { formName : this.formName};
-        let fileParamCount = 0;
+        let beforeSelectVal = true;
         $files = this.getValidFiles($files);
-        this.selectedFiles = $files;
         this.progressObservable = new Subject();
+        beforeSelectVal = this.invokeEventCallback('beforeselect', {
+            $event: $.extend($event.$files || {}, $files)
+        });
         if (this.datasource) {
             this.datasource._progressObservable = this.progressObservable;
             this.datasource._progressObservable.asObservable().subscribe((progressObj) => {
@@ -205,32 +221,11 @@ export class FileUploadComponent extends BaseComponent implements OnInit {
                     }
                 });
             });
-            if (this.datasource.dataBinding) {
-                _.forEach(this.datasource.dataBinding, (dataBinding) => {
-                    _.forEach(dataBinding, (dataObj) => {
-                        if (dataObj instanceof File) {
-                            fileParamCount++;
-                        }
-                    });
-                });
-                if (fileParamCount === 1) {
-                    setTimeout(() => {
-                        this.datasource.invoke();
-                    }, 1000);
-                } else {
-                    setTimeout(() => {
-                        this.invokeEventCallback('select', {
-                            $event: $.extend($event.$files || {}, $files)
-                        });
-                    }, 1000);
-                }
-            } else {
-                setTimeout(() => {
-                    this.invokeEventCallback('select', {
-                        $event: $.extend($event.$files || {}, $files)
-                    });
-                }, 1000);
+            if (beforeSelectVal) {
+                this.onSelectEventCall($event, $files);
             }
+        } else {
+            this.selectedFiles = $files;
         }
     }
 
