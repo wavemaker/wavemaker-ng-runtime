@@ -23,6 +23,4 @@ export class DialogFooterDirective extends BaseComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_INFO);
     }
-
-    // todo:vinay migration task to handle closeDialog
 }
