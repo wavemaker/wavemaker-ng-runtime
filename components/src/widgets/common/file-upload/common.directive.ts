@@ -1,5 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, HostBinding, HostListener, OnInit } from '@angular/core';
-import { StylableComponent } from '@wm/components';
+import { Directive } from '@angular/core';
 
 @Directive({
     selector: '[onFileSelect]'

@@ -15,7 +15,8 @@ export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGene
     registry.set(identifier, {
         fn: fn.bind(expr, $scope, $locals),
         listener,
-        last: undefined
+        last: undefined,
+        expr: expr
     });
 
     return () => $unwatch(identifier);

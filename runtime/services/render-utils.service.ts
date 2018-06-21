@@ -66,22 +66,19 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
             this._onDestroy = new Subject();
 
             if (context) {
-                Object.keys(context).forEach(key => {
-                    this[key] = context[key];
-                });
+                Object.keys(context).forEach(key => this[key] = context[key]);
             }
 
             postConstructFn(this, inj);
         }
 
         registerDestroyListener(fn: Function) {
-            this._onDestroy.subscribe(fn);
+            this._onDestroy.subscribe(() => {}, () => {}, () => fn());
         }
 
         ngOnDestroy() {
             // on component destroy, trigger the destroy subject on context
             // Variables are listening to this event to trigger cancel methods on them (to abort any in progress calls)
-            this._onDestroy.next();
             this._onDestroy.complete();
         }
     }
@@ -145,7 +142,7 @@ const execScript = (script, identifier, ctx, instance, app, inj) => {
     try {
         fn(instance, app, inj);
     } catch (e) {
-        console.warn('error executing script of ${identifier}');
+        console.warn(`error executing script of ${identifier}`);
     }
 };
 
@@ -208,14 +205,16 @@ export class RenderUtilsService {
         context?
     ): Promise<void> {
 
-        let componentRef = componentCache.get(selector);
+        // Commenting this, as same component ref is causing issues with binding references
+        // will have to look for a different alternative for performance optimization
+        // let componentRef = componentCache.get(selector);
 
-        if (!componentRef) {
+        // if (!componentRef) {
             const componentDef = getDynamicComponent(selector, markup, [styles], providers, postConstructFn, context);
             const moduleDef = getDynamicModule(componentDef);
-            componentRef = this.getComponentFactory(componentDef, moduleDef);
-            componentCache.set(selector, componentRef);
-        }
+            const componentRef = this.getComponentFactory(componentDef, moduleDef);
+            // componentCache.set(selector, componentRef);
+        // }
 
         const component = vcRef.createComponent(componentRef);
 

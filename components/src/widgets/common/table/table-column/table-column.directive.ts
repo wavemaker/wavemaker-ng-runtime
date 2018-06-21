@@ -145,26 +145,29 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     ngAfterContentInit() {
         if (this._isRowFilter) {
             // Listen on the inner row filter widget and setup the widget
-            this.registerDestroyListener(this._filterWidget.changes.subscribe((val) => {
+            const s1 = this._filterWidget.changes.subscribe((val) => {
                 this.filterWidget = val.first && val.first.widget;
                 this.setUpFilterWidget();
-            }));
+            });
+            this.registerDestroyListener(() => s1.unsubscribe());
         }
 
         if (this._isInlineEditable) {
-            this.registerDestroyListener(this._inlineWidget.changes.subscribe((val) => {
+            const s2 = this._inlineWidget.changes.subscribe((val) => {
                 // Listen on the inner inline widget and setup the widget
                 this.inlineWidget = val.first && val.first.widget;
                 this.table.registerFormField(this.binding, new FieldDef(this.inlineWidget));
                 this.setUpInlineWidget('inlineWidget');
-            }));
+            });
+            this.registerDestroyListener(() => s2.unsubscribe());
 
             if (this._isNewEditableRow) {
-                this.registerDestroyListener(this._inlineWidgetNew.changes.subscribe((val) => {
+                const s3 = this._inlineWidgetNew.changes.subscribe((val) => {
                     // Listen on the inner inline widget and setup the widget
                     this.inlineWidgetNew = val.first && val.first.widget;
                     this.setUpInlineWidget('inlineWidgetNew');
-                }));
+                });
+                this.registerDestroyListener(() => s3.unsubscribe());
             }
         }
     }
@@ -239,8 +242,15 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 });
             } else {
                 // For other datasources, get the data from datasource bound to table
-                this.registerDestroyListener($watch(this.table.binddataset, this.viewParent, {},
-                        nv => this.widget.filterdataset = nv, getWatchIdentifier(this.widgetId, 'filterdataset')));
+                this.registerDestroyListener(
+                    $watch(
+                        this.table.binddataset,
+                        this.viewParent,
+                        {},
+                        nv => this.widget.filterdataset = nv,
+                        getWatchIdentifier(this.widgetId, 'filterdataset')
+                    )
+                );
             }
         }
     }

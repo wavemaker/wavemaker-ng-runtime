@@ -63,10 +63,11 @@ export class PartialContainerDirective {
             }
         });
 
-        // reload the partial content on partial param change
-        componentInstance.registerDestroyListener(componentInstance.params$.subscribe(()=> {
+        const subscription = componentInstance.params$.subscribe(() => {
             this.renderPartial(componentInstance.content, vcRef, componentInstance)
                 .then(() => this.onLoadSuccess());
-        }));
+        });
+        // reload the partial content on partial param change
+        componentInstance.registerDestroyListener(() => subscription.unsubscribe());
     }
 }
