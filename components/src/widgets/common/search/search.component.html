@@ -1,7 +1,7 @@
-<ng-template #customItemTemplate let-model="item" let-index="index">
+<ng-template #customItemTemplate let-model="item" let-index="index" let-query="query" let-match="match">
     <a>
         <img *ngIf="model.imgSrc" [src]="model.imgSrc" alt="Search" [style.width]="imagewidth">
-        <span [title]="model.label" [textContent]="model.label"></span>
+        <span [title]="model.label" [innerHtml]="hightlight(match, query) || model.label"></span>
     </a>
 </ng-template>
 

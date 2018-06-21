@@ -12,6 +12,10 @@ export class ScrollableDirective implements AfterContentInit {
     }
 
     ngAfterContentInit() {
+        // assigning width for the dropdown.
+        const typeAheadInput = this.searchRef.$element.find('input');
+        $(this.elementRef.nativeElement).width(typeAheadInput.outerWidth());
+
         // add the scroll event listener on the ul element.
         this.elementRef.nativeElement.addEventListener('scroll', this.notifyParent.bind(this));
     }
