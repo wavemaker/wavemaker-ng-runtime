@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostBinding, Injector } from '@angular/core';
 
-import { getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
+import { DataSource, getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IRedrawableComponent } from '../../framework/types';
@@ -602,7 +602,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             i,
             temp;
         const defaultColumns = [],
-            columns = this.datasource.execute('getPropertiesMapColumns') || [];
+            columns = this.datasource.execute(DataSource.Operation.GET_PROPERTIES_MAP) || [];
 
         for (i = 0; i < columns.length && defaultColumns.length <= 2; i += 1) {
             type = columns[i].type;
@@ -897,11 +897,12 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     setNumericandNonPrimaryColumns() {
         let columns,
             type;
+        const propertiesMap = this.datasource.execute(DataSource.Operation.GET_PROPERTIES_MAP);
         this.numericColumns = [];
         this.nonPrimaryColumns = [];
         // Fetching all the columns
-        if (this.dataset && this.dataset.propertiesMap) {
-            columns = []; // TODO: fetchPropertiesMapColumns(scope.dataset.propertiesMap);
+        if (this.dataset && !_.isEmpty(propertiesMap)) {
+            columns = []; // TODO: fetchPropertiesMapColumns(propertiesMap);
         }
 
         if (columns) {

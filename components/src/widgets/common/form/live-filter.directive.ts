@@ -25,7 +25,10 @@ const noop = () => {};
 })
 export class LiveFilterDirective {
 
+    private _options;
+
     orderBy;
+
     // debounce the filter function. If multiple filter calls are made at same time, calls will be delayed and last call is fired
     _filter = _.debounce(options => {
         this.filter(options);
@@ -43,13 +46,6 @@ export class LiveFilterDirective {
         form.onFieldValueChange = this.onFieldValueChange.bind(this);
         form.submitForm = this.submitForm.bind(this);
         form.registerFormWidget = this.registerFormWidget.bind(this);
-
-        this.form.result = {
-            data: [],
-            options: {
-                page: 1
-            }
-        };
     }
 
     execute(operation, options) {
@@ -57,7 +53,9 @@ export class LiveFilterDirective {
             return this.applyFilter(options);
         }
         if (operation === DataSource.Operation.GET_OPTIONS) {
-            return this.form.result ? this.form.result.options : {};
+            return this._options || {};
+        } else if (operation === DataSource.Operation.GET_PAGING_OPTIONS) {
+            return this.form.pagingOptions;
         }
         return this.form.datasource.execute(operation, options);
     }
@@ -98,11 +96,8 @@ export class LiveFilterDirective {
             }
         });
 
-        this.form.result.variableName = dataSource.execute(DataSource.Operation.GET_NAME);
-        this.form.result.propertiesMap = dataSource.execute(DataSource.Operation.GET_PROPERTIES_MAP);
-
         // On load check if default value exists and apply filter, Call the filter with the result options
-        this._filter(this.form.result.options);
+        this._filter(this._options);
     }
 
     clearFilter() {
@@ -132,7 +127,7 @@ export class LiveFilterDirective {
     }
 
     applyFilter(options) {
-        options = options || {};
+        options = options ? (options.data || options) : {};
         options.page = options.page || 1;
         options.orderBy = isDefined(options.orderBy) ?  options.orderBy : this.orderBy;
         return this.filter(options);
@@ -142,7 +137,7 @@ export class LiveFilterDirective {
         if (!this.form.datasource) {
             return;
         }
-        const formFields = {};
+        const filterFields = {};
         const dataModel = {};
         let page = 1,
             orderBy,
@@ -221,7 +216,7 @@ export class LiveFilterDirective {
                 fieldValue = getRangeFieldValue(minValue, maxvalue);
                 matchMode  = getRangeMatchMode(minValue, maxvalue);
                 if (isDefined(fieldValue)) {
-                    formFields[colName] = {
+                    filterFields[colName] = {
                         'value'     : fieldValue,
                         'matchMode' : matchMode,
                         'logicalOp' : 'AND'
@@ -261,64 +256,58 @@ export class LiveFilterDirective {
                         break;
                 }
                 if (isDefined(fieldValue) && fieldValue !== '' && fieldValue !== null) {
-                    formFields[colName] = {};
+                    filterFields[colName] = {};
                     if (matchMode) {
-                        formFields[colName].matchMode = matchMode;
+                        filterFields[colName].matchMode = matchMode;
                         fieldValue = undefined;
                     } else if (filterField.type === DataType.STRING || filterField.isRelated) { // Only for string types and related fields, custom match modes are enabled.
-                        formFields[colName].matchMode = matchMode || filterField.matchmode ||
+                        filterFields[colName].matchMode = matchMode || filterField.matchmode ||
                             this.form.datasource.execute(DataSource.Operation.GET_MATCH_MODE);
                     }
-                    formFields[colName].value     = fieldValue;
-                    formFields[colName].logicalOp = 'AND';
+                    filterFields[colName].value     = fieldValue;
+                    filterFields[colName].logicalOp = 'AND';
                 }
             }
         });
 
         if (options.exportType) {
             return this.form.datasource.execute(DataSource.Operation.DOWNLOAD, {
-                matchMode : 'anywhere',
-                filterFields : formFields,
-                orderBy : orderBy,
-                exportType : options.exportType,
-                logicalOp : 'AND',
-                size : options.exportdatasize
+                data: {
+                    matchMode : 'anywhere',
+                    filterFields : filterFields,
+                    orderBy : orderBy,
+                    exportType : options.exportType,
+                    logicalOp : 'AND',
+                    size : options.exportSize,
+                    fields : options.fields,
+                    fileName: options.fileName
+                }
             });
         }
         return this.form.datasource.execute(DataSource.Operation.LIST_RECORDS, {
-            filterFields : formFields,
+            filterFields : filterFields,
             orderBy : orderBy,
             page : page,
             pagesize : this.form.pagesize || 20,
             skipDataSetUpdate : true, // dont update the actual variable dataset,
             inFlightBehavior : 'executeAll'
         }).then(response => {
-            const result = <any>{};
             const data = response.data;
-            const propertiesMap = response.propertiesMap;
-            const pageOptions = response.pagingOptions;
+            this.form.pagingOptions = response.pagingOptions;
 
             if (data.error) {
                 // disable readonly and show the appropriate error
                 this.form.toggleMessage(true, data.error, 'error', 'ERROR');
                 this.form.onResult(data, false);
             } else {
-                result.data = data;
-                result.formFields = getClonedObject(formFields);
-                result.pagingOptions = {
-                    'dataSize': pageOptions.dataSize,
-                    'maxResults': this.form.pagesize || 20,
-                    'currentPage': page
-                };
-                result.options = {
+                this._options = {
                     'page': page,
                     'orderBy': orderBy
                 };
-                result.propertiesMap = propertiesMap;
-                this.form.result = {...this.form.result, ...result};
+                this.form.result = getClonedObject(data);
                 this.form.onResult(data, true);
             }
-            return result;
+            return this.form.result;
         }, error => {
             this.form.toggleMessage(true, error, 'error', 'ERROR');
             this.form.onResult(error, false);
@@ -333,8 +322,8 @@ export class LiveFilterDirective {
             return isDefined(obj.value) || isDefined(obj.minValue) || isDefined(obj.maxValue);
         });
         /*If default value exists and data is loaded, apply the filter*/
-        if (defaultObj && this.form.result) {
-            this._filter(this.form.result.options);
+        if (defaultObj) {
+            this._filter(this._options);
         }
     }
 

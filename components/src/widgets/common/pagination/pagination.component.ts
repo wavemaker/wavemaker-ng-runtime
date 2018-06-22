@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Injector, Output, SkipSelf, Inject } from '@angular/core';
 
-import { $watch, DataSource, isDefined, isPageable, switchClass, triggerFn, $appDigest } from '@wm/core';
+import { $watch, DataSource, isDefined, switchClass, triggerFn, $appDigest } from '@wm/core';
 
 import { registerProps } from './pagination.props';
 import { styler } from '../../framework/styler';
@@ -86,10 +86,11 @@ export class PaginationComponent extends StylableComponent {
     result;
     __fullData;
     dataset;
-    pagingOptions;
+    options;
     filterFields;
     sortOptions;
     binddataset;
+    pagingOptions;
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
         super(inj, WIDGET_CONFIG);
@@ -183,8 +184,8 @@ export class PaginationComponent extends StylableComponent {
             maxResults,
             currentPage,
             startIndex;
-        dataSize = _.isArray(newVal) ? newVal.length : (newVal.data ? newVal.data.length : _.isEmpty(newVal) ? 0 : 1);
-        maxResults = (this.pagingOptions && this.pagingOptions.maxResults) || dataSize;
+        dataSize = _.isArray(newVal) ? newVal.length : (_.isEmpty(newVal) ? 0 : 1);
+        maxResults = (this.options && this.options.maxResults) || dataSize;
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
         if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
@@ -216,36 +217,25 @@ export class PaginationComponent extends StylableComponent {
             /*Check for number of elements in the data set*/
             if (newVal) {
                 if (this.isDataSourceHasPaging()) {
-                    /*If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.*/
+                    this.pagingOptions = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS);
+                    // If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.
                     this.filterFields = variableOptions.filterFields || {};
-                    this.sortOptions = variableOptions.orderBy || (_.isArray(newVal.sort) ? getOrderByExpr(newVal.sort) : '');
-                    if (_.isObject(newVal) && isPageable(newVal)) {
-                        dataSize = newVal.totalElements;
-                        maxResults = newVal.size;
-                        if (newVal.numberOfElements > 0) {
-                            if (isDefined(newVal.number)) { // number is page number received from backend
-                                this.dn.currentPage = newVal.number + 1;
-                            }
-                            currentPage = this.dn.currentPage || 1;
-                        } else {
-                            currentPage = 1;
+                    this.sortOptions = variableOptions.orderBy ||
+                        (_.isArray(this.pagingOptions.sort) ? getOrderByExpr(this.pagingOptions.sort) : '');
+                    dataSize = this.pagingOptions.totalElements;
+                    maxResults = this.pagingOptions.size;
+                    if (this.pagingOptions.numberOfElements > 0) {
+                        if (isDefined(this.pagingOptions.number)) { // number is page number received from backend
+                            this.dn.currentPage = this.pagingOptions.number + 1;
                         }
-                        /* Sending pageCount undefined to calculate it again for query.*/
-                        this.setDefaultPagingValues(dataSize, maxResults, currentPage);
-                        this.disableNavigation();
-                        this.checkDataSize(dataSize, newVal.numberOfElements, newVal.size);
+                        currentPage = this.dn.currentPage || 1;
+                    } else {
+                        currentPage = 1;
                     }
-                    /*Re-compute the paging values in the following cases.
-                    Data corresponding to the table associated with the live-variable changes.*/
-                    if (newVal.pagingOptions) {
-                        dataSize = newVal.pagingOptions.dataSize;
-
-                        maxResults = newVal.pagingOptions.maxResults;
-                        currentPage = newVal.pagingOptions.currentPage;
-                        this.setDefaultPagingValues(dataSize, maxResults, currentPage);
-                        this.disableNavigation();
-                        this.checkDataSize(dataSize);
-                    }
+                    /* Sending pageCount undefined to calculate it again for query.*/
+                    this.setDefaultPagingValues(dataSize, maxResults, currentPage);
+                    this.disableNavigation();
+                    this.checkDataSize(dataSize, this.pagingOptions.numberOfElements, this.pagingOptions.size);
                     this.setResult(newVal);
                 } else if (!_.isString(newVal)) {
                     this.setNonPageableData(newVal);
@@ -316,7 +306,7 @@ export class PaginationComponent extends StylableComponent {
                 'orderBy': this.sortOptions,
                 'matchMode': 'anywhere'
             }).then(response => {
-                this.onPageDataReady(event, response, callback);
+                this.onPageDataReady(event, response && response.data, callback);
                 $appDigest();
             }, error => {
                 // If error is undefined, do not show any message as this may be discarded request
@@ -416,6 +406,11 @@ export class PaginationComponent extends StylableComponent {
     }
 
     setBindDataSet(binddataset, parent, dataSource) {
+        const parts = binddataset.split('.');
+        let bindPagingOptions;
+        if (parts[0] === 'Variables' || parts[0] === 'Widgets') {
+            bindPagingOptions = `${parts[0]}.${parts[1]}.pagingOptions`;
+        }
         this.binddataset = binddataset;
         setTimeout(() => {
             this.registerDestroyListener(
@@ -425,6 +420,16 @@ export class PaginationComponent extends StylableComponent {
                     {},
                     nv => this.widget.dataset = nv,
                     getWatchIdentifier(this.widgetId, 'dataset')
+                )
+            );
+            // Register a watch on paging options. Call dataset property change handler even if paging options changes to reflect pagination state
+            this.registerDestroyListener(
+                $watch(
+                    bindPagingOptions,
+                    parent,
+                    {},
+                    () => this.widget.dataset = this.dataset,
+                    getWatchIdentifier(this.widgetId, 'pagingOptions')
                 )
             );
         });

@@ -879,7 +879,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     getSortExpr() {
         let sortExp;
         let pagingOptions;
-        if (this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
+        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
             pagingOptions = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS);
             sortExp = _.isEmpty(pagingOptions) ? '' : getOrderByExpr(pagingOptions.sort);
         }
@@ -922,7 +922,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
         }
 
-        if (!this.shownavigation) {
+        if (!this.shownavigation && newVal) {
             this.checkFiltersApplied(this.getSortExpr());
         }
 

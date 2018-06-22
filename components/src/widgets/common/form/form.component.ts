@@ -97,6 +97,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     enableemptyfilter;
     pagesize;
     result;
+    pagingOptions;
     clearFilter: Function;
     applyFilter: Function;
     filter: Function;
