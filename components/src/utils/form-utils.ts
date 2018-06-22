@@ -247,6 +247,7 @@ const getSortedGroupedData = (groupedLiData: Object, groupBy: string) => {
 /**
  * This method gets the groupedData using groupby property and match and returns the sorted array of objects.
  *
+ * @param compRef represents the component's reference i.e. "this" value.
  * @param data represents the dataset i.e array of objects.
  * @param groupby, string groupby property
  * @param match, string match property
@@ -255,10 +256,10 @@ const getSortedGroupedData = (groupedLiData: Object, groupBy: string) => {
  * @param innerItem, represents the innerItem on which groupby has to be applied. Incase of datasetItems, 'dataObject' contains the full object. Here innerItem is dataObject.
  * @returns {any[]} groupedData, array of objects, each object having key and data.
  */
-export const groupData = (data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string) => {
+export const groupData = (compRef: any, data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string) => {
     let groupedLiData = {};
     if (_.includes(groupby, '(')) {
-        const groupDataByUserDefinedFn = this[groupby.split('(')[0]];
+        const groupDataByUserDefinedFn = compRef[groupby.split('(')[0]];
         groupedLiData = _.groupBy(data, groupDataByUserDefinedFn);
     } else {
         groupedLiData = getGroupedData(data, groupby, match, orderby, dateformat, datePipe, innerItem);

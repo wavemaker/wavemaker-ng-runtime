@@ -317,7 +317,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.fieldDefs = getOrderedDataset(this.fieldDefs, this.orderby);
         }
         if (this.groupby) {
-            this.groupedData = groupData(this.fieldDefs, this.groupby, this.match, this.orderby, this.dateformat, this.datePipe);
+            this.groupedData = groupData(this, this.fieldDefs, this.groupby, this.match, this.orderby, this.dateformat, this.datePipe);
         }
 
         if (!this.fieldDefs.length) {

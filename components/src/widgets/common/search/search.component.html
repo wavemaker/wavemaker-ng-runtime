@@ -39,8 +39,9 @@
            [typeaheadMinLength]="minlength"
            [typeaheadOptionsLimit]="limit"
            (typeaheadLoading)="_loadingItems"
-           [typeaheadScrollable]="typeaheadScrollable"
-           [typeaheadOptionsInScrollableView]="optionsLimitInScrollView"
+           typeaheadWaitMs="100"
+           [typeaheadScrollable]="typeaheadscrollable"
+           [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"/>
 </ng-template>
 <!--This template is for both web and fullscreen mode in mobile.-->
@@ -59,10 +60,11 @@
            (input)="onInputChange()"
            (keydown.enter)="onSelect($event)"
            [typeaheadMinLength]="minlength"
+           typeaheadWaitMs="100"
            [typeaheadOptionsLimit]="limit"
            (typeaheadLoading)="_loadingItems"
-           [typeaheadScrollable]="typeaheadScrollable"
-           [typeaheadOptionsInScrollableView]="optionsLimitInScrollableView"
+           [typeaheadScrollable]="typeaheadscrollable"
+           [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"/>
     <input class="model-holder" ng-model="_model_" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>

@@ -42,7 +42,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
         // If groupby is set, get the groupedData from the datasetItems.
         if (this.groupby) {
             this.dataset$.subscribe(() => {
-                this.groupedData = groupData(convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject');
+                this.groupedData = groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject');
             });
             // adding the handler for header click and toggle headers.
             this.handleHeaderClick = handleHeaderClick;
@@ -64,8 +64,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
 
         this.modelByKey = keys;
 
-        $appDigest();
-
         this.invokeOnTouched();
         this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});
     }
@@ -81,7 +79,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
                 break;
             case 'groupby':
             case 'match':
-                this.groupedData = this.datasetItems.length ? groupData(convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];
+                this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];
                 break;
         }
     }

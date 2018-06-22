@@ -221,8 +221,8 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 bindDisplayImgSrc: this.binddisplayimagesrc,
                 displayImgSrc: this.displayimagesrc
             });
-            // get the unique objects out of the extracted data.
-            this.datasetItems = getUniqObjsByDataField(displayOptions, this.datafield, this.displayfield || this.displaylabel);
+            // get the unique objects out of the extracted data. Notify change in datasetItems using [...datasetItems] notation
+            this.datasetItems = [...getUniqObjsByDataField(displayOptions, this.datafield, this.displayfield || this.displaylabel)];
         }
 
         this.postDatasetItemsInit();
