@@ -38,23 +38,25 @@ export class LiveVariableManager extends BaseVariableManager {
      * @param scope scope of the variable
      */
     private processFilterExpBindNode(scope, filterExpressions, success) {
+        const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : (fn => fn());
         let bindFilExpObj = function (obj, targetNodeKey) {
             if (stringStartsWith(obj[targetNodeKey], "bind:")) {
-                $watch(obj[targetNodeKey].replace("bind:", ""), scope, {}, function (newVal, oldVal) {
-                    if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
-                        return;
-                    }
-                    //Skip cloning for blob column
-                    if (!_.includes(['blob', 'file'], obj.type)) {
-                        newVal = getClonedObject(newVal);
-                    }
-                    //setting value to the root node
-                    if (obj) {
-                        obj[targetNodeKey] = newVal;
-                    }
-
-                    triggerFn(success, filterExpressions, newVal);
-                });
+                destroyFn(
+                    $watch(obj[targetNodeKey].replace("bind:", ""), scope, {}, function (newVal, oldVal) {
+                        if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
+                            return;
+                        }
+                        //Skip cloning for blob column
+                        if (!_.includes(['blob', 'file'], obj.type)) {
+                            newVal = getClonedObject(newVal);
+                        }
+                        //setting value to the root node
+                        if (obj) {
+                            obj[targetNodeKey] = newVal;
+                        }
+                        triggerFn(success, filterExpressions, newVal);
+                    })
+                );
             }
         };
 

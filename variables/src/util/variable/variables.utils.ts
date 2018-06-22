@@ -552,30 +552,33 @@ const processBindObject = (obj, scope, root, variable) => {
         targetObj = getTargetObj(obj, root, variable),
         targetNodeKey = getTargetNodeKey(target),
         runMode = true;
+    const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : (fn => fn());
 
     if (stringStartsWith(obj.value, 'bind:')) {
-        $watch(obj.value.replace('bind:', ''), scope, {}, function (newVal, oldVal) {
-            if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && (!_.isUndefined(oldVal) || !_.isUndefined(targetObj[targetNodeKey])))) {
-                return;
-            }
-            // Skip cloning for blob column
-            if (!_.includes(['blob', 'file'], obj.type)) {
-                newVal = getClonedObject(newVal);
-            }
-            setValueToNode(target, obj, root, variable, newVal); // cloning newVal to keep the source clean
+        destroyFn(
+            $watch(obj.value.replace('bind:', ''), scope, {}, function (newVal, oldVal) {
+                if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && (!_.isUndefined(oldVal) || !_.isUndefined(targetObj[targetNodeKey])))) {
+                    return;
+                }
+                // Skip cloning for blob column
+                if (!_.includes(['blob', 'file'], obj.type)) {
+                    newVal = getClonedObject(newVal);
+                }
+                setValueToNode(target, obj, root, variable, newVal); // cloning newVal to keep the source clean
 
-            if (runMode) {
-                /*set the internal bound node map with the latest updated value*/
-                if (!internalBoundNodeMap.has(variable)) {
-                    internalBoundNodeMap.set(variable, {});
+                if (runMode) {
+                    /*set the internal bound node map with the latest updated value*/
+                    if (!internalBoundNodeMap.has(variable)) {
+                        internalBoundNodeMap.set(variable, {});
+                    }
+                    _.set(internalBoundNodeMap.get(variable), [variable.name, root, target], newVal);
+                    /*update the internal nodes after internal node map is set*/
+                    if (_.isObject(newVal)) {
+                        updateInternalNodes(target, root, variable);
+                    }
                 }
-                _.set(internalBoundNodeMap.get(variable), [variable.name, root, target], newVal);
-                /*update the internal nodes after internal node map is set*/
-                if (_.isObject(newVal)) {
-                    updateInternalNodes(target, root, variable);
-                }
-            }
-        });
+            })
+        );
     } else if (!_.isUndefined(obj.value)) {
         setValueToNode(target, obj, root, variable, obj.value, true);
         if (runMode && root !== targetNodeKey) {
