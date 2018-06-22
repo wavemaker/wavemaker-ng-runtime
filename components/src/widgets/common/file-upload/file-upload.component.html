@@ -58,6 +58,9 @@
                         <i class="wi wi-stop"></i>
                     </a>
                 </div>
+                <div class="media-right media-middle"  *ngIf="ft.status === 'success'">
+                    <span class="status-icon {{ft.status | stateClass }}"></span>
+                </div>
             </div>
         </li>
     </ul>

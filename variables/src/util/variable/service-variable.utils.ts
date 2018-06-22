@@ -1,6 +1,6 @@
 import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 import { isFileUploadSupported, securityService } from './variables.utils';
-import { extractType, formatDate, getBlob, isDateTimeType, } from '@wm/core';
+import { extractType, formatDate, getBlob, isDateTimeType, isDefined, } from '@wm/core';
 import { getAccessToken } from './../oAuth.utils';
 import { metadataService } from '@wm/variables';
 
@@ -118,20 +118,20 @@ export class ServiceVariableUtils {
     static constructRequestParams(variable, operationInfo, inputFields) {
         variable = variable || {};
 
-        if(!operationInfo) {
+        if (!operationInfo) {
             return {
                 'error' : {
                     'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.USER_UNAUTHORISED,
                     'field': '_wmServiceOperationInfo'
                 }
-            }
-        } else if(_.isEmpty(operationInfo)) {
+            };
+        } else if (_.isEmpty(operationInfo)) {
             return {
                 'error' : {
                     'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING,
                     'field': '_wmServiceOperationInfo'
                 }
-            }
+            };
         }
 
         const directPath = operationInfo.directPath || '',
@@ -229,7 +229,7 @@ export class ServiceVariableUtils {
 
             let paramValue = param.sampleValue;
 
-            if ((!_.isUndefined(paramValue) && paramValue !== null && paramValue !== '') || (isBodyTypeQueryProcedure && param.type !== 'file')) {
+            if ((!_.isEmpty(paramValue) && isDefined(paramValue) && paramValue !== null && paramValue !== '') || (isBodyTypeQueryProcedure && param.type !== 'file')) {
                 // Format dateTime params for dataService variables
                 if (variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.DATA && isDateTimeType(param.type)) {
                     paramValue = formatDate(paramValue, param.type);

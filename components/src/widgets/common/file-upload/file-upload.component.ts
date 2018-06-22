@@ -198,7 +198,7 @@ export class FileUploadComponent extends BaseComponent implements OnInit {
                     if (file.name === progressObj.fileName) {
                         file.progress = progressObj.progress;
                         if (file.progress === 100) {
-                            file.status = 'Uploaded';
+                            file.status = 'success';
                         } else {
                             file.status = progressObj.status;
                         }
