@@ -229,7 +229,7 @@ export class ServiceVariableUtils {
 
             let paramValue = param.sampleValue;
 
-            if ((!_.isEmpty(paramValue) && isDefined(paramValue) && paramValue !== null && paramValue !== '') || (isBodyTypeQueryProcedure && param.type !== 'file')) {
+            if ((isDefined(paramValue) && paramValue !== null && paramValue !== '') || (isBodyTypeQueryProcedure && param.type !== 'file')) {
                 // Format dateTime params for dataService variables
                 if (variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.DATA && isDateTimeType(param.type)) {
                     paramValue = formatDate(paramValue, param.type);
