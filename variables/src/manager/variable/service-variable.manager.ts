@@ -1,4 +1,4 @@
-import { $invokeWatchers, getClonedObject, getValidJSON, isDefined, isValidWebURL, triggerFn, xmlToJson } from '@wm/core';
+import { $invokeWatchers, getClonedObject, getValidJSON, isDefined, isPageable, isValidWebURL, triggerFn, xmlToJson } from '@wm/core';
 
 import { upload } from '../../util/file-upload.util';
 import { ServiceVariable } from '../../model/variable/service-variable';
@@ -72,7 +72,8 @@ export class ServiceVariableManager extends BaseVariableManager {
             response = this.transformData(response, variable);
         }
 
-        if (isPageable(response)) {
+        const isResponsePageable = isPageable(response);
+        if (isResponsePageable) {
             dataSet = response.content;
             pagingOptions = _.omit(response, 'content');
         } else {
@@ -92,6 +93,15 @@ export class ServiceVariableManager extends BaseVariableManager {
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
             variable.pagingOptions = pagingOptions;
             variable.dataSet = dataSet;
+
+            // legacy properties in dataSet, [content]
+            if (isResponsePageable) {
+                Object.defineProperty(variable.dataSet, 'content', {
+                    get: () => {
+                        return variable.dataSet;
+                    }
+                });
+            }
         }
 
         /* trigger success callback */

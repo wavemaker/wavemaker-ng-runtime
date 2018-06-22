@@ -80,6 +80,18 @@ export class LiveVariableManager extends BaseVariableManager {
     private updateDataset(variable, data, propertiesMap, pagingOptions) {
         variable.pagingOptions = pagingOptions;
         variable.dataSet = data;
+
+        // legacy properties in dataSet, [data, pagingOptions]
+        Object.defineProperty(variable.dataSet, 'data', {
+            get: () => {
+                return variable.dataSet;
+            }
+        });
+        Object.defineProperty(variable.dataSet, 'pagingOptions', {
+            get: () => {
+                return variable.pagingOptions;
+            }
+        });
     }
 
     // Set the _options on variable which can be used by the widgets
