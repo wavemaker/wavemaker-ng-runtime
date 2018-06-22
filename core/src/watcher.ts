@@ -27,6 +27,10 @@ export const $unwatch = identifier => registry.delete(identifier);
 
 let changedByWatch = false;
 
+const $RAF = window.requestAnimationFrame;
+
+let ngZone;
+
 const triggerWatchers = () => {
     registry.forEach(watchInfo => {
         const fn = watchInfo.fn;
@@ -50,14 +54,14 @@ const triggerWatchers = () => {
     });
 };
 
-const $RAF = window.requestAnimationFrame;
+export const setNgZone = zone => ngZone = zone;
 
 export const setAppRef = appRef => {
     $appDigest = (() => {
         let queued = false;
         return (force?: boolean) => {
             if (force) {
-                appRef.tick();
+                ngZone.run(() => appRef.tick());
                 queued = false;
             } else {
                 if (queued) {
@@ -65,7 +69,7 @@ export const setAppRef = appRef => {
                 } else {
                     queued = true;
                     $RAF(() => {
-                        appRef.tick();
+                        ngZone.run(() => appRef.tick());
                         queued = false;
                     });
                 }
@@ -79,11 +83,22 @@ export const resetChangeFromWatch = () => changedByWatch = false;
 
 (<any>window).watchRegistry = registry;
 
-const debouncedTriggerWatchers = debounce(triggerWatchers, 100);
+let skipWatchers;
+
+const debouncedTriggerWatchers = debounce(() => {
+    skipWatchers = true;
+    ngZone.run(() => triggerWatchers());
+}, 100);
+
 export const $invokeWatchers = (force?: boolean) => {
     if (force) {
         triggerWatchers();
     } else {
+
+        if (skipWatchers) {
+            skipWatchers = false;
+            return;
+        }
         debouncedTriggerWatchers();
     }
 };

@@ -1,12 +1,12 @@
 import { $watch, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+import { appManager } from '@wm/variables';
 
 import { BaseVariableManager } from './base-variable.manager';
-import { setInput, initiateCallback, formatExportExpression, debounceVariableCall } from '../../util/variable/variables.utils';
+import { debounceVariableCall, formatExportExpression, initiateCallback, setInput } from '../../util/variable/variables.utils';
 import LiveVariableUtils from '../../util/variable/live-variable.utils';
 import { $queue } from '../../util/inflight-queue';
 import * as LVService from '../../util/variable/live-variable.http.utils';
-import { $rootScope, VARIABLE_CONSTANTS, CONSTANTS } from '../../constants/variables.constants';
-import { appManager } from '@wm/variables';
+import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 
 declare const _;
 const emptyArr = [];
@@ -14,7 +14,7 @@ const emptyArr = [];
 export class LiveVariableManager extends BaseVariableManager {
 
     public initFilterExpressionBinding(variable) {
-        let onSuccess = function (filterExpressions, newVal) {
+        const onSuccess = function (filterExpressions, newVal) {
             if (variable.operation === 'read') {
                 /* if auto-update set for the variable with read operation only, get its data */
                 if (variable.autoUpdate && !_.isUndefined(newVal) && _.isFunction(variable.update)) {
@@ -58,16 +58,16 @@ export class LiveVariableManager extends BaseVariableManager {
             }
         };
 
-        let traverseFilterExpressions = function (filterExpressions) {
-            if (filterExpressions.rules) {
-                _.forEach(filterExpressions.rules, function (filExpObj, i) {
+        const traverseFilterExpressions = function (expressions) {
+            if (expressions.rules) {
+                _.forEach(expressions.rules, function (filExpObj, i) {
                     if (filExpObj.rules) {
                         traverseFilterExpressions(filExpObj);
                     } else {
-                        if (filExpObj.matchMode === "between") {
-                            bindFilExpObj(filExpObj, "secondvalue");
+                        if (filExpObj.matchMode === 'between') {
+                            bindFilExpObj(filExpObj, 'secondvalue');
                         }
-                        bindFilExpObj(filExpObj, "value");
+                        bindFilExpObj(filExpObj, 'value');
                     }
                 });
             }
@@ -116,10 +116,10 @@ export class LiveVariableManager extends BaseVariableManager {
      */
     private getFilterExprFields = function(filterExpressions) {
         let isRequiredFieldAbsent = false;
-        let traverseCallbackFn = function (parentFilExpObj, filExpObj) {
+        const traverseCallbackFn = function (parentFilExpObj, filExpObj) {
             if (filExpObj
                 && filExpObj.required
-                && ((_.indexOf(['null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'], filExpObj.matchMode) === -1) && filExpObj.value === "")) {
+                && ((_.indexOf(['null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'], filExpObj.matchMode) === -1) && filExpObj.value === '')) {
                 isRequiredFieldAbsent = true;
                 return false;
             }
@@ -173,7 +173,7 @@ export class LiveVariableManager extends BaseVariableManager {
             'sort': tableOptions.sort,
             'data': requestData,
             'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options),
-            //'filterMeta': tableOptions.filter,
+            // 'filterMeta': tableOptions.filter,
             'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
         }).then((response, xhrObj) => {
             response = response.body;
@@ -625,9 +625,9 @@ export class LiveVariableManager extends BaseVariableManager {
      * @private
      */
     public upgradeInputDataToFilterExpressions(variable, response, inputData) {
-        if(_.isObject(response)) {
+        if (_.isObject(response)) {
             inputData = response;
-            inputData.condition = "AND";
+            inputData.condition = 'AND';
             inputData.rules = [];
         }
         /**
@@ -635,15 +635,15 @@ export class LiveVariableManager extends BaseVariableManager {
          * so we are keeping a copy of it and the emptying the existing object and now fill it with the
          * user set criteria. If its just modified, change the data and push it tohe rules or else just add a new criteria
          */
-        let clonedRules = _.cloneDeep(inputData.rules);
+        const clonedRules = _.cloneDeep(inputData.rules);
         inputData.rules = [];
         _.forEach(inputData, function (valueObj, key) {
-            if(key !== 'condition' && key !== 'rules') {
-                let filteredObj = _.find(clonedRules, function(o) { return o.target === key; });
-                //if the key is found update the value, else create a new rule obj and add it to the existing rules
-                if(filteredObj) {
+            if (key !== 'condition' && key !== 'rules') {
+                const filteredObj = _.find(clonedRules, function(o) { return o.target === key; });
+                // if the key is found update the value, else create a new rule obj and add it to the existing rules
+                if (filteredObj) {
                     filteredObj.value = valueObj.value;
-                    filteredObj.matchMode = valueObj.matchMode || valueObj.filterCondition || filteredObj.matchMode ||'';
+                    filteredObj.matchMode = valueObj.matchMode || valueObj.filterCondition || filteredObj.matchMode || '';
                     inputData.rules.push(filteredObj);
                 } else {
                     inputData.rules.push({
@@ -668,11 +668,11 @@ export class LiveVariableManager extends BaseVariableManager {
      * @private
      */
     public downgradeFilterExpressionsToInputData(variable, inputData) {
-        if(inputData.hasOwnProperty('getFilterFields')) {
+        if (inputData.hasOwnProperty('getFilterFields')) {
             inputData = inputData.getFilterFields();
         }
         _.forEach(inputData.rules, function(ruleObj) {
-            if(!_.isNil(ruleObj.target) && ruleObj.target !== "") {
+            if (!_.isNil(ruleObj.target) && ruleObj.target !== '') {
                 inputData[ruleObj.target] = {
                     'value': ruleObj.value,
                     'matchMode': ruleObj.matchMode

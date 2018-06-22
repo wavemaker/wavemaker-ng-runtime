@@ -1,5 +1,3 @@
-import { triggerFn } from '@wm/core';
-
 declare const _;
 
 class InflightQueue {
@@ -12,10 +10,10 @@ class InflightQueue {
      * the resolve callback will be called on
      */
     private addToQueue(variable: any, param2: {resolve: (value?: (any)) => void; reject: (reason?: any) => void}) {
-        if(this.requestsQueue.has(variable)) {
+        if (this.requestsQueue.has(variable)) {
             this.requestsQueue.get(variable).push(param2);
         } else {
-            let processes = [];
+            const processes = [];
             processes.push({resolve: param2.resolve, reject: param2.reject, active: false});
             this.requestsQueue.set(variable, processes);
         }
@@ -35,7 +33,7 @@ class InflightQueue {
      */
     private clear = (variable) => {
         this.requestsQueue.delete(variable);
-    };
+    }
 
     /**
      * executes the n/w calls for a specified variable pushed in its respective queue (pushed while it was inFlight)

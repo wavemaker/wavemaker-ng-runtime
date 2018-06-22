@@ -1,6 +1,6 @@
-import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef } from '@angular/core';
+import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef, NgZone } from '@angular/core';
 
-import { $invokeWatchers, _WM_APP_PROJECT, DialogService, hasCordova, setAppRef, setPipeProvider } from '@wm/core';
+import { $invokeWatchers, _WM_APP_PROJECT, DialogService, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
 
 import { OAuthService } from '@wm/oAuth';
 
@@ -32,8 +32,17 @@ type SPINNER = {show: boolean, messages: Array<string>};
 })
 export class AppComponent implements DoCheck, AfterViewInit {
     spinner: SPINNER = {show: false, messages: []};
-    constructor(_pipeProvider: PipeProvider, _appRef: ApplicationRef, private elRef: ElementRef, private oAuthService: OAuthService, private dialogService: DialogService, private spinnerService: SpinnerService) {
+    constructor(
+        _pipeProvider: PipeProvider,
+        _appRef: ApplicationRef,
+        private elRef: ElementRef,
+        private oAuthService: OAuthService,
+        private dialogService: DialogService,
+        private spinnerService: SpinnerService,
+        ngZone: NgZone
+    ) {
         setPipeProvider(_pipeProvider);
+        setNgZone(ngZone);
         setAppRef(_appRef);
         _WM_APP_PROJECT.id = location.href.split('/')[3];
         // subscribe to OAuth changes
