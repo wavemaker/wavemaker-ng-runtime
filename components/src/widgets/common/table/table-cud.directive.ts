@@ -1,9 +1,8 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { TableComponent } from './table.component';
-import { $appDigest, DataSource, triggerFn } from '@wm/core';
+import { $appDigest, DataSource, DialogService, triggerFn } from '@wm/core';
 import { refreshDataSource } from '../../../utils/data-utils';
-import { DialogService } from '../dialog/dialog.service';
 
 const OPERATION = {
     'NEW': 'new',

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 import { EventNotifier } from '@wm/core';
 import { SecurityService } from '@wm/security';
@@ -6,8 +6,13 @@ import { HttpService } from '@wm/http';
 
 import { I18nService } from './i18n.service';
 
-declare const _;
+declare const _, wm;
 declare const _WM_APP_PROPERTIES: any;
+
+const injectorMap = {
+    DialogService: wm.core.DialogService,
+    i18n: I18nService
+};
 
 const enum PROJECT_TYPE {
     APPLICATION = 'APPLICATION',
@@ -42,6 +47,7 @@ export class AppRef {
     }
 
     constructor(
+        private inj: Injector,
         private i18nService: I18nService,
         private httpService: HttpService,
         private securityService: SecurityService
@@ -60,6 +66,13 @@ export class AppRef {
 
     public notify(eventName: string, data?: any) {
         this._eventNotifier.notify(eventName, data);
+    }
+
+    public getDependency(injToken) {
+        if (injectorMap[injToken]) {
+            return this.inj.get(injectorMap[injToken]);
+        }
+        return this.inj.get(injToken);
     }
 
     /**

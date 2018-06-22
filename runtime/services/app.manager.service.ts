@@ -3,10 +3,9 @@ import { Router } from '@angular/router';
 
 import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
-import { DialogService } from '@wm/components';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
+import { App, DialogService } from '@wm/core';
 
-import { App } from '@wm/core';
 import { SpinnerService } from './spinner.service';
 
 declare const _;
@@ -182,7 +181,7 @@ export class AppManagerService {
             config.authenticated = false;
             sessionTimeoutConfig = loginConfig.sessionTimeout || {'type': LOGIN_METHOD.DIALOG};
             sessionTimeoutMethod = sessionTimeoutConfig.type.toUpperCase();
-            switch(sessionTimeoutMethod) {
+            switch (sessionTimeoutMethod) {
                 case LOGIN_METHOD.DIALOG:
                     that.showLoginDialog();
                     break;
@@ -250,7 +249,7 @@ export class AppManagerService {
     }
 
     pushToSessionFailureRequests(callback) {
-        this.$http.pushToSessionFailureQueue(callback)
+        this.$http.pushToSessionFailureQueue(callback);
     }
 
     public getDeployedURL() {

@@ -6,8 +6,6 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxMaskModule } from 'ngx-mask';
 
-import { DialogService } from './widgets/common/dialog/dialog.service';
-
 import { AccordionDirective } from './widgets/common/accordion/accordion.directive';
 import { AccordionPaneComponent } from './widgets/common/accordion/accordion-pane/accordion-pane.component';
 import { TabsComponent } from './widgets/common/tabs/tabs.component';
@@ -274,7 +272,6 @@ const PIPES = [
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],
     providers: [
-        DialogService,
         ToDatePipe,
         FilterPipe,
         TrustAsPipe,
