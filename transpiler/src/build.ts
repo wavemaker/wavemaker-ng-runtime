@@ -74,7 +74,7 @@ const processAttr = attr => {
         if (attr.name === 'accessroles') {
             return [overridden, `'${value}'`];
         }
-        return [overridden, value];
+        return [overridden, quoteAttr(value)];
     }
 
     if (isEvent(attr.name)) {
@@ -118,6 +118,9 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
     attrs.forEach((v, k) => {
         attrMarkup += ` ${k}`;
         if (v) {
+            if (k === '[ngClass]' && v.startsWith('{')) {
+                v = v.replace(/"/g, `'`);
+            }
             attrMarkup += `="${v}"`;
         }
     });
