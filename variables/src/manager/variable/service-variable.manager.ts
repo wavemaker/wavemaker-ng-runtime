@@ -1,4 +1,4 @@
-import { getClonedObject, getValidJSON, isDefined, isValidWebURL, triggerFn, xmlToJson } from '@wm/core';
+import { $invokeWatchers, getClonedObject, getValidJSON, isDefined, isValidWebURL, triggerFn, xmlToJson } from '@wm/core';
 
 import { upload } from '../../util/file-upload.util';
 import { ServiceVariable } from '../../model/variable/service-variable';
@@ -89,6 +89,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         /* trigger success callback */
         triggerFn(success, response);
 
+        $invokeWatchers(true);
         setTimeout(() => {
             // EVENT: ON_SUCCESS
             initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, options.xhrObj);

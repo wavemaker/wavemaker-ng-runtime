@@ -1,4 +1,4 @@
-import { $watch, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+import { $invokeWatchers, $watch, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
 import { appManager } from '@wm/variables';
 
 import { BaseVariableManager } from './base-variable.manager';
@@ -203,13 +203,18 @@ export class LiveVariableManager extends BaseVariableManager {
                 }
                 /* update the dataSet against the variable */
                 this.updateDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
-
                 this.setVariableOptions(variable, options);
-                //  EVENT: ON_SUCCESS
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data);
-                //  EVENT: ON_CAN_UPDATE
-                variable.canUpdate = true;
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
+
+                // watchers should get triggered before calling onSuccess event.
+                // so that any variable/widget depending on this variable's data is updated
+                $invokeWatchers(true);
+                setTimeout(() => {
+                    //  EVENT: ON_SUCCESS
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data);
+                    //  EVENT: ON_CAN_UPDATE
+                    variable.canUpdate = true;
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
+                });
             }
             return Promise.resolve({data: dataObj.data, propertiesMap: variable.propertiesMap, pagingOptions: dataObj.pagingOptions});
         }, (errorMsg, details, xhrObj) => {
