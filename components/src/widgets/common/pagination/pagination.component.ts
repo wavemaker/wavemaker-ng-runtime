@@ -217,7 +217,7 @@ export class PaginationComponent extends StylableComponent {
             /*Check for number of elements in the data set*/
             if (newVal) {
                 if (this.isDataSourceHasPaging()) {
-                    this.pagingOptions = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS);
+                    this.pagingOptions = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS) || {};
                     // If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.
                     this.filterFields = variableOptions.filterFields || {};
                     this.sortOptions = variableOptions.orderBy ||

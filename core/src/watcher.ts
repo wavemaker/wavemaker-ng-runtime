@@ -10,6 +10,9 @@ const registry = new Map<string, any>();
 const watchIdGenerator = new IDGenerator('watch-id-');
 
 export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false) => {
+    if (expr.indexOf('[$i]') !== -1) {
+        expr = expr.replace('[$i]', '[0]');
+    }
     const fn = $parseExpr(expr);
 
     registry.set(identifier, {
