@@ -1,9 +1,9 @@
 import { Injector, TemplateRef } from '@angular/core';
-
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
+import { DialogService } from '@wm/core';
+
 import { IDialog, IWidgetConfig } from '../../../framework/types';
-import { DialogService } from '../dialog.service';
 import { BaseComponent } from '../../base/base.component';
 
 export abstract class BaseDialog extends BaseComponent implements IDialog {

@@ -1,7 +1,5 @@
 import { routerService } from '../variable/variables.utils';
 import { appManager } from '@wm/variables';
-import { DialogService } from '@wm/components';
-import { encodeUrlParams } from '@wm/core';
 
 declare const _;
 

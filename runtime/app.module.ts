@@ -5,12 +5,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
-import { $parseExpr, App } from '@wm/core';
+import { $parseExpr, App, DialogService } from '@wm/core';
 import { HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
 import { OAuthModule } from '@wm/oAuth';
 import { VariablesModule } from '@wm/variables';
-import { WmComponentsModule } from '@wm/components';
+import { DialogServiceImpl, WmComponentsModule } from '@wm/components';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { AppComponent } from './app.component';
@@ -86,6 +86,7 @@ const routes = [
     ],
     providers: [
         {provide: App, useClass: AppRef},
+        {provide: DialogService, useClass: DialogServiceImpl},
         PipeProvider,
         RenderUtilsService,
         MetadataResolve,

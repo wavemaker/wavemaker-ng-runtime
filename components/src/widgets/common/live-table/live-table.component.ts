@@ -1,11 +1,10 @@
 import { Attribute, AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
 
-import { $appDigest, getClonedObject, isDefined, triggerFn } from '@wm/core';
+import {$appDigest, DialogService, getClonedObject, isDefined, triggerFn} from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './live-table.props';
 import { TableComponent } from '../table/table.component';
-import { DialogService } from '../dialog/dialog.service';
 import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 

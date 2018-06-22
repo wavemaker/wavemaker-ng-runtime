@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { HttpService } from '@wm/http';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
-import { DialogService } from '@wm/components';
+import { DialogService } from '@wm/core';
 
 import { VariableFactory } from '../factory/variable.factory';
 import { BaseAction } from '../model/base-action';
@@ -56,7 +56,7 @@ export class VariablesService {
      * @param {string} page
      * @param variablesJson
      * @param scope
-     * @returns {{Variables: {}; Actions: {}}}
+     * @returns {Variables , Actions}
      */
     register(page: string, variablesJson: any, scope: any) {
         const variableInstances = {

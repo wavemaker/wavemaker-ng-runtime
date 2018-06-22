@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BaseDialog } from './base/base-dialog';
 
 @Injectable()
-export class DialogService {
+export class DialogServiceImpl {
 
     /**
      * map which contains the references to all dialogs by name

@@ -51,6 +51,7 @@ export abstract class App {
     changeLocale: Function;
     reload: Function;
     on401: Function;
+    getDependency: Function;
     networkStatus: any;
     notify: (eventName: string, data?: any) => void;
     deployedUrl: string;
@@ -61,6 +62,14 @@ export abstract class App {
     lastActivePageName: string;
 }
 
+
+export abstract class DialogService {
+    register: Function;
+    open: Function;
+    close: Function;
+    closeAllDialogs: Function;
+    showAppConfirmDialog: Function;
+}
 
 export abstract class UserDefinedExecutionContext {
 

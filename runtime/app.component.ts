@@ -1,7 +1,7 @@
-import { AfterContentInit, AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef } from '@angular/core';
+import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef } from '@angular/core';
 
-import { $invokeWatchers, _WM_APP_PROJECT, hasCordova, setAppRef, setPipeProvider } from '@wm/core';
-import { DialogService } from '@wm/components';
+import { $invokeWatchers, _WM_APP_PROJECT, DialogService, hasCordova, setAppRef, setPipeProvider } from '@wm/core';
+
 import { OAuthService } from '@wm/oAuth';
 
 import { PipeProvider } from './services/pipe-provider.service';
@@ -47,7 +47,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         });
 
         // Subscribe to the message source to show/hide app spinner
-        this.spinnerService.getMessageSource().asObservable().subscribe((data:any) => {
+        this.spinnerService.getMessageSource().asObservable().subscribe((data: any) => {
             // setTimeout is to avoid 'ExpressionChangedAfterItHasBeenCheckedError'
             setTimeout(() => {
                 this.spinner.show = data.show;
