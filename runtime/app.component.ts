@@ -28,7 +28,8 @@ type SPINNER = {show: boolean, messages: Array<string>};
         <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext" canceltext.bind="canceltext"
                 iconclass.bind="iconclass" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()"></div>
         <div wmNetworkInfoToaster></div>
-        <div wmAppUpdate></div>`
+        <div wmAppUpdate></div>
+        <i id="wm-mobile-display"></i>`
 })
 export class AppComponent implements DoCheck, AfterViewInit {
     spinner: SPINNER = {show: false, messages: []};

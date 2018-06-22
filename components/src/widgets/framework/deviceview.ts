@@ -1,4 +1,4 @@
-import { setCSS } from '@wm/core';
+import { isMobile, setCSS } from '@wm/core';
 
 enum CLASS_NAME {
     LEFT_PANEL = 'page-left-panel',
@@ -30,16 +30,17 @@ const bindTapEvtHandler = (selector, handler) => {
  * hide the mobile toolbar actions
  */
 const hidePageContainers = (leftNavEle: HTMLElement, searchEle?: HTMLElement) => {
-    // TODO: should be executed only if isMobile() is true;
-    if (leftNavEle) {
-        try {
-            (leftNavEle as any).widget.collapse();
-        } catch (e) {
-            //
+    if (isMobile()) {
+        if (leftNavEle) {
+            try {
+                (leftNavEle as any).widget.collapse();
+            } catch (e) {
+                //
+            }
         }
-    }
-    if (searchEle) {
-        setCSS(searchEle, 'display', 'none');
+        if (searchEle) {
+            setCSS(searchEle, 'display', 'none');
+        }
     }
 };
 

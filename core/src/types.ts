@@ -1,3 +1,5 @@
+import { BaseDialog } from '../../components/src/widgets/common/dialog/base/base-dialog';
+
 export class IDataSource {
     execute: (operation: Operation, options?: any) => boolean | string | Promise<any>;
 }
@@ -65,11 +67,11 @@ export abstract class App {
 
 
 export abstract class DialogService {
-    register: Function;
-    open: Function;
-    close: Function;
-    closeAllDialogs: Function;
-    showAppConfirmDialog: Function;
+    public abstract register(name: string, dialogRef: BaseDialog);
+    public abstract open(name: string, initState?: any);
+    public abstract close(name: string);
+    public abstract showAppConfirmDialog(initState?: any);
+    public abstract closeAllDialogs: Function;
 }
 
 export abstract class UserDefinedExecutionContext {
