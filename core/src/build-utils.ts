@@ -97,7 +97,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
 };
 
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
-export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string) => {
+export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '') => {
 
     const regex = new RegExp('(' + parentDataSet + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
     let currentItemRegEx;
@@ -131,13 +131,13 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                         value = value.replace(currentItemRegEx, 'item');
                     }
                     if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
-                        value = value.replace(currentItemWidgetsRegEx, 'currentItemWidgets');
+                        value = value.replace(currentItemWidgetsRegEx, `${instance}currentItemWidgets`);
                     }
 
                     attr.value = value;
                 }
             });
-            updateTemplateAttrs(childNode.children as Array<Element>, parentDataSet, widgetName);
+            updateTemplateAttrs(childNode.children as Array<Element>, parentDataSet, widgetName, instance);
         }
     });
 };
