@@ -78,7 +78,8 @@ export class LiveVariableManager extends BaseVariableManager {
     }
 
     private updateDataset(variable, data, propertiesMap, pagingOptions) {
-        variable.dataSet = {data, propertiesMap, pagingOptions};
+        variable.pagingOptions = pagingOptions;
+        variable.dataSet = data;
     }
 
     // Set the _options on variable which can be used by the widgets
@@ -187,7 +188,7 @@ export class LiveVariableManager extends BaseVariableManager {
 
             LiveVariableUtils.processBlobColumns(response.content, variable);
             dataObj.data = response.content;
-            dataObj.pagingOptions = {'dataSize': response ? response.totalElements : null, 'maxResults': variable.maxResults, 'currentPage': response ? (response.number + 1) : null};
+            dataObj.pagingOptions = _.omit(response, 'content');
 
             // if callback function is provided, send the data to the callback
             triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
@@ -216,7 +217,7 @@ export class LiveVariableManager extends BaseVariableManager {
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
                 });
             }
-            return Promise.resolve({data: dataObj.data, propertiesMap: variable.propertiesMap, pagingOptions: dataObj.pagingOptions});
+            return Promise.resolve({data: dataObj.data, pagingOptions: dataObj.pagingOptions});
         }, (errorMsg, details, xhrObj) => {
             this.setVariableOptions(variable, options);
             this.handleError(variable, error, errorMsg, options);
@@ -646,7 +647,7 @@ export class LiveVariableManager extends BaseVariableManager {
         inputData.rules = [];
         _.forEach(inputData, function (valueObj, key) {
             if (key !== 'condition' && key !== 'rules') {
-                const filteredObj = _.find(clonedRules, function(o) { return o.target === key; });
+                const filteredObj = _.find(clonedRules, o => o.target === key);
                 // if the key is found update the value, else create a new rule obj and add it to the existing rules
                 if (filteredObj) {
                     filteredObj.value = valueObj.value;

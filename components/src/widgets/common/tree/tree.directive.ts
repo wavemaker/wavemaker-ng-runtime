@@ -78,7 +78,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     onPropertyChange(key: string, nv: any, ov?: any) {
         switch (key) {
             case 'dataset':
-                this.nodes = this.getNodes(nv.data || nv);
+                this.nodes = this.getNodes(nv);
                 this._selectNode = undefined;
                 this.renderTree();
                 break;

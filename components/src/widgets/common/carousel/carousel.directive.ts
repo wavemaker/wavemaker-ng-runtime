@@ -49,13 +49,6 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     }
 
     private onDataChange(newVal) {
-        if (newVal.data) {
-            newVal = newVal.data;
-        }
-        // If the data is a pageable object, then display the content.
-        if (_.isObject(newVal) && isPageable(newVal)) {
-            newVal = newVal.content;
-        }
         this.fieldDefs = createArrayFrom(newVal);
     }
 

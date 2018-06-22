@@ -127,7 +127,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
     /**
      * constructs dataset form the nav elements.
      */
-    private getNodes(nv = (this.dataset || {}).data || this.dataset): Array<NavNode> {
+    private getNodes(nv = this.dataset || {}): Array<NavNode> {
         let nodes: Array<any> = getOrderedDataset(this.prepareNodeDataSet(nv), this.orderby) || [];
 
         if (nodes.length) {

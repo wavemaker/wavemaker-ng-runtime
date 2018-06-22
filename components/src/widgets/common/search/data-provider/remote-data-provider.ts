@@ -58,7 +58,7 @@ export class RemoteDataProvider implements IDataProvider {
      * this function processes the response depending on pageOptions, isPageable and prepares the formattedDataset.
      */
     protected onFilterSuccess(config: IDataProviderConfig, response): Promise<any> {
-        let data: any = isPageable(response) ? response.content : response;
+        let data: any = response.data;
         let formattedData: any;
         let _isLastPage: boolean;
         let page: number;
@@ -71,17 +71,13 @@ export class RemoteDataProvider implements IDataProvider {
         return new Promise((resolve, reject) => {
             const pageOptions = response.pagingOptions;
 
-            if (pageOptions) {
-                page = pageOptions.currentPage;
-                _isLastPage = this.isLast(page, pageOptions.dataSize, pageOptions.maxResults);
-                isPaginatedData = true;
-            } else if (_.isObject(response) && isPageable(response)) {
-                page = response.number + 1;
-                _isLastPage = this.isLast(page, response.totalElements, response.size, response.numberOfElements);
+            if (config.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
+                page = pageOptions.number + 1;
+                _isLastPage = this.isLast(page, pageOptions.totalElements, pageOptions.size, pageOptions.numberOfElements);
                 isPaginatedData = true;
 
                 /*TODO: [bandhavya] This workaround is because backend is not giving the last page in distinct api. Remove after issue is fixed in backend*/
-                if (page > 1 && !_isLastPage && _.isEmpty(response.content) && response.totalElements === AppDefaults.INT_MAX_VALUE) {
+                if (page > 1 && !_isLastPage && pageOptions.totalElements === AppDefaults.INT_MAX_VALUE) {
                     _isLastPage = true;
                     resolve({
                         isLastPage: _isLastPage,

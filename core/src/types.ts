@@ -29,7 +29,8 @@ enum Operation {
     GET_BLOB_URL = 'getBlobURL',
     SUPPORTS_SERVER_FILTER = 'supportsServerFilter',
     GET_OPTIONS = 'getOptions',
-    SEARCH_RECORDS = 'searchRecords'
+    SEARCH_RECORDS = 'searchRecords',
+    GET_PAGING_OPTIONS = 'getPagingOptions'
 }
 
 export const DataSource = {

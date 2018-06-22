@@ -225,8 +225,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         return this.dataProvider.filter(dataConfig)
             .then((response: any) => {
-
-                    response = response.data || response;
+                    // response from dataProvider returns always data object.
+                    response = response.data;
 
                     this._loadingItems = false;
 

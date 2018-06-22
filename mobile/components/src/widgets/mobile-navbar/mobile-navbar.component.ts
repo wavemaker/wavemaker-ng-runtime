@@ -61,7 +61,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy{
                 this.imagesrc = getImageUrl(nv);
                 break;
             case 'dataset':
-                // $is._dataset = nv.data;
+                // $is._dataset = nv;
                 break;
             case 'defaultview':
                 this.showSearchbar = (nv === 'searchview');

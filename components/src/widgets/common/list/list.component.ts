@@ -332,16 +332,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (newVal) {
 
             this.noDataFound = false;
-            newVal = newVal.data || newVal;
 
-            if (isObject(newVal)) {
-                // If the data is a pageable object, then display the content.
-                if (isPageable(newVal)) {
-                    newVal = newVal.content;
-                }
-                if (!_.isArray(newVal)) {
-                    newVal = _.isEmpty(newVal) ? [] : [newVal];
-                }
+            if (isObject(newVal) && !_.isArray(newVal)) {
+                newVal = _.isEmpty(newVal) ? [] : [newVal];
             }
 
             if (_.isString(newVal)) {
@@ -363,7 +356,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private setupDataSource() {
         const dataNavigator = this.dataNavigator;
 
-        dataNavigator.pagingOptions = {
+        dataNavigator.options = {
             maxResults: this.pagesize || 5
         };
 
@@ -650,11 +643,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 if (!nv) {
                     return;
                 }
-                this.onDataSetChange(nv.data || nv);
+                this.onDataSetChange(nv);
                 break;
             case 'datasource':
                 if (this.dataset) {
-                    this.onDataSetChange(this.dataset.data || this.dataset);
+                    this.onDataSetChange(this.dataset);
                 }
                 break;
             case 'navigation':

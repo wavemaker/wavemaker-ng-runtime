@@ -101,10 +101,6 @@ export const extractDataAsArray = data => {
 
 // This function return always an object containing dataset details.
 export const convertDataToObject = dataResult => {
-    // TODO: [bandhavya] remove check for data property
-    // Check for data to get data for livevariable.
-    dataResult = dataResult.hasOwnProperty('data') ? dataResult.data : dataResult;
-
     if (_.isString(dataResult)) {
         dataResult = _.split(dataResult, ',').map(str => str.trim());
     }

@@ -1,9 +1,10 @@
-import { isPageable } from '@wm/core';
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { DataSource, IDataSource } from '@wm/core';
 import { ServiceVariableManager } from '../../manager/variable/service-variable.manager';
+
+declare const _;
 
 const getManager = (): ServiceVariableManager => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.SERVICE);
@@ -12,6 +13,7 @@ const getManager = (): ServiceVariableManager => {
 export class ServiceVariable extends ApiAwareVariable implements IDataSource {
 
     _progressObservable;
+    pagingOptions;
 
     constructor(variable: any) {
         super();
@@ -31,7 +33,7 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = false;
                 break;
             case DataSource.Operation.IS_PAGEABLE:
-                returnVal = (this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || isPageable(this.dataSet));
+                returnVal = (this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || !_.isEmpty(this.pagingOptions));
                 break;
             case DataSource.Operation.SUPPORTS_SERVER_FILTER:
                 returnVal = false;
@@ -53,6 +55,9 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
                 break;
             case DataSource.Operation.DOWNLOAD:
                 returnVal = this.download(options);
+                break;
+            case DataSource.Operation.GET_PAGING_OPTIONS:
+                returnVal = this.pagingOptions;
                 break;
             default :
                 returnVal = {};

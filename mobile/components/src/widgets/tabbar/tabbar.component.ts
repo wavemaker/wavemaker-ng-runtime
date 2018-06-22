@@ -52,7 +52,7 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         switch (key) {
             case 'dataset':
                 if (nv) {
-                    this.tabItems = this.getTabItems(nv.data || nv);
+                    this.tabItems = this.getTabItems(nv);
                 }
                 break;
         }

@@ -60,7 +60,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param success
      */
     private processSuccessResponse(response, variable, options, success) {
-        let newDataSet;
+        let dataSet, newDataSet, pagingOptions = {};
 
         response = getValidJSON(response) || xmlToJson(response) || response;
 
@@ -72,27 +72,35 @@ export class ServiceVariableManager extends BaseVariableManager {
             response = this.transformData(response, variable);
         }
 
-        // EVENT: ON_PREPARE_SETDATA
-        newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response, options.xhrObj);
-        if (isDefined(newDataSet)) {
-            // setting newDataSet as the response to service variable onPrepareSetData
-            response = newDataSet;
+        if (isPageable(response)) {
+            dataSet = response.content;
+            pagingOptions = _.omit(response, 'content');
+        } else {
+            dataSet = response;
         }
 
-        newDataSet = (!_.isObject(response)) ? {'value': response} : response;
+        // EVENT: ON_PREPARE_SETDATA
+        newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataSet, options.xhrObj);
+        if (isDefined(newDataSet)) {
+            // setting newDataSet as the response to service variable onPrepareSetData
+            dataSet = newDataSet;
+        }
+
+        dataSet = (!_.isObject(dataSet)) ? {'value': dataSet} : dataSet;
 
         /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
-            variable.dataSet = newDataSet;
+            variable.pagingOptions = pagingOptions;
+            variable.dataSet = dataSet;
         }
 
         /* trigger success callback */
-        triggerFn(success, response);
+        triggerFn(success, dataSet, pagingOptions);
 
         $invokeWatchers(true);
         setTimeout(() => {
             // EVENT: ON_SUCCESS
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, options.xhrObj);
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataSet, options.xhrObj);
 
             if (!CONSTANTS.isStudioMode) {
                 /* process next requests in the queue */
@@ -101,10 +109,13 @@ export class ServiceVariableManager extends BaseVariableManager {
             }
 
             // EVENT: ON_CAN_UPDATE
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, options.xhrObj);
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataSet, options.xhrObj);
         });
 
-        return variable.dataSet;
+        return {
+            data: variable.dataSet,
+            pagingOptions: variable.pagingOptions
+        };
     }
 
     private uploadFileInFormData(variable: ServiceVariable, options: any, success: Function, error: Function, file, requestParams, fileCount) {

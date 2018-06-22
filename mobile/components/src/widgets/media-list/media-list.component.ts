@@ -82,12 +82,6 @@ export class MediaListComponent extends StylableComponent {
 
     private onDataChange(nv: any) {
         if (nv) {
-            nv = nv.data || nv;
-
-            /*If the data is a pageable object, then display the content.*/
-            if (isObject(nv) && isPageable(nv)) {
-                nv = nv.content;
-            }
 
             if (isObject(nv) && !isArray(nv)) {
                 nv = [nv];

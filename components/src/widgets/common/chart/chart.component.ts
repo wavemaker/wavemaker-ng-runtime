@@ -819,8 +819,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             this.getAggregatedData(() => this.plotChart());
         } else { // Else, simply plot the chart.
             // In case of live variable resetting the aggregated data to the normal dataset when the aggregation has been removed
-            if (this.dataset && this.dataset.data && this.isLiveVariable) {
-                this.chartData = this.dataset.data;
+            if (this.dataset && this.isLiveVariable) {
+                this.chartData = this.dataset;
                 if (this.isGroupByEnabled() && groupingDetails.isVisuallyGrouped) {
                     this.chartData = this.getVisuallyGroupedData(this.chartData, groupingDetails.visualGroupingColumn);
                 }
@@ -924,7 +924,6 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     // plot the chart
     handleDataSet(newVal) {
         this.errMsg = '';
-        newVal = newVal.data || newVal;
         // Resetting the flag to false when the binding was removed
         if (!newVal && !this.binddataset) {
             this.isVisuallyGrouped = false;
@@ -932,7 +931,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
 
         // liveVariables contain data in 'data' property' of the variable
-        this.chartData = this.isLiveVariable ? newVal && (newVal.data || '') : (newVal && newVal.dataValue === '' && _.keys(newVal).length === 1) ? '' : newVal;
+        this.chartData = this.isLiveVariable ? newVal || '' : (newVal && newVal.dataValue === '' && _.keys(newVal).length === 1) ? '' : newVal;
 
         // if the data returned is an object make it an array of object
         if (!_.isArray(this.chartData) && _.isObject(this.chartData)) {

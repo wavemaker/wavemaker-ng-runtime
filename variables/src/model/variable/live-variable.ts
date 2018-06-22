@@ -13,6 +13,7 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     matchMode;
     liveSource;
     propertiesMap;
+    pagingOptions;
     type;
     _options;
 
@@ -98,6 +99,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
                 break;
             case DataSource.Operation.SEARCH_RECORDS:
                 returnVal = this.searchRecords(options);
+                break;
+            case DataSource.Operation.GET_PAGING_OPTIONS:
+                returnVal = this.pagingOptions;
                 break;
             default:
                 returnVal = {};
@@ -195,7 +199,7 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
         }
         getManager().defineFirstLastRecord(this);
         if (this.startUpdate) {
-            setTimeout(()=>{
+            setTimeout(() => {
                 this.invoke();
             });
         }

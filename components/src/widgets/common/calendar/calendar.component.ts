@@ -284,7 +284,6 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         if (!dataset) {
             return;
         }
-        dataset = dataset.data || dataset;
         dataset.forEach((value) => {
             if (!value[eventStartKey]) {
                 return;
@@ -426,7 +425,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         if (!this.dataset) {
             return;
         }
-        dataset = this.dataset.data || this.dataset;
+        dataset = this.dataset;
         dataset = _.isArray(dataset) ? dataset : (_.isObject(dataset) ? [dataset] : []);
         this.events = dataset || this.constructCalendarDataset(dataset);
         this.events.forEach((event) => {
@@ -524,7 +523,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
                 // triggerCalendarChange(); -> Mobile related
                 delete this.eventSources.events;
                 this.dataset = newVal;
-                dataSet = getClonedObject(newVal.data || newVal);
+                dataSet = getClonedObject(newVal);
                 dataSet = _.isArray(dataSet) ? dataSet : _.isObject(dataSet) ? [dataSet] : [];
                 dataSet = this.constructCalendarDataset(dataSet);
                 if (_.includes(_.keys(dataSet[0]), 'start')) {

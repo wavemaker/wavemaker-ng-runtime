@@ -37,7 +37,7 @@ export class TableCUDDirective {
         /*Do not select the item if skip selection item is specified*/
         setTimeout(() => {
             if (!skipSelectItem) {
-                this.table.selectItem(row, this.table.dataset && this.table.dataset.data);
+                this.table.selectItem(row, this.table.dataset);
             }
             triggerFn(callBack);
         }, 250);

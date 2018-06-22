@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import {$appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, isPageable, triggerFn, $parseEvent, $watch, $unwatch } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, triggerFn, $parseEvent, $watch, $unwatch } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -822,7 +822,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.__fullData = this.dataset;
 
                 this.dataNavigator.widget.maxResults = this.pagesize || 5;
-                this.dataNavigator.pagingOptions = {
+                this.dataNavigator.options = {
                     maxResults: this.pagesize || 5
                 };
                 this.removePropertyBinding('dataset');
@@ -876,9 +876,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.setGridData(this.serverData);
     }
 
+    getSortExpr() {
+        let sortExp;
+        let pagingOptions;
+        if (this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
+            pagingOptions = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS);
+            sortExp = _.isEmpty(pagingOptions) ? '' : getOrderByExpr(pagingOptions.sort);
+        }
+        return sortExp || '';
+    }
+
     watchVariableDataSet(newVal) {
         let result;
-        let sortExp;
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
         if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
             return;
@@ -900,16 +909,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
 
-        /*If the data is a pageable object, then display the content.*/
-        if (_.isObject(newVal)) {
-            if (isPageable(newVal)) {
-                sortExp = getOrderByExpr(newVal.sort);
-                newVal = newVal.content;
-            } else {
-                newVal = newVal.data || newVal;
-            }
-        }
-
         // If value is empty or in studio mode, dont enable the navigation
         if (newVal && !_.isEmpty(newVal)) {
             if (this.shownavigation && !this.dataNavigatorWatched) {
@@ -924,7 +923,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
 
         if (!this.shownavigation) {
-            this.checkFiltersApplied(sortExp);
+            this.checkFiltersApplied(this.getSortExpr());
         }
 
         // TODO: Handle selected item reference data
@@ -1090,15 +1089,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     onDataNavigatorDataSetChange(nv) {
-        let data,
-            variableSort;
-        if (_.isObject(nv) && isPageable(nv)) {
-            variableSort = getOrderByExpr(nv.sort);
-            this.__fullData = nv.content;
-        } else {
-            this.__fullData = nv;
-        }
-        this.checkFiltersApplied(variableSort);
+        let data;
+        this.__fullData = nv;
+        this.checkFiltersApplied(this.getSortExpr());
         if (this._isClientSearch) {
             data = getClonedObject(this.__fullData);
             if (_.isObject(data) && !_.isArray(data)) {
