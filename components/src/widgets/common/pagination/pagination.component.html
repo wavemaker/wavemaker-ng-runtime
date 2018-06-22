@@ -58,7 +58,7 @@
 
 <pagination class="pagination basic" [ngClass]="navigationClass" *ngIf="navcontrols === 'Basic'"
             [itemsPerPage]="maxResults" [totalItems]="dataSize"
-            [(ngModel)]="dn.currentPage" (pageChanged)="pageChanged($event)"
+            [ngModel]="dn.currentPage" (pageChanged)="pageChanged($event)"
             [boundaryLinks]="boundarylinks" [maxSize]="maxsize"
             [directionLinks]="directionlinks" previousText="." nextText="." firstText="." lastText="."></pagination>
 
