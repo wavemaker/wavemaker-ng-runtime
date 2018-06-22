@@ -15,6 +15,7 @@ export class AccessrolesDirective {
     private processed = false;
     private readonly isUserAuthenticated;
     private readonly userRoles;
+    private securityEnabled: boolean;
 
     constructor(
         private templateRef: TemplateRef<any>,
@@ -22,6 +23,7 @@ export class AccessrolesDirective {
         private securityService: SecurityService
     ) {
         const securityConfig = this.securityService.get();
+        this.securityEnabled = securityConfig.securityEnabled;
         this.isUserAuthenticated = _.get(securityConfig, 'authenticated');
         this.userRoles = _.get(securityConfig, 'userInfo.userRoles');
     }
@@ -83,7 +85,7 @@ export class AccessrolesDirective {
         return this.isUserAuthenticated && this.matchRoles(widgetRoles, userRoles);
     }
 
-    @Input() set accessroles(roles){
+    @Input() set accessroles(roles) {
         // flag to compute the directive only once
         if (this.processed) {
             return;
@@ -91,8 +93,8 @@ export class AccessrolesDirective {
 
         this.processed = true;
         const widgetRoles = this.getWidgetRolesArrayFromStr(roles);
-        const isAccessible = this.hasAccessToWidget(widgetRoles, this.userRoles);
-        if(isAccessible) {
+        const isAccessible = !this.securityEnabled || this.hasAccessToWidget(widgetRoles, this.userRoles);
+        if (isAccessible) {
             this.viewContainerRef.createEmbeddedView(this.templateRef);
         } else {
             this.viewContainerRef.clear();
