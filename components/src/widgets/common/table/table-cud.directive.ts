@@ -68,16 +68,13 @@ export class TableCUDDirective {
 
     updateVariable(row?, callBack?) {
         const dataSource = this.table.datasource;
-        // TODO: Filter
-        // if (this.isBoundToFilter) {
-        //     //If grid is bound to filter, call the apply fiter and update filter options
-        //     if (!this.shownavigation) {
-        //         refreshLiveFilter();
-        //     }
-        //     this.Widgets[this.widgetName].fetchDistinctValues();
-        //     return;
-        // }
-        if (dataSource && !this.table.shownavigation) {
+        if (!dataSource) {
+            return;
+        }
+
+        dataSource.execute(DataSource.Operation.FETCH_DISTINCT_VALUES);
+
+        if (!this.table.shownavigation) {
             refreshDataSource(dataSource, {
                 page: 1
             }).then(() => {

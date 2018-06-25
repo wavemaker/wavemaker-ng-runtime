@@ -4,7 +4,7 @@ const tagName = 'div';
 
 const registerAction = (tmpl): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmFormAction ${getAttrMarkup(attrs)} ${tmpl}>`,
+        pre: attrs => `<${tagName} wmFormAction name="${attrs.get('name') || attrs.get('key')}" ${getAttrMarkup(attrs)} ${tmpl}>`,
         post: () => `</${tagName}>`
     };
 };

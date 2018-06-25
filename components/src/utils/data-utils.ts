@@ -229,6 +229,30 @@ function setFieldDataSet(formField, data, options?) {
 
 /**
  * @ngdoc function
+ * @name wm.widgets.live.LiveWidgetUtils#fetchDistinctValues
+ * @methodOf wm.widgets.live.LiveWidgetUtils
+ * @function
+ *
+ * @description
+ * Function to fetch the distinct values for a field
+ *
+ * @param {object} scope scope of the widget
+ * @param {object} formFields definitions of the column/ field
+ * @param {string} widget widget property on the field
+ * @param {boolean} isEnableEmptyFilter is null or empty values allowed on filter
+ *
+ */
+export function fetchDistinctValues(dataSource, formFields, options) {
+    if (_.isEmpty(formFields)) {
+        return;
+    }
+    formFields.forEach(formField => {
+        getDistinctValuesForField(dataSource, formField, options);
+    });
+}
+
+/**
+ * @ngdoc function
  * @name wm.widgets.live.LiveWidgetUtils#getDistinctValuesForField
  * @methodOf wm.widgets.live.LiveWidgetUtils
  * @function

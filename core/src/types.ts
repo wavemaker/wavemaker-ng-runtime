@@ -32,7 +32,8 @@ enum Operation {
     SUPPORTS_SERVER_FILTER = 'supportsServerFilter',
     GET_OPTIONS = 'getOptions',
     SEARCH_RECORDS = 'searchRecords',
-    GET_PAGING_OPTIONS = 'getPagingOptions'
+    GET_PAGING_OPTIONS = 'getPagingOptions',
+    FETCH_DISTINCT_VALUES = 'fetchDistinctValues'
 }
 
 export const DataSource = {

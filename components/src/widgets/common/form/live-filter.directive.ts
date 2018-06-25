@@ -4,7 +4,7 @@ import { DataSource } from '@wm/core';
 
 import { FormComponent } from './form.component';
 import { registerLiveFilterProps } from './form.props';
-import { applyFilterOnField, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../utils/data-utils';
+import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../utils/data-utils';
 import { isDataSetWidget } from '../../../utils/widget-utils';
 
 declare const _;
@@ -54,8 +54,15 @@ export class LiveFilterDirective {
         }
         if (operation === DataSource.Operation.GET_OPTIONS) {
             return this._options || {};
-        } else if (operation === DataSource.Operation.GET_PAGING_OPTIONS) {
+        }
+        if (operation === DataSource.Operation.GET_PAGING_OPTIONS) {
             return this.form.pagingOptions;
+        }
+        if (operation === DataSource.Operation.FETCH_DISTINCT_VALUES) {
+            return fetchDistinctValues(this.form.datasource, this.form.formFields, {
+                widget: 'widgettype',
+                enableemptyfilter: this.form.enableemptyfilter
+            });
         }
         return this.form.datasource.execute(operation, options);
     }
