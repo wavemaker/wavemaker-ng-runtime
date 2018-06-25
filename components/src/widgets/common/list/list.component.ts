@@ -102,6 +102,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     public set selecteditem(items) {
         this._items.length = 0;
+        this.deselectListItems();
+
         if (_.isArray(items)) {
             items.forEach(item => this.selectItemByModel(item));
         } else {

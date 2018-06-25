@@ -22,7 +22,7 @@ register(wmListTag, (): IBuildTaskDef => {
             if (!boundExpr) {
                 return;
             }
-            updateTemplateAttrs(node, boundExpr, widgetNameAttr.value, 'instance.');
+            updateTemplateAttrs(node, boundExpr, widgetNameAttr.value, 'itemRef.');
         },
         pre: (attrs) => `<${listTagName} wmList ${getAttrMarkup(attrs)}>`,
         post: () => `</${listTagName}>`
@@ -31,7 +31,7 @@ register(wmListTag, (): IBuildTaskDef => {
 
 register('wm-listtemplate', (): IBuildTaskDef => {
     return {
-        pre: () => `<ng-template #listTemplate let-item="item" let-index="index" let-instance="instance">`,
+        pre: () => `<ng-template #listTemplate let-item="item" let-index="index" let-itemRef="itemRef">`,
         post: () => `</ng-template>`
     };
 });

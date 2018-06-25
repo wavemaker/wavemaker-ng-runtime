@@ -39,7 +39,7 @@
             [wmListItem]="item"
             #listItemRef="listItemRef"
             tabindex="-1">
-            <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i, instance: listItemRef}"></ng-container>
+            <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i, itemRef: listItemRef}"></ng-container>
         </li>
     </ng-template>
 </ul>
@@ -101,7 +101,7 @@
                 class="app-list-item group-list-item"
                 [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
                 [wmListItem]="item" #listItemRef="listItemRef">
-                <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i}"></ng-container>
+                <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, index:i, itemRef: listItemRef}"></ng-container>
             </li>
         </ul>
     </li>
