@@ -86,8 +86,13 @@ export class SpinnerService {
             return _.includes(_.keys(obj), id);
         });
 
+        // sanity check
+        if (!ctx) {
+            return;
+        }
+
         //if spinnerContext exists just remove the spinner from the reference and destroy the scope associated.
-        if (ctx && ctx !== 'page') {
+        if (ctx !== 'page') {
             this.hideContextSpinner(ctx, id);
             return;
         }
