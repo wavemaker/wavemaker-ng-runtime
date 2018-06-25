@@ -937,7 +937,7 @@ export const getRouteNameFromLink = (link) => {
     }
     return link;
 };
-]
+
 export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 
 /**

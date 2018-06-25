@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ContentChild, ElementRef, 
 
 import { Subscription } from 'rxjs/Subscription';
 
-import { $appDigest, DataSource, getClonedObject, isDefined, isObject, isPageable, noop, switchClass } from '@wm/core';
+import { $appDigest, App, DataSource, getClonedObject, isDataSourceEqual, isDefined, isObject, noop, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -50,6 +50,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private noDataFound: boolean;
     private debouncedFetchNextDatasetOnScroll: Function;
     private reorderProps: any;
+    private app: any;
 
     public fieldDefs: Array<any>;
     public disableitem;
@@ -70,6 +71,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public itemsperrow: string;
     public itemclass: string;
     public selectedItemWidgets: Array<WidgetRef> | WidgetRef;
+    public variableInflight;
 
     public handleHeaderClick: Function;
     public toggleAllHeaders: void;
@@ -116,6 +118,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         inj: Injector,
         cdRef: ChangeDetectorRef,
         datePipe: ToDatePipe,
+        app: App,
         @Attribute('itemclass.bind') binditemclass: string,
         @Attribute('disableitem.bind') binddisableitem: string,
         @Attribute('dataset.bind') binddataset: string,
@@ -136,6 +139,19 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.binddataset = binddataset;
         this.mouseEnterCB = mouseEnterCB;
         this.mouseLeaveCB = mouseLeaveCB;
+
+        this.app = app;
+        this.variableInflight = false;
+
+        // Show loading status based on the variable life cycle
+        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
+    }
+
+    handleLoading(data) {
+        const dataSource = this.datasource;
+        if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
+            this.variableInflight = data.active;
+        }
     }
 
     private resetNavigation() {

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostBinding, Injector } from '@angular/core';
 
-import { DataSource, getClonedObject, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
+import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IRedrawableComponent } from '../../framework/types';
@@ -986,6 +986,14 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
+    handleLoading(data) {
+        const dataSource = this.datasource;
+        if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
+            this.variableInflight = data.active;
+            this.isLoadInProgress = data.active;
+        }
+    }
+
     onStyleChange(key, newVal, oldVal) {
         const styleObj = {};
         switch (key) {
@@ -1002,7 +1010,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, private app: App) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
@@ -1012,6 +1020,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         removeAttr(this.nativeElement, 'title');
         this.chartReady = false;
         this.binddataset = this.nativeElement.getAttribute('dataset.bind');
+        // Show loading status based on the variable life cycle
+        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
     }
 
     ngAfterViewInit() {
