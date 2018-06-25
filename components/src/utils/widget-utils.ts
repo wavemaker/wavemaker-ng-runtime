@@ -160,7 +160,7 @@ export const getImageUrl = (urlString, shouldEncode?, defaultUrl?) => {
     }
 
     // If no value is provided for picturesource assign pictureplaceholder or default-image
-    if ((!isImageFile(urlString)) || !urlString) {
+    if (!urlString) {
         urlString = defaultUrl || 'resources/images/imagelists/default-image.png';
     }
 
