@@ -19,6 +19,11 @@ export class NavigationAction extends BaseAction {
         getManager().invoke(this);
     }
 
+    // legacy method.
+    navigate() {
+        this.invoke();
+    }
+
     init() {
         // static property bindings
         getManager().initBinding(this, 'dataBinding', 'dataBinding');
