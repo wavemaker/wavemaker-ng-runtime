@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Injector, Output, SkipSelf, Inject } from '@angular/core';
 
-import { $watch, DataSource, isDefined, switchClass, triggerFn, $appDigest } from '@wm/core';
+import { $watch, DataSource, isDefined, switchClass, triggerFn, $appDigest, debounce } from '@wm/core';
 
 import { registerProps } from './pagination.props';
 import { styler } from '../../framework/styler';
@@ -83,6 +83,10 @@ export class PaginationComponent extends StylableComponent {
     sortOptions;
     binddataset;
     pagingOptions;
+
+    private _debouncedApplyDataset = debounce(() => {
+        this.widget.dataset = this.dataset;
+    }, 250);
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
         super(inj, WIDGET_CONFIG);
@@ -410,8 +414,10 @@ export class PaginationComponent extends StylableComponent {
                     binddataset,
                     parent,
                     {},
-                    nv => this.widget.dataset = nv,
-                    getWatchIdentifier(this.widgetId, 'dataset')
+                    nv => {
+                        this.dataset = nv;
+                        this._debouncedApplyDataset();
+                    }
                 )
             );
 
@@ -424,8 +430,7 @@ export class PaginationComponent extends StylableComponent {
                     bindPagingOptions,
                     parent,
                     {},
-                    () => this.widget.dataset = this.dataset,
-                    getWatchIdentifier(this.widgetId, 'pagingOptions')
+                    () => this._debouncedApplyDataset()
                 )
             );
         });
