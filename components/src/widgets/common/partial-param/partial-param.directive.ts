@@ -1,10 +1,10 @@
-import { Attribute, Directive, Inject, Input, Self } from '@angular/core';
+import { Attribute, Directive, Inject, Self } from '@angular/core';
+
+import { Subject } from 'rxjs/Subject';
 
 import { $watch } from '@wm/core';
 
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { WidgetRef } from '../../../widgets/framework/types';
-import { Subject } from 'rxjs/Subject';
 
 @Directive({
     selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]',
@@ -33,9 +33,6 @@ export class PartialParamHandlerDirective {
 
 @Directive({
     selector: '[wmParam]',
-    providers: [
-        provideAsWidgetRef(PartialParamDirective)
-    ]
 })
 export class PartialParamDirective {
 

@@ -216,6 +216,7 @@ export class RenderUtilsService {
             // componentCache.set(selector, componentRef);
         // }
 
+        vcRef.clear();
         const component = vcRef.createComponent(componentRef);
 
         $appDigest();

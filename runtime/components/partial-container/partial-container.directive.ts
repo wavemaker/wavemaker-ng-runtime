@@ -11,6 +11,9 @@ declare const _;
     selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]'
 })
 export class PartialContainerDirective {
+
+    private contentInitialized = false;
+
     get name() {
         return this.componentInstance.name;
     }
@@ -21,6 +24,8 @@ export class PartialContainerDirective {
         const $target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
 
         $target.innerHTML = '';
+
+        this.contentInitialized = true;
 
         return this.renderUtils.renderPartial(
             nv,
@@ -63,9 +68,11 @@ export class PartialContainerDirective {
             }
         });
 
-        const subscription = componentInstance.params$.subscribe(() => {
-            this.renderPartial(componentInstance.content, vcRef, componentInstance)
-                .then(() => this.onLoadSuccess());
+        const subscription = componentInstance.params$.debounceTime(200).subscribe(() => {
+            if (this.contentInitialized) {
+                this.renderPartial(componentInstance.content, vcRef, componentInstance)
+                    .then(() => this.onLoadSuccess());
+            }
         });
         // reload the partial content on partial param change
         componentInstance.registerDestroyListener(() => subscription.unsubscribe());
