@@ -245,12 +245,15 @@ export class LiveVariableManager extends BaseVariableManager {
         options = options || {};
         options.inputFields = options.row || getClonedObject(variable.inputFields);
         return $queue.submit(variable).then(() => {
+            this.notifyInflight(variable, true);
             return LiveVariableUtils.doCUD(operation, variable, options, success, error)
                 .then((response) => {
                     $queue.process(variable);
+                    this.notifyInflight(variable, false, response);
                     return Promise.resolve(response);
                 }, (err) => {
                     $queue.process(variable);
+                    this.notifyInflight(variable, false, err);
                     return Promise.reject(err);
                 });
         }, error);
@@ -301,12 +304,15 @@ export class LiveVariableManager extends BaseVariableManager {
         options = options || {};
         options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
         return $queue.submit(variable).then(() => {
+            this.notifyInflight(variable, true);
             return this.getEntityData(variable, options, success, error)
                 .then((response) => {
                     $queue.process(variable);
+                    this.notifyInflight(variable, false, response);
                     return Promise.resolve(response);
                 }, (err) => {
                     $queue.process(variable);
+                    this.notifyInflight(variable, false, err);
                     return Promise.reject(err);
                 });
         }, error);

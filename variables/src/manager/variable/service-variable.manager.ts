@@ -226,7 +226,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 break;
             default:
                 if (info.error.message) {
-                    console.warn(info.error.message);
+                    console.warn(info.error.message, variable.name);
                     this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
                     return;
                 }
