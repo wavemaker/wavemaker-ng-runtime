@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { HttpService } from '@wm/http';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
-import { DialogService } from '@wm/core';
+import { AbstractDialogService } from '@wm/core';
 
 import { VariableFactory } from '../factory/variable.factory';
 import { BaseAction } from '../model/base-action';
@@ -18,13 +18,15 @@ declare const _;
 @Injectable()
 export class VariablesService {
 
-    constructor(private httpService: HttpService,
-                private metadataService: MetadataService,
-                private routerService: Router,
-                private toasterService: ToastrService,
-                private oAuthService: OAuthService,
-                private securityService: SecurityService,
-                private dialogService: DialogService) {
+    constructor(
+        private httpService: HttpService,
+        private metadataService: MetadataService,
+        private routerService: Router,
+        private toasterService: ToastrService,
+        private oAuthService: OAuthService,
+        private securityService: SecurityService,
+        private dialogService: AbstractDialogService
+    ) {
         // set external dependencies, to be used across variable classes, managers and utils
         setDependency('http', this.httpService);
         setDependency('metadata', this.metadataService);

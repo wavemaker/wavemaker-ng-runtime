@@ -1,6 +1,6 @@
-import { Directive, Inject, Self, Optional } from '@angular/core';
+import { Directive, Inject, Optional, Self } from '@angular/core';
 
-import { $appDigest, DataSource, DataType, DialogService, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
+import { $appDigest, AbstractDialogService, DataSource, DataType, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
@@ -28,10 +28,12 @@ const getValidTime = val => {
 })
 export class LiveFormDirective {
 
-    constructor(@Self() @Inject(FormComponent) private form,
-                @Optional() liveTable: LiveTableComponent,
-                public datePipe: ToDatePipe,
-                private dialogService: DialogService) {
+    constructor(
+        @Self() @Inject(FormComponent) private form,
+        @Optional() liveTable: LiveTableComponent,
+        public datePipe: ToDatePipe,
+        private dialogService: AbstractDialogService
+    ) {
 
         if (liveTable) {
             this.form._liveTableParent = liveTable;

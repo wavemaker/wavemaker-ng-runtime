@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { App, DialogService } from '@wm/core';
+import { App, AbstractDialogService } from '@wm/core';
 
 import { SpinnerService } from './spinner.service';
 
@@ -19,7 +19,7 @@ export class AppManagerService {
     constructor(
         private $http: HttpService,
         private $security: SecurityService,
-        private $dialog: DialogService,
+        private $dialog: AbstractDialogService,
         private $router: Router,
         private $app: App,
         private $variables: VariablesService,

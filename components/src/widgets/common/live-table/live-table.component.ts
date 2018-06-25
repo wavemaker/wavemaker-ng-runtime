@@ -1,6 +1,6 @@
-import { Attribute, AfterContentInit, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
+import { AfterContentInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
 
-import {$appDigest, DialogService, getClonedObject, isDefined, triggerFn} from '@wm/core';
+import { $appDigest, AbstractDialogService, getClonedObject, isDefined, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './live-table.props';
@@ -41,7 +41,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         inj: Injector,
         elRef: ElementRef,
         cdr: ChangeDetectorRef,
-        private dialogService: DialogService,
+        private dialogService: AbstractDialogService,
         @Attribute('formlayout') layoutType: string,
         @Attribute('dialogid') dialogId: string
     ) {

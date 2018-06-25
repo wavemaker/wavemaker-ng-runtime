@@ -90,8 +90,6 @@ function showAncestorDialog(viewName) {
             const dialog = $(this);
             if ($(dialog.html()).find('[name="' + viewName + '"]').length) {
                 dialogId = dialog.attr('name');
-                // DialogService.closeAllDialogs();
-                // DialogService.showDialog(dialogId);
                 return false;
             }
         });

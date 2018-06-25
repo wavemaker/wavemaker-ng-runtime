@@ -1,7 +1,7 @@
 import { Injector, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
-import { DialogService } from '@wm/core';
+import { AbstractDialogService } from '@wm/core';
 
 import { IDialog, IWidgetConfig } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
@@ -10,7 +10,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
 
     public name: string;
 
-    private readonly dialogService: DialogService;
+    private readonly dialogService: AbstractDialogService;
     private readonly bsModal: BsModalService;
 
     private dialogRef: BsModalRef;
@@ -23,7 +23,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
         protected modalOptions: ModalOptions
     ) {
         super(inj, widgetConfig);
-        this.dialogService = inj.get(DialogService);
+        this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
     }
 

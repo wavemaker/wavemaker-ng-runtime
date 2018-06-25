@@ -1,6 +1,6 @@
 import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef, NgZone } from '@angular/core';
 
-import { $invokeWatchers, _WM_APP_PROJECT, DialogService, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
+import { $invokeWatchers, _WM_APP_PROJECT, AbstractDialogService, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
 
 import { OAuthService } from '@wm/oAuth';
 
@@ -38,7 +38,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         _appRef: ApplicationRef,
         private elRef: ElementRef,
         private oAuthService: OAuthService,
-        private dialogService: DialogService,
+        private dialogService: AbstractDialogService,
         private spinnerService: SpinnerService,
         ngZone: NgZone
     ) {

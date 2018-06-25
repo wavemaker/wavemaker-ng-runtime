@@ -1,7 +1,7 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { TableComponent } from './table.component';
-import { $appDigest, DataSource, DialogService, triggerFn } from '@wm/core';
+import { $appDigest, AbstractDialogService, DataSource, triggerFn } from '@wm/core';
 import { refreshDataSource } from '../../../utils/data-utils';
 
 const OPERATION = {
@@ -15,8 +15,10 @@ const OPERATION = {
 })
 export class TableCUDDirective {
 
-    constructor(@Self() @Inject(TableComponent) private table,
-                private dialogService: DialogService) {
+    constructor(
+        @Self() @Inject(TableComponent) private table,
+        private dialogService: AbstractDialogService
+    ) {
         table.initiateSelectItem = this.initiateSelectItem.bind(this);
         table.updateVariable = this.updateVariable.bind(this);
         table.updateRecord = this.updateRecord.bind(this);

@@ -1,17 +1,18 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { EventNotifier } from '@wm/core';
+import { EventNotifier, AbstractToasterService, AbstractDialogService } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { HttpService } from '@wm/http';
 
 import { I18nService } from './i18n.service';
 
-declare const _, wm;
+declare const _;
 declare const _WM_APP_PROPERTIES: any;
 
 const injectorMap = {
-    DialogService: wm.core.DialogService,
-    i18n: I18nService
+    DialogService: AbstractDialogService,
+    i18n: I18nService,
+    wmToaster: AbstractToasterService
 };
 
 const enum PROJECT_TYPE {
@@ -80,7 +81,7 @@ export class AppRef {
      */
     on401() {
         const userInfo = _.get(this.securityService.get(), 'userInfo');
-        // if a previous user exists, a session time out trigerred
+        // if a previous user exists, a session time out triggered
         if (!_.isEmpty(userInfo)) {
             this.onSessionTimeout();
         }

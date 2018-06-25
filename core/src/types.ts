@@ -66,12 +66,21 @@ export abstract class App {
 }
 
 
-export abstract class DialogService {
+export abstract class AbstractDialogService {
     public abstract register(name: string, dialogRef: BaseDialog);
     public abstract open(name: string, initState?: any);
     public abstract close(name: string);
     public abstract showAppConfirmDialog(initState?: any);
     public abstract closeAllDialogs: Function;
+}
+
+export abstract class AbstractToasterService {
+    public abstract success (title: string, desc: string);
+    public abstract error (title: string, desc: string);
+    public abstract info (title: string, desc: string);
+    public abstract warn (title: string, desc: string);
+    public abstract show (type: string, title: string, desc: string, timeout: number, bodyOutputType: string, onClickHandler: Function, onHideCallback: Function);
+    public abstract hide (toasterObj: any);
 }
 
 export abstract class UserDefinedExecutionContext {

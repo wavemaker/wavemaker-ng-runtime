@@ -5,7 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
-import { $parseExpr, App, DialogService } from '@wm/core';
+import { ToastrModule } from 'ngx-toastr';
+
+import { $parseExpr, App, AbstractDialogService, AbstractToasterService } from '@wm/core';
 import { HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
 import { OAuthModule } from '@wm/oAuth';
@@ -30,6 +32,7 @@ import { RenderUtilsService } from './services/render-utils.service';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { AppSpinnerComponent } from './components/app-spinner.component';
 import { SpinnerService } from './services/spinner.service';
+import { ToasterServiceImpl } from './services/toaster.service';
 
 
 declare const $;
@@ -77,6 +80,10 @@ const routes = [
         HttpClientModule,
         HttpServiceModule,
         RouterModule.forRoot(routes, {useHash: true}),
+        ToastrModule.forRoot({
+            maxOpened: 1,
+            autoDismiss: true
+        }),
         HttpClientXsrfModule.withOptions({
             cookieName: 'wm_xsrf_token',
             headerName: _WM_APP_PROPERTIES.xsrf_header_name
@@ -86,7 +93,8 @@ const routes = [
     ],
     providers: [
         {provide: App, useClass: AppRef},
-        {provide: DialogService, useClass: DialogServiceImpl},
+        {provide: AbstractDialogService, useClass: DialogServiceImpl},
+        {provide: AbstractToasterService, useClass: ToasterServiceImpl},
         PipeProvider,
         RenderUtilsService,
         MetadataResolve,
