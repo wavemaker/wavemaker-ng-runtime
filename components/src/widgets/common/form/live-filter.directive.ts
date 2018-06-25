@@ -1,5 +1,5 @@
 import { Directive, Inject, Self } from '@angular/core';
-import { DataType, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
+import { DataType, debounce, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
 import { DataSource } from '@wm/core';
 
 import { FormComponent } from './form.component';
@@ -30,9 +30,9 @@ export class LiveFilterDirective {
     orderBy;
 
     // debounce the filter function. If multiple filter calls are made at same time, calls will be delayed and last call is fired
-    _filter = _.debounce(options => {
+    _filter = debounce(options => {
         this.filter(options);
-    }, 200);
+    }, 250);
 
     constructor(@Self() @Inject(FormComponent) private form) {
         form.clearFilter = this.clearFilter.bind(this);
@@ -69,7 +69,7 @@ export class LiveFilterDirective {
     onFieldValueChange(field, nv) {
         applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
         if (this.form.autoupdate) {
-            this.filter();
+            this._filter();
         }
     }
 

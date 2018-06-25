@@ -455,7 +455,7 @@ export class LiveFormDirective {
         // If operation is update, form is not touched and current data and previous data is same, Show no changes detected message
         if (this.form.operationType === Live_Operations.UPDATE && this.form.ngform && this.form.ngform.pristine &&
                 (this.form.isSelected && _.isEqual(data, prevData))) {
-            this.form.toggleMessage(true, 'No changes detected', 'info', ''); // TODO: Locale
+            this.form.toggleMessage(true, this.form.appLocale.MESSAGE_NO_CHANGES, 'info', '');
             return;
         }
 

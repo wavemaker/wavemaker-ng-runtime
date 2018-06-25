@@ -65,14 +65,6 @@ export class PaginationComponent extends StylableComponent {
         currentPage: 1
     };
 
-    appLocale = {
-        'LABEL_FIRST': 'First',
-        'LABEL_PREVIOUS': 'Previous',
-        'LABEL_NEXT': 'Next',
-        'LABEL_LAST': 'Last',
-        'LABEL_TOTAL_RECORDS': 'Total records'
-    };
-
     pageCount = 0;
     isDisableNext = true;
     isDisablePrevious = true;
@@ -422,7 +414,11 @@ export class PaginationComponent extends StylableComponent {
                     getWatchIdentifier(this.widgetId, 'dataset')
                 )
             );
+
             // Register a watch on paging options. Call dataset property change handler even if paging options changes to reflect pagination state
+            if (!bindPagingOptions) {
+                return;
+            }
             this.registerDestroyListener(
                 $watch(
                     bindPagingOptions,
