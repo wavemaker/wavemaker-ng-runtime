@@ -47,6 +47,8 @@ interface IPageMinJSON {
     variables: string;
 }
 
+const commonPageWidgets = {};
+
 const getDynamicComponent = (selector: string, template: string, styles: Array<string>, providers: Array<any> = [], postConstructFn: Function, context) => {
 
     @Component({
@@ -237,7 +239,14 @@ export class RenderUtilsService {
 
         const postConstructFn = (pageInstance, inj) => {
             this.defineI18nProps(pageInstance);
-            pageInstance.Widgets = {};
+
+            if (pageName === 'Common') {
+                pageInstance.Widgets = commonPageWidgets;
+            } else {
+                // All active pages should have reference to Common page widgets, e.g. Common login dialog
+                pageInstance.Widgets = Object.create(commonPageWidgets);
+            }
+
             registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
 
             let context = CONTEXT.PAGE;
@@ -289,7 +298,8 @@ export class RenderUtilsService {
 
         const postConstructFn = (partialInstance, inj) => {
             this.defineI18nProps(partialInstance);
-            partialInstance.Widgets = {};
+            // All partials should have reference to Common page widgets, e.g. Common login dialog
+            partialInstance.Widgets = Object.create(commonPageWidgets);
             registerVariablesAndActions(inj, partialName, variables, partialInstance, this.app);
 
             execScript(script, `partial-${partialName}`, 'Partial', partialInstance, this.app, inj);
