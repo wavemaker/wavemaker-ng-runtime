@@ -528,7 +528,8 @@ const updateInternalNodes = (target, root, variable) => {
     let internalNodes;
     function findInternalNodeBound() {
         return _.filter(boundInternalNodes, function (node) {
-            return (node !== targetNodeKey && _.includes(node, targetNodeKey)) || (targetNodeKey === root && node !== targetNodeKey);
+            // the later condition in check (targetNodeKey === root || targetNodeKey === 'dataBinding') is specifically for live variable of insert/update types
+            return (node !== targetNodeKey && _.includes(node, targetNodeKey)) || ((targetNodeKey === root || targetNodeKey === 'dataBinding') && node !== targetNodeKey);
         });
     }
     internalNodes = findInternalNodeBound();
