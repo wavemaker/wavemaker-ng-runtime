@@ -278,10 +278,10 @@ class ASTCompiler {
         _s1.push(
             `if(${condition}){`,
             _s2.join(';'),
-            `${v}=${trueExp};`,
+            `;${v}=${trueExp};`,
             `}else{`,
             _s3.join(';'),
-            `${v}=${falseExp};`,
+            `;${v}=${falseExp};`,
             `}`
         );
 
