@@ -553,7 +553,7 @@ const processBindObject = (obj, scope, root, variable) => {
         targetObj = getTargetObj(obj, root, variable),
         targetNodeKey = getTargetNodeKey(target),
         runMode = true;
-    const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : (fn => fn());
+    const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : _.noop;
 
     if (stringStartsWith(obj.value, 'bind:')) {
         destroyFn(

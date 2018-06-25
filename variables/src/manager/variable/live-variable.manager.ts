@@ -38,7 +38,7 @@ export class LiveVariableManager extends BaseVariableManager {
      * @param scope scope of the variable
      */
     private processFilterExpBindNode(scope, filterExpressions, success) {
-        const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : (fn => fn());
+        const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : _.noop;
         let bindFilExpObj = function (obj, targetNodeKey) {
             if (stringStartsWith(obj[targetNodeKey], "bind:")) {
                 destroyFn(
