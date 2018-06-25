@@ -202,9 +202,6 @@ export class LiveVariableManager extends BaseVariableManager {
             dataObj.data = response.content;
             dataObj.pagingOptions = _.omit(response, 'content');
 
-            // if callback function is provided, send the data to the callback
-            triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
-
             if (!options.skipDataSetUpdate) {
                 //  EVENT: ON_RESULT
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, dataObj.data);
@@ -222,6 +219,9 @@ export class LiveVariableManager extends BaseVariableManager {
                 // so that any variable/widget depending on this variable's data is updated
                 $invokeWatchers(true);
                 setTimeout(() => {
+                    // if callback function is provided, send the data to the callback
+                    triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
+
                     //  EVENT: ON_SUCCESS
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data);
                     //  EVENT: ON_CAN_UPDATE
