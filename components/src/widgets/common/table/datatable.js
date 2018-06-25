@@ -680,9 +680,11 @@ $.widget('wm.datatable', {
             },
             compiledCellTemplates: {}
         });
+        // TODO: Variable loading status is getting updated before dataset update. This is resulting in loader going off before data is rendered.
+        // Need to update code with suitable fix. For now 250ms is added as workaround
         this._setStatus = _.debounce(function () {
             this.__setStatus();
-        }, 100);
+        }, 250);
         this._prepareHeaderData();
         this._prepareData();
         this._render();

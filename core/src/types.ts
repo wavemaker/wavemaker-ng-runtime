@@ -33,7 +33,9 @@ enum Operation {
     GET_OPTIONS = 'getOptions',
     SEARCH_RECORDS = 'searchRecords',
     GET_PAGING_OPTIONS = 'getPagingOptions',
-    FETCH_DISTINCT_VALUES = 'fetchDistinctValues'
+    FETCH_DISTINCT_VALUES = 'fetchDistinctValues',
+    GET_UNIQUE_IDENTIFIER = 'getUniqueIdentifier',
+    GET_CONTEXT_IDENTIFIER = 'getContextIdentifier'
 }
 
 export const DataSource = {

@@ -1,7 +1,7 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource, IDataSource } from '@wm/core';
+import { DataSource, IDataSource, isDefined } from '@wm/core';
 
 export class ModelVariable extends BaseVariable implements IDataSource {
 
@@ -18,8 +18,12 @@ export class ModelVariable extends BaseVariable implements IDataSource {
             .initBinding(this, 'dataBinding', 'dataSet');
     }
 
-    execute(operation) {
-        let returnVal;
+    execute(operation, options) {
+        let returnVal = super.execute(operation, options);
+        if (isDefined(returnVal)) {
+            return returnVal;
+        }
+
         switch (operation) {
             case DataSource.Operation.IS_API_AWARE:
                 returnVal = false;

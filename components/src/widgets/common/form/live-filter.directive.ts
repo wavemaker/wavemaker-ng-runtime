@@ -285,7 +285,7 @@ export class LiveFilterDirective {
                     orderBy : orderBy,
                     exportType : options.exportType,
                     logicalOp : 'AND',
-                    size : options.exportSize,
+                    exportSize : options.exportSize,
                     fields : options.fields,
                     fileName: options.fileName
                 }

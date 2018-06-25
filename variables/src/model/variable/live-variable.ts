@@ -1,7 +1,7 @@
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource, IDataSource } from '@wm/core';
+import { DataSource, IDataSource, isDefined } from '@wm/core';
 import { LiveVariableManager } from '../../manager/variable/live-variable.manager';
 
 const getManager = (): LiveVariableManager => {
@@ -23,7 +23,11 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     }
 
     execute(operation, options) {
-        let returnVal;
+        let returnVal = super.execute(operation, options);
+        if (isDefined(returnVal)) {
+            return returnVal;
+        }
+
         switch (operation) {
             case DataSource.Operation.IS_API_AWARE:
                 returnVal = true;

@@ -1,4 +1,5 @@
 import DatasetUtil from '../util/dataset-util';
+import { DataSource } from '@wm/core';
 
 export abstract class BaseAction {
 
@@ -9,6 +10,20 @@ export abstract class BaseAction {
     category: string;
     dataSet: any;
     dataBinding: any;
+    _context: any;
+
+    execute(operation, options) {
+        let returnVal;
+        switch (operation) {
+            case DataSource.Operation.GET_UNIQUE_IDENTIFIER:
+                returnVal = this._id;
+                break;
+            case DataSource.Operation.GET_CONTEXT_IDENTIFIER:
+                returnVal = this._context;
+                break;
+        }
+        return returnVal;
+    }
 
     getData() {
         return this.dataSet;

@@ -1,4 +1,5 @@
 import { DataType } from './enums';
+import { DataSource } from '@wm/core';
 
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
@@ -936,5 +937,15 @@ export const getRouteNameFromLink = (link) => {
     }
     return link;
 };
-
+]
 export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+
+/**
+ * This function accepts two data sources and will check if both are same by comparing the unique id and
+ * context in which datasources are present
+ * @returns {*} boolean true/ false
+ */
+export const isDataSourceEqual = (d1, d2) => {
+    return d1.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) === d2.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) &&
+    _.isEqual(d1.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER), d2.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER));
+};

@@ -427,7 +427,7 @@ export class LiveVariableManager extends BaseVariableManager {
         options.data.skipEncode = true;
         tableOptions = LiveVariableUtils.prepareTableOptions(variable, options.data, undefined);
         data.query = tableOptions.query ? tableOptions.query : '';
-        data.exportSize = options.data.size;
+        data.exportSize = options.data.exportSize;
         data.exportType = options.data.exportType;
         data.fields = formatExportExpression(options.data.fields);
         if (options.data.fileName) {

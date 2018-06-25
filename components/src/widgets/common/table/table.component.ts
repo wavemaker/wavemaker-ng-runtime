@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, triggerFn, $parseEvent, $watch, $unwatch } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject, getValidJSON, isDefined, App, triggerFn, $parseEvent, $watch, $unwatch, isDataSourceEqual } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -548,6 +548,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         this.ngform = fb.group({});
         this.addEventsToContext(this.context);
+
+        // Show loading status based on the variable life cycle
+        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
     }
 
     ngAfterContentInit() {
@@ -610,8 +613,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.datagridElement.datatable(this.gridOptions);
         this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
 
-        this.watchVariableDataSet(this.dataset);
-
         this.applyProps.forEach(args => this.callDataGridMethod(...args));
 
         if (this.editmode === EDIT_MODE.QUICK_EDIT) {
@@ -642,6 +643,35 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return false;
         }
         return this.datasource.execute(operation, options);
+    }
+
+    handleLoading(data) {
+        const dataSource = this.datasource;
+        if (!dataSource) {
+            if (data.active) {
+                this.variableInflight = data.active;
+                this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+            } else {
+                this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+            }
+            return;
+        }
+        // based on the active state and response toggling the 'loading data...' and 'no data found' messages.
+        if (dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
+            if (isDataSourceEqual(data.variable, this.datasource)) {
+                this.variableInflight = data.active;
+                if (data.active) {
+                    this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+                } else {
+                    // If grid is in edit mode or grid has data, dont show the no data message
+                    if (!this.isGridEditMode && _.isEmpty(this.dataset)) {
+                        this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+                    } else {
+                        this.callDataGridMethod('setStatus', 'ready');
+                    }
+                }
+            }
+        }
     }
 
     clearForm(newRow?) {
@@ -918,7 +948,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         } else {
             this.resetPageNavigation();
             /*for run mode, disabling the loader and showing no data found message if dataset is not valid*/
-            this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+            if (!this.variableInflight) {
+                this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+            }
             this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
         }
 
@@ -928,6 +960,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         // TODO: Handle selected item reference data
 
+        if (!_.isObject(newVal) || newVal === '' || (newVal && newVal.dataValue === '')) {
+            if (!this.variableInflight) {
+                // If variable has finished loading and resultSet is empty, ender empty data
+                this.setGridData([]);
+            }
+            return;
+        }
         if (newVal) {
             this.populateGridData(newVal);
         }
@@ -1145,7 +1184,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             orderBy : sortOptions,
             exportType : $item.label,
             logicalOp : 'AND',
-            size : this.exportdatasize,
+            exportSize : this.exportdatasize,
             columns : columns
         };
         isValid = this.invokeEventCallback('beforeexport', {$data: requestData});
