@@ -48,8 +48,11 @@ export class DataProvider implements IDataProvider {
         /**
          * Make call to remoteDataProvider when searchkey is available and data is not from local / model variable.
          * Otherwise use localDataProvider
+         * If datasource is a serviceVariable with no input params, then perform local search.
          */
-        if ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE)) && config.searchKey) {
+        if ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
+            && config.searchKey
+            && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED)) {
             promise = DataProvider.remoteDataProvider.filter(config);
         } else {
             promise = DataProvider.localDataProvider.filter(config);

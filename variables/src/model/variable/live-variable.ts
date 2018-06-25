@@ -107,6 +107,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.GET_PAGING_OPTIONS:
                 returnVal = this.pagingOptions;
                 break;
+            case DataSource.Operation.IS_UPDATE_REQUIRED:
+                returnVal = true;
+                break;
             default:
                 returnVal = {};
                 break;

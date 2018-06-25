@@ -3,6 +3,7 @@ import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { DataSource, IDataSource, isDefined } from '@wm/core';
 import { ServiceVariableManager } from '../../manager/variable/service-variable.manager';
+import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 
 declare const _;
 
@@ -63,6 +64,9 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.GET_PAGING_OPTIONS:
                 returnVal = this.pagingOptions;
                 break;
+            case DataSource.Operation.IS_UPDATE_REQUIRED:
+                returnVal = this.isUpdateRequired();
+                break;
             default :
                 returnVal = {};
                 break;
@@ -88,6 +92,18 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
 
     searchRecords(options, success?, error?) {
         return getManager().searchRecords(this, options, success, error);
+    }
+
+    isUpdateRequired() {
+        const inputFields = getManager().getInputParms(this);
+        const queryParams = ServiceVariableUtils.excludePaginationParams(inputFields);
+
+        if (!queryParams.length) {
+            // if we don't have any query params and variable data is available then we don't need variable update, so return false
+            return false;
+        }
+
+        return true;
     }
 
     cancel() {

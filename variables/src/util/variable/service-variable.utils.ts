@@ -1,8 +1,8 @@
 import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
-import { isFileUploadSupported, securityService } from './variables.utils';
-import { extractType, formatDate, getBlob, isDateTimeType, isDefined, } from '@wm/core';
+import { isFileUploadSupported } from './variables.utils';
+import { extractType, formatDate, getBlob, isDateTimeType, isDefined } from '@wm/core';
 import { getAccessToken } from './../oAuth.utils';
-import { metadataService } from '@wm/variables';
+import { metadataService } from '../../util/variable/variables.utils';
 
 declare const _, window;
 
@@ -360,5 +360,17 @@ export class ServiceVariableUtils {
         } else {
             return false;
         }
+    }
+
+    /**
+     * This function returns array of query param names for variable other then page,size,sort
+     * @params {params} params of the variable
+     */
+    static excludePaginationParams = (params) => {
+        return _.map(_.reject(params, (param) => {
+            return _.includes(VARIABLE_CONSTANTS.PAGINATION_PARAMS, param.name);
+        }), function (param) {
+            return param.name;
+        });
     }
 }

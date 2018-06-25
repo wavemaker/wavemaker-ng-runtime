@@ -1,5 +1,6 @@
 import { DataType } from './enums';
 import { DataSource } from '@wm/core';
+import { VARIABLE_CONSTANTS } from '@wm/variables';
 
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;

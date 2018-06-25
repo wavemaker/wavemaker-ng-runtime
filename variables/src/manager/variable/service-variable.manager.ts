@@ -440,6 +440,11 @@ export class ServiceVariableManager extends BaseVariableManager {
         }
     }
 
+    public getInputParms(variable) {
+        const wmServiceOperationInfo = metadataService.getByOperationId(variable.operationId);
+        return _.get(wmServiceOperationInfo, 'parameters');
+    }
+
     public setInput(variable, key, val, options) {
         return setInput(variable.dataBinding, key, val, options);
     }
