@@ -99,9 +99,15 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         this.focusFirstInput();
     }
 
+    setFormData(val) {
+        if (!this.form.isDestroyed) {
+            this.form.getWidget().formdata = val;
+        }
+    }
+
     private _addNewRow() {
         this.form.isSelected = true;
-        this.form.getWidget().formdata = '';
+        this.setFormData('');
 
         this.form.new();
 
@@ -121,7 +127,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     private _updateRow(row, eventName) {
-        this.form.getWidget().formdata = row;
+        this.setFormData(row);
         this.form.isSelected = true;
         this.form.edit();
 
@@ -161,14 +167,14 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
                 rowData = newValue[newValue.length - 1];
             }
 
-            this.form.getWidget().formdata = getClonedObject(rowData);
+            this.setFormData(getClonedObject(rowData));
             /*If the form is already in update mode, call the form update function*/
             if (this.form.isUpdateMode) {
                 this.form.edit();
             }
         } else {
             this.form.isSelected = false;
-            this.form.getWidget().formdata = '';
+            this.setFormData('');
             this.form.clearData();
         }
     }

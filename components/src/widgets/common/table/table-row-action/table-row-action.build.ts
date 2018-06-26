@@ -37,16 +37,17 @@ const getSaveCancelTemplate = () => {
 
 // get the inline widget template
 const getRowActionTmpl = (attrs) => {
-    const action = attrs.get('action');
+    const action =  attrs.get('action');
+    const actionTmpl = action ? ` click.event="${action}" ` : '';
     const saveCancelTmpl = action && action.includes('editRow(') ? getSaveCancelTemplate() : '';
-    const btnClass = action.includes('editRow(') ? 'edit edit-row-button' :
-                        (action.includes('deleteRow(') ? 'delete delete-row-button' : '');
+    const btnClass = action ? (action.includes('editRow(') ? 'edit edit-row-button' :
+                        (action.includes('deleteRow(') ? 'delete delete-row-button' : '')) : '';
     return `<ng-template #rowActionTmpl let-row="row" let-$rowData="$rowData">
                <button wmButton data-action-key="${attrs.get('key')}"
                     ${getRowActionAttrs(attrs)}
                     class="row-action row-action-button app-button btn ${attrs.get('class')} ${btnClass}"
                     iconclass="${attrs.get('iconclass')}"
-                    click.event="${action}"
+                    ${actionTmpl}
                     tabindex="${attrs.get('tabindex')}"
                     type="button"></button>
                 ${saveCancelTmpl}

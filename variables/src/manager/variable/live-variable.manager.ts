@@ -243,7 +243,7 @@ export class LiveVariableManager extends BaseVariableManager {
 
     private performCUD(operation, variable, options, success, error) {
         options = options || {};
-        options.inputFields = options.row || getClonedObject(variable.inputFields);
+        options.inputFields = options.inputFields || getClonedObject(variable.inputFields);
         return $queue.submit(variable).then(() => {
             this.notifyInflight(variable, true);
             return LiveVariableUtils.doCUD(operation, variable, options, success, error)

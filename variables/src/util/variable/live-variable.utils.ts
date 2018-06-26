@@ -702,7 +702,7 @@ export default class LiveVariableUtils {
             });
             // Merge inputFields along with dataObj while making Insert/Update/Delete
             _.forEach(inputFields, (attrValue, attrName) => {
-                if (attrValue && !rowObject[attrName]) {
+                if (attrValue && !isDefined(rowObject[attrName])) {
                     rowObject[attrName] = attrValue;
                 }
             });

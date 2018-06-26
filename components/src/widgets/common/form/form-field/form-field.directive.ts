@@ -97,7 +97,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         const WIDGET_CONFIG = {
             widgetType: 'wm-form-field',
             hostClass: '',
-            widgetSubType: 'wm-form-field-' + _widgetType
+            widgetSubType: 'wm-form-field-' + (_widgetType || FormWidgetType.TEXT).trim()
         };
 
         super(inj, WIDGET_CONFIG, new Promise(res => this._initPropsRes = res));
