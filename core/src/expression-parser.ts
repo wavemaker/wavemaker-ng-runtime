@@ -155,7 +155,7 @@ class ASTCompiler {
         const v = this.createVar();
         const s = [];
         for (const item of ast.expressions) {
-            s.push(this.build(item));
+            s.push(this.build(item, stmts));
         }
         stmts.push(`${v}=[${s.join(',')}]`);
         return v;
@@ -167,7 +167,7 @@ class ASTCompiler {
         const v = this.createVar();
         const _values = [];
         for (const _value of ast.values) {
-            _values.push(this.build(_value));
+            _values.push(this.build(_value, stmts));
         }
         stmts.push(`${v}={${ast.keys.map((k, i) => k.key + ':' + _values[i])}}`);
         return v;
@@ -176,7 +176,7 @@ class ASTCompiler {
     processPropertyRead() {
         const ast = this.cAst;
         const stmts = this.cStmts;
-        const r = this.build(ast.receiver);
+        const r = this.build(ast.receiver, stmts);
         const v = this.createVar();
         stmts.push(`${v}=${r}&&${r}.${ast.name}`);
         return v;
@@ -185,8 +185,8 @@ class ASTCompiler {
     processKeyedRead() {
         const ast = this.cAst;
         const stmts = this.cStmts;
-        const k = this.build(ast.key);
-        const o = this.build(ast.obj);
+        const k = this.build(ast.key, stmts);
+        const o = this.build(ast.obj, stmts);
         const v = this.createVar();
         stmts.push(`${v}=${o}&&${o}["${k}"]`);
         return v;
@@ -195,7 +195,7 @@ class ASTCompiler {
     processPrefixNot() {
         const ast = this.cAst;
         const stmts = this.cStmts;
-        const r = this.build(ast.expression);
+        const r = this.build(ast.expression, stmts);
         stmts.push(`${r}=!${r}`);
         return r;
     }
@@ -203,8 +203,8 @@ class ASTCompiler {
     handleBinaryPlus_Minus() {
         const ast = this.cAst;
         const stmts = this.cStmts;
-        const l = this.build(ast.left);
-        const r = this.build(ast.right);
+        const l = this.build(ast.left, stmts);
+        const r = this.build(ast.right, stmts);
         const v = this.createVar();
         const m = ast.operation === '+' ? '_plus' : '_minus';
         stmts.push(`${v}=${m}(${l},${r})`);
@@ -215,24 +215,28 @@ class ASTCompiler {
         const ast = this.cAst;
         const stmts = this.cStmts;
         const _s1 = [];
-        const _s2 = [];
-        const l = this.build(ast.left);
-        const r = this.build(ast.right, _s2);
+        const _sl = [];
+        const _sr = [];
+        const l = this.build(ast.left, _sl);
+        const r = this.build(ast.right, _sr);
 
-        let v = this.createVar();
+        const v = this.createVar();
 
         if (ast.operation === '&&') {
-            v = r;
             _s1.push(
-                `if(${l}){`,
-                _s2.join(';'),
+                _sl.join(';'),
+                `;${v}=false`,
+                `;if(${l}){`,
+                _sr.join(';'),
+                `;${v}=${r};`,
                 `}`
             );
         } else {
-            v = l;
             _s1.push(
-                `if(!${l}){`,
-                _s2.join(';'),
+                _sl.join(';'),
+                `;${v}=${l}`,
+                `;if(!${l}){`,
+                _sr.join(';'),
                 `;${v}=${r};`,
                 `}`
             );
@@ -244,8 +248,8 @@ class ASTCompiler {
     handleBinaryDefault() {
         const ast = this.cAst;
         const stmts = this.cStmts;
-        const l = this.build(ast.left);
-        const r = this.build(ast.right);
+        const l = this.build(ast.left, stmts);
+        const r = this.build(ast.right, stmts);
         const v = this.createVar();
         stmts.push(`${v}=${l}${ast.operation}${r}`);
         return v;
@@ -267,7 +271,7 @@ class ASTCompiler {
     processConditional() {
         const ast = this.cAst;
         const stmts = this.cStmts;
-        const condition = this.build(ast.condition);
+        const condition = this.build(ast.condition, stmts);
         const v = this.createVar();
         const _s1 = [];
         const _s2 = [];
@@ -294,9 +298,9 @@ class ASTCompiler {
         const stmts = this.cStmts;
         const _args = [];
         for (const arg of ast.args) {
-            _args.push(this.build(arg));
+            _args.push(this.build(arg, stmts));
         }
-        const fn = this.build(ast.receiver);
+        const fn = this.build(ast.receiver, stmts);
         const v = this.createVar();
         const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver;
         stmts.push(`${v}= ${fn}&&${fn}.${ast.name}&&${fn}.${ast.name}${isImplicitReceiver ? '.bind(_ctx)' : ''}(${_args.join(',')})`);
@@ -315,11 +319,11 @@ class ASTCompiler {
         if (ast.receiver instanceof ImplicitReceiver) {
             lhs = `_ctx.${ast.name}`;
         } else {
-            receiver = this.build(ast.receiver);
+            receiver = this.build(ast.receiver, stmts);
             lhs = `${receiver}${receiver.length ? '.' : ''}${ast.name}`;
         }
 
-        const rhs = this.build(ast.value);
+        const rhs = this.build(ast.value, stmts);
         stmts.push(`${lhs}=${rhs}`);
     }
 
@@ -330,7 +334,7 @@ class ASTCompiler {
         const _args = [];
         const _s1 = [];
         const _s2 = [];
-        const exp = this.build(ast.exp);
+        const exp = this.build(ast.exp, stmts);
         for (const arg of ast.args) {
             _args.push(this.build(arg, _s2));
         }
