@@ -55,7 +55,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         @Attribute('displayfield.bind') private bindDisplayField,
         @Attribute('displayexpression.bind') private bindDisplayExpr,
         @Attribute('displayimagesrc.bind') private bindDisplayImgSrc,
-        @Attribute('datafield.bind') private bindDataField
+        @Attribute('datafield.bind') private bindDataField,
+        @Attribute('dataset.bind') private bindDataSet
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
@@ -77,6 +78,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.binddisplayexpression = this.bindDisplayExpr;
         this.searchComponent.displaylabel = this.displayfield;
         this.searchComponent.datafield = this.bindDataField;
+        this.searchComponent.binddataset = this.bindDataSet;
+        this.searchComponent.dataset = this.dataset;
 
         this.searchComponent.updateQueryModel = _.debounce(this.updateQueryModel.bind(this), 50);
         this.getTransformedData = this.searchComponent.getTransformedData;
