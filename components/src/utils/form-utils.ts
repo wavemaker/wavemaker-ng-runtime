@@ -1,4 +1,4 @@
-import { AppDefaults, getClonedObject, getFormattedDate, isEqualWithFields } from '@wm/core';
+import { $parseEvent, AppDefaults, getClonedObject, getFormattedDate, isEqualWithFields } from '@wm/core';
 
 import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 
@@ -259,8 +259,10 @@ const getSortedGroupedData = (groupedLiData: Object, groupBy: string) => {
 export const groupData = (compRef: any, data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string) => {
     let groupedLiData = {};
     if (_.includes(groupby, '(')) {
-        const groupDataByUserDefinedFn = compRef[groupby.split('(')[0]];
-        groupedLiData = _.groupBy(data, groupDataByUserDefinedFn);
+        const groupDataByUserDefinedFn = $parseEvent(groupby);
+        groupedLiData = _.groupBy(data, val => {
+            return groupDataByUserDefinedFn(compRef.viewParent, {'rowData': val.dataObject || val});
+        });
     } else {
         groupedLiData = getGroupedData(data, groupby, match, orderby, dateformat, datePipe, innerItem);
     }
