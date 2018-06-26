@@ -122,6 +122,7 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
     attrs.forEach((v, k) => {
         attrMarkup += ` ${k}`;
         if (v) {
+            v = v.trim();
             if (k === '[ngClass]' && v.startsWith('{')) {
                 v = v.replace(/"/g, `'`);
             }
