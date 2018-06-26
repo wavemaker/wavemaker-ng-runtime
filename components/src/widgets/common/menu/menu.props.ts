@@ -8,7 +8,7 @@ export const registerProps = () => {
                 ['accessroles', {value: 'Everyone', ...PROP_STRING}],
                 ['animateitems', PROP_STRING],
                 ['autoclose', {value: 'always', ...PROP_STRING}],
-                ['caption', {value: 'Menu', ...PROP_STRING}],
+                ['caption', PROP_STRING],
                 ['dataset', {value: 'Menu Item 1, Menu Item 2, Menu Item 3', ...PROP_ANY}],
                 ['hint', {value: '', ...PROP_STRING}],
                 ['iconclass', PROP_STRING],
