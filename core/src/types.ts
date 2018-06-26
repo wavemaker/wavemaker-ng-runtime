@@ -39,7 +39,9 @@ enum Operation {
     IS_UPDATE_REQUIRED = 'isUpdateRequired',
     ADD_ITEM = 'addItem',
     SET_ITEM = 'setItem',
-    REMOVE_ITEM = 'removeItem'
+    REMOVE_ITEM = 'removeItem',
+    IS_BOUND_TO_LOCALE = 'isBoundToLocale',
+    GET_DEFAULT_LOCALE = 'getDefaultLocale'
 }
 
 export const DataSource = {

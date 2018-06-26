@@ -2,6 +2,7 @@ import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { DataSource, IDataSource, isDefined } from '@wm/core';
+import { appManager } from '@wm/variables';
 
 export class ModelVariable extends BaseVariable implements IDataSource {
 
@@ -40,10 +41,25 @@ export class ModelVariable extends BaseVariable implements IDataSource {
             case DataSource.Operation.SUPPORTS_SERVER_FILTER:
                 returnVal = false;
                 break;
+            case DataSource.Operation.IS_BOUND_TO_LOCALE:
+                returnVal = this.isBoundToLocale();
+                break;
+            case DataSource.Operation.GET_DEFAULT_LOCALE:
+                returnVal = this.getDefaultLocale();
+                break;
             default:
                 returnVal = {};
                 break;
         }
         return returnVal;
     }
+
+    isBoundToLocale() {
+        return this.name === 'supportedLocale';
+    }
+
+    getDefaultLocale() {
+        return appManager.getSelectedLocale();
+    }
+
 }

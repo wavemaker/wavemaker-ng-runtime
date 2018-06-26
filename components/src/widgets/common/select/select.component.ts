@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import { DataSource } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './select.props';
@@ -22,6 +23,12 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public readonly;
 
     @ViewChild('select', {read: ElementRef}) selectEl: ElementRef;
+
+    set datasource(ds) {
+        if (ds.execute(DataSource.Operation.IS_BOUND_TO_LOCALE)) {
+            this.datavalue = ds.execute(DataSource.Operation.GET_DEFAULT_LOCALE);
+        }
+    }
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

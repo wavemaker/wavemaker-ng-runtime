@@ -5,6 +5,7 @@ import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
 import { App, AbstractDialogService } from '@wm/core';
+import { I18nService } from '@wm/runtime';
 
 import { SpinnerService } from './spinner.service';
 
@@ -24,7 +25,8 @@ export class AppManagerService {
         private $app: App,
         private $variables: VariablesService,
         private $metadata: MetadataService,
-        private $spinner: SpinnerService
+        private $spinner: SpinnerService,
+        private $i18n: I18nService
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
@@ -262,5 +264,9 @@ export class AppManagerService {
 
     getAppLocale() {
         return this.$app.appLocale;
+    }
+
+    getSelectedLocale() {
+        return this.$i18n.getSelectedLocale();
     }
 }
