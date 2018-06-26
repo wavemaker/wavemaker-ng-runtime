@@ -1,6 +1,6 @@
 <div class="panel-heading clearfix" role="tab" (click)="togglePane($event)" [ngClass]="{active: isActive}">
     <h3 class="panel-title">
-        <a href="javascript:void(0);" role="button" class="accordion-toggle" [attr.aria-expanded]="isActive" [attr.aria-controls]="name"><!--Todo aria-expanded state depends on the active state-->
+        <a href="javascript:void(0);" role="button" class="accordion-toggle" [attr.aria-expanded]="isActive" [attr.aria-controls]="name">
             <div class="pull-left">
                 <i class="app-icon panel-icon {{iconclass}}" [hidden]="!iconclass"></i>
             </div>
@@ -12,10 +12,10 @@
     </h3>
     <div class="panel-actions">
         <span class="label label-{{badgetype}}">{{badgevalue}}</span>
-        <button type="button" [attr.aria-expanded]="isActive" [attr.aria-controls]="name"
-                class="app-icon wi panel-action"
-                title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"
-                [ngClass]="isActive ? 'wi-minus' : 'wi-plus'"><!--Todo aria-expanded state depends on the active state-->
+        <button type="button" aria-label="Collapse/Expand" [attr.aria-expanded]="isActive" [attr.aria-controls]="name"
+                class="app-icon panel-action wi"
+                title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}">
+            <i [ngClass]="isActive ? 'wi-minus' : 'wi-plus'"></i>
         </button>
     </div>
 </div>

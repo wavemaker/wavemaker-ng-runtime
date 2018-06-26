@@ -27,11 +27,11 @@ const getRowActionAttrs = attrs => {
 };
 
 const getSaveCancelTemplate = () => {
-    return `<button type="button" class="save row-action-button btn app-button btn-transparent save-edit-row-button hidden" title="Save">
-                <i class="wi wi-done"></i>
+    return `<button type="button" aria-label="Save edit icon" class="save row-action-button btn app-button btn-transparent save-edit-row-button hidden" title="Save">
+                <i class="wi wi-done" aria-hidden="true"></i>
             </button>
-            <button type="button" class="cancel row-action-button btn app-button btn-transparent cancel-edit-row-button hidden" title="Cancel">
-                <i class="wi wi-cancel"></i>
+            <button type="button" aria-label="Cancel edit icon" class="cancel row-action-button btn app-button btn-transparent cancel-edit-row-button hidden" title="Cancel">
+                <i class="wi wi-cancel" aria-hidden="true"></i>
             </button>`;
 };
 

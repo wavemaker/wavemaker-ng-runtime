@@ -13,7 +13,7 @@
         </a>
         <div class="panel-actions">
             <span *ngIf="badgevalue" aria-label="badge" class="app-badge label label-{{badgetype}}">{{badgevalue}}</span>
-            <div wmMenu
+            <div wmMenu aria-label="dropdown"
                  dropdown
                  type="anchor"
                  class="panel-action"
@@ -30,15 +30,15 @@
                  userrole.bind="userrole"
                  itemchildren.bind="itemchildren"
                 ></div>
-            <button type="button" class="app-icon panel-action wi wi-question" [title]="appLocale.LABEL_HELP" *ngIf="helptext"
-                    (click)="toggleHelp()"></button>
-            <button type="button" class="app-icon wi panel-action {{expanded ? 'wi-minus' : 'wi-plus'}}" *ngIf="collapsible" [title]="expandCollapseTitle"
-                    (click)="togglePanel($event);"></button>
-            <button type="button" class="app-icon wi panel-action {{fullscreen ? 'wi-fullscreen-exit': 'wi-fullscreen'}}" *ngIf="enablefullscreen"
+            <button type="button" aria-label="Help" class="app-icon panel-action wi" [title]="appLocale.LABEL_HELP" *ngIf="helptext"
+                    (click)="toggleHelp()"><i class="wi-question"></i></button>
+            <button type="button" aria-label="Collapse/Expand" class="app-icon wi panel-action" *ngIf="collapsible" [title]="expandCollapseTitle"
+                    (click)="togglePanel($event);"><i [ngClass]="expanded ? 'wi-minus' : 'wi-plus'"></i></button>
+            <button type="button" aria-label="Fullscreen/Exit" class="app-icon panel-action wi" *ngIf="enablefullscreen"
                     [title]="fullScreenTitle"
-                    (click)="toggleFullScreen($event);"></button>
-            <button type="button" class="app-icon wi panel-action wi-close" title="{{appLocale.LABEL_CLOSE}}" *ngIf="closable"
-                    (click)="closePanel($event)"></button>
+                    (click)="toggleFullScreen($event);"><i [ngClass]="fullscreen ? 'wi-fullscreen-exit' : 'wi-fullscreen'"></i></button>
+            <button type="button" aria-label="Close button" class="app-icon panel-action" title="{{appLocale.LABEL_CLOSE}}" *ngIf="closable"
+                    (click)="closePanel($event)"><i class="wi wi-close"></i></button>
         </div>
     </h3>
 </div>

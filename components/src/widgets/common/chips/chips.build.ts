@@ -4,7 +4,7 @@ const tagName = 'ul';
 
 register('wm-chips', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmChips role="input" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmChips role="button" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

@@ -1,4 +1,4 @@
-<div class="app-fileupload" init-widget role="input">
+<div class="app-fileupload" init-widget>
     <!-- drag and drop files UI in web -->
     <div class="app-multi-file-upload" *ngIf="!_isMobileType && multiple">
         <div class="drop-box" drag-files="onFileSelect($event,$event.target.files)">
@@ -9,9 +9,9 @@
                     <!--Todo ng-attr-accept="{{chooseFilter}}"-->
                     <!--<input class="file-input" focus-target type="file" name="files" (change)="onFileSelect($event, $event.target.files)" multiple disabled="disabled">
                     <a href="javascript:void(0);" class="app-anchor" >{{fileuploadmessage}}</a>-->
-                    <input class="file-input" type="file" name="files" *ngIf="multiple" [disabled]="disabled" [accept]="chooseFilter" (change)="onFileSelect($event, $event.target.files)" multiple >
-                    <button focus-target class="app-button btn btn-default" >
-                        <i class="{{iconclass}}"></i>
+                    <input class="file-input" aria-label="Select File" type="file" name="files" *ngIf="multiple" [disabled]="disabled" [accept]="chooseFilter" (change)="onFileSelect($event, $event.target.files)" multiple >
+                    <button focus-target class="app-button btn btn-default" aria-label="Upload Icon">
+                        <i class="{{iconclass}}" aria-hidden="true"></i>
                         <span class="caption">{{caption}}</span>
                     </button>
                     </form>
@@ -24,10 +24,10 @@
             <form class="form-horizontal" name="{{formName}}">
                 <!-- support for file upload in Mobileapp in its runmode (Web) -->
                 <!--Todo: ng-attr-accept="{{chooseFilter}}"-->
-                <input class="file-input" type="file" name="files" *ngIf="multiple" [disabled]="disabled" [accept]="chooseFilter" (change)="onFileSelect($event, $event.target.files)" disabled="disabled" multiple>
-                <input class="file-input" type="file" name="files" *ngIf="!multiple" [disabled]="disabled" [accept]="chooseFilter" (change)="onFileSelect($event, $event.target.files)" >
+                <input class="file-input" aria-label="Select files" type="file" name="files" *ngIf="multiple" [disabled]="disabled" [accept]="chooseFilter" (change)="onFileSelect($event, $event.target.files)" disabled="disabled" multiple>
+                <input class="file-input" aria-label="Select Files" type="file" name="files" *ngIf="!multiple" [disabled]="disabled" [accept]="chooseFilter" (change)="onFileSelect($event, $event.target.files)" >
                 <button focus-target class="app-button btn btn-default">
-                    <i class="{{iconclass}}"></i>
+                    <i class="{{iconclass}}" aria-hidden="true"></i>
                     <span class="caption">{{caption}}</span>
                 </button>
             </form>

@@ -21,8 +21,8 @@ const getFilterTemplate = (attrs, pCounter)  => {
     <span class="input-group ${widget}" data-col-identifier="${fieldName}">
         ${widgetTmpl}
         <span class="input-group-addon filter-clear-icon" *ngIf="${pCounter}.showClearIcon('${fieldName}')">
-            <button class="btn-transparent btn app-button" type="button" (click)="${pCounter}.clearRowFilter('${fieldName}')">
-                <i class="app-icon wi wi-clear"></i>
+            <button class="btn-transparent btn app-button" aria-label="Clear button" type="button" (click)="${pCounter}.clearRowFilter('${fieldName}')">
+                <i class="app-icon wi wi-clear" aria-hidden="true"></i>
             </button>
          </span>
         <span class="input-group-addon" dropdown container="body">
