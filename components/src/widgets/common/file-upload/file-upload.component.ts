@@ -4,7 +4,6 @@ import { Subject } from 'rxjs/Subject';
 
 import { isAudioFile, isImageFile, isVideoFile } from '@wm/core';
 
-import { styler } from '../../framework/styler';
 import { registerProps } from './file-upload.props';
 import { StylableComponent } from '../base/stylable.component';
 
@@ -106,7 +105,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
     getValidFiles($files) {
         const validFiles = [];
         const MAXFILEUPLOAD_SIZE = parseInt(this.maxfilesize, 10) * this.FILESIZE_MB || this.FILESIZE_MB;
-        const MAX_FILE_UPLOAD_FORMATTED_SIZE = (this.maxfilesize || '100') + 'MB';
+        const MAX_FILE_UPLOAD_FORMATTED_SIZE = (this.maxfilesize || '1') + 'MB';
 
         // if contenttype is files for mobile projects.
         if (this.chooseFilter === this.DEVICE_CONTENTTYPES.FILES) {
@@ -210,29 +209,32 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
         const uploadOptions = { formName : this.formName};
         let beforeSelectVal;
         $files = this.getValidFiles($files);
-        this.progressObservable = new Subject();
-        beforeSelectVal = this.invokeEventCallback('beforeselect', {
-            $event: $.extend($event.$files || {}, $files)
-        });
-        if (this.datasource) {
-            this.datasource._progressObservable = this.progressObservable;
-            this.datasource._progressObservable.asObservable().subscribe((progressObj) => {
-                _.forEach(this.selectedFiles, (file) => {
-                    if (file.name === progressObj.fileName) {
-                        file.progress = progressObj.progress;
-                        if (file.progress === 100) {
-                            file.status = 'success';
-                        } else {
-                            file.status = progressObj.status;
-                        }
-                    }
-                });
+        // Make call if there are valid files else no call is made
+        if ($files.length) {
+            this.progressObservable = new Subject();
+            beforeSelectVal = this.invokeEventCallback('beforeselect', {
+                $event: $.extend($event.$files || {}, $files)
             });
-            if (beforeSelectVal !== false) {
-                this.onSelectEventCall($event, $files);
+            if (this.datasource) {
+                this.datasource._progressObservable = this.progressObservable;
+                this.datasource._progressObservable.asObservable().subscribe((progressObj) => {
+                    _.forEach(this.selectedFiles, (file) => {
+                        if (file.name === progressObj.fileName) {
+                            file.progress = progressObj.progress;
+                            if (file.progress === 100) {
+                                file.status = 'success';
+                            } else {
+                                file.status = progressObj.status;
+                            }
+                        }
+                    });
+                });
+                if (beforeSelectVal !== false) {
+                    this.onSelectEventCall($event, $files);
+                }
+            } else {
+                this.selectedFiles = $files;
             }
-        } else {
-            this.selectedFiles = $files;
         }
     }
 

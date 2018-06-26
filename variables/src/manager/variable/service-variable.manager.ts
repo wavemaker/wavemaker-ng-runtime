@@ -350,9 +350,19 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @private
      */
     private _invoke (variable: ServiceVariable, options: any, success: Function, error: Function) {
-        const inputFields = getClonedObject(options.inputFields || variable.dataBinding),
-            operationInfo = this.getMethodInfo(variable, inputFields, options),
-            requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
+        let inputFields = getClonedObject(options.inputFields || variable.dataBinding);
+        const operationInfo = this.getMethodInfo(variable, inputFields, options),
+            requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields),
+            // EVENT: ON_BEFORE_UPDATE
+            output: any = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, inputFields, options);
+
+        if (output === false) {
+            triggerFn(error);
+            return;
+        }
+        if (_.isObject(output)) {
+            inputFields = output;
+        }
 
         // check errors
         if (requestParams.error) {
