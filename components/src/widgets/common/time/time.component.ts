@@ -142,6 +142,14 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
     }
 
     /**
+     * This is an internal method triggered when the time input changes
+     */
+    onDisplayTimeChange($event) {
+        const newVal = getValidDateObject($event.target.value);
+        this.onTimeChange(newVal);
+    }
+
+    /**
      * This is an internal method used to execute the on time change functionality
      */
     private onTimeChange(newVal) {

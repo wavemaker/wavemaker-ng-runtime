@@ -7,7 +7,8 @@
        (click)="datepicker.toggle()"
        [disabled]="disabled || readonly || isCurrentDate"
        [required]="required"
-       [attr.placeholder]="placeholder">
+       [attr.placeholder]="placeholder"
+       (change)="onDisplayDateChange($event)">
 <span class="input-group-btn" (click)="datepicker.toggle()">
     <button type="button" class="btn btn-default btn-time" aria-haspopup="true" aria-expanded="false" focus-target><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
 </span>
@@ -20,7 +21,7 @@
            #datepicker="bsDatepicker"
            bsDatepicker
            [isDisabled]="disabled || readonly || isCurrentDate"
-           [bsValue]="bsDatavalue"
+           [bsValue]="bsDataValue"
            (onShown)="onDatePickerOpen()"
            (bsValueChange)="onDateChange($event)">
 </div>
