@@ -3,6 +3,7 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framewor
 export const checkboxProps = new Map(
     [
         ['caption', PROP_STRING],
+        ['class', PROP_STRING],
         ['checkedvalue', {value: true, ...PROP_STRING}],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],

@@ -25,7 +25,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class ButtonComponent extends StylableComponent {
 
-    @HostBinding('type') type: string = 'button';
+    @HostBinding('type') type: string;
     @HostBinding('tabIndex') tabindex: number;
     @HostBinding('disabled') disabled: boolean;
     @HostBinding('attr.accesskey') shortcutkey: string;

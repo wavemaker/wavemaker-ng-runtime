@@ -16,7 +16,7 @@ import { AudioComponent } from './widgets/common/audio/audio.component';
 import { BreadcrumbComponent } from './widgets/common/breadcrumb/breadcrumb.component';
 import { ButtonComponent } from './widgets/common/button/button.component';
 import { ButtonGroupDirective } from './widgets/common/button-group/button-group.directive';
-import { CalendarDirective } from './widgets/common/calendar/calendar.directive';
+import { CalendarComponent } from './widgets/common/calendar/calendar.component';
 import { CardComponent } from './widgets/common/card/card.component';
 import { CardActionsDirective } from './widgets/common/card/card-actions/card-actions.directive';
 import { CardContentComponent } from './widgets/common/card/card-content/card-content.component';
@@ -132,7 +132,7 @@ const wmComponents = [
     BreadcrumbComponent,
     ButtonComponent,
     ButtonGroupDirective,
-    CalendarDirective,
+    CalendarComponent,
     CardComponent,
     CardActionsDirective,
     CardContentComponent,

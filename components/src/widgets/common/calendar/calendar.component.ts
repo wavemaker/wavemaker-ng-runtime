@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { getClonedObject, getSessionStorageItem } from '@wm/core';
 
@@ -66,13 +66,17 @@ const getUTCDateTime = (dateObj) => {
 };
 const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
 
-@Directive({
+@Component({
     selector: '[wmCalendar]',
+    templateUrl: './calendar.component.html',
     providers: [
-        provideAsWidgetRef(CalendarDirective)
+        provideAsWidgetRef(CalendarComponent)
     ]
 })
-export class CalendarDirective extends StylableComponent implements AfterViewInit, OnInit, IRedrawableComponent {
+export class CalendarComponent extends StylableComponent implements AfterViewInit, OnInit, IRedrawableComponent {
+    // The calendar element reference
+    @ViewChild('calendar') _calendar: ElementRef;
+
     public selecteddates: any;
     public selecteddata: any;
     public currentview: object;
@@ -425,7 +429,7 @@ export class CalendarDirective extends StylableComponent implements AfterViewIni
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        this.$fullCalendar = $(this.nativeElement);
+        this.$fullCalendar = $(this._calendar.nativeElement);
         this.$fullCalendar.fullCalendar(this.calendarOptions.calendar);
         // if the changes are already stacked before calendar renders then execute them when needed
         if (this.changesStack.length) {

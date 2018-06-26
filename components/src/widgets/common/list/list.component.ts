@@ -770,7 +770,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.propsInitPromise.then(() => {
             super.ngAfterViewInit();
             this.selectedItemWidgets = this.multiselect ? [] : {};
-            if (this.enablereorder) {
+            if (this.enablereorder && !this.groupby) {
                 this.configureDnD();
             }
             this.setListClass();
