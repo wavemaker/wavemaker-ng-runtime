@@ -16,10 +16,21 @@ declare const _;
 registerFormProps();
 
 const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-form'};
+const LOGIN_FORM_CONFIG = {widgetType: 'wm-form', hostClass: 'app-form app-login-form'};
 const LIVE_FORM_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
 const LIVE_FILTER_CONFIG = {widgetType: 'wm-livefilter', hostClass: 'panel app-panel app-livefilter clearfix liveform-inline'};
 
-const getWidgetConfig = (isLiveForm, isLiveFilter) => (isLiveForm !== null ? LIVE_FORM_CONFIG : (isLiveFilter !== null ? LIVE_FILTER_CONFIG : WIDGET_CONFIG));
+const getWidgetConfig = (isLiveForm, isLiveFilter, role) => {
+    let config = WIDGET_CONFIG;
+    if (isLiveForm) {
+        config = LIVE_FORM_CONFIG;
+    } else if (isLiveFilter !== null) {
+        config = LIVE_FILTER_CONFIG
+    } else if (role === 'app-login') {
+        config = LOGIN_FORM_CONFIG;
+    }
+    return config;
+};
 
 // Generate the form field with given field definition. Add a grid column wrapper around the form field.
 const setMarkupForFormField = (field, columnWidth) =>  {
@@ -140,10 +151,11 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         @Attribute('dataset.bind') public binddataset,
         @Attribute('wmLiveForm') isLiveForm,
         @Attribute('wmLiveFilter') isLiveFilter,
+        @Attribute('role') role,
         @Attribute('key') key,
         @Attribute('name') name
     ) {
-        super(inj, getWidgetConfig(isLiveForm, isLiveFilter));
+        super(inj, getWidgetConfig(isLiveForm, isLiveFilter, role));
 
         styler(this.nativeElement, this);
 

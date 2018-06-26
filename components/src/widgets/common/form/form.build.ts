@@ -40,15 +40,16 @@ const addFormControlName = (children = []) => {
 
 const buildTask = (directiveAttr = ''): IBuildTaskDef => {
     return {
-        requires: ['wm-livetable'],
+        requires: ['wm-livetable', 'wm-login'],
         template: (node: Element) => {
             addFormControlName(node.children);
         },
-        pre: (attrs, shared, parentLiveTable) => {
+        pre: (attrs, shared, parentLiveTable, parentLoginWidget) => {
             let tmpl;
             let dialogId;
+            const role = parentLoginWidget && parentLoginWidget.get('isLogin') ? 'app-login' : '';
             const counter = idGen.nextUid();
-            const liveFormTmpl = `<${tagName} wmForm ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
+            const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                         [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {
