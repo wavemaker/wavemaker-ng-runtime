@@ -184,13 +184,13 @@ export const transformData = (dataSet: any, myDataField?: string, displayOptions
 /**
  * Private method to get the unique objects by the data field
  */
-export const getUniqObjsByDataField = (data: Array<DataSetItem>, dataField: string, displayField: string, isLocalSearch?: boolean) => {
+export const getUniqObjsByDataField = (data: Array<DataSetItem>, dataField: string, displayField: string, allowEmptyFields?: boolean) => {
     let uniqData;
     const isAllFields = dataField === ALLFIELDS;
 
     uniqData = isAllFields ? _.uniqWith(data, _.isEqual) : _.uniqBy(data, 'key');
 
-    if (!displayField && isLocalSearch) {
+    if (!displayField || allowEmptyFields) {
         return uniqData;
     }
 
