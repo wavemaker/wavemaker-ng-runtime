@@ -208,7 +208,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
     /*this function to append upload status dom elements to widget */
     onFileSelect ($event, $files) {
         const uploadOptions = { formName : this.formName};
-        let beforeSelectVal = true;
+        let beforeSelectVal;
         $files = this.getValidFiles($files);
         this.progressObservable = new Subject();
         beforeSelectVal = this.invokeEventCallback('beforeselect', {
@@ -228,7 +228,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
                     }
                 });
             });
-            if (beforeSelectVal) {
+            if (beforeSelectVal !== false) {
                 this.onSelectEventCall($event, $files);
             }
         } else {
