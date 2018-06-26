@@ -2,7 +2,7 @@ import { Injector } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, debounce } from '@wm/core';
+import { $appDigest, debounce, toBoolean } from '@wm/core';
 
 import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
@@ -37,6 +37,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     // this field contains the initial datavalue which needs to be processed once the dataset is available
     public toBeProcessedDatavalue: any;
     private readonly _debouncedInitDatasetItems: Function;
+    protected allowempty: boolean = true;
 
     protected get modelByKey() {
         return this._modelByKey;
@@ -222,7 +223,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 displayImgSrc: this.displayimagesrc
             });
             // get the unique objects out of the extracted data. Notify change in datasetItems using [...datasetItems] notation
-            this.datasetItems = [...getUniqObjsByDataField(displayOptions, this.datafield, this.displayfield || this.displaylabel)];
+            this.datasetItems = [...getUniqObjsByDataField(displayOptions, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty))];
         }
 
         this.postDatasetItemsInit();

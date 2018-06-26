@@ -3,10 +3,10 @@ import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, Quer
 import { Observable } from 'rxjs/Observable';
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
-import { addClass, isDefined } from '@wm/core';
+import { addClass, DataSource, isDefined, toBoolean } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { convertDataToObject, DataSetItem, extractDataAsArray, transformData } from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, transformData } from '../../../utils/form-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 import { styler } from '../../framework/styler';
 import { registerProps } from './search.props';
@@ -186,7 +186,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             itemIndex++;
         }
 
-        return transformData(
+        const transformedData = transformData(
             data,
             this.datafield,
             {
@@ -198,6 +198,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             },
             itemIndex
         );
+
+        if (this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+            this.allowempty = false;
+        }
+
+        return getUniqObjsByDataField(transformedData, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty));
     }
 
     // This method returns a promise that provides the filtered data from the datasource.
