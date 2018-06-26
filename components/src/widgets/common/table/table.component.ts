@@ -648,28 +648,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     handleLoading(data) {
         const dataSource = this.datasource;
-        if (!dataSource) {
+        // based on the active state and response toggling the 'loading data...' and 'no data found' messages.
+        if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
+            this.variableInflight = data.active;
             if (data.active) {
-                this.variableInflight = data.active;
                 this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
             } else {
-                this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
-            }
-            return;
-        }
-        // based on the active state and response toggling the 'loading data...' and 'no data found' messages.
-        if (dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-            if (isDataSourceEqual(data.variable, this.datasource)) {
-                this.variableInflight = data.active;
-                if (data.active) {
-                    this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+                // If grid is in edit mode or grid has data, dont show the no data message
+                if (!this.isGridEditMode && _.isEmpty(this.dataset)) {
+                    this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
                 } else {
-                    // If grid is in edit mode or grid has data, dont show the no data message
-                    if (!this.isGridEditMode && _.isEmpty(this.dataset)) {
-                        this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
-                    } else {
-                        this.callDataGridMethod('setStatus', 'ready');
-                    }
+                    this.callDataGridMethod('setStatus', 'ready');
                 }
             }
         }

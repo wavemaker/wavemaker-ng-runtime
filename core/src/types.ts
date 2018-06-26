@@ -36,7 +36,10 @@ enum Operation {
     FETCH_DISTINCT_VALUES = 'fetchDistinctValues',
     GET_UNIQUE_IDENTIFIER = 'getUniqueIdentifier',
     GET_CONTEXT_IDENTIFIER = 'getContextIdentifier',
-    IS_UPDATE_REQUIRED = 'isUpdateRequired'
+    IS_UPDATE_REQUIRED = 'isUpdateRequired',
+    ADD_ITEM = 'addItem',
+    SET_ITEM = 'setItem',
+    REMOVE_ITEM = 'removeItem'
 }
 
 export const DataSource = {

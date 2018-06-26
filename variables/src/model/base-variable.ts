@@ -22,6 +22,15 @@ export abstract class BaseVariable {
             case DataSource.Operation.GET_CONTEXT_IDENTIFIER:
                 returnVal = this._context;
                 break;
+            case DataSource.Operation.ADD_ITEM:
+                returnVal = this.addItem(options.item);
+                break;
+            case DataSource.Operation.SET_ITEM:
+                returnVal = this.setItem(options.prevItem, options.item);
+                break;
+            case DataSource.Operation.REMOVE_ITEM:
+                returnVal = this.removeItem(options.item);
+                break;
         }
         return returnVal;
     }
@@ -60,11 +69,11 @@ export abstract class BaseVariable {
         return DatasetUtil.setItem(this.dataSet, index, value, this.isList);
     }
 
-    addItem(value: any, index: number) {
+    addItem(value: any, index?: number) {
         return DatasetUtil.addItem(this.dataSet, value, index, this.isList);
     }
 
-    removeItem(index: any, exactMatch: boolean) {
+    removeItem(index: any, exactMatch?: boolean) {
         return DatasetUtil.removeItem(this.dataSet, index, exactMatch);
     }
 

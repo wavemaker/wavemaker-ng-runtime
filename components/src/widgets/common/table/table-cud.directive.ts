@@ -100,6 +100,8 @@ export class TableCUDDirective {
             if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_CRUD)) {
                 this.table.initiateSelectItem(this.table.getNavigationTargetBySortInfo(), response, undefined, false, options.callBack);
                 this.updateVariable(response, options.callBack);
+            } else if (!this.table.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+                this.table.initiateSelectItem(this.table.getNavigationTargetBySortInfo(), response, undefined, false, options.callBack);
             }
             triggerFn(options.success, response);
             this.table.invokeEventCallback('rowinsert', {$event: options.event, $data: response, $rowData: response});
@@ -115,7 +117,7 @@ export class TableCUDDirective {
 
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-                // variable.addItem(options.row); TODO
+                dataSource.execute(DataSource.Operation.ADD_ITEM, {item: options.row});
                 this.insertSuccessHandler(options.row, options);
                 return;
             }
@@ -164,8 +166,8 @@ export class TableCUDDirective {
 
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-                // datasource.execute.setItem(options.prevData, options.row); TODO: Set item on static variable
-                // successHandler(options.row);
+                dataSource.execute(DataSource.Operation.SET_ITEM, {prevItem: options.prevData, item: options.row});
+                this.updateSuccessHandler(options.row, options);
                 return;
             }
             dataSource.execute(DataSource.Operation.UPDATE_RECORD, dataObject).then(response => {
@@ -219,7 +221,7 @@ export class TableCUDDirective {
 
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-                // variable.removeItem(row); TODO: remove item on static variable
+                dataSource.execute(DataSource.Operation.REMOVE_ITEM, {item: row});
                 this.deleteSuccessHandler(row, undefined, evt, callBack);
                 return;
             }
