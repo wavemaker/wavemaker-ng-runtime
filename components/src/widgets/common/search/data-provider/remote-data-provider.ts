@@ -14,7 +14,8 @@ export class RemoteDataProvider implements IDataProvider {
                 searchValue: config.query,
                 orderBy: config.orderby ? _.replace(config.orderby, /:/g, ' ') : '',
                 pagesize: config.limit || config.pagesize,
-                page: config.page
+                page: config.page,
+                onBeforeservicecall: config.onBeforeservicecall
             }
         ).then(response => this.onFilterSuccess(config, response), () => this.onFilterFailure());
     }

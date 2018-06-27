@@ -484,6 +484,17 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (key === 'tabindex') {
             return;
         }
+        if (key === 'enablereorder' && nv) {
+            this.configureDnD();
+        }
+        if (key === 'inputposition') {
+            const $inputEl = this.$element.find('li.app-chip-search');
+            if (nv === 'first') {
+                this.$element.prepend($inputEl);
+            } else {
+                this.$element.append($inputEl);
+            }
+        }
         super.onPropertyChange(key, nv, ov);
     }
 }

@@ -39,18 +39,18 @@ export class LiveVariableManager extends BaseVariableManager {
      */
     private processFilterExpBindNode(scope, filterExpressions, success) {
         const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : _.noop;
-        let bindFilExpObj = function (obj, targetNodeKey) {
-            if (stringStartsWith(obj[targetNodeKey], "bind:")) {
+        const bindFilExpObj = function (obj, targetNodeKey) {
+            if (stringStartsWith(obj[targetNodeKey], 'bind:')) {
                 destroyFn(
-                    $watch(obj[targetNodeKey].replace("bind:", ""), scope, {}, function (newVal, oldVal) {
+                    $watch(obj[targetNodeKey].replace('bind:', ''), scope, {}, function (newVal, oldVal) {
                         if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
                             return;
                         }
-                        //Skip cloning for blob column
+                        // Skip cloning for blob column
                         if (!_.includes(['blob', 'file'], obj.type)) {
                             newVal = getClonedObject(newVal);
                         }
-                        //setting value to the root node
+                        // setting value to the root node
                         if (obj) {
                             obj[targetNodeKey] = newVal;
                         }
@@ -639,6 +639,10 @@ export class LiveVariableManager extends BaseVariableManager {
             inFlightBehavior: 'executeAll',
             logicalOp: 'OR'
         };
+
+        if (options.onBeforeservicecall) {
+            options.onBeforeservicecall(formFields);
+        }
 
         return this.listRecords(variable, requestParams, success, error);
     }
