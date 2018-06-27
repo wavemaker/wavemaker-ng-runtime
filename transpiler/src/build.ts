@@ -2,7 +2,8 @@ import {
     HtmlParser,
     Element,
     Text,
-    Comment
+    Comment,
+    getHtmlTagDefinition
 } from '@angular/compiler';
 
 import { isString } from '@wm/core';
@@ -21,7 +22,10 @@ const OVERRIDES = {
     'data-ng-src': 'src',
     'ng-src': 'src',
     'data-ng-href': 'href',
-    'ng-href': 'href'
+    'ng-href': 'href',
+    'ng-disabled': 'disabled',
+    'data-ng-disabled': 'disabled',
+    'ng-model': '[ngModelOptions]="{standalone: true}" [(ngModel)]'
 };
 
 const selfClosingTags = new Set(['img']);
@@ -269,7 +273,7 @@ const processNode = (node, providers?: Array<IProviderInfo>) => {
             }
             markup += (<any>post)(attrMap, shared, ...requiredProviders);
         } else {
-            if (node.endSourceSpan && !selfClosingTags.has(node.name)) {
+            if (node.endSourceSpan && !getHtmlTagDefinition(node.name).isVoid) {
                 markup += `</${node.name}>`;
             }
         }
