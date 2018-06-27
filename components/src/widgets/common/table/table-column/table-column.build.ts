@@ -76,13 +76,13 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
     const innerTmpl = `${widgetRef} data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
 
-    return `<ng-template ${tmplRef} let-row="row" let-rowData="rowData">
+    return `<ng-template ${tmplRef} let-rowData="rowData">
                  ${widgetTmpl}
             </ng-template>`;
 };
 
 const getFormatExpression = (attrs) => {
-    const columnValue = `row.getProperty('${attrs.get('binding')}')`;
+    const columnValue = `rowData.getProperty('${attrs.get('binding')}')`;
     const formatPattern = attrs.get('formatpattern');
     let colExpression = '';
     switch (formatPattern) {
@@ -142,7 +142,7 @@ register('wm-table-column', (): IBuildTaskDef => {
             const inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs) : '';
             const inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
             const formatPattern = attrs.get('formatpattern');
-            const customExpr = `<ng-template #customExprTmpl let-row="row" let-rowData="rowData" let-columnValue="columnValue" let-colDef="colDef" let-selectedItemData="selectedItemData">`;
+            const customExpr = `<ng-template #customExprTmpl let-rowData="rowData" let-columnValue="columnValue" let-colDef="colDef">`;
             let customExprTmpl = '';
             let formatExprTmpl = '';
 
