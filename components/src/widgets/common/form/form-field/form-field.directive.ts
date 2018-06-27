@@ -207,7 +207,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
     }
 
-    onPropertyChange(key, newVal, ov?) {
+    onPropertyChange(key, nv, ov?) {
         if (this.excludeProps.has(key)) {
             return;
         }
@@ -220,24 +220,24 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             return;
         }
 
-        this.setFormWidget(key, newVal);
+        this.setFormWidget(key, nv);
 
         // Placeholder should not be setup on max widget
         if (key !== 'placeholder') {
-            this.setMaxFormWidget(key, newVal);
+            this.setMaxFormWidget(key, nv);
         }
 
         switch (key) {
             case 'defaultvalue':
-                this.form.onFieldDefaultValueChange(this, newVal);
+                this.form.onFieldDefaultValueChange(this, nv);
                 break;
             case 'maxdefaultvalue':
-                this.maxValue = newVal;
-                this.setMaxFormWidget('datavalue', newVal);
+                this.maxValue = nv;
+                this.setMaxFormWidget('datavalue', nv);
                 this.form.onMaxDefaultValueChange();
                 break;
             case 'maxplaceholder':
-                this.setMaxFormWidget('placeholder', newVal);
+                this.setMaxFormWidget('placeholder', nv);
                 break;
             case 'required':
             case 'maxchars':
@@ -248,19 +248,21 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 this._debounceSetUpValidators();
                 break;
             case 'primary-key':
-                this.primarykey = toBoolean(newVal);
+                this.primarykey = toBoolean(nv);
                 if (this.primarykey) {
                     this.form.setPrimaryKey(this.key);
                 }
                 break;
             case 'display-name':
-                this.displayname = newVal;
+                this.displayname = nv;
                 break;
             case 'class':
                 // Apply class on the inner widget only. Rremove from form filed element
-                removeClass(this.getNativeElement(), newVal);
+                removeClass(this.getNativeElement(), nv);
                 break;
         }
+
+        super.onPropertyChange(key, nv, ov);
     }
 
     get datavalue() {
