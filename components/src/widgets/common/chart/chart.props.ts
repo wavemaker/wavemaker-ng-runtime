@@ -34,6 +34,7 @@ export const registerProps = () => {
                 ['orderby', PROP_STRING],
                 ['reducexticks', {value: true, ...PROP_BOOLEAN}],
                 ['shape', {value: 'circle', ...PROP_STRING}],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showlabels', {value: 'outside', ...PROP_STRING}],
                 ['showlabelsoutside', {value: true, ...PROP_BOOLEAN}],
                 ['showlegend', {value: 'top', ...PROP_STRING}],
