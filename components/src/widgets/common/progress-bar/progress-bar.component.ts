@@ -115,8 +115,22 @@ export class ProgressBarComponent extends StylableComponent {
     }
 
     protected prepareData() {
-        // if the dataset is not provided, update the values in the default data
-        if (!this.hasDataset) {
+        // when the dataset is provided, iterate over the dataset to set the proper values in the data
+        if (this.dataset && _.isArray(this.dataset) && this.type && this.datavalue) {
+            this.data = this.dataset.map((datum): IProgressInfo => {
+                const val: string = findValueOf(datum, this.datavalue);
+                let percentVal = val;
+                if (!val.includes('%')) {
+                    percentVal = `${val}%`;
+                }
+                return {
+                    cls: TYPE_CLASS_MAP[findValueOf(datum, this.type)],
+                    progressBarWidth: percentVal,
+                    displayValue: this.getFormattedDisplayVal(val)
+                };
+            });
+        } else {
+            // if the dataset is not provided, update the values in the default data
             let width: string | number = 0;
             let displayVal: string | number = 0;
             if (this.datavalue) {
@@ -133,23 +147,8 @@ export class ProgressBarComponent extends StylableComponent {
             }
             this.data[0].displayValue = this.getFormattedDisplayVal(displayVal as string);
             this.data[0].progressBarWidth = width as string;
+            this.data[0].cls = TYPE_CLASS_MAP[this.type];
 
-        } else {
-            // when the dataset is provided, iterate over the dataset to set the proper values in the data
-            if (this.dataset && Array.isArray(this.dataset) && this.type && this.datavalue) {
-                this.data = this.dataset.map((datum): IProgressInfo => {
-                    const val: string = findValueOf(datum, this.datavalue);
-                    let percentVal = val;
-                    if (!val.includes('%')) {
-                        percentVal = `${val}%`;
-                    }
-                    return {
-                        cls: TYPE_CLASS_MAP[findValueOf(datum, this.type)],
-                        progressBarWidth: percentVal,
-                        displayValue: this.getFormattedDisplayVal(val)
-                    };
-                });
-            }
         }
     }
 

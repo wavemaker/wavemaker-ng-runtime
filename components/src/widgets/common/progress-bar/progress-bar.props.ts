@@ -15,7 +15,7 @@ export const registerProps = () => {
                 ['minvalue', {value: 0, ...PROP_NUMBER}],
                 ['name', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['type', PROP_STRING]
+                ['type', {value: 'default', ...PROP_STRING}]
             ]
         )
     );
