@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { App, AbstractDialogService } from '@wm/core';
+import { AbstractDialogService, App } from '@wm/core';
 import { I18nService } from '@wm/runtime';
 
 import { SpinnerService } from './spinner.service';

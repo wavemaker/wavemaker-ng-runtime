@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpXsrfTokenExtractor } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '@angular/common/http';
+
 import { Subject } from 'rxjs/Subject';
+
 import { getClonedObject, replace } from '@wm/core';
 
 declare const _;
@@ -26,14 +28,12 @@ export class HttpService {
 
         // headers
         if (headers) {
-            Object.entries(headers).forEach(([k, v]) =>
-                reqHeaders = reqHeaders.append(k, v));
+            Object.entries(headers).forEach(([k, v]) => reqHeaders = reqHeaders.append(k, v));
         }
 
         // params
         if (params) {
-            Object.entries(params).forEach(([k, v]) =>
-                reqParams = reqParams.append(k, v));
+            Object.entries(params).forEach(([k, v]) => reqParams = reqParams.append(k, v));
         }
 
         let third, fourth;
@@ -66,8 +66,8 @@ export class HttpService {
                     });
                     this.on401();
                 } else {
-                    let errorDetails = response.error,
-                        errMsg;
+                    const errorDetails = response.error;
+                    let errMsg;
                     if (errorDetails.errors) {
                         errMsg = this.parseErrors(errorDetails.errors);
                     } else {
@@ -90,17 +90,17 @@ export class HttpService {
     parseErrors(errors) {
         let errMsg = '';
         errors.error.forEach((errorDetails, i) => {
-            errMsg += this.parseError(errorDetails) + (i > 0 ? "\n" : "");
+            errMsg += this.parseError(errorDetails) + (i > 0 ? '\n' : '');
         });
         return errMsg;
     }
 
     parseError(errorObj) {
-        let errMsg,
-            localeObject = this.getLocale();
+        let errMsg;
+        const localeObject = this.getLocale();
         /*Check for local resources and code in the resource */
         if (!localeObject || !localeObject[errorObj.messageKey]) {
-            errMsg = errorObj.message || (errorObj.parameters && errorObj.parameters[0]) || "";
+            errMsg = errorObj.message || (errorObj.parameters && errorObj.parameters[0]) || '';
             return errMsg;
         }
 
@@ -169,18 +169,18 @@ export class HttpService {
      * Execute queued requests, failed due to session timeout
      */
     executeSessionFailureRequests() {
-        const queue = this.sessionTimeoutQueue,
-            that = this;
+        const queue = this.sessionTimeoutQueue;
+        const that = this;
         that.sessionTimeoutQueue = [];
-        queue.forEach(function(data) {
+        queue.forEach(data => {
             if (_.isFunction(data.callback)) {
                 data.callback();
             } else {
-                that.send(data.requestInfo).then(function(response) {
-                    data.resolve(response);
-                }, function(response){
-                    data.reject(response);
-                });
+                that.send(data.requestInfo)
+                    .then(
+                        response => data.resolve(response),
+                        reason =>  data.reject(reason)
+                    );
             }
         });
     }

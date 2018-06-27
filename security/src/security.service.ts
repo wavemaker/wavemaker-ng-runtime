@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '@wm/http';
+
 import { getClonedObject, triggerFn } from '@wm/core';
 
 declare const _WM_APP_PROPERTIES, _;
@@ -19,12 +20,13 @@ export class SecurityService {
     loggedInUser;
     requestQueue;
 
-    constructor(private httpClient: HttpClient,
-                private $http: HttpService,
-                private routerService: Router,
-                private activatedRoute: ActivatedRoute,
-                private _location: Location) {
-    }
+    constructor(
+        private httpClient: HttpClient,
+        private $http: HttpService,
+        private routerService: Router,
+        private activatedRoute: ActivatedRoute,
+        private _location: Location
+    ) {}
 
     isLoaded() {
         return this.config;
@@ -59,7 +61,7 @@ export class SecurityService {
         this.$http.send({
             target: 'Security',
             action: 'getConfig'
-        }).then(function (config) {
+        }).then(config => {
             this.config = config;
             triggerFn(success, this.config);
         }, error);
@@ -72,9 +74,7 @@ export class SecurityService {
      */
     getConfig(successCallback, failureCallback) {
         function invokeQueuedCallbacks(id, method, data) {
-            _.forEach(this.requestQueue[id], function (fn) {
-                triggerFn(fn[method], data);
-            });
+            _.forEach(this.requestQueue[id], fn => triggerFn(fn[method], data));
             this.requestQueue[id] = null;
         }
 
@@ -102,7 +102,7 @@ export class SecurityService {
              invokeQueuedCallbacks('config', 'success', this.get());
              } else {*/
             invokeQueuedCallbacks('config', 'error', error);
-            //}
+            // }
         }
 
         if (this.get()) {
@@ -153,7 +153,8 @@ export class SecurityService {
      * @returns {string}
      */
     getCurrentRoutePage() {
-        return this._location.path().substr(1);
+        const p = this._location.path();
+        return p.substring(1, p.indexOf('?')); // ignore the query params
     }
 
     /**
@@ -216,11 +217,11 @@ export class SecurityService {
      */
     loadPageByUserRole(forcePageLoad?) {
         const that = this;
-        return this.getPageByLoggedInUser().then(function(page){
+        return this.getPageByLoggedInUser().then(page => {
             if (that.isNoPageLoaded() || forcePageLoad) {
                 // Reload the page when current page and post login landing page are same
                 if (that.getCurrentRoutePage() === page) {
-                    window.location.reload();
+                    (window.location as any).reload();
                 } else {
                     that.routerService.navigate([`/${page}`]);
                 }
@@ -278,7 +279,7 @@ export class SecurityService {
 
         // encode all parameters
         _.each(params, function (value, name) {
-            payload += (payload ? '&': '') + encodeURIComponent(name) + '=' + encodeURIComponent(value);
+            payload += (payload ? '&' : '') + encodeURIComponent(name) + '=' + encodeURIComponent(value);
         });
 
         return this.$http.send({

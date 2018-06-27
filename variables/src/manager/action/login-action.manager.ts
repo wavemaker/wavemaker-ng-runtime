@@ -1,12 +1,10 @@
-import { removeErrorMarkup } from 'tslint/lib/verify/parse';
-
-declare const _;
-
 import { getClonedObject, triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { initiateCallback, routerService, securityService, dialogService, appManager } from '../../util/variable/variables.utils';
+import { appManager, dialogService, initiateCallback, routerService, securityService } from '../../util/variable/variables.utils';
+
+declare const _;
 
 export class LoginActionManager extends BaseActionManager {
 
@@ -16,7 +14,7 @@ export class LoginActionManager extends BaseActionManager {
         const LOGIN_PARAM_REMEMBER_ME_OLD = ['rememberme', 'remembermecheck'];
 
         // for older projects
-        LOGIN_PARAM_REMEMBER_ME_OLD.forEach((old_key)=> {
+        LOGIN_PARAM_REMEMBER_ME_OLD.forEach((old_key) => {
             if (_.isBoolean(params[old_key])) {
                 remembermeKey = old_key;
             }
