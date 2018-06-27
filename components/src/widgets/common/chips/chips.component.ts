@@ -66,13 +66,13 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             this.showsearchicon = false;
         }
 
+        this.multiple = true;
         this.dataset$.subscribe(() => this.nextItemIndex = this.datasetItems.length);
     }
 
     ngOnInit() {
         super.ngOnInit();
 
-        this.searchComponent.multiple = true;
         this.searchComponent.binddisplayimagesrc = this.bindDisplayImgSrc;
         this.searchComponent.displayimagesrc = this.displayimagesrc;
         this.searchComponent.binddisplayexpression = this.bindDisplayExpr;
