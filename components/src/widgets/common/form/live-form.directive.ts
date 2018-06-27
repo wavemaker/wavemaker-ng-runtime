@@ -440,7 +440,7 @@ export class LiveFormDirective {
         prevData = this.form.prevformFields ? this.form.constructDataObject(true) : data;
 
         try {
-            isValid = this.form.invokeEventCallback(this.form, 'beforeservicecall', {$event: event, $operation: this.form.operationType, $data: data});
+            isValid = this.form.invokeEventCallback('beforeservicecall', {$event: event, $operation: this.form.operationType, $data: data});
             if (isValid === false) {
                 return;
             }

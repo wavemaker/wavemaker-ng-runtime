@@ -185,7 +185,7 @@ export class LiveFilterDirective {
         });
         /*Perform this function for the event onBeforeservicecall*/
         try {
-            isValid = this.form.invokeEventCallback(this.form, 'beforeservicecall', {$data: dataModel});
+            isValid = this.form.invokeEventCallback('beforeservicecall', {$data: dataModel});
             if (isValid === false) {
                 return;
             }

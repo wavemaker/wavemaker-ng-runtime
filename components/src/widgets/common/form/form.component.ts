@@ -190,6 +190,13 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         context.clearFilter = () => this.clearFilter();
     }
 
+    // change and blur events are added from the template
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (eventName !== 'submit') {
+            super.handleEvent(this.nativeElement, eventName, callback, locals);
+        }
+    }
+
     // This method loops through the form fields and set touched state as touched
     highlightInvalidFields() {
         _.forEach(this.ngform.controls, (control) => control.markAsTouched());
