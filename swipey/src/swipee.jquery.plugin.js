@@ -47,11 +47,12 @@ window.requestAnimationFrame = (function () {
         };
 
 
-    document.addEventListener('mousemove', onTouch);
-    document.addEventListener('touchmove', onTouch);
-    document.addEventListener('mouseup', onTouchEnd);
-    document.addEventListener('touchcancel', onTouchEnd);
-    document.addEventListener('touchend', onTouchEnd);
+    // Todo [Srnivas, Vinay] -- this will trigger digest cycle on each mouse move
+    // document.addEventListener('mousemove', onTouch);
+    // document.addEventListener('touchmove', onTouch);
+    // document.addEventListener('mouseup', onTouchEnd);
+    // document.addEventListener('touchcancel', onTouchEnd);
+    // document.addEventListener('touchend', onTouchEnd);
 
     function ScrollObserver(parent, child, direction) {
         var elementsToObserve = (function(array) {
