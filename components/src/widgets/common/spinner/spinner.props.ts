@@ -5,7 +5,7 @@ export const registerProps = () => {
         'wm-spinner',
         new Map(
             [
-                ['animation', PROP_STRING],
+                ['animation', {value: 'spin', PROP_STRING}],
                 ['caption', {value: 'Loading...', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['iconclass', {value: 'fa fa-circle-o-notch fa-spin', ...PROP_STRING}],

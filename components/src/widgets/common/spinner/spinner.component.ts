@@ -1,4 +1,5 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
+import { formatStyle } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -21,10 +22,12 @@ registerProps();
         provideAsWidgetRef(SpinnerComponent)
     ]
 })
-export class SpinnerComponent extends StylableComponent {
+export class SpinnerComponent extends StylableComponent implements OnInit {
 
     public iconclass = '';
     public animation = '';
+    public imagewidth;
+    public imageheight;
     private picture: string;
     private _spinnerMessages;
     private showCaption = true;
@@ -41,6 +44,12 @@ export class SpinnerComponent extends StylableComponent {
     constructor(inj: Injector, private imagePipe: ImagePipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        this.imageheight = formatStyle(this.imageheight);
+        this.imagewidth = formatStyle(this.imagewidth);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
