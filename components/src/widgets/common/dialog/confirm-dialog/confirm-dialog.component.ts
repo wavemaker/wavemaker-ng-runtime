@@ -37,7 +37,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
         }
 
         // setting the backdrop to 'static' will not close the dialog on backdrop click
-        const backdrop: boolean | 'static' = toBoolean(modal) ? 'static' : true;
+        const backdrop = 'static';
 
         super(
             inj,
