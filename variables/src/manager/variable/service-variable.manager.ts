@@ -451,7 +451,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     }
 
     public getInputParms(variable) {
-        const wmServiceOperationInfo = metadataService.getByOperationId(variable.operationId);
+        const wmServiceOperationInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
         return _.get(wmServiceOperationInfo, 'parameters');
     }
 
@@ -484,6 +484,27 @@ export class ServiceVariableManager extends BaseVariableManager {
         }
     }
 
+    // Gets the input params of the service variable and also add params from the searchKeys (filterfields)
+    private getQueryParams(filterFields, searchValue, variable) {
+        const inputParams = this.getInputParms(this);
+        const queryParams = ServiceVariableUtils.excludePaginationParams(inputParams);
+        const inputFields = {};
+
+        // check if some param value is already available in databinding and update the inputFields accordingly
+        _.map(variable.dataBinding, function (value, key) {
+            inputFields[key] = value;
+        });
+
+        // add the query params mentioned in the searchkey to inputFields
+        _.forEach(filterFields, function (value) {
+            if (_.includes(queryParams, value)) {
+                inputFields[value] = searchValue;
+            }
+        });
+
+        return inputFields;
+    }
+
     /**
      * This method returns filtered records based on searchKey and queryText.
      * @param variable
@@ -493,19 +514,20 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @returns {Promise<any>}
      */
     public searchRecords(variable, options, success, error) {
-        const searchKeys = options.searchKeys,
-            searchValue = options.searchValue;
-
-        _.forEach(searchKeys, key => {
-           this.setInput(variable, key, searchValue, options);
-        });
+        const inputFields = this.getQueryParams(options.searchKeys, options.searchValue, variable);
 
         const requestParams = {
             page: options.page,
+            pagesize: options.pagesize,
             skipDataSetUpdate: true, // dont update the actual variable dataset,
             skipToggleState: true, // Dont change the varibale toggle state as this is a independent call
             inFlightBehavior: 'executeAll',
+            inputFields: inputFields
         };
+
+        if (options.onBeforeservicecall) {
+            options.onBeforeservicecall(inputFields);
+        }
 
         return this.invoke(variable, requestParams, success, error);
     }

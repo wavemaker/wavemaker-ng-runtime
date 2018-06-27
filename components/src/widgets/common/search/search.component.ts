@@ -206,6 +206,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         return getUniqObjsByDataField(transformedData, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty));
     }
 
+    private onBeforeservicecall(inputData) {
+        this.invokeEventCallback('beforeservicecall', {inputData});
+    }
+
     // This method returns a promise that provides the filtered data from the datasource.
     public getDataSource(query: string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
         if (this.dataset) {
@@ -224,7 +228,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             orderby: this.orderby,
             limit: this.limit,
             pagesize: this.pagesize,
-            page: this.page
+            page: this.page,
+            onBeforeservicecall: this.onBeforeservicecall.bind(this)
         };
 
         return this.dataProvider.filter(dataConfig)

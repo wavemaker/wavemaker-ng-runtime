@@ -18,6 +18,7 @@ export interface IDataProviderConfig {
     pagesize?: number;
     page: number;
     noMoredata?: boolean;
+    onBeforeservicecall?: Function;
 }
 
 export interface IDataProvider {
