@@ -199,7 +199,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             itemIndex
         );
 
-        if (this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
             this.allowempty = false;
         }
 
