@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Directive, Injector, OnInit } from '@angular/core';
 
 import { getClonedObject, getSessionStorageItem } from '@wm/core';
 
@@ -9,48 +9,26 @@ import { getEvaluatedData, provideAsWidgetRef } from '../../../utils/widget-util
 import { StylableComponent } from '../base/stylable.component';
 
 declare const _, $, moment;
+registerProps();
 
 const DEFAULT_CLS = 'app-calendar';
-const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
-/**
- * property to store the dateFormats
- */
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
-/**
- * property to map the default header options to the calendar
- */
 const defaultHeaderOptions = {
     left: 'prev next today',
     center: 'title',
     right: 'month basicWeek basicDay'
 };
-/**
- * property to map the control options to the calendar
- */
-const CONTROL_OPTIONS = {
-    LIST: 'navigation, today, year, month, week, day',
-    OTHERS: 'navigation, today, month, week, day'
-};
-/**
- * property to map the view types to the calendar
- */
 const VIEW_TYPES = {
     BASIC: 'basic',
     AGENDA: 'agenda',
     LIST: 'list'
 };
-/**
- * property to map the selection mode to the calendar
- */
 const SELECTION_MODES = {
     NONE: 'none',
     SINGLE: 'single',
     MULTIPLE: 'multiple'
 };
-/**
- * property to map the ButtonText to the calendar
- */
-const  BUTTON_TEXT = {
+const BUTTON_TEXT = {
     DAY: 'Day',
     MONTH: 'Month',
     YEAR: 'Year',
@@ -75,7 +53,6 @@ const getEventMomentValue = (value, key) => {
 
     return moment(value);
 };
-
 const getUTCDateTime = (dateObj) => {
     dateObj = _.isObject(dateObj) ? dateObj : moment(dateObj);
     const year = dateObj.format('YYYY'),
@@ -87,107 +64,41 @@ const getUTCDateTime = (dateObj) => {
         seconds = dateObj.format('ss');
     return new Date(year, month, day, hours, minutes, seconds);
 };
+const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
 
-registerProps();
-
-@Component({
+@Directive({
     selector: '[wmCalendar]',
-    templateUrl: './calendar.component.html',
     providers: [
-        provideAsWidgetRef(CalendarComponent)
+        provideAsWidgetRef(CalendarDirective)
     ]
 })
-export class CalendarComponent extends StylableComponent implements AfterViewInit, OnInit, IRedrawableComponent {
-    /**
-     * The calendar element reference
-     */
-    @ViewChild('calendar') _calendar: ElementRef;
-    /**
-     * The selected dates of the widget
-     */
-    selecteddates: any;
-    /**
-     * The selected events data of the calendar widget
-     */
-    selecteddata: any;
+export class CalendarDirective extends StylableComponent implements AfterViewInit, OnInit, IRedrawableComponent {
+    public selecteddates: any;
+    public selecteddata: any;
+    public currentview: object;
+    public dataset: any;
+    public calendartype;
+    public controls = 'navigation, today, year, month, week, day';
+    public datavalue;
+    public eventtitle;
+    public eventstart;
+    public eventend;
+    public eventallday;
+    public eventclass;
 
-    /**
-     * The current view object of the calendar widget includes start, end and other props
-     */
-    currentview: object;
-    /**
-     * private property to map the dataset input
-     */
-    dataset: any;
-    /**
-     * The calendar type of the widget it can hold three values basic, agenda, list
-     */
-
-    calendartype;
-    /**
-     * The controls property will enable the navigation and view related buttons on the top left and right side of the widget
-     */
-    controls = 'navigation, today, year, month, week, day';
-
-    /**
-     * The datavalue property is used to select a day, gotoYear, gotoDate etc.,
-     */
-    datavalue;
-    /**
-     * The title property to map from the given dataset
-     */
-    eventtitle;
-    /**
-     * The start property to map from the given dataset
-     */
-    eventstart;
-    /**
-     * The end property to map from the given dataset
-     */
-    eventend;
-    /**
-     * The allDay property to map from the given dataset
-     */
-    eventallday;
-    /**
-     * The class property to map from the given dataset
-     */
-    eventclass;
-
-    /**
-     * Private property to map the eventSources to the calendar
-     */
     private eventSources = {
         events: []
     };
-    /**
-     * Private property to map the event data such as when event starts dragged the current position data is inserted into this
-     */
     private oldData;
-    /**
-     * Private property to map the fullcalendar Element rendered
-     */
+    // map the fullcalendar Element rendered
     private $fullCalendar;
-    /**
-     * Private property to map the model to the mobile calendar
-     */
+    // model to the mobile calendar
     private _model_;
-    /**
-     * Private property to map the eventSources to the mobile calendar
-     */
     private eventData;
-    /**
-     * Private property to map the events to the mobile calendar
-     */
     private events;
-    /**
-     * Private property to store the changes when the fullcalendar is not yet rendered
-     */
     private changesStack = [];
 
-    /**
-     * Private property to map the calendarOptions to the calendar
-     */
+    // calendarOptions to the calendar
     private calendarOptions: any = {
         calendar: {
             height: 600,
@@ -203,36 +114,20 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
                 year : BUTTON_TEXT.YEAR,
                 today: BUTTON_TEXT.TODAY
             },
-            eventDrop: (event, delta, revertFunc, jsEvent, ui, view) => {
-                this.onEventdropProxy(event, delta, revertFunc, jsEvent, ui, view);
-            },
-            eventResizeStart: (event, jsEvent, ui, view) => {
-                this.onEventChangeStart(event, jsEvent, ui, view);
-            },
-            eventDragStart: (event, jsEvent, ui, view) => {
-                this.onEventChangeStart(event, jsEvent, ui, view);
-            },
-            eventResize: (event, delta, revertFunc, jsEvent, ui, view) => {
-                this.onEventresizeProxy(event, delta, revertFunc, jsEvent, ui, view);
-            },
-            eventClick: (event, jsEvent, view) => {
-                this.eventClickProxy(event, jsEvent, view);
-            },
-            select: (start, end, jsEvent, view) => {
-                this.onSelectProxy(start, end, jsEvent, view);
-            },
-            eventRender: (event, jsEvent, view) => {
-                this.eventRenderProxy(event, jsEvent, view);
-            },
-            viewRender: (view, element) => {
-                this.viewRenderProxy(view, element);
-            },
-            unselectAuto: false,
             views: {
                 month: {
                     eventLimit: 0
                 }
-            }
+            },
+            unselectAuto: false,
+            eventDrop: this.eventDrop.bind(this),
+            eventResizeStart: this.onEventChangeStart.bind(this),
+            eventDragStart: this.onEventChangeStart.bind(this),
+            eventResize: this.eventResize.bind(this),
+            eventClick: this.eventClick.bind(this),
+            select: this.select.bind(this),
+            eventRender: this.eventRender.bind(this),
+            viewRender: this.viewRender.bind(this)
         }
     };
 
@@ -250,10 +145,11 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         this.$fullCalendar.fullCalendar('select', start, end);
     }
 
-    // this function takes the calendar view to the default date given for the calendar
+    // changes the calendar view to the default date given for the calendar.
     gotoDate() {
         this.$fullCalendar.fullCalendar('gotoDate', moment(this.datavalue));
     }
+
     // this function takes the calendar view to the a year ahead or before based on the operation
     gotoYear(operation) {
         let navigateTo;
@@ -264,93 +160,77 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         }
         this.$fullCalendar.fullCalendar(navigateTo);
     }
+
     // this function re-renders the events assigned to the calendar.
     rerenderEvents() {
         this.$fullCalendar.fullCalendar('rerenderEvents');
     }
 
-    /**
-     * Private method to set the selectedData when a day is clicked, returns the new data
-     */
     private setSelectedData(start, end) {
         let dataset = this.dataset;
-
-        const filteredDates = [],
-            eventStartKey = this.eventstart || 'start',
-            eventEndKey = this.eventend || 'end',
-            startDate = moment(new Date(start)).format('MM/DD/YYYY'),
-            endDate = moment(new Date(end)).subtract(1, 'days').format('MM/DD/YYYY');
-
         if (!dataset) {
             return;
         }
+
+        const filteredDates = [];
+        const eventStartKey = this.eventstart || 'start';
+        const eventEndKey = this.eventend || 'end';
+        const startDate = moment(new Date(start)).format('MM/DD/YYYY');
+        const endDate = moment(new Date(end)).subtract(1, 'days').format('MM/DD/YYYY');
+
+        dataset = dataset.data || dataset;
         dataset.forEach((value) => {
             if (!value[eventStartKey]) {
                 return;
             }
-            const eventStartDate   = moment(new Date(value[eventStartKey])).format('MM/DD/YYYY'),
-                eventEndDate   = moment(new Date(value[eventEndKey] || value[eventStartKey])).format('MM/DD/YYYY'),
-                eventExists = moment(eventStartDate).isSameOrAfter(startDate) && moment(eventEndDate).isSameOrBefore(endDate);
+            const eventStartDate   = moment(new Date(value[eventStartKey])).format('MM/DD/YYYY');
+            const eventEndDate   = moment(new Date(value[eventEndKey] || value[eventStartKey])).format('MM/DD/YYYY');
+            const eventExists = moment(eventStartDate).isSameOrAfter(startDate) && moment(eventEndDate).isSameOrBefore(endDate);
             if (eventExists) {
                 filteredDates.push(value);
             }
         });
         return filteredDates;
     }
-    /**
-     * Private property to proxy the onEventdrop
-     */
-    private onEventdropProxy(event, delta, revertFunc, jsEvent, ui, view) {
-        this.invokeEventCallback('eventdrop', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
+
+    private eventDrop($newData, $delta, $revertFunc, $event, $ui, $view) {
+        this.invokeEventCallback('eventdrop', {$event, $newData, $oldData: this.oldData, $delta, $revertFunc, $ui, $view});
     }
-    /**
-     * Private property to proxy the onSelect
-     */
-    private onSelectProxy(start, end, jsEvent, view) {
+
+    private select(start, end, jsEvent, $view) {
         this.selecteddates = {start: getUTCDateTime(start), end: getUTCDateTime(end)};
         this.selecteddata = this.setSelectedData(start, end);
-        this.invokeEventCallback('select', {start: start.valueOf(), end: end.valueOf(), view, selecteddata: this.selecteddata});
+        this.invokeEventCallback('select', {$start: start.valueOf(), $end: end.valueOf(), $view});
     }
-    /**
-     * Private property to proxy the onEventresize
-     */
-    private onEventresizeProxy(event, delta, revertFunc, jsEvent, ui, view) {
-        this.invokeEventCallback('eventresize', {jsEvent, event, oldData: this.oldData, delta, revertFunc, ui, view});
+
+    private eventResize($newData, $delta, $revertFunc, $event, $ui, $view) {
+        this.invokeEventCallback('eventresize', {$event, $newData, $oldData: this.oldData, $delta, $revertFunc, $ui, $view});
     }
-    /**
-     * Private property to proxy the onEventChangeStart
-     */
-    private onEventChangeStart(event, jsEvent, ui, view) {
+
+    private onEventChangeStart(event) {
         this.oldData = getClonedObject(event);
     }
-    /**
-     * Private property to proxy the onEventclick
-     */
-    private eventClickProxy(event, jsEvent, view) {
-        this.invokeEventCallback('eventclick', {jsEvent, event, view});
+
+    private eventClick($data, $event, $view) {
+        this.invokeEventCallback('eventclick', {$event, $data, $view});
     }
-    /**
-     * Private property to proxy the onEventrender
-     */
-    private eventRenderProxy(event, jsEvent, view) {
+
+    private eventRender($data, $event, $view) {
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
-        this.invokeEventCallback('eventrender', {jsEvent, event, view});
+        this.invokeEventCallback('eventrender', {$event, $data, $view});
     }
-    /**
-     * Private property to proxy the viewrender
-     */
-    private viewRenderProxy(view, element) {
-        this.currentview = {start: view.start.format(), end: view.end.subtract(1, 'days').format()};
+
+    private viewRender($view) {
+        this.currentview = {start: $view.start.format(), end: $view.end.subtract(1, 'days').format()};
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
-        this.invokeEventCallback('viewrender', {view});
+        this.invokeEventCallback('viewrender', {$view});
     }
-    /**
-     * Private property to update the calendar header options once the controls changes
-     */
+
+    // update the calendar header options once the controls changes
     private updateCalendarHeaderOptions() {
         const ctrls = this.controls, viewType = this.calendartype,
             regEx = new RegExp('\\bday\\b', 'g');
@@ -415,9 +295,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         this.invokeEventCallback('eventrender', {$data: this.eventData});
     }
 
-    /**
-     * Private property to prepare calendar events for the mobie calendar
-     */
+    // prepares events for the mobie calendar
     private prepareCalendarEvents () {
         let eventDay,
             dataset;
@@ -439,9 +317,8 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
             }
         });
     }
-    /**
-     * Private method to construct the calendar dataset by mapping the eventstart, eventend, eventtitle etc.,
-     */
+
+    // constructs the calendar dataset by mapping the eventstart, eventend, eventtitle etc.,
     private constructCalendarDataset(eventSource) {
         const properties = {
             title: this.eventtitle,
@@ -548,7 +425,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        this.$fullCalendar = $(this._calendar.nativeElement);
+        this.$fullCalendar = $(this.nativeElement);
         this.$fullCalendar.fullCalendar(this.calendarOptions.calendar);
         // if the changes are already stacked before calendar renders then execute them when needed
         if (this.changesStack.length) {
@@ -558,9 +435,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
             this.changesStack.length = 0;
         }
     }
-    /**
-     * Method to update the calendar options at any point of time
-     */
+
     updateCalendarOptions(operationType: string, argumentKey?: any, argumentValue?: any): void {
         if (!this.$fullCalendar) {
             this.changesStack.push({
