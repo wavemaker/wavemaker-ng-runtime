@@ -9,7 +9,8 @@
            [required]="required"
            [attr.placeholder]="placeholder"
            [required]="required"
-           (click)="toggleDropdown($event)">
+           (click)="toggleDropdown($event)"
+           (change)="onDisplayTimeChange($event)">
     <span class="input-group-btn dropdown-toggle" (click)="toggleDropdown($event)">
       <button focus-target type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
     </span>

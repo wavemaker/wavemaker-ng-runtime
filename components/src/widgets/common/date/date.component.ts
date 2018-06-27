@@ -63,6 +63,14 @@ export class DateComponent extends BaseDateTimeComponent {
         this._dateOptions.showWeekNumbers = false;
     }
 
+    /**
+     * This is an internal method triggered when the date input changes
+     */
+    onDisplayDateChange($event) {
+        const newVal = getDateObj($event.target.value);
+        this.setDataValue(newVal);
+    }
+
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
         if (newVal) {
