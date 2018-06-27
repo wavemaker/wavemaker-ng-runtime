@@ -80,7 +80,7 @@ export class TableCUDDirective {
                 page: 1
             }).then(() => {
                 $appDigest();
-                this.table.selectItemOnSuccess(row, true, callBack);
+                this.selectItemOnSuccess(row, true, callBack);
             });
         }
     }

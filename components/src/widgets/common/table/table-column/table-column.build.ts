@@ -142,7 +142,7 @@ register('wm-table-column', (): IBuildTaskDef => {
             const inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs) : '';
             const inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
             const formatPattern = attrs.get('formatpattern');
-            const customExpr = `<ng-template #customExprTmpl let-row="row" let-columnValue="columnValue" let-colDef="colDef" let-selectedItemData="selectedItemData">`;
+            const customExpr = `<ng-template #customExprTmpl let-row="row" let-rowData="rowData" let-columnValue="columnValue" let-colDef="colDef" let-selectedItemData="selectedItemData">`;
             let customExprTmpl = '';
             let formatExprTmpl = '';
 
