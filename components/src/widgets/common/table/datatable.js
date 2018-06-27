@@ -687,7 +687,7 @@ $.widget('wm.datatable', {
         }, 250);
         this._prepareHeaderData();
         this._prepareData();
-        this._render();
+        this._render(true);
     },
     _setGridEditMode: function (val) {
         if ($.isFunction(this.options.setGridEditMode)) {
@@ -2323,7 +2323,7 @@ $.widget('wm.datatable', {
         }
     },
     /* Renders the table body. */
-    _renderGrid: function () {
+    _renderGrid: function (isCreated) {
         var $htm = $(this._getGridTemplate());
         this.gridElement.append($htm);
         // Set proper data status messages after the grid is rendered.
@@ -2344,7 +2344,9 @@ $.widget('wm.datatable', {
         if (this.options.editmode === this.CONSTANTS.QUICK_EDIT && this.options.showNewRow) {
             this.addNewRow(false, true);
         }
-        this.setColGroupWidths();
+        if (!isCreated) {
+            this.setColGroupWidths();
+        }
         if ($.isFunction(this.options.onDataRender)) {
             this.options.onDataRender();
         }
@@ -2358,7 +2360,7 @@ $.widget('wm.datatable', {
     },
 
     /* Renders the table container. */
-    _render: function () {
+    _render: function (isCreated) {
         if (!this.tableId) {
             this.tableId = this.Utils.generateGuid();
         }
@@ -2388,7 +2390,7 @@ $.widget('wm.datatable', {
         if (this.options.spacing === 'condensed') {
             this._toggleSpacingClasses('condensed');
         }
-        this._renderGrid();
+        this._renderGrid(isCreated);
     },
     __setStatus: function () {
         var loadingIndicator = this.dataStatusContainer.find('i'),

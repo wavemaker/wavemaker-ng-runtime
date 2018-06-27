@@ -455,8 +455,6 @@ export function setPipeProvider(_pipeProvider) {
     pipeProvider = _pipeProvider;
 }
 
-const parser = new Parser(new Lexer);
-
 enum ExpressionType {
     Binding,
     Action
@@ -484,7 +482,7 @@ export function $parseExpr(expr: string): ParseExprResult {
     if (fn) {
         return fn;
     }
-
+    const parser = new Parser(new Lexer);
     const ast = parser.parseBinding(expr, '');
     let boundFn;
 
@@ -548,7 +546,7 @@ export function $parseEvent(expr): ParseExprResult {
     if (fn) {
         return fn;
     }
-
+    const parser = new Parser(new Lexer);
     const ast = parser.parseAction(expr, '');
 
     if (ast.errors.length) {
