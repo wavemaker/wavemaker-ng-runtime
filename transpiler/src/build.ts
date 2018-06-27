@@ -12,8 +12,6 @@ interface IProviderInfo {
     provide: Map<string, any>;
 }
 
-export const BIND_REG_EX = /^\s*bind:(.*)$/g;
-
 const OVERRIDES = {
     'accessroles': '*accessroles',
     'ng-if': '*ngIf',
@@ -34,9 +32,9 @@ export const getBoundToExpr = (value: string) => {
     }
 
     value = value.trim();
-    const match = BIND_REG_EX.exec(value);
-    BIND_REG_EX.lastIndex = 0;
-    return match && match[1];
+    if (value.startsWith('bind:')) {
+        return value.substr(5);
+    }
 };
 
 const quoteAttr = v => {

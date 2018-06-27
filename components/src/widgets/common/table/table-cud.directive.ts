@@ -297,10 +297,6 @@ export class TableCUDDirective {
         if (evt && evt.target) {
             this.table.callDataGridMethod('deleteRowAndUpdateSelectAll', evt);
         } else {
-            if (this.table._liveTableParent) {
-                this.table._liveTableParent.deleteRow(this.table.selectedItems[0]);
-                return;
-            }
             // Wait for the selected item to get updated
             setTimeout(() => {
                 row = evt || this.table.selectedItems[0];

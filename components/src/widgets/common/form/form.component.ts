@@ -22,10 +22,10 @@ const LIVE_FILTER_CONFIG = {widgetType: 'wm-livefilter', hostClass: 'panel app-p
 
 const getWidgetConfig = (isLiveForm, isLiveFilter, role) => {
     let config = WIDGET_CONFIG;
-    if (isLiveForm) {
+    if (isLiveForm !== null) {
         config = LIVE_FORM_CONFIG;
     } else if (isLiveFilter !== null) {
-        config = LIVE_FILTER_CONFIG
+        config = LIVE_FILTER_CONFIG;
     } else if (role === 'app-login') {
         config = LOGIN_FORM_CONFIG;
     }

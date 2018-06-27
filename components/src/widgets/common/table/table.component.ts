@@ -358,10 +358,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.customExprTmpl.forEach(tmpl => {
                 const customExprView = this.customExprViewRef.createEmbeddedView(tmpl, {
                     row: rowData,
-                    selectedItemData: row
+                    rowData: rowData,
+                    selectedItemData: row,
+                    colDef: {},
+                    columnValue: ''
                 });
                 const rootNode = customExprView.rootNodes[0];
                 const fieldName = rootNode.getAttribute('data-col-identifier');
+                customExprView.context.colDef = this.columns[fieldName];
+                customExprView.context.columnValue = rowData.getProperty(fieldName);
                 this.customExprCompiledTl[fieldName + index] = rootNode;
             });
         },
