@@ -473,6 +473,10 @@ export function $parseExpr(expr: string): ParseExprResult {
 
     expr = expr.trim();
 
+    if (expr.endsWith(';')) {
+        expr = expr.slice(0, -1); // remove the trailing semicolon
+    }
+
     if (!expr.length) {
         return noop;
     }
