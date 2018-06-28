@@ -36,7 +36,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public query: string;
     public limit: any;
     public showsearchicon: boolean;
-    public minlength: number;
+    public minchars: number;
     public type: string;
 
     private typeaheadDataSource: Observable<any>;
@@ -352,11 +352,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public ngOnInit() {
         super.ngOnInit();
 
-        // for autocomplete set the minlength to 0
-        if (this.type === 'autocomplete') {
-            this.minlength = 0;
-        } else {
-            this.minlength = isDefined(this.minlength) ? this.minlength : 1;
+        if (!isDefined(this.minchars)) {
+            // for autocomplete set the minchars to 0
+            if (this.type === 'autocomplete') {
+                this.minchars = 0;
+            } else {
+                this.minchars = 1;
+            }
         }
 
         // by default for autocomplete do not show the search icon
