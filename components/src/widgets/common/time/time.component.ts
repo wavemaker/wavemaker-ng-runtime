@@ -1,6 +1,6 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 
-import { $appDigest, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject } from '@wm/core';
+import { $appDigest, addClass, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
@@ -11,6 +11,8 @@ import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
 const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
+
+declare const _;
 
 registerProps();
 
@@ -185,6 +187,16 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
             clearInterval(this.timeinterval);
             this.timeinterval = null;
         }
+    }
+
+    /**
+     * This is an internal method to add css class for dropdown while opening the time dropdown
+     */
+    public onShown() {
+        const tpElements  = document.querySelectorAll('timepicker');
+        _.forEach(tpElements, (element) => {
+            addClass(element.parentElement as HTMLElement, 'app-datetime');
+        });
     }
 
 }
