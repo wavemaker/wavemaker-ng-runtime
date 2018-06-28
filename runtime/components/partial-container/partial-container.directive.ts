@@ -25,15 +25,15 @@ export class PartialContainerDirective {
 
         $target.innerHTML = '';
 
-        this.contentInitialized = true;
-
         return this.renderUtils.renderPartial(
             nv,
             vcRef,
             $target,
             componentInstance,
             () => (this.inj as any).view.component._resolveFragment()
-        );
+        ).then(() => {
+            this.contentInitialized = true;
+        });
     }
 
     onLoadSuccess() {

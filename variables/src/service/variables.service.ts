@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { HttpService } from '@wm/http';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
-import { AbstractDialogService } from '@wm/core';
+import { $invokeWatchers, AbstractDialogService } from '@wm/core';
 
 import { VariableFactory } from '../factory/variable.factory';
 import { BaseAction } from '../model/base-action';
@@ -52,6 +52,19 @@ export class VariablesService {
     }
 
     /**
+     * loops over the variable/actions collection and trigger invoke on it if startUpdate on it is true
+     * @param collection
+     */
+    triggerStartUpdate(collection) {
+        Object.keys(collection).forEach(name => {
+            const variable = collection[name];
+            if (variable.startUpdate) {
+                variable.invoke();
+            }
+        })
+    }
+
+    /**
      * Takes the raw variables and actions json as input
      * Initialize the variable and action instances through the factory
      * collect the variables and actions in separate maps and return the collection
@@ -77,6 +90,12 @@ export class VariablesService {
                 variableInstances.Variables[variableName] = varInstance;
             }
         }
+
+        // trigger watchers to make sure all input bindings are computed
+        $invokeWatchers(true);
+        // after all bindings are computed, trigger startUpdate calls on variables
+        this.triggerStartUpdate(variableInstances.Variables);
+        this.triggerStartUpdate(variableInstances.Actions);
 
         // if the context has onDestroy listener, subscribe the event and trigger cancel on all varibales
         if (scope.registerDestroyListener) {

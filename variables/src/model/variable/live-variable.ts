@@ -205,10 +205,5 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             getManager().initFilterExpressionBinding(this);
         }
         getManager().defineFirstLastRecord(this);
-        if (this.startUpdate) {
-            setTimeout(() => {
-                this.invoke();
-            });
-        }
     }
 }

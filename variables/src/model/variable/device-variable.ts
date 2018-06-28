@@ -15,9 +15,6 @@ export class DeviceVariable extends ApiAwareVariable {
 
     init() {
         getManager().initBinding(this);
-        if (this.startUpdate) {
-            this.invoke();
-        }
     }
 
     invoke(options?, onSuccess?, onError?) {

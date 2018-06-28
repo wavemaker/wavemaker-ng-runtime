@@ -247,8 +247,6 @@ export class RenderUtilsService {
                 pageInstance.Widgets = Object.create(commonPageWidgets);
             }
 
-            registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
-
             let context = CONTEXT.PAGE;
             if (this.app.isPrefabType) {
                 context = CONTEXT.PREFAB;
@@ -262,6 +260,9 @@ export class RenderUtilsService {
             pageInstance.App.Widgets = Object.create(pageInstance.Widgets);
 
             monitorFragments(pageInstance, parseEndPromise, () => {
+                // TODO: have to make sure, the widgets are ready with default values, before firing onReady call
+                // register variables
+                registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
                 (pageInstance.onReady || noop)();
                 (this.app.onPageReady || noop)(pageName, pageInstance);
             });
@@ -300,7 +301,6 @@ export class RenderUtilsService {
             this.defineI18nProps(partialInstance);
             // All partials should have reference to Common page widgets, e.g. Common login dialog
             partialInstance.Widgets = Object.create(commonPageWidgets);
-            registerVariablesAndActions(inj, partialName, variables, partialInstance, this.app);
 
             execScript(script, `partial-${partialName}`, 'Partial', partialInstance, this.app, inj);
 
@@ -315,6 +315,8 @@ export class RenderUtilsService {
             partialInstance.pageParams = containerWidget.partialParams;
 
             monitorFragments(partialInstance, parseEndPromise, () => {
+                // register variable and actions before firing pageReady event
+                registerVariablesAndActions(inj, partialName, variables, partialInstance, this.app);
                 (partialInstance.onReady || noop)();
                 resolveFn();
             });
