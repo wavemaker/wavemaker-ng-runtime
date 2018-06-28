@@ -25,13 +25,16 @@ const formWidgets = new Set([
     'wm-datetime',
     'wm-search',
     'wm-chips',
-    'wm-colorpicker'
+    'wm-colorpicker',
+    'wm-table'
 ]);
 
 const addFormControlName = (children = []) => {
     children.forEach(childNode => {
         if (formWidgets.has(childNode.name)) {
-            childNode.attrs.push(new Attribute('formControlName', childNode.attrs.find((attr) => attr.name === 'name').value, <any>1, <any>1));
+            let key = childNode.attrs.find((attr) => attr.name === 'key' || attr.name === 'name');
+            key = key && key.value;
+            childNode.attrs.push(new Attribute('formControlName', key, <any>1, <any>1));
             childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1));
         }
         addFormControlName(childNode.children);

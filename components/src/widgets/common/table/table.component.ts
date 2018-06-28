@@ -1,5 +1,5 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ControlValueAccessor } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -11,7 +11,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
-import { getConditionalClasses, getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { getConditionalClasses, getOrderByExpr, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 declare var $: any;
@@ -46,10 +46,11 @@ const isInputBodyWrapper = target => {
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [
+        provideAsNgValueAccessor(TableComponent),
         provideAsWidgetRef(TableComponent)
     ]
 })
-export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy {
+export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy, ControlValueAccessor {
 
     @ViewChild(PaginationComponent) dataNavigator;
 
@@ -460,6 +461,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this._gridData = newValue;
         let startRowIndex = 0;
         let gridOptions;
+
+        this._onChange(newValue);
+        this._onTouched();
 
         if (isDefined(newValue)) {
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
@@ -1171,5 +1175,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     invokeActionEvent($event, expression: string) {
         const fn = $parseEvent(expression);
         fn(this.viewParent, Object.assign(this.context, {$event}));
+    }
+
+    // Form control accessor methods. This will be used for table inside form
+    writeValue() {}
+
+    private _onChange: any = () => {};
+    private _onTouched: any = () => {};
+
+    registerOnChange(fn) {
+        this._onChange = fn;
+    }
+    registerOnTouched(fn) {
+        this._onTouched = fn;
     }
 }

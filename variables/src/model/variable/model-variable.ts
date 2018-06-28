@@ -4,6 +4,10 @@ import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { DataSource, IDataSource, isDefined } from '@wm/core';
 import { appManager } from '@wm/variables';
 
+const getManager = () => {
+    return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.MODEL);
+};
+
 export class ModelVariable extends BaseVariable implements IDataSource {
 
     type: any;
@@ -15,8 +19,9 @@ export class ModelVariable extends BaseVariable implements IDataSource {
     }
 
     init() {
-        VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.MODEL)
-            .initBinding(this, 'dataBinding', 'dataSet');
+        getManager().removeFirstEmptyObject(this);
+
+        getManager().initBinding(this, 'dataBinding', 'dataSet');
     }
 
     execute(operation, options) {
