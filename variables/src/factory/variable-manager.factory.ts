@@ -9,6 +9,7 @@ import { LoginActionManager } from '../manager/action/login-action.manager';
 import { LogoutActionManager } from '../manager/action/logout-action.manager';
 import { TimerActionManager } from '../manager/action/timer-action.manager';
 import { DeviceVariableManager } from '../manager/variable/device-variable-manager';
+import { WebSocketVariableManager } from '../manager/variable/web-socket-variable.manager';
 
 const managerMap = new Map(),
     typeToManagerMap = {
@@ -22,7 +23,8 @@ const managerMap = new Map(),
         'wm.LoginVariable': LoginActionManager,
         'wm.LogoutVariable': LogoutActionManager,
         'wm.TimerVariable': TimerActionManager,
-        'wm.DeviceVariable': DeviceVariableManager
+        'wm.DeviceVariable': DeviceVariableManager,
+        'wm.WebSocketVariable': WebSocketVariableManager
     };
 
 export class VariableManagerFactory {
