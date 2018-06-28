@@ -50,7 +50,7 @@ const triggerWatchers = () => {
                 return;
             }
 
-            if (_.isObject(nv) && !(nv.proxy || nv instanceof Proxy)) {
+            if (_.isObject(nv) && !(nv.proxy || (window['Proxy'] && nv instanceof window['Proxy']))) {
                 watchInfo.last = _.clone(nv);
             }
         }

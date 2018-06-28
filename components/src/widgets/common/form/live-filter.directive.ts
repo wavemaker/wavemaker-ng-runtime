@@ -58,6 +58,9 @@ export class LiveFilterDirective {
         if (operation === DataSource.Operation.GET_PAGING_OPTIONS) {
             return this.form.pagingOptions;
         }
+        if (!this.form.datasource) {
+            return {};
+        }
         if (operation === DataSource.Operation.FETCH_DISTINCT_VALUES) {
             return fetchDistinctValues(this.form.datasource, this.form.formFields, {
                 widget: 'widgettype',

@@ -637,7 +637,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
             return false;
         }
-        return this.datasource.execute(operation, options);
+        return this.datasource ? this.datasource.execute(operation, options) : {};
     }
 
     handleLoading(data) {

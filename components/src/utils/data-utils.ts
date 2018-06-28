@@ -66,6 +66,9 @@ export function performDataOperation(dataSource, requestData, options): Promise<
 
 export function refreshDataSource(dataSource, options): Promise<any> {
     return new Promise((res, rej) => {
+        if (!dataSource) {
+            rej();
+        }
         dataSource.execute(DataSource.Operation.LIST_RECORDS, {
             'filterFields' : options.filterFields || {},
             'orderBy' : options.orderBy,

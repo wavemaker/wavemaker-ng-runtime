@@ -110,6 +110,9 @@ export class TableCUDDirective {
 
     insertRecord(options) {
         const dataSource = this.table.datasource;
+        if (!dataSource) {
+            return;
+        }
         const dataObject = {
             row : options.row,
             skipNotification : true
@@ -158,6 +161,9 @@ export class TableCUDDirective {
 
     updateRecord(options) {
         const dataSource = this.table.datasource;
+        if (!dataSource) {
+            return;
+        }
         const dataObject = {
             'row'              : options.row,
             'prevData'         : options.prevData,
@@ -218,7 +224,9 @@ export class TableCUDDirective {
 
     private deleteFn(row, cancelRowDeleteCallback, evt, callBack) {
         const dataSource = this.table.datasource;
-
+        if (!dataSource) {
+            return;
+        }
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
                 dataSource.execute(DataSource.Operation.REMOVE_ITEM, {item: row});

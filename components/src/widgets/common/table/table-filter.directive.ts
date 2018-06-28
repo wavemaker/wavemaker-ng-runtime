@@ -326,6 +326,9 @@ export class TableFilterSortDirective {
 
     private searchHandler(searchSortObj, e, type) {
         const dataSource = this.table.datasource;
+        if (!dataSource) {
+            return;
+        }
         if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
             this.handleServerSideSearch(searchSortObj);
             return;
@@ -339,6 +342,9 @@ export class TableFilterSortDirective {
 
     private sortHandler(searchSortObj, e, type) {
         const dataSource = this.table.datasource;
+        if (!dataSource) {
+            return;
+        }
         if (dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
             this.handleSeverSideSort(searchSortObj, e);
         } else {

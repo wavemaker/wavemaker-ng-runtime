@@ -262,7 +262,7 @@ export class LiveFormDirective {
     findOperationType() {
         let operation;
         let isPrimary = false;
-        const sourceOperation = this.form.datasource.execute(DataSource.Operation.GET_OPERATION_TYPE);
+        const sourceOperation = this.form.datasource && this.form.datasource.execute(DataSource.Operation.GET_OPERATION_TYPE);
         if (sourceOperation && sourceOperation !== 'read') {
             return sourceOperation;
         }
@@ -428,6 +428,9 @@ export class LiveFormDirective {
     }
 
     save(event?, updateMode?, newForm?) {
+        if (!this.form.datasource) {
+            return;
+        }
         let data, prevData, requestData, operationType, isValid;
 
         operationType = this.form.operationType = this.form.operationType || this.findOperationType();
