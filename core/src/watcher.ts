@@ -11,7 +11,7 @@ const watchIdGenerator = new IDGenerator('watch-id-');
 
 export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false) => {
     if (expr.indexOf('[$i]') !== -1) {
-        expr = expr.replace('[$i]', '[0]');
+        expr = expr.replace(/\[\$i]/g, '[0]');
     }
     const fn = $parseExpr(expr);
 
