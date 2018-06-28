@@ -69,7 +69,8 @@ export class LiveFormDirective {
                     field.isDataSetBound = true;
                     fetchRelatedFieldData(this.form.datasource, field.widget, {
                         relatedField: field.key,
-                        datafield: ALLFIELDS
+                        datafield: ALLFIELDS,
+                        widget: 'widgettype',
                     });
                 } else {
                     getDistinctValuesForField(this.form.datasource, field.widget, {

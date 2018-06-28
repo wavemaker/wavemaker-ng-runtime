@@ -1,4 +1,4 @@
-import { DataSource } from '@wm/core';
+import { DataSource, debounce, processFilterExpBindNode } from '@wm/core';
 import { FormWidgetType, isDefined, MatchMode } from '@wm/core';
 
 import { isDataSetWidget } from './widget-utils';
@@ -106,18 +106,52 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
 
     displayField = datafield === ALLFIELDS ? undefined : datafield;
     formField.displayfield = displayField = (formField.displayfield || displayField || formField._primaryKey);
-    // TODO: For autocomplete widget, set the dataset and  related field. Autocomplete widget will make the call to get related data
 
-    dataSource.execute(DataSource.Operation.GET_RELATED_TABLE_DATA, {
-        relatedField,
-        'pagesize': formField.limit,
-        'orderBy': formField.orderby ? _.replace(formField.orderby, /:/g, ' ') : '',
-    }).then(response => {
-        formField.dataset = response;
-        formField.displayfield = formField.displayfield || _.head(_.keys(_.get(response, '[0]')));
-    }, noop);
+    if (isSearchWidgetType(formField[options.widget])) {
+        // TODO: For autocomplete widget, set the dataset and  related field. Autocomplete widget will make the call to get related data
+    } else {
+        interpolateBindExpressions(formField.viewParent, formField.filterexpressions, (filterexpressions) => {
+            formField.filterexpressions = filterexpressions;
+            dataSource.execute(DataSource.Operation.GET_RELATED_TABLE_DATA, {
+                relatedField,
+                pagesize: formField.limit,
+                orderBy: formField.orderby ? _.replace(formField.orderby, /:/g, ' ') : '',
+                filterFields: {},
+                filterExpr: formField.filterexpressions ? formField.filterexpressions : {}
+            }).then(response => {
+                formField.dataset = response;
+                formField.displayfield = formField.displayfield || _.head(_.keys(_.get(response, '[0]')));
+            }, noop);
+        });
+    }
 }
 
+/**
+ * used to interpolate the bind expression for keys in the query builder
+ * @param scope where we find the variable obj
+ * @param filterexpressions - obj containing all the rule objs
+ * @param callbackFn - function to be called with the new replaced values if any in the filterexpressions object
+ */
+function interpolateBindExpressions(context, filterexpressions, callbackFn) {
+    const debouncedFn = debounce(() => {
+        if (_.isFunction(callbackFn)) {
+            callbackFn(filterexpressions);
+        }
+    }, 300);
+
+    /**
+     * calling the debounced function first for the case where if there is any filterexpression without the bindedvariables.
+     * without this it will never be called. processFilterExpBindNode will be called only for the binded variable expressions.
+     */
+    debouncedFn();
+    const filterExpressions = filterexpressions ? (_.isObject(filterexpressions) ? filterexpressions : JSON.parse(filterexpressions)) : {};
+    const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _.noop;
+    const filterSubscription =  processFilterExpBindNode(context, filterExpressions).subscribe((response: any) => {
+        filterexpressions = JSON.stringify(response.filterExpressions);
+        debouncedFn();
+    });
+    destroyFn(() => filterSubscription.unsubscribe());
+}
 /**
  * @ngdoc function
  * @name wm.widgets.live.LiveWidgetUtils#getDistinctFieldProperties
@@ -139,6 +173,7 @@ function getDistinctFieldProperties(dataSource, formField) {
         fieldColumn         = formField['lookup-field'];
         props.distinctField = fieldColumn;
         props.aliasColumn   = fieldColumn.replace('.', '$'); // For related fields, In response . is replaced by $
+        props.filterExpr    = formField.filterexpressions ? (_.isObject(formField.filterexpressions) ? formField.filterexpressions : JSON.parse(formField.filterexpressions)) : {};
     } else {
         props.tableName     = dataSource.execute(DataSource.Operation.GET_ENTITY_NAME);
         fieldColumn         = formField.field || formField.key;
@@ -170,9 +205,10 @@ export function getDistinctValues(dataSource, formField, widget) {
         if (isDataSetWidget(formField[widget]) && (!formField.isDataSetBound || widget === 'filterwidget')) {
             props = getDistinctFieldProperties(dataSource, formField);
             dataSource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
-                'fields'        : props.distinctField,
-                'entityName'    : props.tableName,
-                'pagesize'      : formField.limit
+                fields: props.distinctField,
+                entityName: props.tableName,
+                pagesize: formField.limit,
+                filterExpr: formField.filterexpressions ? JSON.parse(formField.filterexpressions) : {}
             }).then(data => {
                 res({'field': formField, 'data': data, 'aliasColumn': props.aliasColumn});
             }, rej);
@@ -270,14 +306,20 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
     if (!dataSource || !formField || formField.isDataSetBound) {
         return;
     }
-    // TODO: For autocomplete widget, widget will fetch the data. Set properties on the widget itself. Other widgets, fetch the data.
-    getDistinctValues(dataSource, formField, options.widget).then((res: any) => {
-        setFieldDataSet(res.field, res.data, {
-            aliasColumn: res.aliasColumn,
-            widget: options.widget,
-            isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
+    if (isSearchWidgetType(formField[options.widget])) {
+        // TODO: For autocomplete widget, widget will fetch the data. Set properties on the widget itself. Other widgets, fetch the data.
+    } else {
+        interpolateBindExpressions(formField.viewParent, formField.filterexpressions, (filterexpressions) => {
+            formField.filterexpressions = filterexpressions;
+            getDistinctValues(dataSource, formField, options.widget).then((res: any) => {
+                setFieldDataSet(res.field, res.data, {
+                    aliasColumn: res.aliasColumn,
+                    widget: options.widget,
+                    isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
+                });
+            });
         });
-    });
+    }
 }
 
 function isDefinedAndNotEmpty(val) {

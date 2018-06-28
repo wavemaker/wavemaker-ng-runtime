@@ -26,6 +26,7 @@ export const registerProps = () => {
                 ['filterdatafield', PROP_STRING],
                 ['filterdisplayfield', PROP_STRING],
                 ['filterdisplaylabel', PROP_STRING],
+                ['filterexpressions', {value: '{}', ...PROP_STRING}],
                 ['filtersearchkey', PROP_STRING],
                 ['filterOn', PROP_STRING],
                 ['filteronfilter', PROP_STRING],

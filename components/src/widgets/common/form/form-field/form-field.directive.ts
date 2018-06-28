@@ -323,7 +323,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // On field value change, propagate event to parent form
     onValueChange(val) {
-        this.form.onFieldValueChange(this, val);
+        if (!this.isDestroyed) {
+            this.form.onFieldValueChange(this, val);
+        }
     }
 
     // Method to expose validation message and set control to invalid

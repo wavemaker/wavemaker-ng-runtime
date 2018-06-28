@@ -1,7 +1,7 @@
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { forwardRef } from '@angular/core';
 
-import {encodeUrl, getEvaluatedExprValue, isImageFile, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr} from '@wm/core';
+import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr } from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
 
 declare const _;
@@ -216,50 +216,64 @@ export const NAVIGATION_TYPE = {
 
 export const getWatchIdentifier = (...args) => args.join('_');
 
-const matchModeTypesMap = {
-    'integer'    : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'big_integer': ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'short'      : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'float'      : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'big_decimal': ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'double'     : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'long'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'byte'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'string'     : ['anywhere', 'start', 'end', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
-    'character'  : ['exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
-    'text'       : ['anywhere', 'start', 'end', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
-    'date'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'time'       : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'timestamp'  : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'datetime'   : ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    'boolean'    : ['exact', 'null', 'isnotnull'],
-    'clob'       : [],
-    'blob'       : []
+const typesMap = {
+    number: ['number', 'integer', 'big_integer', 'short', 'float', 'big_decimal', 'double', 'long', 'byte'],
+    string: ['string', 'text'],
+    character: ['character'],
+    date: ['date', 'time',  'timestamp', 'datetime']
 };
+const modes = {
+    number: ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
+    string: ['anywhereignorecase', 'anywhere', 'startignorecase', 'start', 'endignorecase', 'end', 'exactignorecase', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
+    character: ['exactignorecase', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
+    date: ['exact', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'notequals', 'isnotnull']
+};
+const matchModeTypesMap = {
+    boolean: ['exact', 'null', 'isnotnull'],
+    clob: [],
+    blob: []
+};
+export const getMatchModeTypesMap = (multiMode?) => {
+    if (multiMode) {
+        modes.number.push('in', 'between');
+        modes.date.push('between');
+        modes.string.push('in');
+        modes.character.push('in');
+    }
 
-export const getMatchModeTypesMap = () => {
+    _.forEach(typesMap, function (types, primType) {
+        _.forEach(types, function (type) {
+            matchModeTypesMap[type] = modes[primType];
+        });
+    });
+    // this is used in filter criteria when the user types the column name manually and where we dont know the type of the column
+    matchModeTypesMap['default'] = _.union(modes['number'], modes['string'], modes['character'], modes['date'], modes['date']);
     return matchModeTypesMap;
 };
 
-const matchModeMsgs = {
-    'start': 'Starts with',
-    'end': 'Ends with',
-    'anywhere': 'Contains',
-    'exact': 'Is equal to',
-    'notequals': 'Is not equal to',
-    'lessthan': 'Less than',
-    'lessthanequal': 'Less than or equals to',
-    'greaterthan': 'Greater than',
-    'greaterthanequal': 'Greater than or equals to',
-    'null': 'Is null',
-    'isnotnull': 'Is not null',
-    'empty': 'Is empty',
-    'isnotempty': 'Is not empty',
-    'nullorempty': 'Is null or empty'
-};
-
-export const getMatchModeMsgs = () => {
-    return matchModeMsgs;
+export const getMatchModeMsgs = (appLocale) => {
+    return {
+        start            : appLocale.LABEL_STARTS_WITH,
+        startignorecase  : appLocale.LABEL_STARTS_WITH_IGNORECASE,
+        end              : appLocale.LABEL_ENDS_WITH,
+        endignorecase    : appLocale.LABEL_ENDS_WITH_IGNORECASE,
+        anywhere         : appLocale.LABEL_CONTAINS,
+        anywhereignorecase: appLocale.LABEL_CONTAINS_IGNORECASE,
+        exact            : appLocale.LABEL_IS_EQUAL_TO,
+        exactignorecase  : appLocale.LABEL_IS_EQUAL_TO_IGNORECASE,
+        notequals        : appLocale.LABEL_IS_NOT_EQUAL_TO,
+        lessthan         : appLocale.LABEL_LESS_THAN,
+        lessthanequal    : appLocale.LABEL_LESS_THAN_OR_EQUALS_TO,
+        greaterthan      : appLocale.LABEL_GREATER_THAN,
+        greaterthanequal : appLocale.LABEL_GREATER_THAN_OR_EQUALS_TO,
+        null             : appLocale.LABEL_IS_NULL,
+        isnotnull        : appLocale.LABEL_IS_NOT_NULL,
+        empty            : appLocale.LABEL_IS_EMPTY,
+        isnotempty       : appLocale.LABEL_IS_NOT_EMPTY,
+        nullorempty      : appLocale.LABEL_IS_NULL_OR_EMPTY,
+        in               : appLocale.LABEL_IN,
+        between          : appLocale.LABEL_BETWEEN
+    };
 };
 
 // Returns array of classes that are evaluated true for given object or array

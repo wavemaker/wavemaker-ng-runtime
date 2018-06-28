@@ -266,7 +266,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 const bindings = _.split(this.binding, '.');
                 fetchRelatedFieldData(dataSource, this.widget, {
                     relatedField: _.head(bindings),
-                    datafield: _.last(bindings)
+                    datafield: _.last(bindings),
+                    widget: 'edit-widget-type'
                 });
             } else if (dataSource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
                 getDistinctValuesForField(dataSource, this.widget, {

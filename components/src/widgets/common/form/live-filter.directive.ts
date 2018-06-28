@@ -273,6 +273,7 @@ export class LiveFilterDirective {
                     }
                     filterFields[colName].value     = fieldValue;
                     filterFields[colName].logicalOp = 'AND';
+                    filterFields[colName].type = filterField.type;
                 }
             }
         });

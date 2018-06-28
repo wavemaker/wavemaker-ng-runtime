@@ -1165,7 +1165,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
         filterFields = this.getFilterFields(this.filterInfo);
         requestData = {
-            matchMode : 'anywhere',
+            matchMode : 'anywhereignorecase',
             filterFields : filterFields,
             orderBy : sortOptions,
             exportType : $item.label,

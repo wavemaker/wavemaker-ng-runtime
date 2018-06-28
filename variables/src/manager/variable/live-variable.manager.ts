@@ -1,5 +1,5 @@
-import { $invokeWatchers, $watch, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
-import { appManager } from '@wm/variables';
+import { $invokeWatchers, getClonedObject, processFilterExpBindNode, triggerFn } from '@wm/core';
+import {appManager, DB_CONSTANTS} from '@wm/variables';
 
 import { BaseVariableManager } from './base-variable.manager';
 import { debounceVariableCall, formatExportExpression, initiateCallback, setInput } from '../../util/variable/variables.utils';
@@ -14,67 +14,24 @@ const emptyArr = [];
 export class LiveVariableManager extends BaseVariableManager {
 
     public initFilterExpressionBinding(variable) {
-        const onSuccess = function (filterExpressions, newVal) {
+        const context = variable._context;
+        const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _.noop;
+
+        const filterSubscription =  processFilterExpBindNode(context, variable.filterExpressions).subscribe((response: any) => {
             if (variable.operation === 'read') {
                 /* if auto-update set for the variable with read operation only, get its data */
-                if (variable.autoUpdate && !_.isUndefined(newVal) && _.isFunction(variable.update)) {
+                if (variable.autoUpdate && !_.isUndefined(response.newVal) && _.isFunction(variable.update)) {
                     debounceVariableCall(variable, 'update');
                 }
             } else {
                 /* if auto-update set for the variable with read operation only, get its data */
-                if (variable.autoUpdate && !_.isUndefined(newVal) && _.isFunction(variable[variable.operation + 'Record'])) {
+                if (variable.autoUpdate && !_.isUndefined(response.newVal) && _.isFunction(variable[variable.operation + 'Record'])) {
                     debounceVariableCall(variable, variable.operation + 'Record');
                 }
             }
-        };
+        });
 
-        this.processFilterExpBindNode(variable._context, variable.filterExpressions, onSuccess);
-    }
-
-    /**
-     * This traverses the filterexpressions object recursively and process the bind string if any in the object
-     * @param variable variable object
-     * @param name name of the variable
-     * @param scope scope of the variable
-     */
-    private processFilterExpBindNode(scope, filterExpressions, success) {
-        const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : _.noop;
-        const bindFilExpObj = function (obj, targetNodeKey) {
-            if (stringStartsWith(obj[targetNodeKey], 'bind:')) {
-                destroyFn(
-                    $watch(obj[targetNodeKey].replace('bind:', ''), scope, {}, function (newVal, oldVal) {
-                        if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
-                            return;
-                        }
-                        // Skip cloning for blob column
-                        if (!_.includes(['blob', 'file'], obj.type)) {
-                            newVal = getClonedObject(newVal);
-                        }
-                        // setting value to the root node
-                        if (obj) {
-                            obj[targetNodeKey] = newVal;
-                        }
-                        triggerFn(success, filterExpressions, newVal);
-                    })
-                );
-            }
-        };
-
-        const traverseFilterExpressions = function (expressions) {
-            if (expressions.rules) {
-                _.forEach(expressions.rules, function (filExpObj, i) {
-                    if (filExpObj.rules) {
-                        traverseFilterExpressions(filExpObj);
-                    } else {
-                        if (filExpObj.matchMode === 'between') {
-                            bindFilExpObj(filExpObj, 'secondvalue');
-                        }
-                        bindFilExpObj(filExpObj, 'value');
-                    }
-                });
-            }
-        };
-        traverseFilterExpressions(filterExpressions);
+        destroyFn(() => filterSubscription.unsubscribe());
     }
 
     private updateDataset(variable, data, propertiesMap, pagingOptions) {
@@ -499,25 +456,45 @@ export class LiveVariableManager extends BaseVariableManager {
             action;
         _.forEach(options.filterFields, (value, key) => {
             value.fieldName = key;
-            value.type      = LiveVariableUtils.getFieldType(columnName, variable, key);
+            value.type = LiveVariableUtils.getFieldType(columnName, variable, key);
+            /**
+             * for 'in' mode we are taking the input as comma separated values and for between in ui there are two different fields
+             * but these are processed and merged into a single value with comma as separator. For these conditions like 'in' and 'between',
+             * for building the query, the function expects the values to be an array
+             */
+            if (value.filterCondition === DB_CONSTANTS.DATABASE_MATCH_MODES.in.toLowerCase() || value.filterCondition === DB_CONSTANTS.DATABASE_MATCH_MODES.between.toLowerCase()) {
+                value.value = value.value.split(',');
+            }
             filterFields.push(value);
         });
         filterOptions = LiveVariableUtils.getFilterOptions(variable, filterFields, options);
         query         = LiveVariableUtils.getSearchQuery(filterOptions, ' ' + (options.logicalOp || 'AND') + ' ', variable.ignoreCase);
-        query         = query ? ('q=' + query) : '';
-        action        = 'searchTableDataWithQuery';
-        orderBy       = _.isEmpty(options.orderBy) ? '' : 'sort=' + options.orderBy;
+        if (options.filterExpr) {
+            const _clonedFields = getClonedObject(_.isObject(options.filterExpr) ? options.filterExpr : JSON.parse(options.filterExpr));
+            LiveVariableUtils.processFilterFields(_clonedFields.rules, variable, options);
+            const filterExpQuery = LiveVariableUtils.generateSearchQuery(_clonedFields.rules, _clonedFields.condition, variable.ignoreCase, options.skipEncode);
+            if (query !== '') {
+                if (filterExpQuery !== '') {
+                    query = '(' + query + ') AND (' + filterExpQuery + ')';
+                }
+            } else if (filterExpQuery !== '') {
+                query = filterExpQuery;
+            }
+        }
+        query = query ? ('q=' + query) : '';
+        action = 'searchTableDataWithQuery';
+        orderBy = _.isEmpty(options.orderBy) ? '' : 'sort=' + options.orderBy;
         return LVService[action]({
-            'projectID'     : projectID,
-            'service'       : variable._prefabName ? '' : 'services',
-            'dataModelName' : variable.liveSource,
-            'entityName'    : relatedTable.type,
-            'page'          : options.page || 1,
-            'size'          : options.pagesize || undefined,
-            'url'           : variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
-            'data'          : query || '',
-            'filterMeta'    : filterOptions,
-            'sort'          : orderBy
+            projectID: projectID,
+            service: variable._prefabName ? '' : 'services',
+            dataModelName: variable.liveSource,
+            entityName: relatedTable.type,
+            page: options.page || 1,
+            size: options.pagesize || undefined,
+            url: variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
+            data: query || '',
+            filter: LiveVariableUtils.getWhereClauseGenerator(variable, options),
+            sort: orderBy
         }).then(res => {
             const response = res.body;
             /*Remove the self related columns from the data. As backend is restricting the self related column to one level, In liveform select, dataset and datavalue object

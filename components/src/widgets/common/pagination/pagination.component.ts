@@ -291,7 +291,7 @@ export class PaginationComponent extends StylableComponent {
                 'page': this.dn.currentPage,
                 'filterFields': this.filterFields,
                 'orderBy': this.sortOptions,
-                'matchMode': 'anywhere'
+                'matchMode': 'anywhereignorecase'
             }).then(response => {
                 this.onPageDataReady(event, response && response.data, callback);
                 $appDigest();

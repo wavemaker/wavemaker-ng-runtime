@@ -1,6 +1,6 @@
 import { DataType } from './enums';
-import { DataSource } from '@wm/core';
-import { VARIABLE_CONSTANTS } from '@wm/variables';
+import { $watch, DataSource } from '@wm/core';
+import { Subject } from 'rxjs/Subject';
 
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
@@ -949,4 +949,54 @@ export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 export const isDataSourceEqual = (d1, d2) => {
     return d1.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) === d2.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) &&
     _.isEqual(d1.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER), d2.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER));
+};
+
+/**
+ * This traverses the filterexpressions object recursively and process the bind string if any in the object
+ * @param variable variable object
+ * @param name name of the variable
+ * @param context scope of the variable
+ */
+export const processFilterExpBindNode = (context, filterExpressions) => {
+    const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _.noop;
+    const filter$ = new Subject();
+
+    const bindFilExpObj = (obj, targetNodeKey) => {
+        if (stringStartsWith(obj[targetNodeKey], 'bind:')) {
+            destroyFn(
+                $watch(obj[targetNodeKey].replace('bind:', ''), context, {}, (newVal, oldVal) => {
+                    if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
+                        return;
+                    }
+                    // Skip cloning for blob column
+                    if (!_.includes(['blob', 'file'], obj.type)) {
+                        newVal = getClonedObject(newVal);
+                    }
+                    // setting value to the root node
+                    if (obj) {
+                        obj[targetNodeKey] = newVal;
+                    }
+                    filter$.next({filterExpressions, newVal});
+                })
+            );
+        }
+    };
+
+    const traverseFilterExpressions = expressions => {
+        if (expressions.rules) {
+            _.forEach(expressions.rules, (filExpObj, i) => {
+                if (filExpObj.rules) {
+                    traverseFilterExpressions(filExpObj);
+                } else {
+                    if (filExpObj.matchMode === 'between') {
+                        bindFilExpObj(filExpObj, 'secondvalue');
+                    }
+                    bindFilExpObj(filExpObj, 'value');
+                }
+            });
+        }
+    };
+    traverseFilterExpressions(filterExpressions);
+
+    return filter$;
 };

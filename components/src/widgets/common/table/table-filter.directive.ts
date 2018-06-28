@@ -119,7 +119,7 @@ export class TableFilterSortDirective {
         table.showClearIcon = this.showClearIcon.bind(this);
         table.clearRowFilter = this.clearRowFilter.bind(this);
         table.matchModeTypesMap = getMatchModeTypesMap();
-        table.matchModeMsgs = getMatchModeMsgs();
+        table.matchModeMsgs = getMatchModeMsgs(table.appLocale);
         table.emptyMatchModes = emptyMatchModes;
         table.getNavigationTargetBySortInfo = this.getNavigationTargetBySortInfo.bind(this);
         table.refreshData = this.refreshData.bind(this);
