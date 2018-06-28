@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-pagedialog', (): IBuildTaskDef => {
     return {
-        pre: attrs => {
+        pre: (attrs, shared) => {
             const content = attrs.get('content');
             attrs.delete('content');
 
@@ -29,12 +29,20 @@ register('wm-pagedialog', (): IBuildTaskDef => {
 
             let containerMarkup = '';
             if (contentMarkup) {
-                containerMarkup += `<ng-template><div wmContainer partialContainer ${contentMarkup} width="100%" height="100%" ${onLoadEvtMarkup}></div></ng-template>`;
+
+                shared.set('hasPartialContent', true);
+                containerMarkup += `<ng-template><div wmContainer partialContainer ${contentMarkup} width="100%" height="100%" ${onLoadEvtMarkup}>`;
             }
 
             return `<${tagName} wmPartialDialog ${getAttrMarkup(attrs)}>${containerMarkup}`;
         },
-        post: () => `</${tagName}>`
+        post: (attrs, shared) => {
+            let preContent = '';
+            if (shared.get('hasPartialContent')) {
+                preContent =  `</div></ng-template>`;
+            }
+            return `${preContent}</${tagName}>`;
+        }
     };
 });
 
