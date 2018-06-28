@@ -21,23 +21,6 @@ registerProps();
 const DEFAULT_CLS = 'app-grid app-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
 
-const rowOperations = {
-    update: {
-        config: {
-            label: 'Update',
-            value: 'update'
-        },
-        property: 'updaterow'
-    },
-    delete: {
-        config: {
-            label: 'Delete',
-            value: 'delete'
-        },
-        property: 'deleterow'
-    }
-};
-
 const exportIconMapping = {
     EXCEL: 'fa fa-file-excel-o',
     CSV: 'fa fa-file-text-o'
@@ -741,13 +724,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return this.datagridElement.datatable.apply(this.datagridElement, args);
     }
 
-    renderOperationColumns(fromDesigner = false) {
+    renderOperationColumns() {
         let rowActionCol,
             insertPosition;
 
-        const opConfig = {},
-            operations = [],
-            rowOperationsColumn = getRowOperationsColumn(),
+        const rowOperationsColumn = getRowOperationsColumn(),
             config = {
                 'name': rowOperationsColumn.field,
                 'field': rowOperationsColumn.field,
@@ -761,15 +742,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         rowActionCol = _.find(this.fullFieldDefs, {'field': ROW_OPS_FIELD, type: 'custom'}); // Check if column is fetched from markup
         _.remove(this.fieldDefs, {type: 'custom', field: ROW_OPS_FIELD}); // Removing operations column
         _.remove(this.headerConfig, {field: rowOperationsColumn.field});
-
-        // Loop through the "rowOperations"
-        _.forEach(rowOperations, (field, fieldName) => {
-            /* Add it to operations only if the corresponding property is enabled.*/
-            if (_.some(this.rowActions, {'key': field.property}) || (!fromDesigner && this[field.property])) {
-                opConfig[fieldName] = rowOperations[fieldName].config;
-                operations.push(fieldName);
-            }
-        });
 
         /*Add the column for row operations only if at-least one operation has been enabled.*/
         if (this.rowActions.length) {
@@ -785,11 +757,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.fieldDefs.push(rowOperationsColumn);
                 this.headerConfig.push(config);
             }
-        } else if (!fromDesigner && operations.length) {
-            rowOperationsColumn.operations = operations;
-            rowOperationsColumn.opConfig = opConfig;
-            this.fieldDefs.push(rowOperationsColumn);
-            this.headerConfig.push(config);
         }
         this.setDataGridOption('headerConfig', this.headerConfig);
     }

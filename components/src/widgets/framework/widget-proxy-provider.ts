@@ -29,7 +29,7 @@ export class WidgetProxyProvider {
         } else {
 
             // If the native Proxy is not supported, IE11
-            const widget = {};
+            const widget = Object.create(instance);
             // define setters and getters for styles
             Object.keys(propNameCSSKeyMap)
                 .forEach(key => {
@@ -49,11 +49,6 @@ export class WidgetProxyProvider {
                         });
                     });
             }
-
-            // define getter for $element
-            Object.defineProperty(widget, '$element', {
-                get: () => instance.$element
-            });
 
             return widget;
         }
