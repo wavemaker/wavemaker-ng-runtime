@@ -52,20 +52,20 @@ export class MessageComponent extends StylableComponent {
         switch (nv) {
             case 'success':
                 msgCls = 'alert-success';
-                msgIconCls = 'fa fa-check';
+                msgIconCls = 'wi wi-done';
                 break;
             case 'error':
                 msgCls = 'alert-danger';
-                msgIconCls = 'fa fa-times-circle';
+                msgIconCls = 'wi wi-cancel';
                 break;
             case 'warn':  /*To support old projects with type as "warn"*/
             case 'warning':
                 msgCls = 'alert-warning';
-                msgIconCls = 'fa fa-exclamation-triangle';
+                msgIconCls = 'wi wi-bell';
                 break;
             case 'info':
                 msgCls = 'alert-info';
-                msgIconCls = 'fa fa-info';
+                msgIconCls = 'wi wi-info';
                 break;
             case 'loading':
                 msgCls = 'alert-info alert-loading';
