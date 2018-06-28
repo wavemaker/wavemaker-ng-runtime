@@ -150,15 +150,28 @@ const execScript = (script, identifier, ctx, instance, app, inj) => {
 
 const monitorFragments = (instance, onParseEnd: Promise<void>, onReadyFn) => {
     let fragments = 0;
+    let isParseFinished = false;
 
-    const invokeOnReady = () => fragments || setTimeout(() => onReadyFn(), 100);
+    const invokeOnReady = () => {
+
+        if (isParseFinished && !fragments) {
+            setTimeout(() => {
+                instance._registerFragment = noop;
+                instance._resolveFragment = noop;
+                onReadyFn();
+            }, 100);
+        }
+    };
 
     instance._registerFragment = () => fragments++;
     instance._resolveFragment = () => {
         fragments--;
         invokeOnReady();
     };
-    onParseEnd.then(invokeOnReady);
+    onParseEnd.then(() => setTimeout(() => {
+        isParseFinished = true;
+        invokeOnReady();
+    }, 100));
 };
 
 @Injectable()
@@ -263,6 +276,7 @@ export class RenderUtilsService {
                 // TODO: have to make sure, the widgets are ready with default values, before firing onReady call
                 // register variables
                 registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
+
                 (pageInstance.onReady || noop)();
                 (this.app.onPageReady || noop)(pageName, pageInstance);
             });

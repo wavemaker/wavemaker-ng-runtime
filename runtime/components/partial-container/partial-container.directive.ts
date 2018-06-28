@@ -35,7 +35,7 @@ export class PartialContainerDirective {
             () => (this.inj as any).view.component._resolveFragment()
         ).then(() => {
             this.contentInitialized = true;
-            this.onLoadSuccess()
+            this.onLoadSuccess();
         });
     }
 
@@ -54,13 +54,10 @@ export class PartialContainerDirective {
         @Attribute('content') _content: string
     ) {
 
-        if (_content) {
-            (this.inj as any).view.component._registerFragment();
-        }
-
         componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
             if (key === 'content') {
                 if (componentInstance.$lazyLoad) {
+                    (this.inj as any).view.component._registerFragment();
                     componentInstance.$lazyLoad = () => {
                         this.renderPartial(nv);
                         componentInstance.$lazyLoad = noop;
