@@ -17,7 +17,7 @@ export class LoginDialogDirective {
     }
 
     hideMsg() {
-        if(this.msgCmp) {
+        if (this.msgCmp) {
             this.msgCmp.hideMessage();
         }
     }
@@ -47,9 +47,11 @@ export class LoginDialogDirective {
     }
 
     doLogin() {
-        this.showLoading();
         const loginInfo = this.getLoginDetails();
         const ds = (this.dialogRef as any).eventsource;
-        ds.invoke({loginInfo: loginInfo}, this.onSuccess.bind(this), this.onError.bind(this));
+        if (ds) {
+            this.showLoading();
+            ds.invoke({loginInfo: loginInfo}, this.onSuccess.bind(this), this.onError.bind(this));
+        }
     }
 }
