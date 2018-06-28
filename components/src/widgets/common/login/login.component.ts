@@ -60,7 +60,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
                 // TODO: Check if it is a variable or any other action event
                 this.invokeEventCallback('click');
                 this.invokeEventCallback('submit');
-            } else {
+            } else if (this.eventsource) {
                 this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccess.bind(this), this.onError.bind(this));
             }
         });
