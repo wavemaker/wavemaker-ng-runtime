@@ -43,8 +43,8 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
      * @param {string} eventName
      * @param data
      */
-    public notify(eventName: string, data?: any) {
-        this._eventNotifier.notify(eventName, data);
+    public notify(eventName: string, ...data: Array<any>) {
+        this._eventNotifier.notify.apply(this._eventNotifier, arguments);
     }
 
     /**

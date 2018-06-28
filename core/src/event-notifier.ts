@@ -20,7 +20,7 @@ export class EventNotifier {
      * @param {string} eventName
      * @param data
      */
-    public notify(eventName: string, data?: any) {
+    public notify(eventName: string, ...data: Array<any>) {
         if (this._isInitialized) {
             this._subject.next({
                 name: eventName,
@@ -51,13 +51,13 @@ export class EventNotifier {
      * @param {(data: any) => void} callback
      * @returns {() => void}
      */
-    public subscribe(eventName, callback: (data: any) => void): () => void {
+    public subscribe(eventName, callback: (...data: Array<any>) => void): () => void {
         let eventListener;
         if (eventName && callback) {
             eventListener = this._subject
                 .subscribe((event: any) => {
                     if (event && isObject(event) && event.name === eventName) {
-                        callback(event.data);
+                        callback.apply(undefined, event.data);
                     }
                 });
             return () => {

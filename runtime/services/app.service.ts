@@ -65,8 +65,8 @@ export class AppRef {
         this.httpService.setLocale(this.appLocale);
     }
 
-    public notify(eventName: string, data?: any) {
-        this._eventNotifier.notify(eventName, data);
+    public notify(eventName: string, ...data: Array<any>) {
+        this._eventNotifier.notify.apply(this._eventNotifier, arguments);
     }
 
     public getDependency(injToken) {
