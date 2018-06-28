@@ -63,6 +63,7 @@ export abstract class App {
     changeLocale: Function;
     reload: Function;
     on401: Function;
+    notifyApp: Function;
     getDependency: Function;
     networkStatus: any;
     notify: (eventName: string, data?: any) => void;

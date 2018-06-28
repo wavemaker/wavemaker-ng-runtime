@@ -2,7 +2,7 @@ import { Attribute, Component, Injector, OnInit } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
-import { isAudioFile, isImageFile, isVideoFile } from '@wm/core';
+import { App, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
 
 import { registerProps } from './file-upload.props';
 import { StylableComponent } from '../base/stylable.component';
@@ -115,15 +115,11 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
         _.forEach($files, (file) => {
             /* check for the file content type before uploading */
             if (!this.isValidFile(file.name, this.chooseFilter, this.getFileExtension(file.name), this._isMobileType)) {
-                // triggerFn(scope.onError);
-                // Todo:[Shubham] wmToaster.show('error', 'Expected a ' + this.chooseFilter + ' file'); Use a consolelog fr nw
-                console.error('Expected a ' + this.chooseFilter + ' file');
+                this.app.notifyApp('Expected a ' + this.chooseFilter + ' file', 'Error');
                 return;
             }
             if (file.size > MAXFILEUPLOAD_SIZE) {
-                // triggerFn(scope.onError);
-                // Todo[Shubham] wmToaster.show('error', 'File size exceeded limit. Max upload size is ' + MAX_FILE_UPLOAD_FORMATTED_SIZE);
-                console.error('File size exceeded limit. Max upload size is ' + MAX_FILE_UPLOAD_FORMATTED_SIZE);
+                this.app.notifyApp('File size exceeded limit. Max upload size is ' + MAX_FILE_UPLOAD_FORMATTED_SIZE, 'Error');
                 return;
             }
             validFiles.push(file);
@@ -258,7 +254,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
         super.onPropertyChange(key, nv, ov);
     }
 
-    constructor(inj: Injector, @Attribute('select.event') public onSelectEvt) {
+    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt) {
         super(inj, WIDGET_CONFIG);
         // styler(this.nativeElement, this);
     }

@@ -291,12 +291,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             if (this.messagelayout === 'Inline') {
                 this.statusMessage = {'caption': template || '', type: type};
             } else {
-                this.app.Actions.appNotification.invoke({
-                    message: template,
-                    title: isDefined(header) ? header : type.toUpperCase(),
-                    class: type,
-                    duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
-                });
+                this.app.notifyApp(template, type, header);
             }
         } else {
             this.statusMessage.caption = '';

@@ -269,4 +269,8 @@ export class AppManagerService {
     getSelectedLocale() {
         return this.$i18n.getSelectedLocale();
     }
+
+    notifyApp(template, type, header) {
+        this.$app.notifyApp(template, type, header);
+    }
 }

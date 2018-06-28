@@ -1098,12 +1098,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     toggleMessage(show, type, msg, header?) {
         if (show && msg) {
-            this.app.Actions.appNotification.invoke({
-                message: msg,
-                title: isDefined(header) ? header : type.toUpperCase(),
-                class: type,
-                duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
-            });
+            this.app.notifyApp(msg, type, header);
         }
     }
 

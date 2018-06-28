@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { EventNotifier, AbstractToasterService, AbstractDialogService } from '@wm/core';
+import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { HttpService } from '@wm/http';
 
@@ -89,5 +89,20 @@ export class AppRef {
 
     public subscribe(eventName, callback: (data: any) => void): () => void {
         return this._eventNotifier.subscribe(eventName, callback);
+    }
+
+    public notifyApp(template, type, header) {
+        if (this.Actions.appNotification) {
+            type = type || 'success';
+            this.Actions.appNotification.invoke({
+                message: template,
+                title: isDefined(header) ? header : type.toUpperCase(),
+                class: type,
+                // If the type is error donot close the toastr
+                duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
+            });
+        } else {
+            console.warn("The default Action \"appNotification\" doesn't exist in your project.");
+        }
     }
 }
