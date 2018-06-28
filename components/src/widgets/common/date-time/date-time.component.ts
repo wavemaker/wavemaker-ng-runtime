@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
@@ -93,10 +93,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.bsDateValue = this.bsTimeValue = this.bsDateTimeValue = undefined;
         }
         this.invokeOnChange(this.datavalue);
-        $appDigest();
+        this.cdRef.detectChanges();
     }
 
-    constructor(inj: Injector, public datePipe: ToDatePipe) {
+    constructor(inj: Injector, public datePipe: ToDatePipe, private cdRef: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);

@@ -143,6 +143,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.app = app;
         this.variableInflight = false;
 
+        this.noDataFound = !binddataset;
+
         // Show loading status based on the variable life cycle
         this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
     }
@@ -520,7 +522,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private setupHandlers() {
         this.listItems.changes.subscribe( listItems => {
             this.onListRender(listItems);
-            $appDigest();
+            this.cdRef.detectChanges();
         });
         // handle click event in capturing phase.
         this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', ($event) => {
