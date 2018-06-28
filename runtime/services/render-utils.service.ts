@@ -151,7 +151,7 @@ const execScript = (script, identifier, ctx, instance, app, inj) => {
 const monitorFragments = (instance, onParseEnd: Promise<void>, onReadyFn) => {
     let fragments = 0;
 
-    const invokeOnReady = () => fragments || onReadyFn();
+    const invokeOnReady = () => fragments || setTimeout(() => onReadyFn(), 100);
 
     instance._registerFragment = () => fragments++;
     instance._resolveFragment = () => {
