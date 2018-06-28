@@ -35,6 +35,7 @@ export class PartialContainerDirective {
             () => (this.inj as any).view.component._resolveFragment()
         ).then(() => {
             this.contentInitialized = true;
+            this.onLoadSuccess()
         });
     }
 
@@ -61,20 +62,18 @@ export class PartialContainerDirective {
             if (key === 'content') {
                 if (componentInstance.$lazyLoad) {
                     componentInstance.$lazyLoad = () => {
-                        this.renderPartial(nv).then(() => this.onLoadSuccess());
+                        this.renderPartial(nv);
                         componentInstance.$lazyLoad = noop;
                     };
                 } else {
-                    this.renderPartial(nv).then(() => this.onLoadSuccess());
+                    this.renderPartial(nv);
                 }
             }
         });
 
         const subscription = componentInstance.params$
             .filter(() => this.contentInitialized)
-            .debounceTime(200).subscribe(() => {
-                this.renderPartial(componentInstance.content).then(() => this.onLoadSuccess());
-        });
+            .debounceTime(200).subscribe(() => this.renderPartial(componentInstance.content));
         // reload the partial content on partial param change
         componentInstance.registerDestroyListener(() => subscription.unsubscribe());
     }
