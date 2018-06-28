@@ -96,7 +96,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
          * after getting the response, set the queryModel and query.
          */
-        this.datavalue$.subscribe((val: Array<string> | string) => {
+        const datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
 
             const query = (_.isArray(val) ? val[0] : val) as string;
 
@@ -120,12 +120,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.updateQueryModel(val);
             }
         });
+        this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
 
-        this.dataset$.subscribe(() => {
+        const datasetSubscription = this.dataset$.subscribe(() => {
             // set the next item index.
             this.startIndex = this.datasetItems.length;
             this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
         });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
         this.dataProvider = new DataProvider();
     }
@@ -354,12 +356,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
 
         // setting the ulElements, liElement on typeaheadContainer with custom options template, as the typeaheadContainer implements the key events and scroll.
-        this.liElements.changes.subscribe((data) => {
+        const matchesSubscription = this.liElements.changes.subscribe((data) => {
             if (this.typeaheadContainerInstance) {
                 this.typeaheadContainerInstance.liElements = data;
                 this.typeaheadContainerInstance.ulElement = this.ulElement;
             }
         });
+        this.registerDestroyListener(() => matchesSubscription.unsubscribe());
+
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {

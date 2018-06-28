@@ -44,13 +44,15 @@ export class RatingComponent extends DatasetAwareFormComponent {
         styler(this.nativeElement, this);
 
         // prepare the rating options on dataset ready.
-        this.dataset$.subscribe(() => {
+        const datasetSubscription = this.dataset$.subscribe(() => {
             this.prepareRatingDataset();
             this.onDatavalueChange(this.datavalue);
         });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
         // listen to changes in datavalue.
-        this.datavalue$.subscribe(() => this.onDatavalueChange(this.datavalue));
+        const datavalueSubscription = this.datavalue$.subscribe(() => this.onDatavalueChange(this.datavalue));
+        this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event

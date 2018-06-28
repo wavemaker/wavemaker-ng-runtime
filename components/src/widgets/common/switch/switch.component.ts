@@ -45,7 +45,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
             this.setSelectedValue();
             this.updateHighlighter(true);
         });
-        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+        this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
     }
 
     ngAfterViewInit() {

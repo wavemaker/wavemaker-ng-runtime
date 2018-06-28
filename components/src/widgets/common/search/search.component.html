@@ -27,7 +27,7 @@
 
 <!--This template is for search inside mobile navbar.-->
 <ng-template *ngIf="navsearchbar; else searchTemplate">
-    <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder"
+    <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder || ''"
            focus-target
            [(ngModel)]="query"
            [disabled]="disabled"
@@ -49,7 +49,7 @@
 <ng-template #searchTemplate>
     <span class="wi wi-arrow-left form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"></span>
     <span class="sr-only">Back button</span>
-    <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder"
+    <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder || ''"
            focus-target
            container="body"
            [disabled]="disabled"

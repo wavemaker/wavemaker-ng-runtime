@@ -67,19 +67,23 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
 
         this.multiple = true;
-        this.dataset$.subscribe(() => this.nextItemIndex = this.datasetItems.length);
+
+        const datasetSubscription = this.dataset$.subscribe(() => {
+            this.nextItemIndex = this.datasetItems.length;
+            this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
 
     ngOnInit() {
         super.ngOnInit();
 
+        this.searchComponent.multiple = true;
         this.searchComponent.binddisplayimagesrc = this.bindDisplayImgSrc;
         this.searchComponent.displayimagesrc = this.displayimagesrc;
         this.searchComponent.binddisplayexpression = this.bindDisplayExpr;
         this.searchComponent.displaylabel = this.displayfield;
         this.searchComponent.datafield = this.bindDataField;
-        this.searchComponent.binddataset = this.bindDataSet;
-        this.searchComponent.dataset = this.dataset;
 
         this.searchComponent.updateQueryModel = _.debounce(this.updateQueryModel.bind(this), 50);
         this.getTransformedData = this.searchComponent.getTransformedData;
@@ -156,7 +160,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         });
 
         this.removeDuplicates();
-        this.resetSearchModel();
         this.updateMaxSize();
         $appDigest();
     }
@@ -333,9 +336,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
     }
 
-    /**
-     * focus search box.
-     */
+    // focus search box.
     private focusSearchBox() {
         this.$element.find('.app-chip-input > input.app-textbox').focus();
     }
@@ -408,6 +409,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
      */
     private resetReorder() {
         this.$element.removeData('oldIndex');
+    }
+
+    private onBeforeservicecall(inputData) {
+        this.invokeEventCallback('beforeservicecall', {inputData});
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
