@@ -84,6 +84,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.binddisplayexpression = this.bindDisplayExpr;
         this.searchComponent.displaylabel = this.displayfield;
         this.searchComponent.datafield = this.bindDataField;
+        this.searchComponent.binddataset = this.bindDataSet;
+        this.searchComponent.dataset = this.dataset;
 
         this.searchComponent.updateQueryModel = _.debounce(this.updateQueryModel.bind(this), 50);
         this.getTransformedData = this.searchComponent.getTransformedData;
@@ -212,7 +214,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             this._modelByValue = [...this._modelByValue, chipObj.value];
         }
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue);
+        this.invokeOnChange(this.datavalue, $event || {}, true);
 
         this.invokeEventCallback('add', {$event, $item: chipObj});
 
@@ -385,7 +387,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this.updateMaxSize();
 
-        this.invokeEventCallback('remove', {$event, widget: this, item: items.length === 1 ? items[0] : items});
+        this.invokeEventCallback('remove', {$event, item: items.length === 1 ? items[0] : items});
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     // Adds the custom chip when datavalue is undefined.
@@ -417,7 +420,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (eventName === 'remove' || eventName === 'beforeremove' || eventName === 'chipselect'
-            || eventName === 'chipclick' || eventName === 'add' || eventName === 'reorder') {
+            || eventName === 'chipclick' || eventName === 'add' || eventName === 'reorder' || eventName === 'change') {
             return;
         }
 

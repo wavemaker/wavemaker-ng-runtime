@@ -65,6 +65,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private class: string;
 
     private parentRef: ChipsComponent; // used when search is inside chips.
+    private lastSelectedIndex: number;
 
     // Default check for container methods to access.
     get typeaheadContainerInstance() {
@@ -150,6 +151,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByValue = item.value;
 
         this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue, $event || {}, true);
+
         this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});
         this.invokeEventCallback('submit', {$event});
 
@@ -157,7 +160,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     private onInputChange() {
-        // reset all the previous page detailss in order to fetch new set of result.
+        // reset all the previous page details in order to fetch new set of result.
         this.dataProvider.hasNoMoreData = false;
         this.result = [];
         this.page = 1;
@@ -180,6 +183,21 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
             // adds custom chip object to the chipsList.
             this.notifyParent($event);
+        }
+    }
+
+    private selectNext() {
+        const activeItem = this.typeaheadContainerInstance._active;
+        const matches = this.typeaheadContainerInstance.matches;
+
+        const index = matches.indexOf(activeItem);
+
+        // on keydown, if scroll is at the bottom and next page records are available, fetch next page items.
+        if (!this._loadingItems && !this.dataProvider.isLastPage && index + 1 > matches.length - 1) {
+            this.loadMoreData(true);
+
+            // index is saved in order to select the lastSelected item in the dropdown after fetching next page items.
+            this.lastSelectedIndex = index;
         }
     }
 
@@ -247,11 +265,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                         this.formattedDataset = response;
                     }
 
-                    this.result = response;
-
                     this.noMoreData = this.isLastPage;
 
-                    return this.getTransformedData(this.formattedDataset, nextItemIndex);
+                    const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
+
+                    // result contains the datafield values.
+                    this.result = _.map(transformedData, 'value');
+                    return transformedData;
                 }, (error) => {
                     this._loadingItems = false;
                     return [];
@@ -354,20 +374,38 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this.class === 'app-chip-input') {
             this.parentRef = this.viewParent;
         }
+    }
 
+    public onDropdownOpen() {
         // setting the ulElements, liElement on typeaheadContainer with custom options template, as the typeaheadContainer implements the key events and scroll.
         const matchesSubscription = this.liElements.changes.subscribe((data) => {
             if (this.typeaheadContainerInstance) {
                 this.typeaheadContainerInstance.liElements = data;
                 this.typeaheadContainerInstance.ulElement = this.ulElement;
+
+                // unsubscribe when matches are not found.
+                if (!this.typeaheadContainerInstance.liElements.length) {
+                    this.result = [];
+                    matchesSubscription.unsubscribe();
+                }
+
+                // after fetching next set of page items, select the item with lastSelectedIndex from the dropdown.
+                if (isDefined(this.lastSelectedIndex) && this.typeaheadContainerInstance.liElements.length > this.lastSelectedIndex + 1) {
+                    this.typeaheadContainerInstance._active = this.typeaheadContainerInstance.matches[this.lastSelectedIndex];
+                    this.typeaheadContainerInstance.nextActiveMatch();
+                    this.lastSelectedIndex = undefined;
+                }
             }
         });
         this.registerDestroyListener(() => matchesSubscription.unsubscribe());
+    }
 
+    protected onFocus($event) {
+        this.invokeEventCallback('focus', {$event});
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (eventName === 'select' || eventName === 'submit') {
+        if (eventName === 'select' || eventName === 'submit' || eventName === 'change') {
             return;
         }
 

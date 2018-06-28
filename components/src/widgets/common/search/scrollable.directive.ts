@@ -18,6 +18,7 @@ export class ScrollableDirective implements AfterContentInit {
 
         // add the scroll event listener on the ul element.
         this.elementRef.nativeElement.addEventListener('scroll', this.notifyParent.bind(this));
+        this.searchRef.onDropdownOpen();
     }
 
     private notifyParent(evt: Event) {
