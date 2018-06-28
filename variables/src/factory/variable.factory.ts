@@ -8,6 +8,7 @@ import {VARIABLE_CONSTANTS} from '../constants/variables.constants';
 import { LoginAction } from '../model/action/login-action';
 import { LogoutAction } from '../model/action/logout-action';
 import { TimerAction } from '../model/action/timer-action';
+import { WebSocketVariable } from '../model/variable/web-socket-variable';
 
 export class VariableFactory {
 
@@ -41,6 +42,8 @@ export class VariableFactory {
             case VARIABLE_CONSTANTS.CATEGORY.TIMER:
                 variableInstance = new TimerAction(variable);
                 break;
+            case VARIABLE_CONSTANTS.CATEGORY.WEBSOCKET:
+                variableInstance = new WebSocketVariable(variable);
         }
 
         variableInstance._context = context;
