@@ -1,7 +1,7 @@
 import { Attribute, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 
 import { WidgetRef } from '@wm/components';
-import { noop } from '@wm/core';
+import { $invokeWatchers, noop } from '@wm/core';
 
 import { RenderUtilsService } from '../../services/render-utils.service';
 
@@ -18,23 +18,27 @@ export class PartialContainerDirective {
         return this.componentInstance.name;
     }
 
-    renderPartial(nv, vcRef, componentInstance) {
+    _renderPartial(nv) {
         this.vcRef.clear();
 
         const $target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
 
         $target.innerHTML = '';
 
+        $invokeWatchers(true);
+
         return this.renderUtils.renderPartial(
             nv,
-            vcRef,
+            this.vcRef,
             $target,
-            componentInstance,
+            this.componentInstance,
             () => (this.inj as any).view.component._resolveFragment()
         ).then(() => {
             this.contentInitialized = true;
         });
     }
+
+    renderPartial = _.debounce(this._renderPartial, 200);
 
     onLoadSuccess() {
         this.componentInstance.invokeEventCallback('load');
@@ -57,22 +61,19 @@ export class PartialContainerDirective {
             if (key === 'content') {
                 if (componentInstance.$lazyLoad) {
                     componentInstance.$lazyLoad = () => {
-                        this.renderPartial(nv, vcRef, componentInstance)
-                            .then(() => this.onLoadSuccess());
+                        this.renderPartial(nv).then(() => this.onLoadSuccess());
                         componentInstance.$lazyLoad = noop;
                     };
                 } else {
-                    this.renderPartial(nv, vcRef, componentInstance)
-                        .then(() => this.onLoadSuccess());
+                    this.renderPartial(nv).then(() => this.onLoadSuccess());
                 }
             }
         });
 
-        const subscription = componentInstance.params$.debounceTime(200).subscribe(() => {
-            if (this.contentInitialized) {
-                this.renderPartial(componentInstance.content, vcRef, componentInstance)
-                    .then(() => this.onLoadSuccess());
-            }
+        const subscription = componentInstance.params$
+            .filter(() => this.contentInitialized)
+            .debounceTime(200).subscribe(() => {
+                this.renderPartial(componentInstance.content).then(() => this.onLoadSuccess());
         });
         // reload the partial content on partial param change
         componentInstance.registerDestroyListener(() => subscription.unsubscribe());
