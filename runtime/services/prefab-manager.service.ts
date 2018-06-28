@@ -13,7 +13,7 @@ const inProgress = new Map<string, Promise<any>>();
 
 const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
     let _url = resourcePath;
-    if (stringStartsWith(resourcePath, 'http://|https://|//')) {
+    if (!stringStartsWith(resourcePath, 'http://|https://|//')) {
         _url = (resourceBasePath + _url).replace('//', '/');
     }
     return _url;
@@ -83,7 +83,11 @@ export class PrefabManagerService {
             this.loadStyles(prefabName, config),
             this.loadScripts(prefabName, config),
             // this.loadModules(prefabName, config)
-        ]);
+        ]).then(() => {
+            if (inProgress.get(prefabName)) {
+                (inProgress.get(prefabName) as any).resolve();
+            }
+        });
     }
 
     protected renderPrefab(prefabName, vcRef, elRef, componentInstance) {
@@ -104,24 +108,23 @@ export class PrefabManagerService {
         }
 
         if (inProgress.get(prefabName)) {
-            const promise = inProgress.get(prefabName);
-            return promise.then(() => {
-                this.renderPrefab(prefabName, vcRef, elRef, componentInstance);
-            });
+            return inProgress.get(prefabName).then(() => this.renderPrefab(prefabName, vcRef, elRef, componentInstance));
         }
 
-        const _promise = {
-            resolve: () => Promise.resolve(),
-            reject: () => Promise.reject('')
-        };
+        let _res;
+        let _rej;
+        const _promise: any = new Promise((res, rej) => {
+            _res = res;
+            _rej = rej;
+        });
 
-        inProgress.set(prefabName, _promise as any);
+        _promise.resolve = _res;
+        _promise.reject = _rej;
+
+        inProgress.set(prefabName, _promise);
 
         return this.loadConfig(prefabName)
             .then(config => this.loadDependencies(prefabName, config))
-            .then(() => this.renderPrefab(prefabName, vcRef, elRef, componentInstance))
-            .then(() => {
-                return this.getPrefabConfig(prefabName);
-            });
+            .then(() => this.renderPrefab(prefabName, vcRef, elRef, componentInstance));
     }
 }
