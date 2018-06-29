@@ -110,6 +110,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.IS_UPDATE_REQUIRED:
                 returnVal = true;
                 break;
+            case DataSource.Operation.IS_BOUND_TO_LOCALE:
+                returnVal = false;
+                break;
             default:
                 returnVal = {};
                 break;

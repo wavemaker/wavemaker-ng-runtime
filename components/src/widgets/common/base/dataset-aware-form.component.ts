@@ -23,6 +23,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     public binddisplayexpression: string;
     public binddisplayimagesrc: string;
+    public binddisplaylabel: string;
 
     public displayValue: Array<string> | string;
 
@@ -76,6 +77,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
         this.binddisplayimagesrc = this.nativeElement.getAttribute('displayimagesrc.bind');
+        this.binddisplaylabel = this.nativeElement.getAttribute('displaylabel.bind');
 
         this._debouncedInitDatasetItems = debounce(() => {
             this.initDatasetItems();
@@ -218,7 +220,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             const displayOptions = transformData(orderedDataset, this.datafield, {
                 displayField: this.displayfield || this.displaylabel,
                 displayExpr: this.displayexpression,
-                bindDisplayExpr: this.binddisplayexpression,
+                bindDisplayExpr: this.binddisplayexpression || this.binddisplaylabel,
                 bindDisplayImgSrc: this.binddisplayimagesrc,
                 displayImgSrc: this.displayimagesrc
             });

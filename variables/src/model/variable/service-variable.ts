@@ -67,6 +67,9 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.IS_UPDATE_REQUIRED:
                 returnVal = this.isUpdateRequired();
                 break;
+            case DataSource.Operation.IS_BOUND_TO_LOCALE:
+                returnVal = false;
+                break;
             default :
                 returnVal = {};
                 break;
