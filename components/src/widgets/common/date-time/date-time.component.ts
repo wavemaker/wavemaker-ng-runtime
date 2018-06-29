@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewC
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { $appDigest, addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate } from '@wm/core';
+import { $appDigest, addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -36,6 +36,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private bsDateTimeValue: any;
     private bsDateValue;
     private bsTimeValue;
+    private showseconds: boolean;
 
     get timestamp() {
         return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
@@ -187,5 +188,15 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.invokeOnChange(this.datavalue, {}, true);
         $appDigest();
+    }
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'autofocus' && nv) {
+            const inputElement = this.$element.find('.display-input')[0] as HTMLElement;
+            setAttr(inputElement, key, nv);
+        }
+        if (key === 'datepattern') {
+            this.showseconds = _.includes(nv, 'ss');
+        }
+        super.onPropertyChange(key, nv, ov);
     }
 }

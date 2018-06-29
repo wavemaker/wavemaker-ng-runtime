@@ -2,7 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { getDateObj, getFormattedDate } from '@wm/core';
+import { getDateObj, getFormattedDate, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -90,5 +90,12 @@ export class DateComponent extends BaseDateTimeComponent {
      */
     onDateChange(newVal): void {
         this.setDataValue(newVal);
+    }
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'autofocus' && nv) {
+            const inputElement = this.$element.find('.display-input')[0] as HTMLElement;
+            setAttr(inputElement, key, nv);
+        }
+        super.onPropertyChange(key, nv, ov);
     }
 }

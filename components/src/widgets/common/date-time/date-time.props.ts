@@ -23,7 +23,6 @@ export const dateTimeProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showbuttonbar', PROP_BOOLEAN],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
-        ['showseconds', {value: false, ...PROP_BOOLEAN}],
         ['showweeks', PROP_BOOLEAN],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['timestamp', PROP_STRING]
