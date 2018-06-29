@@ -1,12 +1,9 @@
-import { Element } from '@angular/compiler';
-
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'wm-popover';
 
 register('wm-popover', (): IBuildTaskDef => {
     return {
-        template: (node: Element, shared) => shared.set('hasChildren', !!node.children.length),
         pre: (attrs: Map<string, string>, shared: Map<string, any>) => {
             const contentSource = attrs.get('contentsource');
             let popoverTemplate;
@@ -23,30 +20,28 @@ register('wm-popover', (): IBuildTaskDef => {
                     contentMarkup = `content.bind="${bindContent}"`;
                 }
 
-                popoverTemplate = `<div wmContainer partialContainer ${contentMarkup}></div>`;
-                shared.set('hasChildren', false);
+                popoverTemplate = `<div wmContainer partialContainer ${contentMarkup}>`;
+                shared.set('hasPopoverContent', true);
             }
 
             let markup = `<${tagName} wmPopover ${getAttrMarkup(attrs)}>`;
 
-            if (popoverTemplate || !!shared.get('hasChildren')) {
-                markup += `<ng-template>`;
-            }
+            markup += `<ng-template>`;
 
             // todo keyboard navigation - tab
             if (popoverTemplate) {
-                markup += `${popoverTemplate ? popoverTemplate : ''}</ng-template>`;
+                markup += `${popoverTemplate ? popoverTemplate : ''}`;
             }
 
             return markup;
         },
         post: (attrs: Map<string, string>, shared: Map<string, any>) => {
             let markup = '';
-            if (!!shared.get('hasChildren')) {
-                markup += `</ng-template>`;
+            if (shared.get('hasPopoverContent')) {
+                markup += `</div>`;
             }
 
-            return `${markup}</${tagName}>`;
+            return `${markup}</ng-template></${tagName}>`;
         }
     };
 });
