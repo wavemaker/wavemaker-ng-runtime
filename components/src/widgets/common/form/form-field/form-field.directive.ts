@@ -64,6 +64,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     isDataSetBound;
     viewmodewidget;
     binddataset;
+    binddisplayexpression;
+    binddisplaylabel;
     form;
     updateon;
     filetype;
@@ -87,6 +89,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         form: FormComponent,
         fb: FormBuilder,
         @Attribute('dataset.bind') binddataset,
+        @Attribute('displayexpression.bind') binddisplayexpression: string,
+        @Attribute('displaylabel.bind') binddisplaylabel: string,
         @Attribute('widgettype') _widgetType,
         @Attribute('name') name,
         @Attribute('key') key,
@@ -105,6 +109,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this._validators = [];
         this.class = '';
         this.binddataset = binddataset;
+        this.binddisplayexpression = binddisplayexpression;
+        this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
         this.name = name;
@@ -356,6 +362,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         if (this.formWidget) {
             this._initPropsRes();
+
+            // setting displayExpressions on the formwidget explicitly as expr was evaluated to "".
+            this.setFormWidget('binddisplaylabel', this.binddisplaylabel);
+            this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
         }
         this.key = this.key || this.target || this.binding || this.name;
         this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
