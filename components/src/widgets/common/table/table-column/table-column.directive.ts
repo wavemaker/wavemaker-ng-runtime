@@ -190,7 +190,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.addFormControl(this.binding);
             const control = this.getFormControl(this.binding);
             if (control) {
-                control.valueChanges.subscribe(this.onValueChange.bind(this));
+                const onValueChangeSubscription =  control.valueChanges.subscribe(this.onValueChange.bind(this));
+                this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
             }
 
             if (this._isNewEditableRow) {
@@ -198,7 +199,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 this.addFormControl(ctrlName);
                 const newControl = this.getFormControl(ctrlName);
                 if (newControl) {
-                    newControl.valueChanges.subscribe(this.onValueChange.bind(this));
+                   const onNewValueChangeSubscription =  newControl.valueChanges.subscribe(this.onValueChange.bind(this));
+                   this.registerDestroyListener(() => onNewValueChangeSubscription.unsubscribe());
                 }
             }
         }
@@ -208,7 +210,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.addFormControl(filterName);
             this.filterControl = this.getFormControl(filterName);
             if (this.filterControl) {
-                this.filterControl.valueChanges.subscribe(this.onFilterValueChange.bind(this));
+                const onFilterValueSubscription = this.filterControl.valueChanges.subscribe(this.onFilterValueChange.bind(this));
+                this.registerDestroyListener(() => onFilterValueSubscription.unsubscribe());
             }
         }
     }
