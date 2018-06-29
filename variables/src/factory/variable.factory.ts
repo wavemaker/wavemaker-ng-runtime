@@ -47,6 +47,7 @@ export class VariableFactory {
         }
 
         variableInstance._context = context;
+        variableInstance.__cloneable__ = false;
         return variableInstance;
     }
 }

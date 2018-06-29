@@ -134,6 +134,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     private toBeSetupEventsQueue: Array<Function> = [];
 
+    public __cloneable__ = false;
 
     protected constructor(
         protected inj: Injector,

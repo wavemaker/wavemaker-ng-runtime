@@ -9,6 +9,12 @@ const registry = new Map<string, any>();
 
 const watchIdGenerator = new IDGenerator('watch-id-');
 
+export const FIRST_TIME_WATCH = Object.create(null);
+
+Object.freeze(FIRST_TIME_WATCH);
+
+export const isFirstTimeChange = v => v === FIRST_TIME_WATCH;
+
 export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false) => {
     if (expr.indexOf('[$i]') !== -1) {
         expr = expr.replace(/\[\$i]/g, '[0]');
@@ -18,7 +24,7 @@ export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGene
     registry.set(identifier, {
         fn: fn.bind(expr, $scope, $locals),
         listener,
-        last: undefined,
+        last: FIRST_TIME_WATCH,
         doNotClone
     });
 
@@ -51,10 +57,8 @@ const triggerWatchers = () => {
                 changedByWatch = true;
                 watchInfo.last = nv;
 
-                if (!watchInfo.doNotClone) {
-                    if (_.isObject(nv)) { // TODO: Check for proxy and do not cone
-                        watchInfo.last = _.clone(nv);
-                    }
+                if (_.isObject(nv) && !watchInfo.doNotClone && nv.__cloneable__ !== false) {
+                    watchInfo.last = _.clone(nv);
                 }
                 listener(nv, ov);
                 resetChangeFromWatch();
