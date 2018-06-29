@@ -102,7 +102,7 @@ export class AppRef {
                 duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
             });
         } else {
-            console.warn("The default Action \"appNotification\" doesn't exist in your project.");
+            console.warn('The default Action \"appNotification\" doesn\'t exist in your project.');
         }
     }
 }
