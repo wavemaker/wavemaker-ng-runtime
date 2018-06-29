@@ -80,6 +80,8 @@ export const isIos = () => isIphone() || isIpod() || isIpad();
 
 export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
 
+export const isMobileApp = () => _WM_APP_PROPERTIES.platformType === 'MOBILE' && _WM_APP_PROPERTIES.type === 'APPLICATION';
+
 export const getAndroidVersion = () => {
     const match = (navigator.userAgent.toLowerCase()).match(/android\s([0-9\.]*)/);
     return match ? match[1] : '';

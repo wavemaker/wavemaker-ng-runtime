@@ -46,13 +46,16 @@ window.requestAnimationFrame = (function () {
             touchEndListeners.length = 0;
         };
 
+    //Binds events outside of zone
+    function addEventListener(target, event, callback) {
+        (target.__zone_symbol__addEventListener || target.addEventListener).call(target, event, callback);
+    }
 
-    // Todo [Srnivas, Vinay] -- this will trigger digest cycle on each mouse move
-    // document.addEventListener('mousemove', onTouch);
-    // document.addEventListener('touchmove', onTouch);
-    // document.addEventListener('mouseup', onTouchEnd);
-    // document.addEventListener('touchcancel', onTouchEnd);
-    // document.addEventListener('touchend', onTouchEnd);
+    addEventListener(document, 'mousemove', onTouch);
+    addEventListener(document, 'touchmove', onTouch);
+    addEventListener(document, 'mouseup', onTouchEnd);
+    addEventListener(document, 'touchcancel', onTouchEnd);
+    addEventListener(document, 'touchend', onTouchEnd);
 
     function ScrollObserver(parent, child, direction) {
         var elementsToObserve = (function(array) {

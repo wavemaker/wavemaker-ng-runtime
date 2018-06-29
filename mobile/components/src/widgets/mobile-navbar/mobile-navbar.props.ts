@@ -20,7 +20,7 @@ export const navbarProps = new Map(
         ['displaylabel', PROP_STRING],
         ['imgsrc', PROP_STRING],
         ['query', {value: '', ...PROP_STRING}],
-        ['leftnavpaneliconclass', PROP_STRING],
+        ['leftnavpaneliconclass', {value: 'wi wi-menu', ...PROP_STRING}],
         ['readonlySearchBar', PROP_BOOLEAN],
         ['searchbutton', {value: false, ...PROP_BOOLEAN}],
         ['searchbuttoniconclass', {value: 'wi wi-search', ...PROP_STRING}],

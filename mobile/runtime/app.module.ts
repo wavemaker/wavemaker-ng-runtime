@@ -115,7 +115,6 @@ export class MobileAppModule {
             } else {
                 resolve(OS.ANDROID);
             }
-            reject('Couldn\'t find os.' );
         });
     }
 }
