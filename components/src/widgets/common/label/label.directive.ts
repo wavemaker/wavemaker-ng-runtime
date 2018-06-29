@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import { Directive, Injector, SecurityContext } from '@angular/core';
 
 import { setProperty, toggleClass } from '@wm/core';
 
@@ -8,6 +8,7 @@ import { registerProps } from './label.props';
 import { StylableComponent } from '../base/stylable.component';
 import { DISPLAY_TYPE } from '../../framework/constants';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 
 registerProps();
 
@@ -26,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class LabelDirective extends StylableComponent {
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this);
@@ -35,7 +36,7 @@ export class LabelDirective extends StylableComponent {
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'caption') {
-            setProperty(this.nativeElement, 'textContent', nv);
+            setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
         } else if (key === 'required') {
             toggleClass(this.nativeElement, 'required', nv);
         } else {
