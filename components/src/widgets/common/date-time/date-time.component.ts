@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewC
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { $appDigest, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate } from '@wm/core';
+import { $appDigest, addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -15,6 +15,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
 
 const now: Date = new Date();
 const CURRENT_DATE: string = 'CURRENT_DATE';
+
+declare const _;
 
 registerProps();
 @Component({
@@ -139,6 +141,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to add a click listener once the time dropdown is open
      */
     private addClickListener(value) {
+        // adding class for time widget dropdown menu
+        const tpElements  = document.querySelectorAll('timepicker');
+        _.forEach(tpElements, (element) => {
+            addClass(element.parentElement as HTMLElement, 'app-datetime');
+        });
+
         setTimeout(() => {
             const dropdownElement = this.nativeElement.querySelector('.dropdown-menu');
             const bodyElement = document.querySelector('body');
