@@ -412,7 +412,7 @@ export default class LiveVariableUtils {
                 } else {
                     if (!_.isNull(rule.target)) {
                         const value = rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.between.toLowerCase()
-                            ? [rule.value, rule.secondvalue]
+                            ? (_.isArray(rule.value) ? rule.value : [rule.value, rule.secondvalue])
                             : (rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.in.toLowerCase()
                                 ? (_.isArray(rule.value) ? rule.value : (rule.value ? rule.value.split(',') : ''))
                                 : rule.value);
