@@ -339,10 +339,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         this.ngform = this.form.ngform;
         this.ngform.addControl(fieldName, this.createControl());
-        this._control.valueChanges
+        const onValueChangeSubscription =  this._control.valueChanges
             .debounceTime(200)
             .subscribe(this.onValueChange.bind(this));
-
+        this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
         super.ngOnInit();
         styler(this.nativeElement, this);
 
