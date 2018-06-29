@@ -19,7 +19,6 @@ export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGene
         fn: fn.bind(expr, $scope, $locals),
         listener,
         last: undefined,
-        expr: expr,
         doNotClone
     });
 
@@ -35,24 +34,39 @@ const $RAF = window.requestAnimationFrame;
 let ngZone;
 
 const triggerWatchers = () => {
-    registry.forEach(watchInfo => {
-        const fn = watchInfo.fn;
-        const listener = watchInfo.listener;
-        const ov = watchInfo.last;
-        const nv = fn();
-        if (!_.isEqual(nv, ov)) {
-            changedByWatch = true;
-            watchInfo.last = nv;
 
-            if (!watchInfo.doNotClone) {
-                if (_.isObject(nv)) { // TODO: Check for proxy and do not cone
-                    watchInfo.last = _.clone(nv);
+    const limit = 5;
+    let pass = 1;
+    let changeDetected;
+
+    do {
+        changeDetected = false;
+        registry.forEach(watchInfo => {
+            const fn = watchInfo.fn;
+            const listener = watchInfo.listener;
+            const ov = watchInfo.last;
+            const nv = fn();
+            if (!_.isEqual(nv, ov)) {
+                changeDetected = true;
+                changedByWatch = true;
+                watchInfo.last = nv;
+
+                if (!watchInfo.doNotClone) {
+                    if (_.isObject(nv)) { // TODO: Check for proxy and do not cone
+                        watchInfo.last = _.clone(nv);
+                    }
                 }
+                listener(nv, ov);
+                resetChangeFromWatch();
             }
-            listener(nv, ov);
-            resetChangeFromWatch();
-        }
-    });
+        });
+        pass++;
+
+    } while (changeDetected && pass < limit);
+
+    if (changeDetected && pass === limit) {
+        console.warn('not able to stabilize the watchers');
+    }
 };
 
 export const setNgZone = zone => ngZone = zone;
