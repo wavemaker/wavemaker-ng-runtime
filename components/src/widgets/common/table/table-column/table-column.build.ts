@@ -102,7 +102,7 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
     }
     const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
     const eventsTmpl = getEventsTmpl(attrs);
-    const innerTmpl = `${widgetRef} data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
+    const innerTmpl = `${widgetRef} wmFormWidget key="${fieldName}" data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
 
     return `<ng-template ${tmplRef} let-rowData="rowData">

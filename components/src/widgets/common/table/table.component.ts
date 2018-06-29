@@ -1172,6 +1172,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         fn(this.viewParent, Object.assign(this.context, {$event}));
     }
 
+    registerFormWidget() {}
+
     // Form control accessor methods. This will be used for table inside form
     writeValue() {}
 

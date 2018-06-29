@@ -1,7 +1,8 @@
-import { Attribute, Directive, Inject, OnInit, Self } from '@angular/core';
+import { Attribute, Directive, Inject, OnInit, Self, Optional } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FormComponent } from './form.component';
 import { WidgetRef } from '../../framework/types';
+import { TableComponent } from '../table/table.component';
 
 @Directive({
     selector: '[wmFormWidget]'
@@ -10,15 +11,23 @@ export class FormWidgetDirective implements OnInit {
 
     ngform: FormGroup;
     fb;
+    parent;
 
     constructor(
-        @Inject(FormComponent) public form,
+        @Optional() @Inject(FormComponent) form,
+        @Optional() @Inject(TableComponent) table,
         @Self() @Inject(WidgetRef) public componentInstance,
         fb: FormBuilder,
         @Attribute('name') public name,
         @Attribute('key') public key,
         @Attribute('updateon') public updateon) {
         this.fb = fb;
+        this.parent = form || table;
+        this.componentInstance.registerPropertyChangeListener((k, nv) => {
+            if (k === 'datavalue' && this._control) {
+                this._control.setValue(nv);
+            }
+        });
     }
 
     get _control() {
@@ -34,10 +43,13 @@ export class FormWidgetDirective implements OnInit {
     }
 
     ngOnInit() {
-        this.ngform = this.form.ngform;
-        this.ngform.addControl(this.key || this.name , this.createControl());
+        this.ngform = this.parent.ngform;
 
-        this.form.registerFormWidget(this.componentInstance);
+        if (!this._control) {
+            this.ngform.addControl(this.key || this.name, this.createControl());
+
+            this.parent.registerFormWidget(this.componentInstance);
+        }
     }
 }
 
