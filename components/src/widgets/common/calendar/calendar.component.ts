@@ -338,7 +338,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
                 if (key === 'title') {
                     objVal = getEvaluatedData(obj, {expression: value});
                 } else {
-                    objVal = _.get(obj, value);
+                    objVal = _.get(obj, key);
                 }
                 if (!objVal) {
                     return;

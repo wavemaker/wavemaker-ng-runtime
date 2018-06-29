@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined } from '@wm/core';
+import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { HttpService } from '@wm/http';
 
@@ -70,8 +70,8 @@ export class AppRef {
     }
 
     public getDependency(injToken) {
-        if (injectorMap[injToken]) {
-            return this.inj.get(injectorMap[injToken]);
+        if (isString(injToken)) {
+            return injectorMap[injToken] && this.inj.get(injectorMap[injToken]);
         }
         return this.inj.get(injToken);
     }
