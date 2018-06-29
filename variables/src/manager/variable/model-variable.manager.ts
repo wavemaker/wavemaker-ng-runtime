@@ -28,7 +28,7 @@ export class ModelVariableManager extends BaseVariableManager {
     * and the object has all fields empty, remove that object
     */
     removeFirstEmptyObject(variable) {
-        if (checkEmptyObject(variable.dataSet[0])) {
+        if (_.isArray(variable.dataSet) && variable.dataSet.length === 1 && checkEmptyObject(variable.dataSet[0])) {
             variable.dataSet = [];
         }
     }

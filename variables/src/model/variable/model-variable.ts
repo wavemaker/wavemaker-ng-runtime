@@ -19,7 +19,9 @@ export class ModelVariable extends BaseVariable implements IDataSource {
     }
 
     init() {
-        getManager().removeFirstEmptyObject(this);
+        if (this.isList) {
+            getManager().removeFirstEmptyObject(this);
+        }
 
         getManager().initBinding(this, 'dataBinding', 'dataSet');
     }
