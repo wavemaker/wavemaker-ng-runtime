@@ -45,7 +45,7 @@ const triggerWatchers = () => {
             watchInfo.last = nv;
 
             if (!watchInfo.doNotClone) {
-                if (_.isObject(nv) && !(nv.proxy || (window['Proxy'] && nv instanceof window['Proxy']))) {
+                if (_.isObject(nv)) { // TODO: Check for proxy and do not cone
                     watchInfo.last = _.clone(nv);
                 }
             }
