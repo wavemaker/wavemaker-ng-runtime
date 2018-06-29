@@ -25,11 +25,11 @@ const unStringify = (val, defaultVal) => {
         return defaultVal;
     }
 
-    if (val === 'true') {
+    if (val === true || val === 'true') {
         return true;
     }
 
-    if (val === 'false') {
+    if (val === false || val === 'false') {
         return false;
     }
 
@@ -69,9 +69,14 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
     constructor(
         inj: Injector,
+        @Attribute('checkedvalue') checkedVal,
+        @Attribute('uncheckedvalue') uncheckedVal,
         @Attribute('type') type
     ) {
         super(inj, WIDGET_CONFIG);
+
+        this._checkedvalue = unStringify(checkedVal, true);
+        this._uncheckedvalue = unStringify(uncheckedVal, false);
 
         // if the type of the checkbox is toggle update the related classes on the host node
         toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');

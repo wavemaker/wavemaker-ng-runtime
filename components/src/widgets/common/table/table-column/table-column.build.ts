@@ -1,4 +1,4 @@
-import { Element } from '@angular/compiler';
+import { Attribute, Element } from '@angular/compiler';
 
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator } from '@wm/core';
@@ -7,6 +7,35 @@ import { EDIT_MODE, getDataTableFilterWidget, getEditModeWidget } from '../../..
 
 const tagName = 'div';
 const idGen = new IDGenerator('data_table_form_');
+const formWidgets = new Set([
+    'wm-text',
+    'wm-textarea',
+    'wm-checkbox',
+    'wm-slider',
+    'wm-currency',
+    'wm-switch',
+    'wm-select',
+    'wm-checkboxset',
+    'wm-radioset',
+    'wm-date',
+    'wm-time',
+    'wm-timestamp',
+    'wm-rating',
+    'wm-datetime',
+    'wm-search',
+    'wm-chips',
+    'wm-colorpicker'
+]);
+
+// Add ngModelOptions standalone true as inner custom form widgets will be not part of table ngform
+const addNgModelStandalone = (children = []) => {
+    children.forEach(childNode => {
+        if (formWidgets.has(childNode.name)) {
+            childNode.attrs.push(new Attribute('[ngModelOptions]', '{standalone: true}', <any>1, <any>1));
+        }
+        addNgModelStandalone(childNode.children);
+    });
+};
 
 // get the filter template (widget and filter menu) to be displayed in filter row
 const getFilterTemplate = (attrs, pCounter)  => {
@@ -132,7 +161,10 @@ register('wm-table-column', (): IBuildTaskDef => {
     return {
         requires: ['wm-table'],
         template: (node: Element, shared) => {
-            shared.set('customExpression', node.children.length > 0);
+            if (node.children.length) {
+                shared.set('customExpression', true);
+                addNgModelStandalone(node.children);
+            }
         },
         pre: (attrs, shared, parentTable) => {
             const pCounter = parentTable.get('table_reference');
