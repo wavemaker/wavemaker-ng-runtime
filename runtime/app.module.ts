@@ -28,11 +28,13 @@ import { EmptyPageComponent, PageWrapperComponent } from './components/page-wrap
 import { PipeProvider } from './services/pipe-provider.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { PrefabPreviewManagerService } from './services/prefab-preview-manager.service';
-import { RenderUtilsService } from './services/render-utils.service';
+import { RenderUtilsService, TempModule } from './services/render-utils.service';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { AppSpinnerComponent } from './components/app-spinner.component';
 import { SpinnerService } from './services/spinner.service';
 import { ToasterServiceImpl } from './services/toaster.service';
+import { CustomToasterComponent } from './components/custom-toaster.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 declare const $;
@@ -66,7 +68,8 @@ const routes = [
         PageWrapperComponent,
         CommonPageComponent,
         EmptyPageComponent,
-        AppSpinnerComponent
+        AppSpinnerComponent,
+        CustomToasterComponent
     ],
     imports: [
         BrowserModule,
@@ -74,11 +77,13 @@ const routes = [
         FormsModule,
         ReactiveFormsModule,
         WmComponentsModule,
+        TempModule,
         VariablesModule,
         OAuthModule,
         RouterModule,
         HttpClientModule,
         HttpServiceModule,
+        BrowserAnimationsModule,
         RouterModule.forRoot(routes, {useHash: true}),
         ToastrModule.forRoot({
             maxOpened: 1,
@@ -110,6 +115,7 @@ const routes = [
         DatePipe,
         SpinnerService
     ],
+    entryComponents: [CustomToasterComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ToastrService } from 'ngx-toastr';
-
+import { $invokeWatchers, AbstractDialogService, AbstractToasterService } from '@wm/core';
 import { HttpService } from '@wm/http';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
-import { $invokeWatchers, AbstractDialogService } from '@wm/core';
 
 import { VariableFactory } from '../factory/variable.factory';
 import { BaseAction } from '../model/base-action';
@@ -22,7 +20,7 @@ export class VariablesService {
         private httpService: HttpService,
         private metadataService: MetadataService,
         private routerService: Router,
-        private toasterService: ToastrService,
+        private toasterService: AbstractToasterService,
         private oAuthService: OAuthService,
         private securityService: SecurityService,
         private dialogService: AbstractDialogService

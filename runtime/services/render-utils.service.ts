@@ -30,7 +30,7 @@ const noop = (...args) => {};
         AccessrolesDirective
     ]
 })
-class TempModule {}
+export class TempModule {}
 
 const getPageOrPartialMinUrl = name => `./pages/${name}/page.min.json`;
 
