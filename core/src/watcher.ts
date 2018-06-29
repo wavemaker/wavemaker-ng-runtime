@@ -65,7 +65,7 @@ const triggerWatchers = () => {
     } while (changeDetected && pass < limit);
 
     if (changeDetected && pass === limit) {
-        console.warn('not able to stabilize the watchers');
+        console.warn(`Number of watch cycles gone above set limit of: ${limit} `);
     }
 };
 
