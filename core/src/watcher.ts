@@ -42,17 +42,15 @@ const triggerWatchers = () => {
         const nv = fn();
         if (!_.isEqual(nv, ov)) {
             changedByWatch = true;
-            listener(nv, ov);
-            resetChangeFromWatch();
             watchInfo.last = nv;
 
-            if (watchInfo.doNotClone) {
-                return;
+            if (!watchInfo.doNotClone) {
+                if (_.isObject(nv) && !(nv.proxy || (window['Proxy'] && nv instanceof window['Proxy']))) {
+                    watchInfo.last = _.clone(nv);
+                }
             }
-
-            if (_.isObject(nv) && !(nv.proxy || (window['Proxy'] && nv instanceof window['Proxy']))) {
-                watchInfo.last = _.clone(nv);
-            }
+            listener(nv, ov);
+            resetChangeFromWatch();
         }
     });
 };

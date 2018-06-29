@@ -363,7 +363,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
             if (_.isArray(newVal)) {
                 if (newVal.length) {
-                    this.invokeEventCallback('beforedatarender', {widget: this, $data: newVal});
+                    this.invokeEventCallback('beforedatarender', {$data: newVal});
                 }
                 this.updateFieldDefs(newVal);
             }
@@ -563,7 +563,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             newIndex: newIndex,
             item: data[newIndex]
         };
-        this.invokeEventCallback('reorder', {$event: evt, widget: this, $changedItem});
+        this.invokeEventCallback('reorder', {$event: evt, $data: data, $changedItem});
         this.$ulEle.removeData('oldIndex');
     }
 
@@ -625,7 +625,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                         this.toggleListItemSelection(this.getQueryListItemByIndex(presentIndex));
                         this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex - 1);
                     } else {
-                        this.invokeEventCallback('selectionlimitexceed', {$event, widget: this});
+                        this.invokeEventCallback('selectionlimitexceed', {$event});
                     }
                 }
             } else if (action === 'selectNext') {
@@ -637,7 +637,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                         this.toggleListItemSelection(this.getQueryListItemByIndex(presentIndex));
                         this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
                     } else {
-                        this.invokeEventCallback('selectionlimitexceed', {$event, widget: this});
+                        this.invokeEventCallback('selectionlimitexceed', {$event});
                     }
                 }
             }
@@ -699,7 +699,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     this.firstSelectedItem = this.lastSelectedItem = $listItem;
                     this.toggleListItemSelection($listItem);
                 } else {
-                    this.invokeEventCallback('selectionlimitexceed', {$event: evt, widget: this});
+                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
                 }
             } else if (evt.shiftKey && this.multiselect) {
                 let first = $listItem.context.index;
@@ -719,7 +719,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     });
                     this.lastSelectedItem = $listItem;
                 }  else {
-                    this.invokeEventCallback('selectionlimitexceed', {$event: evt, widget: this});
+                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
                 }
 
             } else {
