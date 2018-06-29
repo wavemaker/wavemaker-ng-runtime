@@ -6,6 +6,8 @@ import { $watch } from '@wm/core';
 
 import { WidgetRef } from '../../../widgets/framework/types';
 
+declare const _;
+
 @Directive({
     selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]',
 })
@@ -19,7 +21,7 @@ export class PartialParamHandlerDirective {
         this.widgetRef.partialParams[name] = value;
         if (!value && bindExpr) {
             this.widgetRef.registerDestroyListener(
-                $watch(bindExpr, this.widgetRef.getViewParent(), undefined, nv => {
+                $watch(bindExpr, this.widgetRef.getViewParent(), _.get(this.widgetRef, 'context'), nv => {
                     this.widgetRef.partialParams[name] = nv;
 
                     // notify the partial container of the param changes
