@@ -273,7 +273,9 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
-        this.tabsAnimator = new TabsAnimator(this);
+        if (this.canSlide()) {
+            this.tabsAnimator = new TabsAnimator(this);
+        }
     }
 
     ngAfterViewInit() {

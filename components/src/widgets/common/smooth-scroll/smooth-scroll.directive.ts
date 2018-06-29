@@ -1,6 +1,6 @@
 import { Directive, DoCheck, ElementRef, Injector, Input, OnDestroy } from '@angular/core';
 
-import { debounce, isIos, isKitkatDevice, isMobile } from '@wm/core';
+import { debounce, isIos, isKitkatDevice, isMobileApp } from '@wm/core';
 
 declare const IScroll;
 declare const _;
@@ -45,7 +45,7 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
     }
 
     private applySmoothScroll($events?: any[]) {
-        if (!isMobile() || isKitkatDevice()) {
+        if (!isMobileApp() || isKitkatDevice()) {
             return null;
         }
         // Set the fadeScrollbars to true only when content is scrollable inside the smoothscroll-container

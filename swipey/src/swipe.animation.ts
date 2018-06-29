@@ -16,6 +16,7 @@ export abstract class SwipeAnimation {
     public goToUpper() {
         this._$ele.swipeAnimation('gotoUpper');
     }
+    public onAnimation() {}
     public onUpper() {}
     public onLower() {}
     public threshold() { return 30; }
@@ -32,6 +33,7 @@ export abstract class SwipeAnimation {
             bindEvents: this.bindEvents(),
             context: this.context.bind(this),
             direction: this.direction(),
+            onAnimation: this.onAnimation.bind(this),
             onLower: this.onLower.bind(this),
             onUpper: this.onUpper.bind(this),
             threshold: this.threshold()
