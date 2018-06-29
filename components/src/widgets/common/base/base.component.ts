@@ -61,7 +61,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     /**
      * Proxy for the component instance.
      */
-    protected readonly widget: any;
+    protected widget: any;
 
     /**
      * View parent component
@@ -539,6 +539,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     ngOnDestroy() {
         this.isDestroyed = true;
+        this.widget = Object.create(null);
         this.styleChange.complete();
         this.propertyChange.complete();
         this.destroy.complete();

@@ -22,10 +22,7 @@ export class WidgetProxyProvider {
     public static create(instance: BaseComponent, widgetSubType: string, propsByWidgetSubType: Map<string, any>) {
         // If the native Proxy is supported
         if ((window as any).Proxy) {
-            const revocable = Proxy.revocable(instance, proxyHandler);
-            instance.registerDestroyListener(() => revocable.revoke());
-
-            return revocable.proxy;
+            return new Proxy(instance, proxyHandler);
         } else {
 
             // If the native Proxy is not supported, IE11
