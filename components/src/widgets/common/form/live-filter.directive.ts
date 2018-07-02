@@ -284,7 +284,7 @@ export class LiveFilterDirective {
         if (options.exportType) {
             return this.form.datasource.execute(DataSource.Operation.DOWNLOAD, {
                 data: {
-                    matchMode : 'anywhere',
+                    matchMode : 'anywhereignorecase',
                     filterFields : filterFields,
                     orderBy : orderBy,
                     exportType : options.exportType,

@@ -104,7 +104,7 @@ export class TableCUDDirective {
                 this.table.initiateSelectItem(this.table.getNavigationTargetBySortInfo(), response, undefined, false, options.callBack);
             }
             triggerFn(options.success, response);
-            this.table.invokeEventCallback('rowinsert', {$event: options.event, $data: response, rowData: response});
+            this.table.invokeEventCallback('rowinsert', {$event: options.event, $data: response, row: response});
         }
     }
 
@@ -133,7 +133,7 @@ export class TableCUDDirective {
                 triggerFn(options.callBack, undefined, true);
             });
         } else {
-            this.table.invokeEventCallback('rowinsert', {$event: options.event, rowData: options.row});
+            this.table.invokeEventCallback('rowinsert', {$event: options.event, row: options.row});
         }
     }
 
@@ -155,7 +155,7 @@ export class TableCUDDirective {
                 this.updateVariable(response, options.callBack);
             }
             triggerFn(options.success, response);
-            this.table.invokeEventCallback('rowupdate', {$event: options.event, $data: response, rowData: response});
+            this.table.invokeEventCallback('rowupdate', {$event: options.event, $data: response, row: response});
         }
     }
 
@@ -185,7 +185,7 @@ export class TableCUDDirective {
                 triggerFn(options.callBack, undefined, true);
             });
         } else {
-            this.table.invokeEventCallback('rowupdate', {$event: options.event, rowData: options.row});
+            this.table.invokeEventCallback('rowupdate', {$event: options.event, row: options.row});
         }
     }
 
@@ -218,8 +218,8 @@ export class TableCUDDirective {
         }
         this.table.toggleMessage(true, 'success', this.table.deletemessage);
         // custom EventHandler for row deleted event
-        this.table.invokeEventCallback('rowdelete', {$event: evt, $data: row, rowData: row});
-        this.table.invokeEventCallback('rowdeleted', {$event: evt, $data: row, rowData: row});
+        this.table.invokeEventCallback('rowdelete', {$event: evt, $data: row, row});
+        this.table.invokeEventCallback('rowdeleted', {$event: evt, $data: row, row});
     }
 
     private deleteFn(row, cancelRowDeleteCallback, evt, callBack) {
@@ -234,7 +234,7 @@ export class TableCUDDirective {
                 return;
             }
             dataSource.execute(DataSource.Operation.DELETE_RECORD, {
-                row : row,
+                row,
                 skipNotification : true
             }).then(response => {
                 this.deleteSuccessHandler(response, row, evt, callBack);
@@ -244,7 +244,7 @@ export class TableCUDDirective {
                 this.table.toggleMessage(true, 'error', this.table.errormessage || error);
             });
         } else {
-            this.table.invokeEventCallback('rowdelete', {$event: evt, rowData: row});
+            this.table.invokeEventCallback('rowdelete', {$event: evt, row});
         }
         triggerFn(cancelRowDeleteCallback);
     }

@@ -228,7 +228,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
             $appDigest();
         },
-        onRowSelect: (rowData, e) => {
+        onRowSelect: (row, e) => {
             this.selectedItems = this.callDataGridMethod('getSelectedRows');
             this.selectedItemChange.next(this.selectedItems);
 
@@ -237,25 +237,25 @@ export class TableComponent extends StylableComponent implements AfterContentIni
              * for multi select, keep old selected items in tact
              */
             if (this.multiselect) {
-                if (_.findIndex(this.items, rowData) === -1) {
-                    this.items.push(rowData);
+                if (_.findIndex(this.items, row) === -1) {
+                    this.items.push(row);
                 }
             } else {
                 this.items.length = 0;
-                this.items.push(rowData);
+                this.items.push(row);
             }
-            this.invokeEventCallback('select', {$data: rowData, $event: e, rowData: rowData});
-            this.invokeEventCallback('rowclick', {$data: rowData, $event: e, rowData: rowData});
+            this.invokeEventCallback('select', {$data: row, $event: e, row});
+            this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
             $appDigest();
         },
-        onRowDblClick: (rowData, e) => {
-            this.invokeEventCallback('rowdblclick', {$data: rowData, $event: e, rowData: rowData});
+        onRowDblClick: (row, e) => {
+            this.invokeEventCallback('rowdblclick', {$data: row, $event: e, row});
         },
-        onRowDeselect: (rowData, e) => {
+        onRowDeselect: (row, e) => {
             if (this.multiselect) {
-                this.items = _.pullAllWith(this.items, [rowData], _.isEqual);
+                this.items = _.pullAllWith(this.items, [row], _.isEqual);
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
-                this.invokeEventCallback('deselect', {$data: rowData, $event: e, rowData: rowData});
+                this.invokeEventCallback('deselect', {$data: row, $event: e, row});
             }
             $appDigest();
         },
@@ -271,28 +271,28 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // if onSort function is registered invoke it when the column header is clicked
             this.invokeEventCallback('headerclick', {$event: e, $data: col});
         },
-        onRowDelete: (rowData, cancelRowDeleteCallback, e, callBack) => {
+        onRowDelete: (row, cancelRowDeleteCallback, e, callBack) => {
             this.ngZone.run(() => {
-                this.deleteRecord(rowData, cancelRowDeleteCallback, e, callBack);
+                this.deleteRecord(row, cancelRowDeleteCallback, e, callBack);
             });
         },
-        onRowInsert: (rowData, e, callBack) => {
-            this.insertRecord({'row': rowData, event: e, 'callBack': callBack});
+        onRowInsert: (row, e, callBack) => {
+            this.insertRecord({row, event: e, 'callBack': callBack});
         },
-        beforeRowUpdate: (rowData, eventName?) => {
+        beforeRowUpdate: (row, eventName?) => {
             if (this._liveTableParent) {
-                this._liveTableParent.updateRow(rowData, eventName);
+                this._liveTableParent.updateRow(row, eventName);
             }
-            this.prevData = getClonedObject(rowData);
+            this.prevData = getClonedObject(row);
         },
-        afterRowUpdate: (rowData, e, callBack) => {
-            this.updateRecord({'row': rowData, 'prevData': this.prevData, 'event': e, 'callBack': callBack});
+        afterRowUpdate: (row, e, callBack) => {
+            this.updateRecord({row, 'prevData': this.prevData, 'event': e, 'callBack': callBack});
         },
-        onBeforeRowUpdate: (rowData, e) => {
-            return this.invokeEventCallback('beforerowupdate', {$event: e, $data: rowData, rowData: rowData});
+        onBeforeRowUpdate: (row, e) => {
+            return this.invokeEventCallback('beforerowupdate', {$event: e, $data: row, row});
         },
-        onBeforeRowInsert: (rowData, e) => {
-            return this.invokeEventCallback('beforerowinsert', {$event: e, $data: rowData, rowData: rowData});
+        onBeforeRowInsert: (row, e) => {
+            return this.invokeEventCallback('beforerowinsert', {$event: e, $data: row, row});
         },
         onFormRender: ($row, e, operation, alwaysNewRow) => {
             const widget = alwaysNewRow ? 'inlineWidgetNew' : 'inlineWidget';
@@ -306,8 +306,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.invokeEventCallback('formrender', {$event: e, formWidgets: this.formWidgets, $operation: operation});
             }, 250);
         },
-        onBeforeFormRender: (rowData, e, operation) => {
-            return this.invokeEventCallback('beforeformrender', {$event: e, rowData: rowData, $operation: operation});
+        onBeforeFormRender: (row, e, operation) => {
+            return this.invokeEventCallback('beforeformrender', {$event: e, row, $operation: operation});
         },
         clearCustomExpression: () => {
             this.customExprViewRef.clear();
@@ -316,9 +316,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (!this.rowngclass) {
                 return;
             }
+            const row = this.getClonedRowObject(rowData);
             const watchName = `${this.name}_rowNgClass_${index}`;
             $unwatch(watchName);
-            this.registerDestroyListener($watch(this.rowngclass, this.viewParent, {rowData}, (nv, ov) => {
+            this.registerDestroyListener($watch(this.rowngclass, this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
             }, watchName));
         },
@@ -326,29 +327,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (!colDef['col-ng-class']) {
                 return;
             }
+            const row = this.getClonedRowObject(rowData);
             const watchName = `${this.name}_colNgClass_${rowIndex}_${colIndex}`;
             $unwatch(watchName);
-            this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {rowData}, (nv, ov) => {
+            this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
             }, watchName));
         },
-        generateCustomExpressions: (row, index) => {
-            const rowData = getClonedObject(row);
-            rowData.getProperty = field => {
-                return _.get(rowData, field);
-            };
+        generateCustomExpressions: (rowData, index) => {
+            const row = this.getClonedRowObject(rowData);
             this.customExprCompiledTl[index] = [];
             // For all the columns inside the table, generate the inline widget
             this.customExprTmpl.forEach(tmpl => {
                 const customExprView = this.customExprViewRef.createEmbeddedView(tmpl, {
-                    rowData,
+                    row,
                     colDef: {},
                     columnValue: ''
                 });
                 const rootNode = customExprView.rootNodes[0];
                 const fieldName = rootNode.getAttribute('data-col-identifier');
                 customExprView.context.colDef = this.columns[fieldName];
-                customExprView.context.columnValue = rowData.getProperty(fieldName);
+                customExprView.context.columnValue = row.getProperty(fieldName);
                 this.customExprCompiledTl[fieldName + index] = rootNode;
             });
         },
@@ -358,24 +357,26 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         clearRowActions: () => {
             this.rowActionsViewRef.clear();
         },
-        generateRowActions: (index, rowData) => {
+        generateRowActions: (rowData, index) => {
+            const row = this.getClonedRowObject(rowData);
             this.rowActionsCompiledTl[index] = [];
             // For all the columns inside the table, generate the inline widget
             this.rowActionTmpl.forEach((tmpl) => {
-                this.rowActionsCompiledTl[index].push(...this.rowActionsViewRef.createEmbeddedView(tmpl, {rowData}).rootNodes);
+                this.rowActionsCompiledTl[index].push(...this.rowActionsViewRef.createEmbeddedView(tmpl, {row}).rootNodes);
             });
         },
         getRowAction: (index) => {
             return this.rowActionsCompiledTl[index];
         },
-        generateInlineEditRow: (alwaysNewRow, rowData) => {
+        generateInlineEditRow: (rowData, alwaysNewRow) => {
+            const row = this.getClonedRowObject(rowData);
             if (alwaysNewRow) {
                 // Clear the view container ref
                 this.inlineEditNewViewRef.clear();
                 this.inlineNewCompliedTl = {};
                 // For all the columns inside the table, generate the inline widget
                 this.inlineWidgetNewTmpl.forEach(tmpl => {
-                    const rootNode = this.inlineEditNewViewRef.createEmbeddedView(tmpl, {rowData}).rootNodes[0];
+                    const rootNode = this.inlineEditNewViewRef.createEmbeddedView(tmpl, {row}).rootNodes[0];
                     this.inlineNewCompliedTl[rootNode.getAttribute('data-col-identifier')] = rootNode;
                 });
                 this.clearForm(true);
@@ -387,7 +388,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.clearForm();
             // For all the columns inside the table, generate the inline widget
             this.inlineWidgetTmpl.forEach(tmpl => {
-                const rootNode = this.inlineEditViewRef.createEmbeddedView(tmpl, {rowData}).rootNodes[0];
+                const rootNode = this.inlineEditViewRef.createEmbeddedView(tmpl, {row}).rootNodes[0];
                 this.inlineCompliedTl[rootNode.getAttribute('data-col-identifier')] = rootNode;
             });
         },
@@ -625,6 +626,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return false;
         }
         return this.datasource ? this.datasource.execute(operation, options) : {};
+    }
+
+    getClonedRowObject(rowData) {
+        const row = getClonedObject(rowData);
+        row.getProperty = field => {
+            return _.get(row, field);
+        };
+        return row;
     }
 
     handleLoading(data) {

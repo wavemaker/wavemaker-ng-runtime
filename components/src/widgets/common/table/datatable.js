@@ -1391,7 +1391,7 @@ $.widget('wm.datatable', {
             rowId = parseInt($row.attr('data-row-id'), 10),
             $editableElements;
 
-        this.options.generateInlineEditRow(alwaysNewRow, rowData);
+        this.options.generateInlineEditRow(rowData, alwaysNewRow);
 
         $originalElements.each(function () {
             var $el = $(this),
@@ -2317,7 +2317,7 @@ $.widget('wm.datatable', {
                     rowId = $row.attr('data-row-id');
                     _rowData = self.options.data[rowId];
                 }
-                self.options.generateRowActions(index, _rowData);
+                self.options.generateRowActions(_rowData, index);
                 $(this).empty().append(self.options.getRowAction(index));
             });
         }
