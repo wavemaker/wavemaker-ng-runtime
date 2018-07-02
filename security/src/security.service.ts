@@ -155,7 +155,7 @@ export class SecurityService {
     getCurrentRoutePage() {
         const p = this._location.path();
         let lIndex = p.indexOf('?');
-        lIndex = lIndex === -1 ? p.length : lIndex;
+        lIndex = lIndex === -1 ? p.length : lIndex - 1;
         return p.substr(1, lIndex); // ignore the query params
     }
 
