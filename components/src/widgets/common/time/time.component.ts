@@ -1,6 +1,6 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 
-import { $appDigest, addClass, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject } from '@wm/core';
+import { $appDigest, addClass, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
@@ -34,6 +34,7 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
      * This property sets the output format for the selected time datavalue
      */
     outputformat: string;
+    private showseconds: boolean;
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
@@ -109,7 +110,13 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
         if (key === 'tabindex') {
             return;
         }
-
+        if (key === 'autofocus' && nv) {
+            const inputElement  = this.$element.find('.display-input')[0] as HTMLElement;
+            setAttr(inputElement, key, nv);
+        }
+        if (key === 'timepattern') {
+            this.showseconds = _.includes(nv, 'ss');
+        }
         if (key === 'mintime') {
             this.minTime = getValidDateObject(nv); // TODO it is supposed to be time conversion, not to the day
         } else if (key === 'maxtime') {
