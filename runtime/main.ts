@@ -21,3 +21,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // exports
 export * from './services/i18n.service';
+
+export * from './services/angular1.polyfills';
