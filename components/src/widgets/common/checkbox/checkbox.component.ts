@@ -20,7 +20,7 @@ registerProps();
 /*
  * try to convert the chekedvalue and unchecked values to boolean/number
  */
-const unStringify = (val, defaultVal) => {
+const unStringify = (val, defaultVal?) => {
     if (val === null) {
         return defaultVal;
     }
@@ -59,11 +59,11 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
     // if the checkbox is checked, return checkedvalue else return uncheckedvalue
     public get datavalue() {
-        return this.proxyModel ? this._checkedvalue : this._uncheckedvalue;
+        return isDefined(this.proxyModel) ? (this.proxyModel ? this._checkedvalue : this._uncheckedvalue) : undefined;
     }
     // when the datavalue is set, update the checked state
     public set datavalue(v) {
-        this.proxyModel = v === this._checkedvalue;
+        this.proxyModel = (isDefined(v) && v !== '') ? v === this._checkedvalue : undefined;
         this.updatePrevDatavalue(this.datavalue);
     }
 
@@ -98,7 +98,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         } else if (key === 'uncheckedvalue') {
             this._uncheckedvalue = unStringify(nv, false);
         } else if (key === 'datavalue') {
-            this.datavalue = unStringify(nv, false);
+            this.datavalue = unStringify(nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
