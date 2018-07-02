@@ -9,7 +9,7 @@ import { BsDropdownModule, CarouselModule, PopoverModule } from 'ngx-bootstrap';
 import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
-import { $appDigest, App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
+import { $appDigest, $invokeWatchers, App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
@@ -129,6 +129,8 @@ const registerVariablesAndActions = (inj: Injector, identifier: string, variable
     Object.entries(pageVariables.Actions).forEach(([name, action]) => {
         pageInstance.Actions[name] = action;
     });
+
+    return pageVariables;
 };
 
 const _decodeURIComponent = str => {
@@ -259,6 +261,8 @@ export class RenderUtilsService {
                 // All active pages should have reference to Common page widgets, e.g. Common login dialog
                 pageInstance.Widgets = Object.create(commonPageWidgets);
             }
+            // register variables
+            const variablesInstance = registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
 
             let context = CONTEXT.PAGE;
             if (this.app.isPrefabType) {
@@ -274,9 +278,9 @@ export class RenderUtilsService {
 
             monitorFragments(pageInstance, parseEndPromise, () => {
                 // TODO: have to make sure, the widgets are ready with default values, before firing onReady call
-                // register variables
-                registerVariablesAndActions(inj, pageName, variables, pageInstance, this.app);
-
+                $invokeWatchers(true);
+                variablesInstance.callback(variablesInstance.Variables);
+                variablesInstance.callback(variablesInstance.Actions);
                 (pageInstance.onReady || noop)();
                 (this.app.onPageReady || noop)(pageName, pageInstance);
             });
@@ -322,6 +326,9 @@ export class RenderUtilsService {
             partialInstance.Page = this.app.activePageInstance;
             partialInstance.activePageName = this.app.activePageName;
             containerWidget.Widgets = partialInstance.Widgets;
+
+
+            const variablesInstance = registerVariablesAndActions(inj, partialName, variables, partialInstance, this.app);
             containerWidget.Variables = partialInstance.Variables;
             containerWidget.Actions = partialInstance.Actions;
 
@@ -329,8 +336,10 @@ export class RenderUtilsService {
             partialInstance.pageParams = containerWidget.partialParams;
 
             monitorFragments(partialInstance, parseEndPromise, () => {
+                $invokeWatchers(true);
                 // register variable and actions before firing pageReady event
-                registerVariablesAndActions(inj, partialName, variables, partialInstance, this.app);
+                variablesInstance.callback(variablesInstance.Variables);
+                variablesInstance.callback(variablesInstance.Actions);
                 (partialInstance.onReady || noop)();
                 resolveFn();
             });
@@ -350,7 +359,7 @@ export class RenderUtilsService {
             this.defineI18nProps(prefabInstance);
             prefabInstance.Widgets = {};
 
-            registerVariablesAndActions(inj, prefabName, variables, prefabInstance);
+            const variableInstances = registerVariablesAndActions(inj, prefabName, variables, prefabInstance);
 
             execScript(script, `prefab-${prefabName}`, 'Prefab', prefabInstance, this.app, inj);
 
@@ -381,6 +390,9 @@ export class RenderUtilsService {
                 });
 
             onReadyPromise.then(() => {
+                $invokeWatchers(true);
+                variableInstances.callback(variableInstances.Variables);
+                variableInstances.callback(variableInstances.Actions);
                 (prefabInstance.onReady || noop)();
                 containerWidget.invokeEventCallback('load');
             });

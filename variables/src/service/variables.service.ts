@@ -76,7 +76,8 @@ export class VariablesService {
     register(page: string, variablesJson: any, scope: any) {
         const variableInstances = {
             Variables: {},
-            Actions: {}
+            Actions: {},
+            callback: this.triggerStartUpdate
         };
         let varInstance;
 
@@ -90,12 +91,6 @@ export class VariablesService {
                 variableInstances.Variables[variableName] = varInstance;
             }
         }
-
-        // trigger watchers to make sure all input bindings are computed
-        $invokeWatchers(true);
-        // after all bindings are computed, trigger startUpdate calls on variables
-        this.triggerStartUpdate(variableInstances.Variables);
-        this.triggerStartUpdate(variableInstances.Actions);
 
         // if the context has onDestroy listener, subscribe the event and trigger cancel on all varibales
         if (scope.registerDestroyListener) {
