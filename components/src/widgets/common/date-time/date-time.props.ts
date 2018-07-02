@@ -17,7 +17,7 @@ export const dateTimeProps = new Map(
         ['placeholder', {value: 'Select date time', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
-        ['secondsstep', {value: 15, ...PROP_NUMBER}],
+        ['secondsstep', {value: 1, ...PROP_NUMBER}],
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showbuttonbar', PROP_BOOLEAN],
