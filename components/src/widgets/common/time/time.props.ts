@@ -16,6 +16,7 @@ export const timeProps = new Map(
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
+        ['secondsstep', {value: 1, ...PROP_NUMBER}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['timepattern', {value: 'hh:mm a', ...PROP_STRING}],
         ['timestamp', PROP_STRING]
