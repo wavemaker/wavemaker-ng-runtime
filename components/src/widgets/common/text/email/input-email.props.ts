@@ -18,7 +18,7 @@ export const textProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', PROP_STRING],
-        ['updateon', {value: 'blur', ...PROP_STRING}]
+        ['updateon', PROP_STRING]
     ]
 );
 

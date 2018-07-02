@@ -19,7 +19,7 @@ export const inputCalendarTypeProps = new Map(
         ['step', PROP_NUMBER],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', PROP_STRING],
-        ['updateon', {value: 'blur', ...PROP_STRING}]
+        ['updateon', PROP_STRING]
     ]
 );
 

@@ -1,10 +1,11 @@
-import { AfterViewInit, ElementRef } from '@angular/core';
+import { AfterViewInit, ElementRef, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { addClass, switchClass } from '@wm/core';
 
 import { BaseFormCustomComponent } from '../../base/base-form-custom.component';
 import { styler } from '../../../framework/styler';
+import { IWidgetConfig } from '../../../framework/types';
 
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {
     public class: string;
@@ -12,7 +13,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     // possible values for ngModelOptions are 'blur' and 'change'
     // default is 'blur'
     protected ngModelOptions = {
-        updateOn: 'blur'
+        updateOn: ''
     };
 
     /**
@@ -40,11 +41,6 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         } else if (key === 'datavalue') {
             // update the oldDataValue when the datavalue is modified programmatically
             this.updatePrevDatavalue(nv);
-        } else if (key === 'updateon') {
-            if (nv === 'default') {
-                nv = 'change';
-            }
-            this.ngModelOptions.updateOn = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -75,5 +71,15 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
             addClass(this.inputEl.nativeElement, this.class);
         }
         styler(this.inputEl.nativeElement, this);
+    }
+
+    constructor(
+        inj: Injector,
+        config: IWidgetConfig
+    ) {
+        super(inj, config);
+        let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';
+        updateOn = updateOn === 'default' ? 'change' : updateOn;
+        this.ngModelOptions.updateOn = updateOn;
     }
 }

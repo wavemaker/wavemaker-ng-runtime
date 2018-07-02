@@ -67,7 +67,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     binddisplayexpression;
     binddisplaylabel;
     form;
-    updateon;
     filetype;
     extensions;
     permitted;
@@ -319,11 +318,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // Create the reactive form control
     createControl() {
-        let updateOn = this.updateon || 'blur';
-        updateOn = updateOn === 'default' ? 'change' : updateOn;
         return this.fb.control('', {
-            validators: this._validators,
-            updateOn: updateOn
+            validators: this._validators
         });
     }
 

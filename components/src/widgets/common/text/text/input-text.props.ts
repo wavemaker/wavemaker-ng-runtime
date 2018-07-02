@@ -20,7 +20,7 @@ export const inputTextTypeProps = new Map(
         ['step', PROP_NUMBER],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'text', ...PROP_STRING}],
-        ['updateon', {value: 'blur', ...PROP_STRING}]
+        ['updateon', PROP_STRING]
     ]
 );
 

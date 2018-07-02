@@ -19,8 +19,7 @@ export class FormWidgetDirective implements OnInit {
         @Self() @Inject(WidgetRef) public componentInstance,
         fb: FormBuilder,
         @Attribute('name') public name,
-        @Attribute('key') public key,
-        @Attribute('updateon') public updateon) {
+        @Attribute('key') public key) {
         this.fb = fb;
         this.parent = form || table;
         this.componentInstance.registerPropertyChangeListener((k, nv) => {
@@ -35,11 +34,7 @@ export class FormWidgetDirective implements OnInit {
     }
 
     createControl() {
-        let updateOn = this.updateon || 'blur';
-        updateOn = updateOn === 'default' ? 'change' : updateOn;
-        return this.fb.control('', {
-            updateOn: updateOn
-        });
+        return this.fb.control('');
     }
 
     ngOnInit() {

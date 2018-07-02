@@ -6,6 +6,8 @@ declare const _;
 // Method to get the form widget template
 export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, attrs?: Map<string, string>, options: any = {}) => {
     let tmpl;
+    const updateOn = attrs.get('updateon');
+    const updateOnTmpl = updateOn ? `updateon="${updateOn}"` : '';
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
@@ -33,10 +35,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmDateTime ${innerTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<wm-input ${innerTmpl} type="number" aria-label="Only numbers"></wm-input>`;
+            tmpl = `<wm-input ${innerTmpl} type="number" aria-label="Only numbers" ${updateOnTmpl}></wm-input>`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<wm-input ${innerTmpl} type="password" aria-label="Enter password"></wm-input>`;
+            tmpl = `<wm-input ${innerTmpl} type="password" aria-label="Enter password" ${updateOnTmpl}></wm-input>`;
             break;
         case FormWidgetType.RADIOSET:
             tmpl = `<ul wmRadioset ${innerTmpl}></ul>`;
@@ -60,10 +62,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmSwitch ${innerTmpl}></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<wm-input ${innerTmpl} type="${attrs.get('inputtype') || 'text'}" aria-describedby="Enter text"></wm-input>`;
+            tmpl = `<wm-input ${innerTmpl} type="${attrs.get('inputtype') || 'text'}" aria-describedby="Enter text" ${updateOnTmpl}></wm-input>`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<wm-textarea ${innerTmpl} role="textbox" aria-describedby="Place your text"></wm-textarea>`;
+            tmpl = `<wm-textarea ${innerTmpl} role="textbox" aria-describedby="Place your text" ${updateOnTmpl}></wm-textarea>`;
             break;
         case FormWidgetType.TIME:
             tmpl = `<div wmTime ${innerTmpl}></div>`;
@@ -90,7 +92,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             }
             break;
         default:
-            tmpl = `<wm-input ${innerTmpl} aria-describedby="Enter text" type="text"></wm-input>`;
+            tmpl = `<wm-input ${innerTmpl} aria-describedby="Enter text" type="text" ${updateOnTmpl}></wm-input>`;
             break;
     }
     return tmpl;
