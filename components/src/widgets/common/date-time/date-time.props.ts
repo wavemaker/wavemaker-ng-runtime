@@ -9,7 +9,6 @@ export const dateTimeProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['excludedays', PROP_STRING],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
-        ['ismeridian', {value: true, ...PROP_BOOLEAN}],
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],
         ['minutestep', {value: 15, ...PROP_NUMBER}],

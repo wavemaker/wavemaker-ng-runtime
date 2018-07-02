@@ -1,4 +1,4 @@
-<div dropdown [isOpen]="isTimeOpen" [autoClose]="false" [container]="'body'" (onShown)="addClickListener()" style="display: inherit;">
+<div dropdown [isOpen]="isTimeOpen" autoClose="false" [container]="'body'" (onShown)="addClickListener()" style="display: inherit;">
     <input class="form-control app-textbox display-input" aria-label="Set the date and time"
            focus-target
            [name]="name"
@@ -31,9 +31,9 @@
                [bsValue]="bsDateValue"
                (bsValueChange)="onModelUpdate($event, 'date')">
     </div>
-    <div *dropdownMenu class="dropdown-menu" aria-label="timepicker dropdown" aria-controls="time">
+    <div *dropdownMenu class="dropdown-menu" aria-label="timepicker dropdown" aria-controls="time" (click)="preventTpClose($event)">
         <timepicker class="model-holder"
-                    [showMeridian]="!ismeridian"
+                    [showMeridian]="ismeridian"
                     [readonlyInput]="disabled || readonly || isCurrentDate"
                     [(ngModel)]="bsTimeValue"
                     [min]="minTime"
