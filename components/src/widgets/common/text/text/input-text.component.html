@@ -18,4 +18,5 @@
        (blur)="handleBlur($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
        [mask]="displayformat"
+       (keyup.enter)="flushViewChanges(input.value)"
        #input>

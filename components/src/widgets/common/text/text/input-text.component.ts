@@ -28,4 +28,8 @@ export class InputTextComponent extends BaseInput {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
     }
+
+    flushViewChanges(val) {
+        this.ngModel.update.next(val);
+    }
 }

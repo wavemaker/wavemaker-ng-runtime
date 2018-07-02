@@ -169,7 +169,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
         // On value change in form, update the dataoutput
         const onValueChangeSubscription =  this.ngform.valueChanges
-            .debounceTime(500)
             .subscribe(this.updateDataOutput.bind(this));
         this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
         this.elScope = this;
