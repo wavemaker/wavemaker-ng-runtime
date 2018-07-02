@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
 
 import { addClass, formatStyle, setAttr, setCSSFromObj } from '@wm/core';
 
@@ -29,7 +29,7 @@ let activePopover: PopoverComponent;
     ]
 })
 
-export class PopoverComponent extends StylableComponent implements OnInit, AfterContentInit {
+export class PopoverComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
     private event: string;
     private isOpen: boolean = false;
     private closePopoverTimeout;
@@ -47,7 +47,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.nativeElement, this);
 
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
@@ -119,6 +118,11 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (!this.popoverTemplate) {
             this.event = '';
         }
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        styler(this.anchorRef.nativeElement, this);
     }
 }
 
