@@ -1,8 +1,8 @@
-import { Attribute, Component, Injector, OnInit } from '@angular/core';
-
+import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { App, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
+import { styler } from '@wm/components';
 
 import { registerProps } from './file-upload.props';
 import { StylableComponent } from '../base/stylable.component';
@@ -21,7 +21,7 @@ const WIDGET_CONFIG = {
     templateUrl: './file-upload.component.html'
 })
 
-export class FileUploadComponent extends StylableComponent implements OnInit {
+export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit {
 
     selectedFiles = {};
     progressObservable;
@@ -62,7 +62,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
         status: ''
     };
     /*_hasOnSuccessEvt = WM.isDefined(attrs.onSuccess);
-    _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
+     _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
 
     // Checking if the selected file is valid for the choosen filter type
     isValidFile(filename, contenttype, extensionName, isMobileType) {
@@ -138,7 +138,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
     uploadUrl = 'services';
 
     /* change server path based on user option */
-    changeServerUploadPath (path) {
+    changeServerUploadPath(path) {
         this.selectedUploadTypePath = path;
     }
 
@@ -179,7 +179,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
     }*/
 
     /* this function returns the fileextension */
-    getFileExtension (fileName) {
+    getFileExtension(fileName) {
         if (fileName && _.includes(fileName, '.')) {
             return fileName.substring(fileName.lastIndexOf('.') + 1);
         }
@@ -191,19 +191,19 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
      * @param $event
      * @param $files
      */
-    onSelectEventCall ($event, $files) {
-            this.selectedFiles = $files;
-            setTimeout(() => {
-                this.invokeEventCallback('select', {
-                    $event: $.extend($event.$files || {}, $files),
-                    files: $files
-                });
+    onSelectEventCall($event, $files) {
+        this.selectedFiles = $files;
+        setTimeout(() => {
+            this.invokeEventCallback('select', {
+                $event: $.extend($event.$files || {}, $files),
+                files: $files
             });
+        });
     }
 
     /*this function to append upload status dom elements to widget */
-    onFileSelect ($event, $files) {
-        const uploadOptions = { formName : this.formName};
+    onFileSelect($event, $files) {
+        const uploadOptions = {formName: this.formName};
         let beforeSelectVal;
         $files = this.getValidFiles($files);
         // Make call if there are valid files else no call is made
@@ -268,5 +268,9 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
         // Todo:[Shubham] this._isMobileType = !CONSTANTS.$rootScope.isApplicationType;
         this._isMobileType = false;
         this._isCordova = false;
+    }
+
+    ngAfterViewInit() {
+        styler( this.nativeElement.querySelector('.app-button, .drop-box'), this);
     }
 }
