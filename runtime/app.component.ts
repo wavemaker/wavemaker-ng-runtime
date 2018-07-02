@@ -6,6 +6,7 @@ import { OAuthService } from '@wm/oAuth';
 
 import { PipeProvider } from './services/pipe-provider.service';
 import { SpinnerService } from './services/spinner.service';
+import { setTheme } from 'ngx-bootstrap';
 
 type SPINNER = {show: boolean, messages: Array<string>};
 
@@ -64,6 +65,9 @@ export class AppComponent implements DoCheck, AfterViewInit {
                 this.spinner.messages = data.messages;
             });
         });
+
+        // set theme to bs3 on ngx-bootstrap. This avoids runtime calculation to determine bs theme. Thus resolves performance.
+        setTheme('bs3')
     }
 
     providersConfig;

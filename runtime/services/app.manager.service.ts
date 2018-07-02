@@ -52,6 +52,7 @@ export class AppManagerService {
      * On session timeout, if the session timeout config is set to a dialog, then open login dialog
      */
     private showLoginDialog() {
+        this.$spinner.hide('globalSpinner');
         this.$dialog.closeAllDialogs();
         this.$dialog.open('CommonLoginDialog');
     }
