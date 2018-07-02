@@ -479,7 +479,7 @@ $.widget('wm.datatable', {
                         innerTmpl = '<span class="actions-column" data-identifier="actionButtons"></span>';
                         break;
                     case 'rowIndex':
-                        innerTmpl = row.index;
+                        innerTmpl = row.$$index;
                         break;
                     case 'none':
                         innerTmpl = '';
@@ -628,7 +628,7 @@ $.widget('wm.datatable', {
             });
 
             /* Add a unique identifier for each row. */
-            rowData.index = self.options.startRowIndex + i;
+            rowData.$$index = self.options.startRowIndex + i;
             rowData.$$pk = i;
             data.push(rowData);
         });
@@ -744,7 +744,7 @@ $.widget('wm.datatable', {
             return;
         }
 
-        rowData.index = this.options.startRowIndex + rowId;
+        rowData.$$index = this.options.startRowIndex + rowId;
         rowData.$$pk = rowId;
         if (this.options.editmode !== this.CONSTANTS.FORM && this.options.editmode !== this.CONSTANTS.DIALOG) {
             $row = $(this._getRowTemplate(rowData));
