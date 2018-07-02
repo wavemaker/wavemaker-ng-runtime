@@ -106,8 +106,9 @@ export class LoginActionManager extends BaseActionManager {
 
                 /* handle navigation if defaultSuccessHandler on variable is true */
                 if (variable.useDefaultSuccessHandler) {
+                    const isSameUserReloggedIn = lastLoggedInUsername === params['j_username'];
                     // if first time user logging in or same user re-logging in, execute n/w calls failed before logging in
-                    if (!lastLoggedInUsername || lastLoggedInUsername === params['j_username']) {
+                    if (!lastLoggedInUsername || isSameUserReloggedIn) {
                         appManager.executeSessionFailureRequests();
                     }
                     // get redirectTo page from URL and remove it from URL
@@ -140,7 +141,7 @@ export class LoginActionManager extends BaseActionManager {
                             const securityConfig = securityService.get(),
                                 sessionTimeoutLoginMode = _.get(securityConfig, 'loginConfig.sessionTimeout.type') || 'PAGE';
                             // if in dialog mode and a new user logs in OR login happening through page, reload the app
-                            if (lastLoggedInUsername !== params.username || sessionTimeoutLoginMode !== 'DIALOG') {
+                            if (!isSameUserReloggedIn || sessionTimeoutLoginMode !== 'DIALOG') {
                                 routerService.navigate([`/`]);
                                 window.location.reload();
                             }
