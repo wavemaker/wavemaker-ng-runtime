@@ -761,10 +761,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             minIndex: null,
             maxIndex: null
         };
-        if (this.groupby && this.collapsible) {
-            this.handleHeaderClick = handleHeaderClick;
-            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
-        }
     }
 
     ngAfterViewInit() {
@@ -774,6 +770,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.selectedItemWidgets = this.multiselect ? [] : {};
             if (this.enablereorder && !this.groupby) {
                 this.configureDnD();
+            }
+            if (this.groupby && this.collapsible) {
+                this.handleHeaderClick = handleHeaderClick;
+                this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
             }
             this.setListClass();
         });
