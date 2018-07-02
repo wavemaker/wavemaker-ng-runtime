@@ -116,6 +116,18 @@ then
     fi
     echo -e "${Green}Built ngx-mask\n"
 
+    echo -e "${Cyan}Building angular-websocket ${White}"
+    $TSC ./node_modules/angular2-websocket/src/angular2-websocket.ts  --target es5 --module es2015  --lib ES2017,DOM --moduleResolution node --outDir ./dist/tmp
+    $ROLLUP -c ./config/rollup.angular-websocket.config.js --silent
+    if [ "$?" != "0" ]
+    then
+        echo -e "${Red}Error in angular-websocket ${White}\n"
+        exit 1
+    fi
+    echo -e "${Green}angular-websocket ${White}\n"
+
+
+
     echo -e "${Cyan}Building swipey ${White}"
     $ROLLUP -c ./swipey/rollup.config.js --silent
     if [ "$?" != "0" ]
@@ -144,6 +156,7 @@ then
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/ngx-bootstrap.umd.js \
         ./dist/tmp/ngx-toastr.umd.js \
+        ./dist/tmp/angular-websocket.umd.js \
         ./dist/tmp/ngx-mask.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \

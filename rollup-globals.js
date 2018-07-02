@@ -43,5 +43,6 @@ export default {
     'rxjs/Subject': 'Rx',
     'rxjs/Observable': 'Rx',
     'rxjs/ReplaySubject': 'Rx',
-    'tslib': 'tslib'
+    'tslib': 'tslib',
+    'angular2-websocket/angular2-websocket': 'angularWebSocket'
 };

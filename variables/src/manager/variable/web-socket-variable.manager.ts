@@ -57,7 +57,6 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @returns {*}
      */
     private getURL(variable) {
-        /*Todo[Shubham]: Implement WebSocket
         const opInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo'),
             inputFields = variable.dataBinding;
         let config;
@@ -67,21 +66,18 @@ export class WebSocketVariableManager extends BaseVariableManager {
             param.sampleValue = inputFields[param.name];
         });
         // although, no header params will be present, keeping 'skipCloakHeaders' flag if support provided later
-/!*
-        WM.extend(opInfo, {
+        $.extend(opInfo, {
             skipCloakHeaders: true
         });
-*!/
 
-        // Todo[Shubham]
         // call common method to prepare config for the service operation info.
-        config = ServiceVariableUtils.constructRequestParams(opInfo, null, null);
-        /!* if error found, return *!/
+        config = ServiceVariableUtils.constructRequestParams(variable, opInfo, inputFields);
+        /* if error found, return */
         if (config.error && config.error.message) {
             this._onSocketError(variable, {data: config.error.message});
             return;
         }
-        return config.url;*/
+        return config.url;
     }
 
     /**
@@ -94,7 +90,6 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @private
      */
     private _onSocketMessage(variable, evt) {
-        /*Todo[Shubham]: Implement WebSocket
         let data = _.get(evt, 'data'), value, dataLength, dataLimit, shouldAddToLast, insertIdx;
         data = getValidJSON(data) || xmlToJson(data) || data;
         // EVENT: ON_MESSAGE
@@ -116,7 +111,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
             variable.dataSet.splice(insertIdx, 0, data);
         } else {
             variable.dataSet = isDefined(value) ? value : data;
-        }*/
+        }
     }
 
     /**
@@ -174,8 +169,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @param variable
      */
     private freeSocket(variable) {
-        /*Todo[Shubham]: Implement WebSocket
-        _.set(this.scope_var_socket_map, [variable.activeScope.$id, variable.name], undefined);*/
+        _.set(this.scope_var_socket_map, [variable, variable.name], undefined);
     }
 
     /**
@@ -186,11 +180,10 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @private
      */
     private _onSocketClose(variable, evt) {
-        /*Todo[Shubham]: Implement WebSocket
         variable._socketConnected = false;
         this.freeSocket(variable);
         // EVENT: ON_CLOSE
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.CLOSE, variable, _.get(evt, 'data'), evt);*/
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.CLOSE, variable, _.get(evt, 'data'), evt);
     }
 
     /**
@@ -201,11 +194,10 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @private
      */
     private _onSocketError(variable, evt) {
-        /*Todo[Shubham]: Implement WebSocket
         variable._socketConnected = false;
         this.freeSocket(variable);
         // EVENT: ON_ERROR
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, _.get(evt, 'data') || 'Error while connecting with ' + variable.service, evt);*/
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, _.get(evt, 'data') || 'Error while connecting with ' + variable.service, evt);
     }
 
     /**
@@ -215,27 +207,26 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @returns {*}
      */
     private getSocket(variable) {
-        /*Todo[Shubham]: Implement WebSocket
         const url     = this.getURL(variable);
-        let _socket = _.get(this.scope_var_socket_map, [variable.activeScope.$id, variable.name]);
+        let _socket = _.get(this.scope_var_socket_map, [variable, variable.name]);
         if (_socket) {
             return _socket;
         }
 
         // Trigger error if unsecured webSocket is used in secured domain, ignore in mobile device
         if (!CONSTANTS.hasCordova && isInsecureContentRequest(url)) {
-            triggerFn(this._onSocketError.bind(undefined, variable));
+            triggerFn(this._onSocketError.bind(this, variable));
             return;
         }
         _socket = new $WebSocket(url);
-        _socket.onOpen(this._onSocketOpen.bind(undefined, variable));
-        _socket.onError(this._onSocketError.bind(undefined, variable));
-        _socket.onMessage(this._onSocketMessage.bind(undefined, variable));
-        _socket.onClose(this._onSocketClose.bind(undefined, variable));
+        _socket.onOpen(this._onSocketOpen.bind(this, variable));
+        _socket.onError(this._onSocketError.bind(this, variable));
+        _socket.onMessage(this._onSocketMessage.bind(this, variable));
+        _socket.onClose(this._onSocketClose.bind(this, variable));
 
-        _.set(this.scope_var_socket_map, [variable.activeScope.$id, variable.name], _socket);
+        _.set(this.scope_var_socket_map, [variable, variable.name], _socket);
         variable._socket = _socket;
-        return _socket;*/
+        return _socket;
 }
 
     /**
@@ -244,7 +235,6 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @returns {*}
      */
     public open(variable: WebSocketVariable) {
-        /*Todo[Shubham]: Implement WebSocket
         const shouldOpen = this._onBeforeSocketOpen(variable);
         let socket;
         if (!shouldOpen) {
@@ -253,24 +243,23 @@ export class WebSocketVariableManager extends BaseVariableManager {
         socket = this.getSocket(variable);
 
         // close the connection on scope destruction
-        /!*variable.activeScope.$on('$destroy', function () {
+        /*variable.activeScope.$on('$destroy', function () {
             variable.close();
-        });*!/
+        }); */
 
-        return socket;*/
+        return socket;
     }
 
     /**
      * closes an existing socket connection on variable
      */
     public close(variable: WebSocketVariable) {
-        /*Todo[Shubham]: Implement WebSocket
         const shouldClose = this._onBeforeSocketClose(variable),
             socket      = this.getSocket(variable);
         if (!shouldClose) {
             return;
         }
-        socket.close();*/
+        socket.close();
     }
 
     /**
@@ -280,7 +269,6 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @param message
      */
     public send(variable: WebSocketVariable, message: string) {
-        /*Todo[Shubham]: Implement WebSocket
         const socket      = this.getSocket(variable);
         let response;
 
@@ -291,34 +279,10 @@ export class WebSocketVariableManager extends BaseVariableManager {
         }
         message = isDefined(response) ? response : message;
         message = isObject(message) ? JSON.stringify(message) : message;
-        socket.send(message);*/
-    }
-
-    // Todo[Shubham]: Implement update method, after discussion
-    /**
-     * this will initialize variable dataSet with model structure prepared from the dataType of the variable
-     * It is being used to carry out field defs for live widgets in widgetconfigdialogconroller.js
-     * this should be removed once typeUtils is utilized
-     */
-    public update(variable: WebSocketVariable) {
-        /*if (variable._prefabName) {
-            ServiceFactory.getPrefabTypes(variable._prefabName, function (types) {
-                variable.dataSet = $servicevariable.getServiceModel({
-                    variable: variable,
-                    typeRef: variable.type,
-                    types: types
-                });
-                variable.dataSet = shouldAppendData(variable) ? [variable.dataSet] : variable.dataSet;
-            });
-        } else {
-            variable.dataSet = $servicevariable.getServiceModel({
-                variable: variable,
-                typeRef: variable.type
-            });
-            variable.dataSet = shouldAppendData(variable) ? [variable.dataSet] : variable.dataSet;
-        }*/
+        socket.send(message);
     }
 
     // Todo[Shubham]: Implement init method, after discussion
-    public init() {}
+    public init() {
+    }
 }
