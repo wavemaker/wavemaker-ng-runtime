@@ -10,7 +10,7 @@ import { StylableComponent } from '../base/stylable.component';
 declare const _;
 
 registerProps();
-const DEFAULT_CLS = 'app-fileupload input-group';
+const DEFAULT_CLS = 'app-fileupload';
 const WIDGET_CONFIG = {
     widgetType: 'wm-fileupload',
     hostClass: DEFAULT_CLS
@@ -195,7 +195,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
             this.selectedFiles = $files;
             setTimeout(() => {
                 this.invokeEventCallback('select', {
-                    $event: $.extend($event.$files || {}, $files)
+                    $event: $.extend($event.$files || {}, $files),
+                    files: $files
                 });
             });
     }
@@ -208,8 +209,10 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
         // Make call if there are valid files else no call is made
         if ($files.length) {
             this.progressObservable = new Subject();
+            // EVENT: ON_BEFORE_SELECT
             beforeSelectVal = this.invokeEventCallback('beforeselect', {
-                $event: $.extend($event.$files || {}, $files)
+                $event: $.extend($event.$files || {}, $files),
+                files: $files
             });
             if (this.datasource) {
                 this.datasource._progressObservable = this.progressObservable;
@@ -226,6 +229,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit {
                     });
                 });
                 if (beforeSelectVal !== false) {
+                    // EVENT: ON_SELECT
                     this.onSelectEventCall($event, $files);
                 }
             } else {
