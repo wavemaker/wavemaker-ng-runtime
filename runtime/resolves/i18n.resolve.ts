@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 
-import { I18nService } from '../services/i18n.service';
+import { AbstractI18nService } from '@wm/core';
 
 @Injectable()
 export class I18nResolve implements Resolve<any> {
 
-    constructor(private i18nService: I18nService) {}
+    constructor(private i18nService: AbstractI18nService) {}
 
     resolve() {
         return this.i18nService.loadDefaultLocale();

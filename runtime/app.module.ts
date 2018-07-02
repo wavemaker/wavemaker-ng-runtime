@@ -7,7 +7,7 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 import { ToastrModule } from 'ngx-toastr';
 
-import { $parseExpr, App, AbstractDialogService, AbstractToasterService } from '@wm/core';
+import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService } from '@wm/core';
 import { HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
 import { OAuthModule } from '@wm/oAuth';
@@ -22,7 +22,7 @@ import { AppRef } from './services/app.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { CommonPageComponent } from './components/common-page.component';
 import { I18nResolve } from './resolves/i18n.resolve';
-import { I18nService } from './services/i18n.service';
+import { I18nServiceImpl } from './services/i18n.service';
 import { MetadataResolve } from './resolves/metadata.resolve';
 import { EmptyPageComponent, PageWrapperComponent } from './components/page-wrapper.component';
 import { PipeProvider } from './services/pipe-provider.service';
@@ -95,11 +95,11 @@ const routes = [
         {provide: App, useClass: AppRef},
         {provide: AbstractDialogService, useClass: DialogServiceImpl},
         {provide: AbstractToasterService, useClass: ToasterServiceImpl},
+        {provide: AbstractI18nService, useClass: I18nServiceImpl},
         PipeProvider,
         RenderUtilsService,
         MetadataResolve,
         AppJSResolve,
-        I18nService,
         I18nResolve,
         AppManagerService,
         AppResourceManagerService,

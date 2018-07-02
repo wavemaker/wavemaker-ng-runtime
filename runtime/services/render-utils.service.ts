@@ -9,13 +9,12 @@ import { BsDropdownModule, CarouselModule, PopoverModule } from 'ngx-bootstrap';
 import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
-import { $appDigest, $invokeWatchers, App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
+import { $appDigest, $invokeWatchers, AbstractI18nService, App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
-import { I18nService } from './i18n.service';
 import { AccessrolesDirective } from '../directives/accessroles.directive';
 
 const scriptCache = new Map<string, Function>();
@@ -184,7 +183,7 @@ export class RenderUtilsService {
         private injector: Injector,
         private route: ActivatedRoute,
         private resouceMngr: AppResourceManagerService,
-        private i18nService: I18nService
+        private i18nService: AbstractI18nService
     ) {
         app.subscribe('renderResource', options => {
             this.renderResource(options.selector, options.markup, options.styles, options.providers,

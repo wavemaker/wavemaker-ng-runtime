@@ -1,17 +1,16 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString } from '@wm/core';
+import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { HttpService } from '@wm/http';
 
-import { I18nService } from './i18n.service';
 
 declare const _;
 declare const _WM_APP_PROPERTIES: any;
 
 const injectorMap = {
     DialogService: AbstractDialogService,
-    i18n: I18nService,
+    i18nService: AbstractI18nService,
     wmToaster: AbstractToasterService
 };
 
@@ -49,7 +48,7 @@ export class AppRef {
 
     constructor(
         private inj: Injector,
-        private i18nService: I18nService,
+        private i18nService: AbstractI18nService,
         private httpService: HttpService,
         private securityService: SecurityService
     ) {

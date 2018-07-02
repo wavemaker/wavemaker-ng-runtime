@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { getSessionStorageItem, replace, setCSS, setSessionStorageItem } from '@wm/core';
+import {getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem} from '@wm/core';
 
 declare const $, _, moment, _WM_APP_PROPERTIES;
 
@@ -12,7 +12,7 @@ const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 
     'he', 'ku', 'mzn', 'pnb', 'ps', 'sd', 'ug', 'ur', 'yi'];
 
 @Injectable()
-export class I18nService {
+export class I18nServiceImpl extends AbstractI18nService {
 
     private selectedLocale: string;
     private readonly appLocale: any;
@@ -21,6 +21,7 @@ export class I18nService {
     private componentLocalePaths = [];
 
     constructor(private $http: HttpClient) {
+        super();
         this.appLocale = {};
     }
 

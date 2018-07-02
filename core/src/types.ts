@@ -84,6 +84,20 @@ export abstract class AbstractDialogService {
     public abstract closeAllDialogs: Function;
 }
 
+export abstract class AbstractI18nService {
+    public abstract registerLocalePath(path: string);
+    public abstract getSelectedLocale(): string;
+    public abstract getAppLocale(): any;
+    public abstract setSelectedLocale(locale);
+    public abstract loadDefaultLocale();
+    public abstract getLocalizedMessage(message, ...args);
+    protected abstract loadComponentLocaleBundle(path);
+    protected abstract loadComponentLocaleBundles(): Promise<any>;
+    protected abstract loadAppLocaleBundle();
+    protected abstract loadMomentLocaleBundle();
+    protected abstract loadLocaleBundles();
+}
+
 export abstract class AbstractToasterService {
     public abstract success (title: string, desc: string);
     public abstract error (title: string, desc: string);

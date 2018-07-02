@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { AbstractDialogService, App } from '@wm/core';
-import { I18nService } from '@wm/runtime';
+import { AbstractDialogService, AbstractI18nService, App } from '@wm/core';
 
 import { SpinnerService } from './spinner.service';
 
@@ -26,7 +25,7 @@ export class AppManagerService {
         private $variables: VariablesService,
         private $metadata: MetadataService,
         private $spinner: SpinnerService,
-        private $i18n: I18nService
+        private $i18n: AbstractI18nService
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
