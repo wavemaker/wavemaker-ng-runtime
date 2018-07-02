@@ -35,6 +35,7 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
      */
     outputformat: string;
     private showseconds: boolean;
+    private ismeridian: boolean;
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
@@ -115,7 +116,8 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
             setAttr(inputElement, key, nv);
         }
         if (key === 'timepattern') {
-            this.showseconds = _.includes(nv, 'ss');
+            this.showseconds = _.includes(nv, 's');
+            this.ismeridian = _.includes(nv, 'h');
         }
         if (key === 'mintime') {
             this.minTime = getValidDateObject(nv); // TODO it is supposed to be time conversion, not to the day
@@ -134,6 +136,13 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
         $event.stopPropagation();
         this.status.isopen = !this.status.isopen;
         this.addBodyClickListener(this.status.isopen);
+    }
+
+    /**
+     * This is an internal method used to Prevent time picker close while changing time value
+     */
+    private preventTpClose($event) {
+        $event.stopImmediatePropagation();
     }
 
     private addBodyClickListener(skipListener) {

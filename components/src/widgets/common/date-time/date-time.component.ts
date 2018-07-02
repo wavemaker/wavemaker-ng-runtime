@@ -37,6 +37,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private bsDateValue;
     private bsTimeValue;
     private showseconds: boolean;
+    private ismeridian: boolean;
 
     get timestamp() {
         return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
@@ -189,13 +190,22 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.invokeOnChange(this.datavalue, {}, true);
         $appDigest();
     }
+
+    /**
+     * This is an internal method used to Prevent time picker close while changing time value
+     */
+    private preventTpClose($event) {
+        $event.stopImmediatePropagation();
+    }
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'autofocus' && nv) {
             const inputElement = this.$element.find('.display-input')[0] as HTMLElement;
             setAttr(inputElement, key, nv);
         }
         if (key === 'datepattern') {
-            this.showseconds = _.includes(nv, 'ss');
+            this.showseconds = _.includes(nv, 's');
+            this.ismeridian = _.includes(nv, 'h');
         }
         super.onPropertyChange(key, nv, ov);
     }
