@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostBinding, Injector, Optional } from '@angular/core';
 
-import { addClass, App, encodeUrl, formatStyle, getRouteNameFromLink, setAttr } from '@wm/core';
+import { addClass, App, encodeUrl, getRouteNameFromLink, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -87,10 +87,6 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
                 nv = `//${nv}`;
             }
             setAttr(this.nativeElement, 'href', nv);
-        } else if (key === 'iconheight') {
-            this.iconheight = formatStyle(this.iconheight);
-        } else if (key === 'iconwidth') {
-            this.iconwidth = formatStyle(this.iconwidth);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
