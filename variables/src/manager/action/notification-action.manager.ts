@@ -7,11 +7,11 @@ declare const _;
 
 export class NotificationActionManager extends BaseActionManager {
 
-    private onToasterClick(variable, a,b) {
+    private onToasterClick(variable) {
         initiateCallback('onClick', variable, '');
     }
 
-    private onToasterHide(variable, a,b) {
+    private onToasterHide(variable) {
         initiateCallback('onHide', variable, '');
     }
 

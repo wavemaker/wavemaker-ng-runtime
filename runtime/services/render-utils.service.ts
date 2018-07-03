@@ -294,7 +294,7 @@ export class RenderUtilsService {
 
             this.app.lastActivePageName = this.app.activePageName;
             this.app.activePageName = pageName;
-            this.app.activePageInstance = pageInstance;
+            this.app.Page = pageInstance;
             pageInstance.activePageName = pageName;
 
             this.route.queryParams.subscribe(params => pageInstance.pageParams = params);
@@ -330,7 +330,7 @@ export class RenderUtilsService {
             execScript(script, `partial-${partialName}`, 'Partial', partialInstance, this.app, inj);
 
             partialInstance.App = this.app;
-            partialInstance.Page = this.app.activePageInstance;
+            partialInstance.Page = this.app.Page;
             partialInstance.activePageName = this.app.activePageName;
             containerWidget.Widgets = partialInstance.Widgets;
 
