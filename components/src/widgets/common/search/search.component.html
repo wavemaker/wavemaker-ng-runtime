@@ -30,6 +30,7 @@
     <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs" [placeholder]="placeholder || ''"
            focus-target
            [(ngModel)]="query"
+           [readonly]="readonly"
            [disabled]="disabled"
            [typeahead]="typeaheadDataSource"
            [typeaheadItemTemplate]="customItemTemplate"
@@ -58,6 +59,7 @@
            [disabled]="disabled"
            autocomplete="off"
            [(ngModel)]="query"
+           [readonly]="readonly"
            [typeahead]="typeaheadDataSource"
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
@@ -81,7 +83,7 @@
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>
             <button title="Search" [disabled]="disabled" class="app-search-button wi wi-search" type="submit"
-                    (click)="onSelect($event)"></button>
+                    (click)="onSelect($event, true)"></button>
         </form>
     </span>
 </ng-template>
