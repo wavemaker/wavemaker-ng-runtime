@@ -456,7 +456,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
     // Function to generate and compile the form fields from the metadata
     generateFormFields() {
-        const $gridLayout = this.$element.find('.form-elements .app-grid-layout:first');
+        const $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]:first');
         const noOfColumns = Number($gridLayout.attr('columns')) || 1;
         const columnWidth = 12 / noOfColumns;
         let fieldTemplate = '';
@@ -496,6 +496,8 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         $gridLayout.empty(); // Remove any elements from the grid
         this.dynamicFormRef.clear();
 
+        const context = Object.create(this.viewParent);
+        context.form = this;
         this.app.notify('renderResource', {
             selector: 'app-form-' + this.widgetId,
             markup: transpile(fieldTemplate),
@@ -508,9 +510,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
             },
             vcRef: this.dynamicFormRef,
             $target: $gridLayout[0],
-            context: {
-                form: this
-            }
+            context
         });
         this.setFormData(this.formdata);
     }

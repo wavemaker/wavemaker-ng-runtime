@@ -1002,3 +1002,12 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
 
     return filter$;
 };
+
+// This method will set the given proto on the target
+export const extendProto = (target, proto) => {
+    let _proto = Object.getPrototypeOf(target);
+    while (Object.getPrototypeOf(_proto).constructor !== Object) {
+        _proto = Object.getPrototypeOf(_proto);
+    }
+    Object.setPrototypeOf(_proto, proto);
+};
