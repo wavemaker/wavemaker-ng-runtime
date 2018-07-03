@@ -22,6 +22,7 @@ export const registerProps = () => {
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],
                 ['iconurl', PROP_STRING],
+                ['iconwidth', PROP_STRING],
                 ['itemaction', PROP_STRING],
                 ['itemchildren', PROP_STRING],
                 ['itemicon', PROP_STRING],

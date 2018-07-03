@@ -4,7 +4,7 @@ import { EventManager } from '@angular/platform-browser';
 import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
-import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
+import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, formatStyle, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { register } from '../../framework/widget-registry';
@@ -34,6 +34,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     public readonly widgetId: any;
 
     public isDestroyed: boolean;
+
+    public iconheight: string;
+    public iconwidth: string;
 
     /**
      * jQuery nativeElement reference of the component root
@@ -301,6 +304,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         } else if (key === 'conditionalclass') {
             // update classes if old and nv value are different
             updateClasses(nv.toAdd, nv.toRemove, this.nativeElement);
+        }  else  if (key === 'iconheight') {
+            this.iconheight = formatStyle(this.iconheight);
+        } else if (key === 'iconwidth') {
+            this.iconwidth = formatStyle(this.iconwidth);
         }
     }
 
