@@ -2,7 +2,7 @@ import { Injector } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, debounce, toBoolean } from '@wm/core';
+import { $appDigest, debounce, isDefined, toBoolean } from '@wm/core';
 
 import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
@@ -143,7 +143,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.resetDatasetItems();
 
         // if datavalue is not defined or empty then set the model as undefined.
-        if (_.isUndefined(values) || _.isNull(values) || (values instanceof Array && !values.length)) {
+        if (!isDefined(values) || values === '' || _.isNull(values) || (values instanceof Array && !values.length)) {
             this._modelByKey = undefined;
             return;
         }
@@ -153,7 +153,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         }
 
         // preserve the datavalue if datasetItems are empty.
-        if (!this.datasetItems.length && !_.isUndefined(values)) {
+        if (!this.datasetItems.length && isDefined(values)) {
             this.toBeProcessedDatavalue = values;
             return;
         }
@@ -181,9 +181,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         }
 
         // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in toBeProcessedDatavalue.
-        if (_.isUndefined(this._modelByKey) || !this._modelByKey.length) {
+        if (!isDefined(this._modelByKey) || !this._modelByKey.length) {
             this.toBeProcessedDatavalue = values;
-        } else if (!_.isUndefined(this.toBeProcessedDatavalue)) {
+        } else if (isDefined(this.toBeProcessedDatavalue)) {
             // obtain the first array value when multiple is set to false.
             this._modelByValue = (!this.multiple && _.isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
             this.toBeProcessedDatavalue = undefined;
@@ -235,7 +235,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected postDatasetItemsInit() {
         if (this.datasetItems.length) {
             // use the latest of toBeProcessedDatavalue, datavalue
-            const _datavalue = _.isUndefined(this.toBeProcessedDatavalue) ? this.datavalue : this.toBeProcessedDatavalue;
+            const _datavalue = !isDefined(this.toBeProcessedDatavalue) ? this.datavalue : this.toBeProcessedDatavalue;
             this.selectByValue(_datavalue);
         }
         // notify the dataset listeners
