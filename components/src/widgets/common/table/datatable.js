@@ -2303,6 +2303,8 @@ $.widget('wm.datatable', {
         }
         if (!isCreated) {
             this.setColGroupWidths();
+        } else {
+            this._setColSpan(this.options.headerConfig);
         }
         if ($.isFunction(this.options.onDataRender)) {
             this.options.onDataRender();
