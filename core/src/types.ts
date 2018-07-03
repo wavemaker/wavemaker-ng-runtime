@@ -32,6 +32,7 @@ enum Operation {
     SUPPORTS_SERVER_FILTER = 'supportsServerFilter',
     GET_OPTIONS = 'getOptions',
     SEARCH_RECORDS = 'searchRecords',
+    GET_REQUEST_PARAMS = 'getRequestParams',
     GET_PAGING_OPTIONS = 'getPagingOptions',
     FETCH_DISTINCT_VALUES = 'fetchDistinctValues',
     GET_UNIQUE_IDENTIFIER = 'getUniqueIdentifier',

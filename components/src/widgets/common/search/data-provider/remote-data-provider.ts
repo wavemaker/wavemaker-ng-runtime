@@ -2,22 +2,56 @@ import { AppDefaults, DataSource, findValueOf } from '@wm/core';
 
 import { convertDataToObject } from '../../../../utils/form-utils';
 import { IDataProvider, IDataProviderConfig } from './data-provider';
+import { interpolateBindExpressions } from '../../../../utils/data-utils';
 
 declare const _;
 
 export class RemoteDataProvider implements IDataProvider {
     public filter(config: IDataProviderConfig): Promise<any> {
-        return config.datasource.execute(
-            DataSource.Operation.SEARCH_RECORDS,
-            {
-                searchKeys: _.split(config.searchKey, ','), // todo: check for default value
-                searchValue: config.query,
-                orderBy: config.orderby ? _.replace(config.orderby, /:/g, ' ') : '',
-                pagesize: config.limit || config.pagesize,
-                page: config.page,
-                onBeforeservicecall: config.onBeforeservicecall
+        return this.filterData(config).then(response => this.onFilterSuccess(config, response), () => this.onFilterFailure());
+    }
+
+    private filterData(config) {
+        if (config.dataoptions) {
+            const dataoptions = config.dataoptions;
+
+            const requestParams = config.datasource.execute(DataSource.Operation.GET_REQUEST_PARAMS, config);
+
+            // If options are specified, make specifics calls to fetch the results
+            // Fetch the related field data
+            if (dataoptions.relatedField) {
+                return new Promise((resolve, reject) => {
+                    interpolateBindExpressions(config.viewParent, dataoptions.filterExpr, (filterexpressions) => {
+                        requestParams.filterExpr = dataoptions.filterExpr = filterexpressions;
+                        dataoptions.filterExpr = filterexpressions;
+
+                        config.datasource.execute(
+                            DataSource.Operation.GET_RELATED_TABLE_DATA, _.assign({relatedField: dataoptions.relatedField}, requestParams)
+                        ).then(resolve, reject);
+                    });
+                });
             }
-        ).then(response => this.onFilterSuccess(config, response), () => this.onFilterFailure());
+            // Fetch the distinct data
+            if (dataoptions.distinctField) {
+                return config.datasource.execute(
+                    DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS,
+                    {
+                        pagesize: config.limit || config.pagesize,
+                        page: config.page,
+                        fields: dataoptions.distinctField,
+                        entityName: dataoptions.tableName,
+                        filterFields: _.assign(dataoptions.filterFields, requestParams.filterFields),
+                        filterExpr: dataoptions.filterExpr || {}
+
+                    }
+                );
+            }
+        }
+
+        // search records using the searchkey
+        return config.datasource.execute(
+            DataSource.Operation.SEARCH_RECORDS, config
+        );
     }
 
 
@@ -32,7 +66,6 @@ export class RemoteDataProvider implements IDataProvider {
     }
 
     // this function transform the response data in case it is not an array
-    // todo: variable should be of type DataSource
     protected getTransformedData(variable: any, data: any): any {
         const operationResult = variable.operation + 'Result'; // when output is only string it is available as oprationNameResult
         const tempResponse = data[operationResult];
@@ -43,7 +76,6 @@ export class RemoteDataProvider implements IDataProvider {
             _.set(tempObj, operationResult, tempResponse);
             data = [tempObj]; // convert data into an array having tempObj
         } else {
-            // Todo [bandhavya] check if required.
             // in case data received is already an object then convert it into an array
             data = convertDataToObject(data);
         }
@@ -55,9 +87,8 @@ export class RemoteDataProvider implements IDataProvider {
         return [];
     }
 
-    /**
-     * this function processes the response depending on pageOptions, isPageable and prepares the formattedDataset.
-     */
+
+    // this function processes the response depending on pageOptions, isPageable and prepares the formattedDataset.
     protected onFilterSuccess(config: IDataProviderConfig, response): Promise<any> {
         let data: any = response.data;
         let formattedData: any;
@@ -77,7 +108,7 @@ export class RemoteDataProvider implements IDataProvider {
                 _isLastPage = this.isLast(page, pageOptions.totalElements, pageOptions.size, pageOptions.numberOfElements);
                 isPaginatedData = true;
 
-                /*TODO: [bandhavya] This workaround is because backend is not giving the last page in distinct api. Remove after issue is fixed in backend*/
+                // TODO: [bandhavya] This workaround is because backend is not giving the last page in distinct api. Remove after issue is fixed in backend
                 if (page > 1 && !_isLastPage && pageOptions.totalElements === AppDefaults.INT_MAX_VALUE) {
                     _isLastPage = true;
                     resolve({

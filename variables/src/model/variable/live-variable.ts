@@ -104,6 +104,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.SEARCH_RECORDS:
                 returnVal = this.searchRecords(options);
                 break;
+            case DataSource.Operation.GET_REQUEST_PARAMS:
+                returnVal = this.getRequestParams(options);
+                break;
             case DataSource.Operation.GET_PAGING_OPTIONS:
                 returnVal = this.pagingOptions;
                 break;
@@ -183,6 +186,10 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     searchRecords(options, success?, error?) {
         return getManager().searchRecords(this, options, success, error);
+    }
+
+    getRequestParams(options) {
+        return getManager().prepareRequestParams(options);
     }
 
     _downgradeInputData(data) {

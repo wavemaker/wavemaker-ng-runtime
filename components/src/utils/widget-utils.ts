@@ -111,7 +111,7 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
         // parse the expressionValue for replacing all the expressions with values in the object
         expressionValue = getUpdatedExpr(expressionValue);
     } else {
-        expressionValue = field ? field : expr;
+        expressionValue = expr ? expr : field;
     }
 
     return $parseExpr(expressionValue)(dataObj, {__1: dataObj});

@@ -419,14 +419,14 @@ export class TableFilterSortDirective {
 
             filterFields[filterOn] = (isDefined(newVal) && newVal !== '' && newVal !== null) ? {'value' : newVal} : {};
 
-            if (filterWidget === FormWidgetType.AUTOCOMPLETE && filterField.filterdataoptions) { // TODO: Handle autocomplete
-                // filterField.filterdataoptions.filterFields = filterFields;
+            if (filterWidget === FormWidgetType.AUTOCOMPLETE && filterField.filterWidget.dataoptions) {
+                filterField.filterWidget.dataoptions.filterFields = filterFields;
             } else {
                 this.table.datasource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
                     'fields'         : filterKey,
                     'filterFields'   : filterFields
                 }).then(data => {
-                    filterField.filterdataset = _.pull(_.map(data.content, filterKey), null);
+                    filterField.filterdataset = data.data;
                 });
             }
         });

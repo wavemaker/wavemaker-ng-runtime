@@ -65,6 +65,7 @@ const formFieldMap = new Map(
         ['hint', PROP_STRING],
         ['is-range', PROP_BOOLEAN],
         ['is-related', PROP_BOOLEAN],
+        ['isformfield', {value: true}],
         ['key', PROP_STRING],
         ['lookup-type', PROP_STRING],
         ['lookup-field', PROP_STRING],

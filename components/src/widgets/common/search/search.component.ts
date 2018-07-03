@@ -49,6 +49,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private noMoreData: boolean;
     private isLastPage: boolean;
     private formattedDataset: any;
+    private isformfield: boolean;
 
     public tabindex: number;
     public startIndex: number;
@@ -66,6 +67,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private parentRef: ChipsComponent; // used when search is inside chips.
     private lastSelectedIndex: number;
+    private dataoptions: Object;
 
     // Default check for container methods to access.
     get typeaheadContainerInstance() {
@@ -252,6 +254,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             onBeforeservicecall: this.onBeforeservicecall.bind(this)
         };
 
+        if (this.dataoptions) {
+            dataConfig.dataoptions = this.dataoptions;
+            dataConfig.viewParent = this.viewParent;
+        }
+
         return this.dataProvider.filter(dataConfig)
             .then((response: any) => {
                     // response from dataProvider returns always data object.
@@ -290,7 +297,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // if searchKey is defined, then variable call is made using the searchkey and other filterfields
     // else local data search is performed.
     public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
-        if (this.dataProvider.hasNoMoreData) {
+        // search will show all the results fetched previously without making n/w calls all the time.
+        if (!this.isformfield && this.dataProvider.hasNoMoreData) {
             // converting array to observable using "observable.to".
             return Observable.of(this.getTransformedData(this.formattedDataset));
         }

@@ -111,7 +111,10 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
     formField.displayfield = displayField = (formField.displayfield || displayField || formField._primaryKey);
 
     if (isSearchWidgetType(formField[options.widget])) {
-        // TODO: For autocomplete widget, set the dataset and  related field. Autocomplete widget will make the call to get related data
+        formField.dataoptions = {'relatedField': relatedField, 'filterExpr': formField.filterexpressions ? formField.filterexpressions : {}};
+        formField.datasource = dataSource;
+        formField.searchkey = formField.searchkey || displayField;
+        formField.displaylabel = formField.displayfield = (formField.displaylabel || displayField);
     } else {
         interpolateBindExpressions(formField.viewParent, formField.filterexpressions, (filterexpressions) => {
             formField.filterexpressions = filterexpressions;
@@ -122,7 +125,7 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
                 filterFields: {},
                 filterExpr: formField.filterexpressions ? formField.filterexpressions : {}
             }).then(response => {
-                formField.dataset = response;
+                formField.dataset = response.data;
                 formField.displayfield = formField.displayfield || _.head(_.keys(_.get(response, '[0]')));
             }, noop);
         });
@@ -131,11 +134,11 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
 
 /**
  * used to interpolate the bind expression for keys in the query builder
- * @param scope where we find the variable obj
+ * @param context where we find the variable obj
  * @param filterexpressions - obj containing all the rule objs
  * @param callbackFn - function to be called with the new replaced values if any in the filterexpressions object
  */
-function interpolateBindExpressions(context, filterexpressions, callbackFn) {
+export const interpolateBindExpressions = (context, filterexpressions, callbackFn) => {
     const debouncedFn = debounce(() => {
         if (_.isFunction(callbackFn)) {
             callbackFn(filterexpressions);
@@ -154,7 +157,7 @@ function interpolateBindExpressions(context, filterexpressions, callbackFn) {
         debouncedFn();
     });
     destroyFn(() => filterSubscription.unsubscribe());
-}
+};
 /**
  * @ngdoc function
  * @name wm.widgets.live.LiveWidgetUtils#getDistinctFieldProperties
@@ -164,11 +167,11 @@ function interpolateBindExpressions(context, filterexpressions, callbackFn) {
  * @description
  * Returns the properties required for dataset widgets
  *
- * @param {object} variable variable for the widget
+ * @param {object} dataSource variable source for the widget
  * @param {object} formField definition of the column/ field
  *
  */
-function getDistinctFieldProperties(dataSource, formField) {
+export const getDistinctFieldProperties = (dataSource, formField) => {
     const props: any = {};
     let fieldColumn;
     if (formField['is-related']) {
@@ -184,7 +187,7 @@ function getDistinctFieldProperties(dataSource, formField) {
         props.aliasColumn   = fieldColumn;
     }
     return props;
-}
+};
 
 /**
  * @ngdoc function
@@ -212,8 +215,8 @@ export function getDistinctValues(dataSource, formField, widget) {
                 entityName: props.tableName,
                 pagesize: formField.limit,
                 filterExpr: formField.filterexpressions ? JSON.parse(formField.filterexpressions) : {}
-            }).then(data => {
-                res({'field': formField, 'data': data, 'aliasColumn': props.aliasColumn});
+            }).then(response => {
+                res({'field': formField, 'data': response.data, 'aliasColumn': props.aliasColumn});
             }, rej);
         }
     });
@@ -221,7 +224,13 @@ export function getDistinctValues(dataSource, formField, widget) {
 
 // Set the data field properties on dataset widgets
 function setDataFields(formField, options?) {
-    // TODO: For search widget, set search key and display label
+    // For search widget, set search key and display label
+    if (isSearchWidgetType(formField[options.widget])) {
+        formField.datafield = options.aliasColumn || LIVE_CONSTANTS.LABEL_KEY;
+        formField.searchkey = options.distinctField || LIVE_CONSTANTS.LABEL_KEY;
+        formField.displaylabel = formField.displayfield = (options.aliasColumn || LIVE_CONSTANTS.LABEL_VALUE);
+        return;
+    }
     formField.datafield    = LIVE_CONSTANTS.LABEL_KEY;
     formField.displayfield = LIVE_CONSTANTS.LABEL_VALUE;
 }
@@ -253,7 +262,7 @@ function setFieldDataSet(formField, data, options?) {
         emptyOption[LIVE_CONSTANTS.LABEL_VALUE] = LIVE_CONSTANTS.EMPTY_VALUE;
         dataSet.push(emptyOption);
     }
-    _.each(data.content, key => {
+    _.each(data, key => {
         const value  = key[options.aliasColumn];
         const option = {};
         if (value !== null && value !== '') {
@@ -310,7 +319,10 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
         return;
     }
     if (isSearchWidgetType(formField[options.widget])) {
-        // TODO: For autocomplete widget, widget will fetch the data. Set properties on the widget itself. Other widgets, fetch the data.
+        const dataoptions =  getDistinctFieldProperties(dataSource, formField);
+        formField.dataoptions = dataoptions;
+        setDataFields(formField, Object.assign(options || {}, dataoptions));
+        formField.datasource = dataSource;
     } else {
         interpolateBindExpressions(formField.viewParent, formField.filterexpressions, (filterexpressions) => {
             formField.filterexpressions = filterexpressions;
@@ -439,7 +451,7 @@ export const createArrayFrom = (data): Array<any> => {
     }
 
     return data;
-}
+};
 
 /**
  * @ngdoc function
@@ -505,10 +517,10 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
                 'fields'        : fieldColumn,
                 'filterFields'  : filterFields,
                 'pagesize'      : filterField.limit
-            }).then(data => {
-                setFieldDataSet(filterField, data, {
+            }).then(response => {
+                setFieldDataSet(filterField, response.data, {
                     aliasColumn: fieldColumn,
-                    widget: 'widget',
+                    widget: options.widget || 'widgettype',
                     isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
                 });
             }, noop);

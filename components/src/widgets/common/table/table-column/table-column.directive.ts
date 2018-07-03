@@ -7,7 +7,7 @@ import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../.
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
 import { $watch, DataSource, FormWidgetType, isDefined } from '@wm/core';
-import { applyFilterOnField, fetchRelatedFieldData, getDistinctValues, getDistinctValuesForField } from '../../../../utils/data-utils';
+import {applyFilterOnField, fetchRelatedFieldData, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField} from '../../../../utils/data-utils';
 
 declare const _;
 
@@ -109,6 +109,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     filterControl;
     isDataSetBound;
     isFilterDataSetBound;
+    private _dataoptions: any;
+    private _datasource: any;
 
     constructor(
         inj: Injector,
@@ -118,6 +120,22 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
+    }
+
+    get dataoptions() {
+        return this._dataoptions;
+    }
+
+    set dataoptions(options) {
+            this._dataoptions = options;
+    }
+
+    get datasource() {
+        return this._datasource;
+    }
+
+    set datasource(ds) {
+        this._datasource = ds;
     }
 
     ngOnInit() {
@@ -221,6 +239,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         if (this.filterControl) {
             this.filterControl.setValue('');
         }
+        if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
+            this.filterWidget.query = '';
+            this.filterWidget.queryModel = '';
+        }
     }
 
     // On field value change, propagate event to parent form
@@ -231,7 +253,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // On field value change, apply cascading filter
     onValueChange(val) {
         if (val !== null) {
-            applyFilterOnField(this.table.datasource, this.widget, this.table.fieldDefs, val);
+            applyFilterOnField(this.table.datasource, this.widget, this.table.fieldDefs, val, {
+                widget: 'edit-widget-type'
+            });
         }
     }
 
@@ -240,10 +264,15 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         if (this._isRowFilter && isDataSetWidget(this.filterwidget) && !this.bindfilterdataset) {
             // For live variable, get the data using distinct API
             if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
-                getDistinctValues(this.table.datasource, this.widget, 'filterwidget').then((res: any) => {
-                    this._filterDataSet = _.pull(_.map(res.data.content, res.aliasColumn), null);
-                    this.setFilterWidgetDataSet();
-                });
+                if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
+                    this.filterWidget.dataoptions = getDistinctFieldProperties(this.table.datasource, this);
+                    this.filterWidget.datasource = this.table.datasource;
+                } else {
+                    getDistinctValues(this.table.datasource, this.widget, 'filterwidget').then((res: any) => {
+                        this._filterDataSet = res.data;
+                        this.setFilterWidgetDataSet();
+                    });
+                }
             } else {
                 // For other datasources, get the data from datasource bound to table
                 this.registerDestroyListener(
@@ -328,6 +357,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             inlineWidgetProps.forEach(key => {
                 this.setInlineWidgetProp(widget, key, this[key]);
             });
+            this[widget].datasource = this._datasource;
+            this[widget].dataoptions = this._dataoptions;
             this.setInlineWidgetProp(widget, 'datepattern', this.editdatepattern);
         });
     }

@@ -500,8 +500,14 @@ export class LiveVariableManager extends BaseVariableManager {
             /*Remove the self related columns from the data. As backend is restricting the self related column to one level, In liveform select, dataset and datavalue object
             * equality does not work. So, removing the self related columns to acheive the quality*/
             const data = _.map(response.content, o => _.omit(o, selfRelatedCols));
-            triggerFn(success, data, undefined, response ? {'dataSize': response.totalElements, 'maxResults': response.size, 'currentPage': response.number + 1} : {});
-            return Promise.resolve(data);
+
+            const pagingOptions = Object.assign({}, response);
+            delete pagingOptions.content;
+
+            const result = {data: data, pagingOptions};
+            triggerFn(success, result);
+
+            return Promise.resolve(result);
         }, (errMsg) => {
             triggerFn(error, errMsg);
             return Promise.reject(errMsg);
@@ -547,8 +553,13 @@ export class LiveVariableManager extends BaseVariableManager {
                 triggerFn(error, response.error);
                 return Promise.reject(response.error);
             }
-            triggerFn(success, response.body);
-            return Promise.resolve(response.body);
+            let result = response.body;
+            const pagingOptions = Object.assign({}, response.body);
+            delete pagingOptions.content;
+
+            result = {data: result.content, pagingOptions};
+            triggerFn(success, result);
+            return Promise.resolve(result);
         }, errorMsg => {
             triggerFn(error, errorMsg);
             return Promise.reject(errorMsg);
@@ -585,6 +596,38 @@ export class LiveVariableManager extends BaseVariableManager {
         return LiveVariableUtils.getPrimaryKey(variable);
     }
 
+    // Returns the search query params.
+    public prepareRequestParams (options) {
+        let requestParams;
+
+        const searchKeys = _.split(options.searchKey, ','),
+            formFields = {};
+
+        _.forEach(searchKeys, (colName) => {
+            formFields[colName] = {
+                value: options.query,
+                logicalOp: 'AND'
+            };
+        });
+
+        requestParams = {
+            filterFields: formFields,
+            page: options.page,
+            pagesize: options.limit || options.pagesize,
+            skipDataSetUpdate: true, // dont update the actual variable dataset,
+            skipToggleState: true, // Dont change the variable toggle state as this is a independent call
+            inFlightBehavior: 'executeAll',
+            logicalOp: 'OR',
+            orderBy: options.orderby ? _.replace(options.orderby, /:/g, ' ') : ''
+        };
+
+        if (options.onBeforeservicecall) {
+            options.onBeforeservicecall(formFields);
+        }
+
+        return requestParams;
+    }
+
     /**
      * Gets the filtered records based on searchKey
      * @param variable
@@ -594,32 +637,7 @@ export class LiveVariableManager extends BaseVariableManager {
      * @returns {Promise<any>}
      */
     public searchRecords(variable, options, success, error) {
-        let requestParams;
-
-        const searchKeys = options.searchKeys,
-            searchValue = options.searchValue,
-            formFields = {};
-
-        _.forEach(searchKeys, (colName) => {
-            formFields[colName] = {
-                value: searchValue,
-                logicalOp: 'AND'
-            };
-        });
-
-        requestParams = {
-            filterFields: formFields,
-            page: options.page,
-            pagesize: options.pagesize,
-            skipDataSetUpdate: true, // dont update the actual variable dataset,
-            skipToggleState: true, // Dont change the variable toggle state as this is a independent call
-            inFlightBehavior: 'executeAll',
-            logicalOp: 'OR'
-        };
-
-        if (options.onBeforeservicecall) {
-            options.onBeforeservicecall(formFields);
-        }
+        const requestParams = this.prepareRequestParams(options);
 
         return this.listRecords(variable, requestParams, success, error);
     }

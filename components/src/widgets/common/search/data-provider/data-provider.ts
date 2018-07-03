@@ -6,8 +6,10 @@ import { RemoteDataProvider } from './remote-data-provider';
 declare const _;
 
 export interface IDataProviderConfig {
+    dataoptions?: any;
+    viewParent?: any;
     dataset: any;
-    datafield: any;
+    datafield: string;
     binddataset?: string;
     datasource?: any;
     query: string;
@@ -51,9 +53,9 @@ export class DataProvider implements IDataProvider {
          * Otherwise use localDataProvider
          * If datasource is a serviceVariable with no input params, then perform local search.
          */
-        if ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
+        if (config.dataoptions || ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
             && config.searchKey
-            && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED)) {
+            && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED))) {
             promise = DataProvider.remoteDataProvider.filter(config);
         } else {
             promise = DataProvider.localDataProvider.filter(config);

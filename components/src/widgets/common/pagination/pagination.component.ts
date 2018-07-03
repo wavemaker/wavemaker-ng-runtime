@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Inject, Injector, Output, SkipSelf } from '@angular/core';
 
-import { $appDigest, $watch, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
+import { $appDigest, $watch, AppDefaults, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
 
 import { registerProps } from './pagination.props';
 import { styler } from '../../framework/styler';
@@ -136,7 +136,7 @@ export class PaginationComponent extends StylableComponent {
          * Hence,
          * 1. Hide the 'Total Record Count'.
          * 2. Disable the 'GoToLastPage' link as the page number of the last page is not known.*/
-        if (dataSize === -1 || dataSize === 2147483647) {
+        if (dataSize === -1 || dataSize === AppDefaults.INT_MAX_VALUE) {
             this.prevshowrecordcount = this.showrecordcount;
             this.isDisableLast = true;
             this.isDisableCount = true;
