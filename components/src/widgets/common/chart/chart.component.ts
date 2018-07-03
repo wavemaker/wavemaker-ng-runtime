@@ -1017,7 +1017,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
         // generate unique id for the component
-        this.$id = this.nativeElement.getAttribute('name') || Math.random();
+        this.$id = this.widgetId || Math.random();
         // remove title attribute as the element on hover shows you the hint through-out the element
         removeAttr(this.nativeElement, 'title');
         this.chartReady = false;
