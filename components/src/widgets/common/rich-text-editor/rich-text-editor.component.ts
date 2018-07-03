@@ -1,4 +1,4 @@
-import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -23,6 +23,25 @@ const getChangeEvt = () => {
 };
 
 declare const _, $;
+
+
+// override summernote methods
+
+const origFn = $.summernote.ui.button.bind($.summernote);
+
+$.summernote.ui.button = (...args) => {
+
+    const retVal = origFn(...args);
+    const origCallback = retVal.callback;
+
+    retVal.callback = ($node, options) => {
+        // add bs3 btn class to the buttons
+        $node.addClass('btn');
+        return origCallback($node, options);
+    };
+    return retVal;
+};
+//
 
 @Component({
     selector: 'div[wmRichTextEditor]',
@@ -94,7 +113,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         this.performEditorOperation('insertText', nv);
     }
 
-    constructor(inj: Injector, private domSanitizer: DomSanitizer) {
+    constructor(inj: Injector, private domSanitizer: DomSanitizer, private ngZone: NgZone) {
         super(inj, WIDGET_INFO);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
     }
@@ -107,7 +126,10 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
     }
 
     initEditor() {
-        this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
+        this.ngZone.runOutsideAngular(() => {
+            this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
+        });
+
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
