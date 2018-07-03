@@ -16,6 +16,7 @@ import { PartialContainerDirective } from '../components/partial-container/parti
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { PrefabDirective } from '../components/prefab/prefab.directive';
 import { AccessrolesDirective } from '../directives/accessroles.directive';
+import { AppManagerService } from './app.manager.service';
 
 const scriptCache = new Map<string, Function>();
 const componentCache = new Map<string, any>();
@@ -180,6 +181,7 @@ export class RenderUtilsService {
     constructor(
         private compiler: Compiler,
         private app: App,
+        private appManager: AppManagerService,
         private injector: Injector,
         private route: ActivatedRoute,
         private resouceMngr: AppResourceManagerService,
@@ -278,6 +280,12 @@ export class RenderUtilsService {
             monitorFragments(pageInstance, parseEndPromise, () => {
                 // TODO: have to make sure, the widgets are ready with default values, before firing onReady call
                 $invokeWatchers(true);
+                // Trigger app variables only once. Triggering here, as app variables may be watching over page widgets
+                if (!this.appManager.isAppVariablesFired() && pageName !== 'Common') {
+                    variablesInstance.callback(this.app.Variables);
+                    variablesInstance.callback(this.app.Actions);
+                    this.appManager.isAppVariablesFired(true);
+                }
                 variablesInstance.callback(variablesInstance.Variables);
                 variablesInstance.callback(variablesInstance.Actions);
                 (pageInstance.onReady || noop)();

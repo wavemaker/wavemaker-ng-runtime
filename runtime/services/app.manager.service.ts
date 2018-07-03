@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { AbstractDialogService, AbstractI18nService, App } from '@wm/core';
+import { AbstractDialogService, AbstractI18nService, App, isDefined } from '@wm/core';
 
 import { SpinnerService } from './spinner.service';
 
@@ -14,6 +14,7 @@ declare const _;
 export class AppManagerService {
 
     private appVariablesLoaded: boolean = false;
+    private appVariablesFired: boolean = false;
     private _noRedirect: boolean = false;
 
     constructor(
@@ -79,14 +80,29 @@ export class AppManagerService {
         }
         return this.$http.get('./app.variables.json')
             .then(response => {
-                this.appVariablesLoaded = true;
                 const data = this.$variables.register('app', response, this.$app);
                 // not assigning directly to this.$app to keep the reference in tact
                 _.extend(this.$app.Variables, data.Variables);
                 _.extend(this.$app.Actions, data.Actions);
                 this.updateLoggedInUserVariable();
                 this.updateSupportedLocaleVariable();
+                this.appVariablesLoaded = true;
+                this.appVariablesFired = false;
             });
+    }
+
+    /**
+     * getter and setter for the property appVariablesFired
+     * this flag determines if the app variables(with startUpdate:true) have been fired
+     * they should get fired only once through app lifecycle
+     * @param {boolean} isFired
+     * @returns {boolean}
+     */
+    isAppVariablesFired(isFired?: boolean) {
+        if (isDefined(isFired)) {
+            this.appVariablesFired = isFired;
+        }
+        return this.appVariablesFired;
     }
 
     private updateLoggedInUserVariable() {
