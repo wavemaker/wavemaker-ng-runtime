@@ -72,7 +72,7 @@ export abstract class App {
     subscribe: (eventName, callback: (data: any) => void) => () => void;
 
     activePageName: string;
-    activePageInstance: any;
+    Page: any;
     lastActivePageName: string;
 }
 

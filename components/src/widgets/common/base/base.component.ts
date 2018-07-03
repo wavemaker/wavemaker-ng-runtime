@@ -7,10 +7,11 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, formatStyle, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
+import { isStyle } from '../../framework/styler';
 import { register } from '../../framework/widget-registry';
 import { ChangeListener, Context, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
-import { ATTR_SKIP_LIST, DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
+import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
 import { WidgetProxyProvider } from '../../framework/widget-proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
 
@@ -138,6 +139,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     private toBeSetupEventsQueue: Array<Function> = [];
 
     public __cloneable__ = false;
+
+    public widgetProps: Map<string, any>;
 
     protected constructor(
         protected inj: Injector,
@@ -470,6 +473,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
         });
 
+        this.widgetProps = widgetProps;
+
         this.processAttrs();
 
         this.registerWidget(this.initState.get('name'));
@@ -484,7 +489,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.initState.forEach((v, k) => {
             // name is already set, ignore name
             // if the key is part of to be ignored attributes list do not set it on the component instance
-            if (k !== 'name' && !ATTR_SKIP_LIST[k]) {
+            if ((this.widgetProps.get(k) || isStyle(k)) && k !== 'name') {
                 this.widget[k] = v;
             }
         });
