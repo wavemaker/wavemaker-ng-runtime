@@ -611,7 +611,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public handleKeyDown($event, action: string) {
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
-        const presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
+        let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
 
         if (this.multiselect) {
             const firstIndex: number = this.getListItemIndex(this.firstSelectedItem);
@@ -653,6 +653,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.lastSelectedItem.nativeElement.focus();
             }
         } else if (action === 'select') {
+            if (presentIndex === -1) {
+                const $li = $($event.target).closest('li.app-list-item');
+                const $ul = $li.closest('ul.app-livelist-container');
+                presentIndex = $ul.find('li.app-list-item').index($li);
+            }
             this.onItemClick($event, this.getQueryListItemByIndex(presentIndex));
         }
     }
