@@ -87,22 +87,22 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
         'related-entity-name': attrs.get('related-entity-name'),
         'primary-key': attrs.get('primary-key')
     });
-    let widgetRef;
-    let formControl;
+    let widgetRef = '';
+    let formControl = '';
+    let wmFormWidget = '';
     if (widget === FormWidgetType.UPLOAD) {
         options.uploadProps = {
             formName: idGen.nextUid(),
             name: fieldName
         };
-        widgetRef = '';
-        formControl = '';
     } else {
         widgetRef = isNewRow ? '#inlineWidgetNew' : '#inlineWidget';
         formControl = isNewRow ? `formControlName="${fieldName}_new"` : `formControlName="${fieldName}"`;
+        wmFormWidget = 'wmFormWidget';
     }
     const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
     const eventsTmpl = getEventsTmpl(attrs);
-    const innerTmpl = `${widgetRef} wmFormWidget key="${fieldName}" data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
+    const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
 
     return `<ng-template ${tmplRef} let-row="row">
