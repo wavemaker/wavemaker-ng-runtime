@@ -136,8 +136,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public __cloneable__ = false;
 
-    public widgetProps: Map<string, any>;
-
     protected constructor(
         protected inj: Injector,
         config: IWidgetConfig,
@@ -432,11 +430,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 removeAttr(this.nativeElement, attrName);
             }
 
-            if (this.widgetProps.get(propName)) {
-                this.initState.set(propName, attrValue);
-            } else {
-                // treat as attribute only
-            }
+            this.initState.set(propName, attrValue);
         } else {
             // custom attributes provided on elDef;
         }
@@ -468,8 +462,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.initState.set(k, v.value);
             }
         });
-
-        this.widgetProps = widgetProps;
 
         this.processAttrs();
 
