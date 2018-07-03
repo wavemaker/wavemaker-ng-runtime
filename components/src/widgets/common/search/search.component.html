@@ -83,7 +83,7 @@
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>
             <button title="Search" [disabled]="disabled" class="app-search-button wi wi-search" type="submit"
-                    (click)="onSelect($event, true)"></button>
+                    (click)="onSelect($event)"></button>
         </form>
     </span>
 </ng-template>

@@ -50,9 +50,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
             return;
         }
 
-        if (key === 'selectedvalue') {
-            this.datavalue = nv;
-        } else if (key === 'layout') {
+        if (key === 'layout') {
             switchClass(this.nativeElement, nv, ov);
         } else {
             super.onPropertyChange(key, nv, ov);

@@ -19,7 +19,6 @@ export const checkboxsetProps = new Map(
         ['orderby', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
-        ['selectedvalues', PROP_ANY],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showcount', PROP_BOOLEAN],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],

@@ -78,9 +78,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
             return;
         }
 
-        if (key === 'selectedvalues') {
-            this.datavalue = nv;
-        } else if (key === 'layout') {
+        if (key === 'layout') {
             switchClass(this.nativeElement, nv, ov);
         } else if (key === 'groupby' || key === 'match') {
             this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];

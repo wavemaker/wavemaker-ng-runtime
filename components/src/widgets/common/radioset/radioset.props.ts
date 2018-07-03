@@ -15,7 +15,6 @@ export const radiosetProps = new Map(
         ['orderby', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
-        ['selectedvalue', PROP_ANY],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['usekeys', PROP_BOOLEAN],
