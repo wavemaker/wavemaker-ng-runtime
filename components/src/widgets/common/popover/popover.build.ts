@@ -26,7 +26,7 @@ register('wm-popover', (): IBuildTaskDef => {
 
             let markup = `<${tagName} wmPopover ${getAttrMarkup(attrs)}>`;
 
-            markup += `<ng-template>`;
+            markup += `<ng-template><button class="popover-start"></button>`;
 
             // todo keyboard navigation - tab
             if (popoverTemplate) {
@@ -41,7 +41,7 @@ register('wm-popover', (): IBuildTaskDef => {
                 markup += `</div>`;
             }
 
-            return `${markup}</ng-template></${tagName}>`;
+            return `${markup}<button class="popover-end"></button></ng-template></${tagName}>`;
         }
     };
 });
