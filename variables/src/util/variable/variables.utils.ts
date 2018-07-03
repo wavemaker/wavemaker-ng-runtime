@@ -145,7 +145,7 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
     }
     // TODO: [Vibhu], check whether to support legacy event calling mechanism (ideally, it should have been migrated)
     const fn = $parseEvent(variable[type]);
-    fn(variable._context, {$event: variable, $scope: data});
+    return fn(variable._context, {$event: variable, $scope: data});
 };
 
 const triggerOnTimeout = (success) => {
