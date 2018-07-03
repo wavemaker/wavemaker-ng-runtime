@@ -944,7 +944,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
 
         // plotchart for only valid data and only after bound variable returns data
-        if (this.chartData && !this.variableInflight) {
+        if (this.chartData) {
             this._plotChartProxy();
         }
     }
