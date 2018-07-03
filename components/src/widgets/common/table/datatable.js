@@ -1041,30 +1041,6 @@ $.widget('wm.datatable', {
             this.setColGroupWidths();
         }
     },
-
-    _isCustomExpressionNonEditable: function (customTag, $el) {
-        var $input;
-        if (!customTag) {
-            return false;
-        }
-        //Check if expression is provided for custom tag.
-        if (_.includes(customTag, '{{') && _.includes(customTag, '}}')) {
-            //If user gives an invalid expression, return false
-            try {
-                if ($($el.html()).length) {
-                    return true;
-                }
-            } catch (e) {
-                return false;
-            }
-            return false;
-        }
-        $input = $(customTag);
-        if ($input.length) { //If expression is html, return true
-            return true;
-        }
-        return false;
-    },
     /* Marks the first row as selected. */
     selectFirstRow: function (value, visible) {
         var $row,
@@ -1407,13 +1383,10 @@ $.widget('wm.datatable', {
                 if (!(colDef.customExpression || colDef.formatpattern)) {
                     $el.addClass('cell-editing').html(editableTemplate).data('originalText', cellText);
                 } else {
-                    if (self._isCustomExpressionNonEditable(colDef.customExpression, $el)) {
-                        $el.addClass('cell-editing editable-expression').data('originalValue', {
-                            'template': colDef.customExpression,
-                            'rowData': _.cloneDeep(rowData),
-                            'colDef': colDef
-                        });
-                    }
+                    $el.addClass('cell-editing editable-expression').data('originalValue', {
+                        'rowIndex': rowId,
+                        'fieldName': colDef.field
+                    });
                     $el.addClass('cell-editing editable-expression').html(editableTemplate).data('originalText', cellText);
                 }
                 if (colDef.required) {
@@ -1635,20 +1608,12 @@ $.widget('wm.datatable', {
         $editableElements.off('click');
         $editableElements.each(function () {
             var $el = $(this),
-                value = $el.data('originalValue'),
-                originalValue,
-                template;
+                value = $el.data('originalValue');
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
                 $el.text($el.data('originalText') || '');
             } else {
-                originalValue = value;
-                if (originalValue.template) {
-                    template = originalValue.template; // TODO: self.options.getCompiledTemplate(originalValue.template, originalValue.rowData, originalValue.colDef);
-                    $el.html(template);
-                } else {
-                    $el.html(originalValue || '');
-                }
+                $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
         });
         $editButton.removeClass('hidden');
@@ -1681,8 +1646,6 @@ $.widget('wm.datatable', {
         $editableElements.each(function () {
             var $el = $(this),
                 value = $el.data('originalValue'),
-                originalValue,
-                template,
                 text,
                 colDef;
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
@@ -1691,13 +1654,7 @@ $.widget('wm.datatable', {
                 text = self.getTextValue(colDef.field);
                 $el.text(self.Utils.isDefined(text) ? text : '');
             } else {
-                originalValue = value;
-                if (originalValue.template) {
-                    template = originalValue.template; // TODO: self.options.getCompiledTemplate(originalValue.template, originalValue.rowData, originalValue.colDef, true);
-                    $el.html(template);
-                } else {
-                    $el.html(originalValue || '');
-                }
+                $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
         });
         $editButton.removeClass('hidden');
