@@ -32,8 +32,6 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     private btnwidth;
     private compareby;
 
-    @ViewChild('switch', {read: ElementRef}) switchEl: ElementRef;
-
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
 
@@ -50,7 +48,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        styler(this.switchEl.nativeElement as HTMLElement, this);
+        styler(this.nativeElement as HTMLElement, this);
     }
 
     onStyleChange(key: string, nv: any, ov?: any) {
