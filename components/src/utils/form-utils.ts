@@ -261,7 +261,7 @@ export const groupData = (compRef: any, data: Array<Object | DataSetItem>, group
     if (_.includes(groupby, '(')) {
         const groupDataByUserDefinedFn = $parseEvent(groupby);
         groupedLiData = _.groupBy(data, val => {
-            return groupDataByUserDefinedFn(compRef.viewParent, {'rowData': val.dataObject || val});
+            return groupDataByUserDefinedFn(compRef.viewParent, {'row': val.dataObject || val});
         });
     } else {
         groupedLiData = getGroupedData(data, groupby, match, orderby, dateformat, datePipe, innerItem);
