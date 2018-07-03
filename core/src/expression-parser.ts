@@ -169,7 +169,7 @@ class ASTCompiler {
         for (const _value of ast.values) {
             _values.push(this.build(_value, stmts));
         }
-        stmts.push(`${v}={${ast.keys.map((k, i) => k.key + ':' + _values[i])}}`);
+        stmts.push(`${v}={${ast.keys.map((k, i) => `'${k.key}':${_values[i]}`)}}`);
         return v;
     }
 
