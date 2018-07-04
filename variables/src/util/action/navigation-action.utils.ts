@@ -226,7 +226,8 @@ export const navigate = (variable, options) => {
     /* if operation is goToPage, navigate to the pageName */
     switch (operation) {
         case 'goToPreviousPage':
-            // Todo[shubham] NavigationService.goToPrevious();
+            // TODO: implement stack approach for mobile
+            window.history.back();
             break;
         case 'gotoPage':
             goToPage(pageName , { transition  : variable.pageTransitions,
