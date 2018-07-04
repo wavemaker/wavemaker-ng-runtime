@@ -5,6 +5,8 @@ import { propNameCSSKeyMap } from './styler';
 import { globalPropertyChangeHandler } from './property-change-handler';
 import { BaseComponent } from '../common/base/base.component';
 
+declare const _;
+
 /**
  *  proxy handler for the components
  */
@@ -14,7 +16,11 @@ export const proxyHandler = {
         return true;
     },
     get: (target: BaseComponent, key: string): any => {
-        return target[key];
+        const v = target[key];
+        if (_.isFunction(v)) { // bind the proper context for the methods
+            return v.bind(target);
+        }
+        return v;
     }
 };
 
