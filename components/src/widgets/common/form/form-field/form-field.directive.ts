@@ -277,7 +277,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     set datavalue(val) {
-        if (this._control) {
+        if (this._control && this.widgettype !== FormWidgetType.UPLOAD) {
             this._control.setValue(val);
         }
     }

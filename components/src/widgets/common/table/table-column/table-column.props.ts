@@ -13,7 +13,7 @@ export const registerProps = () => {
                 ['col-class', PROP_STRING],
                 ['col-ng-class', PROP_STRING],
                 ['currencypattern', PROP_STRING],
-                ['customExpression', PROP_BOOLEAN],
+                ['customExpression', PROP_BOOLEAN], // Internal property to check if column has custom expression
                 ['datafield', PROP_STRING],
                 ['dataoptions', PROP_ANY],
                 ['dataset', PROP_ANY],
@@ -43,7 +43,7 @@ export const registerProps = () => {
                 ['pcdisplay', {value: true, ...PROP_BOOLEAN}],
                 ['placeholder', PROP_STRING],
                 ['prefix', PROP_STRING],
-                ['primaryKey', PROP_STRING],
+                ['primary-key', PROP_STRING],
                 ['readonly', PROP_BOOLEAN],
                 ['related-entity-name', PROP_STRING],
                 ['required', PROP_BOOLEAN],
