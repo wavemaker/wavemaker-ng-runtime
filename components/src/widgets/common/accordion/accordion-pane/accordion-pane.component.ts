@@ -75,7 +75,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
         this.notifyParent(false, evt);
     }
 
-    public togglePane(evt: Event) {
+    public toggle(evt: Event) {
         if (this.isActive) {
             this.collapse(evt);
         } else {

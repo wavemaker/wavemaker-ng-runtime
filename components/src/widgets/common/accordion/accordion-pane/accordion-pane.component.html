@@ -1,4 +1,4 @@
-<div class="panel-heading clearfix" role="tab" (click)="togglePane($event)" [ngClass]="{active: isActive}">
+<div class="panel-heading clearfix" role="tab" (click)="toggle($event)" [ngClass]="{active: isActive}">
     <h3 class="panel-title">
         <a href="javascript:void(0);" role="button" class="accordion-toggle" [attr.aria-expanded]="isActive" [attr.aria-controls]="name">
             <div class="pull-left">

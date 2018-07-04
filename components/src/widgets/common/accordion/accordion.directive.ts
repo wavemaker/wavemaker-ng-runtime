@@ -29,6 +29,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     public closeothers: boolean;
 
     private activePaneIndex: number;
+    private activePane: AccordionPaneComponent;
     private promiseResolverFn: Function;
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
@@ -53,6 +54,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         if (isExpand) {
             this.closePanesExcept(paneRef);
             const index = this.getPaneIndexByRef(paneRef);
+            this.activePane = paneRef.getWidget();
             // if the event is defined invoke the change callback.
             // programmatic invocations of expand/collapse on accordion-pane will not trigger change event
             if (evt) {
@@ -71,13 +73,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     }
 
     private getPaneIndexByRef(paneRef: AccordionPaneComponent): number {
-        let index = 0;
-        for (const pane of this.panes.toArray()) {
-            if (pane === paneRef) {
-                return index;
-            }
-            index++;
-        }
+        return this.panes.toArray().indexOf(paneRef);
     }
 
     private getPaneRefByIndex(index: number): AccordionPaneComponent {
@@ -101,16 +97,6 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     private expandPane(index: number) {
         this.closePanesExcept(index);
         this.panes.toArray()[index].expand();
-        this.activePaneIndex = index;
-    }
-
-    private expandDefaultPane() {
-        let paneIndex = this.defaultpaneindex || 0;
-        if (!this.isValidPaneIndex(paneIndex)) {
-            paneIndex = 0;
-        }
-
-        this.expandPane(paneIndex);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

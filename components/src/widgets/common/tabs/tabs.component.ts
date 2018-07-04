@@ -97,11 +97,11 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             this.invokeEventCallback('change', {
                 $event: evt,
                 newPaneIndex: this.getPaneIndexByRef(paneRef),
-                oldPaneIndex: this.getActivePaneIndex()
+                oldPaneIndex: this.getActiveTabIndex()
             });
         }
 
-        this.activeTab = paneRef;
+        this.activeTab = paneRef.getWidget();
         if (evt) {
             headerElement = $(evt.target as HTMLElement).closest('li.tab-header');
         } else {
@@ -125,7 +125,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     // Returns the active tab index from tabs.
-    public getActivePaneIndex(): number {
+    public getActiveTabIndex(): number {
         return this.getPaneIndexByRef(this.activeTab);
     }
 
@@ -166,7 +166,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     // select next tab relative to the current active tab
     public selectNext() {
-        const pane = this.getSelectableTabAfterIndex(this.getActivePaneIndex() + 1);
+        const pane = this.getSelectableTabAfterIndex(this.getActiveTabIndex() + 1);
         if (pane) {
             pane.select();
         }
@@ -174,7 +174,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     // select prev tab relative to the current active tab
     public selectPrev() {
-        const pane = this.getSelectableTabBeforeIndex(this.getActivePaneIndex() - 1);
+        const pane = this.getSelectableTabBeforeIndex(this.getActiveTabIndex() - 1);
         if (pane) {
             pane.select();
         }
@@ -206,7 +206,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             return;
         }
 
-        const index = this.getActivePaneIndex() || 0;
+        const index = this.getActiveTabIndex() || 0;
         const contentNode = this.nativeElement.querySelector(':scope > .tab-content') as HTMLElement;
         const childEls = contentNode.querySelectorAll(':scope >.tab-pane:not([hidden])');
         const noOfTabs = childEls.length;

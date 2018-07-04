@@ -787,5 +787,3 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 }
 
-
-// Todo(punith) -- mobileRelatedChanges

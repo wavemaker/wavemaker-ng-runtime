@@ -31,7 +31,7 @@ register(wmListTag, (): IBuildTaskDef => {
 
 register('wm-listtemplate', (): IBuildTaskDef => {
     return {
-        pre: () => `<ng-template #listTemplate let-item="item" let-index="index" let-itemRef="itemRef">`,
+        pre: () => `<ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$isFirst="$isFirst" let-$isLast="$isLast">`,
         post: () => `</ng-template>`
     };
 });
