@@ -163,6 +163,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this.removeDuplicates();
         this.updateMaxSize();
+        this.resetSearchModel();
         $appDigest();
     }
 

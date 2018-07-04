@@ -1,17 +1,17 @@
-<li class="chip-item" *ngFor="let item of chipsList; let index = index;"
+<li class="chip-item" *ngFor="let item of chipsList; let $index = index;"
     [ngClass]="{'active': item.active, 'disabled': disabled}">
     <a class="app-chip" href="javascript:void(0);" tabindex="-1"
        (click)="handleChipClick($event, item)"
-       (keydown.delete)="onDelete($event, item, index)"
-       (keydown.backspace)="onBackspace($event, item, index)"
-       (keydown.arrowleft)="onArrowLeft(item, index)"
-       (keydown.arrowright)="onArrowRight(item, index)"
+       (keydown.delete)="onDelete($event, item, $index)"
+       (keydown.backspace)="onBackspace($event, item, $index)"
+       (keydown.arrowleft)="onArrowLeft(item, $index)"
+       (keydown.arrowright)="onArrowRight(item, $index)"
        (focus)="handleChipFocus($event, item)"
        (blur)="readonly ? 0 : item.active = false"
        [ngClass]="{'chip-duplicate bg-danger': item.isDuplicate, 'chip-picture': item.imgSrc}">
         <img data-identifier="img" alt="Chip Image" class="button-image-icon" [src]="item.imgSrc" *ngIf="item.imgSrc"/>
         <span [textContent]="item.label"></span>
-        <button type="button" tabindex="-1" arial-label="Clear Button" class="btn btn-transparent" (click)="removeItem($event, item, index);" *ngIf="!readonly">
+        <button type="button" tabindex="-1" arial-label="Clear Button" class="btn btn-transparent" (click)="removeItem($event, item, $index);" *ngIf="!readonly">
             <i class="app-icon wi wi-close"></i>
         </button>
     </a>

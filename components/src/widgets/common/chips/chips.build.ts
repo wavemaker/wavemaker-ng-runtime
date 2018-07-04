@@ -4,7 +4,7 @@ const tagName = 'ul';
 
 register('wm-chips', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmChips role="button" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmChips role="button" ${getAttrMarkup(attrs)} ngModel>`,
         post: () => `</${tagName}>`
     };
 });
