@@ -19,7 +19,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
         if (this.isDestroyed) {
             return;
         }
-        if (this.hasOwnProperty('formControlName')) {
+        if (this.getAttr('formControlName')) {
             this.datavalue = value;
             this.onPropertyChange('datavalue', value);
             this.updatePrevDatavalue(value);

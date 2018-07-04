@@ -142,6 +142,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public widgetProps: Map<string, any>;
 
+    private $attrs = new Map<string, string>();
+
     protected constructor(
         protected inj: Injector,
         config: IWidgetConfig,
@@ -274,6 +276,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     public setWidgetProperty(key: string, value: any) {
         this.widget[key] = value;
+    }
+
+    public getAttr(attrName: string): string {
+        return this.$attrs.get(attrName);
     }
 
     /**
@@ -453,6 +459,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         const elDef = (this.inj as any).elDef;
 
         for (const [, attrName, attrValue] of elDef.element.attrs) {
+            this.$attrs.set(attrName, attrValue);
             this.processAttr(attrName, attrValue);
         }
     }
