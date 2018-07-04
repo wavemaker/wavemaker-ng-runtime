@@ -177,7 +177,7 @@ export class NetworkService implements IDeviceStartUpService {
     }
 
     public start(): Promise<void> {
-        if (cordova && Connection) {
+        if (cordova && window['Connection']) {
             networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
             this.tryToConnect(true);
             /*
