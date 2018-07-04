@@ -67,6 +67,9 @@ export class ServiceVariableManager extends BaseVariableManager {
         // EVENT: ON_RESULT
         initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, options.xhrObj);
 
+        // trigger success callback, pass data received from server as it is.
+        triggerFn(success, response, pagingOptions);
+
         /* if dataTransformation enabled, transform the data */
         if (variable.transformationColumns) {
             response = this.transformData(response, variable);
@@ -80,14 +83,15 @@ export class ServiceVariableManager extends BaseVariableManager {
             dataSet = response;
         }
 
+        // if a primitive type response is returned, wrap it in an object
+        dataSet = (!_.isObject(dataSet)) ? {'value': dataSet} : dataSet;
+
         // EVENT: ON_PREPARE_SETDATA
         newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataSet, options.xhrObj);
         if (isDefined(newDataSet)) {
             // setting newDataSet as the response to service variable onPrepareSetData
             dataSet = newDataSet;
         }
-
-        dataSet = (!_.isObject(dataSet)) ? {'value': dataSet} : dataSet;
 
         /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
@@ -103,9 +107,6 @@ export class ServiceVariableManager extends BaseVariableManager {
                 });
             }
         }
-
-        /* trigger success callback */
-        triggerFn(success, dataSet, pagingOptions);
 
         $invokeWatchers(true);
         setTimeout(() => {
