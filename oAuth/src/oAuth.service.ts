@@ -18,7 +18,9 @@ export class OAuthService {
     }
 
     addProviderConfig(provider) {
-        this.providersConfig.push(provider);
+        if (!(_.find(this.providersConfig, {'name' : provider.name}))) {
+            this.providersConfig.push(provider);
+        }
         this.providers.next(this.providersConfig);
     }
 

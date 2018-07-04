@@ -16,15 +16,14 @@ type SPINNER = {show: boolean, messages: Array<string>};
         <router-outlet></router-outlet>
         <app-common-page hidden></app-common-page>
         <app-spinner [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
-        <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'">
-            <ul style="list-style: none" class="list-items">
-                <li style="padding-bottom: 10px;" class="list-item" *ngFor="let provider of providersConfig">
-                    <button class="btn" (click)="provider.invoke()">{{provider.name}}</button>
-                </li>
-            </ul>
-            <div wmDialogActions name="dialogactions1">
-                <button wmButton class="btn-primary" caption="Close" click.event="closeDialog()" name="button4"></button>
-            </div>
+        <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'" close.event="closeOAuthDialog()">
+            <ng-template #dialogBody>
+                <ul class="list-items">
+                    <li class="list-item" *ngFor="let provider of providersConfig">
+                        <button class="btn" (click)="provider.invoke()">{{provider.name}}</button>
+                    </li>
+                </ul>
+            </ng-template>
         </div>
         <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext" canceltext.bind="canceltext"
                 iconclass.bind="iconclass" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()"></div>
@@ -67,7 +66,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         });
 
         // set theme to bs3 on ngx-bootstrap. This avoids runtime calculation to determine bs theme. Thus resolves performance.
-        setTheme('bs3')
+        setTheme('bs3');
     }
 
     providersConfig;
