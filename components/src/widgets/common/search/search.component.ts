@@ -316,7 +316,18 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
 
     public updateQueryModel(data: any) {
-        this.queryModel = this.getTransformedData(extractDataAsArray(data));
+        if (!this._modelByKey) {
+            this.getDataSource(this.query, true).then((response) => {
+                if (response.length) {
+                    this.queryModel = response;
+                    this.query = this.queryModel.length ? this.queryModel[0].label : '';
+                }
+            });
+            return;
+        }
+
+        const selectedItem = _.find(this.datasetItems, {selected: true});
+        this.queryModel = selectedItem ? [selectedItem] : this.getTransformedData(extractDataAsArray(data));
 
         // Show the label value on input.
         this.query = this.queryModel.length ? this.queryModel[0].label : '';

@@ -149,8 +149,6 @@ export const transformData = (dataSet: any, myDataField?: string, displayOptions
             myDataField = ALLFIELDS;
         }
 
-        const myDisplayImgSrc = displayOptions.displayImgSrc;
-
         dataSet.forEach((option, index) => {
             const key = myDataField === ALLFIELDS ? startIndex + index : getObjValueByKey(option, myDataField);
 
@@ -168,7 +166,7 @@ export const transformData = (dataSet: any, myDataField?: string, displayOptions
                     dataObject: option, // represents the object when datafield is ALLFIELDS. This is used as innerItem while grouping the datasetItems.
                     index: startIndex + index
                 };
-                if (myDisplayImgSrc) {
+                if (displayOptions.displayImgSrc || displayOptions.bindDisplayImgSrc) {
                     (dataSetItem as any).imgSrc = getEvaluatedData(option, {
                         expression: displayOptions.displayImgSrc,
                         bindExpression: displayOptions.bindDisplayImgSrc
