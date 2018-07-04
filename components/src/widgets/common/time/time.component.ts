@@ -1,4 +1,5 @@
-import { Component, Injector, OnDestroy } from '@angular/core';
+import { Component, Inject, Injector, NgZone, OnDestroy } from '@angular/core';
+import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { $appDigest, addClass, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject, setAttr } from '@wm/core';
 
@@ -6,7 +7,7 @@ import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
+import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
@@ -24,7 +25,7 @@ registerProps();
         provideAsWidgetRef(TimeComponent)
     ]
 })
-export class TimeComponent extends BaseFormCustomComponent implements OnDestroy {
+export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This property sets the display pattern of the time selected
      */
@@ -100,8 +101,18 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
      */
     private bsTimeValue: Date;
 
-    constructor(inj: Injector, public datePipe: ToDatePipe) {
+    private keyEventPlugin;
+
+    constructor(
+        inj: Injector,
+        private datePipe: ToDatePipe,
+        private ngZone: NgZone,
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+    ) {
         super(inj, WIDGET_CONFIG);
+
+        // KeyEventsPlugin
+        this.keyEventPlugin = evtMngrPlugins[1].constructor;
 
         styler(this.nativeElement, this);
         /**
@@ -212,13 +223,94 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
     }
 
     /**
+     * This function sets the value isOpen/isTimeOpen (i.e when datepicker popup is closed) based on widget type(i.e  DateTime, Time)
+     * @param val - isOpen/isTimeOpen is set based on the timepicker popup is open/closed
+     */
+    private setIsTimeOpen(val: boolean) {
+        this.status.isopen = val;
+    }
+
+    /**
+     * This function sets the keyboard events to Timepicker popup
+     */
+    private bindTimePickerKeyboardEvents() {
+        setTimeout(() => {
+            const $timepickerPopup = $('body').find('> bs-dropdown-container timepicker');
+            this.addEventsOnTimePicker($timepickerPopup);
+        });
+    }
+
+    /**
+     * This function sets the events to given element
+     * @param $el - element on which the event is added
+     */
+    private addEventsOnTimePicker($el: JQuery) {
+        $el.on('keydown', evt => {
+            const $target = $(evt.target);
+            const $parent = $target.parent();
+
+            const action = this.keyEventPlugin.getEventFullKey(evt);
+
+            let stopPropogation, preventDefault;
+
+            if ($target.hasClass('bs-timepicker-field')) {
+                if ($parent.is(':first-child')) {
+                    if (action === 'shift.tab' || action === 'enter' || action === 'escape') {
+                        this.setIsTimeOpen(false);
+                        this.focus();
+                        stopPropogation = true;
+                        preventDefault = true;
+                    }
+                } else if ($parent.is(':last-child')) {
+                    if (action === 'tab' || action === 'escape') {
+                        this.setIsTimeOpen(false);
+                        this.focus();
+                        stopPropogation = true;
+                        preventDefault = true;
+                    }
+                } else {
+                    if (action === 'enter' || action === 'escape') {
+                        this.setIsTimeOpen(false);
+                        this.focus();
+                        stopPropogation = true;
+                        preventDefault = true;
+                    }
+                }
+                if (stopPropogation) {
+                    evt.stopPropagation();
+                }
+                if (preventDefault) {
+                    evt.preventDefault();
+                }
+            } else if ($target.hasClass('btn-default')) {
+                if (action === 'tab' || action === 'escape') {
+                    this.setIsTimeOpen(false);
+                    this.focus();
+                }
+            }
+        });
+    }
+
+    private focusPopover() {
+        // setTimeout is used so that by then time input has the updated value. focus is setting back to the input field
+        this.ngZone.runOutsideAngular(() => {
+            setTimeout(() => {
+                $('timepicker .form-group:first > input.form-control').focus();
+            });
+        });
+
+    }
+
+    /**
      * This is an internal method to add css class for dropdown while opening the time dropdown
      */
     public onShown() {
         const tpElements  = document.querySelectorAll('timepicker');
-        _.forEach(tpElements, (element) => {
+        _.forEach(tpElements, element => {
             addClass(element.parentElement as HTMLElement, 'app-datetime');
         });
+        this.focusPopover();
+        this.bindTimePickerKeyboardEvents();
     }
 
 }

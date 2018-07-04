@@ -4,8 +4,7 @@ import { BaseFormCustomComponent } from './base-form-custom.component';
 import { Subscription } from 'rxjs/Subscription';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
 
-declare const _;
-declare const moment;
+declare const moment, _, $;
 
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy {
     public excludedays: string;
