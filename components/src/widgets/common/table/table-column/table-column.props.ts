@@ -13,6 +13,7 @@ export const registerProps = () => {
                 ['col-class', PROP_STRING],
                 ['col-ng-class', PROP_STRING],
                 ['currencypattern', PROP_STRING],
+                ['customExpression', PROP_BOOLEAN],
                 ['datafield', PROP_STRING],
                 ['dataoptions', PROP_ANY],
                 ['dataset', PROP_ANY],

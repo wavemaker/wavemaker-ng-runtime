@@ -57,7 +57,7 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             tabindex: this.tabindex,
             iconname: this.iconname,
             type: this.type,
-            updateMode: this['update-mode'] === true || this['update-mode'] === 'true',
+            updateMode: this['update-mode'],
             position: this.position
         };
         this._propsInitialized = true;

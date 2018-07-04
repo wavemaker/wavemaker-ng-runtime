@@ -20,7 +20,7 @@ export const registerProps = () => {
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING],
                 ['type', {value: 'button', ...PROP_STRING}],
-                ['updateMode', PROP_STRING]
+                ['update-mode', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );
