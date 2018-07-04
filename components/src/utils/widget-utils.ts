@@ -1,7 +1,7 @@
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { forwardRef } from '@angular/core';
 
-import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr } from '@wm/core';
+import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate } from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
 
 declare const _;
@@ -81,7 +81,7 @@ export const getObjValueByKey = (obj: any, strKey: string) => {
     if (strKey) {
         let val;
         /* convert indexes to properties, so as to work for even 'key1[0].child1'*/
-        strKey.replace(/\[(\w+)\]/g, '.$1').split('.').forEach(function (key) {
+        strKey.replace(/\[(\w+)\]/g, '.$1').split('.').forEach(key => {
             // If obj is null, then assign val to null.
             val = (val && val[key]) || (_.isNull(obj) ? obj : obj[key]);
         });
@@ -138,7 +138,7 @@ export const getOrderByExpr = pageableObj => {
     const expressions       = [],
         KEY_VAL_SEPARATOR = ' ',
         FIELD_SEPARATOR   = ',';
-    _.forEach(pageableObj, function (obj) {
+    _.forEach(pageableObj, obj => {
         expressions.push(obj.property + KEY_VAL_SEPARATOR + obj.direction.toLowerCase());
     });
 
@@ -241,8 +241,8 @@ export const getMatchModeTypesMap = (multiMode?) => {
         modes.character.push('in');
     }
 
-    _.forEach(typesMap, function (types, primType) {
-        _.forEach(types, function (type) {
+    _.forEach(typesMap, (types, primType) => {
+        _.forEach(types, type => {
             matchModeTypesMap[type] = modes[primType];
         });
     });
@@ -307,4 +307,127 @@ export const getConditionalClasses = (nv, ov?) => {
         toRemove = ov ? [ov] : [];
     }
     return {toAdd, toRemove};
+};
+
+/*helper function for prepareFieldDefs*/
+const pushFieldDef = (dataObject, columnDefObj, namePrefix, options) => {
+    /*loop over the fields in the dataObject to process them*/
+    let modifiedTitle,
+        relatedTable,
+        relatedField,
+        relatedInfo,
+        fieldName,
+        isRelated;
+    if (!options) {
+        options = {};
+    }
+    _.forEach(dataObject, (value, title) => {
+        if (_.includes(title, '.')) {
+            relatedInfo  = _.split(title, '.');
+            relatedTable = relatedInfo[0];
+            relatedField = relatedInfo[1];
+            isRelated    = true;
+        }
+        if (options.noModifyTitle) {
+            modifiedTitle = title;
+        } else {
+            if (_.isString(title)) {
+                modifiedTitle = prettifyLabel(title);
+                modifiedTitle = deHyphenate(modifiedTitle);
+                modifiedTitle = namePrefix ? initCaps(namePrefix) + ' ' + modifiedTitle : modifiedTitle;
+            } else {
+                modifiedTitle = title;
+            }
+        }
+        title = namePrefix ? namePrefix + '.' + title : title;
+        if (isRelated) {
+            // For related columns, shorten the title to last two words
+            fieldName = _.split(modifiedTitle, ' ');
+            fieldName = fieldName.length > 1 ? fieldName[fieldName.length - 2] + ' ' + fieldName[fieldName.length - 1] : fieldName[0];
+        } else {
+            fieldName = modifiedTitle;
+        }
+        const defObj = options.setBindingField ? {'displayName': fieldName, 'field': title, 'relatedTable': relatedTable, 'relatedField': relatedField || modifiedTitle}
+        : {'displayName': fieldName, 'relatedTable': relatedTable, 'relatedField': relatedField || modifiedTitle};
+        /*if field is a leaf node, push it in the columnDefs*/
+        if (!_.isObject(value) || (_.isArray(value) && !value[0])) {
+            /*if the column counter has reached upperBound return*/
+            if (options.upperBound && options.columnCount === options.upperBound) {
+                return;
+            }
+            columnDefObj.terminals.push(defObj);
+            /*increment the column counter*/
+            options.columnCount += 1;
+        } else {
+            /*else field is an object, process it recursively*/
+            /* if parent node to be included, include it */
+            if (options.columnCount !== options.upperBound) {
+                columnDefObj.objects.push(defObj);
+            }
+
+            /* if field is an array node, process its first child */
+            if (_.isArray(value) && value[0]) {
+                pushFieldDef(value[0], columnDefObj, title + '[0]', options);
+            } else {
+                pushFieldDef(value, columnDefObj, title, options);
+            }
+        }
+    });
+};
+
+const getMetaDataFromData = (data) => {
+    let dataObject;
+    if (_.isArray(data)) {
+        if (_.isObject(data[0])) {
+            dataObject = getClonedObject(data[0]);
+            /*Loop over the object to find out any null values. If any null values are present in the first row, check and assign the values from other row.
+             * As column generation is dependent on data, for related fields if first row value is null, columns are not generated.
+             * To prevent this, check the data in other rows and generate the columns. New keys from others rows are also added*/
+            _.forEach(data, (row, index) => {
+                if ((index + 1) >= 10) { // Limit the data search to first 10 records
+                    return false;
+                }
+                _.assignWith(dataObject, row, (objValue, srcValue) => {
+                    return (objValue === null || objValue === undefined) ? srcValue : objValue;
+                });
+            });
+        } else {
+            dataObject = data[0];
+        }
+    } else {
+        dataObject = data;
+    }
+    return dataObject;
+};
+
+export const prepareFieldDefs = (data, options?) => {
+    let dataObject;
+    const columnDef = {
+            'objects' : [],
+            'terminals' : []
+        };
+    /*if no data provided, initialize default column definitions*/
+    if (!data) {
+        data = [];
+    }
+    if (!options) {
+        options = {};
+    }
+    options.setBindingField = true;
+    options.columnCount = 0;
+    dataObject = getMetaDataFromData(data);
+    /*first of the many data objects from grid data*/
+    pushFieldDef(dataObject, columnDef, '', options);
+    if (!options || (options && !options.filter)) {
+        return columnDef.terminals;
+    }
+    switch (options.filter) {
+        case 'all':
+            return columnDef;
+        case 'objects':
+            return columnDef.objects;
+        case 'terminals':
+            return columnDef.terminals;
+    }
+    return columnDef;
 };
