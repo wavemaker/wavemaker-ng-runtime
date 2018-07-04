@@ -128,7 +128,7 @@ function getViewElementInActivePage($el) {
 const goToPage = function (pageName, options) {
 
     // prevent the default behavior, if the navigation is from an anchor click event
-    if ($(window.event.target as HTMLElement).closest('a').length) {
+    if ($(window.event && window.event.target as HTMLElement).closest('a').length) {
         window.event.preventDefault();
     }
 
