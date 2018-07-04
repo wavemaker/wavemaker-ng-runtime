@@ -1,22 +1,10 @@
-import { $appDigest, $unwatch, isChangeFromWatch, isObject, resetChangeFromWatch, toBoolean } from '@wm/core';
+import { $appDigest, $unwatch, isChangeFromWatch, isObject, resetChangeFromWatch, toBoolean, toDimension } from '@wm/core';
 
 import { BaseComponent } from '../common/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
 import { isStyle } from './styler';
 import { getConditionalClasses, getWatchIdentifier } from '../../utils/widget-utils';
-
-// set of boolean attrs
-const BOOLEAN_ATTRS = new Set([
-    'readonly', 'autofocus', 'disabled', 'startchecked', 'multiple',
-    'selected', 'required', 'controls', 'autoplay', 'loop', 'muted', 'show'
-]);
-
-/**
- * Returns true if the provided key is a boolean attribute
- * @param {string} key
- * @returns {boolean}
- */
-const isBooleanAttr = (key: string): boolean => BOOLEAN_ATTRS.has(key);
+import { isBooleanAttr, isDimensionProp } from './constants';
 
 /**
  * Returns the parsed value based on the provided type
@@ -70,6 +58,11 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
 
     // Set the value in the component and trigger appDigest when there is a change in the value
     if (nv !== ov || isObject(nv) || isObject(ov)) {
+
+        if (isDimensionProp(key)) {
+            nv = toDimension(nv);
+        }
+
         component[key] = nv;
 
         if (isStyle(key)) {

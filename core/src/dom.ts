@@ -66,9 +66,6 @@ export const toggleClass = (node: HTMLElement, cls: string, condition: boolean, 
 
 export const setCSS = (node: HTMLElement, cssName: string, val?: string | number, sync?: boolean) => {
     const task = () => node.style[cssName] = val;
-    if (val && (cssName === 'width' || cssName === 'height')) {
-        val = toDimension(val);
-    }
     sync ? task() : invokeLater(task);
 };
 

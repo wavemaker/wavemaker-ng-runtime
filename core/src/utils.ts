@@ -810,25 +810,6 @@ export const openLink = (link: string, target: string = '_self') => {
 };
 
 
-/**
- * Formats style with given format
- * 'px' is default
- * @param val - style value
- * @param format - to which output format you want to style
- * @param forceFormat - even if format is present in val force format with given format
- * @returns val - formatted value
- */
-export const formatStyle = (val: string | number = '', format: string = 'px', forceFormat: boolean = false): string => {
-    const styleRegExp = /px|em|rem|pt|%/g;
-    val = val.toString();
-    if (forceFormat) {
-        val = val.replace(styleRegExp, '');
-    }
-    if (!styleRegExp.test(val)) {
-        val = val + format;
-    }
-    return val;
-};
 /* util function to load the content from a url */
 export const fetchContent = (dataType, url: string, inSync: boolean = false, success?, error?): Promise<any> => {
     return $.ajax({type: 'get', dataType: dataType, url: url, async: !inSync})
