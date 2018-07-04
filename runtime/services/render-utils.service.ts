@@ -9,7 +9,7 @@ import { BsDropdownModule, CarouselModule, PopoverModule } from 'ngx-bootstrap';
 import { BaseComponent, WmComponentsModule } from '@wm/components';
 import { transpile } from '@wm/transpiler';
 import { VariablesService } from '@wm/variables';
-import { $appDigest, $invokeWatchers, AbstractI18nService, App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
+import { $appDigest, $invokeWatchers, AbstractI18nService, App, extendProto, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { PartialContainerDirective } from '../components/partial-container/partial-container.directive';
@@ -68,7 +68,8 @@ const getDynamicComponent = (selector: string, template: string, styles: Array<s
             this._onDestroy = new Subject();
 
             if (context) {
-                Object.keys(context).forEach(key => this[key] = context[key]);
+                // Get the inner prototype and set the context on the prototype
+                extendProto(this, context);
             }
 
             postConstructFn(this, inj);
