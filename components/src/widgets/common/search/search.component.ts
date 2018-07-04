@@ -186,7 +186,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.notifyParent($event);
         }
 
-        if (this.typeaheadContainerInstance._active) {
+        if (this.typeaheadContainerInstance && this.typeaheadContainerInstance._active) {
             this.typeaheadOnSelect(this.typeaheadContainerInstance._active, $event);
         } else {
             this.typeaheadOnSelect(({item: {key: this.query, value: this._modelByValue, label: this.query}} as TypeaheadMatch), $event);

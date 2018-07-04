@@ -202,7 +202,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // Method to set the properties on inner form widget
     setFormWidget(key, val) {
-        this.formWidget.widget[key] = val;
+        if (this.formWidget && this.formWidget.widget) {
+            this.formWidget.widget[key] = val;
+        }
     }
 
     // Method to set the properties on inner max form widget (when range is selected)
