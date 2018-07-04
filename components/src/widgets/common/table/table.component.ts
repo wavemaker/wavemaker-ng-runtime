@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ControlValueAccessor } from '@angular/forms';
 
 import { Subject } from 'rxjs/Subject';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, isDataSourceEqual, isDefined, triggerFn } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, isDataSourceEqual, isDefined, isMobile, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -573,7 +573,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.editmode = this.editmode;
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
-        // TODO: this.gridOptions.isMobile   = isMobile();
+        this.gridOptions.isMobile = isMobile();
         // TODO: App defaults
         this.gridOptions.name = this.name;
         this.gridOptions.messages = {
@@ -679,9 +679,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return properties.every((prop, index) => {
             data = record[prop];
             /* If fieldDefs are missing, show all columns in data. */
-            /* TODO: Add mobile check*/
             isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) &&
-                (this.fieldDefs[index].pcDisplay)) || true;
+                (isMobile() ? this.fieldDefs[index].mobileDisplay : this.fieldDefs[index].pcDisplay)) || true;
             /*Validating only the displayed fields*/
             if (isDisplayed) {
                 return (data === null || data === undefined || data === '');
@@ -1111,6 +1110,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
+        if (isMobile()) {
+            if (!tableColumn.mobileDisplay) {
+                return;
+            }
+        } else {
+            if (!tableColumn.pcDisplay) {
+                return;
+            }
+        }
         this.fieldDefs.push(tableColumn);
         this.fullFieldDefs.push(tableColumn);
         this.rowFilter[tableColumn.field] = {

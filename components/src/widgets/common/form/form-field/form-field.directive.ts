@@ -1,7 +1,7 @@
 import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Self } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { DataType, debounce, FormWidgetType, removeClass, toBoolean } from '@wm/core';
+import { DataType, debounce, FormWidgetType, isMobile, removeClass, toBoolean } from '@wm/core';
 
 import { styler } from '../../../framework/styler';
 import { registerProps } from './form-field.props';
@@ -82,6 +82,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     private _debounceSetUpValidators;
     private _initPropsRes;
+    private mobileDisplay;
+    private pcDisplay;
 
     constructor(
         inj: Injector,
@@ -94,6 +96,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('name') name,
         @Attribute('key') key,
         @Attribute('is-range') isRange,
+        @Attribute('pc-display') pcDisplay,
+        @Attribute('mobile-display') mobileDisplay,
         @Self() @Inject(Context) contexts: Array<any>
     ) {
 
@@ -117,6 +121,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.isRange = isRange;
         this.excludeProps = new Set(['type']);
         this.widgettype = _widgetType;
+        this.pcDisplay = pcDisplay !== 'false';
+        this.mobileDisplay = mobileDisplay !== 'false';
 
         if (this.binddataset) {
             this.isDataSetBound = true;
@@ -375,6 +381,18 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
             this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
         }
+
+        this.registerReadyStateListener(() => {
+            if (isMobile()) {
+                if (!this.mobileDisplay) {
+                    this.widget.show = false;
+                }
+            } else {
+                if (!this.pcDisplay) {
+                    this.widget.show = false;
+                }
+            }
+        });
 
         // Register the form field with parent form
         this.form.registerFormFields(this.widget);

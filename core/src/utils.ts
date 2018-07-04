@@ -801,8 +801,9 @@ export const hasCordova = () => {
 // TODO: Create AppDefaults Service and include the getter setter for key / value pairs.
 export const AppDefaults = {
     INT_MAX_VALUE: 2147483647,
-    dateFormat: 'MM/dd/yyyy',
-    timeFormat: 'HH:mm'
+    dateFormat: '',
+    timeFormat: '',
+    dateTimeFormat: ''
 } ;
 
 export const openLink = (link: string, target: string = '_self') => {
