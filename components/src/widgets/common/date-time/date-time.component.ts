@@ -39,6 +39,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private showseconds: boolean;
     private ismeridian: boolean;
 
+    public showdropdownon: string;
+
     get timestamp() {
         return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
     }
@@ -196,6 +198,16 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      */
     private preventTpClose($event) {
         $event.stopImmediatePropagation();
+    }
+
+    /**
+     * This is an internal method used to toggle the dropdown of the date widget
+     */
+    private toggleDpDropdown($event) {
+        if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
+            return;
+        }
+        this.bsDatePickerDirective.toggle();
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

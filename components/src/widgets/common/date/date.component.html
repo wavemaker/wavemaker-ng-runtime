@@ -4,12 +4,12 @@
        [name]="name"
        [tabindex]="tabindex"
        [value]="displayValue"
-       (click)="datepicker.toggle()"
+       (click)="toggleDpDropdown($event)"
        [disabled]="disabled || readonly || isCurrentDate"
        [required]="required"
        [attr.placeholder]="placeholder"
        (change)="onDisplayDateChange($event)">
-<span class="input-group-btn" (click)="datepicker.toggle()">
+<span class="input-group-btn" (click)="toggleDpDropdown($event)">
     <button type="button" class="btn btn-default btn-time" aria-label="Select date" aria-haspopup="true" aria-expanded="false" focus-target><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
 </span>
 <div style="height: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">

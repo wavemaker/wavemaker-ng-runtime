@@ -34,6 +34,9 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
      * This property sets the output format for the selected time datavalue
      */
     outputformat: string;
+
+    public showdropdownon: string;
+
     private showseconds: boolean;
     private ismeridian: boolean;
 
@@ -134,6 +137,9 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
     private toggleDropdown($event): void {
         $event.preventDefault();
         $event.stopPropagation();
+        if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
+            return;
+        }
         this.status.isopen = !this.status.isopen;
         this.addBodyClickListener(this.status.isopen);
     }

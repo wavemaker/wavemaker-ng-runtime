@@ -5,15 +5,15 @@
            [tabindex]="tabindex"
            type="text"
            [value]="displayValue"
-           (click)="datepicker.toggle()"
+           (click)="toggleDpDropdown($event)"
            [disabled]="disabled || readonly || isCurrentDate"
            [required]="required"
            [attr.placeholder]="placeholder">
     <span class="input-group-btn">
-    <button focus-target type="button" class="btn btn-default btn-time" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="datepicker.toggle();">
+    <button focus-target type="button" class="btn btn-default btn-date" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="toggleDpDropdown($event)">
         <i aria-hidden="true" class="app-icon wi wi-calendar"></i>
     </button>
-    <button focus-target type="button" class="btn btn-default btn-date" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)">
+    <button focus-target type="button" class="btn btn-default btn-time" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)">
         <i aria-hidden="true" class="app-icon wi wi-access-time"></i>
     </button>
 </span>

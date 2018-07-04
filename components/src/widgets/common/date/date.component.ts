@@ -29,6 +29,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class DateComponent extends BaseDateTimeComponent {
     private bsDataValue;
+    public showdropdownon: string;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -83,6 +84,16 @@ export class DateComponent extends BaseDateTimeComponent {
 
     onDatePickerOpen() {
         this.invokeOnTouched();
+    }
+
+    /**
+     * This is an internal method used to toggle the dropdown of the date widget
+     */
+    toggleDpDropdown($event) {
+        if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
+            return;
+        }
+        this.bsDatePickerDirective.toggle();
     }
 
     /**
