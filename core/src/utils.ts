@@ -186,6 +186,10 @@ export const prettifyLabel = label => {
     return label;
 };
 
+export const deHyphenate = (name) => {
+    return name.split('-').join(' ');
+};
+
 /*Accepts an array or a string separated with symbol and returns prettified result*/
 export const prettifyLabels = (names, separator?) => {
     let modifiedNames,

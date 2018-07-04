@@ -11,7 +11,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
 import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
-import { getConditionalClasses, getOrderByExpr, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { getConditionalClasses, getOrderByExpr, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 declare var $: any;
@@ -869,8 +869,64 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         } else {
             this.serverData = serviceData;
         }
-        /*check if new column defs required*/
-        this.setGridData(this.serverData);
+        // If fielddefs are not present, generate fielddefs from data
+        if (this.fieldDefs.length) {
+            this.setGridData(this.serverData);
+        } else {
+            this.createGridColumns(this.serverData);
+        }
+    }
+
+    prepareFieldDefs(data) {
+        let defaultFieldDefs;
+        let properties;
+
+        this.fieldDefs = [];
+        this.headerConfig = [];
+        /* if properties map is existed then fetch the column configuration for all nested levels using util function */
+        properties = data;
+        /*call utility function to prepare fieldDefs for grid against given data (A MAX OF 10 COLUMNS ONLY)*/
+        defaultFieldDefs = prepareFieldDefs(properties);
+
+        /*append additional properties*/
+        _.forEach(defaultFieldDefs, columnDef => {
+            columnDef.pcDisplay = true;
+            columnDef.mobileDisplay = true;
+            columnDef.searchable = true;
+            columnDef.type  = 'string';
+            this.headerConfig.push({
+                'name'  : columnDef.field,
+                'field' : columnDef.field
+            });
+        });
+
+        /*prepare a copy of fieldDefs prepared
+         (defaultFieldDefs will be passed to markup and fieldDefs are used for grid)
+         (a copy is kept to prevent changes made by ng-grid in the fieldDefs)
+         */
+        this.fieldDefs = getClonedObject(defaultFieldDefs);
+
+        this.renderOperationColumns();
+        this.setDataGridOption('colDefs', this.fieldDefs);
+    }
+
+    createGridColumns(data) {
+        /* this call back function receives the data from the variable */
+        /* check whether data is valid or not */
+        const dataValid = data && !data.error;
+        /*if the data is type json object, make it an array of the object*/
+        if (dataValid && !_.isArray(data)) {
+            data = [data];
+        }
+        /* if new columns to be rendered, prepare default fieldDefs for the data provided*/
+        this.prepareFieldDefs(data);
+        /* Arranging Data for Pagination */
+        /* if data exists and data is not error type the render the data on grid using setGridData function */
+        if (dataValid) {
+            /*check for nested data if existed*/
+            this.serverData = data;
+            this.setGridData(this.serverData);
+        }
     }
 
     getSortExpr() {
