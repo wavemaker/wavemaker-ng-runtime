@@ -68,6 +68,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private parentRef: ChipsComponent; // used when search is inside chips.
     private lastSelectedIndex: number;
     private dataoptions: Object;
+    private _lastQuery: string;
 
     // Default check for container methods to access.
     get typeaheadContainerInstance() {
@@ -110,25 +111,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
             // if the datafield is ALLFILEDS do not fetch the records
             // update the query model with the values we have
-            if (this.datafield === ALLFIELDS) {
-                this.updateQueryModel(val);
-                return;
-            }
-
-            // value is present but the corresponding key is not found then fetch next set
-            // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
-            if (!this.modelByKey) {
-                this.query = query;
-            } else {
-                this.updateQueryModel(val);
-            }
+            this.updateQueryModel(val, this.datafield);
         });
         this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
 
         const datasetSubscription = this.dataset$.subscribe(() => {
             // set the next item index.
             this.startIndex = this.datasetItems.length;
-            this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
+            this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue, this.datafield);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
@@ -146,7 +136,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         const item = match.item;
         this.queryModel = item;
         item.selected = true;
-        this.query = item.label;
+        this._lastQuery = this.query = item.label;
 
         // As item.key can vary from key in the datasetItems
         this._modelByKey = item.key;
@@ -166,6 +156,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataProvider.hasNoMoreData = false;
         this.result = [];
         this.page = 1;
+
+        // when input is cleared, reset the datavalue
+        if (this.query === '') {
+            this.queryModel = '';
+            this.datavalue = '';
+        }
     }
 
     // Triggerred when typeahead option is selected.
@@ -289,9 +285,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     return [];
                 }
             ).then(result => {
-                // When no result is found, set the datavalue to empty.
+                // When no result is found, set the datavalue to undefined.
                 if (!result.length) {
-                    this.datavalue = '';
+                    this._modelByValue = undefined;
                     this.queryModel = query;
                 }
                 return result;
@@ -302,6 +298,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // if searchKey is defined, then variable call is made using the searchkey and other filterfields
     // else local data search is performed.
     public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
+        if (this._lastQuery === query) {
+            return Observable.of([]);
+        }
         // search will show all the results fetched previously without making n/w calls all the time.
         if (!this.isformfield && this.dataProvider.hasNoMoreData) {
             // converting array to observable using "observable.to".
@@ -315,12 +314,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
 
-    public updateQueryModel(data: any) {
-        if (!this._modelByKey) {
-            this.getDataSource(this.query, true).then((response) => {
+    public updateQueryModel(data: any, datafield: string) {
+        // value is present but the corresponding key is not found then fetch next set
+        // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
+        if (!this._modelByKey && datafield !== ALLFIELDS) {
+            this.getDataSource(data, true).then((response) => {
                 if (response.length) {
                     this.queryModel = response;
-                    this.query = this.queryModel.length ? this.queryModel[0].label : '';
+                    this._lastQuery = this.query = this.queryModel.length ? this.queryModel[0].label : '';
                 }
             });
             return;
@@ -330,7 +331,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.queryModel = selectedItem ? [selectedItem] : this.getTransformedData(extractDataAsArray(data));
 
         // Show the label value on input.
-        this.query = this.queryModel.length ? this.queryModel[0].label : '';
+        this._lastQuery = this.query = this.queryModel.length ? this.queryModel[0].label : '';
     }
 
 
