@@ -2,7 +2,7 @@ import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '@wm/components';
 
 export const navbarProps = new Map(
     [
-        ['backbutton', {value: false, ...PROP_BOOLEAN}],
+        ['backbutton', {value: true, ...PROP_BOOLEAN}],
         ['backbuttoniconclass', {value: 'wi wi-back', ...PROP_STRING}],
         ['backbuttonlabel', {value: '', ...PROP_STRING}],
         ['backgroundattachment', PROP_STRING],

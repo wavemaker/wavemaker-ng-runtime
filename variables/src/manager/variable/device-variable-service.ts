@@ -34,7 +34,11 @@ export class DeviceVariableService {
                     return Promise.reject(reason);
                 });
         } else {
-            return Promise.resolve(operation.model);
+            return Promise.resolve()
+                .then(() => {
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, operation.model);
+                    return operation.model;
+                });
         }
     }
 }

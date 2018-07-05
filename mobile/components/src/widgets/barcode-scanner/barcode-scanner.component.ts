@@ -26,7 +26,7 @@ export class BarcodeScannerComponent extends StylableComponent {
 
     constructor(private scanner: BarcodeScanner, inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
     @HostListener('click', ['$event'])

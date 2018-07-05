@@ -7,6 +7,7 @@ export const registerProps = () => {
             [
                 ['barcodeformat', {value: 'ALL', ...PROP_STRING}],
                 ['caption', {value: '', ...PROP_STRING}],
+                ['class', PROP_STRING],
                 ['iconclass', {value: 'glyphicon glyphicon-barcode', ...PROP_STRING}],
                 ['iconsize', {value: '2em', ...PROP_STRING}]
             ]

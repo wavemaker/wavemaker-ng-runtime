@@ -8,6 +8,7 @@ export const registerProps = () => {
                 ['allowedit', {value: false, ...PROP_BOOLEAN}],
                 ['capturetype', {value: 'IMAGE', ...PROP_STRING}],
                 ['caption', {value: '', ...PROP_STRING}],
+                ['class', PROP_STRING],
                 ['correctorientation', {value: false, ...PROP_BOOLEAN}],
                 ['datavalue', {value: '', ...PROP_STRING}],
                 ['iconclass', {value: 'wi wi-photo-camera', ...PROP_STRING}],
