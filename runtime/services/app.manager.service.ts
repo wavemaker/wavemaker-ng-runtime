@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { AbstractDialogService, AbstractI18nService, App, isDefined, triggerFn } from '@wm/core';
-
+import { AbstractDialogService, AbstractHttpService, AbstractI18nService, App, isDefined, triggerFn } from '@wm/core';
 import { SpinnerService } from './spinner.service';
 
 declare const _;
@@ -18,7 +16,7 @@ export class AppManagerService {
     private _noRedirect: boolean = false;
 
     constructor(
-        private $http: HttpService,
+        private $http: AbstractHttpService,
         private $security: SecurityService,
         private $dialog: AbstractDialogService,
         private $router: Router,

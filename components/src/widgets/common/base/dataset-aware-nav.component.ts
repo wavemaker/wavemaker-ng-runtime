@@ -68,7 +68,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
      */
     private getNode(fields, node): NavNode {
         const children = getEvaluatedData(node, {expression: 'itemchildren', bindExpression: this.binditemchildren}) || node[fields.childrenField];
-        return {
+        const navNode = {
             action: getEvaluatedData(node, {expression: 'itemaction', bindExpression: this.binditemaction}) || node[fields.actionField],
             badge: getEvaluatedData(node, {expression: 'itembadge', bindExpression: this.binditembadge}) || node[fields.badgeField],
             children: Array.isArray(children) ? this.getNodes(children) : [],
@@ -82,6 +82,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             // older projects have display field & data field property for menu.
             value: this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
         };
+        return _.omitBy(navNode, _.isUndefined);
     }
 
     resetItemFieldMap() {

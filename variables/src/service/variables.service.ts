@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $invokeWatchers, AbstractDialogService, AbstractToasterService } from '@wm/core';
-import { HttpService } from '@wm/http';
+import { AbstractHttpService, AbstractDialogService, AbstractToasterService } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
 
@@ -17,7 +16,7 @@ declare const _;
 export class VariablesService {
 
     constructor(
-        private httpService: HttpService,
+        private httpService: AbstractHttpService,
         private metadataService: MetadataService,
         private routerService: Router,
         private toasterService: AbstractToasterService,
@@ -59,7 +58,7 @@ export class VariablesService {
             if (variable.startUpdate) {
                 variable.invoke();
             }
-        })
+        });
     }
 
     /**

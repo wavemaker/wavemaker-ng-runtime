@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import { HttpService } from '@wm/http';
+
+import { AbstractHttpService } from '@wm/core';
 import { performAuthorization, removeAccessToken, getAccessToken } from './oAuth.utils';
 
 declare const _;
 
 @Injectable()
 export class OAuthService {
-    constructor(private httpService: HttpService) {}
+    constructor(private httpService: AbstractHttpService) {}
 
     providers = new Subject();
 

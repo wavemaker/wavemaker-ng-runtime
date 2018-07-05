@@ -1,9 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService } from '@wm/core';
+import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService, AbstractHttpService } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { HttpService } from '@wm/http';
-
 
 declare const _;
 declare const _WM_APP_PROPERTIES: any;
@@ -11,7 +9,7 @@ declare const _WM_APP_PROPERTIES: any;
 const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
-    wmToaster: AbstractToasterService
+    ToasterService: AbstractToasterService
 };
 
 const enum PROJECT_TYPE {
@@ -21,6 +19,20 @@ const enum PROJECT_TYPE {
 }
 
 const noop = (...args) => {};
+
+// Wraps httpService to behave as angular 1.x $http service.
+const getHttpDependency = function() {
+    const httpService = this.httpService;
+    const fn = function (key, options?) {
+        const args = Array.from(arguments).slice(1);
+        return Promise.resolve(httpService[key].apply(httpService, args));
+    };
+    const $http = function () {
+        return fn.apply(undefined, ['send', ...Array.from(arguments)]);
+    };
+    ['get', 'post', 'head', 'put', 'delete', 'jsonp', 'patch'].forEach(key => $http[key] = fn.bind(undefined, key));
+    return $http;
+};
 
 @Injectable()
 export class AppRef {
@@ -49,7 +61,7 @@ export class AppRef {
     constructor(
         private inj: Injector,
         private i18nService: AbstractI18nService,
-        private httpService: HttpService,
+        private httpService: AbstractHttpService,
         private securityService: SecurityService
     ) {
 
@@ -70,6 +82,9 @@ export class AppRef {
 
     public getDependency(injToken) {
         if (isString(injToken)) {
+            if (injToken === 'HttpService') {
+                return getHttpDependency.call(this);
+            }
             return injectorMap[injToken] && this.inj.get(injectorMap[injToken]);
         }
         return this.inj.get(injToken);

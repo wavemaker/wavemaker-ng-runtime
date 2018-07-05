@@ -86,6 +86,28 @@ export abstract class AbstractDialogService {
     public abstract closeAllDialogs: Function;
 }
 
+export abstract class AbstractHttpService {
+    public abstract send(options: any);
+    public abstract setLocale(locale);
+    public abstract getLocale();
+    public abstract parseErrors(errors);
+    public abstract parseError(errorObj);
+    public abstract getHeader(error, headerKey);
+    public abstract isPlatformSessionTimeout(error);
+    public abstract get(url: string, options?: any);
+    public abstract post(url, data, options);
+    public abstract put(url, data, options);
+    public abstract patch(url, data, options);
+    public abstract delete(url, options);
+    public abstract head(url, options);
+    public abstract jsonp(url, options);
+    public abstract upload(url, data, options);
+    public abstract registerOnSessionTimeout(callback);
+    public abstract on401();
+    public abstract pushToSessionFailureQueue(callback);
+    public abstract executeSessionFailureRequests();
+}
+
 export abstract class AbstractI18nService {
     public abstract registerLocalePath(path: string);
     public abstract getSelectedLocale(): string;

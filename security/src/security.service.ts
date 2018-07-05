@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpService } from '@wm/http';
 
-import { getClonedObject, triggerFn } from '@wm/core';
+import { AbstractHttpService, getClonedObject, triggerFn } from '@wm/core';
 
 declare const _WM_APP_PROPERTIES, _;
 
@@ -22,7 +21,7 @@ export class SecurityService {
 
     constructor(
         private httpClient: HttpClient,
-        private $http: HttpService,
+        private $http: AbstractHttpService,
         private routerService: Router,
         private activatedRoute: ActivatedRoute,
         private _location: Location

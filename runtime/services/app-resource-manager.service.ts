@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { HttpService } from '@wm/http';
+import { AbstractHttpService } from '@wm/core';
 import { SecurityService } from '@wm/security';
-
 
 const cache = new Map<string, string>();
 
@@ -24,5 +23,5 @@ export class AppResourceManagerService {
         });
     }
 
-    constructor(private $http: HttpService, private securityService: SecurityService) {}
+    constructor(private $http: AbstractHttpService, private securityService: SecurityService) {}
 }
