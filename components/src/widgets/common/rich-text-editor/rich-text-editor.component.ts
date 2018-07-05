@@ -56,7 +56,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
     $richTextEditor;
     $hiddenInputEle;
 
-    _model_;
+    proxyModel;
     _operationStack = [];
     isEditorLoaded = false;
 
@@ -88,7 +88,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
                 }
             },
             onChange: (contents, editable) => {
-                this._model_ = this.domSanitizer.bypassSecurityTrustHtml(contents.toString());
+                this.proxyModel = this.domSanitizer.bypassSecurityTrustHtml(contents.toString());
                 this.invokeOnChange(contents, getChangeEvt());
                 this.invokeOnTouched();
             }

@@ -6,6 +6,7 @@
            type="text"
            [value]="displayValue"
            (click)="toggleDpDropdown($event)"
+           (change)="onDateChange($event)"
            [disabled]="disabled || readonly || isCurrentDate"
            [required]="required"
            [attr.placeholder]="placeholder">

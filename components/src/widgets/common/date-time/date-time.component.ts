@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewC
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { $appDigest, addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate, setAttr } from '@wm/core';
+import { addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate, getValidDateObject, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -38,6 +38,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private bsTimeValue;
     private showseconds: boolean;
     private ismeridian: boolean;
+    private proxyModel;
 
     public showdropdownon: string;
 
@@ -50,7 +51,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * @returns {any|string}
      */
     get displayValue(): any {
-        return getFormattedDate(this.datePipe, this.bsDateTimeValue, this._dateOptions.dateInputFormat) || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, this._dateOptions.dateInputFormat) || '';
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
@@ -76,7 +77,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private isCurrentDate: boolean = false;
 
     get datavalue(): any {
-        return getFormattedDate(this.datePipe, this.bsDateTimeValue, this.outputformat);
+        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
     }
 
     /**Todo[Shubham]: needs to be redefined
@@ -88,17 +89,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.setTimeInterval();
             return;
         }
+        this.proxyModel = newVal ? getDateObj(newVal) : undefined;
+
+        this.bsTimeValue = this.bsDateValue = this.proxyModel;
         this.isCurrentDate = false;
         this.clearTimeInterval();
-
-        if (newVal) {
-            this.bsDateValue = this.bsDateValue || getDateObj(newVal);
-            this.bsTimeValue = this.bsTimeValue || getDateObj(newVal);
-            this.bsDateTimeValue = getDateObj(newVal);
-        } else {
-            this.bsDateValue = this.bsTimeValue = this.bsDateTimeValue = undefined;
-        }
-        this.invokeOnChange(this.datavalue);
         this.cdRef.detectChanges();
     }
 
@@ -170,27 +165,20 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      */
     private onModelUpdate(newVal, type?) {
         if (!newVal) {
-            this.bsDateTimeValue = undefined;
-            this.invokeOnChange(this.datavalue, {}, true); // Todo[Shubham]: should pass event as second param(not supported by lib presently)
+            this.proxyModel = undefined;
             return;
         }
-        const dateObj = getDateObj(newVal);
         if (type === 'date') {
-            this.bsDateValue = dateObj.toDateString();
-            this.bsTimeValue = dateObj.toTimeString();
             if (this.isDateOpen) {
                 this.toggleTimePicker(true);
             }
-            this.bsDateTimeValue = new Date(`${this.bsDateValue} ${this.bsTimeValue}`);
-        } else {
-            this.bsTimeValue = dateObj.toTimeString();
-            if (!this.bsDateValue) {
-                this.bsDateValue = dateObj.toDateString();
-            }
-            this.bsDateTimeValue = new Date(`${this.bsDateValue} ${this.bsTimeValue}`);
         }
-        this.invokeOnChange(this.datavalue, {}, true);
-        $appDigest();
+        this.proxyModel = newVal;
+        if (this.proxyModel) {
+            this.bsDateValue = this.bsTimeValue = this.proxyModel;
+        }
+        this.invokeOnChange(newVal);
+        this.cdRef.detectChanges();
     }
 
     /**
@@ -208,6 +196,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             return;
         }
         this.bsDatePickerDirective.toggle();
+    }
+
+    private onDateChange($event) {
+        let newVal = $event.target.value.trim();
+        newVal = newVal ? getValidDateObject(newVal) : undefined;
+        this.onModelUpdate(newVal);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
