@@ -28,7 +28,7 @@ export class LoginActionManager extends BaseActionManager {
         for (paramKey in params) {
             if (params.hasOwnProperty(paramKey) &&
                 (params[paramKey] === '' || params[paramKey] === undefined)) {
-                err = 'Please provide ' + paramKey + '.';
+                err = 'Please provide required credentials';
                 break;
             }
         }
