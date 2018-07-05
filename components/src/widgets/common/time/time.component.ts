@@ -160,7 +160,7 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
         setTimeout(() => {
             const dropdownElement = this.nativeElement.querySelector('.dropdown-menu');
             addEventListener(bodyElement, dropdownElement, 'click', () => {
-                this.toggleDropdown(evt);
+                this.status.isopen = false;
             }, EVENT_LIFE.ONCE);
         }, 350);
     }
