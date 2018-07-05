@@ -606,6 +606,13 @@ export const getValidDateObject = val => {
     return new Date(moment(val).valueOf());
 };
 
+/*  This function returns javascript date object*/
+export const getNativeDateObject = val => {
+    val = getValidDateObject(val);
+    return new Date(val);
+};
+
+
 /**
  * prepare a blob object based on the content and content type provided
  * if content is blob itself, simply returns it back

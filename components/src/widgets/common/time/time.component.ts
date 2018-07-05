@@ -1,6 +1,6 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 
-import { $appDigest, addClass, addEventListener, EVENT_LIFE, getFormattedDate, getValidDateObject, setAttr } from '@wm/core';
+import { $appDigest, addClass, addEventListener, EVENT_LIFE, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
@@ -54,12 +54,12 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
     set datavalue(newVal: any) {
         if (newVal) {
             if (newVal === CURRENT_TIME) {
-                this.bsTimeValue = getValidDateObject(newVal);
+                this.bsTimeValue = getNativeDateObject(newVal);
                 this.isCurrentTime = true;
                 this.setTimeInterval();
             } else {
                 this.clearTimeInterval();
-                this.bsTimeValue = getValidDateObject(newVal);
+                this.bsTimeValue = getNativeDateObject(newVal);
                 this.isCurrentTime = false;
             }
         } else {
@@ -123,9 +123,9 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
             this.ismeridian = _.includes(nv, 'h');
         }
         if (key === 'mintime') {
-            this.minTime = getValidDateObject(nv); // TODO it is supposed to be time conversion, not to the day
+            this.minTime = getNativeDateObject(nv); // TODO it is supposed to be time conversion, not to the day
         } else if (key === 'maxtime') {
-            this.maxTime = getValidDateObject(nv);
+            this.maxTime = getNativeDateObject(nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -169,7 +169,7 @@ export class TimeComponent extends BaseFormCustomComponent implements OnDestroy 
      * This is an internal method triggered when the time input changes
      */
     onDisplayTimeChange($event) {
-        const newVal = getValidDateObject($event.target.value);
+        const newVal = getNativeDateObject($event.target.value);
         this.onTimeChange(newVal);
     }
 
