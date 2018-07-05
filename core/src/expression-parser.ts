@@ -113,6 +113,12 @@ const getPurePipeVal = (pipe, cache, identifier, ...args) => {
     return result;
 };
 
+const STR_ESCAPE_REGEX = /[^ a-zA-Z0-9]/g;
+
+const stringEscapeFn = str => {
+    return '\\u' + ('0000' + str.charCodeAt(0).toString(16)).slice(-4);
+};
+
 class ASTCompiler {
     ast; // ast to be compiled
     declarations; // variable names
@@ -146,7 +152,7 @@ class ASTCompiler {
 
     processLiteralPrimitive() {
         const ast = this.cAst;
-        return isString(ast.value) ? `"${ast.value.replace(/"/g, '\\"')}"` : ast.value;
+        return isString(ast.value) ? `"${ast.value.replace(/"/g, '\\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
     }
 
     processLiteralArray() {
