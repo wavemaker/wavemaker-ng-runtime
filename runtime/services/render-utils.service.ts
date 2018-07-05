@@ -296,6 +296,7 @@ export class RenderUtilsService {
                 variablesInstance.callback(variablesInstance.Actions);
                 (pageInstance.onReady || noop)();
                 (this.app.onPageReady || noop)(pageName, pageInstance);
+                this.appManager.notify('pageReady', {'name' : pageName, 'instance' : pageInstance});
             });
 
             this.app.lastActivePageName = this.app.activePageName;

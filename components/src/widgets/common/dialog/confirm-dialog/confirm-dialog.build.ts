@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-confirmdialog', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmConfirmDialog ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmConfirmDialog wm-navigable-element="true" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

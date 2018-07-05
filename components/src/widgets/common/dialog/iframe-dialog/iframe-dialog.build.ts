@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-iframedialog', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmIframeDialog ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmIframeDialog wm-navigable-element="true" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

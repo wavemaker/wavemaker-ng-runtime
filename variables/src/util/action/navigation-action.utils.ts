@@ -1,5 +1,4 @@
-import { routerService } from '../variable/variables.utils';
-import { appManager } from '@wm/variables';
+import { appManager, routerService } from '../variable/variables.utils';
 
 declare const _;
 
@@ -18,29 +17,29 @@ let pageStackObject,
  * isLastVisitedPage, checks if the given page is last visited page
  * getPagesCount, returns the number of pages in stack
  */
-pageStackObject = ( function() {
+pageStackObject = ( function () {
     const stack = [];
     let currentPage;
     return {
-        'getCurrentPage' : () => {
+        'getCurrentPage': () => {
             return currentPage;
         },
-        'push' : (pageInfo) => {
+        'push': (pageInfo) => {
             if (currentPage) {
                 stack.push(currentPage);
             }
             currentPage = pageInfo;
         },
-        'pop' : () => {
+        'pop': () => {
             currentPage = stack.pop();
         },
-        'getLastPage' : () => {
+        'getLastPage': () => {
             return stack.length > 0 ? stack[stack.length - 1] : undefined;
         },
-        'isEqual' : (page1, page2) => {
+        'isEqual': (page1, page2) => {
             return page1 && page2 && page1.name === page2.name && _.isEqual(page1.urlParams, page2.urlParams);
         },
-        'isLastVisitedPage' : (page) => {
+        'isLastVisitedPage': (page) => {
             return this.isEqual(page, this.getLastPage());
         },
         'getPagesCount': () => {
@@ -54,26 +53,27 @@ pageStackObject = ( function() {
  */
 function showAncestors(element, variable) {
     const ancestorSearchQuery = '[wm-navigable-element="true"]';
+    const activePage = getActivePage();
 
     element
         .parents(ancestorSearchQuery)
         .toArray()
         .reverse()
         .forEach((parent) => {
-            const $is = variable._context.Widgets[parent];
-            switch ($is._widgettype) {
+            const $el = activePage.Widgets[parent.getAttribute('name')];
+            switch ($el.widgetType) {
                 case 'wm-accordionpane':
-                    $is.expand();
+                    $el.expand();
                     break;
                 case 'wm-tabpane':
-                    $is.select();
+                    $el.select();
                     break;
                 case 'wm-segment-content':
-                    $is.navigate();
+                    $el.navigate();
                     break;
                 case 'wm-panel':
                     /* flip the active flag */
-                    $is.expanded = true;
+                    $el.expanded = true;
                     break;
             }
         });
@@ -147,30 +147,31 @@ const goToPage = function (pageName, options) {
  * if the element not found in the compiled markup, the same is searched in the available dialogs in the page
  */
 function goToElementView(viewElement, viewName, pageName, variable) {
-    let $is, parentDialog;
+    let $el, parentDialog;
+    const activePage = getActivePage();
 
     if (viewElement.length) {
-        if (pageName === appManager.$app.activePageName) {
+        if (pageName === activePage.activePageName) {
             viewElement = getViewElementInActivePage(viewElement);
         }
 
-        $is = variable._context.Widgets[viewName];
-        switch ($is.widgetType) {
+        $el = activePage.Widgets[viewName];
+        switch ($el.widgetType) {
             case 'wm-accordionpane':
                 showAncestors(viewElement, variable);
-                $is.expand();
+                $el.expand();
                 break;
             case 'wm-tabpane':
                 showAncestors(viewElement, variable);
-                $is.select();
+                $el.select();
                 break;
             case 'wm-segment-content':
                 showAncestors(viewElement, variable);
-                $is.navigate();
+                $el.navigate();
                 break;
             case 'wm-panel':
                 /* flip the active flag */
-                $is.expanded = true;
+                $el.expanded = true;
                 break;
         }
     } else {
@@ -183,6 +184,10 @@ function goToElementView(viewElement, viewName, pageName, variable) {
     }
 }
 
+const getActivePage = () => {
+    return appManager.getActivePage();
+};
+
 /** Todo[Shubham] Need to handle gotoElement in other pages{TBD}
  * Navigates to particular view
  * @param viewName
@@ -191,13 +196,14 @@ function goToElementView(viewElement, viewName, pageName, variable) {
  */
 const goToView = function (viewName, options, variable) {
     options = options || {};
-    const pageName = options.pageName,
-        transition = options.transition || '',
-        $event = options.$event;
+    const pageName = options.pageName;
+    const transition = options.transition || '';
+    const $event = options.$event;
+    const activePage = getActivePage();
 
     // checking if the element is present in the same page if yes highlight the element
     // else goto the page in which the element exists and highlight the element
-    if (!pageName || pageName === appManager.$app.activePageName || isPartialWithNameExists(pageName)) {
+    if (!pageName || pageName === activePage.activePageName || isPartialWithNameExists(pageName)) {
         goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
     } else {
         goToPage(pageName, {
@@ -205,6 +211,12 @@ const goToView = function (viewName, options, variable) {
             $event      : $event,
             transition  : transition,
             urlParams   : options.urlParams
+        });
+        // subscribe to an event named pageReady which notifies this subscriber
+        // when all widgets in page are loaded i.e when page is ready
+        const pageReadySubscriber = appManager.subscribe('pageReady', (page) => {
+            goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
+            pageReadySubscriber();
         });
     }
 };
@@ -218,8 +230,8 @@ export const navigate = (variable, options) => {
 
     let viewName;
     const pageName = variable.dataBinding.pageName || variable.pageName,
-        operation           = variable.operation,
-        urlParams           = variable.dataSet;
+        operation = variable.operation,
+        urlParams = variable.dataSet;
 
     options = options || {};
 
@@ -230,9 +242,11 @@ export const navigate = (variable, options) => {
             window.history.back();
             break;
         case 'gotoPage':
-            goToPage(pageName , { transition  : variable.pageTransitions,
-                $event      : options.$event,
-                urlParams   : urlParams});
+            goToPage(pageName, {
+                transition: variable.pageTransitions,
+                $event: options.$event,
+                urlParams: urlParams
+            });
             break;
         case 'gotoView':
             viewName = (variable.dataBinding && variable.dataBinding.viewName) || variable.viewName;
@@ -251,10 +265,10 @@ export const navigate = (variable, options) => {
     /* if view name found, call routine to navigate to it */
     if (viewName) {
         goToView(viewName, {
-            pageName    : pageName,
-            transition  : variable.pageTransitions,
-            $event      : options.$event,
-            urlParams   : urlParams
+            pageName: pageName,
+            transition: variable.pageTransitions,
+            $event: options.$event,
+            urlParams: urlParams
         }, variable);
     }
 };

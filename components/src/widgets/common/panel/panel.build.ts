@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-panel', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmPanel partialContainer aria-label="panel" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmPanel partialContainer aria-label="panel" wm-navigable-element="true" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

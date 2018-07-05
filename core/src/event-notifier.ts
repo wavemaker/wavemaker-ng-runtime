@@ -61,7 +61,7 @@ export class EventNotifier {
                     }
                 });
             return () => {
-                eventListener.destroy();
+                eventListener.unsubscribe();
             };
         }
         return noop;

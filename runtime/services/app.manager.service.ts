@@ -278,6 +278,14 @@ export class AppManagerService {
         this.$app.notify(eventName, data);
     }
 
+    subscribe(eventName, data) {
+        return this.$app.subscribe(eventName, data);
+    }
+
+    getActivePage() {
+        return this.$app.activePage;
+    }
+
     getAppLocale() {
         return this.$app.appLocale;
     }

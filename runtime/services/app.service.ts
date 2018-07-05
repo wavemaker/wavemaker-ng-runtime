@@ -90,6 +90,10 @@ export class AppRef {
         return this._eventNotifier.subscribe(eventName, callback);
     }
 
+    public getActivePage() {
+        return (<any>this).activePage;
+    }
+
     public notifyApp(template, type, title) {
         const notificationAction = _.get(this, 'Actions.appNotification');
         if (notificationAction) {
