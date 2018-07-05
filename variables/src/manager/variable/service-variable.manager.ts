@@ -406,7 +406,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         }, (e) => {
             // notify variable error
             this.notifyInflight(variable, false);
-            this.processErrorResponse(variable, e, error, options.xhrObj, options.skipNotification);
+            this.processErrorResponse(variable, e.error, error, e.details, options.skipNotification);
         });
     }
 

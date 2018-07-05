@@ -73,7 +73,10 @@ export class HttpService {
                     } else {
                         errMsg = 'Service Call Failed';
                     }
-                    reject(errMsg);
+                    reject({
+                        error: errMsg,
+                        details: response
+                    });
                 }
             });
         });

@@ -72,7 +72,7 @@ export class LiveVariableManager extends BaseVariableManager {
         }
 
         //  EVENT: ON_ERROR
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, options.errorDetails);
         //  EVENT: ON_CAN_UPDATE
         variable.canUpdate = true;
         initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
@@ -117,7 +117,7 @@ export class LiveVariableManager extends BaseVariableManager {
         if (output === false) {
             $queue.process(variable);
             // $rootScope.$emit('toggle-variable-state', variable, false);
-            triggerFn(error);
+            triggerFn(error, 'Call stopped from the event: ' + VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE);
             return Promise.reject('Call stopped from the event: ' + VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE);
         }
 
@@ -147,7 +147,7 @@ export class LiveVariableManager extends BaseVariableManager {
             'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options),
             // 'filterMeta': tableOptions.filter,
             'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
-        }).then((response, xhrObj) => {
+        }).then((response) => {
             response = response.body;
 
             if ((response && response.error) || !response || !_.isArray(response.content)) {
@@ -187,11 +187,11 @@ export class LiveVariableManager extends BaseVariableManager {
                 });
             }
             return Promise.resolve({data: dataObj.data, pagingOptions: dataObj.pagingOptions});
-        }, (errorMsg, details, xhrObj) => {
+        }, (e) => {
             this.setVariableOptions(variable, options);
-            this.handleError(variable, error, errorMsg, options);
+            this.handleError(variable, error, e.error, _.extend(options, {errorDetails: e.details}));
 
-            return Promise.reject(errorMsg);
+            return Promise.reject(e.error);
         });
 
         variable.promise = promiseObj;

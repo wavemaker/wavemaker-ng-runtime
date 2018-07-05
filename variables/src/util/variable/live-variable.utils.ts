@@ -844,15 +844,15 @@ export default class LiveVariableUtils {
             'id': !_.isUndefined(options.id) ? encodeURIComponent(options.id) : compositeId,
             'data': rowObject,
             'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
-        }).then((response, xhrObj) => {
-            response = response.body;
+        }).then((data) => {
+            let response = data.body;
             $queue.process(variable);
             /* if error received on making call, call error callback */
             if (response && response.error) {
                 // EVENT: ON_RESULT
                 _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
                 // EVENT: ON_ERROR
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error);
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
                 // EVENT: ON_CAN_UPDATE
                 variable.canUpdate = true;
                 _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error);
@@ -878,22 +878,23 @@ export default class LiveVariableUtils {
             _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
             triggerFn(success, response);
             return Promise.resolve(response);
-        }, (response, details, xhrObj) => {
+        }, (response) => {
+            const errMsg = response.error;
             // EVENT: ON_RESULT
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg);
             // EVENT: ON_ERROR
             if (!options.skipNotification) {
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
             }
             // EVENT: ON_CAN_UPDATE
             variable.canUpdate = true;
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
-            triggerFn(error, response);
-            return Promise.reject(response);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg);
+            triggerFn(error, errMsg);
+            return Promise.reject(errMsg);
         });
 
         return variable.promise = promiseObj;
-    }
+    };
 
     static traverseFilterExpressions = (filterExpressions, traverseCallbackFn) => {
         if (filterExpressions.rules) {
@@ -905,7 +906,7 @@ export default class LiveVariableUtils {
                 }
             });
         }
-    }
+    };
 
     /**
      * Traverses recursively the filterExpressions object and if there is any required field present with no value,

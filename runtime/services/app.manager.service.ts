@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpService } from '@wm/http';
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { AbstractDialogService, AbstractI18nService, App, isDefined } from '@wm/core';
+import { AbstractDialogService, AbstractI18nService, App, isDefined, triggerFn } from '@wm/core';
 
 import { SpinnerService } from './spinner.service';
 
@@ -288,5 +288,15 @@ export class AppManagerService {
 
     notifyApp(template, type, header) {
         this.$app.notifyApp(template, type, header);
+    }
+
+    /**
+     * Triggers the onServiceError method defined in app.js of the app
+     * @param variable
+     * @param data
+     * @param xhrOb
+     */
+    appOnServiceError(variable: any, data: any, xhrOb?: any) {
+        triggerFn(this.$app.onServiceError, variable, data, xhrOb);
     }
 }
