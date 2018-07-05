@@ -94,6 +94,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // Runs on every search
                 observer.next(this.query);
             })
+            .debounceTime(150)
             .mergeMap((token: string) => this.getDataSourceAsObservable(token));
 
         /**
@@ -197,10 +198,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         // on keydown, if scroll is at the bottom and next page records are available, fetch next page items.
         if (!this._loadingItems && !this.dataProvider.isLastPage && index + 1 > matches.length - 1) {
-            this.loadMoreData(true);
-
             // index is saved in order to select the lastSelected item in the dropdown after fetching next page items.
             this.lastSelectedIndex = index;
+            this.loadMoreData(true);
         }
     }
 
@@ -235,13 +235,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // This method returns a promise that provides the filtered data from the datasource.
     public getDataSource(query: string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
-        if (this.dataset) {
-            this.formattedDataset = convertDataToObject(this.dataset);
-        }
-
         // For default datavalue, search key as to be on datafield to get the default data from the filter call.
         const dataConfig: IDataProviderConfig = {
-            dataset: this.formattedDataset,
+            dataset: this.dataset ? convertDataToObject(this.dataset) : undefined,
             binddataset: this.binddataset,
             datasource: this.datasource,
             datafield: this.datafield,
@@ -273,7 +269,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                         this.formattedDataset = response;
                     }
 
-                    this.noMoreData = this.isLastPage;
+                    this.noMoreData = response.isLastPage;
 
                     const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
 
@@ -298,7 +294,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // if searchKey is defined, then variable call is made using the searchkey and other filterfields
     // else local data search is performed.
     public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
-        if (this._lastQuery === query) {
+        // show dropdown only when there is change in query
+        if ((this.minchars || query) && this._lastQuery === query) {
             return Observable.of([]);
         }
         // search will show all the results fetched previously without making n/w calls all the time.
