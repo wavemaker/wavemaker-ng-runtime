@@ -1,4 +1,4 @@
-import { isNumberType, FormWidgetType, DataType } from '@wm/core';
+import { isNumberType, FormWidgetType, DataType, isMobileApp, isAndroid } from '@wm/core';
 
 declare const _;
 
@@ -66,7 +66,13 @@ export const getFieldLayoutConfig = (captionWidth, captionPosition): any => {
     captionPosition = captionPosition || 'top';
 
     if (captionPosition === 'top') {
-        captionCls = widgetCls = 'col-xs-12';
+        // TODO: check for selectedViewPort android
+        if (!isMobileApp() || isAndroid()) { // Is android or not a mobile application
+            captionCls = widgetCls = 'col-xs-12';
+        } else if (isMobileApp()) { // Is a mobile application and not android
+            captionCls = 'col-xs-4';
+            widgetCls = 'col-xs-8';
+        }
     } else if (captionWidth) {
         // handling itemsperrow containing string of classes
         _.forEach(_.split(captionWidth, ' '), function (cls) {

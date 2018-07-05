@@ -396,7 +396,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
         formData = getClonedObject(this.constructDataObject());
 
-        params = {$event: event, $formData: formData, $data: formData};
+        params = {$event, $formData: formData, $data: formData};
 
         if (this.onBeforeSubmitEvt && this.invokeEventCallback('beforesubmit', params)) {
             return;

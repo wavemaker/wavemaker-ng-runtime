@@ -1,5 +1,5 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
-import { FormWidgetType, getFormWidgetTemplate, IDGenerator } from '@wm/core';
+import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp } from '@wm/core';
 
 import { ALLFIELDS } from '../../../../utils/data-utils';
 import { isDataSetWidget } from '../../../../utils/widget-utils';
@@ -82,6 +82,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                    class="help-block text-danger"
                                    [textContent]="${counter}.validationmessage"></p>` : '';
             const eventsTmpl = getEventsTemplate(attrs);
+            const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             attrs.delete('widget');
             shared.set('counter', counter);
             return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getAttrMarkup(attrs)}>
@@ -89,7 +90,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                             <label *ngIf="${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
-                            <div [ngClass]="[${pCounter}._widgetClass]">
+                            <div [ngClass]="${counter}.displayname ? ${pCounter}._widgetClass : '${controlLayout}'">
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter)}
