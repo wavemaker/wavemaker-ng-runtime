@@ -87,7 +87,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     messagelayout;
     metadata;
     errormessage;
-    primaryKey;
+    primaryKey = [];
     postmessage;
     _liveTableParent;
     updateMode;
