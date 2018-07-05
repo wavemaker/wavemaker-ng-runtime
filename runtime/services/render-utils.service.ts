@@ -295,7 +295,7 @@ export class RenderUtilsService {
 
             this.app.lastActivePageName = this.app.activePageName;
             this.app.activePageName = pageName;
-            this.app.Page = pageInstance;
+            this.app.activePage = pageInstance;
             pageInstance.activePageName = pageName;
 
             this.route.queryParams.subscribe(params => pageInstance.pageParams = params);
