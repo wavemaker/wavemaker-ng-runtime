@@ -336,18 +336,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         generateCustomExpressions: (rowData, index) => {
             const row = this.getClonedRowObject(rowData);
+            const colDef = {};
             this.customExprCompiledTl[index] = [];
             // For all the columns inside the table, generate the inline widget
             this.customExprTmpl.forEach(tmpl => {
                 const customExprView = this.customExprViewRef.createEmbeddedView(tmpl, {
                     row,
-                    colDef: {},
-                    columnValue: ''
+                    colDef
                 });
                 const rootNode = customExprView.rootNodes[0];
                 const fieldName = rootNode.getAttribute('data-col-identifier');
-                customExprView.context.colDef = this.columns[fieldName];
-                customExprView.context.columnValue = row.getProperty(fieldName);
+                _.extend(colDef, this.columns[fieldName]);
                 this.customExprCompiledTl[fieldName + index] = rootNode;
             });
         },
