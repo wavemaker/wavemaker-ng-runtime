@@ -210,6 +210,11 @@ export class RenderUtilsService {
                     styles: _decodeURIComponent(styles),
                     variables: getValidJSON(_decodeURIComponent(variables)) || {}
                 };
+            }, (e) => {
+                const details = e.details;
+                if (details.status === 404) {
+                    this.appManager.notifyApp(this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available', 'error');
+                }
             });
     }
 

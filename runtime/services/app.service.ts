@@ -90,18 +90,19 @@ export class AppRef {
         return this._eventNotifier.subscribe(eventName, callback);
     }
 
-    public notifyApp(template, type, header) {
-        if (this.Actions.appNotification) {
+    public notifyApp(template, type, title) {
+        const notificationAction = _.get(this, 'Actions.appNotification');
+        if (notificationAction) {
             type = type || 'success';
-            this.Actions.appNotification.invoke({
+            notificationAction.invoke({
                 message: template,
-                title: isDefined(header) ? header : type.toUpperCase(),
+                title: isDefined(title) ? title : type.toUpperCase(),
                 class: type,
-                // If the type is error donot close the toastr
+                // If the type is error do not close the toastr
                 duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
             });
         } else {
-            console.warn('The default Action \"appNotification\" doesn\'t exist in your project.');
+            console.warn('The default Action "appNotification" doesn\'t exist in the app.');
         }
     }
 }

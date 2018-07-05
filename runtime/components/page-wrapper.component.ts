@@ -59,6 +59,8 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
                 )
                     .then(() => {
                         this.spinnerService.hide(spinnerId)
+                    }, (e) => {
+                        this.spinnerService.hide(spinnerId);
                     });
             });
     }
