@@ -24,6 +24,7 @@ export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGene
     registry.set(identifier, {
         fn: fn.bind(expr, $scope, $locals),
         listener,
+        expr,
         last: FIRST_TIME_WATCH,
         doNotClone
     });
@@ -51,7 +52,14 @@ const triggerWatchers = () => {
             const fn = watchInfo.fn;
             const listener = watchInfo.listener;
             const ov = watchInfo.last;
-            const nv = fn();
+            let nv;
+
+            try {
+                nv = fn();
+            } catch (e) {
+                console.warn(`error in executing expression: '${watchInfo.expr}'`);
+            }
+
             if (!_.isEqual(nv, ov)) {
                 changeDetected = true;
                 changedByWatch = true;
