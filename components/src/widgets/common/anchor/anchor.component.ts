@@ -79,6 +79,9 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'hyperlink') {
+            if (!nv) {
+                return;
+            }
             if (this.encodeurl) {
                 nv = encodeUrl(nv);
             }

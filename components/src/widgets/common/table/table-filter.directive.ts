@@ -381,7 +381,7 @@ export class TableFilterSortDirective {
         this.table.rowFilter[fieldName].matchMode = condition;
         // For empty match modes, clear off the value and call filter
         if (_.includes(this.table.emptyMatchModes, condition)) {
-            this.table.rowFilter[fieldName].value = undefined;
+            this.table.columns[fieldName].resetFilter();
             this.table.onRowFilterChange();
         } else {
             // If value is present, call the filter. Else, focus on the field
