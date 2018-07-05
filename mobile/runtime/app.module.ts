@@ -10,7 +10,7 @@ import { $rootScope } from '@wm/variables';
 
 import {MobileHttpInterceptor} from './services/http-interceptor.service';
 
-declare const $;
+declare const $, navigator;
 declare const _WM_APP_PROPERTIES;
 
 enum OS {
@@ -45,6 +45,7 @@ export class MobileAppModule {
         this._$appEl.addClass('wm-mobile-app');
         if (hasCordova()) {
             this._$appEl.addClass('cordova');
+            navigator.splashscreen.hide();
         }
         app.deployedUrl = this.getDeployedUrl();
         this.getDeviceOS().then(os => this.applyOSTheme(os));

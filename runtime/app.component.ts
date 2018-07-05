@@ -87,17 +87,13 @@ export class AppComponent implements DoCheck, AfterViewInit {
         const $eleRef = $(this.elRef.nativeElement);
         const $networkInfo = $eleRef.find('>[wmNetworkInfoToaster]');
         const $appUpdate = $eleRef.find('>[wmAppUpdate]');
-        const $target = $('body >wm-network-info-toaster');
+        const $body = $('body:first');
         if (hasCordova()) {
-            $appUpdate.appendTo('body:first');
-            if ($target.length > 0) {
-                $networkInfo.insertAfter($target as any);
-                $target.remove();
-            }
+            $appUpdate.appendTo($body);
+            $networkInfo.appendTo($body);
         } else {
             $networkInfo.remove();
             $appUpdate.remove();
-            $target.remove();
         }
     }
 }

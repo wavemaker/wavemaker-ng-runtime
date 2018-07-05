@@ -4,7 +4,7 @@ import { Component, ElementRef } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { FileOpener } from '@ionic-native/file-opener';
 
-import { addClass, hasCordova, removeClass, setCSS } from '@wm/core';
+import { addClass, hasCordova, noop, removeClass, setCSS } from '@wm/core';
 import { DeviceFileDownloadService, DeviceService } from '@wm/mobile/core';
 
 declare const cordova;
@@ -38,7 +38,7 @@ export class AppUpdateComponent {
         if (hasCordova()) {
             this.deviceService.whenReady().then(() => {
                 this.getBuildMeta().then(buildMeta => {
-                    if (buildMeta.buildMode === 'DEVELOPMENT_MODE') {
+                    if (buildMeta && buildMeta.buildMode === 'DEVELOPMENT_MODE') {
                         this.file.removeFile(cordova.file.externalApplicationStorageDirectory, AUTO_UPDATE_FILENAME);
                         this.checkForUpdate()
                             .then(this.getUserConfirmation.bind(this));
@@ -94,7 +94,7 @@ export class AppUpdateComponent {
                 .then(data => {
                     this._buildMeta = JSON.parse(data);
                     return this._buildMeta;
-                });
+                }, noop);
         }
         return Promise.resolve(this._buildMeta);
     }
