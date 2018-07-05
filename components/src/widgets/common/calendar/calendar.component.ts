@@ -97,7 +97,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
     // map the fullcalendar Element rendered
     private $fullCalendar;
     // model to the mobile calendar
-    private _model_;
+    private proxyModel;
     private eventData;
     private events;
     private changesStack = [];
@@ -291,10 +291,10 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
     private triggerMobileCalendarChange() {
         this.prepareCalendarEvents();
         // change the model so that the view is rendered again with the events , after the dataset is changed.
-        this._model_ = this._model_ || moment().valueOf();
+        this.proxyModel = this.proxyModel || moment().valueOf();
         this.selecteddates = {
-            start: moment(this._model_).valueOf(),
-            end  : moment(this._model_).endOf('day').valueOf()
+            start: moment(this.proxyModel).valueOf(),
+            end  : moment(this.proxyModel).endOf('day').valueOf()
         };
         this.invokeEventCallback('eventrender', {$data: this.eventData});
     }

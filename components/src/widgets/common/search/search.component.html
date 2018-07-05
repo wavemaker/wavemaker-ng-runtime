@@ -74,7 +74,7 @@
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
            [attr.name]="name"/>
-    <input class="model-holder" ng-model="_model_" ng-required="required" tabindex="-1">
+    <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
     <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch()"></span>
     <span class="sr-only">Clear button</span>
