@@ -29,22 +29,51 @@ const getEventsTemplate = (attrs) => {
     return getAttrMarkup(eventAttrs);
 };
 
-const getWidgetTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isMaxWidget?) => {
+const DEFAULT_PLACEHOLDERS = new Map([
+    [FormWidgetType.SELECT, ['Select Min value', 'Select Max value', 'Select value']],
+    [FormWidgetType.DATETIME, ['Select Min date time', 'Select Max date time', 'Select date time']],
+    [FormWidgetType.TIME, ['Select Min time', 'Select Max time', 'Select time']],
+    [FormWidgetType.DATE, ['Select Min date', 'Select Max date', 'Select date']],
+    [FormWidgetType.TEXTAREA, ['', '', 'Enter value']],
+    [FormWidgetType.RICHTEXT, ['', '', 'Enter value']],
+    [FormWidgetType.COLORPICKER, ['Select Color', 'Select Color', 'Select Color']],
+    [FormWidgetType.CHIPS, ['', '', 'Type here...']],
+    [FormWidgetType.PASSWORD, ['Enter Min value', 'Enter Max value', 'Enter value']],
+    [FormWidgetType.NUMBER, ['Enter Min value', 'Enter Max value', 'Enter value']],
+    [FormWidgetType.TEXT, ['Enter Min value', 'Enter Max value', 'Enter value']],
+    [FormWidgetType.CURRENCY, ['Enter Min value', 'Enter Max value', 'Enter value']],
+    [FormWidgetType.AUTOCOMPLETE, ['', '', 'Search']],
+]);
+
+const setDefaultPlaceholder = (attrs, widgetType, index) => {
+    const prop = index === 1 ? 'maxplaceholder' : 'placeholder';
+    let placeholder = attrs.get(prop);
+    if (placeholder || placeholder === '') {
+        return;
+    }
+    placeholder = DEFAULT_PLACEHOLDERS.get(widgetType) && DEFAULT_PLACEHOLDERS.get(widgetType)[index];
+    if (placeholder) {
+        attrs.set(prop, placeholder);
+    }
+};
+
+const getWidgetTemplate = (attrs, options) => {
     const fieldName = (attrs.get('key') || attrs.get('name') || '').trim();
-    const formControl = isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
-    const tmplRef = isMaxWidget ? `#formWidgetMax` : `#formWidget`;
-    const defaultTmpl = `[class.hidden]="!${pCounter}.isUpdateMode && ${counter}.viewmodewidget !== 'default'" ${formControl} ${eventsTmpl} ${tmplRef}`;
-    return getFormWidgetTemplate(widgetType, defaultTmpl, attrs, {counter, pCounter});
+    const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
+    const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
+    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef}`;
+    return getFormWidgetTemplate(options.widgetType, defaultTmpl, attrs, {counter: options.counter, pCounter: options.pCounter});
 };
 
 
 const getTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter) => {
-        if (attrs.get('is-range') !== 'true') {
-            return getWidgetTemplate(attrs, widgetType, eventsTmpl, counter, pCounter);
-        }
-        // TODO: Handle mobile case
-        return `<div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, eventsTmpl, counter, pCounter)}</div>
-                <div class="col-sm-6">${getWidgetTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, true)}</div>`;
+    const isRange = attrs.get('is-range') === 'true';
+    if (!isRange) {
+        return getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter});
+    }
+    const layoutClass = isMobileApp() ? 'col-xs-6' : 'col-sm-6';
+    return `<div class="${layoutClass}">${getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter})}</div>
+                <div class="${layoutClass}">${getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter, isMaxWidget: true})}</div>`;
 };
 
 const getCaptionByWidget = (attrs, widgetType, counter) => {
@@ -85,6 +114,14 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             attrs.delete('widget');
             shared.set('counter', counter);
+
+            if (attrs.get('is-range') === 'true') {
+                setDefaultPlaceholder(attrs, widgetType, 0);
+                setDefaultPlaceholder(attrs, widgetType, 1);
+            } else {
+                setDefaultPlaceholder(attrs, widgetType, 2);
+            }
+
             return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getAttrMarkup(attrs)}>
                         <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="${widgetType}">
                             <label *ngIf="${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
