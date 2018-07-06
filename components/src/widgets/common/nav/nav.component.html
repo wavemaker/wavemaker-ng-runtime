@@ -4,7 +4,7 @@
 </ng-template>
 
 <li class="app-nav-item {{item.class}}" *ngFor="let item of nodes; let index = index;" #liRef [ngClass]="{active: item.link === '#/' + activePageName}">
-    <a class="app-anchor" href="javascript:void(0)" *ngIf="!item.children.length" (click)="onNavSelect($event, item, liRef)">
+    <a class="app-anchor" [wmNavigationControl]="item.link" [disableMenuContext]="disableMenuContext" *ngIf="!item.children.length" (click)="onNavSelect($event, item, liRef)">
         <i class="app-nav-icon" [ngClass]="item.icon"></i>
         <span class="anchor-caption" [textContent]="item.label"></span>
         <span class="badge" [textContent]="item.badge"></span>

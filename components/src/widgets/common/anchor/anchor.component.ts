@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostBinding, Injector, Optional } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, Injector, Optional, Self } from '@angular/core';
 
 import { addClass, App, encodeUrl, getRouteNameFromLink, setAttr } from '@wm/core';
 
@@ -9,6 +9,7 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './anchor.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { NavItemDirective } from '../nav/nav-item/nav-item.directive';
+import { disableContextMenu } from '../nav/navigation-control.directive';
 
 
 registerProps();
@@ -48,9 +49,6 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
         private app: App
     ) {
         super(inj, WIDGET_CONFIG);
-
-        setAttr(this.nativeElement, 'href', 'javascript:void(0)');
-
         styler(this.nativeElement, this);
     }
 
@@ -80,6 +78,8 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'hyperlink') {
             if (!nv) {
+                setAttr(this.nativeElement, 'href', 'javascript:void(0)');
+                this.nativeElement.addEventListener('contextmenu', disableContextMenu);
                 return;
             }
             if (this.encodeurl) {
@@ -90,6 +90,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
                 nv = `//${nv}`;
             }
             setAttr(this.nativeElement, 'href', nv);
+            this.nativeElement.removeEventListener('contextmenu', disableContextMenu);
         } else {
             super.onPropertyChange(key, nv, ov);
         }

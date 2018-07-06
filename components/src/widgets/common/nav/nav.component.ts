@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
+import { Attribute, ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { $parseEvent, addClass, App, getRouteNameFromLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
@@ -32,6 +32,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
 
     public selecteditem;
     public type;
+    public disableMenuContext: boolean;
     public layout;
 
     private activeNavLINode: HTMLElement;
@@ -45,10 +46,12 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         private cdRef: ChangeDetectorRef,
         private router: Router,
         private userDefinedExecutionContext: UserDefinedExecutionContext,
-        private app: App
+        private app: App,
+        @Attribute('select.event') selectEventCB
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+        this.disableMenuContext = !!selectEventCB;
     }
 
 
