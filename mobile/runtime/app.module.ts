@@ -43,14 +43,16 @@ export class MobileAppModule {
     constructor(app: App, deviceService: DeviceService) {
         this._$appEl = $('.wm-app:first');
         this._$appEl.addClass('wm-mobile-app');
-        if (hasCordova()) {
-            this._$appEl.addClass('cordova');
-            navigator.splashscreen.hide();
-        }
         app.deployedUrl = this.getDeployedUrl();
         this.getDeviceOS().then(os => this.applyOSTheme(os));
         this.handleKeyBoardClass();
         deviceService.start();
+        deviceService.whenReady().then(() => {
+            if (hasCordova()) {
+                this._$appEl.addClass('cordova');
+                navigator.splashscreen.hide();
+            }
+        });
     }
 
     private applyOSTheme(os) {

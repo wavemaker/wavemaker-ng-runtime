@@ -11,6 +11,7 @@ declare const _;
 export class SmoothScrollDirective implements DoCheck, OnDestroy {
 
     private readonly _$el;
+    private _isEnabled = false;
     private _smoothScrollInstance;
     private _lastScrollY = -1;
     private _waitRefreshTill = -1;
@@ -20,10 +21,14 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
     }
 
     public ngDoCheck() {
-        if (!this._smoothScrollInstance) {
-            this._smoothScrollInstance = this.applySmoothScroll();
-        } else {
-            this.refreshIScroll();
+        if (this._isEnabled) {
+            if (!this._smoothScrollInstance) {
+                this._smoothScrollInstance = this.applySmoothScroll();
+            } else {
+                this.refreshIScroll();
+            }
+        } else if (this._smoothScrollInstance && this._smoothScrollInstance.destroy) {
+            this._smoothScrollInstance.destroy();
         }
     }
 
@@ -35,7 +40,8 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
 
     @Input()
     set wmSmoothscroll(val: string) {
-        if (val === 'true') {
+        this._isEnabled = val === 'true';
+        if (this._isEnabled) {
             if (!this._smoothScrollInstance) {
                 this._smoothScrollInstance = this.applySmoothScroll();
             }
