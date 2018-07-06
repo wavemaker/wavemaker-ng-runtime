@@ -387,6 +387,7 @@ $.widget('wm.datatable', {
         this.options.clearCustomExpression();
 
         _.forEach(this.preparedData, function (row, index) {
+            row.$index = index + 1;
             self.options.generateCustomExpressions(row, index);
             self.options.registerRowNgClassWatcher(row, index);
             $tbody.append(self._getRowTemplate(row, index));
@@ -490,6 +491,7 @@ $.widget('wm.datatable', {
                 $htm.html(innerTmpl);
             }
         }
+        row.$index = rowIndex + 1;
         this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId);
         return $htm;
     },
@@ -744,10 +746,10 @@ $.widget('wm.datatable', {
             return;
         }
 
-        rowData.$$index = this.options.startRowIndex + rowId;
+        rowData.$index = rowId;
         rowData.$$pk = rowId;
         if (this.options.editmode !== this.CONSTANTS.FORM && this.options.editmode !== this.CONSTANTS.DIALOG) {
-            $row = $(this._getRowTemplate(rowData));
+            $row = $(this._getRowTemplate(rowData, rowData.$index));
             if (!this.preparedData.length) {
                 this.setStatus('ready', this.dataStatus.ready);
             }
@@ -1366,7 +1368,7 @@ $.widget('wm.datatable', {
             $originalElements = $row.find('td.app-datagrid-cell'),
             rowId = parseInt($row.attr('data-row-id'), 10),
             $editableElements;
-        rowData.$$index = this.options.startRowIndex + rowId;
+        rowData.$index = rowId + 1;
 
         this.options.generateInlineEditRow(rowData, alwaysNewRow);
 
@@ -2261,7 +2263,7 @@ $.widget('wm.datatable', {
 
     //Appends row operations markup to grid template
     _appendRowActions: function ($htm, isNewRow, rowData) {
-        var self, template,
+        var self,
             rowOperationsCol = this._getRowActionsColumnDef();
         if (this.options.rowActions.length || rowOperationsCol) {
             this._setActionsEnabled();
@@ -2272,8 +2274,9 @@ $.widget('wm.datatable', {
                     _rowData = rowData;
                 } else {
                     $row = $(this).closest('tr');
-                    rowId = $row.attr('data-row-id');
+                    rowId = parseInt($row.attr('data-row-id'), 10);
                     _rowData = self.options.data[rowId];
+                    _rowData.$index = index + 1;
                 }
                 self.options.generateRowActions(_rowData, index);
                 $(this).empty().append(self.options.getRowAction(index));
