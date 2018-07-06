@@ -1,4 +1,4 @@
-import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, OnDestroy, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable, Injector, NgModule, NO_ERRORS_SCHEMA, OnDestroy, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -105,7 +105,7 @@ const getDynamicModule = component => {
             BsDropdownModule.forRoot(),
             PopoverModule.forRoot()
         ],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
     })
     class DynamicModule {
     }
