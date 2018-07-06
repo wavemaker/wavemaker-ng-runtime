@@ -348,23 +348,45 @@ export class LiveVariableManager extends BaseVariableManager {
      * @returns {any}
      */
     public setFilter(variable, key, val) {
-        let paramObj = {},
-            targetObj = {};
+        let paramObj: any = {},
+            targetObj: any = {};
         if (_.isObject(key)) {
             paramObj = key;
         } else {
             paramObj[key] = val;
         }
 
-        if (!variable.filterFields) {
-            variable.filterFields = {};
+        if (!variable.filterExpressions) {
+            variable.filterExpressions = {'condition': 'AND', 'rules':[]};
         }
-        targetObj = variable.filterFields;
+        targetObj = variable.filterExpressions;
 
-        _.forEach(paramObj, (paramVal, paramKey) => {
-            targetObj[paramKey] = {
-                'value': paramVal
-            };
+        // find the existing criteria if present or else return null. Find the first one and return.
+        // If the user wants to set a different object, then he has to use the getCriteria API defined
+        // on the dataFilter object passed to the onBeforeListRecords
+        function getExistingCriteria(filterField) {
+            var existingCriteria = null;
+            LiveVariableUtils.traverseFilterExpressions(targetObj, function(filterExpressions, criteria) {
+                if(filterField === criteria.target) {
+                    return existingCriteria = criteria;
+                }
+            });
+            return existingCriteria;
+        }
+
+        _.forEach(paramObj, function (paramVal, paramKey) {
+            var existingCriteria = getExistingCriteria(paramKey);
+            if(existingCriteria !== null) {
+                existingCriteria.value = paramVal;
+            } else {
+                targetObj.rules.push({
+                    target: paramKey,
+                    type: '',
+                    matchMode: '',
+                    value: paramVal,
+                    required: false
+                });
+            }
         });
 
         return targetObj;
