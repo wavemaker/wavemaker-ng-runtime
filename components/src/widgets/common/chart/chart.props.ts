@@ -25,6 +25,7 @@ export const registerProps = () => {
                 ['legendtype', {value: 'furious', ...PROP_STRING}],
                 ['linethickness', PROP_STRING],
                 ['loadingdatamsg', {value: 'Loading...', ...PROP_STRING}],
+                ['name', PROP_STRING],
                 ['nodatamessage', {value: 'No Data Available.', ...PROP_STRING}],
                 ['offset', PROP_STRING],
                 ['offsetbottom', {value: 55, ...PROP_NUMBER}],
