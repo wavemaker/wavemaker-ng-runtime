@@ -94,12 +94,12 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
 
     // select next valid tab
     private handleSwipeLeft() {
-        this.tabsRef.selectNext();
+        this.tabsRef.next();
     }
 
     // select prev valid tab
     private handleSwipeRight() {
-        this.tabsRef.selectPrev();
+        this.tabsRef.prev();
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

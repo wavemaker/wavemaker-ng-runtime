@@ -67,7 +67,7 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
     }
 
     // toggle the panel state between collapsed - expanded. invoke the respective callbacks
-    protected togglePanel($event) {
+    public toggle($event) {
         if (this.collapsible) {
             this.invokeEventCallback(this.expanded ? 'collapse' : 'expand', {$event});
             this.expanded = !this.expanded;
@@ -75,6 +75,18 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
                 this.$lazyLoad();
                 this.reDrawChildren();
             }
+        }
+    }
+
+    public expand($event) {
+        if (!this.expanded) {
+            this.toggle($event);
+        }
+    }
+
+    public collapse($event) {
+        if (this.expanded) {
+            this.toggle($event);
         }
     }
 
@@ -96,7 +108,7 @@ export class PanelComponent extends StylableComponent implements OnInit, AfterCo
     }
 
     // hide the panel and invoke the respective event handler
-    protected closePanel($event) {
+    protected close($event) {
         this.getWidget().show = false;
         this.invokeEventCallback('close', {$event});
     }
