@@ -132,6 +132,14 @@ export abstract class AbstractToasterService {
     public abstract showCustom (pageName: string, options?: any);
 }
 
+export abstract class AbstractSpinnerService {
+    public abstract getMessageSource();
+    public abstract showContextSpinner();
+    public abstract showAppSpinner(msg, id);
+    public abstract hideContextSpinner(ctx, id);
+    public abstract show(message, id?, spinnerClass?, spinnerContext?, variableScopeId?);
+    public abstract hide(id);
+}
 export abstract class UserDefinedExecutionContext {
 
 }

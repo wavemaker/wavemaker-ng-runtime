@@ -1,6 +1,9 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService, AbstractHttpService } from '@wm/core';
+import {
+    EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService,
+    AbstractHttpService, AbstractSpinnerService
+} from '@wm/core';
 import { SecurityService } from '@wm/security';
 
 declare const _;
@@ -9,6 +12,7 @@ declare const _WM_APP_PROPERTIES: any;
 const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
+    SpinnerService: AbstractSpinnerService,
     ToasterService: AbstractToasterService
 };
 

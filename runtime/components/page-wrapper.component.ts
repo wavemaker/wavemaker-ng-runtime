@@ -3,12 +3,11 @@ import { ApplicationRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewC
 
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
-import { App } from '@wm/core';
+import { App, AbstractSpinnerService } from '@wm/core';
 
 import { RenderUtilsService } from '../services/render-utils.service';
 import { Subscription } from 'rxjs/Subscription';
 import { AppManagerService } from '../services/app.manager.service';
-import { SpinnerService } from '../services/spinner.service';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -31,7 +30,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         private app: App,
         private ngZone: NgZone,
         private elRef: ElementRef,
-        private spinnerService: SpinnerService
+        private spinnerService: AbstractSpinnerService
     ) {}
 
     getTargetNode() {
@@ -58,7 +57,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
                     $target
                 )
                     .then(() => {
-                        this.spinnerService.hide(spinnerId)
+                        this.spinnerService.hide(spinnerId);
                     }, (e) => {
                         this.spinnerService.hide(spinnerId);
                     });

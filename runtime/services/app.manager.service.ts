@@ -4,8 +4,7 @@ import { DatePipe } from '@angular/common';
 
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { AbstractDialogService, AbstractHttpService, AbstractI18nService, App, isDefined, triggerFn } from '@wm/core';
-import { SpinnerService } from './spinner.service';
+import { AbstractDialogService, AbstractHttpService, AbstractI18nService, App, isDefined, triggerFn, AbstractSpinnerService } from '@wm/core';
 
 declare const _;
 
@@ -24,7 +23,7 @@ export class AppManagerService {
         private $app: App,
         private $variables: VariablesService,
         private $metadata: MetadataService,
-        private $spinner: SpinnerService,
+        private $spinner: AbstractSpinnerService,
         private $i18n: AbstractI18nService,
         private $datePipe: DatePipe
     ) {
