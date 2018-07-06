@@ -632,9 +632,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         row.getProperty = field => {
             return _.get(row, field);
         };
-        row.$index = rowData.$$index - 1;
-        row.$isFirst = row.$index === 0;
-        row.$isLast = this.gridData.length === row.$index + 1;
+        row.$index = rowData.$$index;
+        row.$isFirst = row.$index === 1;
+        row.$isLast = this.gridData.length === row.$index;
+        delete row.$$index;
+        delete row.$$pk;
         return row;
     }
 

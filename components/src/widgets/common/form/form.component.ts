@@ -312,7 +312,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     }
 
     registerFormWidget(widget) {
-        const name = widget.key || widget.name;
+        const name = widget.name || widget.key;
         this.formWidgets[name] = widget;
     }
 

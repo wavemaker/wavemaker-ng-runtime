@@ -1366,6 +1366,7 @@ $.widget('wm.datatable', {
             $originalElements = $row.find('td.app-datagrid-cell'),
             rowId = parseInt($row.attr('data-row-id'), 10),
             $editableElements;
+        rowData.$$index = this.options.startRowIndex + rowId;
 
         this.options.generateInlineEditRow(rowData, alwaysNewRow);
 

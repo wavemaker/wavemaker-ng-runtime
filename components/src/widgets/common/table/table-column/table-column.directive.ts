@@ -343,7 +343,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Set the props on the inline edit widget
     setInlineWidgetProp(widget, prop, nv) {
-        if (this[widget]) {
+        if (this[widget] && isDefined(nv)) {
             this[widget][prop] = nv;
         }
     }
