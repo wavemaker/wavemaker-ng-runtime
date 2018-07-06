@@ -570,7 +570,7 @@ export default class LiveVariableUtils {
         clonedFields = clonedFields || variable.filterFields;
         // get the filter fields from the variable
         _.forEach(clonedFields, (value, key) => {
-            if (!options.filterFields || !options.filterFields[key] || options.filterFields[key].logicalOp === 'AND') {
+            if (_.isObject(value) && (!options.filterFields || !options.filterFields[key] || options.filterFields[key].logicalOp === 'AND')) {
                 value.fieldName = key;
                 if (LiveVariableUtils.isStringType(LiveVariableUtils.getSQLFieldType(variable, value))) {
                     value.filterCondition = DB_CONSTANTS.DATABASE_MATCH_MODES[value.matchMode || variable.matchMode];
@@ -702,7 +702,7 @@ export default class LiveVariableUtils {
             });
             // Merge inputFields along with dataObj while making Insert/Update/Delete
             _.forEach(inputFields, (attrValue, attrName) => {
-                if (attrValue && !isDefined(rowObject[attrName])) {
+                if ((isDefined(attrValue) && attrValue !== '') && (!isDefined(rowObject[attrName]) || rowObject[attrName] === '')) {
                     rowObject[attrName] = attrValue;
                 }
             });
@@ -897,7 +897,7 @@ export default class LiveVariableUtils {
     };
 
     static traverseFilterExpressions = (filterExpressions, traverseCallbackFn) => {
-        if (filterExpressions.rules) {
+        if (filterExpressions && filterExpressions.rules) {
             _.forEach(filterExpressions.rules, (filExpObj, i) => {
                 if (filExpObj.rules) {
                     LiveVariableUtils.traverseFilterExpressions(filExpObj, traverseCallbackFn);

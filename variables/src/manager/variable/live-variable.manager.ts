@@ -110,7 +110,8 @@ export class LiveVariableManager extends BaseVariableManager {
             clonedFields,
             requestData;
 
-        clonedFields = this.getFilterExprFields(getClonedObject(variable.filterExpressions));
+        // empty array kept (if variable is not of read type filterExpressions will be undefined)
+        clonedFields = this.getFilterExprFields(getClonedObject(variable.filterExpressions || {}));
         // clonedFields = getClonedObject(variable.filterFields);
         //  EVENT: ON_BEFORE_UPDATE
         output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
