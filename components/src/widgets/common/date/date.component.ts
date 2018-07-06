@@ -30,6 +30,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class DateComponent extends BaseDateTimeComponent {
     private bsDataValue;
     public showdropdownon: string;
+    public useDatapicker = true;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
