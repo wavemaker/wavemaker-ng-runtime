@@ -552,7 +552,7 @@ export default class LiveVariableUtils {
             'sort'   : orderByOptions,
             'query'  : query
         };
-    }
+    };
 
     static prepareTableOptions = (variable, options, clonedFields?) => {
         if (variable.operation === 'read') {
@@ -609,7 +609,7 @@ export default class LiveVariableUtils {
             'sort': orderByOptions,
             'query': query
         };
-    }
+    };
 
     /* Function to check if specified field is of type date*/
     static getFieldType = (fieldName, variable, relatedField?) => {
