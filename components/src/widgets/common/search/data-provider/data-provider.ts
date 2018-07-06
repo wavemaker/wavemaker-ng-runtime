@@ -15,6 +15,7 @@ export interface IDataProviderConfig {
     query: string;
     searchKey?: string;
     casesensitive?: boolean;
+    isformfield?: boolean;
     orderby?: string;
     limit?: number;
     pagesize?: number;
