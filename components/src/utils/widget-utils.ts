@@ -98,7 +98,7 @@ export const getObjValueByKey = (obj: any, strKey: string) => {
  * If expression is given, evaluates the expression value.
  * else check for bindExpression, extract the value from the dataObj
  */
-export const getEvaluatedData = (dataObj: any, options: any) => {
+export const getEvaluatedData = (dataObj: any, options: any, context?: any) => {
     let expressionValue;
     const field = options.field,
         expr = options.expression,
@@ -114,7 +114,7 @@ export const getEvaluatedData = (dataObj: any, options: any) => {
         expressionValue = expr ? expr : field;
     }
 
-    return $parseExpr(expressionValue)(dataObj, {__1: dataObj});
+    return $parseExpr(expressionValue)(context, Object.assign(dataObj, {__1: dataObj}));
 };
 
 export const isActiveNavItem = (link, routeName) => {

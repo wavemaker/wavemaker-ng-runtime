@@ -118,10 +118,10 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         nodes.forEach((node, idx) => {
             const $li = $('<li></li>'),
                 $iconNode = $('<i></i>'),
-                nodeLabel = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}) || node.label,
-                nodeIcon = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}) || node.icon,
-                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}) || node.children,
-                nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}) || node.children;
+                nodeLabel = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}, this.viewParent) || node.label,
+                nodeIcon = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}, this.viewParent) || node.icon,
+                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}, this.viewParent) || node.children,
+                nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent) || node.children;
             let isNodeMatched = false,
                 expandCollapseIcon;
 
@@ -316,7 +316,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             if (this.nodeid) {
                 this.datavalue = $parseExpr(this.nodeid)(this, data);
             } else if (this.bindnodeid) {
-                this.datavalue = getEvaluatedData(data, {expression: this.nodeid, bindExpression: this.bindnodeid});
+                this.datavalue = getEvaluatedData(data, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
             } else {
                 this.datavalue = getClonedObject(data) || {};
             }

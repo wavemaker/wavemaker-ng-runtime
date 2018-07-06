@@ -231,6 +231,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
 
         const transformedData = transformData(
+            this.viewParent,
             data,
             this.datafield,
             {

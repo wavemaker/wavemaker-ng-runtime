@@ -154,7 +154,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
         return getEvaluatedData(object, {
             expression: displayExpr
-        });
+        }, this.viewParent);
     }
 
     // Expression to be evaluated in view mode of form field
