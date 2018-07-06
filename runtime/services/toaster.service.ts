@@ -15,6 +15,11 @@ export class ToasterServiceImpl extends AbstractToasterService {
     }
 
     private _showToaster (type: string, title: string, desc: string, options?: any) {
+        // backward compatibility (in 9.x, 4th param is timeout value).
+        if (_.isNumber(options)) {
+            options = {timeOut: options};
+        }
+
         options = options || {};
         options.timeOut = isDefined(options.timeOut) ? options.timeOut : 0;
         options.enableHtml = isDefined(options.enableHtml);
