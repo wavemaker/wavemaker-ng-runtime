@@ -66,7 +66,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.selectByValue(val);
 
         // invoke on datavalue change.
-        this.invokeOnChange(val);
+        this.invokeOnChange(val, {}, true);
 
         // changes on the datavalue can be subscribed using listenToDatavalue
         this.datavalue$.next(val);

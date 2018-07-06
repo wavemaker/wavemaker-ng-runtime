@@ -20,7 +20,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 })
 export class SelectComponent extends DatasetAwareFormComponent implements AfterViewInit {
 
-    public readonly;
+    public readonly: boolean;
+    public placeholder: string;
 
     @ViewChild('select', {read: ElementRef}) selectEl: ElementRef;
 
@@ -48,6 +49,15 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     }
 
     onSelectValueChange($event) {
+        if (this.readonly) {
+            if (this.placeholder) {
+                this.selectEl.nativeElement.value = this.placeholder;
+            } else {
+                this.selectEl.nativeElement.value = '';
+            }
+            this.datavalue = (this as any).prevDatavalue;
+            return;
+        }
         this.invokeOnTouched();
         this.invokeEventCallback('change', {$event, newVal: this.datavalue});
     }
