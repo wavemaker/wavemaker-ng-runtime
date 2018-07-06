@@ -21,7 +21,7 @@ export class SegmentContentComponent extends StylableComponent {
 
     constructor(private segmentedControl: SegmentedControlComponent, inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
         segmentedControl.addContent(this);
         // TODO:  On demand load
         this.invokeEventCallback('load');

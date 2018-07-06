@@ -1,4 +1,4 @@
-import { PROP_STRING, register } from '@wm/components';
+import { PROP_STRING, PROP_BOOLEAN, register } from '@wm/components';
 
 export const registerProps = () => {
     register(
@@ -6,7 +6,10 @@ export const registerProps = () => {
         new Map(
             [
                 ['caption', {value: '', ...PROP_STRING}],
-                ['iconclass', {value: '', ...PROP_STRING}]
+                ['class', PROP_STRING],
+                ['content', PROP_STRING],
+                ['iconclass', {value: '', ...PROP_STRING}],
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );

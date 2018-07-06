@@ -48,7 +48,7 @@ export class CameraComponent extends StylableComponent {
 
     constructor(private camera: Camera, private mediaCapture: MediaCapture, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
     onPropertyChange(key, nv, ov?) {
