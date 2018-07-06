@@ -371,7 +371,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         // check errors
         if (requestParams.error) {
             this.handleRequestMetaError(requestParams, variable, success, error, options);
-            return;
+            return Promise.reject(requestParams.error.message);
         }
 
         // file upload
@@ -407,6 +407,7 @@ export class ServiceVariableManager extends BaseVariableManager {
             // notify variable error
             this.notifyInflight(variable, false);
             this.processErrorResponse(variable, e.error, error, e.details, options.skipNotification);
+            return Promise.reject(e);
         });
     }
 

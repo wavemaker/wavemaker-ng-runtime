@@ -273,7 +273,7 @@ export class ServiceVariableUtils {
                         if (isBodyTypeQueryProcedure && param.name === SWAGGER_CONSTANTS.WM_DATA_JSON) {
                             setParamsOfChildNode();
                             // Process query/procedure formData non-file params params
-                            bodyInfo = this.processRequestBody(paramValueInfo, params);
+                            bodyInfo = processRequestBody(paramValueInfo, params);
                             requestBody = getFormData(getFormDataObj(), param, bodyInfo.requestBody);
                             requiredParamMissing = _.concat(requiredParamMissing, bodyInfo.missingParams);
                         } else {
@@ -354,12 +354,8 @@ export class ServiceVariableUtils {
     }
 
     static isFileUploadRequest(variable) {
-        const methodInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
-        if (methodInfo && methodInfo.consumes) {
-            return methodInfo.consumes[0] === WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA;
-        } else {
-            return false;
-        }
+        // temporary fix, have to find proper solution for deciding weather to upload file through variable
+        return variable.service === 'FileService' && variable.operation === 'uploadFile';
     }
 
     /**
