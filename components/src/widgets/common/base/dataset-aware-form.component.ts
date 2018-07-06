@@ -211,8 +211,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             return;
         }
 
+        this.dataset = extractDataAsArray(this.dataset);
+
         // convert any dataset to the object format.
-        const orderedDataset = getOrderedDataset(convertDataToObject(this.dataset), this.orderby);
+        const orderedDataset = getOrderedDataset(this.dataset, this.orderby);
 
         if (this.usekeys) {
             this.datasetItems = transformDataWithKeys(orderedDataset);
