@@ -1,7 +1,7 @@
-import { $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+import { extractType, DataType, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
-declare const window, _, $;
+declare const window, _, $, moment;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 
@@ -754,3 +754,50 @@ export const formatExportExpression = fieldDefs => {
 };
 
 export const debounceVariableCall = _invoke;
+
+const DEFAULT_FORMATS = {
+    'DATE'           : 'yyyy-MM-dd',
+    'TIME'           : 'HH:mm:ss',
+    'TIMESTAMP'      : 'timestamp',
+    'DATETIME'       : 'yyyy-MM-ddTHH:mm:ss',
+    'LOCALDATETIME'  : 'yyyy-MM-ddTHH:mm:ss',
+    'DATETIME_ORACLE': 'yyyy-MM-dd HH:mm:ss',
+    'DATE_TIME'      : 'yyyy-MM-dd HH:mm:ss'
+};
+
+const getDateTimeFormatForType = (type) => {
+    return DEFAULT_FORMATS[_.toUpper(type)];
+};
+
+// Format value for datetime types
+const _formatDate = (dateValue, type) => {
+    let epoch;
+    if (_.isDate(dateValue)) {
+        epoch = dateValue.getTime();
+    } else {
+        if (!isNaN(dateValue)) {
+            dateValue = parseInt(dateValue, 10);
+        }
+        epoch = dateValue && moment(dateValue).valueOf();
+    }
+    if (type === DataType.TIMESTAMP) {
+        return epoch;
+    }
+    if (type === DataType.TIME && !epoch) {
+        epoch = moment(new Date().toDateString() + ' ' + dateValue).valueOf();
+    }
+    return dateValue && appManager.getPipe('date').transform(epoch, getDateTimeFormatForType(type));
+};
+
+// Function to convert values of date time types into default formats
+export const formatDate = (value, type) => {
+    if (_.includes(type, '.')) {
+        type = _.toLower(extractType(type));
+    }
+    if (_.isArray(value)) {
+        return _.map(value, function (val) {
+            return _formatDate(val, type);
+        });
+    }
+    return _formatDate(value, type);
+};

@@ -548,39 +548,6 @@ export const replace = (template, map) => {
     });
 };
 
-// Format value for datetime types
-const _formatDate = (dateValue, type) => {
-    let epoch;
-    if (_.isDate(dateValue)) {
-        epoch = dateValue.getTime();
-    } else {
-        if (!isNaN(dateValue)) {
-            dateValue = parseInt(dateValue, 10);
-        }
-        epoch = dateValue && moment(dateValue).valueOf();
-    }
-    if (type === DataType.TIMESTAMP) {
-        return epoch;
-    }
-    if (type === DataType.TIME && !epoch) {
-        epoch = moment(new Date().toDateString() + ' ' + dateValue).valueOf();
-    }
-    return dateValue; // && $filter('date')(epoch, getDateTimeFormatForType(type));
-};
-
-/*Function to convert values of date time types into default formats*/
-export const formatDate = (value, type) => {
-    if (_.includes(type, '.')) {
-        type = _.toLower(extractType(type));
-    }
-    if (_.isArray(value)) {
-        return _.map(value, function (val) {
-            return _formatDate(val, type);
-        });
-    }
-    return _formatDate(value, type);
-};
-
 /*Function to check if date time type*/
 export const isDateTimeType = type => {
     if (_.includes(type, '.')) {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
@@ -24,7 +25,8 @@ export class AppManagerService {
         private $variables: VariablesService,
         private $metadata: MetadataService,
         private $spinner: SpinnerService,
-        private $i18n: AbstractI18nService
+        private $i18n: AbstractI18nService,
+        private $datePipe: DatePipe
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
@@ -304,5 +306,14 @@ export class AppManagerService {
      */
     appOnServiceError(variable: any, data: any, xhrOb?: any) {
         triggerFn(this.$app.onServiceError, variable, data, xhrOb);
+    }
+
+    /**
+     * Returns the pipe based on the input
+     */
+    getPipe(pipe) {
+        if (pipe === 'date') {
+            return this.$datePipe;
+        }
     }
 }
