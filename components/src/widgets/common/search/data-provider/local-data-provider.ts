@@ -46,7 +46,11 @@ export class LocalDataProvider implements IDataProvider {
                     });
                 }
             }
-            resolve({data: filteredData});
+            resolve({
+                data: filteredData,
+                hasMoreData: false,
+                isLastPage: true
+            });
         });
     }
 }

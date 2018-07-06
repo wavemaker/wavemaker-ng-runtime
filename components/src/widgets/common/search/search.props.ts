@@ -4,7 +4,7 @@ export const searchProps = new Map(
     [
         ['casesensitive', {value: false, ...PROP_BOOLEAN}],
         ['class', PROP_STRING],
-        ['datacompletemsg', {value: 'No more data to load', ...PROP_STRING}],
+        ['datacompletemsg', PROP_STRING],
         ['datafield', {value: 'All Fields', ...PROP_STRING}],
         ['dataoptions', PROP_ANY],
         ['dataset', PROP_ANY],

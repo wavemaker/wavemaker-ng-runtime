@@ -3,7 +3,7 @@ import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, Quer
 import { Observable } from 'rxjs/Observable';
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
-import { addClass, DataSource, isDefined, toBoolean } from '@wm/core';
+import { addClass, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, transformData } from '../../../utils/form-utils';
@@ -97,7 +97,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // Runs on every search. debounce the query after 150ms
                 _.debounce((observer: any) => {
                     observer.next(this.query);
-                }, 150)
+                }, 200)
             )
             .mergeMap((token: string) => this.getDataSourceAsObservable(token));
 
@@ -128,6 +128,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
         this.dataProvider = new DataProvider();
+    }
+
+    // Check if the widget is of type autocomplete in mobile view/ app
+    private isMobileAutoComplete() {
+        return this.type === 'autocomplete' && isMobile();
     }
 
     // On click of the typeahead item, invoke the container's selectMatch and set the queryModel, datavalue.
@@ -167,29 +172,41 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.queryModel = '';
             this.datavalue = '';
         }
+        this.showClosebtn = (this.query !== '');
+    }
+
+    // on clear, trigger search with page size 1
+    private clearSearch() {
+        this.query = '';
+        this.onInputChange();
+        this.dataProvider.isLastPage = false;
+        this.loadMoreData(true);
     }
 
     // Triggerred when typeahead option is selected.
     private onSelect($event: Event) {
+        let hasActiveEl = false;
         // when matches are available.
         if (this.typeaheadContainerInstance && this.typeaheadContainerInstance.liElements.length) {
+            hasActiveEl = true;
             this.typeaheadContainerInstance.selectActiveMatch();
-        } else if (this.allowonlyselect) {
-            // matches are empty set the datavalue to undefined.
-            this.queryModel = this.query;
-            this._modelByValue = undefined;
-        } else {
-            // Used by chips, if allowonlyselect is false, set the datavalue to query.
-            this.queryModel = this.query;
-            this._modelByValue = this.query;
-
-            // adds custom chip object to the chipsList.
-            this.notifyParent($event);
+        } else if (!isDefined(this._modelByValue)) {
+            if (this.allowonlyselect) {
+                // matches are empty set the datavalue to undefined.
+                this.queryModel = this.query;
+                this._modelByValue = undefined;
+            } else {
+                // Used by chips, if allowonlyselect is false, set the datavalue to query.
+                this.queryModel = this.query;
+                this._modelByValue = undefined;
+                // adds custom chip object to the chipsList.
+                this.notifyParent($event);
+            }
         }
 
-        if (this.typeaheadContainerInstance && this.typeaheadContainerInstance._active) {
+        if (hasActiveEl) {
             this.typeaheadOnSelect(this.typeaheadContainerInstance._active, $event);
-        } else {
+        } else if (isDefined(this._modelByValue)) {
             this.typeaheadOnSelect(({item: {key: this.query, value: this._modelByValue, label: this.query}} as TypeaheadMatch), $event);
         }
     }
@@ -280,6 +297,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     if (this.formattedDataset.length > 20) {
                         this.typeahead.typeaheadOptionsLimit = this.formattedDataset.length;
                     }
+
+                // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
+                if (this._isOpen && this.isMobileAutoComplete() && !this.noMoreData) {
+                    this.triggerSearch();
+                }
 
                     const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
 
@@ -377,6 +399,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggers the method on the parent.
     private notifyParent($event) {
         if (this.parentRef) {
+            this._modelByValue = this.query;
             this.parentRef.notifyEmptyValues($event);
         }
     }
@@ -410,7 +433,36 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
+    private triggerSearch() {
+        if (this._loadingItems || this.isLastPage || !this.$element.hasClass('full-screen')) {
+            return;
+        }
+        const typeAheadDropDown = this.dropdownEl;
+        const $lastItem = typeAheadDropDown.find('li').last();
+
+        // Check if last item is not below the full screen
+        if ($lastItem.length && typeAheadDropDown.length && (typeAheadDropDown.height() + typeAheadDropDown.position().top >  $lastItem.height() + $lastItem.position().top)) {
+            this.loadMoreData(true);
+        }
+    }
+
     public onDropdownOpen() {
+        this._isOpen = true;
+        // open full-screen search view
+        if (this.isMobileAutoComplete()) {
+            // Add full screen class on focus of the input element.
+            this.$element.addClass('full-screen');
+
+            const dropdownEl = this.dropdownEl.closest('typeahead-container');
+
+            dropdownEl.insertAfter(this.$element.find('input:first'));
+            dropdownEl.css({position: 'relative', top: 0, height: '100%'});
+
+            if (this.isMobileAutoComplete() && !this.noMoreData) {
+                this.triggerSearch();
+            }
+        }
+
         // setting the ulElements, liElement on typeaheadContainer with custom options template, as the typeaheadContainer implements the key events and scroll.
         const matchesSubscription = this.liElements.changes.subscribe((data) => {
             if (this.typeaheadContainerInstance) {
@@ -432,6 +484,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
         });
         this.registerDestroyListener(() => matchesSubscription.unsubscribe());
+    }
+
+    // Close the full screen mode in mobile view of auto complete
+    private closeSearch() {
+        this.page = 1;
+        if (!isDefined(this.datavalue)) {
+            this.queryModel = this.query = '';
+        }
+        this.$element.removeClass('full-screen');
     }
 
     protected onFocus($event) {
