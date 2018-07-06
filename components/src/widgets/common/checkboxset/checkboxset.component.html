@@ -19,7 +19,7 @@
 <ng-template #groupedListTemplate>
     <li *ngFor="let groupObj of groupedData" class="app-list-item-group">
         <ul class="item-group">
-            <li class="list-group-header" (click)="handleHeaderClick($event)" [title]="groupObj.key" ngClass="{'collapsible-content' : collapsible}">
+            <li class="list-group-header" (click)="handleHeaderClick($event)" [title]="groupObj.key" [ngClass]="{'collapsible-content': collapsible}">
                 <h4 class="group-title">{{groupObj.key}}
                     <div class="header-action">
                         <i class="app-icon wi action wi-chevron-up" *ngIf="collapsible" title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"></i>

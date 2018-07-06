@@ -1,4 +1,4 @@
-import { Attribute, Component, Injector } from '@angular/core';
+import { Attribute, Component, Injector, OnInit } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
@@ -26,8 +26,9 @@ declare const _;
     ]
 })
 
-export class CheckboxsetComponent extends DatasetAwareFormComponent {
+export class CheckboxsetComponent extends DatasetAwareFormComponent implements OnInit {
     public layout = '';
+    public collapsible: boolean;
 
     protected match: string;
     protected dateformat: string;
@@ -48,9 +49,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
             });
             this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
-            // adding the handler for header click and toggle headers.
-            this.handleHeaderClick = handleHeaderClick;
-            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
         }
     }
 
@@ -84,6 +82,15 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
             this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];
         } else {
             super.onPropertyChange(key, nv, ov);
+        }
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        // adding the handler for header click and toggle headers.
+        if (this.groupby && this.collapsible) {
+            this.handleHeaderClick = handleHeaderClick;
+            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
         }
     }
 }
