@@ -502,6 +502,7 @@ export default class LiveVariableUtils {
         }
 
         const filterOptions = [];
+        const matchModes = DB_CONSTANTS.DATABASE_MATCH_MODES;
         let orderByFields,
             orderByOptions,
             query;
@@ -516,12 +517,14 @@ export default class LiveVariableUtils {
         if (!_.isEmpty(options.filterFields)) {
             filterRules = {'condition': options.logicalOp || 'AND', 'rules': []};
             _.forEach(options.filterFields, (filterObj, filterName) => {
-                if (!_.isNil(filterObj.value) && filterObj.value !== '') {
+                const filterCondition = matchModes[filterObj.matchMode] || matchModes[filterObj.filterCondition] || filterObj.filterCondition;
+                if (_.includes(DB_CONSTANTS.DATABASE_EMPTY_MATCH_MODES, filterCondition) ||
+                    (!_.isNil(filterObj.value) && filterObj.value !== '')) {
                     const type = filterObj.type || LiveVariableUtils.getSqlType(variable, filterName);
                     const ruleObj = {
                         'target': filterName,
                         'type': type,
-                        'matchMode': filterObj.matchMode || (LiveVariableUtils.isStringType(type) ? 'startignorecase' : "exact"),
+                        'matchMode': filterObj.matchMode || (LiveVariableUtils.isStringType(type) ? 'startignorecase' : 'exact'),
                         'value': filterObj.value,
                         'required': filterObj.required || false
                     };
