@@ -3,9 +3,9 @@ import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef, NgZone }
 import { $invokeWatchers, _WM_APP_PROJECT, AbstractDialogService, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
 
 import { OAuthService } from '@wm/oAuth';
+import { AbstractSpinnerService } from '@wm/core';
 
 import { PipeProvider } from './services/pipe-provider.service';
-import { SpinnerService } from './services/spinner.service';
 import { setTheme } from 'ngx-bootstrap';
 
 type SPINNER = {show: boolean, messages: Array<string>};
@@ -39,7 +39,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         private elRef: ElementRef,
         private oAuthService: OAuthService,
         private dialogService: AbstractDialogService,
-        private spinnerService: SpinnerService,
+        private spinnerService: AbstractSpinnerService,
         ngZone: NgZone
     ) {
         setPipeProvider(_pipeProvider);

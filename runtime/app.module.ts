@@ -7,7 +7,7 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 import { ToastrModule } from 'ngx-toastr';
 
-import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService } from '@wm/core';
+import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService, AbstractSpinnerService } from '@wm/core';
 import { HttpServiceImpl, HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
 import { OAuthModule } from '@wm/oAuth';
@@ -31,11 +31,10 @@ import { PrefabPreviewManagerService } from './services/prefab-preview-manager.s
 import { RenderUtilsService, TempModule } from './services/render-utils.service';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { AppSpinnerComponent } from './components/app-spinner.component';
-import { SpinnerService } from './services/spinner.service';
+import { SpinnerServiceImpl } from './services/spinner.service';
 import { ToasterServiceImpl } from './services/toaster.service';
 import { CustomToasterComponent } from './components/custom-toaster.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 
 declare const $;
 declare const _WM_APP_PROPERTIES;
@@ -102,6 +101,7 @@ const routes = [
         {provide: AbstractToasterService, useClass: ToasterServiceImpl},
         {provide: AbstractI18nService, useClass: I18nServiceImpl},
         {provide: AbstractHttpService, useClass: HttpServiceImpl},
+        {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
         PipeProvider,
         RenderUtilsService,
         MetadataResolve,
@@ -113,8 +113,7 @@ const routes = [
         PrefabPreviewManagerService,
         SecurityConfigResolve,
         DecimalPipe,
-        DatePipe,
-        SpinnerService
+        DatePipe
     ],
     entryComponents: [CustomToasterComponent],
     bootstrap: [AppComponent]

@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { AbstractSpinnerService } from '@wm/core';
 
 declare const _;
 
 @Injectable()
-export class SpinnerService {
+export class SpinnerServiceImpl extends AbstractSpinnerService {
     spinnerId;
     messageSource = new Subject();
     messagesByContext = {};
 
     constructor() {
+        super();
     }
 
     /**
@@ -24,8 +26,7 @@ export class SpinnerService {
      * show spinner on a container element
      * yet to implement
      */
-    showContextSpinner() {
-    }
+    showContextSpinner() {}
 
     /**
      * show the app spinner with provided message
@@ -50,9 +51,7 @@ export class SpinnerService {
      * @param ctx
      * @param id
      */
-    hideContextSpinner(ctx, id) {
-        
-    }
+    hideContextSpinner(ctx, id) {}
 
     /**
      * show spinner
@@ -64,11 +63,10 @@ export class SpinnerService {
      * @returns {any}
      */
     show(message, id?, spinnerClass?, spinnerContext?, variableScopeId?) {
-        var spinnerScope;
         id      = id || ++this.spinnerId;
-        //if spinnerContext is passed, then append the spinner to the element(default method for variable calls).
+        // if spinnerContext is passed, then append the spinner to the element(default method for variable calls).
         if (spinnerContext && spinnerContext !== 'page') {
-            //return after the compiled spinner is appended to the element reference
+            // return after the compiled spinner is appended to the element reference
             return this.showContextSpinner();
         }
 
@@ -81,7 +79,7 @@ export class SpinnerService {
      * @param spinnerId
      */
     hide(id) {
-        //find the spinner context of the id from the messagesByContext
+        // find the spinner context of the id from the messagesByContext
         const ctx = _.findKey(this.messagesByContext, function (obj) {
             return _.includes(_.keys(obj), id);
         });
@@ -91,7 +89,7 @@ export class SpinnerService {
             return;
         }
 
-        //if spinnerContext exists just remove the spinner from the reference and destroy the scope associated.
+        // if spinnerContext exists just remove the spinner from the reference and destroy the scope associated.
         if (ctx !== 'page') {
             this.hideContextSpinner(ctx, id);
             return;
