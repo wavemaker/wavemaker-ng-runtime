@@ -31,6 +31,13 @@ export class BarcodeScannerComponent extends StylableComponent {
 
     @HostListener('click', ['$event'])
     public openBarcodescanner($event) {
+        this.scan().then(text => {
+                this.datavalue = text;
+                this.invokeEventCallback('success', {$event});
+            });
+    }
+
+    private scan(): Promise<string> {
         let options;
         if (hasCordova()) {
             if (this.barcodeformat && this.barcodeformat !== 'ALL') {
@@ -38,13 +45,9 @@ export class BarcodeScannerComponent extends StylableComponent {
                     formats: this.barcodeformat
                 };
             }
-            this.scanner.scan(options)
-                .then((data) => {
-                    this.datavalue = data.text;
-                    this.invokeEventCallback('success', {$event});
-                });
-        } else {
-            this.invokeEventCallback('success', {$event});
+            return this.scanner.scan(options)
+                .then(data => data.text);
         }
+        return Promise.resolve('BAR_CODE');
     }
 }

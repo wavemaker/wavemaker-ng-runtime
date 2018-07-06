@@ -1,4 +1,5 @@
 import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { isMobileApp } from '@wm/core';
 
 const propsMap = new Map(
     [
@@ -21,6 +22,10 @@ const propsMap = new Map(
         ['title', PROP_STRING]
     ]
 );
+
+if (isMobileApp()) {
+    propsMap.set('captionwidth', {value: 'xs-4 sm-4 md-4 lg-4', ...PROP_STRING});
+}
 
 const formMap = new Map(propsMap);
 formMap.set('action', PROP_STRING);

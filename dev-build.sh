@@ -36,7 +36,7 @@ fi
 
 echo -e "${Cyan}Compiling typescript files using ngc ${White}"
 $NGC -p ./runtime/tsconfig.build.json
-$NGC -p ./mobile/dummy/tsconfig.build.json
+$NGC -p ./mobile/placeholder/tsconfig.build.json
 if [ "$?" != "0" ]
 then
 	echo -e "${Red}Error while ngc ${White}\n"
@@ -140,24 +140,24 @@ then
 fi
 echo -e "${Green}Built Variables ${White}\n"
 ########## mobile components
-echo -e "${Cyan}Building dummy mobile components task ${White}"
+echo -e "${Cyan}Building mobile components task ${White}"
 $ROLLUP -c ./mobile/components/rollup.wm-components.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in building dummy mobile components task ${White}\n"
+    echo -e "${Red}Error in building mobile components task ${White}\n"
     exit 1
 fi
-echo -e "${Green}Built dummy mobile components task ${White}\n"
+echo -e "${Green}Built mobile components task ${White}\n"
 
 ########## mobile runtime
-echo -e "${Cyan}Building dummy mobile runtime ${White}"
+echo -e "${Cyan}Building mobile runtime ${White}"
 $ROLLUP -c ./mobile/runtime/rollup.config.js --silent
 if [ "$?" != "0" ]
 then
-    echo -e "${Red}Error in bundling dummy mobile runtime ${White}"
+    echo -e "${Red}Error in bundling mobile runtime ${White}"
     exit 1
 fi
-echo -e "${Green}Built dummy mobile runtime ${White}\n"
+echo -e "${Green}Built mobile runtime ${White}\n"
 ########## runtime
 echo -e "${Cyan}Building runtime ${White}"
 $ROLLUP -c ./runtime/rollup.config.js --silent

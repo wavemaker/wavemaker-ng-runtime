@@ -34,7 +34,7 @@ export class MediaListComponent extends StylableComponent {
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        styler(this.$element, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
     public onPropertyChange(key, nv, ov?) {

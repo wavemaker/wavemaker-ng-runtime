@@ -1,11 +1,12 @@
-import { PROP_NUMBER, register } from '@wm/components';
+import { PROP_BOOLEAN, PROP_STRING, register } from '@wm/components';
 
 export const registerProps = () => {
     register(
         'wm-segmented-control',
         new Map(
             [
-                ['tabindex', {value: 0, ...PROP_NUMBER}]
+                ['class', PROP_STRING],
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );
