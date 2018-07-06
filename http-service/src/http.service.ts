@@ -3,18 +3,20 @@ import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '
 
 import { Subject } from 'rxjs/Subject';
 
-import { getClonedObject, replace } from '@wm/core';
+import { AbstractHttpService, getClonedObject, replace } from '@wm/core';
 
 declare const _;
 
 @Injectable()
-export class HttpService {
+export class HttpServiceImpl extends AbstractHttpService {
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
     sessionTimeoutObservable = new Subject();
     sessionTimeoutQueue = [];
     localeObject: any;
 
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient) {
+        super();
+    }
 
     send(options: any) {
         let reqHeaders = new HttpHeaders(),
@@ -134,6 +136,44 @@ export class HttpService {
         options = options || {};
         options.url = url;
         options.method = 'post';
+        options.data = data;
+        return this.send(options);
+    }
+
+    put(url, data, options) {
+        options = options || {};
+        options.url = url;
+        options.method = 'put';
+        options.data = data;
+        return this.send(options);
+    }
+
+    patch(url, data, options) {
+        options = options || {};
+        options.url = url;
+        options.method = 'patch';
+        options.data = data;
+        return this.send(options);
+    }
+
+    delete(url, options) {
+        options = options || {};
+        options.url = url;
+        options.method = 'delete';
+        return this.send(options);
+    }
+
+    head(url, options) {
+        options = options || {};
+        options.url = url;
+        options.method = 'head';
+        return this.send(options);
+    }
+
+    jsonp(url, options) {
+        options = options || {};
+        options.url = url;
+        options.method = 'jsonp';
         return this.send(options);
     }
 

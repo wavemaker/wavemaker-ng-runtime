@@ -7,8 +7,8 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 import { ToastrModule } from 'ngx-toastr';
 
-import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService } from '@wm/core';
-import { HttpServiceModule } from '@wm/http';
+import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService } from '@wm/core';
+import { HttpServiceImpl, HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
 import { OAuthModule } from '@wm/oAuth';
 import { VariablesModule } from '@wm/variables';
@@ -101,6 +101,7 @@ const routes = [
         {provide: AbstractDialogService, useClass: DialogServiceImpl},
         {provide: AbstractToasterService, useClass: ToasterServiceImpl},
         {provide: AbstractI18nService, useClass: I18nServiceImpl},
+        {provide: AbstractHttpService, useClass: HttpServiceImpl},
         PipeProvider,
         RenderUtilsService,
         MetadataResolve,
