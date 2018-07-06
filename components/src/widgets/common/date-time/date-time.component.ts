@@ -41,6 +41,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private proxyModel;
 
     public showdropdownon: string;
+    public useDatapicker = true;
 
     get timestamp() {
         return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;

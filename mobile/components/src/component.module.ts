@@ -7,6 +7,8 @@ import { WmComponentsModule } from '@wm/components';
 import { AppUpdateComponent } from './widgets/app-update/app-update.component';
 import { BarcodeScannerComponent } from './widgets/barcode-scanner/barcode-scanner.component';
 import { CameraComponent } from './widgets/camera/camera.component';
+import { DateDirective } from './widgets/date/date.directive';
+import { DateTimeDirective } from './widgets/date-time/date-time.directive';
 import { ImageCacheDirective } from './widgets/image-cache/image-cache.directive';
 import { MediaListComponent } from './widgets/media-list/media-list.component';
 import { MediaListItemDirective } from './widgets/media-list/media-list-item/media-list-item.directive';
@@ -24,6 +26,8 @@ const wmMobileComponents = [
     AppUpdateComponent,
     BarcodeScannerComponent,
     CameraComponent,
+    DateDirective,
+    DateTimeDirective,
     ImageCacheDirective,
     MediaListComponent,
     MediaListItemDirective,
