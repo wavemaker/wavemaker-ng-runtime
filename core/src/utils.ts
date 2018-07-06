@@ -960,8 +960,22 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
                     if (!_.includes(['blob', 'file'], obj.type)) {
                         newVal = getClonedObject(newVal);
                     }
-                    // setting value to the root node
-                    if (obj) {
+                    //backward compatibility: where we are allowing the user to bind complete object
+                    if(obj.target === "dataBinding") {
+                        //remove the existing databinding element
+                        filterExpressions.rules = [];
+                        //now add all the returned values
+                        _.forEach(newVal, function(value, target) {
+                            filterExpressions.rules.push({
+                                'target': target,
+                                'value': value,
+                                'matchMode': obj.matchMode || 'startignorecase',
+                                'required': false,
+                                'type':''
+                            })
+                        });
+                    } else {
+                        // setting value to the root node
                         obj[targetNodeKey] = newVal;
                     }
                     filter$.next({filterExpressions, newVal});
