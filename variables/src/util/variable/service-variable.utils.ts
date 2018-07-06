@@ -1,8 +1,8 @@
 import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 import { isFileUploadSupported } from './variables.utils';
-import { extractType, formatDate, getBlob, isDateTimeType, isDefined } from '@wm/core';
+import { extractType, getBlob, isDateTimeType, isDefined } from '@wm/core';
 import { getAccessToken } from './../oAuth.utils';
-import { metadataService } from '../../util/variable/variables.utils';
+import { metadataService, formatDate } from '../../util/variable/variables.utils';
 
 declare const _, window;
 
