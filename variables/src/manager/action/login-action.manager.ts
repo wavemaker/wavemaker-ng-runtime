@@ -88,8 +88,9 @@ export class LoginActionManager extends BaseActionManager {
 
         // get previously loggedInUser name (if any)
         const lastLoggedInUsername = _.get(securityService.get(), 'userInfo.userName');
-        variable.promise = securityService.appLogin(params, function (response) {
-            // $rootScope.$emit('toggle-variable-state', variable, false);
+
+        this.notifyInflight(variable, true);
+        variable.promise = securityService.appLogin(params, (response) => {
             // Closing login dialog after successful login
             dialogService.close('CommonLoginDialog');
 
@@ -100,8 +101,9 @@ export class LoginActionManager extends BaseActionManager {
              */
             appManager.reloadAppData().
             then(function (config) {
+                // hide the spinner after all the n/w calls are completed
+                this.notifyInflight(variable, false, response);
                 triggerFn(success);
-
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, _.get(config, 'userInfo'));
 
                 /* handle navigation if defaultSuccessHandler on variable is true */
@@ -150,9 +152,10 @@ export class LoginActionManager extends BaseActionManager {
                     }
                 }
             });
-        }, function (errorMsg, errorDetails, xhrObj) {
-            // $rootScope.$emit('toggle-variable-state', variable, false);
-            errorMsg = errorMsg || 'Invalid credentials.';
+        }, (e) => {
+            this.notifyInflight(variable, false, e);
+            const errorMsg = e.error || 'Invalid credentials.';
+            const xhrObj = e.details;
             /* if in RUN mode, trigger error events associated with the variable */
             if (CONSTANTS.isRunMode) {
                 initiateCallback('onError', variable, errorMsg, xhrObj);
