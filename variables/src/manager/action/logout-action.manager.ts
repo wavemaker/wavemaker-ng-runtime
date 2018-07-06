@@ -19,23 +19,23 @@ export class LogoutActionManager extends BaseActionManager {
             triggerFn(error, msg, xhrObj);
         };
 
-        // $rootScope.$emit('toggle-variable-state', variable, true);
         // EVENT: ON_BEFORE_UPDATE
         output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, null);
         if (output === false) {
             triggerFn(error);
             return;
         }
-        securityService.isAuthenticated(function (isAuthenticated) {
-            // $rootScope.$emit('toggle-variable-state', variable, false);
+        securityService.isAuthenticated(isAuthenticated => {
             if (isAuthenticated) {
-                variable.promise = securityService.appLogout(function (response) {
+                this.notifyInflight(variable, true);
+                variable.promise = securityService.appLogout(response => {
                     let redirectUrl = response.body;
                     redirectUrl = getValidJSON(redirectUrl);
                     // Reset Security Config.
                     // $rootScope.isUserAuthenticated = false;
                     appManager.reloadAppData().
-                    then(function () {
+                    then(() => {
+                        this.notifyInflight(variable, false, redirectUrl);
                         // EVENT: ON_RESULT
                         initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, redirectUrl);
                         // EVENT: ON_SUCCESS
@@ -52,7 +52,7 @@ export class LogoutActionManager extends BaseActionManager {
                             redirectPage = '';
                         }
                         routerService.navigate([`/${redirectPage}`]);
-                        setTimeout(function () {
+                        setTimeout(() => {
                             // reloading in timeout as, firefox and safari are not updating the url before reload(WMS-7887)
                             window.location.reload();
                         });
@@ -62,8 +62,8 @@ export class LogoutActionManager extends BaseActionManager {
             } else {
                 handleError('No authenticated user to logout.');
             }
-        }, function (err) {
-            // $rootScope.$emit('toggle-variable-state', variable, false);
+        }, (err) => {
+            this.notifyInflight(variable, false, err);
             handleError(err);
         });
     }

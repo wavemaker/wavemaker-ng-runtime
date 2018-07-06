@@ -100,7 +100,7 @@ export class LoginActionManager extends BaseActionManager {
              * Update loggedInUser variable with new user details
              */
             appManager.reloadAppData().
-            then(function (config) {
+            then((config) => {
                 // hide the spinner after all the n/w calls are completed
                 this.notifyInflight(variable, false, response);
                 triggerFn(success);
