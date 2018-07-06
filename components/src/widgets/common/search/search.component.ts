@@ -68,7 +68,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private parentRef: ChipsComponent; // used when search is inside chips.
     private lastSelectedIndex: number;
     private dataoptions: Object;
+    public dropdownEl: any;
     private _lastQuery: string;
+    private _isOpen: boolean; // set to true when dropdown is open
+    private showClosebtn: boolean;
 
     // Default check for container methods to access.
     get typeaheadContainerInstance() {
@@ -90,11 +93,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
          * @type {Observable<any>}
          */
         this.typeaheadDataSource = Observable
-            .create((observer: any) => {
-                // Runs on every search
-                observer.next(this.query);
-            })
-            .debounceTime(150)
+            .create(
+                // Runs on every search. debounce the query after 150ms
+                _.debounce((observer: any) => {
+                    observer.next(this.query);
+                }, 150)
+            )
             .mergeMap((token: string) => this.getDataSourceAsObservable(token));
 
         /**
@@ -244,6 +248,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             query: query,
             searchKey: searchOnDataField ? this.datafield : this.searchkey,
             casesensitive: this.casesensitive,
+            isformfield: this.isformfield,
             orderby: this.orderby,
             limit: this.limit,
             pagesize: this.pagesize,
@@ -258,6 +263,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         return this.dataProvider.filter(dataConfig)
             .then((response: any) => {
+                    this.noMoreData = response.isLastPage;
+
                     // response from dataProvider returns always data object.
                     response = response.data;
 
@@ -269,7 +276,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                         this.formattedDataset = response;
                     }
 
-                    this.noMoreData = response.isLastPage;
+                    // explicitly setting the optionslimit as the matches more than 20 will be ignored if optionslimit is not specified.
+                    if (this.formattedDataset.length > 20) {
+                        this.typeahead.typeaheadOptionsLimit = this.formattedDataset.length;
+                    }
 
                     const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
 
@@ -314,7 +324,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public updateQueryModel(data: any, datafield: string) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
-        if (!this._modelByKey && datafield !== ALLFIELDS) {
+        if (isDefined(data) && this.searchkey && !this._modelByKey && datafield !== ALLFIELDS) {
             this.getDataSource(data, true).then((response) => {
                 if (response.length) {
                     this.queryModel = response;
