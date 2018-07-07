@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const switchProps = new Map(
     [
@@ -10,6 +10,7 @@ export const switchProps = new Map(
         ['displayfield', PROP_STRING],
         ['iconclass', PROP_STRING],
         ['orderby', PROP_STRING],
+        ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]
 );

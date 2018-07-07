@@ -22,7 +22,8 @@ export const registerProps = () => {
                 ['disabled', PROP_BOOLEAN],
                 ['iconclass', {value: 'wi wi-file-upload', ...PROP_STRING}],
                 ['filelistheight', PROP_NUMBER],
-                ['class', PROP_STRING]
+                ['class', PROP_STRING],
+                ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )
     );

@@ -8,6 +8,7 @@ export const richTextProps = new Map(
         ['name', PROP_STRING],
         ['placeholder', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
+        ['show', {value: true, ...PROP_BOOLEAN}],
         ['showpreview', {value: false, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]

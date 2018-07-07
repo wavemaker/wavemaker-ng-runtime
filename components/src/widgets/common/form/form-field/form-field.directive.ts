@@ -45,7 +45,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _validators;
 
     ngform: FormGroup;
-    name;
     defaultvalue;
     displayexpression;
     displayfield;
@@ -82,8 +81,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     private _debounceSetUpValidators;
     private _initPropsRes;
-    private mobileDisplay;
-    private pcDisplay;
+    private _name;
+    private _key;
 
     constructor(
         inj: Injector,
@@ -116,13 +115,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
-        this.name = name;
-        this.key = key;
+        this._name = name;
+        this._key = key;
         this.isRange = isRange;
         this.excludeProps = new Set(['type']);
         this.widgettype = _widgetType;
-        this.pcDisplay = pcDisplay !== 'false';
-        this.mobileDisplay = mobileDisplay !== 'false';
 
         if (this.binddataset) {
             this.isDataSetBound = true;
@@ -230,6 +227,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             if (key === 'required') {
                 this._debounceSetUpValidators();
             }
+            super.onPropertyChange(key, nv, ov);
             return;
         }
 
@@ -263,7 +261,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             case 'primary-key':
                 this.primarykey = toBoolean(nv);
                 if (this.primarykey) {
-                    this.form.setPrimaryKey(this.key);
+                    this.form.setPrimaryKey(this._key);
                 }
                 break;
             case 'display-name':
@@ -320,12 +318,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // Get the reactive form control
     get _control() {
-        return this.ngform && this.ngform.controls[this.key || this.name];
+        return this.ngform && this.ngform.controls[this._key || this._name];
     }
 
     // Get the reactive max form control
     get _maxControl() {
-        return this.ngform && this.ngform.controls[(this.key || this.name) + '_max'];
+        return this.ngform && this.ngform.controls[(this._key || this._name) + '_max'];
     }
 
     // Create the reactive form control
@@ -351,7 +349,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     ngOnInit() {
-        const fieldName = this.key || this.name;
+        const fieldName = this._key || this._name;
 
         this.ngform = this.form.ngform;
         this.ngform.addControl(fieldName, this.createControl());
@@ -377,24 +375,25 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.setFormWidget('binddisplaylabel', this.binddisplaylabel);
             this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
         }
-        this.key = this.key || this.target || this.binding || this.name;
-        this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
-
-        // For upload widget, generate the permitted field
-        if (this.type === DataType.BLOB) {
-            let fileType;
-            // Create the accepts string from file type and extensions
-            fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
-            this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
-        }
 
         this.registerReadyStateListener(() => {
+            this.key = this._key || this.target || this.binding || this._name;
+            this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
+
+            // For upload widget, generate the permitted field
+            if (this.type === DataType.BLOB) {
+                let fileType;
+                // Create the accepts string from file type and extensions
+                fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
+                this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
+            }
+
             if (isMobile()) {
-                if (!this.mobileDisplay) {
+                if (!this['mobile-display']) {
                     this.widget.show = false;
                 }
             } else {
-                if (!this.pcDisplay) {
+                if (!this['pc-display']) {
                     this.widget.show = false;
                 }
             }
