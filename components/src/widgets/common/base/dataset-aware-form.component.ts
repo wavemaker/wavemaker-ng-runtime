@@ -219,7 +219,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (this.usekeys) {
             this.datasetItems = transformDataWithKeys(orderedDataset);
         } else {
-            const displayOptions = transformData(orderedDataset, this.datafield, {
+            const displayOptions = transformData(this.viewParent, orderedDataset, this.datafield, {
                 displayField: this.displayfield || this.displaylabel,
                 displayExpr: this.displayexpression,
                 bindDisplayExpr: this.binddisplayexpression || this.binddisplaylabel,
