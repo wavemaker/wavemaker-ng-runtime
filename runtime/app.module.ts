@@ -28,13 +28,17 @@ import { EmptyPageComponent, PageWrapperComponent } from './components/page-wrap
 import { PipeProvider } from './services/pipe-provider.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { PrefabPreviewManagerService } from './services/prefab-preview-manager.service';
-import { RenderUtilsService, TempModule } from './services/render-utils.service';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { AppSpinnerComponent } from './components/app-spinner.component';
 import { SpinnerServiceImpl } from './services/spinner.service';
 import { ToasterServiceImpl } from './services/toaster.service';
 import { CustomToasterComponent } from './components/custom-toaster.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RenderViewService, TempModule } from './services/render-utils/render-view.service';
+import { RenderFragmentService } from './services/render-utils/render-fragment.service';
+import { RenderPageService } from './services/render-utils/render-page.service';
+import { RenderPartialService } from './services/render-utils/render-partial.service';
+import { RenderPrefabService } from './services/render-utils/render-prefab.service';
 
 declare const $;
 declare const _WM_APP_PROPERTIES;
@@ -103,7 +107,11 @@ const routes = [
         {provide: AbstractHttpService, useClass: HttpServiceImpl},
         {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
         PipeProvider,
-        RenderUtilsService,
+        RenderViewService,
+        RenderFragmentService,
+        RenderPageService,
+        RenderPartialService,
+        RenderPrefabService,
         MetadataResolve,
         AppJSResolve,
         I18nResolve,

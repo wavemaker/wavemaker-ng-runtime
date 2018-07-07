@@ -153,7 +153,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.viewParent = (inj as any).view.component;
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
         this.context = (inj as any).view.context;
-        this.widget = WidgetProxyProvider.create(this, this.widgetSubType, getWidgetPropsByType(this.widgetSubType));
+        this.widget = this.createProxy();
         this.eventManager = inj.get(EventManager);
         (this.nativeElement as any).widget = this.widget;
 
@@ -246,6 +246,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public getDisplayType(): string {
         return this.displayType;
+    }
+
+    protected createProxy(): any {
+        return WidgetProxyProvider.create(this, this.widgetSubType, getWidgetPropsByType(this.widgetSubType));
     }
 
     protected initContext() {

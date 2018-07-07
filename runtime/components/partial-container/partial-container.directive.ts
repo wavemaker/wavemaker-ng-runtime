@@ -2,8 +2,7 @@ import { Attribute, Directive, ElementRef, Inject, Injector, Self, ViewContainer
 
 import { WidgetRef } from '@wm/components';
 import { $invokeWatchers, noop } from '@wm/core';
-
-import { RenderUtilsService } from '../../services/render-utils.service';
+import { RenderPartialService } from '../../services/render-utils/render-partial.service';
 
 declare const _;
 
@@ -27,12 +26,12 @@ export class PartialContainerDirective {
 
         $invokeWatchers(true);
 
-        return this.renderUtils.renderPartial(
+        return this.renderPartialService.render(
             nv,
             this.vcRef,
             $target,
             this.componentInstance,
-            () => (this.inj as any).view.component._resolveFragment()
+            this.inj
         ).then(() => {
             this.contentInitialized = true;
             this.onLoadSuccess();
@@ -47,7 +46,7 @@ export class PartialContainerDirective {
 
     constructor(
         @Self() @Inject(WidgetRef) public componentInstance,
-        public renderUtils: RenderUtilsService,
+        public renderPartialService: RenderPartialService,
         public vcRef: ViewContainerRef,
         public elRef: ElementRef,
         public inj: Injector,
@@ -57,7 +56,6 @@ export class PartialContainerDirective {
         componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
             if (key === 'content') {
                 if (componentInstance.$lazyLoad) {
-                    (this.inj as any).view.component._registerFragment();
                     componentInstance.$lazyLoad = () => {
                         this.renderPartial(nv);
                         componentInstance.$lazyLoad = noop;

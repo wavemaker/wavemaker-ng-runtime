@@ -498,12 +498,12 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
         const context = Object.create(this.viewParent);
         context.form = this;
-        this.app.notify('renderResource', {
+        this.app.notify('render-resource', {
             selector: 'app-form-' + this.widgetId,
             markup: transpile(fieldTemplate),
             styles: '',
             providers: undefined,
-            postConstructFn: () => {
+            initFn: () => {
                 setTimeout(() => {
                     $appDigest();
                 }, 250);

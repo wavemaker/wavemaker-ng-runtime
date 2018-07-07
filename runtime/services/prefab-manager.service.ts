@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { stringStartsWith, loadStyleSheets, loadScripts } from '@wm/core';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
-import { RenderUtilsService } from './render-utils.service';
 
 declare const _;
 
@@ -23,8 +22,7 @@ const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
 export class PrefabManagerService {
 
     constructor(
-        protected resourceMngr: AppResourceManagerService,
-        protected renderUtils: RenderUtilsService
+        protected resourceMngr: AppResourceManagerService
     ) {}
 
     protected getPrefabConfig(prefabName: string) {
@@ -91,14 +89,14 @@ export class PrefabManagerService {
     }
 
     protected renderPrefab(prefabName, vcRef, elRef, componentInstance) {
-        return this.renderUtils.renderPrefab(
-            prefabName,
-            this.getPrefabConfig(prefabName),
-            this.getPrefabMinJsonUrl(prefabName),
-            vcRef,
-            elRef.nativeElement,
-            componentInstance
-        );
+        // return this.renderUtils.renderPrefab(
+        //     prefabName,
+        //     this.getPrefabConfig(prefabName),
+        //     this.getPrefabMinJsonUrl(prefabName),
+        //     vcRef,
+        //     elRef.nativeElement,
+        //     componentInstance
+        // );
     }
 
     public init(prefabName, vcRef, elRef, componentInstance): Promise<any> {
