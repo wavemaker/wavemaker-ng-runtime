@@ -150,20 +150,46 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
     }
 
     // changes the calendar view to the default date given for the calendar.
-    gotoDate() {
+    public gotoDate() {
         this.$fullCalendar.fullCalendar('gotoDate', moment(this.datavalue));
     }
 
-    // this function takes the calendar view to the a year ahead or before based on the operation
-    gotoYear(operation) {
-        let navigateTo;
-        if (operation === 'next') {
-            navigateTo = 'nextYear';
-        } else {
-            navigateTo = 'prevYear';
-        }
-        this.$fullCalendar.fullCalendar(navigateTo);
+    // this function takes the calendar view to the a year ahead
+    public gotoNextYear() {
+        this.$fullCalendar.fullCalendar('nextYear');
     }
+
+    // this function takes the calendar view to the a year before
+    public gotoPrevYear() {
+        this.$fullCalendar.fullCalendar('prevYear');
+    }
+
+    /**
+     * this function takes the calendar view to the specified month
+     * @param monthVal, 1-12 value of month
+     */
+    public gotoMonth(monthVal) {
+        const presentDay = this.$fullCalendar.fullCalendar('getDate');
+        const presentMonthVal = new Date(presentDay).getMonth();
+        if (presentMonthVal < monthVal) {
+            this.$fullCalendar.fullCalendar('gotoDate', presentDay.add(monthVal - presentMonthVal - 1, 'M'));
+        } else {
+            this.$fullCalendar.fullCalendar('gotoDate', presentDay.subtract( presentMonthVal - monthVal + 1, 'M'));
+        }
+    }
+
+    // this function takes the calendar view to the a month ahead
+    public gotoNextMonth() {
+        const presentDay = this.$fullCalendar.fullCalendar('getDate');
+        this.$fullCalendar.fullCalendar('gotoDate', presentDay.add(1, 'M'));
+    }
+
+    // this function takes the calendar view to the a month before
+    public gotoPrevMonth() {
+        const presentDay = this.$fullCalendar.fullCalendar('getDate');
+        this.$fullCalendar.fullCalendar('gotoDate', presentDay.subtract(1, 'M'));
+    }
+
 
     // this function re-renders the events assigned to the calendar.
     rerenderEvents() {

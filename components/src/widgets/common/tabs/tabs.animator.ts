@@ -41,12 +41,12 @@ export class TabsAnimator extends SwipeAnimation {
     }
 
     public onUpper() {
-        this.tabs.selectPrev();
+        this.tabs.prev();
         $appDigest();
     }
 
     public onLower() {
-        this.tabs.selectNext();
+        this.tabs.next();
         $appDigest();
     }
 

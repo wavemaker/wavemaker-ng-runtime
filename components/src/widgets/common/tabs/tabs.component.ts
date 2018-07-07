@@ -147,7 +147,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     private getSelectableTabAfterIndex(index: number): TabPaneComponent {
-        for (let i = index; i < this.panes.length; i++) {
+        for (let i = index + 1; i < this.panes.length; i++) {
             const pane = this.getPaneRefByIndex(i);
             if (this.isSelectableTab(pane)) {
                 return pane;
@@ -156,7 +156,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     private getSelectableTabBeforeIndex(index: number): TabPaneComponent {
-        for (let i = index; i >= 0; i--) {
+        for (let i = index - 1; i >= 0; i--) {
             const pane = this.getPaneRefByIndex(i);
             if (this.isSelectableTab(pane)) {
                 return pane;
@@ -165,7 +165,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     // select next tab relative to the current active tab
-    public selectNext() {
+    public next() {
         const pane = this.getSelectableTabAfterIndex(this.getActiveTabIndex() + 1);
         if (pane) {
             pane.select();
@@ -173,7 +173,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     // select prev tab relative to the current active tab
-    public selectPrev() {
+    public prev() {
         const pane = this.getSelectableTabBeforeIndex(this.getActiveTabIndex() - 1);
         if (pane) {
             pane.select();

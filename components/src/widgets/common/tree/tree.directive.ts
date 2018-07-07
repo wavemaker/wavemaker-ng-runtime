@@ -94,7 +94,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
                 this.changeTreeIcons(nv, ov);
                 break;
             case 'datavalue':
-                this.selectNodeById(nv);
+                this.selectById(nv);
                 break;
             default:
                 super.onPropertyChange(key, nv, ov);
@@ -283,10 +283,10 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             path = '',
             $liPath,
             nodeAction;
+        $el.find('.selected').removeClass('selected');
         if (!$li.length) {
             return;
         }
-        $el.find('.selected').removeClass('selected');
         $li.addClass('selected');
         data = $li.data('nodedata');
         nodeAction = data[this.nodeaction || 'action'];
@@ -349,8 +349,12 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         });
     }
 
-    private selectNodeById(value?) {
+    private selectById(value?) {
         this.selectNode(undefined, value);
+    }
+    private deselectById(value?) {
+        this.selecteditem = {};
+        this.selectById();
     }
     public redraw() {
         this.renderTree(true);
