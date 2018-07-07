@@ -1,6 +1,6 @@
 const win = window as any;
 
-win.angular = {};
+win.Application = win.angular = {};
 
 const ANGULAR1_DEPRECATED = () => {
     console.warn('DEPRECATED Angular 1.x feature');
