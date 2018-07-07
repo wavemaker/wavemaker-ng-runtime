@@ -164,6 +164,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             while (index >= 0) {
                 const prevStep = this.getStepRefByIndex(index);
                 prevStep.done = true;
+                prevStep.isInitialized = true;
                 index--;
             }
         } else {
@@ -214,7 +215,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
                 return;
             }
         }
-
+        nextStep.isInitialized = true;
         nextStep = this.getNextValidStepFormIndex(currentStepIndex + 1);
 
         // If there are any steps which has show then only change state of current step else remain same

@@ -25,7 +25,8 @@ const enum STEP_STATUS {
     selector: 'form[wmWizardStep]',
     providers: [
         provideAsWidgetRef(WizardStepDirective)
-    ]
+    ],
+    exportAs: 'wmWizardStep'
 })
 export class WizardStepDirective extends BaseComponent {
 
@@ -36,6 +37,7 @@ export class WizardStepDirective extends BaseComponent {
     public disablenext: boolean;
     public disabledone: boolean;
     public disableprevious: boolean;
+    public isInitialized: boolean;
 
     private status: STEP_STATUS = STEP_STATUS.DISABLED;
 
