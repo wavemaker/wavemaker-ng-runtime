@@ -68,12 +68,16 @@ export class HttpServiceImpl extends AbstractHttpService {
                     });
                     this.on401();
                 } else {
-                    const errorDetails = response.error;
                     let errMsg;
-                    if (errorDetails.errors) {
-                        errMsg = this.parseErrors(errorDetails.errors);
+                    if (_.isString(response)) {
+                        errMsg = response;
                     } else {
-                        errMsg = 'Service Call Failed';
+                        const errorDetails = response.error;
+                        if (errorDetails && errorDetails.errors) {
+                            errMsg = this.parseErrors(errorDetails.errors);
+                        } else {
+                            errMsg = 'Service Call Failed';
+                        }
                     }
                     reject({
                         error: errMsg,
