@@ -593,7 +593,7 @@ export const getBlob = (val, valContentType?) => {
     }
     const jsonVal = getValidJSON(val);
     if (jsonVal && jsonVal instanceof Object) {
-        val = new Blob([jsonVal], {type: valContentType || 'application/json'});
+        val = new Blob([JSON.stringify(jsonVal)], {type: valContentType || 'application/json'});
     } else {
         val = new Blob([val], {type: valContentType || 'text/plain'});
     }
