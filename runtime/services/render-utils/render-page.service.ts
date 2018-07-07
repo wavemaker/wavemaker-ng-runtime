@@ -1,7 +1,7 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { $invokeWatchers, App, noop } from '@wm/core';
+import { App, muteWatchers, noop, unMuteWatchers } from '@wm/core';
 
 import { commonPageWidgets, getFragmentUrl, RenderFragmentService } from './render-fragment.service';
 import { AppManagerService } from '../app.manager.service';
@@ -66,7 +66,7 @@ export class RenderPageService {
 
     private postReady(pageName: string, instance: any, variableCollection: any) {
         // TODO: have to make sure, the widgets are ready with default values, before firing onReady call
-        $invokeWatchers(true);
+        unMuteWatchers();
 
         this.invokeVariables(pageName, variableCollection);
 
@@ -76,6 +76,7 @@ export class RenderPageService {
     public async render(pageName: string, vcRef: ViewContainerRef, $target: HTMLElement) {
         const context = pageName === 'Common' ? 'Partial' : 'Page';
 
+        muteWatchers();
         return this.renderFragment.render(
             pageName,
             getFragmentUrl(pageName),

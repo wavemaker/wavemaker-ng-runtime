@@ -15,6 +15,17 @@ Object.freeze(FIRST_TIME_WATCH);
 
 export const isFirstTimeChange = v => v === FIRST_TIME_WATCH;
 
+let muted = false;
+
+export const muteWatchers = () => {
+    muted = true;
+};
+
+export const unMuteWatchers = () => {
+    muted = false;
+    triggerWatchers();
+};
+
 export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false) => {
     if (expr.indexOf('[$i]') !== -1) {
         expr = expr.replace(/\[\$i]/g, '[0]');
@@ -41,6 +52,10 @@ const $RAF = window.requestAnimationFrame;
 let ngZone;
 
 const triggerWatchers = () => {
+
+    if (muted) {
+        return;
+    }
 
     const limit = 5;
     let pass = 1;
