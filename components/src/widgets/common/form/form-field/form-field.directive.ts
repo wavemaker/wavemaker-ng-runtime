@@ -275,6 +275,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 break;
         }
 
+        if (key === 'tabindex') {
+            return;
+        }
+
         super.onPropertyChange(key, nv, ov);
     }
 
@@ -340,8 +344,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // Method to expose validation message and set control to invalid
     setValidationMessage(val) {
-        this.validationmessage = val;
-        this.setUpValidators(customValidatorFn);
+        setTimeout(() => {
+            this.validationmessage = val;
+            this.setUpValidators(customValidatorFn);
+        });
     }
 
     ngOnInit() {
