@@ -49,9 +49,9 @@ class FieldDef {
 })
 export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit {
 
-    @ContentChildren('filterWidget') _filterWidget;
-    @ContentChildren('inlineWidget') _inlineWidget;
-    @ContentChildren('inlineWidgetNew') _inlineWidgetNew;
+    @ContentChildren('filterWidget') _filterInstances;
+    @ContentChildren('inlineWidget') _inlineInstances;
+    @ContentChildren('inlineWidgetNew') _inlineInstancesNew;
 
     private _propsInitialized: boolean;
     private _filterDataSet;
@@ -59,9 +59,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     private _isInlineEditable;
     private _isNewEditableRow;
 
-    filterWidget;
-    inlineWidget;
-    inlineWidgetNew;
+    filterInstance;
+    inlineInstance;
+    inlineInstanceNew;
 
     backgroundcolor;
     binding;
@@ -127,7 +127,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     }
 
     set dataoptions(options) {
-            this._dataoptions = options;
+        this._dataoptions = options;
     }
 
     get datasource() {
@@ -163,26 +163,26 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     ngAfterContentInit() {
         if (this._isRowFilter) {
             // Listen on the inner row filter widget and setup the widget
-            const s1 = this._filterWidget.changes.subscribe((val) => {
-                this.filterWidget = val.first && val.first.widget;
+            const s1 = this._filterInstances.changes.subscribe((val) => {
+                this.filterInstance = val.first && val.first.widget;
                 this.setUpFilterWidget();
             });
             this.registerDestroyListener(() => s1.unsubscribe());
         }
 
         if (this._isInlineEditable) {
-            const s2 = this._inlineWidget.changes.subscribe((val) => {
+            const s2 = this._inlineInstances.changes.subscribe((val) => {
                 // Listen on the inner inline widget and setup the widget
-                this.inlineWidget = val.first && val.first.widget;
-                this.table.registerFormField(this.binding, new FieldDef(this.inlineWidget));
+                this.inlineInstance = val.first && val.first.widget;
+                this.table.registerFormField(this.binding, new FieldDef(this.inlineInstance));
                 this.setUpInlineWidget('inlineWidget');
             });
             this.registerDestroyListener(() => s2.unsubscribe());
 
             if (this._isNewEditableRow) {
-                const s3 = this._inlineWidgetNew.changes.subscribe((val) => {
+                const s3 = this._inlineInstancesNew.changes.subscribe((val) => {
                     // Listen on the inner inline widget and setup the widget
-                    this.inlineWidgetNew = val.first && val.first.widget;
+                    this.inlineInstanceNew = val.first && val.first.widget;
                     this.setUpInlineWidget('inlineWidgetNew');
                 });
                 this.registerDestroyListener(() => s3.unsubscribe());
@@ -240,8 +240,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.filterControl.setValue('');
         }
         if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
-            this.filterWidget.query = '';
-            this.filterWidget.queryModel = '';
+            this.filterInstance.query = '';
+            this.filterInstance.queryModel = '';
         }
     }
 
@@ -259,14 +259,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
     }
 
-    initializeFilter() {
+    loadFilterData() {
         // If filterdataset is not bound, get the data implicitly
         if (this._isRowFilter && isDataSetWidget(this.filterwidget) && !this.bindfilterdataset) {
             // For live variable, get the data using distinct API
             if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
                 if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
-                    this.filterWidget.dataoptions = getDistinctFieldProperties(this.table.datasource, this);
-                    this.filterWidget.datasource = this.table.datasource;
+                    this.filterInstance.dataoptions = getDistinctFieldProperties(this.table.datasource, this);
+                    this.filterInstance.datasource = this.table.datasource;
                 } else {
                     getDistinctValues(this.table.datasource, this.widget, 'filterwidget').then((res: any) => {
                         this._filterDataSet = res.data;
@@ -288,7 +288,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
     }
 
-    initializeInlineWidget() {
+    loadInlineWidgetData() {
         // If dataset is not bound, get the data implicitly
         if (isDataSetWidget(this['edit-widget-type']) && !this.binddataset && !this.readonly) {
             const dataSource = this.table.datasource;
@@ -311,33 +311,33 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // On table datasource change, get the data for row filters
     onDataSourceChange() {
-        this.initializeFilter();
-        this.initializeInlineWidget();
+        this.loadFilterData();
+        this.loadInlineWidgetData();
     }
 
     // Set the data on the row filter widget
     setFilterWidgetDataSet() {
-        if (this.filterWidget) {
-            this.filterWidget.dataset = this._filterDataSet;
+        if (this.filterInstance) {
+            this.filterInstance.dataset = this._filterDataSet;
         }
     }
 
     // Set the props on the row filter widget
     setUpFilterWidget() {
-        this.filterWidget.registerReadyStateListener(() => {
+        this.filterInstance.registerReadyStateListener(() => {
             if (isDataSetWidget(this.filterwidget)) {
-                this.filterWidget.dataset = this._filterDataSet;
-                this.filterWidget.datafield = this.filterdatafield || this.binding;
-                this.filterWidget.displayfield = this.filterdisplayfield || this.binding;
+                this.filterInstance.dataset = this._filterDataSet;
+                this.filterInstance.datafield = this.filterdatafield || this.binding;
+                this.filterInstance.displayfield = this.filterdisplayfield || this.binding;
                 if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
-                    this.filterWidget.displaylabel = this.filterdisplaylabel || this.binding;
-                    this.filterWidget.searchkey = this.filtersearchkey || this.binding;
+                    this.filterInstance.displaylabel = this.filterdisplaylabel || this.binding;
+                    this.filterInstance.searchkey = this.filtersearchkey || this.binding;
                 }
             }
             if (this.filterwidget === FormWidgetType.TIME) {
-                this.filterWidget.timepattern = 'hh:mm:ss a'; // TODO: Set application time format
+                this.filterInstance.timepattern = 'hh:mm:ss a'; // TODO: Set application time format
             }
-            this.filterWidget.placeholder = this.filterplaceholder || '';
+            this.filterInstance.placeholder = this.filterplaceholder || '';
         });
     }
 

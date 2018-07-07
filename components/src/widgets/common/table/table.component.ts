@@ -443,9 +443,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // Function to redraw the widgets on resize of columns
         redrawWidgets: () => {
             this.fieldDefs.forEach(col => {
-                triggerFn(col.inlineWidget && col.inlineWidget.redraw);
-                triggerFn(col.inlineWidgetNew && col.inlineWidgetNew.redraw);
-                triggerFn(col.filterWidget && col.filterWidget.redraw);
+                triggerFn(col.inlineInstance && col.inlineInstance.redraw);
+                triggerFn(col.inlineInstanceNew && col.inlineInstanceNew.redraw);
+                triggerFn(col.filterInstance && col.filterInstance.redraw);
             });
         },
         searchHandler: this.searchSortHandler.bind(this),

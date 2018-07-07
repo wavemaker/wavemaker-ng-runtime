@@ -389,7 +389,7 @@ export class TableFilterSortDirective {
                 this.table.onRowFilterChange();
             } else {
                 setTimeout(() => {
-                    this.table.columns[fieldName].filterWidget.focus();
+                    this.table.columns[fieldName].filterInstance.focus();
                 });
             }
         }
@@ -419,8 +419,8 @@ export class TableFilterSortDirective {
 
             filterFields[filterOn] = (isDefined(newVal) && newVal !== '' && newVal !== null) ? {'value' : newVal} : {};
 
-            if (filterWidget === FormWidgetType.AUTOCOMPLETE && filterField.filterWidget.dataoptions) {
-                filterField.filterWidget.dataoptions.filterFields = filterFields;
+            if (filterWidget === FormWidgetType.AUTOCOMPLETE && filterField.filterInstance.dataoptions) {
+                filterField.filterInstance.dataoptions.filterFields = filterFields;
             } else {
                 this.table.datasource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
                     'fields'         : filterKey,
