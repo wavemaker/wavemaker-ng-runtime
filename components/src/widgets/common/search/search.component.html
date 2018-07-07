@@ -15,7 +15,7 @@
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
             </ng-container>
         </li>
-        <div class="status" *ngIf="datacompletemsg && dataProvider.hasNoMoreData">
+        <div class="status" [hidden]="!(datacompletemsg && dataProvider.hasNoMoreData)">
             <span [textContent]="datacompletemsg"></span>
         </div>
         <div class="status" [hidden]="!_loadingItems">
@@ -40,6 +40,7 @@
            (keydown.enter)="onSelect($event)"
            (blur)="invokeOnTouched($event)"
            (focus)="onFocus($event)"
+           [typeaheadLatinize]="false"
            [typeaheadMinLength]="minchars"
            (typeaheadLoading)="_loadingItems"
            [typeaheadScrollable]="true"
@@ -66,6 +67,7 @@
            (keydown.enter)="onSelect($event)"
            (blur)="invokeOnTouched($event)"
            (focus)="onFocus($event)"
+           [typeaheadLatinize]="false"
            [typeaheadMinLength]="minchars"
            (typeaheadLoading)="_loadingItems"
            [typeaheadScrollable]="true"

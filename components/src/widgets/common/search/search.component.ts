@@ -393,7 +393,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // highlight the characters in the dropdown matching the query.
     private hightlight(match: TypeaheadMatch, query: String) {
-        (match as any).value = match.item.label;
+        // highlight of chars will work only when label are strings.
+        (match as any).value = match.item.label.toString();
         return this.typeaheadContainerInstance.hightlight(match, query);
     }
 
@@ -511,6 +512,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     onPropertyChange(key: string, nv: any, ov: any) {
         if (key === 'tabindex') {
             return;
+        }
+        // when dataoptions are provided and there is no displaylabel given then displaylabel is set as the relatedfield
+        if (key === 'displaylabel' && this.dataoptions && this.binddisplaylabel === null) {
+            this.query = _.get(this._modelByValue, nv) || this._modelByValue;
         }
         super.onPropertyChange(key, nv, ov);
     }
