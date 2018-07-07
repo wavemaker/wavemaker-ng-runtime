@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
+import { AfterViewInit, Attribute, Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 
 import { BsDropdownDirective } from 'ngx-bootstrap';
 
@@ -8,6 +8,7 @@ import { styler } from '../../framework/styler';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './menu.props';
 import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
+import { NavComponent } from '../nav/nav.component';
 
 declare const _;
 
@@ -64,6 +65,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public linktarget: string;
     public iconclass: string;
     public animateitems: string;
+    public disableMenuContext: boolean;
     public autoclose: string;
 
     private menuCaret: string = 'fa-caret-down';
@@ -115,9 +117,16 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
 
     constructor(
         inj: Injector,
-        @Self() @Optional() public bsDropdown: BsDropdownDirective
+        @Self() @Optional() public bsDropdown: BsDropdownDirective,
+        @Optional() parentNav: NavComponent,
+        @Attribute('select.event') public selectEventCB: string
     ) {
         super(inj, WIDGET_CONFIG);
+        if (parentNav) {
+            this.disableMenuContext = !!parentNav.disableMenuContext;
+        } else {
+            this.disableMenuContext = !!selectEventCB;
+        }
     }
 
     ngOnInit() {

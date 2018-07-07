@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['conditionalclass', PROP_ANY],
                 ['encodeurl', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
-                ['hyperlink', PROP_STRING],
+                ['hyperlink', {value: '', ...PROP_STRING}],
                 ['iconclass', PROP_STRING],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],

@@ -1,5 +1,5 @@
 <li *ngFor="let item of nodes; let last = last; let index = index" [ngClass]="{active: last}" class="{{item.class}}">
     <i class="{{item.icon}}"></i>
-    <a [title]="item.label" href="javascript:void(0)" (click)="onItemClick($event, item)" *ngIf="!last" [textContent]="item.label"></a>
+    <a [title]="item.label" href="javascript:void(0)" [wmNavigationControl]="item.link" [disableMenuContext]="disableMenuContext" (click)="onItemClick($event, item)" *ngIf="!last" [textContent]="item.label"></a>
     <label *ngIf="last" [textContent]="item.label"></label>
 </li>
