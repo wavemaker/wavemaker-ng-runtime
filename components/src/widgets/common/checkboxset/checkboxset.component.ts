@@ -1,6 +1,6 @@
 import { Attribute, Component, Injector, OnInit } from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import { noop, switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -50,6 +50,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
             this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
         }
+        this.handleHeaderClick = noop;
     }
 
     onCheckboxLabelClick($event, key) {
