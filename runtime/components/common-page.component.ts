@@ -1,7 +1,8 @@
 import { Component, ElementRef, ViewContainerRef } from '@angular/core';
 
 import { App } from '@wm/core';
-import { RenderPageService } from '../services/render-utils/render-page.service';
+
+import { PageRenderer } from '../services/render-utils/page-renderer';
 
 @Component({
     selector: 'app-common-page',
@@ -11,12 +12,12 @@ export class CommonPageComponent {
     constructor(
         private vcRef: ViewContainerRef,
         private elRef: ElementRef,
-        private renderPageService: RenderPageService,
+        private pageRenderer: PageRenderer,
         private app: App
     ) {
 
         if (this.app.isApplicationType) {
-            this.renderPageService.render('Common', this.vcRef, this.elRef.nativeElement);
+            this.pageRenderer.render('Common', this.vcRef, this.elRef.nativeElement);
         }
     }
 }

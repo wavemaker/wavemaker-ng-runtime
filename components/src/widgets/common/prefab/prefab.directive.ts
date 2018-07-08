@@ -33,9 +33,13 @@ export class PrefabDirective extends StylableComponent {
         styler(this.nativeElement, this);
     }
 
-    public setPrefabProps(props) {
+    public setProps(config) {
+        if (!config || !config.properties) {
+            return;
+        }
+
         if (!registeredPropsSet.has(this.widgetType)) {
-            register(this.widgetType, this.prepareProps(props));
+            register(this.widgetType, this.prepareProps(config.properties));
         }
 
         this.propsReady();

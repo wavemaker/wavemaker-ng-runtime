@@ -23,7 +23,7 @@ import { AccessrolesDirective } from '../../directives/accessroles.directive';
 export class TempModule {}
 
 @Injectable()
-export class RenderViewService {
+export class ViewRenderer {
 
     constructor(private compiler: Compiler, private app: App) {
         app.subscribe('render-resource', options => {

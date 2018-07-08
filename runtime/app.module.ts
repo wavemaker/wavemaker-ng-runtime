@@ -27,18 +27,17 @@ import { MetadataResolve } from './resolves/metadata.resolve';
 import { EmptyPageComponent, PageWrapperComponent } from './components/page-wrapper.component';
 import { PipeProvider } from './services/pipe-provider.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
-import { PrefabPreviewManagerService } from './services/prefab-preview-manager.service';
 import { SecurityConfigResolve } from './resolves/security-config.resolve';
 import { AppSpinnerComponent } from './components/app-spinner.component';
 import { SpinnerServiceImpl } from './services/spinner.service';
 import { ToasterServiceImpl } from './services/toaster.service';
 import { CustomToasterComponent } from './components/custom-toaster.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RenderViewService, TempModule } from './services/render-utils/render-view.service';
-import { RenderFragmentService } from './services/render-utils/render-fragment.service';
-import { RenderPageService } from './services/render-utils/render-page.service';
-import { RenderPartialService } from './services/render-utils/render-partial.service';
-import { RenderPrefabService } from './services/render-utils/render-prefab.service';
+import { ViewRenderer, TempModule } from './services/render-utils/view-renderer';
+import { FragmentRenderer } from './services/render-utils/fragment-renderer';
+import { PageRenderer } from './services/render-utils/page-renderer';
+import { PartialRenderer } from './services/render-utils/partial-renderer';
+import { PrefabRenderer } from './services/render-utils/prefab-renderer';
 
 declare const $;
 declare const _WM_APP_PROPERTIES;
@@ -107,18 +106,17 @@ const routes = [
         {provide: AbstractHttpService, useClass: HttpServiceImpl},
         {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
         PipeProvider,
-        RenderViewService,
-        RenderFragmentService,
-        RenderPageService,
-        RenderPartialService,
-        RenderPrefabService,
+        ViewRenderer,
+        FragmentRenderer,
+        PageRenderer,
+        PartialRenderer,
+        PrefabRenderer,
         MetadataResolve,
         AppJSResolve,
         I18nResolve,
         AppManagerService,
         AppResourceManagerService,
         PrefabManagerService,
-        PrefabPreviewManagerService,
         SecurityConfigResolve,
         DecimalPipe,
         DatePipe

@@ -2,7 +2,8 @@ import { Attribute, Directive, ElementRef, Inject, Injector, Self, ViewContainer
 
 import { WidgetRef } from '@wm/components';
 import { $invokeWatchers, noop } from '@wm/core';
-import { RenderPartialService } from '../../services/render-utils/render-partial.service';
+
+import { PartialRenderer } from '../../services/render-utils/partial-renderer';
 
 declare const _;
 
@@ -26,7 +27,7 @@ export class PartialContainerDirective {
 
         $invokeWatchers(true);
 
-        return this.renderPartialService.render(
+        return this.partialRenderer.render(
             nv,
             this.vcRef,
             $target,
@@ -46,7 +47,7 @@ export class PartialContainerDirective {
 
     constructor(
         @Self() @Inject(WidgetRef) public componentInstance,
-        public renderPartialService: RenderPartialService,
+        public partialRenderer: PartialRenderer,
         public vcRef: ViewContainerRef,
         public elRef: ElementRef,
         public inj: Injector,

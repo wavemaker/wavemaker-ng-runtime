@@ -3,14 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 
 import { App, muteWatchers, noop, unMuteWatchers } from '@wm/core';
 
-import { commonPageWidgets, getFragmentUrl, RenderFragmentService } from './render-fragment.service';
+import { commonPageWidgets, getFragmentUrl, FragmentRenderer } from './fragment-renderer';
 import { AppManagerService } from '../app.manager.service';
 
 @Injectable()
-export class RenderPageService {
+export class PageRenderer {
 
     constructor(
-        private renderFragment: RenderFragmentService,
+        private renderFragment: FragmentRenderer,
         private app: App,
         private route: ActivatedRoute,
         private appManager: AppManagerService

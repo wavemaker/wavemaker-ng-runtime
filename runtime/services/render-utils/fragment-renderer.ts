@@ -3,16 +3,17 @@ import { Injectable, Injector, ViewContainerRef } from '@angular/core';
 import { transpile } from '@wm/transpiler';
 import { AbstractI18nService, App, getValidJSON, noop } from '@wm/core';
 
-import { RenderViewService } from './render-view.service';
+import { ViewRenderer } from './view-renderer';
 import { AppResourceManagerService } from '../app-resource-manager.service';
 import { AppManagerService } from '../app.manager.service';
 import { VariablesService } from '@wm/variables';
 
-interface IPageMinJSON {
+export interface IPageMinJSON {
     markup: string;
     script: string;
     styles: string;
     variables: string;
+    config?: string;
 }
 
 declare const window: any;
@@ -80,12 +81,12 @@ export const getFragmentUrl = pageName => `./pages/${pageName}/page.min.json`;
 export const commonPageWidgets = {};
 
 @Injectable()
-export class RenderFragmentService {
+export class FragmentRenderer {
     constructor(
         private resouceMngr: AppResourceManagerService,
         private appManager: AppManagerService,
         private app: App,
-        private renderResource: RenderViewService,
+        private renderResource: ViewRenderer,
         private i18nService: AbstractI18nService
     ) {}
 
@@ -103,6 +104,9 @@ export class RenderFragmentService {
         if (extendWithAppVariableContext) {
             instance.Variables = Object.create(this.app.Variables);
             instance.Actions = Object.create(this.app.Actions);
+        } else {
+            instance.Variables = {};
+            instance.Actions = {};
         }
 
         // assign all the page variables to the pageInstance
@@ -112,7 +116,7 @@ export class RenderFragmentService {
         return variableCollection;
     }
 
-    private loadResourcesOfFragment(url): Promise<IPageMinJSON> {
+    public loadResourcesOfFragment(url): Promise<IPageMinJSON> {
 
         const resource = fragmentCache.get(url);
 

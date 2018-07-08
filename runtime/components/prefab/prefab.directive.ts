@@ -2,8 +2,7 @@ import { Directive, ElementRef, Inject, Self, ViewContainerRef } from '@angular/
 
 import { WidgetRef } from '@wm/components';
 
-import { PrefabManagerService } from '../../services/prefab-manager.service';
-import { PrefabPreviewManagerService } from '../../services/prefab-preview-manager.service';
+import { PrefabRenderer } from '../../services/render-utils/prefab-renderer';
 
 @Directive({
     selector: '[wmPrefab][prefabname]'
@@ -12,18 +11,11 @@ export class PrefabDirective {
 
     constructor(
         @Self() @Inject(WidgetRef) public componentInstance,
-        public prefabManager: PrefabManagerService,
-        public prefabPreviewManager: PrefabPreviewManagerService,
+        public prefabRenderer: PrefabRenderer,
         public vcRef: ViewContainerRef,
         public elRef: ElementRef
     ) {
-
         const prefabName = this.componentInstance.prefabName;
-
-        (prefabName === '__self__' ? this.prefabPreviewManager : this.prefabManager)
-            .init(prefabName, vcRef, elRef, componentInstance)
-            .then(config => {
-                this.componentInstance.setPrefabProps(config.properties);
-            });
+        this.prefabRenderer.render(prefabName, vcRef, elRef.nativeElement, componentInstance);
     }
 }

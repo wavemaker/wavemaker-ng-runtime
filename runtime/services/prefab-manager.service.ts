@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { stringStartsWith, loadStyleSheets, loadScripts } from '@wm/core';
+import { loadScripts, loadStyleSheets, stringStartsWith } from '@wm/core';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
 
@@ -9,6 +9,7 @@ declare const _;
 const prefabConfigCache = new Map<string, any>();
 const prefabsWithError = new Set<string>();
 const inProgress = new Map<string, Promise<any>>();
+const resolvedPrefabs = new Set<string>();
 
 const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
     let _url = resourcePath;
@@ -22,7 +23,7 @@ const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
 export class PrefabManagerService {
 
     constructor(
-        protected resourceMngr: AppResourceManagerService
+        private resourceMngr: AppResourceManagerService
     ) {}
 
     protected getPrefabConfig(prefabName: string) {
@@ -30,18 +31,18 @@ export class PrefabManagerService {
     }
 
     protected getPrefabBaseUrl(prefabName: string) {
-        return `app/prefabs/${prefabName}`;
+        return prefabName === '__self__' ? '.' : `app/prefabs/${prefabName}`;
     }
 
     protected getConfigUrl(prefabName: string) {
         return `${this.getPrefabBaseUrl(prefabName)}/config.json`;
     }
 
-    protected getPrefabMinJsonUrl(prefabName: string) {
+    public getPrefabMinJsonUrl(prefabName: string) {
         return `${this.getPrefabBaseUrl(prefabName)}/pages/Main/page.min.json`;
     }
 
-    protected loadConfig(prefabName): Promise<any> {
+    public getConfig(prefabName): Promise<any> {
         const config = this.getPrefabConfig(prefabName);
         if (config) {
             return Promise.resolve(config);
@@ -76,39 +77,7 @@ export class PrefabManagerService {
         return loadScripts(_scripts);
     }
 
-    protected loadDependencies(prefabName, config): Promise<any> {
-        return Promise.all([
-            this.loadStyles(prefabName, config),
-            this.loadScripts(prefabName, config),
-            // this.loadModules(prefabName, config)
-        ]).then(() => {
-            if (inProgress.get(prefabName)) {
-                (inProgress.get(prefabName) as any).resolve();
-            }
-        });
-    }
-
-    protected renderPrefab(prefabName, vcRef, elRef, componentInstance) {
-        // return this.renderUtils.renderPrefab(
-        //     prefabName,
-        //     this.getPrefabConfig(prefabName),
-        //     this.getPrefabMinJsonUrl(prefabName),
-        //     vcRef,
-        //     elRef.nativeElement,
-        //     componentInstance
-        // );
-    }
-
-    public init(prefabName, vcRef, elRef, componentInstance): Promise<any> {
-
-        if (prefabsWithError.has(prefabName)) {
-            return Promise.reject('');
-        }
-
-        if (inProgress.get(prefabName)) {
-            return inProgress.get(prefabName).then(() => this.renderPrefab(prefabName, vcRef, elRef, componentInstance));
-        }
-
+    private setInProgress(prefabName: string) {
         let _res;
         let _rej;
         const _promise: any = new Promise((res, rej) => {
@@ -120,9 +89,40 @@ export class PrefabManagerService {
         _promise.reject = _rej;
 
         inProgress.set(prefabName, _promise);
+    }
 
-        return this.loadConfig(prefabName)
-            .then(config => this.loadDependencies(prefabName, config))
-            .then(() => this.renderPrefab(prefabName, vcRef, elRef, componentInstance));
+    private resolveInProgress(prefabName: string) {
+        if (inProgress.get(prefabName)) {
+            (inProgress.get(prefabName) as any).resolve();
+            inProgress.delete(prefabName);
+        }
+    }
+
+    public loadDependencies(prefabName): Promise<void> {
+
+        if (resolvedPrefabs.has(prefabName)) {
+            return Promise.resolve();
+        }
+
+        if (prefabsWithError.has(prefabName)) {
+            return Promise.reject('');
+        }
+
+        if (inProgress.get(prefabName)) {
+            return inProgress.get(prefabName);
+        }
+
+        this.setInProgress(prefabName);
+
+        return this.getConfig(prefabName)
+            .then(config => {
+                return Promise.all([
+                    this.loadStyles(prefabName, config),
+                    this.loadScripts(prefabName, config),
+                ]).then(() => {
+                    this.resolveInProgress(prefabName);
+                    resolvedPrefabs.add(prefabName);
+                });
+            });
     }
 }

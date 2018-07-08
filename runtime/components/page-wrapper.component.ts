@@ -7,7 +7,8 @@ import { App, AbstractSpinnerService } from '@wm/core';
 
 import { Subscription } from 'rxjs/Subscription';
 import { AppManagerService } from '../services/app.manager.service';
-import { RenderPageService } from '../services/render-utils/render-page.service';
+import { PageRenderer } from '../services/render-utils/page-renderer';
+import { PrefabRenderer } from '../services/render-utils/prefab-renderer';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -21,7 +22,8 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
 
     constructor(
         private route: ActivatedRoute,
-        private renderPageService: RenderPageService,
+        private pageRenderer: PageRenderer,
+        private prefabRenderer: PrefabRenderer,
         private vcRef: ViewContainerRef,
         private appRef: ApplicationRef,
         private metadataService: MetadataService,
@@ -51,7 +53,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
 
         this.appManager.loadAppVariables()
             .then(() => {
-                this.renderPageService.render(pageName, this.vcRef, $target)
+                this.pageRenderer.render(pageName, this.vcRef, $target)
                     .then(() => {
                         this.spinnerService.hide(spinnerId);
                     }, (e) => {
@@ -64,10 +66,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.resetViewContainer();
         const $target = this.getTargetNode();
 
-        // this.renderUtils.renderPrefabPreviewPage(
-        //     this.vcRef,
-        //     $target
-        // );
+        this.prefabRenderer.renderForPreview(this.vcRef, $target);
     }
 
     ngOnInit() {

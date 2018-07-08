@@ -2,12 +2,12 @@ import { Injectable, Injector, ViewContainerRef } from '@angular/core';
 
 import { $invokeWatchers, App, noop } from '@wm/core';
 
-import { commonPageWidgets, getFragmentUrl, RenderFragmentService } from './render-fragment.service';
+import { commonPageWidgets, getFragmentUrl, FragmentRenderer } from './fragment-renderer';
 
 @Injectable()
-export class RenderPartialService {
+export class PartialRenderer {
     constructor(
-        private renderFragment: RenderFragmentService,
+        private renderFragment: FragmentRenderer,
         private app: App
     ) {}
 
@@ -47,11 +47,7 @@ export class RenderPartialService {
     }
 
     private postReady(instance: any, variableCollection: any, inj: Injector) {
-        // TODO: have to make sure, the widgets are ready with default values, before firing onReady call
-        $invokeWatchers(true);
-
         this.invokeVariables(variableCollection);
-
         this.invokeOnReady(instance, inj);
     }
 
