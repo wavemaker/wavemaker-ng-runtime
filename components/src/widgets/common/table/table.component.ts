@@ -245,6 +245,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.items.length = 0;
                     this.items.push(row);
                 }
+                this.invokeEventCallback('click', {$data: row, $event: e, row});
                 this.invokeEventCallback('select', {$data: row, $event: e, row});
                 this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
             });
@@ -1254,6 +1255,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     invokeActionEvent($event, expression: string) {
         const fn = $parseEvent(expression);
         fn(this.viewParent, Object.assign(this.context, {$event}));
+    }
+
+    // change and blur events are added from the template
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (eventName !== 'click') {
+            super.handleEvent(this.nativeElement, eventName, callback, locals);
+        }
     }
 
     registerFormWidget() {}
