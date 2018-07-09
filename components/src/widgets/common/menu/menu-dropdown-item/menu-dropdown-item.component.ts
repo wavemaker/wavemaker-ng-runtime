@@ -132,7 +132,7 @@ export class MenuDropdownItemComponent implements OnInit {
 
     @HostListener('click', ['$event', 'item'])
     onSelect = ($event, item) => {
-        if (this.nativeElement !== $event.target.closest('.app-menu-item')) {
+        if (this.nativeElement !== $($event.target).closest('.app-menu-item').get(0)) {
             return;
         }
         // prevent event event propagation if auto close is outside click.
