@@ -175,7 +175,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 // Listen on the inner inline widget and setup the widget
                 this.inlineInstance = val.first && val.first.widget;
                 this.table.registerFormField(this.binding, new FieldDef(this.inlineInstance));
-                this.setUpInlineWidget('inlineWidget');
+                this.setUpInlineWidget('inlineInstance');
             });
             this.registerDestroyListener(() => s2.unsubscribe());
 
@@ -183,7 +183,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 const s3 = this._inlineInstancesNew.changes.subscribe((val) => {
                     // Listen on the inner inline widget and setup the widget
                     this.inlineInstanceNew = val.first && val.first.widget;
-                    this.setUpInlineWidget('inlineWidgetNew');
+                    this.setUpInlineWidget('inlineInstanceNew');
                 });
                 this.registerDestroyListener(() => s3.unsubscribe());
             }
@@ -412,13 +412,13 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 this.setFilterWidgetDataSet();
                 break;
             case 'editdatepattern':
-                this.setInlineWidgetProp('inlineWidget', 'datepattern', nv);
-                this.setInlineWidgetProp('inlineWidgetNew', 'datepattern', nv);
+                this.setInlineWidgetProp('inlineInstance', 'datepattern', nv);
+                this.setInlineWidgetProp('inlineInstanceNew', 'datepattern', nv);
                 break;
             default:
                 if (inlineWidgetProps.includes(key)) {
-                    this.setInlineWidgetProp('inlineWidget', key, nv);
-                    this.setInlineWidgetProp('inlineWidgetNew', key, nv);
+                    this.setInlineWidgetProp('inlineInstance', key, nv);
+                    this.setInlineWidgetProp('inlineInstanceNew', key, nv);
                 }
                 break;
         }
