@@ -23,6 +23,7 @@ import { DeviceFileOpenerService } from './services/device-file-opener.service';
 import { DeviceFileService } from './services/device-file.service';
 import { DeviceFileUploadService } from './services/device-file-upload.service';
 import { DeviceService } from './services/device.service';
+import { ExtAppMessageService } from './services/ext-app-message.service';
 import { NetworkService } from './services/network.service';
 
 const ionicServices = [
@@ -50,6 +51,7 @@ const ionicServices = [
         DeviceFileService,
         DeviceFileUploadService,
         DeviceService,
+        ExtAppMessageService,
         NetworkService,
         ...ionicServices
     ],

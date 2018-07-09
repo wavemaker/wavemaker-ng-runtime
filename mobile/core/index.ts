@@ -6,4 +6,5 @@ export * from './src/services/device-file-opener.service';
 export * from './src/services/device-file.service';
 export * from './src/services/device-file-upload.service';
 export * from './src/services/device.service';
+export * from './src/services/ext-app-message.service';
 export * from './src/services/network.service';
