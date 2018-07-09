@@ -124,9 +124,8 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         this.selectedItem = this.datasetItems[$index];
         this.updateHighlighter();
 
-        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: this.oldVal});
-        this.oldVal = this.datavalue;
-
+        // invoke on datavalue change.
+        this.invokeOnChange(this.datavalue, $event || {}, true);
         $appDigest();
     }
 

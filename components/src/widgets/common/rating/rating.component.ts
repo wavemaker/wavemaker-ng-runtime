@@ -114,7 +114,8 @@ export class RatingComponent extends DatasetAwareFormComponent {
         }
 
         this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});
+        // invoke on datavalue change.
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     // Update the selected flag on datasetItems and assign the ratingValue.
