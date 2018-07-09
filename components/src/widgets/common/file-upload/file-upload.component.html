@@ -28,7 +28,7 @@
         <div class="app-files-upload-status single"></div>
     </div>
     <!-- support for file upload in Mobile Application (device) -->
-    <button *ngIf="_isCordova" focus-target class="app-button btn btn-default" (click)="openFileSelector()" disabled="disabled">
+    <button *ngIf="_isCordova" focus-target class="app-button btn btn-default" (click)="openFileSelector()" [disabled]="disabled">
         <i class="{{iconclass}}"></i>
         <span class="caption">{{caption}}</span>
     </button>

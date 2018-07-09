@@ -27,11 +27,10 @@ type SPINNER = {show: boolean, messages: Array<string>};
         </div>
         <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext" canceltext.bind="canceltext"
                 iconclass.bind="iconclass" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()"></div>
-        <div wmNetworkInfoToaster></div>
-        <div wmAppUpdate></div>
+        <div wmAppExt></div>
         <i id="wm-mobile-display"></i>`
 })
-export class AppComponent implements DoCheck, AfterViewInit {
+export class AppComponent implements DoCheck {
     spinner: SPINNER = {show: false, messages: []};
     constructor(
         _pipeProvider: PipeProvider,
@@ -81,19 +80,5 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
     ngDoCheck() {
         $invokeWatchers();
-    }
-
-    ngAfterViewInit() {
-        const $eleRef = $(this.elRef.nativeElement);
-        const $networkInfo = $eleRef.find('>[wmNetworkInfoToaster]');
-        const $appUpdate = $eleRef.find('>[wmAppUpdate]');
-        const $body = $('body:first');
-        if (hasCordova()) {
-            $appUpdate.appendTo($body);
-            $networkInfo.appendTo($body);
-        } else {
-            $networkInfo.remove();
-            $appUpdate.remove();
-        }
     }
 }

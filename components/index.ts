@@ -3,6 +3,7 @@ export * from './src/utils/widget-utils';
 export * from './src/widgets/common/base/base.component';
 export * from './src/widgets/common/date/date.component';
 export * from './src/widgets/common/date-time/date-time.component';
+export * from './src/widgets/common/file-upload/file-upload.component';
 export * from './src/widgets/common/left-panel/left-panel.directive';
 export * from './src/widgets/common/page/page.directive';
 export * from './src/widgets/common/base/stylable.component';

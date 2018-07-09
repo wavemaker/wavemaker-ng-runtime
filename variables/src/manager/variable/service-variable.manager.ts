@@ -317,8 +317,9 @@ export class ServiceVariableManager extends BaseVariableManager {
                     fileParamCount++;
                 }
                 _.forEach(inputField, (input) => {
-                    if (input instanceof File) {
+                    if (input instanceof File || _.find(_.values(input), o => o instanceof Blob)) {
                         fileArr.push(input);
+                        fileParamCount = fileParamCount || 1;
                     }
                 });
             } else {

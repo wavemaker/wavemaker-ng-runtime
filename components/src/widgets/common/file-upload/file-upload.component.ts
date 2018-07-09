@@ -142,42 +142,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         this.selectedUploadTypePath = path;
     }
 
-    // Todo[Shubham]: Need this only in mobile
-    /* if (CONSTANTS.hasCordova) {
-        openFileSelector{
-        var uploadOptions = {formName: scope.formName};
-
-        // open the imagepicker view if contenttype is image.
-        if (scope.contenttype === DEVICE_CONTENTTYPES.IMAGE) {
-            DeviceMediaService.imagePicker(scope.multiple).then(function (files) {
-                scope.onFileSelect({}, files);
-            });
-            return;
-        }
-
-        // open the audiopicker view if contenttype is image.
-        if (scope.contenttype === DEVICE_CONTENTTYPES.AUDIO) {
-            DeviceMediaService.audioPicker(scope.multiple).then(function (files) {
-                scope.onFileSelect({}, files);
-            });
-            return;
-        }
-
-        //// open the videopicker view if contenttype is image.
-        if (scope.contenttype === DEVICE_CONTENTTYPES.VIDEO && Utils.isIphone()) {
-            DeviceMediaService.videoPicker().then(function (files) {
-                scope.onFileSelect({}, files);
-            });
-            return;
-        }
-
-        // open the file selector if contenttype is files.
-        FileSelectorService.open({multiple: scope.multiple}, function (files) {
-            scope.onFileSelect({}, files);
-        });
-    }
-    }*/
-
     /* this function returns the fileextension */
     getFileExtension(fileName) {
         if (fileName && _.includes(fileName, '.')) {
@@ -265,9 +229,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     ngOnInit() {
         super.ngOnInit();
-        // Todo:[Shubham] this._isMobileType = !CONSTANTS.$rootScope.isApplicationType;
-        this._isMobileType = false;
-        this._isCordova = false;
     }
 
     ngAfterViewInit() {

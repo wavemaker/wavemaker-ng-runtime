@@ -1,0 +1,35 @@
+<div class="app-file-browser" *ngIf="isVisible && currentFolder">
+    <div class="modal-backdrop fade" [class.in]="isVisible"></div>
+    <div class="modal fade" style="display: block;" [class.in]="isVisible" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header clearfix">
+                    <h4 class="modal-title pull-left">
+                        <span (click)="onFileClick(currentFolder.parent)" [hidden]="!!!currentFolder.parent">
+                            <i class="wi wi-long-arrow-left"></i>
+                        </span>
+                     {{currentFolder.name}}
+                    </h4>
+                    <div class="selected-file-button pull-right" (click)="refreshFolder()">
+                        <i class="wi wi-refresh"></i>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="file-info-box" *ngFor="let file of currentFolder.files">
+                        <div class="file-info"  [class.bg-primary]="file.isSelected" (click)="onFileClick(file)">
+                            <i class="file-icon wi wi-folder" *ngIf="!file.isFile"></i>
+                            <i class="file-icon wi wi-file {{getFileExtension(file.name)}}" *ngIf="file.isFile"></i>
+                            <span class="file-name">{{file.name}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" *ngIf="selectedFiles && selectedFiles.length > 0" (click)="submit()">
+                        Done <span class="badge badge-light">{{selectedFiles.length}}</span>
+                    </button>
+                    <button type="button" class="btn btn-default" (click)="show = false;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

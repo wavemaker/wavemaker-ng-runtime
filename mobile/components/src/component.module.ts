@@ -4,11 +4,15 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { WmComponentsModule } from '@wm/components';
 
+import { FileSelectorService } from './services/file-selector.service';
+
 import { AppUpdateComponent } from './widgets/app-update/app-update.component';
 import { BarcodeScannerComponent } from './widgets/barcode-scanner/barcode-scanner.component';
 import { CameraComponent } from './widgets/camera/camera.component';
 import { DateDirective } from './widgets/date/date.directive';
 import { DateTimeDirective } from './widgets/date-time/date-time.directive';
+import { FileBrowserComponent } from './widgets/file-browser/file-browser.component';
+import { FileUploadDirective } from './widgets/file-upload/file-upload.directive';
 import { ImageCacheDirective } from './widgets/image-cache/image-cache.directive';
 import { MediaListComponent } from './widgets/media-list/media-list.component';
 import { MediaListItemDirective } from './widgets/media-list/media-list-item/media-list-item.directive';
@@ -28,6 +32,8 @@ const wmMobileComponents = [
     CameraComponent,
     DateDirective,
     DateTimeDirective,
+    FileBrowserComponent,
+    FileUploadDirective,
     ImageCacheDirective,
     MediaListComponent,
     MediaListItemDirective,
@@ -52,7 +58,7 @@ const PIPES = [];
     ],
     declarations: [...wmMobileComponents, ...PIPES],
     exports: [...wmMobileComponents, ...PIPES],
-    providers: [],
+    providers: [FileSelectorService],
     entryComponents: []
 })
 export class WmMobileComponentsModule {
