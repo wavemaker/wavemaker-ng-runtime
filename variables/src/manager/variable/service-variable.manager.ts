@@ -231,9 +231,9 @@ export class ServiceVariableManager extends BaseVariableManager {
                 if (info.error.message) {
                     console.warn(info.error.message, variable.name);
                     this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
-                    return;
                 }
         }
+        return info;
     }
 
     /**
@@ -370,8 +370,9 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         // check errors
         if (requestParams.error) {
-            this.handleRequestMetaError(requestParams, variable, success, error, options);
-            return Promise.reject(requestParams.error.message);
+            const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
+            const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
+            return Promise.reject(reason);
         }
 
         // file upload
