@@ -68,7 +68,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         this.modelByKey = keys;
 
         this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});
+        // invoke on datavalue change.
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     onPropertyChange(key, nv, ov?) {

@@ -185,7 +185,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             this.toBeProcessedDatavalue = values;
         } else if (isDefined(this.toBeProcessedDatavalue)) {
             // obtain the first array value when multiple is set to false.
-            this._modelByValue = (!this.multiple && _.isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
+            // set the modelByValue only when undefined.
+            if (!isDefined(this._modelByValue)) {
+                this._modelByValue = (!this.multiple && _.isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
+            }
             this.toBeProcessedDatavalue = undefined;
         }
 

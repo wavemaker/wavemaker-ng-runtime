@@ -42,7 +42,8 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
         this.modelByKey = key;
 
         this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event: $event, newVal: this.datavalue});
+        // invoke on datavalue change.
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     onPropertyChange(key, nv, ov?) {
