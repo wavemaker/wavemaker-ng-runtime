@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 
 import {
     EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService,
-    AbstractHttpService, AbstractSpinnerService
+    AbstractHttpService, AbstractSpinnerService, UtilsService
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -13,7 +13,8 @@ const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
     SpinnerService: AbstractSpinnerService,
-    ToasterService: AbstractToasterService
+    ToasterService: AbstractToasterService,
+    Utils: UtilsService
 };
 
 const enum PROJECT_TYPE {
