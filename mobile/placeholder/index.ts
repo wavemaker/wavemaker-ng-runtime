@@ -1,2 +1,2 @@
-export * from './components/src/component.module';
-export * from './runtime/app.module';
+export * from './components/index';
+export * from './runtime/index';
