@@ -217,6 +217,10 @@ export const updateCompositeTableData = function (params, successCallback, failu
     return initiateAction('updateCompositeTableData', params, successCallback, failureCallback, null);
 };
 
+export const periodUpdateCompositeTableData = function (params, successCallback, failureCallback) {
+    return initiateAction('periodUpdateCompositeTableData', params, successCallback, failureCallback);
+};
+
 export const updateMultiPartTableData = function (params, successCallback, failureCallback) {
     return initiateAction('updateMultiPartTableData', params, successCallback, failureCallback, null);
 };
@@ -231,6 +235,10 @@ export const deleteTableData = function (params, successCallback, failureCallbac
 
 export const deleteCompositeTableData = function (params, successCallback, failureCallback) {
     return initiateAction('deleteCompositeTableData', params, successCallback, failureCallback, null);
+};
+
+export const periodDeleteCompositeTableData = function (params, successCallback, failureCallback) {
+    return initiateAction('periodDeleteCompositeTableData', params, successCallback, failureCallback);
 };
 
 export const exportTableData = function (params) {

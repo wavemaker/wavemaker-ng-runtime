@@ -74,6 +74,7 @@ const formFieldMap = new Map(
         ['maxdefaultvalue', PROP_STRING],
         ['maxplaceholder', PROP_STRING],
         ['mobile-display', {value: true, ...PROP_BOOLEAN}],
+        ['period', PROP_BOOLEAN],
         ['pc-display', {value: true, ...PROP_BOOLEAN}],
         ['primary-key', PROP_STRING],
         ['related-entity-name', PROP_STRING],

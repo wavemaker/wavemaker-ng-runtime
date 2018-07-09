@@ -244,6 +244,10 @@ export const VARIABLE_URLS = {
         url: '/:service/:dataModelName/:entityName/composite-id?:id',
             method: 'PUT'
     },
+    periodUpdateCompositeTableData: {
+        url: '/:service/:dataModelName/:entityName/composite-id/periods?:id',
+            method: 'PUT'
+    },
     updateMultiPartCompositeTableData: {
         url: '/:service/:dataModelName/:entityName/composite-id?:id',
             method: 'POST',
@@ -252,6 +256,10 @@ export const VARIABLE_URLS = {
     },
     deleteCompositeTableData: {
         url: '/:service/:dataModelName/:entityName/composite-id?:id',
+            method: 'DELETE'
+    },
+    periodDeleteCompositeTableData: {
+        url: '/:service/:dataModelName/:entityName/composite-id/periods?:id',
             method: 'DELETE'
     },
     getDistinctDataByFields: {

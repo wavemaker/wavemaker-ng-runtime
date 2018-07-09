@@ -679,7 +679,7 @@ export default class LiveVariableUtils {
 
         // EVENT: ON_BEFORE_UPDATE
         clonedFields = getClonedObject(inputFields);
-        output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
+        output = _initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields, options);
         if (output === false) {
             // $rootScope.$emit('toggle-variable-state', variable, false);
             triggerFn(error);
@@ -760,7 +760,12 @@ export default class LiveVariableUtils {
                     } else {
                         primaryKey.forEach(key => {
                             compositeKeysData[key] = rowObject[key];
-                            prevCompositeKeysData[key] = prevData[key] || (options.rowData && options.rowData[key]) || rowObject[key];
+                            // In case of periodic update for Business temporal fields, passing updated field data.
+                            if (options.period) {
+                                prevCompositeKeysData[key] = rowObject[key];
+                            } else {
+                                prevCompositeKeysData[key] = prevData[key] || (options.rowData && options.rowData[key]) || rowObject[key];
+                            }
                         });
                     }
                     options.row = compositeKeysData;
@@ -837,6 +842,11 @@ export default class LiveVariableUtils {
         * This handles cases such as "Delete" requests where data should not be passed.*/
         if (_.isEmpty(rowObject) && action === 'deleteTableData') {
             rowObject = undefined;
+        }
+
+        if ((action === 'updateCompositeTableData' || action === 'deleteCompositeTableData') && options.period) {
+            // capitalize first character
+            action = 'period' + action.charAt(0).toUpperCase() + action.substr(1);
         }
 
         promiseObj = LVService[action]({

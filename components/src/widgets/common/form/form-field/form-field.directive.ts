@@ -58,6 +58,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     class;
     primarykey;
     readonly;
+    _readonly;
     show;
     type;
     isDataSetBound;
@@ -379,6 +380,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.registerReadyStateListener(() => {
             this.key = this._key || this.target || this.binding || this._name;
             this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
+            this._readonly = this.readonly; // Save readonly state
 
             // For upload widget, generate the permitted field
             if (this.type === DataType.BLOB) {

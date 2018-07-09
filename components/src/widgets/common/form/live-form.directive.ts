@@ -335,7 +335,8 @@ export class LiveFormDirective {
 
     setReadonlyFields() {
         this.form.formFields.forEach(field => {
-            if (field.primarykey && !field.isRelated) {
+            field.readonly = field._readonly;
+            if (field.primarykey && !field.isRelated && !field.period) {
                 field.readonly = true;
             }
         });
@@ -431,7 +432,8 @@ export class LiveFormDirective {
         if (!this.form.datasource) {
             return;
         }
-        let data, prevData, requestData, operationType, isValid;
+        let data, prevData, operationType, isValid;
+        const requestData: any = {};
 
         operationType = this.form.operationType = this.form.operationType || this.findOperationType();
 
@@ -444,7 +446,7 @@ export class LiveFormDirective {
         prevData = this.form.prevformFields ? this.form.constructDataObject(true) : data;
 
         try {
-            isValid = this.form.invokeEventCallback('beforeservicecall', {$event: event, $operation: this.form.operationType, $data: data});
+            isValid = this.form.invokeEventCallback('beforeservicecall', {$event: event, $operation: this.form.operationType, $data: data, options: requestData});
             if (isValid === false) {
                 return;
             }
@@ -467,11 +469,9 @@ export class LiveFormDirective {
 
         this.form.resetFormState();
 
-        requestData = {
-            'row': data,
-            'transform': true,
-            'skipNotification': true
-        };
+        requestData.row = data;
+        requestData.transform = true;
+        requestData.skipNotification = true;
 
         if (operationType === Live_Operations.UPDATE) {
             requestData.rowData = this.form.formdata;

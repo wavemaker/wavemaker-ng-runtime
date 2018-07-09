@@ -114,7 +114,7 @@ export class LiveVariableManager extends BaseVariableManager {
         clonedFields = this.getFilterExprFields(getClonedObject(variable.filterExpressions || {}));
         // clonedFields = getClonedObject(variable.filterFields);
         //  EVENT: ON_BEFORE_UPDATE
-        output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields);
+        output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields, options);
         if (output === false) {
             $queue.process(variable);
             // $rootScope.$emit('toggle-variable-state', variable, false);
