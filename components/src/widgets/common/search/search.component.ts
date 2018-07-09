@@ -41,7 +41,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
-    private datasource: any;
+    public datasource: any;
     private page = 1;
     private _loadingItems: boolean;
     private dataProvider: IDataProvider;
@@ -284,7 +284,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.noMoreData = response.isLastPage;
 
                     // response from dataProvider returns always data object.
-                    response = response.data;
+                    response = response.data || response;
 
                     this._loadingItems = false;
 

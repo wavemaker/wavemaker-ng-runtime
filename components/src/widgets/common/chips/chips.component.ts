@@ -43,10 +43,21 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private showsearchicon: boolean;
 
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
+    private _datasource: any;
 
     // When datavalue is not available check value in "toBeProcessedDatavalue" property.
     set toBeProcessedDatavalue(val) {
         this.searchComponent.toBeProcessedDatavalue = val;
+    }
+
+    // getter setter is added to pass the datasource to searchcomponent.
+    get datasource () {
+        return this._datasource;
+    }
+
+    set datasource(nv) {
+        this._datasource = nv;
+        this.searchComponent.datasource = nv;
     }
 
     constructor(
