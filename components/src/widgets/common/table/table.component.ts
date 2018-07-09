@@ -210,54 +210,56 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             selectField: 'Select Field'
         },
         onDataRender: () => {
-            // select rows selected in previous pages. (Not finding intersection of data and selecteditems as it will be heavy)
-            if (!this.multiselect) {
-                this.items.length = 0;
-            }
-            this.callDataGridMethod('selectRows', this.items);
-            this.selectedItems = this.callDataGridMethod('getSelectedRows');
-            this.selectedItemChange.next(this.selectedItems);
+            this.ngZone.run(() => {
+                // select rows selected in previous pages. (Not finding intersection of data and selecteditems as it will be heavy)
+                if (!this.multiselect) {
+                    this.items.length = 0;
+                }
+                this.callDataGridMethod('selectRows', this.items);
+                this.selectedItems = this.callDataGridMethod('getSelectedRows');
+                this.selectedItemChange.next(this.selectedItems);
 
-            if (this.gridData.length) {
-                this.invokeEventCallback('datarender', {$data: this.gridData});
-            }
-            // On render, apply the filters set for query service variable
-            if (this._isPageSearch && this.filterInfo) {
-                this.searchSortHandler(this.filterInfo, undefined, 'search');
-            }
-
-            $appDigest();
+                if (this.gridData.length) {
+                    this.invokeEventCallback('datarender', {$data: this.gridData});
+                }
+                // On render, apply the filters set for query service variable
+                if (this._isPageSearch && this.filterInfo) {
+                    this.searchSortHandler(this.filterInfo, undefined, 'search');
+                }
+            });
         },
         onRowSelect: (row, e) => {
-            this.selectedItems = this.callDataGridMethod('getSelectedRows');
-            this.selectedItemChange.next(this.selectedItems);
+            this.ngZone.run(() => {
+                this.selectedItems = this.callDataGridMethod('getSelectedRows');
+                this.selectedItemChange.next(this.selectedItems);
 
-            /*
-             * in case of single select, update the items with out changing the reference.
-             * for multi select, keep old selected items in tact
-             */
-            if (this.multiselect) {
-                if (_.findIndex(this.items, row) === -1) {
+                /*
+                 * in case of single select, update the items with out changing the reference.
+                 * for multi select, keep old selected items in tact
+                 */
+                if (this.multiselect) {
+                    if (_.findIndex(this.items, row) === -1) {
+                        this.items.push(row);
+                    }
+                } else {
+                    this.items.length = 0;
                     this.items.push(row);
                 }
-            } else {
-                this.items.length = 0;
-                this.items.push(row);
-            }
-            this.invokeEventCallback('select', {$data: row, $event: e, row});
-            this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
-            $appDigest();
+                this.invokeEventCallback('select', {$data: row, $event: e, row});
+                this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
+            });
         },
         onRowDblClick: (row, e) => {
             this.invokeEventCallback('rowdblclick', {$data: row, $event: e, row});
         },
         onRowDeselect: (row, e) => {
             if (this.multiselect) {
-                this.items = _.pullAllWith(this.items, [row], _.isEqual);
-                this.selectedItems = this.callDataGridMethod('getSelectedRows');
-                this.invokeEventCallback('deselect', {$data: row, $event: e, row});
+                this.ngZone.run(() => {
+                    this.items = _.pullAllWith(this.items, [row], _.isEqual);
+                    this.selectedItems = this.callDataGridMethod('getSelectedRows');
+                    this.invokeEventCallback('deselect', {$data: row, $event: e, row});
+                });
             }
-            $appDigest();
         },
         onColumnSelect: (col, e) => {
             this.selectedColumns = this.callDataGridMethod('getSelectedColumns');
@@ -434,8 +436,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return this.rowFilterCompliedTl[fieldName];
         },
         setGridEditMode: (val) => {
-            this.isGridEditMode = val;
-            $appDigest();
+            this.ngZone.run(() => {
+                this.isGridEditMode = val;
+            });
         },
         setGridState: (val) => {
             this.isLoading = val === 'loading';

@@ -42,13 +42,14 @@ const getRowActionTmpl = (attrs) => {
     const saveCancelTmpl = action && action.includes('editRow(') ? getSaveCancelTemplate() : '';
     const btnClass = action ? (action.includes('editRow(') ? 'edit edit-row-button' :
                         (action.includes('deleteRow(') ? 'delete delete-row-button' : '')) : '';
+    const tabIndex = attrs.get('tabindex') ? `tabindex="${attrs.get('tabindex')}"` : '';
     return `<ng-template #rowActionTmpl let-row="row">
                <button wmButton data-action-key="${attrs.get('key')}"
                     ${getRowActionAttrs(attrs)}
                     class="row-action row-action-button app-button btn ${attrs.get('class')} ${btnClass}"
                     iconclass="${attrs.get('iconclass')}"
                     ${actionTmpl}
-                    tabindex="${attrs.get('tabindex')}"
+                    ${tabIndex}
                     type="button"></button>
                 ${saveCancelTmpl}
             </ng-template>`;
