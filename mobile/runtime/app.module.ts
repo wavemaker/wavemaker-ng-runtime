@@ -3,12 +3,13 @@ import { NgModule } from '@angular/core';
 
 
 import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, removeNode } from '@wm/core';
-import { NetworkInfoToasterComponent, WmMobileComponentsModule } from '@wm/mobile/components';
+import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { MobileCoreModule, DeviceService } from '@wm/mobile/core';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope } from '@wm/variables';
 
-import {MobileHttpInterceptor} from './services/http-interceptor.service';
+import { MobileHttpInterceptor } from './services/http-interceptor.service';
+import { AppExtComponent } from './app-ext.component';
 
 declare const $, navigator;
 declare const _WM_APP_PROPERTIES;
@@ -21,7 +22,12 @@ enum OS {
 const KEYBOARD_CLASS = 'keyboard';
 
 @NgModule({
-    declarations: [],
+    declarations: [
+        AppExtComponent
+    ],
+    exports: [
+        AppExtComponent
+    ],
     imports: [
         MobileCoreModule,
         VariablesModule,
@@ -34,7 +40,7 @@ const KEYBOARD_CLASS = 'keyboard';
             multi: true
         }
     ],
-    bootstrap: [NetworkInfoToasterComponent]
+    bootstrap: []
 })
 export class MobileAppModule {
 
@@ -92,11 +98,11 @@ export class MobileAppModule {
                     }
                 }));
             }
-            $rootScope.project.deployedUrl = deployedUrl;
         }
         if (!deployedUrl.endsWith('/')) {
             deployedUrl = deployedUrl + '/';
         }
+        $rootScope.project.deployedUrl = deployedUrl;
         return deployedUrl;
     }
 
