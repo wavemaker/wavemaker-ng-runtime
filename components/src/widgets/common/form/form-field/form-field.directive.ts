@@ -397,10 +397,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                     this.widget.show = false;
                 }
             }
-        });
 
-        // Register the form field with parent form
-        this.form.registerFormFields(this.widget);
+            // Register the form field with parent form
+            this.form.registerFormFields(this.widget);
+        });
     }
 }
 
