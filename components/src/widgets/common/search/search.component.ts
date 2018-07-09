@@ -109,7 +109,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
             const query = (_.isArray(val) ? val[0] : val) as string;
 
-            if (_.isUndefined(query) || query === null || query === '') {
+            if (!isDefined(query) || query === null || query === '') {
                 this._modelByValue = '';
                 return;
             }
@@ -358,7 +358,17 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
 
         const selectedItem = _.find(this.datasetItems, {selected: true});
-        this.queryModel = selectedItem ? [selectedItem] : this.getTransformedData(extractDataAsArray(data));
+
+        // set the default only when it is available in dataset.
+        if (selectedItem) {
+            this.queryModel = [selectedItem];
+        } else if (this.datafield === ALLFIELDS) {
+            this.queryModel = this.getTransformedData(extractDataAsArray(data));
+        } else {
+            // no value is found, set the datavalue to undefined.
+            this._modelByValue = undefined;
+            return;
+        }
 
         // Show the label value on input.
         this._lastQuery = this.query = this.queryModel.length ? this.queryModel[0].label : '';
