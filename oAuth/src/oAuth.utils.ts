@@ -20,20 +20,6 @@ export const removeAccessToken = (provider) => {
     sessionStorage.removeItem(accessTokenKey);
 };
 
-// Todo[Shubham]: oAuth Mobile
-/*function listenForExternalOAuthMessage(providerId, callback) {
- let deregister, timerId;
- deregister = ExtAppMessageService.addMessageListener('^services/oauth/' + providerId + '$', function (message) {
- callback(message.data.access_token);
- deregister();
- clearTimeout(timerId);
- });
- timerId = setTimeout(function () {
- deregister();
- callback();
- }, 60000);
- }*/
-
 /**
  * This function returns the accesstoken placeholder based on the studio or run mode for the project
  * @param provider
@@ -172,22 +158,23 @@ function onAuthWindowOpen(provider, callback, removeProviderConfigCallBack) {
  */
 function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack) {
     let oAuthWindow;
-    /*Todo [Shubham]: Implementation in Mobile
+
      if (CONSTANTS.hasCordova) {
-     window.open(url, '_system');
-     listenForExternalOAuthMessage(providerId, function (accessToken) {
-     const key = providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT;
-     if (accessToken) {
-     localStorage.setItem(key, accessToken);
-     checkAuthenticationStatus(providerId, onSuccess, removeProviderConfigCallBack);
+         window.open(url, '_system');
+         window['OAuthInMobile'](providerId).then(accessToken => {
+             const key = providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT;
+             if (accessToken) {
+                 localStorage.setItem(key, accessToken);
+                 checkAuthenticationStatus(providerId, onSuccess, removeProviderConfigCallBack, null);
+             } else {
+                 onSuccess('error');
+             }
+         });
      } else {
-     onSuccess('error');
+         oAuthWindow = window.open(url, '_blank', newWindowProps);
+         onAuthWindowOpen(providerId, onSuccess, removeProviderConfigCallBack);
+         checkForWindowExistence(oAuthWindow, providerId, onSuccess);
      }
-     });
-     } else { */
-    oAuthWindow = window.open(url, '_blank', newWindowProps);
-    onAuthWindowOpen(providerId, onSuccess, removeProviderConfigCallBack);
-    checkForWindowExistence(oAuthWindow, providerId, onSuccess);
 }
 
 /**

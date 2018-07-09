@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 
 import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, removeNode } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
-import { MobileCoreModule, DeviceService } from '@wm/mobile/core';
+import { MobileCoreModule, DeviceService, ExtAppMessageService } from '@wm/mobile/core';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope } from '@wm/variables';
 
@@ -13,6 +13,8 @@ import { AppExtComponent } from './app-ext.component';
 
 declare const $, navigator;
 declare const _WM_APP_PROPERTIES;
+
+export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 
 enum OS {
     IOS = 'ios',
@@ -46,7 +48,7 @@ export class MobileAppModule {
 
     private _$appEl;
 
-    constructor(app: App, deviceService: DeviceService) {
+    constructor(app: App, deviceService: DeviceService, private extAppMessageService: ExtAppMessageService) {
         this._$appEl = $('.wm-app:first');
         this._$appEl.addClass('wm-mobile-app');
         app.deployedUrl = this.getDeployedUrl();
@@ -56,9 +58,27 @@ export class MobileAppModule {
         deviceService.whenReady().then(() => {
             if (hasCordova()) {
                 this._$appEl.addClass('cordova');
+                this.exposeOAuthService();
                 navigator.splashscreen.hide();
             }
         });
+    }
+
+    private exposeOAuthService() {
+        window['OAuthInMobile'] = (providerId) => {
+            return new Promise<string>((resolve, reject) => {
+                const oauthAdress = '^services/oauth/' + providerId + '$';
+                const deregister = this.extAppMessageService.subscribe(oauthAdress, message => {
+                        resolve(message.data.get('access_token'));
+                        deregister();
+                        clearTimeout(timerId);
+                    });
+                const timerId = setTimeout(function () {
+                    deregister();
+                    reject(`Time out for oauth message after ${MAX_WAIT_TIME_4_OAUTH_MESSAGE % 1000} seconds`);
+                }, MAX_WAIT_TIME_4_OAUTH_MESSAGE);
+            });
+        };
     }
 
     private applyOSTheme(os) {
