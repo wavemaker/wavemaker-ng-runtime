@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -15,7 +15,8 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['showheader', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['title', {value: 'Information', ...PROP_STRING}]
+                ['title', {value: 'Information', ...PROP_STRING}],
+                ['eventsource', PROP_ANY]
             ]
         )
     );
