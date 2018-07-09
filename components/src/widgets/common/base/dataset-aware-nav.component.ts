@@ -1,7 +1,6 @@
 import { Injector } from '@angular/core';
 
 import { $appDigest, findValueOf, isObject, validateAccessRoles } from '@wm/core';
-import { SecurityService } from '@wm/security';
 
 import { createArrayFrom } from '../../../utils/data-utils';
 import { getEvaluatedData } from '../../../utils/widget-utils';
@@ -48,11 +47,10 @@ export class DatasetAwareNavComponent extends StylableComponent {
     private binditemid: string | null;
     private binditemlink: string | null;
     private binduserrole: string | null;
-    private securityService: any;
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
-        this.securityService = this.inj.get(SecurityService);
+
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
         this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');
         this.binditemaction = this.nativeElement.getAttribute('itemaction.bind');
@@ -138,7 +136,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             const nodeFields = this.getItemFieldsMap();
 
             nodes = nodes.reduce((result, node) => {
-                if (validateAccessRoles(node[userRole], this.securityService.loggedInUser)) {
+                if (validateAccessRoles(node[userRole])) {
                     result.push(this.getNode(nodeFields, node));
                 }
                 return result;

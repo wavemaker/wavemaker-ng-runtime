@@ -377,14 +377,14 @@ export const generateGUId = () => {
 /**
  * Validate if given access role is in current loggedin user access roles
  */
-export const validateAccessRoles = (roleExp, loggedInUser) => {
+export const validateAccessRoles = (roleExp) => {
     let roles;
 
-    if (roleExp && loggedInUser) {
+    if (roleExp) {
 
         roles = roleExp && roleExp.split(',').map(Function.prototype.call, String.prototype.trim);
 
-        return _.intersection(roles, loggedInUser.userRoles).length;
+        return _.intersection(roles, []).length;
     }
 
     return true;
@@ -934,19 +934,19 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
                     if (!_.includes(['blob', 'file'], obj.type)) {
                         newVal = getClonedObject(newVal);
                     }
-                    // backward compatibility: where we are allowing the user to bind complete object
-                    if (obj.target === 'dataBinding') {
-                        // remove the existing databinding element
+                    //backward compatibility: where we are allowing the user to bind complete object
+                    if(obj.target === "dataBinding") {
+                        //remove the existing databinding element
                         filterExpressions.rules = [];
-                        // now add all the returned values
+                        //now add all the returned values
                         _.forEach(newVal, function(value, target) {
                             filterExpressions.rules.push({
                                 'target': target,
                                 'value': value,
                                 'matchMode': obj.matchMode || 'startignorecase',
                                 'required': false,
-                                'type': ''
-                            });
+                                'type':''
+                            })
                         });
                     } else {
                         // setting value to the root node

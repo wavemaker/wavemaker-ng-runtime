@@ -6,8 +6,6 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxMaskModule } from 'ngx-mask';
 
-import { SecurityModule } from '@wm/security';
-
 import { AccordionDirective } from './widgets/common/accordion/accordion.directive';
 import { AccordionPaneComponent } from './widgets/common/accordion/accordion-pane/accordion-pane.component';
 import { TabsComponent } from './widgets/common/tabs/tabs.component';
@@ -271,8 +269,7 @@ const PIPES = [
         ModalModule.forRoot(),
         NgxMaskModule.forRoot(),
         CarouselModule.forRoot(),
-        PopoverModule.forRoot(),
-        SecurityModule
+        PopoverModule.forRoot()
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],
