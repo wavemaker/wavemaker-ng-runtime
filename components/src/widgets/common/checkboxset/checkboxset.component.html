@@ -3,16 +3,16 @@
         [class.active]="item.selected"
         *ngFor="let item of datasetItems; let i = index"
         (click)="onCheckboxLabelClick($event, item.key)">
-        <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled}" [title]="item.label">
+        <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
             <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                    [tabindex]="tabindex"
-                   [disabled]="disabled" [attr.data-attr-index]="i"
+                   [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                    [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
             <span class="caption" [textContent]="item.label"></span>
         </label>
     </li>
 </ng-template>
-<input [disabled]="disabled" hidden class="model-holder">
+<input [disabled]="disabled || readonly" hidden class="model-holder">
 <div *ngIf="readonly || disabled" class="readonly-wrapper"></div>
 
 <!-- This template will be displayed when groupby is specified. -->
@@ -31,10 +31,10 @@
                 [ngClass]="['checkbox', 'app-checkbox', 'group-list-item', itemclass]"
                 [class.active]="item.selected"
                 (click)="onCheckboxLabelClick($event, item)">
-                <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled}" [title]="item.label">
+                <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
                     <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                            [tabindex]="tabindex"
-                           [disabled]="disabled" [attr.data-attr-index]="i"
+                           [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
                     <span class="caption" [textContent]="item.label"></span>
                 </label>

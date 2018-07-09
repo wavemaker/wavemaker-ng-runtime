@@ -1,4 +1,4 @@
-import { Attribute, Directive, Injector, SecurityContext } from '@angular/core';
+import { Attribute, Directive, Injector, SecurityContext, OnInit } from '@angular/core';
 
 import { setCSS, setProperty } from '@wm/core';
 
@@ -23,7 +23,9 @@ registerProps();
         provideAsWidgetRef(HtmlDirective)
     ]
 })
-export class HtmlDirective extends StylableComponent {
+export class HtmlDirective extends StylableComponent implements OnInit {
+
+    public content: string;
 
     constructor(
         inj: Injector,
@@ -39,6 +41,13 @@ export class HtmlDirective extends StylableComponent {
         }
 
         styler(this.nativeElement, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        if (!this.content && this.nativeElement.innerHTML) {
+            this.content = this.nativeElement.innerHTML;
+        }
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
