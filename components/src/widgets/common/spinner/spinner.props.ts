@@ -15,7 +15,8 @@ export const registerProps = () => {
                 ['imagewidth', {value: '20px', ...PROP_STRING}],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['type', {value: 'icon', ...PROP_STRING}]
+                ['type', {value: 'icon', ...PROP_STRING}],
+                ['servicevariabletotrack', PROP_STRING]
             ]
         )
     );

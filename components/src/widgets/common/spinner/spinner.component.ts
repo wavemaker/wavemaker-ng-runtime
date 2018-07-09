@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -6,6 +6,7 @@ import { registerProps } from './spinner.props';
 import { StylableComponent } from '../base/stylable.component';
 import { ImagePipe } from '../../../pipes/image.pipe';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { DataSource, validateDataSourceCtx } from '@wm/core';
 
 declare const _;
 
@@ -21,12 +22,14 @@ registerProps();
         provideAsWidgetRef(SpinnerComponent)
     ]
 })
-export class SpinnerComponent extends StylableComponent {
+export class SpinnerComponent extends StylableComponent implements OnInit{
 
     public iconclass = '';
     public animation = '';
     public imagewidth;
     public imageheight;
+    public servicevariabletotrack: string;
+    public show: boolean;
     private picture: string;
     private _spinnerMessages;
     private showCaption = true;
@@ -38,6 +41,16 @@ export class SpinnerComponent extends StylableComponent {
     public set spinnerMessages(newVal) {
         this.showCaption = _.isEmpty(newVal);
         this._spinnerMessages = newVal;
+    }
+
+    private listenOnDataSource() {
+        const variables = _.split(this.servicevariabletotrack, ',');
+        this.getAppInstance().subscribe('toggle-variable-state', data => {
+            const name = data.variable.execute(DataSource.Operation.GET_NAME);
+            if (_.includes(variables, name) && validateDataSourceCtx(data.variable, this.getViewParent())) {
+                this.widget.show = data.active;
+            }
+        });
     }
 
     constructor(inj: Injector, private imagePipe: ImagePipe) {
@@ -56,6 +69,15 @@ export class SpinnerComponent extends StylableComponent {
             }
         } else {
             super.onPropertyChange(key, nv, ov);
+        }
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        // if variables are to be listened to, hide the widget and set the listener
+        if (this.servicevariabletotrack) {
+            this.widget.show = false;
+            this.listenOnDataSource();
         }
     }
 }

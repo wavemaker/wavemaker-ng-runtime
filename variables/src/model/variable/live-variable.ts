@@ -86,9 +86,6 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.DOWNLOAD:
                 returnVal = this.download(options);
                 break;
-            case DataSource.Operation.GET_NAME:
-                returnVal = this.name;
-                break;
             case DataSource.Operation.GET_PROPERTIES_MAP:
                 returnVal = this.propertiesMap;
                 break;

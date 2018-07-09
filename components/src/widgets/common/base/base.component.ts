@@ -284,6 +284,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     /**
+     * returns app instance
+     * @returns {App}
+     */
+    public getAppInstance() {
+        return this.inj.get(App);
+    }
+
+    /**
      * Generates a unique id
      * Default pattern is `widget-id-${id}`
      * Components can override this method to generate a different id eg, bar-chart-1

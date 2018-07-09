@@ -16,6 +16,9 @@ export abstract class BaseVariable {
     execute(operation, options) {
         let returnVal;
         switch (operation) {
+            case DataSource.Operation.GET_NAME:
+                returnVal = this.name;
+                break;
             case DataSource.Operation.GET_UNIQUE_IDENTIFIER:
                 returnVal = this._id;
                 break;

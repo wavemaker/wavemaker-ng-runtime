@@ -914,6 +914,16 @@ export const isDataSourceEqual = (d1, d2) => {
 };
 
 /**
+ * checks if the passed datasource context matches with passed context
+ * @param ds, datasource having a context
+ * @param ctx, context to compare with
+ * @returns {boolean}
+ */
+export const validateDataSourceCtx = (ds, ctx) => {
+    return ds.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER) === ctx;
+};
+
+/**
  * This traverses the filterexpressions object recursively and process the bind string if any in the object
  * @param variable variable object
  * @param name name of the variable
