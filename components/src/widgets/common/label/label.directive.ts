@@ -10,6 +10,8 @@ import { DISPLAY_TYPE } from '../../framework/constants';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 
+declare const _;
+
 registerProps();
 
 const DEFAULT_CLS = 'app-label';
@@ -36,7 +38,12 @@ export class LabelDirective extends StylableComponent {
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'caption') {
-            setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
+            if (_.isObject(nv)) {
+                setProperty(this.nativeElement, 'textContent', JSON.stringify(nv));
+            } else {
+                setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
+            }
+
         } else if (key === 'required') {
             toggleClass(this.nativeElement, 'required', nv);
         } else {
