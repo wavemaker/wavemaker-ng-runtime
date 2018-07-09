@@ -42,6 +42,7 @@ export const registerProps = () => {
                 ['limit', PROP_NUMBER],
                 ['mobiledisplay', {value: true, ...PROP_BOOLEAN}],
                 ['pcdisplay', {value: true, ...PROP_BOOLEAN}],
+                ['period', PROP_BOOLEAN],
                 ['placeholder', PROP_STRING],
                 ['prefix', PROP_STRING],
                 ['primary-key', PROP_STRING],

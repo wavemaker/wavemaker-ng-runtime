@@ -271,13 +271,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // if onSort function is registered invoke it when the column header is clicked
             this.invokeEventCallback('headerclick', {$event: e, $data: col});
         },
-        onRowDelete: (row, cancelRowDeleteCallback, e, callBack) => {
+        onRowDelete: (row, cancelRowDeleteCallback, e, callBack, options) => {
             this.ngZone.run(() => {
-                this.deleteRecord(row, cancelRowDeleteCallback, e, callBack);
+                this.deleteRecord(_.extend({}, options, {row, 'cancelRowDeleteCallback': cancelRowDeleteCallback, 'evt': e, 'callBack': callBack}));
             });
         },
-        onRowInsert: (row, e, callBack) => {
-            this.insertRecord({row, event: e, 'callBack': callBack});
+        onRowInsert: (row, e, callBack, options) => {
+            this.insertRecord(_.extend({}, options, {row, event: e, 'callBack': callBack}));
         },
         beforeRowUpdate: (row, eventName?) => {
             if (this._liveTableParent) {
@@ -285,14 +285,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             this.prevData = getClonedObject(row);
         },
-        afterRowUpdate: (row, e, callBack) => {
-            this.updateRecord({row, 'prevData': this.prevData, 'event': e, 'callBack': callBack});
+        afterRowUpdate: (row, e, callBack, options) => {
+            this.updateRecord(_.extend({}, options, {row, 'prevData': this.prevData, 'event': e, 'callBack': callBack}));
         },
-        onBeforeRowUpdate: (row, e) => {
-            return this.invokeEventCallback('beforerowupdate', {$event: e, $data: row, row});
+        onBeforeRowUpdate: (row, e, options) => {
+            return this.invokeEventCallback('beforerowupdate', {$event: e, $data: row, row, options: options});
         },
-        onBeforeRowInsert: (row, e) => {
-            return this.invokeEventCallback('beforerowinsert', {$event: e, $data: row, row});
+        onBeforeRowInsert: (row, e, options) => {
+            return this.invokeEventCallback('beforerowinsert', {$event: e, $data: row, row, options: options});
+        },
+        onBeforeRowDelete: (row, e, options) => {
+            return this.invokeEventCallback('beforerowdelete', {$event: e, row, options: options});
         },
         onFormRender: ($row, e, operation, alwaysNewRow) => {
             const widget = alwaysNewRow ? 'inlineWidgetNew' : 'inlineWidget';

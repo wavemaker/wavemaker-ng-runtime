@@ -115,7 +115,8 @@ export class TableCUDDirective {
         }
         const dataObject = {
             row : options.row,
-            skipNotification : true
+            skipNotification : true,
+            period: options.period
         };
 
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
@@ -165,9 +166,10 @@ export class TableCUDDirective {
             return;
         }
         const dataObject = {
-            'row'              : options.row,
-            'prevData'         : options.prevData,
-            'skipNotification' : true
+            row : options.row,
+            prevData : options.prevData,
+            skipNotification : true,
+            period : options.period
         };
 
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
@@ -222,37 +224,38 @@ export class TableCUDDirective {
         this.table.invokeEventCallback('rowdeleted', {$event: evt, $data: row, row});
     }
 
-    private deleteFn(row, cancelRowDeleteCallback, evt, callBack) {
+    private deleteFn(options) {
         const dataSource = this.table.datasource;
         if (!dataSource) {
             return;
         }
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-                dataSource.execute(DataSource.Operation.REMOVE_ITEM, {item: row});
-                this.deleteSuccessHandler(row, undefined, evt, callBack);
+                dataSource.execute(DataSource.Operation.REMOVE_ITEM, {item: options.row});
+                this.deleteSuccessHandler(options.row, undefined, options.evt, options.callBack);
                 return;
             }
             dataSource.execute(DataSource.Operation.DELETE_RECORD, {
-                row,
-                skipNotification : true
+                row: options.row,
+                skipNotification : true,
+                period: options.period
             }).then(response => {
-                this.deleteSuccessHandler(response, row, evt, callBack);
+                this.deleteSuccessHandler(response, options.row, options.evt, options.callBack);
             }, error => {
-                triggerFn(callBack, undefined, true);
-                this.table.invokeEventCallback('error', {$event: evt, $operation: OPERATION.DELETE, $data: error});
+                triggerFn(options.callBack, undefined, true);
+                this.table.invokeEventCallback('error', {$event: options.evt, $operation: OPERATION.DELETE, $data: error});
                 this.table.toggleMessage(true, 'error', this.table.errormessage || error);
             });
         } else {
-            this.table.invokeEventCallback('rowdelete', {$event: evt, row});
+            this.table.invokeEventCallback('rowdelete', {$event: options.evt, row: options.row});
         }
-        triggerFn(cancelRowDeleteCallback);
+        triggerFn(options.cancelRowDeleteCallback);
     }
 
-    deleteRecord(row, cancelRowDeleteCallback?, evt?, callBack?) {
+    deleteRecord(options) {
         if (!this.table.confirmdelete) {
-            this.deleteFn(row, cancelRowDeleteCallback, evt, callBack);
-            triggerFn(cancelRowDeleteCallback);
+            this.deleteFn(options);
+            triggerFn(options.cancelRowDeleteCallback);
             return;
         }
         this.dialogService.showAppConfirmDialog({
@@ -262,10 +265,10 @@ export class TableCUDDirective {
             oktext: this.table.deleteoktext,
             canceltext: this.table.deletecanceltext,
             onOk: () => {
-                this.deleteFn(row, cancelRowDeleteCallback, evt, callBack);
+                this.deleteFn(options);
             },
             onClose: () => {
-                triggerFn(cancelRowDeleteCallback);
+                triggerFn(options.cancelRowDeleteCallback);
             }
         });
     }
@@ -308,7 +311,7 @@ export class TableCUDDirective {
             // Wait for the selected item to get updated
             setTimeout(() => {
                 row = evt || this.table.selectedItems[0];
-                this.deleteRecord(row);
+                this.deleteRecord({row});
             });
         }
     }

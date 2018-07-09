@@ -439,7 +439,7 @@ $.widget('wm.datatable', {
     _getRadioTemplate: function (row) {
         var checked = row.checked ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '';
-        return '<input type="radio" name="" value=""' + checked + disabled + '/>';
+        return '<input type="radio" rowSelectInput name="" value=""' + checked + disabled + '/>';
     },
 
     /* Returns the table cell template. */
@@ -1102,7 +1102,7 @@ $.widget('wm.datatable', {
             $row.removeClass('active');
         }
         if (this.options.showRadioColumn) {
-            $radio = $row.find('td input:radio:not(:disabled)');
+            $radio = $row.find('td input[rowSelectInput]:radio:not(:disabled)');
             $radio.prop('checked', selected);
             this.preparedData[rowId].checked = selected;
         }
@@ -1201,9 +1201,18 @@ $.widget('wm.datatable', {
             this.options.onRowDblClick(rowData, e);
         }
     },
+    closePopover: function() {
+        //If the DataTable is in the popover, popover shouldn't be closed
+        if (!this.element.closest('.app-popover').length) {
+            //removes all the popovers
+            $('.app-popover').remove();
+        }
+    },
     headerClickHandler: function (e) {
         var $th = $(e.target).closest('th.app-datagrid-header-cell'),
             id = $th.attr('data-col-id');
+        //Closing the popovers if any present when clicked on header or while sorting
+        this.closePopover();
         this.options.onHeaderClick(this.preparedHeaderData[id], e);
     },
     /* Handles column selection. */
@@ -1419,6 +1428,8 @@ $.widget('wm.datatable', {
         if (e) {
             e.stopPropagation();
         }
+        //Closing the popovers if clicked on any row for Quick edit
+        this.closePopover();
         var $row = options.$row || $(e.target).closest('tr'),
             $editButton = $row.find('.edit-row-button'),
             $cancelButton = $row.find('.cancel-edit-row-button'),
@@ -1565,20 +1576,20 @@ $.widget('wm.datatable', {
 
                     if (isNewRow) {
                         if ($.isFunction(this.options.onBeforeRowInsert)) {
-                            isValid = this.options.onBeforeRowInsert(rowData, e);
+                            isValid = this.options.onBeforeRowInsert(rowData, e, options);
                             if (isValid === false) {
                                 return;
                             }
                         }
-                        this.options.onRowInsert(rowData, e, onSaveSuccess);
+                        this.options.onRowInsert(rowData, e, onSaveSuccess, options);
                     } else {
                         if ($.isFunction(this.options.onBeforeRowUpdate)) {
-                            isValid = this.options.onBeforeRowUpdate(rowData, e);
+                            isValid = this.options.onBeforeRowUpdate(rowData, e, options);
                             if (isValid === false) {
                                 return;
                             }
                         }
-                        this.options.afterRowUpdate(rowData, e, onSaveSuccess);
+                        this.options.afterRowUpdate(rowData, e, onSaveSuccess, options);
                     }
                 } else {
                     this.cancelEdit($row);
@@ -1674,6 +1685,8 @@ $.widget('wm.datatable', {
             isNewRow = this._isNewRow($row),
             className,
             isActiveRow,
+            isValid,
+            options = {},
             self = this;
         if ($.isFunction(this.options.beforeRowDelete)) {
             this.options.beforeRowDelete(rowData, e);
@@ -1689,6 +1702,13 @@ $.widget('wm.datatable', {
             }
             this.addOrRemoveScroll();
             return;
+        }
+        /* calling onbeforerowDelete callback function.*/
+        if($.isFunction(this.options.onBeforeRowDelete)) {
+            isValid = this.options.onBeforeRowDelete(rowData, e, options);
+            if (isValid === false) {
+                return;
+            }
         }
         if ($.isFunction(this.options.onRowDelete)) {
             className = this.options.cssClassNames.deleteRow;
@@ -1722,7 +1742,7 @@ $.widget('wm.datatable', {
                     $nextRow = self.gridBody.find('tr[data-row-id="' + (rowID - 1) + '"]');
                 }
                 $nextRow.trigger('click', [undefined, {action: 'edit', skipFocus: skipFocus}]);
-            });
+            }, options);
         }
     },
 
@@ -1741,7 +1761,7 @@ $.widget('wm.datatable', {
             var id = $(this).attr('data-row-id'),
                 preparedData = self.preparedData[id];
             if (id !== rowId && preparedData) {
-                $(this).find('input:radio').prop('checked', false);
+                $(this).find('input[rowSelectInput]:radio').prop('checked', false);
                 preparedData.selected = preparedData.checked = false;
                 $(this).removeClass('active');
             }
