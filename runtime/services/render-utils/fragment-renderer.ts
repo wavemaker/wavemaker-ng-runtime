@@ -2,11 +2,11 @@ import { Injectable, Injector, ViewContainerRef } from '@angular/core';
 
 import { transpile } from '@wm/transpiler';
 import { AbstractI18nService, App, getValidJSON, noop } from '@wm/core';
+import { VariablesService } from '@wm/variables';
 
 import { ViewRenderer } from './view-renderer';
 import { AppResourceManagerService } from '../app-resource-manager.service';
 import { AppManagerService } from '../app.manager.service';
-import { VariablesService } from '@wm/variables';
 
 export interface IPageMinJSON {
     markup: string;
@@ -146,7 +146,7 @@ export class FragmentRenderer {
             });
     }
 
-    public async render(
+    public render(
         fragmentName: string,
         url: string,
         context: string,
@@ -156,27 +156,28 @@ export class FragmentRenderer {
         $target: HTMLElement,
         extendWithAppVariableContext: boolean
     ): Promise<any> {
-        const {markup, script, styles, variables} = await this.loadResourcesOfFragment(url);
+        return this.loadResourcesOfFragment(url)
+            .then(({markup, script, styles, variables}) => {
+                let viewInitPromiseResolveFn;
+                const viewInitPromise: Promise<void> = new Promise(res => viewInitPromiseResolveFn = res);
 
-        let viewInitPromiseResolveFn;
-        const viewInitPromise: Promise<void> = new Promise(res => viewInitPromiseResolveFn = res);
+                let onReadyPromiseResolveFn;
+                const onReadyPromise: Promise<any> = new Promise(res => onReadyPromiseResolveFn = res);
 
-        let onReadyPromiseResolveFn;
-        const onReadyPromise: Promise<any> = new Promise(res => onReadyPromiseResolveFn = res);
+                const initFn = (instance, inj) => {
+                    execScript(script, selector, context, instance, this.app);
 
-        const initFn = (instance, inj) => {
-            execScript(script, selector, context, instance, this.app);
+                    this.defineI18nProps(instance);
+                    const variableCollection = this.registerVariablesAndActions(inj, fragmentName, getValidJSON(variables) || {}, instance, extendWithAppVariableContext);
+                    componentInitFn(instance);
 
-            this.defineI18nProps(instance);
-            const variableCollection = this.registerVariablesAndActions(inj, fragmentName, getValidJSON(variables) || {}, instance, extendWithAppVariableContext);
-            componentInitFn(instance);
+                    monitorFragments(instance, viewInitPromise).then(() => onReadyPromiseResolveFn({instance, variableCollection}));
+                };
 
-            monitorFragments(instance, viewInitPromise).then(() => onReadyPromiseResolveFn({instance, variableCollection}));
-        };
+                this.renderResource.render(selector, markup, styles, undefined, initFn, vcRef, $target)
+                    .then(() => viewInitPromiseResolveFn());
 
-        this.renderResource.render(selector, markup, styles, undefined, initFn, vcRef, $target)
-            .then(() => viewInitPromiseResolveFn());
-
-        return onReadyPromise;
+                return onReadyPromise;
+            });
     }
 }

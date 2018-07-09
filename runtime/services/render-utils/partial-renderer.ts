@@ -41,9 +41,13 @@ export class PartialRenderer {
         variableCollection.callback(variableCollection.Actions);
     }
 
+    private resolveFragment(inj: Injector) {
+        (inj as any).view.component._resolveFragment();
+    }
+
     private invokeOnReady(instance: any, inj: Injector) {
         (instance.onReady || noop)();
-        (inj as any).view.component._resolveFragment();
+        this.resolveFragment(inj);
     }
 
     private postReady(instance: any, variableCollection: any, inj: Injector) {
@@ -69,6 +73,8 @@ export class PartialRenderer {
             true
         ).then(({instance, variableCollection}) => {
             this.postReady(instance, variableCollection, inj);
+        }, () => {
+            this.resolveFragment(inj);
         });
     }
 }
