@@ -33,7 +33,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public casesensitive: boolean;
     public searchkey: string;
     public queryModel: DataSetItem[] | string;
-    public query: string;
+    public query: string = '';
     public limit: any;
     public showsearchicon: boolean;
     public minchars: number;
