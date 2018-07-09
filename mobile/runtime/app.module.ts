@@ -69,7 +69,7 @@ export class MobileAppModule {
             return new Promise<string>((resolve, reject) => {
                 const oauthAdress = '^services/oauth/' + providerId + '$';
                 const deregister = this.extAppMessageService.subscribe(oauthAdress, message => {
-                        resolve(message.data.get('access_token'));
+                        resolve(message.data['access_token']);
                         deregister();
                         clearTimeout(timerId);
                     });
@@ -79,6 +79,9 @@ export class MobileAppModule {
                 }, MAX_WAIT_TIME_4_OAUTH_MESSAGE);
             });
         };
+        const handleOpenURL = window['handleOpenURL'];
+        handleOpenURL.isReady = true;
+        handleOpenURL(handleOpenURL.lastURL);
     }
 
     private applyOSTheme(os) {
