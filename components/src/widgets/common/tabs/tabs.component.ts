@@ -12,6 +12,8 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
+declare const _;
+
 const DEFAULT_CLS = 'app-tabs clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-tabs',
@@ -126,7 +128,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     // Returns the active tab index from tabs.
     public getActiveTabIndex(): number {
-        return this.getPaneIndexByRef(this.activeTab);
+        return _.findIndex(this.panes.toArray(), {isActive: true});
     }
 
     private isValidPaneIndex(index: number): boolean {
