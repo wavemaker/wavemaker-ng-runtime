@@ -203,8 +203,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.typeaheadContainerInstance.selectActiveMatch();
         } else if (!isDefined(this._modelByValue)) {
             if (this.allowonlyselect) {
-                // matches are empty set the datavalue to undefined.
-                this.queryModel = this.query;
+                // matches are empty set the datavalue to undefined and set the query.
+                this.queryModel = this.query = '';
                 this._modelByValue = undefined;
             } else {
                 // Used by chips, if allowonlyselect is false, set the datavalue to query.
@@ -212,6 +212,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this._modelByValue = undefined;
                 // adds custom chip object to the chipsList.
                 this.notifyParent($event);
+                return;
             }
         }
 
