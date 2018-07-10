@@ -1,6 +1,8 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
+
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
 import { addClass, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
@@ -72,6 +74,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private _lastQuery: string;
     private _isOpen: boolean; // set to true when dropdown is open
     private showClosebtn: boolean;
+    private datavalueSubscription: Subscription;
 
     // Default check for container methods to access.
     get typeaheadContainerInstance() {
@@ -105,7 +108,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
          * after getting the response, set the queryModel and query.
          */
-        const datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
+        this.datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
 
             const query = (_.isArray(val) ? val[0] : val) as string;
 
@@ -118,7 +121,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // update the query model with the values we have
             this.updateQueryModel(val, this.datafield);
         });
-        this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
+        this.registerDestroyListener(() => this.datavalueSubscription.unsubscribe());
 
         const datasetSubscription = this.dataset$.subscribe(() => {
             // set the next item index.
@@ -128,6 +131,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
         this.dataProvider = new DataProvider();
+    }
+
+    // unsubscribe the datavalue subscription as the datavalue change will trigger subscription always
+    private unsubscribeDatavalue() {
+        if (this.datavalueSubscription) {
+            this.datavalueSubscription.unsubscribe();
+            this.datavalueSubscription = undefined;
+        }
     }
 
     // Check if the widget is of type autocomplete in mobile view/ app
