@@ -67,7 +67,7 @@ const processRequestBody = (inputData, params) => {
     let paramValue;
     _.forEach(params, function (param) {
         paramValue = _.get(inputData, param.name);
-        if (!_.isUndefined(paramValue) && (paramValue !== '') && !param.readOnly) {
+        if (!_.isUndefined(paramValue) && paramValue !== '' && paramValue !== null && !param.readOnly) {
             paramValue = isDateTimeType(param.type) ? formatDate(paramValue, param.type) : paramValue;
             // Construct ',' separated string if param is not array type but value is an array
             if (_.isArray(paramValue) && _.toLower(extractType(param.type)) === 'string') {

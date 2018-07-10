@@ -36,7 +36,7 @@ formMap.set('postmessage', {value: 'Data posted successfully', ...PROP_STRING});
 formMap.set('target', PROP_STRING);
 formMap.set('enctype', PROP_STRING);
 formMap.set('errormessage', {value: 'An error occured. Please try again!', ...PROP_STRING});
-formMap.set('messagelayout', {value: 'Toaster', ...PROP_STRING});
+formMap.set('messagelayout', {value: 'Inline', ...PROP_STRING});
 formMap.set('formdata', PROP_STRING);
 formMap.set('novalidate', PROP_BOOLEAN);
 formMap.set('validationtype', {value: 'default', ...PROP_STRING});
