@@ -351,7 +351,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 formData[fieldTarget[0]][fieldTarget[1]] = fieldValue;
             }
         });
-        this.dataoutput = {...this.ngform.value, ...formData};
+        this.dataoutput = {...formData, ...this.ngform.value};
         return this.dataoutput;
     }
 
