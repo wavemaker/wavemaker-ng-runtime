@@ -46,6 +46,8 @@ export class AppManagerService {
                 }
             }
         });
+        this.$app.subscribe('userLoggedIn', () => this.setLandingPage());
+        this.$app.subscribe('userLoggedOut', () => this.setLandingPage());
     }
 
     /**
@@ -66,7 +68,12 @@ export class AppManagerService {
     }
 
     loadSecurityConfig() {
-        return this.$security.load();
+        return this.$security.load().then((r) => {
+            if (!this.$app.landingPageName) {
+                this.setLandingPage();
+            }
+            return r;
+        });
     }
 
     loadMetadata() {
@@ -212,6 +219,7 @@ export class AppManagerService {
                     this.handleSSOLogin(config);
                     break;
             }
+            this.setLandingPage();
         } else {
             // if no user found, 401 was thrown for first time login
             loginMethod = loginConfig.type.toUpperCase();
@@ -227,6 +235,7 @@ export class AppManagerService {
                     // on app load, by default Home page is loaded
                     page = that.$security.getRedirectPage(config);
                     that.$router.navigate([loginConfig.pageName], {queryParams: {redirectTo: page}});
+                    this.$app.landingPageName = loginConfig.pageName;
                     break;
                 case LOGIN_METHOD.SSO:
                     this.handleSSOLogin(config);
@@ -314,5 +323,9 @@ export class AppManagerService {
         if (pipe === 'date') {
             return this.$datePipe;
         }
+    }
+
+    private setLandingPage() {
+        return this.$security.getPageByLoggedInUser().then(p => this.$app.landingPageName = <string> p);
     }
 }

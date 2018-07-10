@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { AbstractHttpService, getClonedObject, triggerFn } from '@wm/core';
+import { AbstractHttpService, App, getClonedObject, triggerFn } from '@wm/core';
 
 declare const _WM_APP_PROPERTIES, _;
 
@@ -20,6 +20,7 @@ export class SecurityService {
     requestQueue;
 
     constructor(
+        private injector: Injector,
         private httpClient: HttpClient,
         private $http: AbstractHttpService,
         private routerService: Router,
@@ -303,7 +304,7 @@ export class SecurityService {
                 this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;*/
             }
             // After the successful login in device, this function triggers the pending onLoginCallbacks.
-
+            this.injector.get(App).notify('userLoggedIn', {});
             triggerFn(successCallback, response);
         }, failureCallback);
     }
@@ -339,6 +340,7 @@ export class SecurityService {
         /*if (CONSTANTS.hasCordova) {
             localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, '');
         }*/
+        this.injector.get(App).notify('userLoggedOut', {});
         triggerFn(successCallback, response);
     }, failureCallback);
 }
