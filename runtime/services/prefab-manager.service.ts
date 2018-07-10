@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { loadScripts, loadStyleSheets, stringStartsWith } from '@wm/core';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
+import { MetadataService } from '@wm/variables';
 
 declare const _;
 
@@ -23,7 +24,8 @@ const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
 export class PrefabManagerService {
 
     constructor(
-        private resourceMngr: AppResourceManagerService
+        private resourceMngr: AppResourceManagerService,
+        private $metadata: MetadataService
     ) {}
 
     protected getPrefabConfig(prefabName: string) {
@@ -31,11 +33,15 @@ export class PrefabManagerService {
     }
 
     protected getPrefabBaseUrl(prefabName: string) {
-        return prefabName === '__self__' ? '.' : `app/prefabs/${prefabName}`;
+        return this.isPrefabInPreview(prefabName) ? '.' : `app/prefabs/${prefabName}`;
     }
 
     protected getConfigUrl(prefabName: string) {
         return `${this.getPrefabBaseUrl(prefabName)}/config.json`;
+    }
+
+    public isPrefabInPreview(prefabName: string) {
+        return prefabName === '__self__';
     }
 
     public getPrefabMinJsonUrl(prefabName: string) {
@@ -53,6 +59,10 @@ export class PrefabManagerService {
                 prefabConfigCache.set(prefabName, _config);
                 return _config;
             });
+    }
+
+    public loadServiceDefs(prefabName): Promise<any> {
+        return this.isPrefabInPreview(prefabName) ? Promise.resolve() : this.$metadata.load(prefabName);
     }
 
     protected loadStyles(prefabName, {resources: {styles}} = {resources: {styles: []}}): Promise<void> {
@@ -119,6 +129,7 @@ export class PrefabManagerService {
                 return Promise.all([
                     this.loadStyles(prefabName, config),
                     this.loadScripts(prefabName, config),
+                    this.loadServiceDefs(prefabName)
                 ]).then(() => {
                     this.resolveInProgress(prefabName);
                     resolvedPrefabs.add(prefabName);

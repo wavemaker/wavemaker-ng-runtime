@@ -84,6 +84,10 @@ export class PrefabRenderer {
         this.registerChangeListeners(instance, containerWidget);
         this.registerProps(prefabName, instance, containerWidget);
         instance.App = this.app;
+        // prefabName is required on instance only when it is in being run in the app
+        if (!this.prefabMngr.isPrefabInPreview(prefabName)) {
+            instance.prefabName = prefabName;
+        }
     }
 
     private invokeVariables(variableCollection: any) {
