@@ -80,6 +80,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.multiple = true;
 
         const datasetSubscription = this.dataset$.subscribe(() => {
+            this.searchComponent.dataset = this.dataset;
             this.nextItemIndex = this.datasetItems.length;
             this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
         });
