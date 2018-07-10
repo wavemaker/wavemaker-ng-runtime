@@ -1,6 +1,7 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 
 import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef } from '@wm/components';
+import { App } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 
 import { registerProps } from './mobile-navbar.props';
@@ -28,6 +29,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
     private _backBtnListenerDestroyer;
 
     constructor(
+        app: App,
         private page: PageDirective,
         private deviceService: DeviceService,
         inj: Injector
@@ -39,7 +41,11 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
             }
         });
         this._backBtnListenerDestroyer = deviceService.onBackButtonTap($event => {
-            this.goBack($event);
+            if (app.landingPageName === app.activePageName) {
+                window.navigator['app'].exitApp();
+            } else {
+                this.goBack($event);
+            }
             return false;
         });
     }

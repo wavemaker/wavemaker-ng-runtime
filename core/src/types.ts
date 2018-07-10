@@ -74,6 +74,7 @@ export abstract class App {
     activePageName: string;
     activePage: any;
     Page: any;
+    landingPageName: string;
     lastActivePageName: string;
 }
 

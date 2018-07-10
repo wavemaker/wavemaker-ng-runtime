@@ -1,37 +1,31 @@
-import { AfterViewInit, Directive } from '@angular/core';
+import { Directive } from '@angular/core';
 
-import { PageContentComponent, PageDirective } from '@wm/components';
+import { PageContentComponent } from '@wm/components';
 import { addClass, App, removeClass } from '@wm/core';
+import { MobilePageDirective } from '../page/page.directive';
 
 @Directive({
     selector: '[wmPageContent]'
 })
-export class PageContentDirective implements AfterViewInit {
+export class PageContentDirective {
 
-    constructor(private app: App, private pageContentComponent: PageContentComponent) {
-        this.pageContentComponent.isContentLoading = true;
-        this.pageContentComponent.hideContent = true;
-    }
-
-    public ngAfterViewInit() {
-        if (this.pageContentComponent.$element.closest('[wmpartial]').length === 0) {
-            addClass(this.pageContentComponent.getNativeElement(), 'load');
-            const unsubscribe = this.app.subscribe('pageStartupdateVariablesLoaded', (data) => {
-                if (data.pageName === this.app.activePageName) {
-                    this.pageContentComponent.hideContent = false;
+    constructor(app: App, page: MobilePageDirective, pageContentComponent: PageContentComponent) {
+        if (page.showLoader) {
+            page.showLoader = false;
+            pageContentComponent.isContentLoading = true;
+            pageContentComponent.hideContent = true;
+            addClass(pageContentComponent.getNativeElement(), 'load');
+            const unsubscribe = app.subscribe('pageStartupdateVariablesLoaded', (data) => {
+                if (data.pageName === app.activePageName) {
+                    pageContentComponent.hideContent = false;
                     // wait for compilation
                     setTimeout(() => {
-                        this.pageContentComponent.isContentLoading = false;
-                        removeClass(this.pageContentComponent.getNativeElement(), 'load');
+                        pageContentComponent.isContentLoading = false;
+                        removeClass(pageContentComponent.getNativeElement(), 'load');
                     }, 300);
                     unsubscribe();
                 }
             });
-        } else {
-            setTimeout(() => {
-                this.pageContentComponent.isContentLoading = false;
-                this.pageContentComponent.hideContent = false;
-            }, 0);
         }
     }
 }

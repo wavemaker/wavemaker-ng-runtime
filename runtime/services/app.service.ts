@@ -59,6 +59,8 @@ export class AppRef {
 
     private _eventNotifier = new EventNotifier();
 
+    landingPageName: string;
+
     reload() {
         window.location.reload();
     }
