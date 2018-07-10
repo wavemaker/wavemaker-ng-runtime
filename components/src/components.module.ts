@@ -77,7 +77,7 @@ import { NavbarComponent } from './widgets/common/navbar/navbar.component';
 import { NavComponent } from './widgets/common/nav/nav.component';
 import { NavItemDirective } from './widgets/common/nav/nav-item/nav-item.directive';
 import { NavigationControlDirective } from './widgets/common/nav/navigation-control.directive';
-import { PageContentDirective } from './widgets/common/page-content/page-content.directive';
+import { PageContentComponent } from './widgets/common/page-content/page-content.component';
 import { PageDirective } from './widgets/common/page/page.directive';
 import { PaginationComponent } from './widgets/common/pagination/pagination.component';
 import { PanelComponent } from './widgets/common/panel/panel.component';
@@ -196,7 +196,7 @@ const wmComponents = [
     NavItemDirective,
     NavigationControlDirective,
     OnFileSelectDirective,
-    PageContentDirective,
+    PageContentComponent,
     PageDirective,
     PaginationComponent,
     PanelComponent,
