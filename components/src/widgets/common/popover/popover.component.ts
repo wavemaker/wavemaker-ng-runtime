@@ -9,8 +9,10 @@ import { registerProps } from './popover.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
+const DEFAULT_CLS = 'app-popover-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-popover'
+    widgetType: 'wm-popover',
+    hostClass: DEFAULT_CLS
 };
 
 const eventsMap = {
