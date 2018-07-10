@@ -1,6 +1,6 @@
 import { Directive, Inject, Optional, Self } from '@angular/core';
 
-import { $appDigest, AbstractDialogService, DataSource, DataType, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
+import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 
 import { registerLiveFormProps } from './form.props';
 import { FormComponent } from './form.component';
@@ -27,6 +27,10 @@ const getValidTime = val => {
     selector: '[wmLiveForm]'
 })
 export class LiveFormDirective {
+
+    private _debouncedSavePrevDataValues = debounce(() => {
+        this.savePrevDataValues();
+    }, 250);
 
     constructor(
         @Self() @Inject(FormComponent) private form,
@@ -100,7 +104,7 @@ export class LiveFormDirective {
         if (field.readonly && field['primary-key'] && field.generator === 'assigned') {
             field.widget.readonly = false;
         }
-        this.savePrevDataValues();
+        this._debouncedSavePrevDataValues();
     }
 
     onFieldValueChange(field, nv) {
@@ -233,7 +237,7 @@ export class LiveFormDirective {
             } else if (field.type === DataType.LIST) {
                 fieldValue = field.value || undefined;
             } else {
-                fieldValue = field.value;
+                fieldValue = (field.value === null || field.value === '') ? undefined : field.value;
             }
 
             if (fieldTarget.length === 1) {

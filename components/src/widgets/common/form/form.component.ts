@@ -336,6 +336,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 fieldValue;
             fieldTarget = _.split(field.key || field.target, '.');
             fieldValue = field.datavalue || field._control.value;
+            fieldValue = (fieldValue === null || fieldValue === '') ? undefined : fieldValue;
 
             if (field.type === 'file') {
                 fieldValue = getFiles(this.name, field.key + '_formWidget', field.multiple);

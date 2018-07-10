@@ -329,7 +329,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // Create the reactive form control
     createControl() {
-        return this.fb.control('', {
+        return this.fb.control(undefined, {
             validators: this._validators
         });
     }

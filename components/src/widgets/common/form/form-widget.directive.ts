@@ -34,7 +34,7 @@ export class FormWidgetDirective implements OnInit {
     }
 
     createControl() {
-        return this.fb.control('');
+        return this.fb.control(undefined);
     }
 
     ngOnInit() {
