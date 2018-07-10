@@ -8,3 +8,5 @@ export * from './src/utils';
 export * from './src/watcher';
 export * from './src/id-generator';
 export * from './src/types';
+export * from './src/utils.service';
+export * from './core.module';

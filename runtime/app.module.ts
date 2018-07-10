@@ -8,6 +8,7 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 
 import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService, AbstractSpinnerService } from '@wm/core';
+import { CoreModule } from '@wm/core';
 import { HttpServiceImpl, HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
 import { OAuthModule } from '@wm/oAuth';
@@ -78,6 +79,7 @@ const routes = [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
+        CoreModule,
         WmComponentsModule,
         TempModule,
         VariablesModule,
