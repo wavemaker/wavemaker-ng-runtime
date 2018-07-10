@@ -363,7 +363,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.getDataSource(data, true).then((response) => {
                 if (response.length) {
                     this.queryModel = response;
-                    this._lastQuery = this.query = this.queryModel.length ? this.queryModel[0].label : '';
+                    this._lastQuery = this.query = this.queryModel[0].label || '';
+                    this._modelByValue = this.queryModel[0].value;
                 }
             });
             return;
