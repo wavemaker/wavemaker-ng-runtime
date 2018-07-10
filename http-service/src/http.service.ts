@@ -25,8 +25,10 @@ export class HttpServiceImpl extends AbstractHttpService {
         const params = options.params;
         const responseType = options.responseType;
 
-        // TODO[VIBHU]: not to be sent with non-proxy calls from service variable
-        reqHeaders = reqHeaders.append('X-Requested-With', 'XMLHttpRequest');
+        // this header is not to be sent with non-proxy calls from service variable
+        if (!options.isDirectCall) {
+            reqHeaders = reqHeaders.append('X-Requested-With', 'XMLHttpRequest');
+        }
 
         // headers
         if (headers) {
