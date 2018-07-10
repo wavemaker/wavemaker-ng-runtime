@@ -315,9 +315,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onBeforeFormRender: (row, e, operation) => {
             return this.invokeEventCallback('beforeformrender', {$event: e, row, $operation: operation});
         },
-        clearCustomExpression: () => {
-            this.customExprViewRef.clear();
-        },
         registerRowNgClassWatcher: (rowData, index) => {
             if (!this.rowngclass) {
                 return;
@@ -340,6 +337,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
             }, watchName));
         },
+        clearCustomExpression: () => {
+            this.customExprViewRef.clear();
+            this.customExprCompiledTl = {};
+        },
         generateCustomExpressions: (rowData, index) => {
             const row = this.getClonedRowObject(rowData);
             const colDef = {};
@@ -348,7 +349,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 colDef
             };
             this.addEventsToContext(context);
-            this.customExprCompiledTl[index] = [];
             // For all the columns inside the table, generate the inline widget
             this.customExprTmpl.forEach(tmpl => {
                 const customExprView = this.customExprViewRef.createEmbeddedView(tmpl, context);
@@ -359,10 +359,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             });
         },
         getCustomExpression: (fieldName, index) => {
-            return this.customExprCompiledTl[fieldName + index];
+            return this.customExprCompiledTl[fieldName + index] || '';
         },
         clearRowActions: () => {
             this.rowActionsViewRef.clear();
+            this.rowActionsCompiledTl = {};
         },
         generateRowActions: (rowData, index) => {
             const row = this.getClonedRowObject(rowData);

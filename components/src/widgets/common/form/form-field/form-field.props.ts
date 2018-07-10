@@ -63,6 +63,7 @@ const formFieldMap = new Map(
         ['display-name', PROP_STRING],
         ['field', PROP_STRING],
         ['filterexpressions', PROP_STRING],
+        ['filter-on', PROP_STRING],
         ['hint', PROP_STRING],
         ['is-range', PROP_BOOLEAN],
         ['is-related', PROP_BOOLEAN],

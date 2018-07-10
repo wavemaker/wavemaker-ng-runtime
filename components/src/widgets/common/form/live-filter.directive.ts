@@ -1,5 +1,5 @@
 import { Directive, Inject, Self } from '@angular/core';
-import { DataType, debounce, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
+import { $appDigest, DataType, debounce, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
 import { DataSource } from '@wm/core';
 
 import { FormComponent } from './form.component';
@@ -318,6 +318,7 @@ export class LiveFilterDirective {
                 this.form.result = getClonedObject(data);
                 this.form.onResult(data, true);
             }
+            $appDigest();
             return this.form.result;
         }, error => {
             this.form.toggleMessage(true, error, 'error', 'ERROR');
