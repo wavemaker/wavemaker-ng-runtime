@@ -1,5 +1,7 @@
 import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
 
+import { setCSS } from '@wm/core';
+
 import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';
 import { PROP_TYPE, register } from '../../framework/widget-props';
@@ -31,6 +33,12 @@ export class PrefabDirective extends StylableComponent {
         this.widgetType = widgetType;
 
         styler(this.nativeElement, this);
+    }
+
+    onStyleChange(key: string, nv: any, ov: any) {
+        if (key === 'height') {
+            setCSS(this.nativeElement, 'overflow', 'auto');
+        }
     }
 
     public setProps(config) {

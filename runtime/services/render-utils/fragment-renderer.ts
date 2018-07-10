@@ -1,7 +1,7 @@
 import { Injectable, Injector, ViewContainerRef } from '@angular/core';
 
 import { transpile } from '@wm/transpiler';
-import { AbstractI18nService, App, getValidJSON, noop } from '@wm/core';
+import { AbstractI18nService, App, getValidJSON, noop, UtilsService } from '@wm/core';
 import { VariablesService } from '@wm/variables';
 
 import { ViewRenderer } from './view-renderer';
@@ -62,15 +62,16 @@ const execScript = (
     identifier: string,
     ctx: string,
     instance: any,
-    app: any
+    app: any,
+    utils: any
 ) => {
     let fn = scriptCache.get(identifier);
     if (!fn) {
-        fn = new Function(ctx, 'App', script);
+        fn = new Function(ctx, 'App', 'Utils', script);
         scriptCache.set(identifier, fn);
     }
     try {
-        fn(instance, app);
+        fn(instance, app, utils);
     } catch (e) {
         console.warn(`error executing script of ${identifier}`);
     }
@@ -87,7 +88,8 @@ export class FragmentRenderer {
         private appManager: AppManagerService,
         private app: App,
         private renderResource: ViewRenderer,
-        private i18nService: AbstractI18nService
+        private i18nService: AbstractI18nService,
+        private utils: UtilsService
     ) {}
 
     public defineI18nProps(instance) {
@@ -165,7 +167,7 @@ export class FragmentRenderer {
                 const onReadyPromise: Promise<any> = new Promise(res => onReadyPromiseResolveFn = res);
 
                 const initFn = (instance, inj) => {
-                    execScript(script, selector, context, instance, this.app);
+                    execScript(script, selector, context, instance, this.app, this.utils);
 
                     this.defineI18nProps(instance);
                     const variableCollection = this.registerVariablesAndActions(inj, fragmentName, getValidJSON(variables) || {}, instance, extendWithAppVariableContext);
