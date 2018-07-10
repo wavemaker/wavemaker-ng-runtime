@@ -74,7 +74,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private _lastQuery: string;
     private _isOpen: boolean; // set to true when dropdown is open
     private showClosebtn: boolean;
-    private datavalueSubscription: Subscription;
+    private _unsubscribeDv: boolean;
 
     // Default check for container methods to access.
     get typeaheadContainerInstance() {
@@ -108,20 +108,24 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
          * after getting the response, set the queryModel and query.
          */
-        this.datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
+        const datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
 
             const query = (_.isArray(val) ? val[0] : val) as string;
 
             if (!isDefined(query) || query === null || query === '') {
                 this._modelByValue = '';
+                // reset the query.
+                this.query = this.queryModel = '';
                 return;
             }
 
-            // if the datafield is ALLFILEDS do not fetch the records
-            // update the query model with the values we have
-            this.updateQueryModel(val, this.datafield);
+            if (!this._unsubscribeDv) {
+                // if the datafield is ALLFILEDS do not fetch the records
+                // update the query model with the values we have
+                this.updateQueryModel(val, this.datafield);
+            }
         });
-        this.registerDestroyListener(() => this.datavalueSubscription.unsubscribe());
+        this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
 
         const datasetSubscription = this.dataset$.subscribe(() => {
             // set the next item index.
@@ -135,10 +139,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // unsubscribe the datavalue subscription as the datavalue change will trigger subscription always
     private unsubscribeDatavalue() {
-        if (this.datavalueSubscription) {
-            this.datavalueSubscription.unsubscribe();
-            this.datavalueSubscription = undefined;
-        }
+        this._unsubscribeDv = true;
     }
 
     // Check if the widget is of type autocomplete in mobile view/ app
@@ -375,7 +376,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // set the default only when it is available in dataset.
         if (selectedItem) {
             this.queryModel = [selectedItem];
-        } else if (this.datafield === ALLFIELDS) {
+        } else if (this.datafield === ALLFIELDS && _.isObject(data)) {
             this.queryModel = this.getTransformedData(extractDataAsArray(data));
         } else {
             // no value is found, set the datavalue to undefined.
