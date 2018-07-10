@@ -54,7 +54,9 @@ export class PageRenderer {
             variableCollection.callback(this.app.Actions);
             this.appManager.isAppVariablesFired(true);
         }
-        variableCollection.callback(variableCollection.Variables);
+        variableCollection.callback(variableCollection.Variables)
+            .catch(noop)
+            .then(() => this.appManager.notify('pageStartupdateVariablesLoaded', {pageName: pageName}));
         variableCollection.callback(variableCollection.Actions);
     }
 

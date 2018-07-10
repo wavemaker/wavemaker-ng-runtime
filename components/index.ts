@@ -6,6 +6,7 @@ export * from './src/widgets/common/date-time/date-time.component';
 export * from './src/widgets/common/file-upload/file-upload.component';
 export * from './src/widgets/common/left-panel/left-panel.directive';
 export * from './src/widgets/common/page/page.directive';
+export * from './src/widgets/common/page-content/page-content.component';
 export * from './src/widgets/common/base/stylable.component';
 export * from './src/widgets/framework/styler';
 export * from './src/widgets/framework/types';

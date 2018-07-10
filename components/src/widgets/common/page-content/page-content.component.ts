@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
@@ -12,13 +12,17 @@ registerProps();
 const DEFAULT_CLS = 'app-page-content app-content-column';
 const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 
-@Directive({
+@Component({
     selector: '[wmPageContent]',
+    templateUrl: './page-content.component.html',
     providers: [
-        provideAsWidgetRef(PageContentDirective)
+        provideAsWidgetRef(PageContentComponent)
     ]
 })
-export class PageContentDirective extends StylableComponent {
+export class PageContentComponent extends StylableComponent {
+
+    public isContentLoading = false;
+    public hideContent = false;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

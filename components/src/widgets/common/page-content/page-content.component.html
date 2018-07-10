@@ -1,0 +1,9 @@
+<ng-container *ngIf="!hideContent">
+    <ng-content></ng-content>
+</ng-container>
+<ng-container *ngIf="isContentLoading">
+    <div class="app-page-content-loader">
+        <div class="loader bg-primary"></div>
+        <div class="load-info"></div>
+    </div>
+</ng-container>

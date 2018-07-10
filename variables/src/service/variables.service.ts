@@ -53,12 +53,12 @@ export class VariablesService {
      * @param collection
      */
     triggerStartUpdate(collection) {
-        Object.keys(collection).forEach(name => {
-            const variable = collection[name];
-            if (variable.startUpdate) {
-                variable.invoke();
-            }
-        });
+        return Promise.all(
+            Object.keys(collection)
+                .map(name => collection[name])
+                .filter( variable => variable.startUpdate && variable.invoke)
+                .map(variable => new Promise((resolve, reject) => variable.invoke(null, resolve, reject)))
+            );
     }
 
     /**
