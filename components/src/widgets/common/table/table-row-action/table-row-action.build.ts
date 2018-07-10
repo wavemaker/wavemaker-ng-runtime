@@ -38,7 +38,7 @@ const getSaveCancelTemplate = () => {
 // get the inline widget template
 const getRowActionTmpl = (attrs) => {
     const action =  attrs.get('action');
-    const actionTmpl = action ? ` click.event="${action}" ` : '';
+    const actionTmpl = action ? ` click.event.delayed="${action}" ` : '';
     const saveCancelTmpl = action && action.includes('editRow(') ? getSaveCancelTemplate() : '';
     const btnClass = action ? (action.includes('editRow(') ? 'edit edit-row-button' :
                         (action.includes('deleteRow(') ? 'delete delete-row-button' : '')) : '';

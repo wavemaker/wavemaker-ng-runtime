@@ -348,13 +348,17 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * invoke the event handler
      * Components can override this method to execute custom logic before invoking the user callback
      */
-    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any, meta?: string) {
         this.eventManager.addEventListener(
             node,
             eventName,
             e => {
                 locals.$event = e;
-                eventCallback();
+                if (meta === 'delayed') {
+                   setTimeout(() => eventCallback(), 150);
+                } else {
+                    eventCallback();
+                }
             }
         );
     }
@@ -367,7 +371,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @param {string} eventName
      * @param {string} expr
      */
-    protected processEventAttr(eventName: string, expr: string) {
+    protected processEventAttr(eventName: string, expr: string, meta?: string) {
         let fn = $parseEvent(expr);
         const locals = this.context;
         locals.widget = this.widget;
@@ -378,7 +382,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         // events needs to be setup after viewInit
         this.toBeSetupEventsQueue.push(() => {
-            this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), fn, locals);
+            this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), fn, locals, meta);
         });
     }
 
@@ -434,15 +438,15 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * If the attribute is a bound expression, register a watch on the expression
      */
     protected processAttr(attrName: string, attrValue: string) {
-        const {0: propName, 1: meta, length} = attrName.split('.');
-        if (meta === 'bind') {
+        const {0: propName, 1: type, 2: meta, length} = attrName.split('.');
+        if (type === 'bind') {
             // if the show property is bound, set the initial value to false
             if (propName === 'show') {
                 this.nativeElement.hidden = true;
             }
             this.processBindAttr(propName, attrValue);
-        } else if (meta === 'event') {
-            this.processEventAttr(propName, attrValue);
+        } else if (type === 'event') {
+            this.processEventAttr(propName, attrValue, meta);
         } else if (length === 1) {
             // remove class and name attributes. Component will set them on the proper node
             if (attrName === 'class') {
