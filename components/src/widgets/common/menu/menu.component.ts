@@ -1,13 +1,14 @@
 import { AfterViewInit, Attribute, Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { BsDropdownDirective } from 'ngx-bootstrap';
 
 import { $appDigest, addClass, removeClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { isActiveNavItem, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './menu.props';
-import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
+import { DatasetAwareNavComponent, NavNode } from '../base/dataset-aware-nav.component';
 import { NavComponent } from '../nav/nav.component';
 
 declare const _;
@@ -117,8 +118,9 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
 
     constructor(
         inj: Injector,
+        public route: Router,
         @Self() @Optional() public bsDropdown: BsDropdownDirective,
-        @Optional() parentNav: NavComponent,
+        @Optional() private parentNav: NavComponent,
         @Attribute('select.event') public selectEventCB: string
     ) {
         super(inj, WIDGET_CONFIG);
@@ -126,6 +128,29 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             this.disableMenuContext = !!parentNav.disableMenuContext;
         } else {
             this.disableMenuContext = !!selectEventCB;
+        }
+    }
+
+    /**
+     * returns true if the menu has link to the current page.
+     * @param nodes
+     */
+    private hasLinkToCurrentPage(nodes: Array<NavNode>) {
+        return nodes.some(node => {
+            if (isActiveNavItem(node.link, this.route.url)) {
+                return true;
+            }
+            if (node.children) {
+                return this.hasLinkToCurrentPage(node.children);
+            }
+        });
+    }
+
+    protected resetNodes() {
+        super.resetNodes();
+        // open the menu if any of its menu items has link to current page and if its inside nav component
+        if (this.parentNav && this.hasLinkToCurrentPage(this.nodes)) {
+            this.bsDropdown.show();
         }
     }
 

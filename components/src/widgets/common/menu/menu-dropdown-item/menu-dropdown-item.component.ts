@@ -1,5 +1,4 @@
 import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { $parseEvent, addClass, getRouteNameFromLink, getUrlParams, openLink, UserDefinedExecutionContext } from '@wm/core';
 
@@ -35,7 +34,6 @@ export class MenuDropdownItemComponent implements OnInit {
     private readonly nativeElement;
 
     constructor(
-        private route: Router,
         private menuRef: MenuComponent,
         private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Optional() private parentNav: NavComponent,
@@ -50,8 +48,9 @@ export class MenuDropdownItemComponent implements OnInit {
     ngOnInit() {
         // add active class to the item only if it is in nav component.
         if (this.parentNav) {
-            if (isActiveNavItem(this.item.link, this.route.url)) {
+            if (isActiveNavItem(this.item.link, this.menuRef.route.url)) {
                 addClass(this.nativeElement, 'active');
+                $(this.nativeElement).parentsUntil(this.menuRef.$element, '.dropdown-submenu').addClass('open');
             }
         }
     }
@@ -158,7 +157,7 @@ export class MenuDropdownItemComponent implements OnInit {
             if (menuLink.startsWith('#/')) {
                 const queryParams = getUrlParams(menuLink);
                 menuLink = getRouteNameFromLink(menuLink);
-                this.route.navigate([menuLink], { queryParams});
+                this.menuRef.route.navigate([menuLink], { queryParams});
             } else {
                 openLink(menuLink, linkTarget);
             }
