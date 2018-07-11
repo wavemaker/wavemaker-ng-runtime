@@ -31,7 +31,7 @@ export const searchProps = new Map(
         ['showsearchicon', PROP_BOOLEAN],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'search', ...PROP_STRING}],
-        ['width', {value: '100%', ...PROP_STRING}]
+        ['width', PROP_STRING]
     ]
 );
 
