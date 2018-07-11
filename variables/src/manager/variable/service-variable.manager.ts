@@ -267,7 +267,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @returns {any}
      */
     private getMethodInfo(variable, inputFields, options) {
-        const methodInfo = _.get(metadataService.getByOperationId(variable.operationId, ServiceVariableUtils.getPrefabName(variable)), 'wmServiceOperationInfo');
+        const methodInfo = _.get(metadataService.getByOperationId(variable.operationId, variable.getPrefabName()), 'wmServiceOperationInfo');
         if (!methodInfo) {
             return null;
         }
