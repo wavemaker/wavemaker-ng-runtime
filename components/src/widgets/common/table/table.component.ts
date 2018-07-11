@@ -310,12 +310,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return this.invokeEventCallback('beforerowdelete', {$event: e, row, options: options});
         },
         onFormRender: ($row, e, operation, alwaysNewRow) => {
-            const widget = alwaysNewRow ? 'inlineWidgetNew' : 'inlineWidget';
+            const widget = alwaysNewRow ? 'inlineInstanceNew' : 'inlineInstance';
             setTimeout(() => {
                 this.formWidgets = {};
                 this.fieldDefs.forEach(col => {
                     if (col[widget]) {
                         this.formWidgets[col.field] = col[widget];
+                        this.setDisabledOnField(operation, col, widget);
                     }
                 });
                 this.invokeEventCallback('formrender', {$event: e, formWidgets: this.formWidgets, $operation: operation});
@@ -673,6 +674,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.callDataGridMethod('setStatus', 'ready');
                 }
             }
+        }
+    }
+
+    setDisabledOnField(operation, colDef, widgetType) {
+        if (operation !== 'new' && colDef['primary-key'] && colDef.generator === 'assigned' && !colDef['related-entity-name'] && !colDef.period) {
+            colDef[widgetType].disabled = true;
+        } else {
+            colDef[widgetType].disabled = colDef.disabled;
         }
     }
 
