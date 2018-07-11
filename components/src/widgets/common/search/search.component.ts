@@ -207,7 +207,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // matches are empty set the datavalue to undefined and set the query.
                 this.queryModel = this.query = '';
                 this._modelByValue = undefined;
-            } else {
+            } else if (this.query !== '' && isDefined(this.query)) {
                 // Used by chips, if allowonlyselect is false, set the datavalue to query.
                 this.queryModel = this.query;
                 this._modelByValue = undefined;
