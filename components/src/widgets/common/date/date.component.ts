@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
@@ -53,12 +53,13 @@ export class DateComponent extends BaseDateTimeComponent {
             this.bsDataValue = undefined;
         }
         this.invokeOnChange(this.datavalue);
+        this.cdRef.detectChanges();
     }
 
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
-    constructor(inj: Injector, public datePipe: ToDatePipe) {
+    constructor(inj: Injector, public datePipe: ToDatePipe, private cdRef: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this._dateOptions.containerClass = 'theme-red';
