@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { DataType, debounce, FormWidgetType, isMobile, removeClass, toBoolean } from '@wm/core';
 
-import { styler } from '../../../framework/styler';
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { getDefaultViewModeWidget } from '../../../../utils/live-utils';
@@ -281,6 +280,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         super.onPropertyChange(key, nv, ov);
     }
 
+    onStyleChange(key, nv, ov?) {
+        this.setFormWidget(key, nv);
+        this.setMaxFormWidget(key, nv);
+        super.onStyleChange(key, nv, ov);
+    }
+
     get datavalue() {
         return this.formWidget && this.formWidget.datavalue;
     }
@@ -359,7 +364,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             .subscribe(this.onValueChange.bind(this));
         this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
         super.ngOnInit();
-        styler(this.nativeElement, this);
 
         if (this.isRange === 'true') {
             this.ngform.addControl(fieldName + '_max', this.createControl());

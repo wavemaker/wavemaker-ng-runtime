@@ -19,4 +19,5 @@
        (blur)="handleBlur($event)"
        (ngModelChange)="handleChange($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
+       (keyup.enter)="flushViewChanges(input.value)"
        #input>

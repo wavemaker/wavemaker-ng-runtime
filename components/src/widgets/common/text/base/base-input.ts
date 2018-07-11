@@ -1,7 +1,7 @@
 import { AfterViewInit, ElementRef, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { addClass, switchClass } from '@wm/core';
+import { $appDigest, addClass, switchClass } from '@wm/core';
 
 import { BaseFormCustomComponent } from '../../base/base-form-custom.component';
 import { styler } from '../../../framework/styler';
@@ -61,6 +61,12 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     // invoke the blur callback
     protected handleBlur($event) {
         this.invokeOnTouched($event);
+    }
+
+    // Update the model on enter key press
+    flushViewChanges(val) {
+        this.ngModel.update.next(val);
+        $appDigest();
     }
 
     ngAfterViewInit() {

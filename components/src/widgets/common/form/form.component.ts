@@ -1,7 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce } from '@wm/core';
 import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
@@ -119,6 +119,10 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     private operationType;
     private _isLayoutDialog;
 
+    private _debouncedSubmitForm = debounce(($event) => {
+        this.submitForm($event);
+    }, 250);
+
     set isLayoutDialog(nv) {
         if (nv) {
             removeClass(this.nativeElement, 'panel app-panel liveform-inline');
@@ -133,7 +137,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     @HostBinding('action') action: string;
 
     @HostListener('submit', ['$event']) submit($event) {
-        this.submitForm($event);
+        this._debouncedSubmitForm($event);
     }
 
     @HostListener('reset') onReset() {
