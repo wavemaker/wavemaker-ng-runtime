@@ -164,7 +164,7 @@ export class LiveVariableManager extends BaseVariableManager {
         /*Fetch the table data*/
         promiseObj = LVService[dbOperation]({
             'projectID': $rootScope.project.id,
-            'service': variable._prefabName ? '' : 'services',
+            'service': variable.getPrefabName() ? '' : 'services',
             'dataModelName': variable.liveSource,
             'entityName': variable.type,
             'page': options.page || 1,
@@ -173,7 +173,7 @@ export class LiveVariableManager extends BaseVariableManager {
             'data': requestData,
             'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options),
             // 'filterMeta': tableOptions.filter,
-            'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
+            'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
         }).then((response) => {
             response = response.body;
 
@@ -441,11 +441,11 @@ export class LiveVariableManager extends BaseVariableManager {
         }
         LVService[dbOperation]({
             'projectID': projectID,
-            'service': variable._prefabName ? '' : 'services',
+            'service': variable.getPrefabName() ? '' : 'services',
             'dataModelName': variable.liveSource,
             'entityName': variable.type,
             'sort': tableOptions.sort,
-            'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
+            'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl,
             'data': data,
             'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options)
             // 'filterMeta'    : tableOptions.filter
@@ -535,12 +535,12 @@ export class LiveVariableManager extends BaseVariableManager {
         orderBy = _.isEmpty(options.orderBy) ? '' : 'sort=' + options.orderBy;
         return LVService[action]({
             projectID: projectID,
-            service: variable._prefabName ? '' : 'services',
+            service: variable.getPrefabName() ? '' : 'services',
             dataModelName: variable.liveSource,
             entityName: relatedTable.type,
             page: options.page || 1,
             size: options.pagesize || undefined,
-            url: variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl,
+            url: variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl,
             data: query || '',
             filter: LiveVariableUtils.getWhereClauseGenerator(variable, options),
             sort: orderBy
@@ -589,14 +589,14 @@ export class LiveVariableManager extends BaseVariableManager {
 
         return LVService[dbOperation]({
             'projectID': projectID,
-            'service': variable._prefabName ? '' : 'services',
+            'service': variable.getPrefabName() ? '' : 'services',
             'dataModelName': variable.liveSource,
             'entityName': options.entityName || variable.type,
             'page': options.page || 1,
             'size': options.pagesize,
             'sort': sort,
             'data': requestData,
-            'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
+            'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
         }).then(response => {
             if ((response && response.error) || !response) {
                 triggerFn(error, response.error);

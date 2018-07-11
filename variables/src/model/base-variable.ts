@@ -89,4 +89,12 @@ export abstract class BaseVariable {
         return DatasetUtil.getCount(this.dataSet, this.isList);
     }
 
+    /**
+     * Return the prefab name if the variable is form a prefab
+     * @returns {string}
+     */
+    getPrefabName() {
+        return this._context && this._context.prefabName;
+    }
+
 }

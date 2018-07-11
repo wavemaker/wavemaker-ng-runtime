@@ -109,15 +109,6 @@ const cloakHeadersForProxy = (headers) => {
 
 export class ServiceVariableUtils {
     /**
-     * Return the prefab name if the variable is form a prefab
-     * @param variable
-     * @returns {any}
-     */
-    static getPrefabName(variable) {
-        return _.get(variable, '_context.prefabName')
-    }
-
-    /**
      * prepares the HTTP request info for a Service Variable
      * @param variable
      * @param operationInfo
@@ -336,11 +327,11 @@ export class ServiceVariableUtils {
         if (isProxyCall) {
             // avoiding cloakHeadersForProxy when the method is invoked from apidesigner.
                 headers = variable.serviceType !== VARIABLE_CONSTANTS.SERVICE_TYPE.REST || operationInfo.skipCloakHeaders ? headers : cloakHeadersForProxy(headers);
-            if (this.getPrefabName(variable) && VARIABLE_CONSTANTS.REST_SUPPORTED_SERVICES.indexOf(variable.serviceType) !== -1) {
+            if (variable.getPrefabName() && VARIABLE_CONSTANTS.REST_SUPPORTED_SERVICES.indexOf(variable.serviceType) !== -1) {
                 /* if it is a prefab variable (used in a normal project), modify the url */
-                url = 'prefabs/' + this.getPrefabName(variable) + url;
+                url = 'prefabs/' + variable.getPrefabName() + url;
                 target = 'invokePrefabRestService';
-            } else if (!this.getPrefabName(variable)) {
+            } else if (!variable.getPrefabName()) {
                 url = 'services' + url;
             }
             url = $rootScope.project.deployedUrl + url;
