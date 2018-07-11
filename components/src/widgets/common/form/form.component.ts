@@ -326,6 +326,16 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         this.buttonArray.push(formAction);
     }
 
+    updateFormDataOutput(dataObject) {
+        // Set the values of the widgets inside the live form (other than form fields) in form data
+        _.forEach(this.ngform.value, (val, key) => {
+            if (!_.find(this.formFields, {key})) {
+                dataObject[key] = val;
+            }
+        });
+        this.dataoutput = dataObject;
+    }
+
     // Construct the data object merging the form fields and custom widgets data
     constructDataObject() {
         const formData     = {};
@@ -351,7 +361,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                 formData[fieldTarget[0]][fieldTarget[1]] = fieldValue;
             }
         });
-        this.dataoutput = {...formData, ...this.ngform.value};
+        this.updateFormDataOutput(formData);
         return this.dataoutput;
     }
 

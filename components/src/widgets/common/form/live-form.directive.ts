@@ -248,8 +248,7 @@ export class LiveFormDirective {
             }
         });
         if (!isPreviousData) {
-            // Set the values of the widgets inside the live form (other than form fields) in form data
-            this.form.dataoutput = {...dataObject, ...this.form.ngform.value};
+            this.form.updateFormDataOutput(dataObject);
             return this.form.dataoutput;
         }
         return dataObject;
