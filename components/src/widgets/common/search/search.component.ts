@@ -178,6 +178,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataProvider.hasNoMoreData = false;
         this.result = [];
         this.page = 1;
+        this._lastQuery = undefined;
 
         // when input is cleared, reset the datavalue
         if (this.query === '') {
@@ -341,7 +342,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // else local data search is performed.
     public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
         // show dropdown only when there is change in query
-        if ((this.minchars || query) && this._lastQuery === query) {
+        if (query && (this._lastQuery === query)) {
             return Observable.of([]);
         }
         // search will show all the results fetched previously without making n/w calls all the time.
