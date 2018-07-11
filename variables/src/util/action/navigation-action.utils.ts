@@ -126,12 +126,6 @@ function getViewElementInActivePage($el) {
  * @param options
  */
 const goToPage = function (pageName, options) {
-
-    // prevent the default behavior, if the navigation is from an anchor click event
-    if ($(window.event && window.event.target as HTMLElement).closest('a').length) {
-        window.event.preventDefault();
-    }
-
     nextTransitionToApply = options.transition || '';
     pageStackObject.push({
         name : pageName,

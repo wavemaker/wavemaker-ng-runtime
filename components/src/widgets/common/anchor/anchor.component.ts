@@ -33,6 +33,7 @@ const regex = /Actions.goToPage_(\w+)\.invoke\(\)/g;
 export class AnchorComponent extends StylableComponent implements AfterViewInit {
 
     private hasNavigationToCurrentPageExpr: boolean;
+    private hasGoToPageExpr: boolean;
 
     public encodeurl;
     public hyperlink;
@@ -62,7 +63,10 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
             if (fns.some(fn => {
                 regex.lastIndex = 0;
                 const matches = regex.exec(fn);
-                return matches && matches.length && matches[1] === app.activePageName;
+
+                this.hasGoToPageExpr = matches && (matches.length > 0);
+
+                return this.hasGoToPageExpr && matches[1] === app.activePageName;
             })) {
                 this.hasNavigationToCurrentPageExpr = true;
             }
@@ -73,6 +77,21 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
         if (this.navItemRef) {
             addClass(this.navItemRef.getNativeElement(), 'active');
         }
+    }
+
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any, meta?: string) {
+        super.handleEvent(
+            node,
+            eventName,
+            e => {
+                if (this.hasGoToPageExpr && locals.$event) {
+                    locals.$event.preventDefault();
+                }
+                eventCallback();
+            },
+            locals,
+            meta
+        );
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
