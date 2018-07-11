@@ -106,14 +106,19 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             KEY_MOVEMENTS.MOVE_RIGHT = 'LEFT-ARROW';
         }
 
-        if (eventAction === KEY_MOVEMENTS.MOVE_DOWN || eventAction === KEY_MOVEMENTS.MOVE_RIGHT || eventAction === KEY_MOVEMENTS.ON_ENTER) {
-            this._selectFirstItem = true;
-            this.bsDropdown.show();
-            $event.preventDefault();
-        } else if (eventAction === KEY_MOVEMENTS.MOVE_UP || eventAction === KEY_MOVEMENTS.MOVE_LEFT) {
+        if (_.includes([KEY_MOVEMENTS.MOVE_DOWN, KEY_MOVEMENTS.MOVE_RIGHT], eventAction)) {
+            if (!this.bsDropdown.isOpen) {
+                this._selectFirstItem = true;
+                this.bsDropdown.show();
+            } else {
+                this.$element.find('> ul[wmmenudropdown] li.app-menu-item:first > a').focus();
+            }
+        } else if (eventAction === KEY_MOVEMENTS.ON_ENTER) {
+            this.bsDropdown.toggle(true);
+        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction)) {
             this.bsDropdown.hide();
-            $event.preventDefault();
         }
+        $event.preventDefault();
     }
 
     constructor(

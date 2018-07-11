@@ -11,14 +11,16 @@ import { StylableComponent } from './stylable.component';
 declare const _;
 
 const getValidLink = (link) => {
-    const routRegex = /^[./#]+.*/;
+    const routRegex = /^(\/|#\/|#)(?!\W).*/;
     if (link) {
         if (routRegex.test(link)) {
             link = _.first(link.match(/[\w]+.*/g)) || '';
             return `#/${link}`;
-        } else {
-            return link;
         }
+        if (_.startsWith(link, 'www.')) {
+            return `//${link}`;
+        }
+        return link;
     }
 };
 

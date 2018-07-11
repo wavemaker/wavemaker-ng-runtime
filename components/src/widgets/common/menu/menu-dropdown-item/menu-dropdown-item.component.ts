@@ -126,6 +126,8 @@ export class MenuDropdownItemComponent implements OnInit {
             * 2. When Escape key is clicked*/
             $event.preventDefault();
             this.menuRef.bsDropdown.hide();
+        } else if (eventAction === KEY_MOVEMENTS.ON_ENTER) {
+            this.onSelect($event, this.item);
         }
     }
 
@@ -139,6 +141,7 @@ export class MenuDropdownItemComponent implements OnInit {
             $event.stopPropagation();
         }
 
+        $event.preventDefault();
         const args = {$event, $item: item};
         const linkTarget = this.menuRef.linktarget;
         const itemAction = item.action;
@@ -154,7 +157,7 @@ export class MenuDropdownItemComponent implements OnInit {
 
             this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
         } else if (menuLink) {
-            if (menuLink.startsWith('#/')) {
+            if (menuLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
                 const queryParams = getUrlParams(menuLink);
                 menuLink = getRouteNameFromLink(menuLink);
                 this.menuRef.route.navigate([menuLink], { queryParams});
