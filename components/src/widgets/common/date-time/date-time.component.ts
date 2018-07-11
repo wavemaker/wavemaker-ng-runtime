@@ -13,7 +13,6 @@ import { BaseDateTimeComponent } from '../base/base-date-time.component';
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
 
-const now: Date = new Date();
 const CURRENT_DATE: string = 'CURRENT_DATE';
 
 declare const _;
@@ -76,6 +75,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This property is set to TRUE if the time component value is set to CURRENT_TIME; In this case the timer keeps changing the time value until the widget is available.
      */
     private isCurrentDate: boolean = false;
+
+    private _debouncedOnChange: Function =  _.debounce(this.invokeOnChange, 10);
 
     get datavalue(): any {
         return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
@@ -140,7 +141,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method to add a click listener once the time dropdown is open
      */
-    private addClickListener(value) {
+    private addClickListener() {
         // adding class for time widget dropdown menu
         const tpElements  = document.querySelectorAll('timepicker');
         _.forEach(tpElements, (element) => {
@@ -178,7 +179,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.proxyModel) {
             this.bsDateValue = this.bsTimeValue = this.proxyModel;
         }
-        this.invokeOnChange(newVal);
+        this._debouncedOnChange(newVal, {}, true);
         this.cdRef.detectChanges();
     }
 
