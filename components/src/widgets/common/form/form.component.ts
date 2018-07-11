@@ -43,6 +43,36 @@ const setMarkupForFormField = (field, columnWidth) =>  {
             </wm-gridcolumn>`;
 };
 
+// Function to find out the first invalid element in form
+const findInvalidElement = ($formEle, ngForm) => {
+    const $ele = $formEle.find('form.ng-invalid:visible, [formControlName].ng-invalid:visible').first();
+    let formObj = ngForm;
+    // If element is form, find out the first invalid element in this form
+    if ($ele.is('form')) {
+        formObj = ngForm && ngForm.controls[$ele.attr('formControlName') || $ele.attr('name')];
+        if (formObj) {
+            return findInvalidElement($ele, formObj);
+        }
+    }
+    return {
+        ngForm: formObj,
+        $ele: $ele
+    };
+};
+
+const setTouchedState = ngForm => {
+    if (ngForm.valid) {
+        return;
+    }
+    if (ngForm.controls) {
+        _.forEach(ngForm.controls, ctrl => {
+            setTouchedState(ctrl);
+        });
+    } else {
+        ngForm.markAsTouched();
+    }
+};
+
 @Component({
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
@@ -203,7 +233,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
     // This method loops through the form fields and set touched state as touched
     highlightInvalidFields() {
-        _.forEach(this.ngform.controls, (control) => control.markAsTouched());
+        setTouchedState(this.ngform);
     }
 
     // Disable the form submit if form is in invalid state. Highlight all the invalid fields if validation type is default
@@ -211,20 +241,29 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         // Disable the form submit if form is in invalid state. For delete operation, do not check the validation.
         if (this.operationType !== 'delete' && (this.validationtype === 'html' || this.validationtype === 'default')
                 && this.ngform && this.ngform.invalid) {
-            // TODO: For blob type required fields, even if file is present, required error is shown.
-            // To prevent this, if value is present set the required validity to true
-            // $($formEle.find('input[type="file"].app-blob-upload')).each(function () {
-            //     var $blobEL = WM.element(this);
-            //     if ($blobEL.val()) {
-            //         ngform[$blobEL.attr('name')].$setValidity('required', true);
-            //     }
-            // });
 
             if (this.ngform.invalid) {
                 if (this.validationtype === 'default') {
                     this.highlightInvalidFields();
                 }
-                // TODO: Safari Validation
+                // Find the first invalid untoched element and set it to touched.
+                // Safari does not form validations. this will ensure that error is shown for user
+                const eleForm = findInvalidElement(this.$element, this.ngform);
+                const $invalidForm = eleForm.ngForm;
+                let $invalidEle  = eleForm.$ele;
+                $invalidEle = $invalidEle.parent().find('[focus-target]');
+                if ($invalidEle.length) {
+                    // on save click in page layout liveform, focus of autocomplete widget opens full-screen search.
+                    if (!$invalidEle.hasClass('app-search-input')) {
+                        $invalidEle.focus();
+                    }
+                    const ngEle = $invalidForm && $invalidForm.controls[$invalidEle.attr('formControlName') || $invalidEle.attr('name')];
+                    if (ngEle && ngEle.markAsTouched) {
+                        ngEle.markAsTouched();
+                    }
+                    $appDigest();
+                    return true;
+                }
                 return true;
             }
             return false;
