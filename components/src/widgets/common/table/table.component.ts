@@ -39,6 +39,15 @@ const isInputBodyWrapper = target => {
             return false;
         }
     });
+    const attrs = ['bsdatepickerdaydecorator'];
+    if (!isInput) {
+        attrs.forEach(attr => {
+            if (target[0].hasAttribute(attr)) {
+                isInput = true;
+                return false;
+            }
+        });
+    }
     return isInput;
 };
 
@@ -713,20 +722,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     setGridData(serverData) {
-        const data = serverData;
-        // If serverData has data but is undefined, then return
-        if (this.filternullrecords) {
-            this.gridData = this.removeEmptyRecords(data);
-        } else {
-            this.gridData = data;
-        }
+        const data = this.filternullrecords ?  this.removeEmptyRecords(serverData) : serverData;
         if (!this.variableInflight) {
-            if (this.gridData && this.gridData.length === 0) {
+            if (data && data.length === 0) {
                 this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
             } else {
                 this.callDataGridMethod('setStatus', 'ready');
             }
         }
+        this.gridData = data;
     }
 
     setDataGridOption(optionName, newVal, forceSet = false) {
