@@ -56,8 +56,8 @@ export class LeftPanelDirective extends StylableComponent {
     }
 
     public collapse(): void {
-        addClass(this.$ele[0], 'swipee-transition');
-        switchClass(this.$ele[0], 'left-panel-collapsed', 'left-panel-expanded');
+        addClass(this.nativeElement, 'swipee-transition');
+        switchClass(this.nativeElement, 'left-panel-collapsed', 'left-panel-expanded');
         this.expanded = false;
         switchClass(this.$page[0], 'left-panel-collapsed-container', 'left-panel-expanded-container');
         if (this.animation === AnimationType.SLIDE_IN) {
@@ -71,8 +71,8 @@ export class LeftPanelDirective extends StylableComponent {
     }
 
     public expand(): void {
-        removeClass(this.$ele[0], 'swipee-transition');
-        switchClass(this.$ele[0], 'left-panel-expanded', 'left-panel-collapsed');
+        removeClass(this.nativeElement, 'swipee-transition');
+        switchClass(this.nativeElement, 'left-panel-expanded', 'left-panel-collapsed');
         this.expanded = true;
         if (!(this.isTabletApplicationType && this.animation === AnimationType.SLIDE_IN)) {
             this._destroyCollapseActionListener = this.listenForCollapseAction();
@@ -106,7 +106,7 @@ export class LeftPanelDirective extends StylableComponent {
                     addClass(this.$page[0], 'slide-over-left-panel-container');
                 }
                 this._leftPanelAnimator = new LeftPanelAnimator(this);
-                switchClass(this.$ele[0], nv, ov);
+                switchClass(this.nativeElement, nv, ov);
                 break;
             case 'columnwidth':
                 this.setLeftPanelWidth(['md', 'sm'], nv, ov);

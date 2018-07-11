@@ -1,6 +1,7 @@
 import { SwipeAnimation } from '@swipey';
 
 import { AnimationType, LeftPanelDirective } from './left-panel.directive';
+import { $appDigest } from '@wm/core';
 
 export class LeftPanelAnimator extends SwipeAnimation {
     private _$animatedElements;
@@ -12,15 +13,12 @@ export class LeftPanelAnimator extends SwipeAnimation {
 
     constructor(private leftPanel: LeftPanelDirective) {
         super();
-        this.init(this.leftPanel.$ele, this.leftPanel.isGesturesEnabled());
-    }
-
-    public bindEvents(): string[] {
-        return this.leftPanel.gestures === 'off' ? [] : undefined;
+        this.init(this.leftPanel.$ele, this.leftPanel.$page);
     }
 
     public bounds(): {} {
         let offset = 0;
+        this.setGesturesEnabled(this.leftPanel.isGesturesEnabled());
         if (!this._width) {
             this._pageContainerWidth = this.leftPanel.$page.width();
             this._leftPanelWidth = this.leftPanel.$ele.width();
@@ -114,12 +112,14 @@ export class LeftPanelAnimator extends SwipeAnimation {
         this._expanded = false;
         this.leftPanel.collapse();
         this.resetTransition();
+        $appDigest();
     }
 
     public onUpper(): void {
         this._expanded = true;
         this.leftPanel.expand();
         this.resetTransition();
+        $appDigest();
     }
 
     private resetTransition() {
