@@ -109,9 +109,10 @@ export class RemoteDataProvider implements IDataProvider {
                 isPaginatedData = true;
 
                 // TODO: [bandhavya] This workaround is because backend is not giving the last page in distinct api. Remove after issue is fixed in backend
-                if (page > 1 && !_isLastPage && pageOptions.totalElements === AppDefaults.INT_MAX_VALUE) {
+                if (page > 1 && !_isLastPage && _.isEmpty(data) && pageOptions.totalElements === AppDefaults.INT_MAX_VALUE) {
                     _isLastPage = true;
                     resolve({
+                        data: [],
                         isLastPage: _isLastPage,
                         hasMoreData: page > 1,
                         isPaginatedData,
