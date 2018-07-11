@@ -235,6 +235,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         // reset input box when item is added.
         this.resetSearchModel();
+
+        // stop the event to not to call the submit event on enter press.
+        if ($event && (($event as any).key === 'Enter' || ($event as any).keyCode === 13)) {
+            this.stopEvent($event);
+        }
     }
 
     // Prepare datavalue object from a string(junk) value when datafield is allFields.
@@ -387,16 +392,18 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         const $chipsList = this.$element.find('li.chip-item > a.app-chip');
 
         // if there are no chips in the list focus search box
-        if (!chipsLength || !canFocus) {
-            this.focusSearchBox();
-        } else if ((chipsLength - 1) < focusIndex) {
-            // if focus index is greater than chips length select last chip
-            $chipsList.get(chipsLength - 1).focus();
-        } else {
-            // manually set the succeeding chip as active if there is a chip next to the current chip.
-            this.chipsList[focusIndex].active = true;
-            $chipsList.get(focusIndex).focus();
-        }
+        setTimeout(() => {
+            if (!chipsLength || !canFocus) {
+                this.focusSearchBox();
+            } else if ((chipsLength - 1) < focusIndex) {
+                // if focus index is greater than chips length select last chip
+                $chipsList.get(chipsLength - 1).focus();
+            } else {
+                // manually set the succeeding chip as active if there is a chip next to the current chip.
+                this.chipsList[focusIndex].active = true;
+                $chipsList.get(focusIndex).focus();
+            }
+        });
 
         this.updateMaxSize();
 
