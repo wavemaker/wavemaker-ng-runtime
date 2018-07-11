@@ -71,9 +71,8 @@ export class PictureDirective extends StylableComponent implements OnInit {
             switchClass(this.nativeElement, `img-${nv}`, `img-${ov}`);
         } else if (key === 'hint') {
             setAttr(this.nativeElement, 'alt', nv);
-        } else {
-            super.onPropertyChange(key, nv, ov);
         }
+        super.onPropertyChange(key, nv, ov);
     }
 
     onStyleChange(key: string, nv: any, ov?: any) {
