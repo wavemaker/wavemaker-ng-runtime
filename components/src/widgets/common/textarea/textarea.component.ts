@@ -7,7 +7,8 @@ import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/wid
 
 registerProps();
 
-const WIDGET_CONFIG = {widgetType: 'wm-textarea'};
+const WIDGET_CONFIG = {widgetType: 'wm-textarea',
+    hostClass: 'app-input-wrapper'};
 
 @Component({
     selector: 'wm-textarea',

@@ -9,7 +9,8 @@ import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/
 registerProps();
 
 const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-input-color'
+    widgetType: 'wm-input-color',
+    hostClass: 'app-input-wrapper'
 };
 
 @Component({

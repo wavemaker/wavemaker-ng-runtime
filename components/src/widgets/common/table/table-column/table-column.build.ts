@@ -47,7 +47,7 @@ const getFilterTemplate = (attrs, pCounter)  => {
     const widgetTmpl = `${getFormWidgetTemplate(widget, innerTmpl, attrs)}`;
 
     return `<ng-template #filterTmpl let-changeFn="changeFn" let-isDisabled="isDisabled">
-    <span class="input-group ${widget}" data-col-identifier="${fieldName}">
+    <div class="input-group ${widget}" data-col-identifier="${fieldName}">
         ${widgetTmpl}
         <span class="input-group-addon filter-clear-icon" *ngIf="${pCounter}.showClearIcon('${fieldName}')">
             <button class="btn-transparent btn app-button" aria-label="Clear button" type="button" (click)="${pCounter}.clearRowFilter('${fieldName}')">
@@ -65,7 +65,7 @@ const getFilterTemplate = (attrs, pCounter)  => {
                     </li>
              </ul>
         </span>
-    </span></ng-template>`;
+    </div></ng-template>`;
 };
 
 const getEventsTmpl = attrs => {

@@ -9,7 +9,8 @@ import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/
 registerProps();
 
 const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-input-email'
+    widgetType: 'wm-input-email',
+    hostClass: 'app-input-wrapper'
 };
 
 @Component({

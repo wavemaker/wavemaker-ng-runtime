@@ -9,7 +9,8 @@ import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/
 registerProps();
 
 const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-input-text'
+    widgetType: 'wm-input-text',
+    hostClass: 'app-select-wrapper'
 };
 
 @Component({
