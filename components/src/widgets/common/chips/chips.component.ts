@@ -44,6 +44,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
     private _datasource: any;
+    private _debounceResetSearchModel: Function;
 
     // When datavalue is not available check value in "toBeProcessedDatavalue" property.
     set toBeProcessedDatavalue(val) {
@@ -93,7 +94,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.multiple = true;
         this.searchComponent.binddisplayimagesrc = this.bindDisplayImgSrc;
         this.searchComponent.displayimagesrc = this.displayimagesrc;
-        this.searchComponent.binddisplayexpression = this.bindDisplayExpr;
+        this.searchComponent.binddisplaylabel = this.bindDisplayExpr;
         this.searchComponent.displaylabel = this.displayfield;
         this.searchComponent.datafield = this.bindDataField;
         this.searchComponent.binddataset = this.bindDataSet;
@@ -101,6 +102,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this.searchComponent.updateQueryModel = _.debounce(this.updateQueryModel.bind(this), 50);
         this.getTransformedData = this.searchComponent.getTransformedData;
+
+        this._debounceResetSearchModel = _.debounce(this.resetSearchModel, 10);
     }
 
     ngAfterViewInit() {
@@ -175,12 +178,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this.removeDuplicates();
         this.updateMaxSize();
-        this.resetSearchModel();
+        this._debounceResetSearchModel();
         $appDigest();
     }
 
     private resetSearchModel() {
         this.searchComponent.query = '';
+        this.searchComponent.queryModel = '';
+        this.searchComponent.datavalue = undefined;
 
         this.focusSearchBox();
     }
@@ -201,6 +206,12 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             if (this.datafield === ALLFIELDS) {
                 if (!_.isObject(this.searchComponent.query)) {
                     dataObj = this.createCustomDataModel(this.searchComponent.query);
+
+                    // return if the custom chip is empty
+                    if (!dataObj) {
+                        this._debounceResetSearchModel();
+                        return;
+                    }
                 }
             }
 
@@ -216,7 +227,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
 
         if (this.isDuplicate(chipObj)) {
-            this.resetSearchModel();
+            this._debounceResetSearchModel();
             return;
         }
         this.chipsList.push(chipObj);
@@ -234,7 +245,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.updateMaxSize();
 
         // reset input box when item is added.
-        this.resetSearchModel();
+        this._debounceResetSearchModel();
 
         // stop the event to not to call the submit event on enter press.
         if ($event && (($event as any).key === 'Enter' || ($event as any).keyCode === 13)) {
