@@ -1445,7 +1445,8 @@ $.widget('wm.datatable', {
             isValid,
             $requiredEls,
             alwaysNewRow = $row.hasClass('always-new-row'),
-            advancedEdit = self.options.editmode === self.CONSTANTS.QUICK_EDIT;
+            advancedEdit = self.options.editmode === self.CONSTANTS.QUICK_EDIT,
+            editOptions = {};
 
         //On success of update or delete
         function onSaveSuccess(skipFocus, error) {
@@ -1576,20 +1577,20 @@ $.widget('wm.datatable', {
 
                     if (isNewRow) {
                         if ($.isFunction(this.options.onBeforeRowInsert)) {
-                            isValid = this.options.onBeforeRowInsert(rowData, e, options);
+                            isValid = this.options.onBeforeRowInsert(rowData, e, editOptions);
                             if (isValid === false) {
                                 return;
                             }
                         }
-                        this.options.onRowInsert(rowData, e, onSaveSuccess, options);
+                        this.options.onRowInsert(rowData, e, onSaveSuccess, editOptions);
                     } else {
                         if ($.isFunction(this.options.onBeforeRowUpdate)) {
-                            isValid = this.options.onBeforeRowUpdate(rowData, e, options);
+                            isValid = this.options.onBeforeRowUpdate(rowData, e, editOptions);
                             if (isValid === false) {
                                 return;
                             }
                         }
-                        this.options.afterRowUpdate(rowData, e, onSaveSuccess, options);
+                        this.options.afterRowUpdate(rowData, e, onSaveSuccess, editOptions);
                     }
                 } else {
                     this.cancelEdit($row);
