@@ -10,7 +10,7 @@ declare const _;
 
 export class WebSocketVariableManager extends BaseVariableManager {
 
-    scope_var_socket_map;
+    scope_var_socket_map = {};
     PROPERTY = {
         'SERVICE': 'service',
         'DATA_UPDATE_STRATEGY': 'dataUpdateStrategy',
@@ -169,7 +169,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @param variable
      */
     private freeSocket(variable) {
-        _.set(this.scope_var_socket_map, [variable, variable.name], undefined);
+        _.set(this.scope_var_socket_map, [ variable.name], undefined);
     }
 
     /**
@@ -208,7 +208,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     private getSocket(variable) {
         const url     = this.getURL(variable);
-        let _socket = _.get(this.scope_var_socket_map, [variable, variable.name]);
+        let _socket = _.get(this.scope_var_socket_map, [ variable.name]);
         if (_socket) {
             return _socket;
         }
@@ -224,7 +224,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
         _socket.onMessage(this._onSocketMessage.bind(this, variable));
         _socket.onClose(this._onSocketClose.bind(this, variable));
 
-        _.set(this.scope_var_socket_map, [variable, variable.name], _socket);
+        _.set(this.scope_var_socket_map, [variable.name], _socket);
         variable._socket = _socket;
         return _socket;
 }
@@ -256,7 +256,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
     public close(variable: WebSocketVariable) {
         const shouldClose = this._onBeforeSocketClose(variable),
             socket      = this.getSocket(variable);
-        if (!shouldClose) {
+        if (shouldClose === false) {
             return;
         }
         socket.close();
