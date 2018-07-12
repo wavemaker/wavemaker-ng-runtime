@@ -79,9 +79,13 @@ export class PaginationComponent extends StylableComponent {
 
     private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, 250);
     private _debouncedPageChanged = debounce(event => {
-        this.dn.currentPage = event && event.page;
-        this.goToPage();
-        this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
+        const currentPage = event && event.page;
+        // Do not call goToPage if page has not changed
+        if (currentPage !== this.dn.currentPage) {
+            this.dn.currentPage = currentPage;
+            this.goToPage();
+            this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
+        }
     }, 250);
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
