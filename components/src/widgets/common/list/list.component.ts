@@ -738,6 +738,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
+    // Empty the list content on clear
+    public clear () {
+        this.updateFieldDefs([]);
+    }
+
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (_.includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
             this.eventManager.addEventListener(
