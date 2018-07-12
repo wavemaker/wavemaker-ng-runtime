@@ -26,7 +26,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     @ViewChild('select', {read: ElementRef}) selectEl: ElementRef;
 
     set datasource(ds) {
-        if (ds.execute(DataSource.Operation.IS_BOUND_TO_LOCALE)) {
+        if (ds && ds.execute && ds.execute(DataSource.Operation.IS_BOUND_TO_LOCALE)) {
             this.datavalue = ds.execute(DataSource.Operation.GET_DEFAULT_LOCALE);
         }
     }
