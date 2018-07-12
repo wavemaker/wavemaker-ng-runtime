@@ -267,9 +267,10 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @returns {any}
      */
     private getMethodInfo(variable, inputFields, options) {
-        const methodInfo = _.get(metadataService.getByOperationId(variable.operationId, variable.getPrefabName()), 'wmServiceOperationInfo');
+        const serviceDef = metadataService.getByOperationId(variable.operationId, variable.getPrefabName());
+        const methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
         if (!methodInfo) {
-            return null;
+            return methodInfo;
         }
         const securityDefnObj = _.get(methodInfo.securityDefinitions, '0'),
             isOAuthTypeService = securityDefnObj && (securityDefnObj.type === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2);

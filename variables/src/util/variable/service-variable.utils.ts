@@ -118,7 +118,8 @@ export class ServiceVariableUtils {
     static constructRequestParams(variable, operationInfo, inputFields) {
         variable = variable || {};
 
-        if (!operationInfo) {
+        // operationInfo is specifically null for un_authorized access
+        if (operationInfo === null) {
             return {
                 'error' : {
                     'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.USER_UNAUTHORISED,
