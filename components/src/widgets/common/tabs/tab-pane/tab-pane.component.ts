@@ -102,6 +102,13 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.tabsRef.prev();
     }
 
+    // select event is called manually
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (eventName !== 'select') {
+            super.handleEvent(this.nativeElement, eventName, callback, locals);
+        }
+    }
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'content') {
             if (this.isActive) {
