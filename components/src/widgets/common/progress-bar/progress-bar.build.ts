@@ -29,12 +29,12 @@ register('wm-progress', (): IBuildTaskDef => {
 
                 const replaceRegex = getReplaceRegex(boundExpr);
 
-                if (type.includes(boundExpr)) {
+                if (type && type.includes(boundExpr)) {
                     type = type.replace(replaceRegex, '');
                     getAttr(node, 'type').value = type;
                 }
 
-                if (datavalue.includes(boundExpr)) {
+                if (datavalue && datavalue.includes(boundExpr)) {
                     datavalue = datavalue.replace(replaceRegex, '');
                     getAttr(node, 'datavalue').value = datavalue;
                 }

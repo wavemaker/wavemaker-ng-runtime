@@ -108,7 +108,7 @@ export class ProgressBarComponent extends StylableComponent {
         val = parseFloat('' + val);
         val = (val.toFixed(getDecimalCount(format)));
 
-        if (format.includes('%')) {
+        if (format && format.includes('%')) {
             val = `${val}%`;
         }
         return val;
@@ -120,7 +120,7 @@ export class ProgressBarComponent extends StylableComponent {
             this.data = this.dataset.map((datum): IProgressInfo => {
                 const val: string = findValueOf(datum, this.datavalue);
                 let percentVal = val;
-                if (!val.includes('%')) {
+                if (val && !val.includes('%')) {
                     percentVal = `${val}%`;
                 }
                 return {
