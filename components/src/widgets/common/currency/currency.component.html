@@ -8,6 +8,7 @@
        (ngModelChange)="handleChange($event);"
        [ngModelOptions]="{updateOn: 'blur'}"
        (blur)="invokeOnTouched($event)"
+       (focus)="invokeOnFocus($event)"
        [attr.step]="step"
        [attr.min]="minvalue"
        [attr.max]="maxvalue"
