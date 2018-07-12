@@ -12,7 +12,7 @@ export class SecurityConfigResolve implements Resolve<any> {
     constructor(private appManager: AppManagerService) {
 
         // if the project type is PREFAB, setting this flag will not trigger security/info call
-        this.loaded = _WM_APP_PROPERTIES.type === 'PREFAB';
+        this.loaded = this.appManager.isPrefabType() || this.appManager.isTemplateBundleType();
     }
 
     resolve() {

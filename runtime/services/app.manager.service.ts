@@ -328,4 +328,20 @@ export class AppManagerService {
     private setLandingPage() {
         return this.$security.getPageByLoggedInUser().then(p => this.$app.landingPageName = <string> p);
     }
+
+    /**
+     * return true if prefab type app
+     * @returns {boolean}
+     */
+    isPrefabType() {
+        return this.$app.isPrefabType;
+    }
+
+    /**
+     * return true if template bundle type app
+     * @returns {boolean}
+     */
+    isTemplateBundleType() {
+        return this.$app.isTemplateBundleType;
+    }
 }
