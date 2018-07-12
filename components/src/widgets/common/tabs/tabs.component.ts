@@ -112,7 +112,13 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.animateIn(headerElement);
 
         // this.setTabsLeftPosition(this.getPaneIndexByRef(this.activeTab), this.panes.length);
-        this.transitionTabIntoView();
+        if (this.canSlide()) {
+            if (!this.tabsAnimator) {
+                this.tabsAnimator = new TabsAnimator(this);
+                this.tabsAnimator.setGesturesEnabled(this.canSlide());
+            }
+            this.tabsAnimator.transitionTabIntoView();
+        }
     }
 
     public goToTab(tabIndex) {
@@ -168,7 +174,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     // select next tab relative to the current active tab
     public next() {
-        const pane = this.getSelectableTabAfterIndex(this.getActiveTabIndex() + 1);
+        const pane = this.getSelectableTabAfterIndex(this.getActiveTabIndex());
         if (pane) {
             pane.select();
         }
@@ -176,7 +182,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     // select prev tab relative to the current active tab
     public prev() {
-        const pane = this.getSelectableTabBeforeIndex(this.getActiveTabIndex() - 1);
+        const pane = this.getSelectableTabBeforeIndex(this.getActiveTabIndex());
         if (pane) {
             pane.select();
         }
@@ -200,34 +206,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
     }
 
-
-    // calculate the pane widths accordingly and add proper styles to animate the tab into viewport
-    private transitionTabIntoView() {
-
-        if (!this.canSlide()) {
-            return;
-        }
-
-        const index = this.getActiveTabIndex() || 0;
-        const contentNode = this.nativeElement.querySelector(':scope > .tab-content') as HTMLElement;
-        const childEls = contentNode.querySelectorAll(':scope >.tab-pane:not([hidden])');
-        const noOfTabs = childEls.length;
-
-        addClass(this.nativeElement, 'has-transition');
-        // set width on the tab-content
-
-        const maxWidth = `${noOfTabs * 100}%`;
-        setCSSFromObj(contentNode, {maxWidth: maxWidth, width: maxWidth});
-
-        const width = `${100 / noOfTabs}%`;
-        for (const child of Array.from(childEls)) {
-            setCSS(child as HTMLElement, 'width', width);
-        }
-
-
-        const leftVal = (-1 * index * 100 / noOfTabs);
-        setCSS(contentNode, 'transform', `translate3d(${leftVal}%, 0, 0)`);
-    }
 
     // update the postion of tab header
     private setTabsPosition() {
@@ -275,9 +253,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
-        if (this.canSlide()) {
-            this.tabsAnimator = new TabsAnimator(this);
-        }
     }
 
     ngAfterViewInit() {

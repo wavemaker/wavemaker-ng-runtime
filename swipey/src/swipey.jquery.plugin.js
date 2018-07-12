@@ -618,6 +618,7 @@ window.requestAnimationFrame = (function () {
             'direction': settings.direction,
             'threshold': settings.threshold,
             'bindEvents': settings.bindEvents,
+            'target': settings.target,
             'onSwipeStart': function(e, data) {
                 var cd;
                 state.$d = 0;
@@ -635,9 +636,10 @@ window.requestAnimationFrame = (function () {
                 state.bounds.strictLower = !(state.bounds.strict === false || state.bounds.strictLower === false);
                 state.bounds.strictUpper = !(state.bounds.strict === false || state.bounds.strictUpper === false);
 
-                if ((state.bounds.strictLower &&
-                    ((_.isUndefined(state.bounds.lower) && data.length < 0) ||
-                        (!_.isUndefined(state.bounds.lower) && state.bounds.lower > cd))) ||
+                if (!settings.enableGestures() ||
+                    (state.bounds.strictLower &&
+                        ((_.isUndefined(state.bounds.lower) && data.length < 0) ||
+                            (!_.isUndefined(state.bounds.lower) && state.bounds.lower > cd))) ||
                     (state.bounds.strictUpper &&
                         ((_.isUndefined(state.bounds.upper) && data.length > 0) ||
                             (!_.isUndefined(state.bounds.upper) && state.bounds.upper < cd)))) {
@@ -724,8 +726,10 @@ window.requestAnimationFrame = (function () {
         this.each(function() {
             addSwipey($(this), $.extend({
                 'direction': $.fn.swipey.DIRECTIONS.HORIZONTAL,
+                'target': $(this),
                 //'step': 10,
                 'threshold': 30,
+                'enableGestures': function() { return true; },
                 'bindEvents': ['touch'],
                 'bounds': {},
                 'context': {},

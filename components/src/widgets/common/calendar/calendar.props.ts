@@ -1,9 +1,9 @@
+import { isMobileApp } from '@wm/core';
+
 import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
-    register(
-        'wm-calendar',
-        new Map(
+    const props = new Map(
             [
                 ['calendartype', {value: 'basic', ...PROP_STRING}],
                 ['class', PROP_STRING],
@@ -22,6 +22,9 @@ export const registerProps = () => {
                 ['view', PROP_STRING],
                 ['selectionmode', PROP_STRING]
             ]
-        )
-    );
+        );
+    if (isMobileApp()) {
+        props.set('view', {value: 'day', ...PROP_STRING});
+    }
+    register('wm-calendar', props);
 };
