@@ -117,7 +117,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     public goToTab(tabIndex) {
         if (this.isValidPaneIndex(tabIndex - 1)) {
-            const tab = this.getPaneRefByIndex(tabIndex);
+            const tab = this.getPaneRefByIndex(tabIndex - 1);
             tab.select();
         }
     }
