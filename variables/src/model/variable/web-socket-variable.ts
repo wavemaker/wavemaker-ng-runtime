@@ -29,6 +29,10 @@ export class WebSocketVariable extends ApiAwareVariable {
         return getManager().send(this);
     }
 
+    cancel() {
+        return this.close();
+    }
+
     invoke(options?, success?, error?) {
         getManager().send(this);
         if (success) {
