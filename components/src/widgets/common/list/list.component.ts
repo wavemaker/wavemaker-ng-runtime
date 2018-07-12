@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, E
 
 import { Subscription } from 'rxjs/Subscription';
 
-import { $appDigest, App, DataSource, getClonedObject, isDataSourceEqual, isDefined, isObject, noop, switchClass } from '@wm/core';
+import { $appDigest, App, DataSource, getClonedObject, isDataSourceEqual, isDefined, isNumber, isObject, noop, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -453,7 +453,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     /**
      * Selects the listItem and updates selecteditem property.
-     * If the listItem is already a selected selected item then deselects the item.
+     * If the listItem is already a selected item then deselects the item.
      * @param {ListItemDirective} $listItem: Item to be selected of deselected.
      */
     private toggleListItemSelection($listItem: ListItemDirective) {
@@ -587,7 +587,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     // returns listitem reference by index value.
-    private getQueryListItemByIndex(index: number) {
+    private getQueryListItemByIndex(index: number): ListItemDirective {
         return this.listItems.toArray()[index];
     }
 
@@ -741,6 +741,43 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     // Empty the list content on clear
     public clear () {
         this.updateFieldDefs([]);
+    }
+
+    /**
+     *  Returns ListItem Reference based on the input provided.
+     * @param val: index | model of the list item.
+     * @returns {ListItemDirective}
+     */
+    private getItemRefByIndexOrModel(val: any): ListItemDirective {
+        let listItem: ListItemDirective;
+        if (isNumber(val)) {
+            listItem = this.getQueryListItemByIndex(val);
+        } else {
+            listItem = this.getListItemByModel(val);
+        }
+        return listItem;
+    }
+
+    /**
+     * deselects item in the list.
+     * @param val: index | model of the list item.
+     */
+    public deselectItem (val: any) {
+        const listItem = this.getItemRefByIndexOrModel(val);
+        if (listItem && listItem.isActive) {
+            this.toggleListItemSelection(listItem);
+        }
+    }
+
+    /**
+     * selects item in the list.
+     * @param val: index | model of the list item.
+     */
+    public selectItem(val) {
+        const listItem = this.getItemRefByIndexOrModel(val);
+        if (listItem && !listItem.isActive) {
+            this.toggleListItemSelection(listItem);
+        }
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
