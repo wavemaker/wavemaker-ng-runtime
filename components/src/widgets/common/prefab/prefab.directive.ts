@@ -11,6 +11,8 @@ const DEFAULT_CLS = 'app-prefab';
 
 const registeredPropsSet = new Set<string>();
 
+declare const _;
+
 @Directive({
     selector: 'section[wmPrefab]',
     providers: [
@@ -71,7 +73,8 @@ export class PrefabDirective extends StylableComponent {
                 type = v.type;
             }
 
-            propsMap.set(k, {type, value: v.value});
+            // Do not set the 'bind:*' values
+            propsMap.set(k, {type, value: _.startsWith(v.value, 'bind:') ? undefined : v.value});
         });
 
         registeredPropsSet.add(this.widgetType);

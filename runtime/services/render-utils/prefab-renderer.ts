@@ -1,7 +1,7 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 
 import { transpile } from '@wm/transpiler';
-import { App, noop } from '@wm/core';
+import { $watch, App, noop } from '@wm/core';
 import { BaseComponent } from '@wm/components';
 
 import { FragmentRenderer } from './fragment-renderer';
@@ -47,7 +47,7 @@ export class PrefabRenderer {
     private registerProps(prefabName: string, instance: any, containerWidget: any) {
         this.prefabMngr.getConfig(prefabName)
             .then(config => {
-                containerWidget.setProps(config);
+
                 if (config) {
                     Object.entries((config.properties || {}))
                         .forEach(([key, prop]) => {
@@ -65,6 +65,15 @@ export class PrefabRenderer {
                                     }
                                 };
                             } else {
+
+                                let expr;
+
+                                let value = _.trim(prop.value);
+
+                                if (_.startsWith(value, 'bind:')) {
+                                    expr = value.replace('bind:', '');
+                                }
+
                                 Object.defineProperty(instance, key, {
                                     get: () => {
                                         return containerWidget[key];
@@ -73,9 +82,16 @@ export class PrefabRenderer {
                                         containerWidget.widget[key] = nv;
                                     }
                                 });
+
+                                if (expr) {
+                                    instance.registerDestroyListener(
+                                        $watch(expr, instance, {}, nv => containerWidget.widget[key] = nv)
+                                    )
+                                }
                             }
                         });
                 }
+                containerWidget.setProps(config);
             });
     }
 
