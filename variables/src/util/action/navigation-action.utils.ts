@@ -221,7 +221,7 @@ const goToView = function (viewName, options, variable) {
  * @param options
  */
 export const navigate = (variable, options) => {
-
+    variable.dataSet = (options && options.data) || variable.dataSet;
     let viewName;
     const pageName = variable.dataBinding.pageName || variable.pageName,
         operation = variable.operation,

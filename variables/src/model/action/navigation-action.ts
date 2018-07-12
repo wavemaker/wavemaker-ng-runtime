@@ -15,13 +15,13 @@ export class NavigationAction extends BaseAction {
         Object.assign(this as any, variable);
     }
 
-    invoke() {
-        getManager().invoke(this);
+    invoke(options?) {
+        getManager().invoke(this, options);
     }
 
     // legacy method.
-    navigate() {
-        this.invoke();
+    navigate(options?) {
+        this.invoke(options);
     }
 
     init() {
