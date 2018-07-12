@@ -179,6 +179,7 @@ then
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
         ./node_modules/iscroll/build/iscroll.js \
+        ./node_modules/js-cookie/src/js.cookie.js \
         ./dist/tmp/swipey.umd.js \
         ./swipey/src/swipey.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
@@ -247,6 +248,7 @@ then
         ./dist/tmp/ionic-native-core.umd.js \
         ./dist/tmp/ionic-native-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
+        ./node_modules/js-cookie/src/js.cookie.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b
 
     if [ "$?" != "0" ]
