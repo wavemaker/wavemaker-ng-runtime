@@ -53,6 +53,10 @@ export class CurrencyComponent extends BaseFormCustomComponent implements OnInit
         }
     }
 
+    private invokeOnFocus($event) {
+        this.invokeEventCallback('focus', {$event});
+    }
+
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
