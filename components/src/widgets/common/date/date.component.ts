@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { getDateObj, getFormattedDate, setAttr } from '@wm/core';
+import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -36,6 +36,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private isOpen: boolean;
 
     private keyEventPlugin;
+    private deregisterEventListener;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -115,6 +116,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private hideDatepickerDropdown() {
         this.isOpen = false;
+        this.deregisterEventListener();
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
 
@@ -128,6 +130,30 @@ export class DateComponent extends BaseDateTimeComponent {
             return;
         }
         this.bsDatePickerDirective.toggle();
+        this.addBodyClickListener(this.bsDatePickerDirective.isOpen);
+    }
+
+    private addBodyClickListener(skipListener) {
+        if (!skipListener) {
+            return;
+        }
+        const bodyElement = document.querySelector('body');
+        setTimeout(() => {
+            const bsDateContainerElement = bodyElement.querySelector(`.${this.dateContainerCls}`);
+            this.deregisterEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', () => {
+                this.isOpen = false;
+            }, EVENT_LIFE.ONCE, true);
+        }, 350);
+    }
+
+    /**
+     * This is an internal method triggered when pressing key on the date input
+     */
+    private onDisplayKeydown(event) {
+        const action = this.keyEventPlugin.getEventFullKey(event);
+        if (action === 'enter' || action === 'arrowdown') {
+            this.toggleDpDropdown(event);
+        }
     }
 
     /**

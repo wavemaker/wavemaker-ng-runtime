@@ -336,18 +336,26 @@ export const getDateObj = (value?: string): Date => {
     return dateObj;
 };
 
-export const addEventListener = (_element: Element, excludeElement: Element, eventType, successCB, life: EVENT_LIFE) => {
+export const addEventListenerOnElement = (_element: Element, excludeElement: Element, nativeElement: Element, eventType, successCB, life: EVENT_LIFE, isCapture = false) => {
     const element: Element = _element;
     const eventListener = (event) => {
         if (excludeElement && (excludeElement.contains(event.target) || excludeElement === event.target)) {
             return;
         }
+        if (nativeElement.contains(event.target)) {
+            element.removeEventListener(eventType, eventListener, isCapture);
+            return;
+        }
         if (life === EVENT_LIFE.ONCE) {
-            element.removeEventListener(eventType, eventListener);
+            element.removeEventListener(eventType, eventListener, isCapture);
         }
         successCB();
     };
-    element.addEventListener(eventType, eventListener);
+    element.addEventListener(eventType, eventListener, isCapture);
+    const removeEventListener = () => {
+        element.removeEventListener(eventType, eventListener, isCapture);
+    };
+    return removeEventListener;
 };
 
 /**

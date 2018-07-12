@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
+import { addClass, addEventListenerOnElement, EVENT_LIFE, getDateObj, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -43,6 +43,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     public showdropdownon: string;
     public useDatapicker = true;
     private keyEventPlugin;
+    private deregisterDatepickerEventListener;
+    private deregisterTimepickeEventListener;
 
     get timestamp() {
         return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
@@ -144,6 +146,21 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private toggleTimePicker(newVal) {
         this.isTimeOpen = newVal;
         this.invokeOnTouched();
+        this.addTimepickerClickListener(this.isTimeOpen);
+    }
+
+    private addTimepickerClickListener(skipListener) {
+        if (!skipListener) {
+            return;
+        }
+        const bodyElement = document.querySelector('body');
+        const evt = new Event('click');
+        setTimeout(() => {
+            const dropdownElement = bodyElement.querySelector('.dropdown-menu');
+            this.deregisterTimepickeEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', () => {
+                this.toggleTimePicker(false);
+            }, EVENT_LIFE.ONCE, true);
+        }, 350);
     }
 
     private focusPopover() {
@@ -230,6 +247,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     private hideTimepickerDropdown() {
         this.toggleTimePicker(false);
+        this.deregisterTimepickeEventListener();
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
     }
@@ -237,27 +255,21 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method to add a click listener once the time dropdown is open
      */
-    private addClickListener() {
+    private onTimepickerOpen() {
         // adding class for time widget dropdown menu
         const tpElements  = document.querySelectorAll('timepicker');
         _.forEach(tpElements, (element) => {
             addClass(element.parentElement as HTMLElement, 'app-datetime');
         });
 
-        setTimeout(() => {
-            const dropdownElement = this.nativeElement.querySelector('.dropdown-menu');
-            const bodyElement = document.querySelector('body');
-            addEventListener(bodyElement, dropdownElement, 'click', () => {
-                this.toggleTimePicker(false);
-            }, EVENT_LIFE.ONCE);
-        }, 350);
-
+        this.bsDatePickerDirective.hide();
         this.focusPopover();
         this.bindTimePickerKeyboardEvents();
     }
 
     private onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
+        this.toggleTimePicker(false);
         this.invokeOnTouched();
         const dateContainer  = document.querySelector(`.${this.dateContainerCls}`) as HTMLElement;
         setAttr(dateContainer, 'tabindex', '0');
@@ -319,10 +331,25 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             return;
         }
         this.bsDatePickerDirective.toggle();
+        this.addBodyClickListener(this.bsDatePickerDirective.isOpen);
+    }
+
+    private addBodyClickListener(skipListener) {
+        if (!skipListener) {
+            return;
+        }
+        const bodyElement = document.querySelector('body');
+        setTimeout(() => {
+            const bsDateContainerElement = bodyElement.querySelector(`.${this.dateContainerCls}`);
+            this.deregisterDatepickerEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', () => {
+                this.bsDatePickerDirective.hide();
+            }, EVENT_LIFE.ONCE, true);
+        }, 350);
     }
 
     private hideDatepickerDropdown() {
         this.bsDatePickerDirective.hide();
+        this.deregisterDatepickerEventListener();
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
 
@@ -332,6 +359,16 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         let newVal = $event.target.value.trim();
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
         this.onModelUpdate(newVal);
+    }
+
+    /**
+     * This is an internal method triggered when pressing key on the datetime input
+     */
+    private onDisplayKeydown(event) {
+        const action = this.keyEventPlugin.getEventFullKey(event);
+        if (action === 'enter' || action === 'arrowdown') {
+            this.toggleDpDropdown(event);
+        }
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
