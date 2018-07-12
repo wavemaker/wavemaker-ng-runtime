@@ -162,7 +162,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             this._modelByKey = [];
             values.forEach(val => {
                 const itemByValue = _.find(this.datasetItems, item => {
-                    return (_.isObject(item.value) ? _.isEqual(item.value, val) : _.toString(item.value) === _.toString(val));
+                    return (_.isObject(item.value) ? _.isEqual(item.value, val) : (_.toString(item.value)).toLowerCase() === (_.toString(val)).toLowerCase());
                 });
                 if (itemByValue) {
                     itemByValue.selected = true;
@@ -172,7 +172,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         } else {
             this._modelByKey = undefined;
             const itemByValue = _.find(this.datasetItems, item => {
-                return (_.isObject(item.value)  ? _.isEqual(item.value, values) : _.toString(item.value) === _.toString(values));
+                return (_.isObject(item.value)  ? _.isEqual(item.value, values) : (_.toString(item.value)).toLowerCase() === (_.toString(values)).toLowerCase());
             });
             if (itemByValue) {
                 itemByValue.selected = true;
