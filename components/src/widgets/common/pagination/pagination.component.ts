@@ -78,6 +78,11 @@ export class PaginationComponent extends StylableComponent {
     pagingOptions;
 
     private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, 250);
+    private _debouncedPageChanged = debounce(event => {
+        this.dn.currentPage = event && event.page;
+        this.goToPage();
+        this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
+    }, 250);
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
         super(inj, WIDGET_CONFIG);
@@ -349,9 +354,7 @@ export class PaginationComponent extends StylableComponent {
     }
 
     pageChanged(event: any) {
-        this.dn.currentPage = event && event.page;
-        this.goToPage();
-        this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
+       this._debouncedPageChanged(event);
     }
 
     /*Function to navigate to the respective pages.*/
