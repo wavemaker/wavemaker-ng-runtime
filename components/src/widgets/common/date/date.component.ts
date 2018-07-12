@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, ViewChild, Inject } from '@angular/core';
+import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
@@ -31,6 +32,10 @@ export class DateComponent extends BaseDateTimeComponent {
     private bsDataValue;
     public showdropdownon: string;
     public useDatapicker = true;
+    private dateContainerCls: string;
+    private isOpen: boolean;
+
+    private keyEventPlugin;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -59,10 +64,15 @@ export class DateComponent extends BaseDateTimeComponent {
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
-    constructor(inj: Injector, public datePipe: ToDatePipe, private cdRef: ChangeDetectorRef) {
+    constructor(inj: Injector, public datePipe: ToDatePipe, private cdRef: ChangeDetectorRef,
+                @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
-        this._dateOptions.containerClass = 'theme-red';
+
+        // KeyEventsPlugin
+        this.keyEventPlugin = evtMngrPlugins[1].constructor;
+        this.dateContainerCls = `app-date-${this.widgetId}`;
+        this._dateOptions.containerClass = `theme-red ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
     }
 
@@ -86,6 +96,28 @@ export class DateComponent extends BaseDateTimeComponent {
 
     onDatePickerOpen() {
         this.invokeOnTouched();
+        this.isOpen = true;
+        const dateContainer  = document.querySelector(`.${this.dateContainerCls}`) as HTMLElement;
+        setAttr(dateContainer, 'tabindex', '0');
+        this.addDatepickerKeyboardEvents(dateContainer);
+        setTimeout(() => dateContainer.focus());
+
+    }
+    private addDatepickerKeyboardEvents(dateContainer) {
+        dateContainer.onkeydown = (event) => {
+            const action = this.keyEventPlugin.getEventFullKey(event);
+            // Check for Shift+Tab key or Tab key or escape
+            if (action === 'shift.tab' || action === 'tab' || action === 'escape') {
+                this.hideDatepickerDropdown();
+            }
+        };
+    }
+
+    private hideDatepickerDropdown() {
+        this.isOpen = false;
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        setTimeout(() => displayInputElem.focus());
+
     }
 
     /**

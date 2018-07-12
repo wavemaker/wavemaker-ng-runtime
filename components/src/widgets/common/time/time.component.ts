@@ -236,6 +236,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private bindTimePickerKeyboardEvents() {
         setTimeout(() => {
             const $timepickerPopup = $('body').find('> bs-dropdown-container timepicker');
+            $timepickerPopup.attr('tabindex', 0);
             this.addEventsOnTimePicker($timepickerPopup);
         });
     }
@@ -252,6 +253,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             const action = this.keyEventPlugin.getEventFullKey(evt);
 
             let stopPropogation, preventDefault;
+
+            if (action === 'escape') {
+                this.hideTimepickerDropdown();
+            }
 
             if ($target.hasClass('bs-timepicker-field')) {
                 if ($parent.is(':first-child')) {
@@ -289,6 +294,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 }
             }
         });
+    }
+
+    private hideTimepickerDropdown() {
+        this.status.isopen = false;
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        setTimeout(() => displayInputElem.focus());
     }
 
     private focusPopover() {

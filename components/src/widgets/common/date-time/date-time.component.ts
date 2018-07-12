@@ -1,8 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewChild, NgZone, Inject } from '@angular/core';
+import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate, getValidDateObject, setAttr } from '@wm/core';
+import { addClass, addEventListener, EVENT_LIFE, getDateObj, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -41,6 +42,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     public showdropdownon: string;
     public useDatapicker = true;
+    private keyEventPlugin;
 
     get timestamp() {
         return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
@@ -78,6 +80,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     private _debouncedOnChange: Function =  _.debounce(this.invokeOnChange, 10);
 
+    private dateContainerCls: string;
+
     get datavalue(): any {
         return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
     }
@@ -99,11 +103,15 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.cdRef.detectChanges();
     }
 
-    constructor(inj: Injector, public datePipe: ToDatePipe, private cdRef: ChangeDetectorRef) {
+    constructor(inj: Injector, public datePipe: ToDatePipe, private ngZone: NgZone, private cdRef: ChangeDetectorRef,
+                @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
-        this._dateOptions.containerClass = 'theme-red';
+        // KeyEventsPlugin
+        this.keyEventPlugin = evtMngrPlugins[1].constructor;
+        this.dateContainerCls = `app-date-${this.widgetId}`;
+        this._dateOptions.containerClass = `theme-red ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
     }
 
@@ -138,6 +146,94 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.invokeOnTouched();
     }
 
+    private focusPopover() {
+        // setTimeout is used so that by then time input has the updated value. focus is setting back to the input field
+        this.ngZone.runOutsideAngular(() => {
+            setTimeout(() => {
+                $('timepicker .form-group:first > input.form-control').focus();
+            });
+        });
+
+    }
+
+    /**
+     * This function sets the value isOpen/isTimeOpen (i.e when datepicker popup is closed) based on widget type(i.e  DateTime, Time)
+     * @param val - isOpen/isTimeOpen is set based on the timepicker popup is open/closed
+     */
+    private setIsTimeOpen(val: boolean) {
+        this.isTimeOpen = val;
+    }
+
+    /**
+     * This function sets the events to given element
+     * @param $el - element on which the event is added
+     */
+    private addEventsOnTimePicker($el: JQuery) {
+        $el.on('keydown', evt => {
+            const $target = $(evt.target);
+            const $parent = $target.parent();
+
+            const action = this.keyEventPlugin.getEventFullKey(evt);
+
+            let stopPropogation, preventDefault;
+            if (action === 'shift.tab' || action === 'escape') {
+                this.hideTimepickerDropdown();
+            }
+            if ($target.hasClass('bs-timepicker-field')) {
+                if ($parent.is(':first-child')) {
+                    if (action === 'shift.tab' || action === 'enter' || action === 'escape') {
+                        this.setIsTimeOpen(false);
+                        this.focus();
+                        stopPropogation = true;
+                        preventDefault = true;
+                    }
+                } else if ($parent.is(':last-child')) {
+                    if (action === 'tab' || action === 'escape') {
+                        this.setIsTimeOpen(false);
+                        this.focus();
+                        stopPropogation = true;
+                        preventDefault = true;
+                    }
+                } else {
+                    if (action === 'enter' || action === 'escape') {
+                        this.setIsTimeOpen(false);
+                        this.focus();
+                        stopPropogation = true;
+                        preventDefault = true;
+                    }
+                }
+                if (stopPropogation) {
+                    evt.stopPropagation();
+                }
+                if (preventDefault) {
+                    evt.preventDefault();
+                }
+            } else if ($target.hasClass('btn-default')) {
+                if (action === 'tab' || action === 'escape') {
+                    this.setIsTimeOpen(false);
+                    this.focus();
+                }
+            }
+        });
+    }
+
+    /**
+     * This function sets the keyboard events to Timepicker popup
+     */
+    private bindTimePickerKeyboardEvents() {
+        setTimeout(() => {
+            const $timepickerPopup = $('body').find('> bs-dropdown-container timepicker');
+            $timepickerPopup.attr('tabindex', 0);
+            this.addEventsOnTimePicker($timepickerPopup);
+        });
+    }
+
+    private hideTimepickerDropdown() {
+        this.toggleTimePicker(false);
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        setTimeout(() => displayInputElem.focus());
+    }
+
     /**
      * This is an internal method to add a click listener once the time dropdown is open
      */
@@ -155,11 +251,36 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
                 this.toggleTimePicker(false);
             }, EVENT_LIFE.ONCE);
         }, 350);
+
+        this.focusPopover();
+        this.bindTimePickerKeyboardEvents();
     }
 
     private onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
         this.invokeOnTouched();
+        const dateContainer  = document.querySelector(`.${this.dateContainerCls}`) as HTMLElement;
+        setAttr(dateContainer, 'tabindex', '0');
+        this.addDatepickerKeyboardEvents(dateContainer);
+        setTimeout(() => dateContainer.focus());
+    }
+
+
+    private addDatepickerKeyboardEvents(dateContainer) {
+        dateContainer.onkeydown = (event) => {
+            const action = this.keyEventPlugin.getEventFullKey(event);
+            // Check for Tab key or escape
+            if (action === 'escape') {
+                this.hideDatepickerDropdown();
+            }
+            if (action === 'tab') {
+                this.bsDatePickerDirective.hide();
+                this.toggleTimePicker(true);
+            }
+            if (action === 'shift.tab') {
+                this.hideDatepickerDropdown();
+            }
+        };
     }
 
     /**
@@ -200,9 +321,16 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.bsDatePickerDirective.toggle();
     }
 
+    private hideDatepickerDropdown() {
+        this.bsDatePickerDirective.hide();
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        setTimeout(() => displayInputElem.focus());
+
+    }
+
     private onDateChange($event) {
         let newVal = $event.target.value.trim();
-        newVal = newVal ? getValidDateObject(newVal) : undefined;
+        newVal = newVal ? getNativeDateObject(newVal) : undefined;
         this.onModelUpdate(newVal);
     }
 
