@@ -1,7 +1,7 @@
 import { Component, Inject, Injector, NgZone, OnDestroy } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
-import { $appDigest, addClass, addEventListener, EVENT_LIFE, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
+import { $appDigest, addClass, addEventListenerOnElement, EVENT_LIFE, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
@@ -40,6 +40,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     private showseconds: boolean;
     private ismeridian: boolean;
+    private deregisterEventListener;
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
@@ -151,7 +152,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
             return;
         }
-        this.status.isopen = !this.status.isopen;
+        this.ngZone.run(() => {
+            this.status.isopen = !this.status.isopen;
+        });
+
         this.addBodyClickListener(this.status.isopen);
     }
 
@@ -169,11 +173,21 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         const bodyElement = document.querySelector('body');
         const evt = new Event('click');
         setTimeout(() => {
-            const dropdownElement = this.nativeElement.querySelector('.dropdown-menu');
-            addEventListener(bodyElement, dropdownElement, 'click', () => {
+            const dropdownElement = bodyElement.querySelector('.dropdown-menu');
+            this.deregisterEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', () => {
                 this.status.isopen = false;
-            }, EVENT_LIFE.ONCE);
+            }, EVENT_LIFE.ONCE, true);
         }, 350);
+    }
+
+    /**
+     * This is an internal method triggered when pressing key on the time input
+     */
+    private onDisplayKeydown(event) {
+        const action = this.keyEventPlugin.getEventFullKey(event);
+        if (action === 'enter' || action === 'arrowdown') {
+            this.toggleDropdown(event);
+        }
     }
 
     /**
@@ -298,6 +312,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     private hideTimepickerDropdown() {
         this.status.isopen = false;
+        this.deregisterEventListener();
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
     }

@@ -12,7 +12,8 @@
            [disabled]="disabled || readonly || isCurrentDate"
            [required]="required"
            [attr.placeholder]="placeholder"
-           (change)="onDisplayDateChange($event)">
+           (change)="onDisplayDateChange($event)"
+           (keydown)="onDisplayKeydown($event)">
     <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-time" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="toggleDpDropdown($event)" focus-target><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
         </span>

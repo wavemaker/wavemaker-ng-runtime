@@ -2,7 +2,7 @@
 </ng-container>
 
 <ng-template #dataPickerTemplate>
-    <div dropdown [isOpen]="isTimeOpen" autoClose="false" [container]="'body'" (onShown)="addClickListener()" style="display: inherit;">
+    <div dropdown [isOpen]="isTimeOpen" autoClose="false" [container]="'body'" (onShown)="onTimepickerOpen()" style="display: inherit;">
         <input class="form-control app-textbox display-input" aria-label="Set the date and time"
                focus-target
                [name]="name"
@@ -13,7 +13,8 @@
                (change)="onDateChange($event)"
                [disabled]="disabled || readonly || isCurrentDate"
                [required]="required"
-               [attr.placeholder]="placeholder">
+               [attr.placeholder]="placeholder"
+               (keydown)="onDisplayKeydown($event)">
         <span class="input-group-btn">
         <button focus-target type="button" class="btn btn-default btn-date" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="toggleDpDropdown($event)">
             <i aria-hidden="true" class="app-icon wi wi-calendar"></i>

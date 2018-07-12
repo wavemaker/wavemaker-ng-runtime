@@ -10,7 +10,8 @@
            [attr.placeholder]="placeholder"
            [required]="required"
            (click)="toggleDropdown($event)"
-           (change)="onDisplayTimeChange($event)">
+           (change)="onDisplayTimeChange($event)"
+           (keydown)="onDisplayKeydown($event)">
     <span class="input-group-btn dropdown-toggle">
       <button focus-target type="button" class="btn btn-default btn-date" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
     </span>
