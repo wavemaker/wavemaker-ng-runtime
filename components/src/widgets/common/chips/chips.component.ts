@@ -125,9 +125,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
 
         // clone the data as the updations on data will change the datavalue.
-        const dataValue = _.clone(data);
+        let dataValue = _.clone(data);
 
         this.chipsList = [];
+
+        // update the model when model has items more than maxsize
+        if (this.maxsize && dataValue.length > this.maxsize) {
+            this._modelByValue = dataValue = _.slice(dataValue, 0, this.maxsize);
+        }
 
         /**
          * For each value in datavalue,
@@ -390,14 +395,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             return;
         }
 
-        const pulledItems = _.pullAt(this.chipsList, indexes);
-
-        pulledItems.forEach(datasetItem => {
-            _.remove(this.datavalue, val => {
-                return _.isObject(val) ? _.isEqual(val, datasetItem.value) : _.toString(val) === _.toString(datasetItem.value);
-            });
-        });
-
         // focus next chip after deletion.
         const chipsLength = this.chipsList.length;
         const $chipsList = this.$element.find('li.chip-item > a.app-chip');
@@ -416,10 +413,19 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
         });
 
+        const pulledItems = _.pullAt(this.chipsList, indexes);
+
+        pulledItems.forEach(datasetItem => {
+            this._modelByValue = _.filter(this._modelByValue, val => {
+                return !(_.isObject(val) ? _.isEqual(val, datasetItem.value) : _.toString(val) === _.toString(datasetItem.value));
+            });
+        });
+
+        this.invokeOnChange(this._modelByValue, $event, true);
+
         this.updateMaxSize();
 
         this.invokeEventCallback('remove', {$event, item: items.length === 1 ? items[0] : items});
-        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     // Adds the custom chip when datavalue is undefined.
