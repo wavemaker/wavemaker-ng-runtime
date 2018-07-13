@@ -117,7 +117,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this._name = name;
         this._key = key;
         this.isRange = isRange;
-        this.excludeProps = new Set(['type']);
+        this.excludeProps = new Set(['type', 'name']);
         this.widgettype = _widgetType;
 
         if (this.binddataset || this.$element.attr('dataset')) {
