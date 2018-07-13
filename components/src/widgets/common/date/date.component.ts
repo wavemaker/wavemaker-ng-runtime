@@ -14,6 +14,8 @@ import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 registerProps();
 
+declare const _;
+
 const DEFAULT_CLS = 'app-date input-group';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-date',
@@ -122,6 +124,13 @@ export class DateComponent extends BaseDateTimeComponent {
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
 
+    }
+
+    // change and blur events are added from the template
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (!_.includes(['blur', 'focus', 'change'], eventName)) {
+            super.handleEvent(node, eventName, callback, locals);
+        }
     }
 
     /**

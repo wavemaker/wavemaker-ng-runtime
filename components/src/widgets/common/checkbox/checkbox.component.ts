@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
@@ -56,6 +56,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     private _uncheckedvalue;
 
     @ViewChild(NgModel) ngModel: NgModel;
+    @ViewChild('checkbox', {read: ElementRef}) checkboxEl: ElementRef;
 
     // if the checkbox is checked, return checkedvalue else return uncheckedvalue
     public get datavalue() {
@@ -107,7 +108,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     // change and blur events are handled from template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
-            super.handleEvent(node, eventName, callback, locals);
+            super.handleEvent(this.checkboxEl.nativeElement, eventName, callback, locals);
         }
     }
 
