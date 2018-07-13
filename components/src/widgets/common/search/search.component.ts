@@ -296,6 +296,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         return this.dataProvider.filter(dataConfig)
             .then((response: any) => {
+                // on focusout i.e. on other widget focus, if n/w is pending loading icon is shown, when data is available then dropdown is shown again.
+                    if (this._unsubscribeDv) {
+                        response = {
+                            data: [],
+                            isLastPage: false
+                        };
+                        this.dataProvider.hasMoreData = false;
+                    }
+
                     this.noMoreData = response.isLastPage;
 
                     // response from dataProvider returns always data object.
@@ -525,6 +534,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     protected onFocus($event) {
         this.invokeEventCallback('focus', {$event});
+    }
+
+    // on focusout, subscribe to the datavalue changes again
+    protected onFocusOut() {
+        this._unsubscribeDv = false;
+        this._loadingItems = false;
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
