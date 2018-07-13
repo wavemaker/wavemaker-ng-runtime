@@ -8,6 +8,7 @@ export const switchProps = new Map(
         ['dataset', {value: 'yes, no, maybe', ...PROP_ANY}],
         ['datavalue', PROP_STRING],
         ['displayfield', PROP_STRING],
+        ['disabled', PROP_BOOLEAN],
         ['iconclass', PROP_STRING],
         ['orderby', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],

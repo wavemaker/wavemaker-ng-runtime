@@ -312,7 +312,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     private hideTimepickerDropdown() {
         this.status.isopen = false;
-        this.deregisterEventListener();
+        if (this.deregisterEventListener) {
+            this.deregisterEventListener();
+        }
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
     }

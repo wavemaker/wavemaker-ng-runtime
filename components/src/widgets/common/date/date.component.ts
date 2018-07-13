@@ -116,7 +116,9 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private hideDatepickerDropdown() {
         this.isOpen = false;
-        this.deregisterEventListener();
+        if (this.deregisterEventListener) {
+            this.deregisterEventListener();
+        }
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
 

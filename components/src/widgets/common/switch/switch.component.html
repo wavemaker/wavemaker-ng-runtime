@@ -4,8 +4,7 @@
        href="javascript:void(0);"
        class="btn btn-default"
        [name]="'wm-switch-' + opt.key"
-       [attr.disabled]="disabled"
-       [ngClass]="{'selected': opt.selected}"
+       [ngClass]="{'selected': opt.selected, 'disabled': disabled}"
        (click)="selectOpt($event, $index, opt)"
        [textContent] = "opt[displayfield] || opt.label">
         <i *ngIf="opt[iconclass || 'icon']" aria-hidden="true" [ngClass]="['app-icon', opt[iconclass] || opt['icon']]"></i>

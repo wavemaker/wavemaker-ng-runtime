@@ -247,7 +247,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     private hideTimepickerDropdown() {
         this.toggleTimePicker(false);
-        this.deregisterTimepickeEventListener();
+        if (this.deregisterTimepickeEventListener) {
+            this.deregisterTimepickeEventListener();
+        }
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
     }
@@ -300,7 +302,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      */
     private onModelUpdate(newVal, type?) {
         if (!newVal) {
-            this.proxyModel = undefined;
+            this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
             return;
         }
         if (type === 'date') {
@@ -349,7 +351,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     private hideDatepickerDropdown() {
         this.bsDatePickerDirective.hide();
-        this.deregisterDatepickerEventListener();
+        if (this.deregisterDatepickerEventListener) {
+            this.deregisterDatepickerEventListener();
+        }
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         setTimeout(() => displayInputElem.focus());
 
