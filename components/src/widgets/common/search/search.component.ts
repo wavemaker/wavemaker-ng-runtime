@@ -34,7 +34,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     public casesensitive: boolean;
     public searchkey: string;
-    public queryModel: DataSetItem[] | string;
+    public queryModel: Array<DataSetItem> | string;
     public query: string = '';
     public limit: any;
     public showsearchicon: boolean;
@@ -271,7 +271,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // This method returns a promise that provides the filtered data from the datasource.
-    public getDataSource(query: string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
+    public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
         // For default datavalue, search key as to be on datafield to get the default data from the filter call.
         const dataConfig: IDataProviderConfig = {
             dataset: this.dataset ? convertDataToObject(this.dataset) : undefined,
@@ -332,7 +332,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // When no result is found, set the datavalue to undefined.
                 if (!result.length) {
                     this._modelByValue = undefined;
-                    this.queryModel = query;
+                    this.queryModel = (query as string);
                 }
                 return result;
             });
@@ -347,7 +347,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             return Observable.of([]);
         }
         // search will show all the results fetched previously without making n/w calls all the time.
-        if (!this.isformfield && this.dataProvider.hasNoMoreData) {
+        if (!this.isformfield && this.dataProvider.hasNoMoreData && this.query) {
             // converting array to observable using "observable.to".
             return Observable.of(this.getTransformedData(this.formattedDataset));
         }

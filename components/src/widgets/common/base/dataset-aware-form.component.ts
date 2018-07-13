@@ -33,7 +33,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected datavalue$ = new Subject();
 
     protected _modelByKey: any;
-    protected _modelByValue: any;
+    public _modelByValue: any;
 
     // this field contains the initial datavalue which needs to be processed once the dataset is available
     public toBeProcessedDatavalue: any;
