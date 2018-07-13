@@ -327,7 +327,7 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
  */
 export const getDateObj = (value?: string): Date => {
     const dateObj = new Date(value);
-    if (value === null || value === undefined) {
+    if (value === '' || value === null || value === undefined) {
         return undefined;
     }
     if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {

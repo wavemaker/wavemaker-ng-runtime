@@ -31,6 +31,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     private oldVal;
     private btnwidth;
     private compareby;
+    private disabled: boolean;
 
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
@@ -113,6 +114,10 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
 
         this.invokeOnTouched();
         $event.preventDefault();
+
+        if (this.disabled) {
+            return;
+        }
 
         if (this.selectedItem && $index === (this.selectedItem.index - 1)) {
             if (this.datasetItems.length === 2) {
