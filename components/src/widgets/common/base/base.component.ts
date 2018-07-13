@@ -548,6 +548,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         $target.focus();
     }
 
+    // Defining the execute method on BaseComponent. If dataset is binded to widgets ouptut then datasource.execute will be defined
+    protected execute(operation, options): any {
+
+    }
+
     /**
      * nativeElement will be available by this time
      * if the delayInit is false, properties meta will be available by this time
