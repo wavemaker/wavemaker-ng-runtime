@@ -237,16 +237,10 @@ export class WebSocketVariableManager extends BaseVariableManager {
     public open(variable: WebSocketVariable) {
         const shouldOpen = this._onBeforeSocketOpen(variable);
         let socket;
-        if (!shouldOpen) {
+        if (shouldOpen === false) {
             return;
         }
         socket = this.getSocket(variable);
-
-        // close the connection on scope destruction
-        /*variable.activeScope.$on('$destroy', function () {
-            variable.close();
-        }); */
-
         return socket;
     }
 
@@ -279,6 +273,6 @@ export class WebSocketVariableManager extends BaseVariableManager {
         }
         message = isDefined(response) ? response : message;
         message = isObject(message) ? JSON.stringify(message) : message;
-        socket.send(message);
+        socket.send(message, 0);
     }
 }

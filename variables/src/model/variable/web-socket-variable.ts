@@ -33,8 +33,8 @@ export class WebSocketVariable extends ApiAwareVariable {
         return this.close();
     }
 
-    invoke(message?: string) {
-        this.send(message)
+    invoke() {
+        this.open();
     }
 
     init () {
