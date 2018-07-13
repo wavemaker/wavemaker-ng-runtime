@@ -1,10 +1,11 @@
-import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef } from '@angular/core';
+import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce } from '@wm/core';
 import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
+import { WidgetRef } from '../../framework/types';
 import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig, parseValueByType } from '../../../utils/live-utils';
@@ -80,9 +81,11 @@ const setTouchedState = ngForm => {
         provideAsWidgetRef(FormComponent)
     ]
 })
-export class FormComponent extends StylableComponent implements OnDestroy {
+export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit {
 
     @ViewChild('dynamicForm', {read: ViewContainerRef}) dynamicFormRef: ViewContainerRef;
+    // this is the reference to the component refs inside the form-group
+    @ContentChildren(WidgetRef, {descendants: true}) componentRefs;
 
     autoupdate;
     captionAlignClass: string;
@@ -220,6 +223,17 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         this.elScope = this;
 
         this.addEventsToContext(this.context);
+    }
+
+    ngAfterContentInit() {
+        setTimeout(() => {
+            this.componentRefs.forEach(componentRef => {
+                if (componentRef.name) {
+                    // Register widgets inside form with formWidgets
+                    this.formWidgets[componentRef.name] = componentRef;
+                }
+            });
+        }, 250);
     }
 
     addEventsToContext(context) {
