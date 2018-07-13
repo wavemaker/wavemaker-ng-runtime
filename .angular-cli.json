@@ -41,6 +41,7 @@
                 "../../../node_modules/jquery-ui/ui/widgets/sortable.js",
                 "../../../node_modules/jquery-ui/ui/widgets/droppable.js",
                 "../../../node_modules/hammerjs/hammer.min.js",
+                "../../../node_modules/js-cookie/src/js.cookie.min.js",
                 "../../../components/src/widgets/common/table/datatable.js"
             ],
             "environmentSource": "environments/environment.ts",

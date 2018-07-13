@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import {getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem} from '@wm/core';
+import { CONSTANTS } from '@wm/variables';
 
-declare const $, _, moment, _WM_APP_PROPERTIES;
+
+declare const $, _, moment, _WM_APP_PROPERTIES, Cookies;
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const MOMENT_LOCALE_PATH = 'resources/momentLocale';
@@ -152,12 +154,44 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     public loadDefaultLocale() {
-        const defaultLanguage = getSessionStorageItem('selectedLocale') || _WM_APP_PROPERTIES.defaultLanguage;
+        const _acceptLang = this.getAcceptedLanguages();
+        _acceptLang.push(_WM_APP_PROPERTIES.defaultLanguage);
+
+        let _supportedLang = _.split(_WM_APP_PROPERTIES.supportedLanguages, ',') || ['en'];
+
+        // check for the session storage to load any pre-requested locale
+        const _defaultLang = getSessionStorageItem('selectedLocale') || _.intersection(_acceptLang, _supportedLang)[0] || 'en';
+
+        // if the supportedLocale is not available set it to defaultLocale
+        _supportedLang = _supportedLang || [_defaultLang];
+
+        const defaultLanguage = _defaultLang || _supportedLang[0];
         return this.setSelectedLocale(defaultLanguage);
     }
 
     public getLocalizedMessage(message, ...args) {
         return replace(this.appLocale[message], args);
+    }
+
+    // This function returns the accepted languages list
+    public getAcceptedLanguages() {
+        let languages;
+        if (CONSTANTS.hasCordova) {
+            languages = navigator.languages || [navigator.language];
+        } else {
+            languages = Cookies.get('X-Accept-Language') || '';
+            /**
+             * Accept-Language Header will contain set of supported locale, so try splitting the string to proper locale set
+             * Ex: en,en-US;q=0.9,de;q=0.6,ar;q=0.2,hi
+             *
+             * Split the above into [en,en-us,de,ar,hi]
+             * @type {Array}
+             */
+            languages = languages.split(',').map(function(locale) {
+                return locale.split(';')[0];
+            });
+        }
+        return _.map(languages, _.toLower);
     }
 
 }
