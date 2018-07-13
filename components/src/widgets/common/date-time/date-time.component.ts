@@ -375,6 +375,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
     }
 
+    // change and blur events are added from the template
+    protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
+        if (!_.includes(['blur', 'focus', 'change'], eventName)) {
+            super.handleEvent(node, eventName, callback, locals);
+        }
+    }
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'autofocus' && nv) {
             const inputElement = this.$element.find('.display-input')[0] as HTMLElement;

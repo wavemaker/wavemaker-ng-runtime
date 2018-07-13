@@ -42,4 +42,8 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
             this.invokeEventCallback('blur', {$event});
         }
     }
+
+    protected invokeOnFocus($event: Event) {
+        this.invokeEventCallback('focus', {$event});
+    }
 }

@@ -1,7 +1,6 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
@@ -532,10 +531,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.$element.removeClass('full-screen');
     }
 
-    protected onFocus($event) {
-        this.invokeEventCallback('focus', {$event});
-    }
-
     // on focusout, subscribe to the datavalue changes again
     protected onFocusOut() {
         this._unsubscribeDv = false;
@@ -543,11 +538,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (eventName === 'select' || eventName === 'submit' || eventName === 'change') {
-            return;
+        if (!_.includes(['blur', 'focus', 'select', 'submit', 'change'], eventName)) {
+            super.handleEvent(node, eventName, eventCallback, locals);
         }
-
-        super.handleEvent(node, eventName, eventCallback, locals);
     }
 
     onPropertyChange(key: string, nv: any, ov: any) {
