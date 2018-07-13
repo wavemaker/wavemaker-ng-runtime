@@ -202,6 +202,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         let chipObj;
 
         if (searchComponent && isDefined(searchComponent.queryModel)) {
+            if (!searchComponent.query) {
+                return;
+            }
             chipObj = searchComponent.queryModel;
         } else {
             if (this.allowonlyselect) {
