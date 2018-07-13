@@ -65,12 +65,15 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         if (this.datafield === 'All Fields' && this.compareby && this.compareby.length) {
             setItemByCompare(this.datasetItems, this.datavalue, this.compareby);
         }
-        const selectedItem =  _.find(this.datasetItems, {value: this.datavalue});
+        const selectedItem = _.find(this.datasetItems, {value: this.datavalue});
 
         if (selectedItem) {
             this.selectedItem = selectedItem;
             return;
         }
+
+        // If no value is provided, set first value as default if options are available else set -1 ie no selection
+        this.selectOptAtIndex(0);
     }
 
     // set the css for switch overlay element.
@@ -105,6 +108,14 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
                 left: left + '%'
             }, 300);
         }
+    }
+
+    selectOptAtIndex($index) {
+        if (!this.datasetItems.length) {
+            return;
+        }
+        const opt = this.datasetItems[$index];
+        this._modelByValue = opt.value;
     }
 
     // Triggered on selected the option from the switch.
