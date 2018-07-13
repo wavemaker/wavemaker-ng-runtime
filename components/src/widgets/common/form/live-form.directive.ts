@@ -266,7 +266,7 @@ export class LiveFormDirective {
         /*If OperationType is not set then based on the formdata object return the operation type,
             this case occurs only if the form is outside a livegrid*/
         /*If the formdata object has primary key value then return update else insert*/
-        if (this.form.primaryKey && this.form.formdata) {
+        if (this.form.primaryKey && !_.isEmpty(this.form.formdata)) {
             /*If only one column is primary key*/
             if (this.form.primaryKey.length === 1) {
                 if (this.form.formdata[this.form.primaryKey[0]]) {

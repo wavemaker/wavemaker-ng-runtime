@@ -35,20 +35,18 @@ export class DeviceFileCacheService implements IDeviceStartUpService {
 
     public getLocalPath(url: string, downloadIfNotExists: boolean, isPersistent: boolean): Promise<string> {
         const filePath = this._cacheIndex[url];
-        return new Promise((resolve, reject) => {
-            this.fileService.isValidPath(filePath)
-                .then(() => resolve(filePath), () => {
+        return this.fileService.isValidPath(filePath)
+                .catch(() => {
                     delete this._cacheIndex[url];
                     if (downloadIfNotExists) {
-                        this.download(url, isPersistent);
+                        return this.download(url, isPersistent);
                     } else {
-                        reject();
+                        Promise.reject('No cache entry for ' + url);
                     }
                 });
-        });
     }
 
-    public invalidateCache(): void{
+    public invalidateCache(): void {
         this._cacheIndex = {};
         this.writeCacheIndexToFile();
         this.fileService.clearTemporaryStorage();
@@ -61,11 +59,12 @@ export class DeviceFileCacheService implements IDeviceStartUpService {
             }, noop);
     }
 
-    private download(url: string, isPersistent: boolean): Promise<void> {
+    private download(url: string, isPersistent: boolean): Promise<string> {
         return this.downloadService.download(url, isPersistent)
             .then(filepath => {
                 this._cacheIndex[url] = filepath;
                 this.writeCacheIndexToFile();
+                return filepath;
             });
     }
 

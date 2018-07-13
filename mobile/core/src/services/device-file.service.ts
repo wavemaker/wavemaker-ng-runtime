@@ -156,20 +156,16 @@ export class DeviceFileService implements IDeviceStartUpService {
     }
 
     public newFileName(folder: string, fileName: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            return this.cordovaFile.checkFile(folder, fileName)
-                .then(() => {
-                    const extIndex = fileName.lastIndexOf('.');
-                    if (extIndex > 0) {
-                        fileName = fileName.substring(0, extIndex) + '_' + Date.now() + '.' + fileName.substring(extIndex + 1);
-                    } else {
-                        fileName = fileName + '_' + Date.now();
-                    }
-                    return this.newFileName(folder, fileName);
-                }, function () {
-                    resolve(fileName);
-                });
-        });
+        return this.cordovaFile.checkFile(folder, fileName)
+            .then(() => {
+                const extIndex = fileName.lastIndexOf('.');
+                if (extIndex > 0) {
+                    fileName = fileName.substring(0, extIndex) + '_' + Date.now() + '.' + fileName.substring(extIndex + 1);
+                } else {
+                    fileName = fileName + '_' + Date.now();
+                }
+                return this.newFileName(folder, fileName);
+            }, () => fileName);
     }
 
     public removeFile(filePath: string): Promise<any> {
