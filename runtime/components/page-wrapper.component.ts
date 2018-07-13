@@ -106,21 +106,21 @@ export class EmptyPageComponent implements OnInit {
         private route: ActivatedRoute,
         private securityService: SecurityService,
         private router: Router,
-        private app: App
+        private app: App,
+        private appManger: AppManagerService
     ) {}
 
     ngOnInit() {
         if (this.app.isPrefabType) {
             // there is only one route
             this.router.navigate(['prefab-preview']);
+        } else  if (this.app.isApplicationType) {
+            this.securityService.getPageByLoggedInUser().then(page => {
+                this.router.navigate([page]);
+            });
         } else {
-            if (this.app.isApplicationType) {
-                this.securityService.getPageByLoggedInUser().then(page => {
-                    this.router.navigate([page]);
-                });
-            } else {
-                this.router.navigate([_WM_APP_PROPERTIES.homePage]);
-            }
+            this.router.navigate([_WM_APP_PROPERTIES.homePage]);
+            this.appManger.postAppTypeInfo();
         }
     }
 }
