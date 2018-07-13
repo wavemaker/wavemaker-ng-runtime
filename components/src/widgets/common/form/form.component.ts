@@ -97,7 +97,6 @@ export class FormComponent extends StylableComponent implements OnDestroy {
     captionwidth: string;
     _captionClass = '';
     ngform: FormGroup;
-    isUpdateMode = true;
     formFields = [];
     formfields = {};
     formWidgets = {};
@@ -164,6 +163,18 @@ export class FormComponent extends StylableComponent implements OnDestroy {
         return this._isLayoutDialog;
     }
 
+    private _isUpdateMode;
+    set isUpdateMode(nv) {
+        this._isUpdateMode = nv;
+        this.formFields.forEach(field => {
+            field.setReadOnlyState(nv);
+        });
+    }
+
+    get isUpdateMode() {
+        return this._isUpdateMode;
+    }
+
     @HostBinding('action') action: string;
 
     @HostListener('submit', ['$event']) submit($event) {
@@ -193,6 +204,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
 
         styler(this.nativeElement, this);
 
+        this.isUpdateMode = true;
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});
 
