@@ -4,9 +4,18 @@ import { DatePipe } from '@angular/common';
 
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { AbstractDialogService, AbstractHttpService, AbstractI18nService, App, isDefined, triggerFn, AbstractSpinnerService } from '@wm/core';
+import { AbstractDialogService, AbstractHttpService, AbstractI18nService, App, isDefined, triggerFn, AbstractSpinnerService, fetchContent } from '@wm/core';
 
 declare const _;
+
+enum POST_MESSAGES {
+    HIDE_TEMPLATES_SHOW_CASE = 'hide-templates-show-case',
+    SHOW_TEMPLATES_SHOW_CASE = 'show-templates-show-case',
+    UPDATE_LOCATION          = 'update-location-path',
+    SELECT_TEMPLATE          = 'select-template',
+    TEMPLATEBUNDLE_CONFIG    = 'template-bundle-config',
+    ON_LOAD                  = 'on-load'
+}
 
 @Injectable()
 export class AppManagerService {
@@ -14,6 +23,7 @@ export class AppManagerService {
     private appVariablesLoaded: boolean = false;
     private appVariablesFired: boolean = false;
     private _noRedirect: boolean = false;
+    private templates: Array<any>;
 
     constructor(
         private $http: AbstractHttpService,
@@ -343,5 +353,54 @@ export class AppManagerService {
      */
     isTemplateBundleType() {
         return this.$app.isTemplateBundleType;
+    }
+
+    postMessage(content) {
+        window.top.postMessage(content, '*');
+    }
+
+    showTemplate(idx) {
+        const template = this.templates[idx];
+        //scope.activeTemplateIndex = idx;
+        this.$router.navigate([template.id]);
+    }
+    postTemplateBundleInfo(){
+
+        window.onmessage = (evt) => {
+            const msgData = evt.data;
+
+            if (!_.isObject(msgData)) {
+                return;
+            }
+
+            const key = msgData.key;
+
+            switch (key) {
+                case POST_MESSAGES.HIDE_TEMPLATES_SHOW_CASE:
+                    //scope.hideShowCase = true;
+                    break;
+                case POST_MESSAGES.SELECT_TEMPLATE:
+                    this.showTemplate(msgData.templateIndex);
+                    break;
+            }
+        };
+
+        setTimeout(() =>{
+            this.postMessage({key: POST_MESSAGES.ON_LOAD});
+        });
+
+        return fetchContent('json', './config.json', true, response => {
+            this.templates = [];
+            if (!response.error) {
+                this.templates = response.templates;
+                this.postMessage({'key': POST_MESSAGES.TEMPLATEBUNDLE_CONFIG, 'config': response});
+            }
+        });
+    }
+
+    postAppTypeInfo() {
+        if (this.isTemplateBundleType()) {
+            return this.postTemplateBundleInfo();
+        }
     }
 }
