@@ -19,7 +19,7 @@ export class ImageCacheDirective implements DoCheck {
     ) {}
 
     public ngDoCheck() {
-        if (this._isEnabled && this.componentInstance.imgSource) {
+        if (this._isEnabled && this.componentInstance.imgSource && this.componentInstance.imgSource.startsWith('http')) {
             if (this._lastUrl !== this.componentInstance.imgSource) {
                 this._lastUrl = this.componentInstance.imgSource;
                 this.getLocalPath(this._lastUrl).then((localPath) => {

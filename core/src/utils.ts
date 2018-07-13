@@ -762,7 +762,7 @@ export const convertToBlob = (filepath): Promise<any> => {
         resolveLocalFileSystemURL(filepath, function (fileEntry) {
             fileEntry.file(function (file) {
                 // file has the cordova file structure. To submit to the backend, convert this file to javascript file
-                const reader = new window['__zone_symbol__FileReader']();
+                const reader = new FileReader();
                 reader.onloadend = () => {
                     const imgBlob = new Blob([reader.result], {
                         'type' : file.type
@@ -1003,3 +1003,17 @@ export const extendProto = (target, proto) => {
     }
     Object.setPrototypeOf(_proto, proto);
 };
+
+export const removeExtraSlashes = function (url) {
+    const base64regex = /^data:image\/([a-z]{2,});base64,/;
+    if (_.isString(url)) {
+        /*
+        * support for mobile apps having local file path url starting with file:/// and
+        * support for base64 format
+        * */
+        if (_.startsWith(url, 'file:///') || base64regex.test(url)) {
+            return url;
+        }
+        return url.replace(new RegExp('([^:]\/)(\/)+', 'g'), '$1');
+    }
+}
