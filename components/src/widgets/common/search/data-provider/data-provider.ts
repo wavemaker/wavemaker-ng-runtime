@@ -12,7 +12,7 @@ export interface IDataProviderConfig {
     datafield: string;
     binddataset?: string;
     datasource?: any;
-    query: string;
+    query: Array<string> | string;
     searchKey?: string;
     casesensitive?: boolean;
     isformfield?: boolean;
