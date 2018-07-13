@@ -45,6 +45,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
     private _datasource: any;
     private _debounceResetSearchModel: Function;
+    private _unsubscribeDv: boolean = false;
 
     // When datavalue is not available check value in "toBeProcessedDatavalue" property.
     set toBeProcessedDatavalue(val) {
@@ -86,6 +87,16 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+
+        const datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
+            // update queryModel only when parentRef is available.
+            if (!this._unsubscribeDv) {
+                // if the datafield is ALLFILEDS do not fetch the records
+                // update the query model with the values we have
+                this.updateQueryModel(val);
+            }
+        });
+        this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
     }
 
     ngOnInit() {
@@ -119,8 +130,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // This method updates the queryModel.
+    // default call to get the default data can be done only when defaultQuery is true.
     private updateQueryModel(data: any) {
-        if (!this.datasetItems.length || !data) {
+        if (!data) {
+            this.chipsList = [];
             return;
         }
 
@@ -133,6 +146,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (this.maxsize && dataValue.length > this.maxsize) {
             this._modelByValue = dataValue = _.slice(dataValue, 0, this.maxsize);
         }
+
+        const searchQuery: Array<string> = [];
 
         /**
          * For each value in datavalue,
@@ -151,18 +166,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             if (itemFound) {
                 this.chipsList.push(itemFound);
             } else if (this.datafield !== ALLFIELDS) {
-                this.getDefaultModel(val)
-                    .then(response => {
-                        if (response.length) {
-                            this.chipsList = this.chipsList.concat(response);
-                        } else if (this.allowonlyselect) {
-                            data.splice(i, 1);
-                        } else {
-                            this.nextItemIndex++;
-                            const transformedData = this.getTransformedData([dataValue[i]], this.nextItemIndex);
-                            this.chipsList.push(transformedData[0]);
-                        }
-                    });
+                searchQuery.push(val);
             } else if (this.datafield === ALLFIELDS) {
                 let dataObj;
                 if (!_.isObject(val)) {
@@ -181,16 +185,41 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
         });
 
+        // make default query with all the values and if response for the value is not in datavalue then add a custom chip object.
+        if (searchQuery) {
+            this.getDefaultModel(searchQuery)
+                .then(response => {
+                    this.chipsList = this.chipsList.concat(response);
+
+                    dataValue.forEach((val: any, i: number) => {
+                        const isExists = _.find(this.chipsList, (obj) => {
+                            return obj.value.toString() === val.toString();
+                        });
+
+                        if (!isExists) {
+                            if (this.allowonlyselect) {
+                                data.splice(i, 1);
+                            }
+                            this.nextItemIndex++;
+                            const transformedData = this.getTransformedData([val], this.nextItemIndex);
+                            this.chipsList.push(transformedData[0]);
+                        }
+                    });
+                });
+        }
+
         this.removeDuplicates();
         this.updateMaxSize();
-        this._debounceResetSearchModel();
+        this.resetSearchModel();
         $appDigest();
     }
 
     private resetSearchModel() {
         this.searchComponent.query = '';
         this.searchComponent.queryModel = '';
-        this.searchComponent.datavalue = undefined;
+        this.searchComponent._modelByValue = undefined;
+
+        this._unsubscribeDv = false;
 
         this.focusSearchBox();
     }
@@ -240,13 +269,17 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         this.chipsList.push(chipObj);
 
+        const prevDatavalue = _.clone(this.datavalue);
+
         if (!this.datavalue) {
             this._modelByValue = [chipObj.value];
         } else {
             this._modelByValue = [...this._modelByValue, chipObj.value];
         }
+
+        this._unsubscribeDv = true;
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue, $event || {}, true);
+        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: prevDatavalue});
 
         this.invokeEventCallback('add', {$event, $item: chipObj});
 
@@ -286,7 +319,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Makes call to searchComponent to filter the dataSource based on the query.
-    protected getDefaultModel(query: string) {
+    protected getDefaultModel(query: Array<string> | string) {
         return this.searchComponent.getDataSource(query, true);
     }
 
@@ -398,12 +431,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             return;
         }
 
-        // focus next chip after deletion.
-        const chipsLength = this.chipsList.length;
-        const $chipsList = this.$element.find('li.chip-item > a.app-chip');
+        const prevDatavalue = _.clone(this.datavalue);
 
+        // focus next chip after deletion.
         // if there are no chips in the list focus search box
         setTimeout(() => {
+            const chipsLength = this.chipsList.length;
+            const $chipsList = this.$element.find('li.chip-item > a.app-chip');
+
             if (!chipsLength || !canFocus) {
                 this.focusSearchBox();
             } else if ((chipsLength - 1) < focusIndex) {
@@ -424,7 +459,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             });
         });
 
+        this._unsubscribeDv = true;
+
         this.invokeOnChange(this._modelByValue, $event, true);
+        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: prevDatavalue});
 
         this.updateMaxSize();
 
