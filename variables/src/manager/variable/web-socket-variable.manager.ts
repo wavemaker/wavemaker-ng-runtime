@@ -268,7 +268,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * if message provide, it is sent, else the one present in RequestBody param is sent
      * @param message
      */
-    public send(variable: WebSocketVariable, message: string) {
+    public send(variable: WebSocketVariable, message?: string) {
         const socket      = this.getSocket(variable);
         let response;
 
@@ -280,9 +280,5 @@ export class WebSocketVariableManager extends BaseVariableManager {
         message = isDefined(response) ? response : message;
         message = isObject(message) ? JSON.stringify(message) : message;
         socket.send(message);
-    }
-
-    // Todo[Shubham]: Implement init method, after discussion
-    public init() {
     }
 }
