@@ -482,6 +482,7 @@ export class FormComponent extends StylableComponent implements OnDestroy {
                         this.onResult(error, false, $event);
                         this.toggleMessage(true, template, 'error');
                         this.invokeEventCallback('submit', params);
+                        $appDigest();
                     });
             } else {
                 this.onResult({}, true, $event);

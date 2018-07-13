@@ -501,6 +501,7 @@ export class LiveFormDirective {
         }, (error) => {
             this.form.onResult(error, false, event);
             this.form.toggleMessage(true, error, 'error');
+            $appDigest();
         });
     }
 }
