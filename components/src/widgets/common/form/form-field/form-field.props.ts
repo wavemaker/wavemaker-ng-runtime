@@ -82,7 +82,7 @@ const formFieldMap = new Map(
         ['period', PROP_BOOLEAN],
         ['pc-display', {value: true, ...PROP_BOOLEAN}],
         ['placeholder', PROP_STRING],
-        ['primary-key', PROP_STRING],
+        ['primary-key', PROP_BOOLEAN],
         ['related-entity-name', PROP_STRING],
         ['required', PROP_BOOLEAN],
         ['show', {value: true, ...PROP_BOOLEAN}],

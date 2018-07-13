@@ -13,7 +13,6 @@ const propsMap = new Map(
         ['dataset', PROP_ANY],
         ['datasource', PROP_STRING],
         ['expanded', {value: true, ...PROP_BOOLEAN}],
-        ['iconclass', PROP_STRING],
         ['name', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
@@ -40,6 +39,7 @@ formMap.set('messagelayout', {value: 'Inline', ...PROP_STRING});
 formMap.set('formdata', PROP_STRING);
 formMap.set('novalidate', PROP_BOOLEAN);
 formMap.set('validationtype', {value: 'default', ...PROP_STRING});
+formMap.set('iconclass', PROP_STRING);
 
 export const registerFormProps = () => {
     register(
@@ -59,6 +59,7 @@ liveFormMap.set('messagelayout', {value: 'Toaster', ...PROP_STRING});
 liveFormMap.set('formdata', PROP_STRING);
 liveFormMap.set('novalidate', PROP_BOOLEAN);
 liveFormMap.set('validationtype', {value: 'default', ...PROP_STRING});
+liveFormMap.set('iconclass', PROP_STRING);
 
 export const registerLiveFormProps = () => {
     register(
@@ -71,6 +72,7 @@ const liveFilterMap = new Map(propsMap);
 liveFilterMap.set('autoupdate', PROP_BOOLEAN);
 liveFilterMap.set('enableemptyfilter', {value: ' ', ...PROP_STRING});
 liveFilterMap.set('pagesize', {value: 20, ...PROP_NUMBER});
+liveFilterMap.set('iconclass', {value: 'wi wi-filter-list', ...PROP_STRING});
 
 export const registerLiveFilterProps = () => {
     register(

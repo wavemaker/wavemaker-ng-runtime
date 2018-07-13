@@ -55,9 +55,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     binding;
     widgettype;
     class;
-    primarykey;
     readonly;
-    _readonly;
     show;
     type;
     isDataSetBound;
@@ -69,6 +67,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     filetype;
     extensions;
     permitted;
+    period;
     isRange;
 
     // Validation properties
@@ -259,8 +258,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 this._debounceSetUpValidators();
                 break;
             case 'primary-key':
-                this.primarykey = toBoolean(nv);
-                if (this.primarykey) {
+                if (nv) {
                     this.form.setPrimaryKey(this._key);
                 }
                 break;
@@ -270,6 +268,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             case 'class':
                 // Apply class on the inner widget only. Rremove from form filed element
                 removeClass(this.getNativeElement(), nv);
+                break;
+            case 'readonly':
+               this.setReadOnlyState();
                 break;
         }
 
@@ -354,6 +355,24 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         });
     }
 
+    setReadOnlyState() {
+        let readOnly;
+        if (this.form.isUpdateMode) {
+            if (this['primary-key'] && !this['is-related'] && !this.period) {
+                /*If the field is primary but is assigned set readonly false.
+                   Assigned is where the user inputs the value while a new entry.
+                   This is not editable(in update mode) once entry is successful*/
+                readOnly = !(this.generator === 'assigned' && this.form.operationType !== 'update');
+            } else {
+                readOnly = this.readonly;
+            }
+        } else {
+            // In view mode, set widget state to readonly always
+            readOnly = true;
+        }
+        this.setFormWidget('readonly', readOnly);
+    }
+
     ngOnInit() {
         const fieldName = this._key || this._name;
 
@@ -384,7 +403,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.registerReadyStateListener(() => {
             this.key = this._key || this.target || this.binding || this._name;
             this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
-            this._readonly = this.readonly; // Save readonly state
 
             // For upload widget, generate the permitted field
             if (this.type === DataType.BLOB) {
