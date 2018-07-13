@@ -214,6 +214,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this._modelByValue = undefined;
                 // adds custom chip object to the chipsList.
                 this.notifyParent($event);
+                this.invokeEventCallback('submit', {$event, widget: this, value: this.query});
                 return;
             }
         }

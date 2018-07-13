@@ -27,4 +27,8 @@ export class SegmentContentComponent extends StylableComponent {
         this.invokeEventCallback('load');
         this.invokeEventCallback('ready');
     }
+
+    public navigate() {
+        this.segmentedControl.showContent(this);
+    }
 }

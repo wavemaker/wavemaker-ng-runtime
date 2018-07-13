@@ -1,6 +1,7 @@
 import { Component, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
+import { isNumber } from '@wm/core';
 
 import { registerProps } from './segmented-control.props';
 import { SegmentContentComponent } from './segment-content/segment-content.component';
@@ -62,16 +63,15 @@ export class SegmentedControlComponent extends StylableComponent {
         }
     }
 
-    public show(content: SegmentContentComponent) {
-        const index = this.contents.findIndex(c => {
-            return c === content;
-        });
-        if (index >= 0) {
-            this.showContent(index);
+    public showContent(content: number | SegmentContentComponent , $event?: any) {
+        let index: number;
+        if (isNumber(content)) {
+            index = content as number;
+        } else {
+            index = this.contents.findIndex(c => {
+                return c === content;
+            });
         }
-    }
-
-    public showContent(index: number, $event?: any) {
         if (index < 0 || index >= this.contents.length) {
             return;
         }

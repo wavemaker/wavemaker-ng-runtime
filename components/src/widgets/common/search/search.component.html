@@ -26,7 +26,7 @@
 </ng-template>
 
 <!--This template is for search inside mobile navbar.-->
-<ng-template *ngIf="navsearchbar; else searchTemplate">
+<ng-container *ngIf="navsearchbar; else searchTemplate">
     <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs app-search-input" [placeholder]="placeholder || ''"
            focus-target
            [(ngModel)]="query"
@@ -48,7 +48,8 @@
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
            [attr.name]="name"/>
-</ng-template>
+    <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch();"></i>
+</ng-container>
 <!--This template is for both web and fullscreen mode in mobile.-->
 <ng-template #searchTemplate>
     <span class="wi wi-arrow-left form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"></span>
