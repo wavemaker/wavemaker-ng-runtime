@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { App } from '@wm/core';
+import { App, removeExtraSlashes } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 
 @Injectable()
@@ -20,10 +20,16 @@ export class MobileHttpInterceptor implements HttpInterceptor {
 
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let modifiedRequest = request;
-        if (request.url.indexOf('://') < 0
-            && MobileHttpInterceptor.REMOTE_SERVICE_URL_PATTERNS.find(r => r.test(request.url))) {
+        let url = request.url;
+        // if necessary, prepend deployed url
+        if (url.indexOf('://') < 0
+            && MobileHttpInterceptor.REMOTE_SERVICE_URL_PATTERNS.find(r => r.test(url))) {
+            url = this.app.deployedUrl + url;
+        }
+        url = removeExtraSlashes(url);
+        if (url !== request.url) {
             modifiedRequest = request.clone({
-                url: this.app.deployedUrl + request.url
+                url: url
             });
         }
         const subject = new Subject<HttpEvent<any>>();
