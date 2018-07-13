@@ -98,12 +98,6 @@ export class LiveFormDirective {
         } else {
             field.value = undefined;
         }
-        /*If the field is primary but is assigned set readonly false.
-         Assigned is where the user inputs the value while a new entry.
-         This is not editable(in update mode) once entry is successful*/
-        if (field.readonly && field['primary-key'] && field.generator === 'assigned') {
-            field.widget.readonly = false;
-        }
         this._debouncedSavePrevDataValues();
     }
 
@@ -338,10 +332,7 @@ export class LiveFormDirective {
 
     setReadonlyFields() {
         this.form.formFields.forEach(field => {
-            field.readonly = field._readonly;
-            if (field.primarykey && !field.isRelated && !field.period) {
-                field.readonly = true;
-            }
+            field.setReadOnlyState();
         });
     }
 
