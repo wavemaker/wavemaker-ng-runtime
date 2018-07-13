@@ -13,6 +13,7 @@ declare const _;
 export class PartialContainerDirective {
 
     private contentInitialized = false;
+    private $target;
 
     get name() {
         return this.componentInstance.name;
@@ -21,16 +22,14 @@ export class PartialContainerDirective {
     _renderPartial(nv) {
         this.vcRef.clear();
 
-        const $target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
-
-        $target.innerHTML = '';
+        this.$target.innerHTML = '';
 
         $invokeWatchers(true);
 
         return this.partialRenderer.render(
             nv,
             this.vcRef,
-            $target,
+            this.$target,
             this.componentInstance,
             this.inj
         ).then(() => {
@@ -53,6 +52,8 @@ export class PartialContainerDirective {
         public inj: Injector,
         @Attribute('content') _content: string
     ) {
+
+        this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
 
         componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
             if (key === 'content') {
