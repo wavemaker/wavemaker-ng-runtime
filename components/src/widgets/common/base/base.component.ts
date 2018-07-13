@@ -426,7 +426,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
             if (fn) {
                 $invokeWatchers(true);
-                return fn(Object.assign(locals, extraLocals));
+                try {
+                    return fn(Object.assign(locals, extraLocals));
+                } catch (err) {
+                    console.error(err);
+                }
             }
         }
     }
