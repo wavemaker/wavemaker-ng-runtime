@@ -59,7 +59,10 @@ export class PrefabRenderer {
                             } else if (prop.type === 'method') {
                                 containerWidget[key] = (...args) => {
                                     try {
-                                        instance[prop.method](...args);
+                                        const path = prop.method.split('.');
+                                        const method = path.pop();
+                                        const ref = _.get(instance, path);
+                                        ref[method].apply(ref, args);
                                     } catch (e) {
                                         console.warn(`error in executing prefab-${prefabName} method-${key}`);
                                     }
