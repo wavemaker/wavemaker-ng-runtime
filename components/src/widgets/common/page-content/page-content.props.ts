@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-page-content',
         new Map(
             [
+                ['class', PROP_STRING],
                 ['columnwidth', PROP_NUMBER],
                 ['content', PROP_STRING],
                 ['name', PROP_STRING],

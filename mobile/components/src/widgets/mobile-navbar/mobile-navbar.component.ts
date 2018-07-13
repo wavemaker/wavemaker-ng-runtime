@@ -20,8 +20,11 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass:
 })
 export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
 
+    private _isReady = false;
+
     public datavalue: string;
     public imagesrc: string;
+    public query: string;
     public leftNavPanel: LeftPanelDirective;
     public showLeftnavbtn: boolean;
     public showSearchbar: boolean;
@@ -48,14 +51,21 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
             }
             return false;
         });
+        setTimeout(() => this._isReady = true, 1000);
     }
 
 
     public goBack($event): void {
-        if (this.hasEventCallback('backbtnclick')) {
-            this.invokeEventCallback('backbtnclick', {$event});
-        } else {
-            window.history.go(-1);
+         /**
+          * TODO: while trying navigating from details page to edit page in wavereads, app is navigating
+          * as details -> editPage -> details. For now, keeping this callback to react after 1 second.
+          */
+        if (this._isReady) {
+            if (this.hasEventCallback('backbtnclick')) {
+                this.invokeEventCallback('backbtnclick', {$event});
+            } else {
+                window.history.go(-1);
+            }
         }
     }
 
@@ -71,6 +81,8 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
             // $is._dataset = nv;
         } else if (key === 'defaultview') {
             this.showSearchbar = (nv === 'searchview');
+        } else if (key === 'datavalue') {
+            this.query = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -78,6 +90,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
 
     public onSubmission($event, widget, value): void {
         this.datavalue = value;
+        this.query = value;
         this.invokeEventCallback('search', {$event});
     }
 

@@ -9,6 +9,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['content', PROP_STRING],
                 ['iconclass', {value: '', ...PROP_STRING}],
+                ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )

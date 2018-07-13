@@ -1,7 +1,7 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { App, muteWatchers, noop, unMuteWatchers } from '@wm/core';
+import { App, isMobileApp, muteWatchers, noop, unMuteWatchers } from '@wm/core';
 
 import { commonPageWidgets, getFragmentUrl, FragmentRenderer } from './fragment-renderer';
 import { AppManagerService } from '../app.manager.service';
@@ -71,8 +71,14 @@ export class PageRenderer {
         unMuteWatchers();
 
         this.invokeVariables(pageName, variableCollection);
-
-        this.invokeOnReady(pageName, instance);
+        if (isMobileApp) {
+            const removeSubscription = this.appManager.subscribe('pageContentReady', () => {
+                this.invokeOnReady(pageName, instance);
+                removeSubscription();
+            });
+        } else {
+            this.invokeOnReady(pageName, instance);
+        }
     }
 
     public async render(pageName: string, vcRef: ViewContainerRef, $target: HTMLElement) {

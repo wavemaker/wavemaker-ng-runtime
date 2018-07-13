@@ -22,6 +22,7 @@ export class PageContentDirective {
                     setTimeout(() => {
                         pageContentComponent.isContentLoading = false;
                         removeClass(pageContentComponent.getNativeElement(), 'load');
+                        app.notify('pageContentReady');
                     }, 300);
                     unsubscribe();
                 }
