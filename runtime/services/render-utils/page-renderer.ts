@@ -71,7 +71,7 @@ export class PageRenderer {
         unMuteWatchers();
 
         this.invokeVariables(pageName, variableCollection);
-        if (isMobileApp) {
+        if (isMobileApp()) {
             const removeSubscription = this.appManager.subscribe('pageContentReady', () => {
                 this.invokeOnReady(pageName, instance);
                 removeSubscription();
