@@ -126,10 +126,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (key === 'tabindex') {
             return;
         }
-        if (key === 'autofocus' && nv) {
-            const inputElement  = this.$element.find('.display-input')[0] as HTMLElement;
-            setAttr(inputElement, key, nv);
-        }
         if (key === 'timepattern') {
             this.showseconds = _.includes(nv, 's');
             this.ismeridian = _.includes(nv, 'h');
