@@ -1167,7 +1167,9 @@ $.widget('wm.datatable', {
             options.action = options.action || 'edit';
 
             if (options.operation === 'new' || self.options.actionsEnabled.edit) {
-                this.toggleEditRow(e, options);
+                self.options.runInNgZone(function () {
+                    self.toggleEditRow(e, options)
+                });
             }
 
             if (options.skipSelect) {
