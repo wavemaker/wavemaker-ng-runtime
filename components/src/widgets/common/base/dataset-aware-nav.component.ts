@@ -47,10 +47,11 @@ export class DatasetAwareNavComponent extends StylableComponent {
     private binditemaction: string | null;
     private binditembadge: string | null;
     private binditemchildren: string | null;
-    private binditemid: string | null;
     private binditemlink: string | null;
     private binduserrole: string | null;
     private securityService: any;
+
+    protected binditemid: string | null;
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);

@@ -80,7 +80,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
     protected resetNodes() {
         super.resetNodes();
         // get path only if the widget have id property.
-        if (this.itemid) {
+        if (this.itemid || this.binditemid) {
             this.nodes = this.getPath({key: this.getCurrentRoute(), isPathFound: false}, this.nodes);
         }
 
