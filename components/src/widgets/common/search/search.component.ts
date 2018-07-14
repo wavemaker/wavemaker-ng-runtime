@@ -136,11 +136,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataProvider = new DataProvider();
     }
 
-    // unsubscribe the datavalue subscription as the datavalue change will trigger subscription always
-    private unsubscribeDatavalue() {
-        this._unsubscribeDv = true;
-    }
-
     // Check if the widget is of type autocomplete in mobile view/ app
     private isMobileAutoComplete() {
         return this.type === 'autocomplete' && isMobile();

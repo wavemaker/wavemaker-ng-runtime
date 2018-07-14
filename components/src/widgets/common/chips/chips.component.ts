@@ -46,11 +46,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private _datasource: any;
     private _debounceResetSearchModel: Function;
     private _unsubscribeDv: boolean = false;
-
-    // When datavalue is not available check value in "toBeProcessedDatavalue" property.
-    set toBeProcessedDatavalue(val) {
-        this.searchComponent.toBeProcessedDatavalue = val;
-    }
+    private searchkey: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource () {
@@ -60,6 +56,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     set datasource(nv) {
         this._datasource = nv;
         this.searchComponent.datasource = nv;
+        this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
     }
 
     constructor(
@@ -80,6 +77,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
 
         this.multiple = true;
+        this.nextItemIndex = 0; // default chip index
 
         const datasetSubscription = this.dataset$.subscribe(() => {
             this.searchComponent.dataset = this.dataset;
@@ -107,9 +105,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.displayimagesrc = this.displayimagesrc;
         this.searchComponent.binddisplaylabel = this.bindDisplayExpr;
         this.searchComponent.displaylabel = this.displayfield;
-        this.searchComponent.datafield = this.bindDataField;
+        this.searchComponent.datafield = this.bindDataField || this.datafield;
         this.searchComponent.binddataset = this.bindDataSet;
         this.searchComponent.dataset = this.dataset;
+        this.searchComponent.searchkey = this.searchkey;
 
         this.searchComponent.updateQueryModel = _.debounce(this.updateQueryModel.bind(this), 50);
         this.getTransformedData = this.searchComponent.getTransformedData;
@@ -175,9 +174,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                         data.splice(i, 1, dataObj);
                     }
                 }
-
-                this.nextItemIndex++;
-
                 dataObj = dataObj || val;
 
                 const transformedData = this.getTransformedData([dataObj], this.nextItemIndex);
@@ -185,11 +181,17 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
         });
 
+        if (!isDefined(this._modelByValue)) {
+            this._modelByValue = data;
+        }
+
         // make default query with all the values and if response for the value is not in datavalue then add a custom chip object.
-        if (searchQuery) {
-            this.getDefaultModel(searchQuery)
+        if (searchQuery.length && this.datasource) {
+            this.getDefaultModel(searchQuery, this.nextItemIndex)
                 .then(response => {
                     this.chipsList = this.chipsList.concat(response);
+
+                    const _dataValue = _.clone(dataValue);
 
                     dataValue.forEach((val: any, i: number) => {
                         const isExists = _.find(this.chipsList, (obj) => {
@@ -198,13 +200,16 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
                         if (!isExists) {
                             if (this.allowonlyselect) {
-                                data.splice(i, 1);
+                                const index = _dataValue.indexOf(val);
+                                _dataValue.splice(index, 1);
+                                return;
                             }
-                            this.nextItemIndex++;
                             const transformedData = this.getTransformedData([val], this.nextItemIndex);
                             this.chipsList.push(transformedData[0]);
                         }
                     });
+
+                    this._modelByValue = _dataValue;
                 });
         }
 
@@ -219,7 +224,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.queryModel = '';
         this.searchComponent._modelByValue = undefined;
 
-        this._unsubscribeDv = false;
+        setTimeout(() => {
+            this._unsubscribeDv = false;
+        });
 
         this.focusSearchBox();
     }
@@ -252,7 +259,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 }
             }
 
-            this.nextItemIndex++;
             const data = dataObj || this.searchComponent.query;
             chipObj = this.getTransformedData([data], this.nextItemIndex)[0];
         }
@@ -319,8 +325,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Makes call to searchComponent to filter the dataSource based on the query.
-    protected getDefaultModel(query: Array<string> | string) {
-        return this.searchComponent.getDataSource(query, true);
+    protected getDefaultModel(query: Array<string> | string, index?: number) {
+        return this.searchComponent.getDataSource(query, true, index);
     }
 
     private handleChipClick($event: Event, chip: DataSetItem) {
