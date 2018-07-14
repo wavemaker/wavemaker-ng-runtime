@@ -471,6 +471,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         timeoutCall: (fn, delay) => {
             setTimeout(fn, delay);
         },
+        runInNgZone: fn => {
+            this.ngZone.run(fn);
+        },
         safeApply: () => {
             $appDigest();
         }
