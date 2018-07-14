@@ -174,11 +174,4 @@ export class DateComponent extends BaseDateTimeComponent {
     onDateChange(newVal): void {
         this.setDataValue(newVal);
     }
-    onPropertyChange(key: string, nv: any, ov?: any) {
-        if (key === 'autofocus' && nv) {
-            const inputElement = this.$element.find('.display-input')[0] as HTMLElement;
-            setAttr(inputElement, key, nv);
-        }
-        super.onPropertyChange(key, nv, ov);
-    }
 }
