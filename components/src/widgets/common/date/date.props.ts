@@ -7,8 +7,8 @@ export const dateProps = new Map(
         ['datavalue', PROP_STRING],
         ['datepattern', {value: 'yyyy-MM-dd', ...PROP_STRING}],
         ['disabled', PROP_BOOLEAN],
-        ['excludedays', PROP_STRING], // TODO not addressed
-        ['excludedates', PROP_STRING], // TODO not addressed
+        ['excludedays', PROP_STRING],
+        ['excludedates', PROP_STRING],
         ['hint', {value: '', ...PROP_STRING}],
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],

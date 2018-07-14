@@ -40,33 +40,36 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        this.dateOnShowSubscription = this.bsDatePickerDirective
-            .onShown
-            .subscribe(cal => {
-                cal.daysCalendar.subscribe(data => {
-                    let excludedDates;
-                    if (this.excludedates) {
-                        if (isString(this.excludedates)) {
-                            excludedDates = _.split(this.excludedates, ',');
-                        } else {
-                            excludedDates = this.excludedates;
+        if (this.bsDatePickerDirective) {
+            this.dateOnShowSubscription = this.bsDatePickerDirective
+                .onShown
+                .subscribe(cal => {
+                    cal.daysCalendar.subscribe(data => {
+                        let excludedDates;
+                        if (this.excludedates) {
+                            if (isString(this.excludedates)) {
+                                excludedDates = _.split(this.excludedates, ',');
+                            } else {
+                                excludedDates = this.excludedates;
+                            }
+                            excludedDates = excludedDates.map(d => moment(d));
                         }
-                        excludedDates = excludedDates.map(d => moment(d));
-                    }
-                    data[0].weeks.forEach(week => {
-                        week.days.forEach(day => {
-                            if (!day.isDisabled && this.excludedays) {
-                                day.isDisabled = _.includes(this.excludedays, day.dayIndex);
-                            }
+                        data[0].weeks.forEach(week => {
+                            week.days.forEach(day => {
+                                if (!day.isDisabled && this.excludedays) {
+                                    day.isDisabled = _.includes(this.excludedays, day.dayIndex);
+                                }
 
-                            if (!day.isDisabled && excludedDates) {
-                                const md = moment(day.date);
-                                day.isDisabled = excludedDates.some(ed => md.isSame(ed, 'day'));
-                            }
+                                if (!day.isDisabled && excludedDates) {
+                                    const md = moment(day.date);
+                                    day.isDisabled = excludedDates.some(ed => md.isSame(ed, 'day'));
+                                }
+                            });
                         });
                     });
                 });
-            });
+        }
+
     }
 
     ngOnDestroy() {
