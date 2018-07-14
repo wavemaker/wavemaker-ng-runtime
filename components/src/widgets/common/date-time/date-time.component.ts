@@ -329,6 +329,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method used to toggle the dropdown of the date widget
      */
     private toggleDpDropdown($event) {
+        $event.stopPropagation();
         if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
             return;
         }
