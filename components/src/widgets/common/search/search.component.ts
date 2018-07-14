@@ -42,7 +42,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
-    public datasource: any;
     private page = 1;
     private _loadingItems: boolean;
     private dataProvider: IDataProvider;
@@ -74,6 +73,17 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private _isOpen: boolean; // set to true when dropdown is open
     private showClosebtn: boolean;
     private _unsubscribeDv: boolean;
+    private _datasource: any;
+
+    // getter setter is added to pass the datasource to searchcomponent.
+    get datasource () {
+        return this._datasource;
+    }
+
+    set datasource(nv) {
+        this._datasource = nv;
+        this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue, this.datafield);
+    }
 
     // Default check for container methods to access.
     get typeaheadContainerInstance() {
