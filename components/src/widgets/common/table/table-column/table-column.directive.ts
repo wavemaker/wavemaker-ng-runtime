@@ -1,4 +1,5 @@
 import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { Validators } from '@angular/forms';
 
 import { BaseComponent } from '../../base/base.component';
 import { EDIT_MODE, getDataTableFilterWidget, getDefaultValue, getEditModeWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
@@ -191,12 +192,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         super.ngAfterContentInit();
     }
 
-    addFormControl(name) {
-        this.table.ngform.addControl(name, this.table.fb.control(''));
+    addFormControl(suffix?: string) {
+        const ctrlName = suffix ? (this.binding + suffix) : this.binding;
+        this.table.ngform.addControl(ctrlName, this.table.fb.control(''));
     }
 
-    getFormControl(name) {
-        return this.table.ngform.controls[name];
+    getFormControl(suffix?: string) {
+        const ctrlName = suffix ? (this.binding + suffix) : this.binding;
+        return this.table.ngform.controls[ctrlName];
     }
 
     // Setup the inline edit and filter widget
@@ -205,17 +208,16 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             if (this.editWidgetType === FormWidgetType.UPLOAD) {
                 return;
             }
-            this.addFormControl(this.binding);
-            const control = this.getFormControl(this.binding);
+            this.addFormControl();
+            const control = this.getFormControl();
             if (control) {
                 const onValueChangeSubscription =  control.valueChanges.subscribe(this.onValueChange.bind(this));
                 this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
             }
 
             if (this._isNewEditableRow) {
-                const ctrlName = this.binding + '_new';
-                this.addFormControl(ctrlName);
-                const newControl = this.getFormControl(ctrlName);
+                this.addFormControl('_new');
+                const newControl = this.getFormControl('_new');
                 if (newControl) {
                    const onNewValueChangeSubscription =  newControl.valueChanges.subscribe(this.onValueChange.bind(this));
                    this.registerDestroyListener(() => onNewValueChangeSubscription.unsubscribe());
@@ -224,9 +226,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
 
         if (this._isRowFilter) {
-            const filterName = this.binding + '_filter';
-            this.addFormControl(filterName);
-            this.filterControl = this.getFormControl(filterName);
+            this.addFormControl('_filter');
+            this.filterControl = this.getFormControl('_filter');
             if (this.filterControl) {
                 const onFilterValueSubscription = this.filterControl.valueChanges.subscribe(this.onFilterValueChange.bind(this));
                 this.registerDestroyListener(() => onFilterValueSubscription.unsubscribe());
@@ -345,6 +346,15 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     setInlineWidgetProp(widget, prop, nv) {
         if (this[widget] && isDefined(nv)) {
             this[widget][prop] = nv;
+        }
+        if (prop === 'required') {
+            const control = this.getFormControl(widget === 'inlineInstanceNew' ? '_new' : undefined);
+            if (nv) {
+                control.setValidators([Validators.required]);
+            } else {
+                control.setValidators([]);
+            }
+            control.updateValueAndValidity();
         }
     }
 
