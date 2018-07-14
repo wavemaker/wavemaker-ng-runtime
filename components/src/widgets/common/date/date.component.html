@@ -12,6 +12,7 @@
            (focus)="invokeOnFocus($event)"
            (blur)="invokeOnTouched($event)"
            [disabled]="disabled || readonly || isCurrentDate"
+           [autofocus]="autofocus"
            [required]="required"
            [attr.placeholder]="placeholder"
            (change)="onDisplayDateChange($event)"
