@@ -1,3 +1,5 @@
+import { NgZone } from '@angular/core';
+
 import { SwipeAnimation } from '@swipey';
 
 import { CarouselDirective } from './carousel.directive';
@@ -12,7 +14,8 @@ export class CarouselAnimator extends SwipeAnimation {
     private _intervalId;
     private _swiping;
     private _width;
-    public constructor(private carousel: CarouselDirective, private interval: number) {
+
+    public constructor(private carousel: CarouselDirective, private interval: number, private ngZone: NgZone) {
         super();
         const self = this;
         this._$el = $(this.carousel.getNativeElement()).find('>.carousel');
@@ -20,10 +23,10 @@ export class CarouselAnimator extends SwipeAnimation {
         this._items = this._$el.find('>.carousel-inner >.carousel-item');
         this._indicators = this._$el.find('>.carousel-indicators');
         this._indicators.find('li').each(function (i) {
-           $(this).on('click', () => {
-               self._activeIndex = i;
-               self.setActiveItem();
-           });
+            $(this).on('click', () => {
+                self._activeIndex = i;
+                self.setActiveItem();
+            });
         });
         this._$el.find('>.left.carousel-control').on('click', () => {
             this.goToUpper();
@@ -42,7 +45,7 @@ export class CarouselAnimator extends SwipeAnimation {
         this._swiping = true;
         return {
             'lower': -this._width,
-            'center' : 0,
+            'center': 0,
             'upper': this._width
         };
     }
@@ -79,11 +82,13 @@ export class CarouselAnimator extends SwipeAnimation {
     }
 
     public start() {
-        this._intervalId = setInterval(() => {
-            if (!this._swiping) {
-                this.goToLower();
-            }
-        }, this.interval);
+        this.ngZone.runOutsideAngular(() => {
+            this._intervalId = setInterval(() => {
+                if (!this._swiping) {
+                    this.goToLower();
+                }
+            }, this.interval);
+        });
     }
 
     public pause() {
@@ -146,6 +151,6 @@ export class CarouselAnimator extends SwipeAnimation {
         items.eq((items.length + left) % items.length).addClass('left-item').removeClass('right-item');
         items.eq((items.length + this._activeIndex) % items.length).removeClass('left-item right-item').addClass('active');
         items.eq((items.length + right) % items.length).addClass('right-item').removeClass('left-item');
-        }
+    }
 
 }

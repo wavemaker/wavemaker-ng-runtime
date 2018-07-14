@@ -1,8 +1,6 @@
-import { AfterContentInit, ContentChildren, Directive, Injector, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { AfterContentInit, ContentChildren, Directive, Injector, NgZone, OnDestroy, OnInit, QueryList } from '@angular/core';
 
 import { CarouselComponent, SlideComponent } from 'ngx-bootstrap';
-
-import { isPageable } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -43,7 +41,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     @ContentChildren(SlideComponent) slides: QueryList<SlideComponent>;
 
-    constructor(public component: CarouselComponent, inj: Injector) {
+    constructor(public component: CarouselComponent, inj: Injector, private ngZone: NgZone) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
@@ -60,7 +58,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     private onSlidesRender(slides) {
         setTimeout(() => {
-            this.animator = new CarouselAnimator(this, this.interval);
+            this.animator = new CarouselAnimator(this, this.interval, this.ngZone);
         }, 50);
     }
 
