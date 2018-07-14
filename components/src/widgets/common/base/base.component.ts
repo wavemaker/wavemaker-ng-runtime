@@ -357,7 +357,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 if (meta === 'delayed') {
                    setTimeout(() => eventCallback(), 150);
                 } else {
-                    eventCallback();
+                    return eventCallback();
                 }
             }
         );
@@ -372,17 +372,25 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @param {string} expr
      */
     protected processEventAttr(eventName: string, expr: string, meta?: string) {
-        let fn = $parseEvent(expr);
+        const fn = $parseEvent(expr);
         const locals = this.context;
         locals.widget = this.widget;
+        const boundFn = fn.bind(undefined, this.viewParent, locals);
 
-        fn = fn.bind(undefined, this.viewParent, locals);
+        const eventCallback = () => {
+            $invokeWatchers(true);
+            try {
+                return boundFn();
+            } catch (e) {
+                console.error(e);
+            }
+        };
 
-        this.eventHandlers.set(eventName, {callback: fn, locals});
+        this.eventHandlers.set(eventName, {callback: eventCallback, locals});
 
         // events needs to be setup after viewInit
         this.toBeSetupEventsQueue.push(() => {
-            this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), fn, locals, meta);
+            this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
         });
     }
 
@@ -425,12 +433,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             const locals = callbackInfo.locals || {};
 
             if (fn) {
-                $invokeWatchers(true);
-                try {
-                    return fn(Object.assign(locals, extraLocals));
-                } catch (err) {
-                    console.error(err);
-                }
+                return fn(Object.assign(locals, extraLocals));
             }
         }
     }
