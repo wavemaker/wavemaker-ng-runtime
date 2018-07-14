@@ -89,7 +89,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
             },
             onChange: (contents, editable) => {
                 this.proxyModel = this.domSanitizer.bypassSecurityTrustHtml(contents.toString());
-                this.invokeOnChange(contents, getChangeEvt());
+                this.invokeOnChange(contents, getChangeEvt(), true);
                 this.invokeOnTouched();
             }
         },
@@ -119,9 +119,9 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this.$richTextEditor = $(this.nativeElement.querySelector('[richTextEditor]'));
-        this.$hiddenInputEle = $(this.nativeElement.querySelector('input.model-holder.ng-hide'));
+        this.$hiddenInputEle = $(this.nativeElement.querySelector('input.model-holder'));
+        super.ngOnInit();
         this.initEditor();
     }
 
