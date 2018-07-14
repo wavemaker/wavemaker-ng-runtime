@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '
 
 import { Subject } from 'rxjs/Subject';
 
-import { AbstractHttpService, getClonedObject, replace } from '@wm/core';
+import { AbstractHttpService, getClonedObject, getValidJSON, replace } from '@wm/core';
 
 declare const _;
 
@@ -74,7 +74,8 @@ export class HttpServiceImpl extends AbstractHttpService {
                     if (_.isString(response)) {
                         errMsg = response;
                     } else {
-                        const errorDetails = response.error;
+                        let errorDetails = response.error;
+                        errorDetails = getValidJSON(errorDetails) || errorDetails;
                         if (errorDetails && errorDetails.errors) {
                             errMsg = this.parseErrors(errorDetails.errors);
                         } else {
