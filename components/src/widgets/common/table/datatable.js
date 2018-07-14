@@ -1891,6 +1891,9 @@ $.widget('wm.datatable', {
             return;
         }
         if (event.which === 13) { //Enter key
+            if($target.is('button')){
+                return;
+            }
             if (quickEdit && $target.hasClass('app-datagrid-row') && !$target.hasClass('row-editing')) {
                 $row.trigger('click', [undefined, {action: 'edit'}]);
             } else {
