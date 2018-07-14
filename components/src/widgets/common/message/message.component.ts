@@ -32,9 +32,13 @@ export class MessageComponent extends StylableComponent {
         styler(this.nativeElement, this);
     }
 
-    public showMessage(caption: string, type: string) {
-        this.caption = caption;
-        this.setWidgetProperty('type', type);
+    public showMessage(caption?: string, type?: string) {
+        if (caption) {
+            this.caption = caption;
+        }
+        if (type) {
+            this.setWidgetProperty('type', type);
+        }
         this.setWidgetProperty('show', true);
     }
 

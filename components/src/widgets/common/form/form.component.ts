@@ -11,6 +11,7 @@ import { registerFormProps } from './form.props';
 import { getFieldLayoutConfig, parseValueByType } from '../../../utils/live-utils';
 import { performDataOperation } from '../../../utils/data-utils';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { MessageComponent } from '../message/message.component';
 
 declare const _;
 
@@ -84,6 +85,7 @@ const setTouchedState = ngForm => {
 export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit {
 
     @ViewChild('dynamicForm', {read: ViewContainerRef}) dynamicFormRef: ViewContainerRef;
+    @ViewChild(MessageComponent) messageRef;
     // this is the reference to the component refs inside the form-group
     @ContentChildren(WidgetRef, {descendants: true}) componentRefs;
 
@@ -359,6 +361,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
             if (this.messagelayout === 'Inline') {
                 this.statusMessage = {'caption': template || '', type: type};
+                if (this.messageRef) {
+                    this.messageRef.showMessage();
+                }
             } else {
                 this.app.notifyApp(template, type, header);
             }
