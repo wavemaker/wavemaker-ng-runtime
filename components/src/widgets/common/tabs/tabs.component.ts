@@ -94,6 +94,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         // invoke select callback on the selected tab
         paneRef.invokeOnSelectCallback(evt);
 
+        this.activeTab = paneRef.getWidget();
+
         // invoke change callback if the evt is present, select a tab programmatically will not have the event
         if (evt) {
             this.invokeEventCallback('change', {
@@ -103,7 +105,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             });
         }
 
-        this.activeTab = paneRef.getWidget();
         if (evt) {
             headerElement = $(evt.target as HTMLElement).closest('li.tab-header');
         } else {
