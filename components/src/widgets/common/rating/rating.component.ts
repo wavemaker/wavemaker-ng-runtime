@@ -46,7 +46,6 @@ export class RatingComponent extends DatasetAwareFormComponent {
         // prepare the rating options on dataset ready.
         const datasetSubscription = this.dataset$.subscribe(() => {
             this.prepareRatingDataset();
-            this.onDatavalueChange(this.datavalue);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
@@ -102,6 +101,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
         if (!data.length) { // constructs default datasetItems when there is no dataset binding.
             this.datasetItems = ratingItems;
         }
+        this.onDatavalueChange(this.datavalue);
     }
 
     onRatingClick($event, rate) {
