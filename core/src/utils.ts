@@ -6,6 +6,7 @@ declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
 declare const document;
 declare const resolveLocalFileSystemURL;
+declare const $;
 
 const userAgent = navigator.userAgent;
 const REGEX = {
@@ -1016,4 +1017,53 @@ export const removeExtraSlashes = function (url) {
         }
         return url.replace(new RegExp('([^:]\/)(\/)+', 'g'), '$1');
     }
-}
+};
+
+$.cachedScript = (() => {
+    const inProgress = new Map();
+    const resolved = new Set();
+
+    const isInProgress = url => inProgress.has(url);
+    const isResolved = url => resolved.has(url);
+    const onLoad = url => {
+        resolved.add(url);
+        inProgress.get(url).resolve();
+        inProgress.delete(url);
+    };
+
+    const setInProgress = url => {
+        let resFn;
+        let rejFn;
+        const promise: any = new Promise((res, rej) => {
+            resFn = res;
+            rejFn = rej;
+        });
+
+        promise.resolve = resFn;
+        promise.reject = rejFn;
+
+        inProgress.set(url, promise);
+    };
+
+    return function (url) {
+        if (isResolved(url)) {
+            return Promise.resolve();
+        }
+
+        if (isInProgress(url)) {
+            return inProgress.get(url);
+        }
+
+        setInProgress(url);
+
+        const options = {
+            dataType: 'script',
+            cache: true,
+            url
+        };
+
+        jQuery.ajax(options).done(() => onLoad(url));
+
+        return inProgress.get(url);
+    };
+})();
