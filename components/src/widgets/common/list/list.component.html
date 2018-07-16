@@ -35,7 +35,7 @@
     (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
 >
     <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
-        <li *ngFor="let item of fieldDefs; index as $index; first as $isFirst; last as $isLast;" class="app-list-item {{itemsPerRowClass}} {{listItemRef.itemClass}}"
+        <li *ngFor="let item of fieldDefs; index as $index; first as $isFirst; last as $isLast;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
             tabindex="-1">
@@ -98,8 +98,8 @@
                 </h4>
             </li>
             <li *ngFor="let item of groupObj.data; index as $index; first as $isFirst; last as $isLast;" tabindex="0"
-                class="app-list-item group-list-item"
-                [ngClass]="[itemsPerRowClass, listItemRef.itemClass]"
+                class="app-list-item group-list-item {{itemsPerRowClass}}"
+                [ngClass]="listItemRef.itemClass"
                 [wmListItem]="item" #listItemRef="listItemRef">
                 <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index:$index, itemRef: listItemRef, $isFirst:$isFirst, $isLast:$isLast}"></ng-container>
             </li>
