@@ -1,7 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, IDGenerator } from '@wm/core';
 import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
@@ -21,6 +21,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-fo
 const LOGIN_FORM_CONFIG = {widgetType: 'wm-form', hostClass: 'app-form app-login-form'};
 const LIVE_FORM_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
 const LIVE_FILTER_CONFIG = {widgetType: 'wm-livefilter', hostClass: 'panel app-panel app-livefilter clearfix liveform-inline'};
+const idGen = new IDGenerator('-dynamic-');
 
 const getWidgetConfig = (isLiveForm, isLiveFilter, role) => {
     let config = WIDGET_CONFIG;
@@ -585,7 +586,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         const context = Object.create(this.viewParent);
         context.form = this;
         this.app.notify('render-resource', {
-            selector: 'app-form-' + this.widgetId,
+            selector: 'app-form-' + this.widgetId + idGen.nextUid(),
             markup: transpile(fieldTemplate),
             styles: '',
             providers: undefined,
