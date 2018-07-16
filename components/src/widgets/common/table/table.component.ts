@@ -330,7 +330,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 return;
             }
             const row = this.getClonedRowObject(rowData);
-            const watchName = `${this.name}_rowNgClass_${index}`;
+            const watchName = `${this.widgetId}_rowNgClass_${index}`;
             $unwatch(watchName);
             this.registerDestroyListener($watch(this.rowngclass, this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
@@ -341,7 +341,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 return;
             }
             const row = this.getClonedRowObject(rowData);
-            const watchName = `${this.name}_colNgClass_${rowIndex}_${colIndex}`;
+            const watchName = `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
             $unwatch(watchName);
             this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
