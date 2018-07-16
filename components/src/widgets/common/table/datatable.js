@@ -387,9 +387,10 @@ $.widget('wm.datatable', {
         this.options.clearCustomExpression();
 
         _.forEach(this.preparedData, function (row, index) {
-            row.$index = index + 1;
-            self.options.generateCustomExpressions(row, index);
-            self.options.registerRowNgClassWatcher(row, index);
+            var _row = _.clone(row);
+            _row.$index = index + 1;
+            self.options.generateCustomExpressions(_row, index);
+            self.options.registerRowNgClassWatcher(_row, index);
             $tbody.append(self._getRowTemplate(row, index));
         });
 
@@ -1378,10 +1379,12 @@ $.widget('wm.datatable', {
         var self = this,
             $originalElements = $row.find('td.app-datagrid-cell'),
             rowId = parseInt($row.attr('data-row-id'), 10),
-            $editableElements;
-        rowData.$index = rowId + 1;
+            $editableElements,
+            _rowData = _.clone(rowData);
 
-        this.options.generateInlineEditRow(rowData, alwaysNewRow);
+        _rowData.$index = rowId + 1;
+
+        this.options.generateInlineEditRow(_rowData, alwaysNewRow);
 
         $originalElements.each(function () {
             var $el = $(this),
@@ -2303,7 +2306,7 @@ $.widget('wm.datatable', {
                 } else {
                     $row = $(this).closest('tr');
                     rowId = parseInt($row.attr('data-row-id'), 10);
-                    _rowData = self.options.data[rowId];
+                    _rowData = _.clone(self.options.data[rowId]);
                     _rowData.$index = index + 1;
                 }
                 self.options.generateRowActions(_rowData, index);
