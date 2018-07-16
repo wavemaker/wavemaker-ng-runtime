@@ -7,6 +7,7 @@ export const registerProps = () => {
             [
                 ['uploadpath', {...PROP_STRING}],
                 ['contenttype', PROP_STRING],
+                ['datasource', PROP_STRING],
                 ['service', PROP_STRING],
                 ['operation', PROP_STRING],
                 ['mode', PROP_STRING],
