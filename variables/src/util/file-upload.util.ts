@@ -93,7 +93,7 @@ function uploadWithFileTransfer(file, url, options) {}
 
 /* upload file with ajax calling */
 function uploadWithAjax(file, fd, url, options) {
-    fd.forEach((value, key) => {
+    _.forEach(fd, (value, key) => {
         if (_.isArray(value)) {
             if (value[0] instanceof File) {
                fd.delete(key);
