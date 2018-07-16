@@ -13,6 +13,7 @@ export const registerProps = () => {
                 ['centerlabel', {value: false, ...PROP_BOOLEAN}],
                 ['customcolors', PROP_STRING],
                 ['dataset', PROP_ANY],
+                ['datasource', PROP_STRING],
                 ['donutratio', {value: 'medium', ...PROP_STRING}],
                 ['formattype', {value: '', PROP_STRING}],
                 ['groupby', PROP_STRING],
