@@ -41,7 +41,7 @@ class OpenFileOperation implements IDeviceVariableOperation {
         let filePath = dataBindings.get('filePath');
         // if relative path is given, then append url with deployedUrl, to access files in resources.
         if (!isValidWebURL(filePath)) {
-            filePath = $rootScope.project.deployedUrl + '/' + filePath;
+            filePath = $rootScope.project.deployedUrl + filePath;
         }
         return this.fileOpener.openRemoteFile(filePath, fileType.mimeType, fileType.extension);
     }
@@ -72,7 +72,7 @@ class UploadFileOperation implements IDeviceVariableOperation {
     constructor(private fileUploader: DeviceFileUploadService) {}
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
-        const serverUrl = $rootScope.project.deployedUrl + '/services/file/uploadFile?relativePath=' + (dataBindings.get('remoteFolder') || ''),
+        const serverUrl = $rootScope.project.deployedUrl + 'services/file/uploadFile?relativePath=' + (dataBindings.get('remoteFolder') || ''),
             filePath = dataBindings.get('localFile'),
             fileName = filePath.split('/').pop(),
             data = {

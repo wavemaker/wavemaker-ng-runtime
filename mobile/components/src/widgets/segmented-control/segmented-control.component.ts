@@ -1,7 +1,7 @@
-import { Component, Injector } from '@angular/core';
+import { AfterViewInit, Component, Injector } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
-import { isNumber } from '@wm/core';
+import { isNumber, setCSS, setCSSFromObj } from '@wm/core';
 
 import { registerProps } from './segmented-control.props';
 import { SegmentContentComponent } from './segment-content/segment-content.component';
@@ -18,7 +18,9 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segmented-control', hostCl
         provideAsWidgetRef(SegmentedControlComponent)
     ]
 })
-export class SegmentedControlComponent extends StylableComponent {
+export class SegmentedControlComponent extends StylableComponent implements AfterViewInit {
+
+    private _$container;
 
     public contents: SegmentContentComponent[] = [];
     public currentSelectedIndex = 0;
@@ -39,6 +41,22 @@ export class SegmentedControlComponent extends StylableComponent {
 
     public goToPrev() {
         this.showContent(this.currentSelectedIndex - 1);
+    }
+
+    public ngAfterViewInit() {
+        this._$container = this.$element.find('>.app-segments-container');
+        const childEls = this._$container.find('>.list-inline >li');
+        const maxWidth = `${this.contents.length * 100}%`;
+        setCSSFromObj(this._$container[0], {
+            maxWidth: maxWidth,
+            width: maxWidth,
+            'white-space': 'nowrap',
+            transition: 'transform 0.2s linear'
+        });
+        const width = `${100 / this.contents.length}%`;
+        for (const child of Array.from(childEls)) {
+            setCSS(child as HTMLElement, 'width', width);
+        }
     }
 
     public onPropertyChange(key, nv, ov?) {
@@ -86,10 +104,7 @@ export class SegmentedControlComponent extends StylableComponent {
 
         this.currentSelectedIndex = index;
         this.invokeEventCallback('beforesegmentchange', eventData);
-        $segmentsCtr.animate(
-            { scrollLeft: index * $segmentsCtr.width()},
-            { duration: 'fast' }
-        );
+        setCSS(this._$container[0], 'transform', `translate3d(${-1 *  index / this.contents.length * 100}%, 0, 0)`);
         this.invokeEventCallback('segmentchange', eventData);
     }
 
