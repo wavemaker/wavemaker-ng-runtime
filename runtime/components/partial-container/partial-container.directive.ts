@@ -20,9 +20,6 @@ export class PartialContainerDirective {
     }
 
     _renderPartial(nv) {
-        this.vcRef.clear();
-
-        this.$target.innerHTML = '';
 
         $invokeWatchers(true);
 
