@@ -12,6 +12,8 @@ import { PartialContainerDirective } from '../../components/partial-container/pa
 import { PrefabDirective } from '../../components/prefab/prefab.directive';
 import { AccessrolesDirective } from '../../directives/accessroles.directive';
 
+const componentCache = new Map<string, any>();
+
 @NgModule({
     declarations: [PartialContainerDirective, PrefabDirective, AccessrolesDirective],
     exports: [
@@ -54,21 +56,40 @@ export class ViewRenderer {
         let postInitResolveFn;
         const postInitPromise: Promise<void> = new Promise(res => postInitResolveFn = res);
 
-        const componentDef = this.getDynamicComponent(
-            selector,
-            markup,
-            [styles],
-            providers,
-            componentInitFn,
-            () => postInitResolveFn(),
-            context
-        );
-        const moduleDef = this.getDynamicModule(componentDef);
-        const componentRef = this.getComponentFactory(componentDef, moduleDef);
+        let componentRef = componentCache.get(selector);
+
+        if (!componentRef) {
+            const componentDef = this.getDynamicComponent(
+                selector,
+                markup,
+                [styles],
+                providers
+            );
+
+            const moduleDef = this.getDynamicModule(componentDef);
+            componentRef = this.getComponentFactory(componentDef, moduleDef);
+            componentCache.set(selector, componentRef);
+        }
+
+        const initSub = (componentRef.componentType as any).init$
+            .subscribe(({instance, inj}) => {
+                if (context) {
+                    // Get the inner prototype and set the context on the prototype
+                    extendProto(instance, context);
+                }
+                componentInitFn(instance, inj);
+                initSub.unsubscribe();
+            });
+        const postInitSub = (componentRef.componentType as any).viewInit$
+            .subscribe(() => {
+                postInitResolveFn();
+                postInitSub.unsubscribe();
+            });
 
         vcRef.clear();
         const component = vcRef.createComponent(componentRef);
 
+        $target.innerHTML = '';
         $target.appendChild(component.location.nativeElement);
 
         return postInitPromise;
@@ -78,10 +99,7 @@ export class ViewRenderer {
         selector: string,
         template: string,
         styles: Array<string>,
-        providers: Array<any> = [],
-        componentInitFn: Function,
-        postViewInitFn: Function,
-        context
+        providers: Array<any> = []
     ) {
 
         @Component({
@@ -96,16 +114,17 @@ export class ViewRenderer {
             $element;
             _onDestroy;
 
+            static init$ = new Subject();
+            static viewInit$ = new Subject();
+
             constructor(inj: Injector) {
                 // create new subject and assign it to the component(page/partial/prefab) context
                 this._onDestroy = new Subject();
 
-                if (context) {
-                    // Get the inner prototype and set the context on the prototype
-                    extendProto(this, context);
-                }
-
-                componentInitFn(this, inj);
+                DynamicComponent.init$.next({
+                    instance: this,
+                    inj
+                });
             }
 
             registerDestroyListener(fn: Function) {
@@ -119,9 +138,7 @@ export class ViewRenderer {
             }
 
             ngAfterViewInit() {
-                if (postViewInitFn) {
-                    setTimeout(() => postViewInitFn(), 100);
-                }
+                setTimeout(() => DynamicComponent.viewInit$.next(), 100);
             }
         }
 
