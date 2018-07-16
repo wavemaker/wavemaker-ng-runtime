@@ -776,7 +776,9 @@ $.widget('wm.datatable', {
                 this.setDefaultRowData(rowData);
 
                 $row.addClass('always-new-row').addClass('row-editing');
-                this.makeRowEditable($row, rowData, true);
+                this.options.runInNgZone(function () {
+                    self.makeRowEditable($row, rowData, true);
+                });
             } else {
                 $row.trigger('click', [undefined, {action: 'edit', operation: 'new', skipFocus: skipFocus}]);
             }
@@ -1167,9 +1169,7 @@ $.widget('wm.datatable', {
             options.action = options.action || 'edit';
 
             if (options.operation === 'new' || self.options.actionsEnabled.edit) {
-                self.options.runInNgZone(function () {
-                    self.toggleEditRow(e, options)
-                });
+                self.toggleEditRow(e, options)
             }
 
             if (options.skipSelect) {
@@ -1501,7 +1501,9 @@ $.widget('wm.datatable', {
             this._setGridEditMode(true);
             this.disableActions(true);
             $deleteButton.removeClass('disabled-action');
-            this.makeRowEditable($row, rowData);
+            this.options.runInNgZone(function () {
+                self.makeRowEditable($row, rowData);
+            });
             // Show editable row.
             $editButton.addClass('hidden');
             $cancelButton.removeClass('hidden');
