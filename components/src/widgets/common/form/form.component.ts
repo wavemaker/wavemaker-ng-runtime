@@ -148,7 +148,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     applyFilter: Function;
     filter: Function;
     filterOnDefault: Function;
-    execute: Function;
     onMaxDefaultValueChange: Function;
 
     private operationType;
