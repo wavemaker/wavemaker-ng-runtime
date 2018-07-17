@@ -82,9 +82,10 @@ export class PaginationComponent extends StylableComponent {
         const currentPage = event && event.page;
         // Do not call goToPage if page has not changed
         if (currentPage !== this.dn.currentPage) {
+            const inst = (this as any).parent || this;
             this.dn.currentPage = currentPage;
+            inst.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
             this.goToPage();
-            this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
         }
     }, 250);
 
