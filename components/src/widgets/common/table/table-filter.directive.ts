@@ -227,7 +227,7 @@ export class TableFilterSortDirective {
         this.table._isClientSearch = true;
 
         let data;
-        data = this.table.shownavigation ? getClonedObject(this.table.__fullData) : getClonedObject(this.table.dataset);
+        data = this.table.isNavigationEnabled() ? getClonedObject(this.table.__fullData) : getClonedObject(this.table.dataset);
         if (type === 'search') {
             this.table.filterInfo = searchSortObj;
         } else {
@@ -240,7 +240,7 @@ export class TableFilterSortDirective {
         data = this.getSearchResult(data, this.table.filterInfo);
         data = this.getSortResult(data, this.table.sortInfo);
         this.table.serverData = data;
-        if (this.table.shownavigation) {
+        if (this.table.isNavigationEnabled()) {
             // Reset the page number to 1
             this.table.dataNavigator.dn.currentPage = 1;
             this.table.dataNavigator.setPagingValues(data);

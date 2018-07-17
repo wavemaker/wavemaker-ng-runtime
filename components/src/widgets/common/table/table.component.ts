@@ -491,7 +491,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (isDefined(newValue)) {
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
              and its current page is set properly*/
-            if (this.shownavigation && this.dataNavigator && this.dataNavigator.dn.currentPage) {
+            if (this.isNavigationEnabled() && this.dataNavigator.dn.currentPage) {
                 startRowIndex = ((this.dataNavigator.dn.currentPage - 1) * (this.dataNavigator.maxResults || 1)) + 1;
                 this.setDataGridOption('startRowIndex', startRowIndex);
             }
@@ -648,6 +648,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return false;
         }
         return this.datasource ? this.datasource.execute(operation, options) : {};
+    }
+
+    isNavigationEnabled() {
+        return this.shownavigation && this.dataNavigator && this.dataNavigatorWatched;
     }
 
     getClonedRowObject(rowData) {
@@ -886,7 +890,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         let data;
         serviceData = transformData(serviceData, this.name);
         // Apply filter and sort, if data is refreshed through Refresh data method
-        if (!this.shownavigation && this._isClientSearch) {
+        if (!this.isNavigationEnabled() && this._isClientSearch) {
             data = getClonedObject(serviceData);
             data = this.getSearchResult(data, this.filterInfo);
             data = this.getSortResult(data, this.sortInfo);
@@ -1002,7 +1006,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
         }
 
-        if (!this.shownavigation && newVal) {
+        if (!this.isNavigationEnabled() && newVal) {
             this.checkFiltersApplied(this.getSortExpr());
         }
 
