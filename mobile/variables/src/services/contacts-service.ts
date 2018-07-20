@@ -26,6 +26,8 @@ class GetContactsOperation implements IDeviceVariableOperation {
     ];
     public readonly requiredCordovaPlugins = ['CONTACTS'];
 
+    public waitingCalls: (() => void)[] = [];
+
     constructor(private contacts: Contacts) {
 
     }
@@ -41,19 +43,41 @@ class GetContactsOperation implements IDeviceVariableOperation {
         return name;
     }
 
+    private processNextCall() {
+        if (this.waitingCalls.length > 0) {
+            this.waitingCalls[0]();
+        }
+    }
+
+    private findContacts(requiredFields, findOptions): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            // Contacts plugin is not processing two simultaneous calls. It is anwsering to only call.
+            this.waitingCalls.push(() => {
+                this.contacts.find(requiredFields, findOptions).then(data => {
+                    if (data != null) {
+                        const contacts = data.filter(c => {
+                            c.displayName = this.extractDisplayName(c);
+                            return c.phoneNumbers && c.phoneNumbers.length > 0;
+                        });
+                        resolve(contacts);
+                    }
+                }, reject).then(() => {
+                    this.waitingCalls.shift();
+                    this.processNextCall();
+                });
+            });
+            if (this.waitingCalls.length === 1) {
+                this.processNextCall();
+            }
+        });
+    }
+
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
         const requiredFields: ContactFieldType[] = ['displayName', 'name'];
         const findOptions = {
             filter : dataBindings.get('contactFilter'),
             multiple : true
         };
-        return this.contacts.find(requiredFields, findOptions).then(data => {
-            if (data != null) {
-                return data.filter(c => {
-                    c.displayName = this.extractDisplayName(c);
-                    return c.phoneNumbers && c.phoneNumbers.length > 0;
-                });
-            }
-        });
+        return this.findContacts(requiredFields, findOptions);
     }
 }

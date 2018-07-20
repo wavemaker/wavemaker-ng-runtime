@@ -10,13 +10,14 @@ import { MobilePageDirective } from '../page/page.directive';
 export class PageContentDirective {
 
     constructor(app: App, page: MobilePageDirective, pageContentComponent: PageContentComponent) {
+        const pageName = app.activePageName;
         if (page.showLoader) {
             page.showLoader = false;
             pageContentComponent.isContentLoading = true;
             pageContentComponent.hideContent = true;
             addClass(pageContentComponent.getNativeElement(), 'load');
             const unsubscribe = app.subscribe('pageStartupdateVariablesLoaded', (data) => {
-                if (data.pageName === app.activePageName) {
+                if (data.pageName === pageName) {
                     pageContentComponent.hideContent = false;
                     // wait for compilation
                     setTimeout(() => {
