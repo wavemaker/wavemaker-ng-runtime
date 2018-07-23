@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
-import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule, PopoverModule  } from 'ngx-bootstrap';
+import { BsDatepickerModule, DatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule, PopoverModule  } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxMaskModule } from 'ngx-mask';
@@ -258,6 +258,7 @@ const PIPES = [
 ];
 
 export const bsDatePickerModule: ModuleWithProviders = BsDatepickerModule.forRoot();
+export const datepickerModule: ModuleWithProviders = DatepickerModule.forRoot();
 export const timepickerModule: ModuleWithProviders = TimepickerModule.forRoot();
 export const bsDropdownModule: ModuleWithProviders = BsDropdownModule.forRoot();
 export const paginationModule: ModuleWithProviders = PaginationModule.forRoot();
@@ -275,6 +276,7 @@ export const popoverModule: ModuleWithProviders = PopoverModule.forRoot();
         FormsModule,
         SecurityModule,
         bsDatePickerModule,
+        datepickerModule,
         timepickerModule,
         bsDropdownModule,
         paginationModule,

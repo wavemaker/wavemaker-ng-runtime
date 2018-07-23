@@ -1,6 +1,8 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-inner.component';
 
-import { getClonedObject, getSessionStorageItem } from '@wm/core';
+import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+
+import { getClonedObject, getSessionStorageItem, isMobile } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IRedrawableComponent } from '../../framework/types';
@@ -65,6 +67,11 @@ const getUTCDateTime = (dateObj) => {
     return new Date(year, month, day, hours, minutes, seconds);
 };
 const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
+// mobile calendar class names
+const multipleEventClass = 'app-calendar-event';
+const doubleEventClass = multipleEventClass + ' two';
+const singleEventClass = multipleEventClass + ' one';
+const dateFormat = 'YYYY/MM/DD';
 
 @Component({
     selector: '[wmCalendar]',
@@ -73,9 +80,12 @@ const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(CalendarComponent)
     ]
 })
-export class CalendarComponent extends StylableComponent implements AfterViewInit, OnInit, IRedrawableComponent {
+export class CalendarComponent extends StylableComponent implements AfterContentInit, AfterViewInit, OnInit, IRedrawableComponent {
     // The calendar element reference
     @ViewChild('calendar') _calendar: ElementRef;
+    @ViewChild('datepicker') _datepicker: ElementRef;
+
+    public _datepickerInnerComponent: DatePickerInnerComponent;
 
     public selecteddates: any;
     public selecteddata: any;
@@ -134,6 +144,9 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
             viewRender: this.viewRender.bind(this)
         }
     };
+    private mobileCalendar: boolean;
+    private view: string;
+    private dayClass: Array<any> = [];
 
     // this function selects the default date given for the calendar
     selectDate() {
@@ -230,7 +243,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
     private select(start, end, jsEvent, $view) {
         this.selecteddates = {start: getUTCDateTime(start), end: getUTCDateTime(end)};
         this.selecteddata = this.setSelectedData(start, end);
-        this.invokeEventCallback('select', {$start: start.valueOf(), $end: end.valueOf(), $view});
+        this.invokeEventCallback('select', {$start: start.valueOf(), $end: end.valueOf(), $view, $data: this.selecteddata});
     }
 
     private eventResize($newData, $delta, $revertFunc, $event, $ui, $view) {
@@ -337,15 +350,29 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
         dataset = _.isArray(dataset) ? dataset : (_.isObject(dataset) ? [dataset] : []);
         this.events = dataset || this.constructCalendarDataset(dataset);
         this.events.forEach((event) => {
-            if (event.start) {
-                eventDay = moment(event.start).startOf('day').format('YYYY/MM/DD');
+            const eventStart = event.start || event[this.eventstart];
+            if (eventStart) {
+                eventDay = moment(eventStart).startOf('day').format(dateFormat);
                 if (this.eventData[eventDay]) {
                     this.eventData[eventDay].push(event);
                 } else {
                     this.eventData[eventDay] = [event];
                 }
+
+                if (this.mobileCalendar) {
+                    // custom class on the date in the date picker.
+                    this.dayClass.push({
+                        date: new Date(eventStart).setHours(0, 0, 0, 0),
+                        mode: 'day',
+                        clazz: this.getDayClass({eventDay: eventDay})
+                    });
+                }
             }
         });
+        // add the eventData on the calendar by calling refreshView
+        if (this.mobileCalendar && this._datepickerInnerComponent) {
+            this._datepickerInnerComponent.refreshView();
+        }
     }
 
     // constructs the calendar dataset by mapping the eventstart, eventend, eventtitle etc.,
@@ -380,11 +407,20 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
+
+        this.mobileCalendar = isMobile();
     }
 
     ngOnInit() {
         super.ngOnInit();
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
+
+        if (this.mobileCalendar) {
+            if (!this.view || this.view === 'week') {
+                this.view = 'day';
+            }
+            this.triggerMobileCalendarChange();
+        }
     }
 
     onStyleChange(key, nv, ov?) {
@@ -420,7 +456,6 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
                     this.calendarOptions.calendar.defaultView = nv;
                 }
                 this.updateCalendarOptions('changeView', this.calendarOptions.calendar.defaultView);
-            // mobile newVal === 'week' defaultView = 'day'
                 break;
             case 'calendartype':
                 this.calendartype = nv || 'basic';
@@ -429,7 +464,7 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
             case 'dataset':
                 let dataSet;
                 const eventSet = [];
-                // triggerCalendarChange(); -> Mobile related
+                this.triggerMobileCalendarChange();
                 delete this.eventSources.events;
                 this.dataset = nv;
                 dataSet = getClonedObject(nv);
@@ -455,6 +490,26 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+
+        if (this.mobileCalendar && this._datepicker) {
+            // renderview when active date changes
+            (this._datepicker as any).activeDateChange.subscribe((dt) => {
+                const prevMonth = (this._datepicker as any).activeDate.getMonth();
+                const selectedMonth = dt.getMonth();
+
+                // invoke renderView only when month is changed.
+                if (prevMonth !== selectedMonth) {
+                    this.renderMobileView(dt);
+                }
+            });
+
+            this._datepickerInnerComponent = (this._datepicker as any)._datePicker;
+
+            return;
+        }
+
+        _.defer(this.redraw);
+
         this.$fullCalendar = $(this._calendar.nativeElement);
         this.$fullCalendar.fullCalendar(this.calendarOptions.calendar);
         // if the changes are already stacked before calendar renders then execute them when needed
@@ -480,5 +535,53 @@ export class CalendarComponent extends StylableComponent implements AfterViewIni
 
     redraw() {
         this.updateCalendarOptions('render');
+    }
+
+    // on date change invoke the select event, and if date has event on it then invoke the event click.
+    private onValueChange(value: Date): void {
+        this.proxyModel = value;
+        const selectedDate        = this.proxyModel && moment(this.proxyModel).startOf('day').format(dateFormat),
+            selectedEventData   = this.eventData[selectedDate],
+            start               = moment(this.proxyModel),
+            end                 = moment(this.proxyModel).endOf('day');
+        this.selecteddata = selectedEventData;
+        this.selecteddates = {
+            'start': moment(selectedDate).valueOf(),
+            'end'  : moment(selectedDate).endOf('day').valueOf()
+        };
+        this.calendarOptions.calendar.select(start.valueOf(), end.valueOf(), {}, this, selectedEventData);
+        if (selectedEventData) {
+            this.calendarOptions.calendar.eventClick(selectedEventData, {}, this);
+        }
+    }
+
+    // returns the custom class for the events depending on the length of the events for that day.
+    private getDayClass(data) {
+        const eventDay = data.eventDay;
+
+        if (!_.isEmpty(this.eventData) && this.eventData[eventDay]) {
+            const eventsLength = this.eventData[eventDay].length;
+            if (eventsLength === 1) {
+                return singleEventClass;
+            }
+            if (eventsLength === 2) {
+                return doubleEventClass;
+            }
+            return multipleEventClass;
+        }
+        return '';
+    }
+
+    // sets the current view and invokes the viewrender method.
+    private renderMobileView(viewObj) {
+        let startDate,
+            endDate;
+        if (!viewObj) {
+            return;
+        }
+        startDate = moment(viewObj).startOf('month').valueOf();
+        endDate = moment(viewObj).endOf('month').valueOf();
+        this.currentview = {start: startDate, end: endDate};
+        this.invokeEventCallback('viewrender', { $view: this.calendarOptions });
     }
 }
