@@ -152,6 +152,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     private operationType;
     private _isLayoutDialog;
+    private _dynamicContext;
+    private _isGridLayoutPresent;
 
     private _debouncedSubmitForm = debounce(($event) => {
         this.submitForm($event);
@@ -236,6 +238,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 }
             });
         }, 250);
+        this._isGridLayoutPresent = this.$element.find('.panel-body [wmlayoutgrid]').length > 0;
     }
 
     addEventsToContext(context) {
@@ -542,8 +545,19 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     // Function to generate and compile the form fields from the metadata
     generateFormFields() {
-        const $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]:first');
-        const noOfColumns = Number($gridLayout.attr('columns')) || 1;
+        let noOfColumns;
+        let $gridLayout;
+        if (this._isGridLayoutPresent) {
+            $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]:first');
+            noOfColumns = Number($gridLayout.attr('columns')) || 1;
+        } else {
+            $gridLayout = this.$element.find('.form-elements .dynamic-form-container');
+            if (!$gridLayout.length) {
+                this.$element.find('.form-elements').prepend('<div class="dynamic-form-container"></div>');
+                $gridLayout = this.$element.find('.form-elements .dynamic-form-container');
+            }
+            noOfColumns = 1;
+        }
         const columnWidth = 12 / noOfColumns;
         let fieldTemplate = '';
         let colCount = 0;
@@ -579,24 +593,26 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             fieldTemplate += `<wm-gridrow>${colTmpl}</wm-gridrow>`;
         }
 
-        $gridLayout.empty(); // Remove any elements from the grid
+        if (!this._isGridLayoutPresent) {
+            fieldTemplate = `<wm-layoutgrid>${fieldTemplate}</wm-layoutgrid>`;
+        }
+
         this.dynamicFormRef.clear();
 
-        const context = Object.create(this.viewParent);
-        context.form = this;
+        if (!this._dynamicContext) {
+            this._dynamicContext = Object.create(this.viewParent);
+            this._dynamicContext.form = this;
+        }
+
         this.app.notify('render-resource', {
             selector: 'app-form-' + this.widgetId + idGen.nextUid(),
             markup: transpile(fieldTemplate),
             styles: '',
             providers: undefined,
-            initFn: () => {
-                setTimeout(() => {
-                    $appDigest();
-                }, 250);
-            },
+            initFn: () => {},
             vcRef: this.dynamicFormRef,
             $target: $gridLayout[0],
-            context
+            context: this._dynamicContext
         });
         this.setFormData(this.formdata);
     }
