@@ -12,7 +12,7 @@ export class TabsAnimator extends SwipeAnimation {
     public constructor(private tabs: TabsComponent) {
         super();
         this._$el = $(this.tabs.getNativeElement()).find('>.tab-content');
-        const childEls = this._$el.find('>.tab-pane');
+        const childEls = this._$el.find('>[wmTabPane]');
         this._noOfTabs = childEls.length;
 
         const maxWidth = `${this._noOfTabs * 100}%`;
