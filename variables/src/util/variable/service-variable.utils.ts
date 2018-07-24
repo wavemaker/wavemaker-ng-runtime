@@ -360,10 +360,10 @@ export class ServiceVariableUtils {
     }
 
     /**
-     * This function returns array of query param names for variable other then page,size,sort
+     * This method returns array of query param names for variable other then page,size,sort
      * @params {params} params of the variable
      */
-    static excludePaginationParams = (params) => {
+    static excludePaginationParams(params) {
         return _.map(_.reject(params, (param) => {
             return _.includes(VARIABLE_CONSTANTS.PAGINATION_PARAMS, param.name);
         }), function (param) {

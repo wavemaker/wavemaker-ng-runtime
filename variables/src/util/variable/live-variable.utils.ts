@@ -10,16 +10,16 @@ const _initiateCallback = initiateCallback;
 
 export default class LiveVariableUtils {
 
-    static isCompositeKey = (primaryKey) => {
+    static isCompositeKey(primaryKey) {
         return !primaryKey || (primaryKey && (!primaryKey.length || primaryKey.length > 1));
     }
 
-    static isNoPrimaryKey = (primaryKey) => {
+    static isNoPrimaryKey(primaryKey) {
         return (!primaryKey || (primaryKey && !primaryKey.length));
     }
 
     // Generate the URL based on the primary keys and their values
-    static getCompositeIDURL = (primaryKeysData) => {
+    static getCompositeIDURL(primaryKeysData) {
         let compositeId = '';
         //  Loop over the 'compositeKeysData' and construct the 'compositeId'.
         _.forEach(primaryKeysData, (paramValue, paramName) => {
@@ -31,11 +31,11 @@ export default class LiveVariableUtils {
 
 
     // Check if table has blob column
-    static hasBlob = (variable) => {
+    static hasBlob(variable) {
         return _.find(_.get(variable, ['propertiesMap', 'columns']), {'type': 'blob'});
     }
 
-    static getPrimaryKey = (variable) => {
+    static getPrimaryKey(variable) {
         if (!variable.propertiesMap) {
             return [];
         }
@@ -59,7 +59,7 @@ export default class LiveVariableUtils {
     }
 
     //  Construct the URL for blob columns and set it in the data, so that widgets can use this
-    static processBlobColumns = (responseData, variable) => {
+    static processBlobColumns(responseData, variable) {
         if (!responseData) {
             return;
         }
@@ -96,7 +96,7 @@ export default class LiveVariableUtils {
         });
     }
 
-    static getHibernateOrSqlType = (variable, fieldName, type) => {
+    static getHibernateOrSqlType(variable, fieldName, type) {
         const columns = variable.propertiesMap.columns;
         let column,
             relatedCols,
@@ -118,12 +118,12 @@ export default class LiveVariableUtils {
     }
 
     /*Function to get the sqlType of the specified field.*/
-    static getSqlType = (variable, fieldName) => {
+    static getSqlType(variable, fieldName) {
         return LiveVariableUtils.getHibernateOrSqlType(variable, fieldName, 'type');
     }
 
     /*Function to check if the specified field has a one-to-many relation or not.*/
-    static isRelatedFieldMany = (variable, fieldName) => {
+    static isRelatedFieldMany(variable, fieldName) {
         const columns = variable.propertiesMap.columns,
             columnsCount = columns.length;
         let index,
@@ -140,18 +140,18 @@ export default class LiveVariableUtils {
         return true;
     }
 
-    static isStringType = (type) => {
+    static isStringType(type) {
         return _.includes(['text', 'string'], _.toLower(type));
     }
 
-    static getSQLFieldType = (variable, options) => {
+    static getSQLFieldType(variable, options) {
         if (_.includes(['timestamp', 'datetime', 'date'], options.type)) {
             return options.type;
         }
         return LiveVariableUtils.getSqlType(variable, options.fieldName) || options.type;
     }
 
-    static getAttributeName = (variable, fieldName) => {
+    static getAttributeName(variable, fieldName) {
         let attrName = fieldName;
         variable.propertiesMap.columns.forEach(column => {
             if (column.fieldName === fieldName && column.isRelated) {
@@ -161,14 +161,14 @@ export default class LiveVariableUtils {
         return attrName;
     }
 
-    static getFilterCondition = (filterCondition) => {
+    static getFilterCondition(filterCondition) {
         if (_.includes(DB_CONSTANTS.DATABASE_RANGE_MATCH_MODES, filterCondition)) {
             return filterCondition;
         }
         return DB_CONSTANTS.DATABASE_MATCH_MODES['exact'];
     }
 
-    static getFilterOption = (variable, fieldOptions, options) => {
+    static getFilterOption(variable, fieldOptions, options) {
         let attributeName,
             fieldValue = fieldOptions.value,
             filterOption,
@@ -181,7 +181,7 @@ export default class LiveVariableUtils {
 
         filterCondition = matchModes[fieldOptions.matchMode] || matchModes[fieldOptions.filterCondition] || fieldOptions.filterCondition;
 
-            fieldOptions.type = fieldType;
+        fieldOptions.type = fieldType;
         /* if the field value is an object(complex type), loop over each field inside and push only first level fields */
         if (_.isObject(fieldValue) && !_.isArray(fieldValue)) {
             const firstLevelValues = [];
@@ -262,7 +262,7 @@ export default class LiveVariableUtils {
         }
     }
 
-    static getFilterOptions = (variable, filterFields, options) => {
+    static getFilterOptions(variable, filterFields, options) {
         const filterOptions = [];
         _.each(filterFields, (fieldOptions) => {
             const filterOption = LiveVariableUtils.getFilterOption(variable, fieldOptions, options);
@@ -279,7 +279,7 @@ export default class LiveVariableUtils {
 
     // Wrap the field name and value in lower() in ignore case scenario
     // TODO: Change the function name to represent the added functionality of identifiers for datetime, timestamp and float types. Previously only lower was warapped.
-    static wrapInLowerCase = (value, options, ignoreCase, isField?) => {
+    static wrapInLowerCase(value, options, ignoreCase, isField?) {
         const type = _.toLower(options.attributeType);
         if (!isField) {
             // Wrap the identifiers for datetime, timestamp and float types. Wrappring is not required for fields.
@@ -303,7 +303,7 @@ export default class LiveVariableUtils {
         return value;
     }
 
-    static encodeAndAddQuotes = (value, type, skipEncode) => {
+    static encodeAndAddQuotes(value, type, skipEncode) {
         let encodedValue = skipEncode ? value : encodeURIComponent(value);
         type = _.toLower(type);
         encodedValue = _.replace(encodedValue, /'/g, '\'\'');
@@ -314,7 +314,7 @@ export default class LiveVariableUtils {
         return '\'' + encodedValue + '\'';
     }
 
-    static getParamValue = (value, options, ignoreCase, skipEncode) => {
+    static getParamValue(value, options, ignoreCase, skipEncode) {
         let param;
         const filterCondition = options.filterCondition,
             dbModes = DB_CONSTANTS.DATABASE_MATCH_MODES,
@@ -364,7 +364,7 @@ export default class LiveVariableUtils {
         return isDefined(param) ? param : '';
     }
 
-    static getSearchQuery = (filterOptions, operator, ignoreCase, skipEncode?) => {
+    static getSearchQuery(filterOptions, operator, ignoreCase, skipEncode?) {
         let query;
         const params = [];
         _.forEach(filterOptions, fieldValue => {
@@ -400,7 +400,7 @@ export default class LiveVariableUtils {
      * @param variable variable object
      * @param options options
      */
-    static processFilterFields = (rules, variable, options) => {
+    static processFilterFields(rules, variable, options) {
         _.remove(rules, rule => {
             return rule && (_.isString(rule.value) && rule.value.indexOf('bind:') === 0 || (rule.matchMode === 'between' ? (_.isString(rule.secondvalue) && rule.secondvalue.indexOf("bind:") === 0) : false));
         });
@@ -429,7 +429,7 @@ export default class LiveVariableUtils {
         });
     }
 
-    static getSearchField = (fieldValue, ignoreCase, skipEncode) => {
+    static getSearchField(fieldValue, ignoreCase, skipEncode) {
         let fieldName = fieldValue.attributeName;
         let matchModeExpr;
         let paramValue;
@@ -465,7 +465,7 @@ export default class LiveVariableUtils {
      * @param ignoreCase
      * @returns {*} boolean
      */
-    static getIgnoreCase = (matchMode, ignoreCase) => {
+    static getIgnoreCase(matchMode, ignoreCase) {
         const matchModes = DB_CONSTANTS.DATABASE_MATCH_MODES;
         if (_.indexOf([matchModes['anywhere'], matchModes['start'], matchModes['end'], matchModes['exact']], matchMode) !== -1) {
             return false;
@@ -476,7 +476,7 @@ export default class LiveVariableUtils {
         return ignoreCase;
     }
 
-    static generateSearchQuery = (rules, condition, ignoreCase, skipEncode) => {
+    static generateSearchQuery(rules, condition, ignoreCase, skipEncode) {
         const params = [];
         _.forEach(rules, rule => {
             if (rule) {
@@ -496,7 +496,7 @@ export default class LiveVariableUtils {
         return _.join(params, ' ' + condition + ' ');
     }
 
-    static prepareTableOptionsForFilterExps = (variable, options, clonedFields) => {
+    static prepareTableOptionsForFilterExps(variable, options, clonedFields) {
         if (!isDefined(options.searchWithQuery)) {
             options.searchWithQuery = true; // Using query api instead of  search api
         }
@@ -506,7 +506,7 @@ export default class LiveVariableUtils {
         let orderByFields,
             orderByOptions,
             query;
-        let clonedObj  = clonedFields || getClonedObject(variable.filterExpressions);
+        let clonedObj = clonedFields || getClonedObject(variable.filterExpressions);
 
         // if filterexpression from live filter is present use it to query
         if (options.filterExpr && !_.isEmpty(options.filterExpr)) {
@@ -555,9 +555,9 @@ export default class LiveVariableUtils {
             'sort'   : orderByOptions,
             'query'  : query
         };
-    };
+    }
 
-    static prepareTableOptions = (variable, options, clonedFields?) => {
+    static prepareTableOptions(variable, options, clonedFields?) {
         if (variable.operation === 'read') {
             return LiveVariableUtils.prepareTableOptionsForFilterExps(variable, options, clonedFields);
         }
@@ -612,10 +612,10 @@ export default class LiveVariableUtils {
             'sort': orderByOptions,
             'query': query
         };
-    };
+    }
 
     /* Function to check if specified field is of type date*/
-    static getFieldType = (fieldName, variable, relatedField?) => {
+    static getFieldType(fieldName, variable, relatedField?) {
         let fieldType,
             columns,
             result;
@@ -636,7 +636,7 @@ export default class LiveVariableUtils {
     }
 
     // Prepare formData for blob columns
-    static prepareFormData = (variableDetails, rowObject) => {
+    static prepareFormData(variableDetails, rowObject) {
         const formData: any = new FormData();
         formData.rowData = _.clone(rowObject);
         _.forEach(rowObject, (colValue, colName) => {
@@ -659,7 +659,7 @@ export default class LiveVariableUtils {
         return formData;
     }
 
-    static doCUD = (action, variable, options, success, error) => {
+    static doCUD(action, variable, options, success, error) {
         const projectID = $rootScope.project.id || $rootScope.projectName,
             primaryKey = LiveVariableUtils.getPrimaryKey(variable),
             isFormDataSupported = (window.File && window.FileReader && window.FileList && window.Blob);
@@ -907,9 +907,9 @@ export default class LiveVariableUtils {
         });
 
         return variable.promise = promiseObj;
-    };
+    }
 
-    static traverseFilterExpressions = (filterExpressions, traverseCallbackFn) => {
+    static traverseFilterExpressions(filterExpressions, traverseCallbackFn) {
         if (filterExpressions && filterExpressions.rules) {
             _.forEach(filterExpressions.rules, (filExpObj, i) => {
                 if (filExpObj.rules) {
@@ -919,7 +919,7 @@ export default class LiveVariableUtils {
                 }
             });
         }
-    };
+    }
 
     /**
      * Traverses recursively the filterExpressions object and if there is any required field present with no value,
@@ -929,7 +929,7 @@ export default class LiveVariableUtils {
      * @param filterExpressions - recursive rule Object
      * @returns {Object} object or boolean. Object if everything gets validated or else just boolean indicating failure in the validations
      */
-    static getFilterExprFields = (filterExpressions) => {
+    static getFilterExprFields(filterExpressions) {
         let isRequiredFieldAbsent = false;
         const traverseCallbackFn = (parentFilExpObj, filExpObj) => {
             if (filExpObj
@@ -951,7 +951,7 @@ export default class LiveVariableUtils {
      * This return function can take a function as argument. This argument function can modify the filter fields
      * before generating where clause.
      */
-    static getWhereClauseGenerator = (variable, options) => {
+    static getWhereClauseGenerator(variable, options) {
         return modifier => {
             const clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(variable.filterExpressions));
             if (modifier) {
