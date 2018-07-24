@@ -15,9 +15,7 @@ success_file=./dist/BUILD_SUCCESS
 
 if [ -f  $success_file ] ; then
 
-	working_directories=(security swipey node_modules core http-service oAuth showcase config components mobile runtime transpiler variables);
-
-	update_time=`find "${working_directories[@]}" -type f -printf '%Ts\n' | sort -n | tail -1`
+	update_time=`git ls-files | while read file; do date -r $file  +%s; done | sort -n | tail -1`
 	build_time=`date -r $success_file  +%s`
 
 	if [ $update_time -le $build_time ] ; then
