@@ -1,7 +1,7 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { App, isMobileApp, muteWatchers, noop, unMuteWatchers } from '@wm/core';
+import { AbstractNavigationService, addClass, App, isMobileApp, muteWatchers, noop, removeClass, unMuteWatchers } from '@wm/core';
 
 import { commonPageWidgets, getFragmentUrl, FragmentRenderer } from './fragment-renderer';
 import { AppManagerService } from '../app.manager.service';
@@ -13,7 +13,8 @@ export class PageRenderer {
         private renderFragment: FragmentRenderer,
         private app: App,
         private route: ActivatedRoute,
-        private appManager: AppManagerService
+        private appManager: AppManagerService,
+        private navigationService: AbstractNavigationService
     ) {}
 
     private registerWidgets(pageName: string, instance: any) {
@@ -47,7 +48,7 @@ export class PageRenderer {
         this.registerPageParams(instance);
     }
 
-    private invokeVariables(pageName: string, variableCollection: any) {
+    private invokeVariables(pageName: string, variableCollection: any, instance: any) {
         // Trigger app variables only once. Triggering here, as app variables may be watching over page widgets
         if (!this.appManager.isAppVariablesFired() && pageName !== 'Common') {
             variableCollection.callback(this.app.Variables);
@@ -56,7 +57,10 @@ export class PageRenderer {
         }
         variableCollection.callback(variableCollection.Variables)
             .catch(noop)
-            .then(() => this.appManager.notify('pageStartupdateVariablesLoaded', {pageName: pageName}));
+            .then(() => {
+                this.appManager.notify('page-start-up-variables-loaded', {pageName: pageName});
+                instance.compilePageContent = true;
+            });
         variableCollection.callback(variableCollection.Actions);
     }
 
@@ -70,18 +74,19 @@ export class PageRenderer {
         // TODO: have to make sure, the widgets are ready with default values, before firing onReady call
         unMuteWatchers();
 
-        this.invokeVariables(pageName, variableCollection);
+        this.invokeVariables(pageName, variableCollection, instance);
         if (isMobileApp()) {
-            const removeSubscription = this.appManager.subscribe('pageContentReady', () => {
+            instance.onPageContentReady = () => {
                 this.invokeOnReady(pageName, instance);
-                removeSubscription();
-            });
+                instance.onPageContentReady = noop;
+                setTimeout(() => instance.showPageContent = true);
+            };
         } else {
             this.invokeOnReady(pageName, instance);
         }
     }
 
-    public async render(pageName: string, vcRef: ViewContainerRef, $target: HTMLElement) {
+    public async render(pageName: string, vcRef: ViewContainerRef, $target: HTMLElement, clearVCRef?) {
         const context = pageName === 'Common' ? 'Partial' : 'Page';
 
         muteWatchers();
@@ -95,9 +100,34 @@ export class PageRenderer {
             },
             vcRef,
             $target,
-            true
+            true,
+            clearVCRef
         ).then(({instance, variableCollection}) => {
-            this.postReady(pageName, instance, variableCollection);
+            return this.runPageTransition($target)
+                .then(() => this.postReady(pageName, instance, variableCollection));
+        });
+    }
+
+    private runPageTransition($target: HTMLElement): Promise<void> {
+        return new Promise(resolve => {
+            let transition = this.navigationService.getPageTransition();
+            if (transition) {
+                const onTransitionEnd = () => {
+                    if (resolve) {
+                        $target.removeEventListener('animationend', onTransitionEnd);
+                        removeClass($target, transition);
+                        resolve();
+                        resolve = null;
+                    }
+                };
+                transition = 'page-transition page-transition-' + transition;
+                addClass($target, transition);
+                $target.addEventListener('animationend', onTransitionEnd);
+                // Wait for a maximum of 1 second for transition to end.
+                setTimeout(onTransitionEnd, 1000);
+            } else {
+                resolve();
+            }
         });
     }
 }

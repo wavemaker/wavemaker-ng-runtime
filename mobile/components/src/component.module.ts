@@ -20,7 +20,7 @@ import { MobileLeftPanelDirective } from './widgets/left-panel/left-panel.direct
 import { MobilePageDirective } from './widgets/page/page.directive';
 import { MobileNavbarComponent } from './widgets/mobile-navbar/mobile-navbar.component';
 import { NetworkInfoToasterComponent } from './widgets/network-info-toaster/network-info-toaster.component';
-import { PageContentDirective } from './widgets/page-content/page-content.directive';
+import { PageContentLoaderComponent } from './widgets/page-content-loader/page-content-loader.component';
 import { SearchDirective } from './widgets/search/search.directive';
 import { SegmentContentComponent } from './widgets/segmented-control/segment-content/segment-content.component';
 import { SegmentedControlComponent } from './widgets/segmented-control/segmented-control.component';
@@ -43,7 +43,7 @@ const wmMobileComponents = [
     MobilePageDirective,
     MobileTabbarComponent,
     NetworkInfoToasterComponent,
-    PageContentDirective,
+    PageContentLoaderComponent,
     SearchDirective,
     SegmentContentComponent,
     SegmentedControlComponent,

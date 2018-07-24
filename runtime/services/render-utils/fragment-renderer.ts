@@ -156,7 +156,8 @@ export class FragmentRenderer {
         componentInitFn: Function,
         vcRef: ViewContainerRef,
         $target: HTMLElement,
-        extendWithAppVariableContext: boolean
+        extendWithAppVariableContext: boolean,
+        clearVCRef?
     ): Promise<any> {
         return this.loadResourcesOfFragment(url)
             .then(({markup, script, styles, variables}) => {
@@ -176,7 +177,7 @@ export class FragmentRenderer {
                     monitorFragments(instance, viewInitPromise).then(() => onReadyPromiseResolveFn({instance, variableCollection}));
                 };
 
-                this.renderResource.render(selector, markup, styles, undefined, initFn, vcRef, $target)
+                this.renderResource.render(selector, markup, styles, undefined, initFn, vcRef, $target, null, clearVCRef)
                     .then(() => viewInitPromiseResolveFn());
 
                 return onReadyPromise;

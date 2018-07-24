@@ -7,7 +7,7 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 import { ToastrModule } from 'ngx-toastr';
 
-import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService, AbstractSpinnerService } from '@wm/core';
+import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService, AbstractSpinnerService, AbstractNavigationService } from '@wm/core';
 import { CoreModule } from '@wm/core';
 import { HttpServiceImpl, HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
@@ -39,6 +39,7 @@ import { FragmentRenderer } from './services/render-utils/fragment-renderer';
 import { PageRenderer } from './services/render-utils/page-renderer';
 import { PartialRenderer } from './services/render-utils/partial-renderer';
 import { PrefabRenderer } from './services/render-utils/prefab-renderer';
+import { NavigationServiceImpl } from './services/navigation.service';
 
 declare const $;
 declare const _WM_APP_PROPERTIES;
@@ -108,6 +109,7 @@ export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.wi
         {provide: AbstractI18nService, useClass: I18nServiceImpl},
         {provide: AbstractHttpService, useClass: HttpServiceImpl},
         {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
+        {provide: AbstractNavigationService, useClass: NavigationServiceImpl},
         PipeProvider,
         ViewRenderer,
         FragmentRenderer,

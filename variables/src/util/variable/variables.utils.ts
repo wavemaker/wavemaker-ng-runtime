@@ -8,6 +8,7 @@ const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 export let appManager;
 export let httpService;
 export let metadataService;
+export let navigationService;
 export let routerService;
 export let toasterService;
 export let oauthService;
@@ -94,6 +95,9 @@ export const setDependency = (type: string, ref: any) => {
         case 'metadata':
             metadataService = ref;
             break;
+        case 'navigationService':
+            navigationService = ref;
+            break;
         case 'router':
             routerService = ref;
             break;
@@ -134,7 +138,7 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
                 if (_.isString(data)) {
                     errorVariable.setMessage(data);
                 } else {
-                    errorVariable.setMessage('An error has occured. Please check the app logs.')
+                    errorVariable.setMessage('An error has occured. Please check the app logs.');
                 }
                 errorVariable.invoke({}, undefined, undefined);
                  // $rootScope.$evalAsync(function () {

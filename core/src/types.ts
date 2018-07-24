@@ -144,3 +144,19 @@ export abstract class AbstractSpinnerService {
 export abstract class UserDefinedExecutionContext {
 
 }
+
+export interface NavigationOptions {
+    $event?: any;
+    pageName?: string;
+    transition?: string;
+    urlParams?: any;
+    viewName?: string;
+}
+
+export abstract class AbstractNavigationService {
+    public abstract getPageTransition(): string;
+    public abstract goToPage(pageName: string, options: NavigationOptions);
+    public abstract goToPrevious();
+    public abstract goToView(viewName: string, options: NavigationOptions, variable: any);
+}
+

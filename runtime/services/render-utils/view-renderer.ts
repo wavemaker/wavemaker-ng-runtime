@@ -50,7 +50,8 @@ export class ViewRenderer {
         componentInitFn: Function,
         vcRef: ViewContainerRef,
         $target: HTMLElement,
-        context?: any
+        context?: any,
+        clearVCRef = true
     ): Promise<void> {
 
         let postInitResolveFn;
@@ -86,10 +87,13 @@ export class ViewRenderer {
                 postInitSub.unsubscribe();
             });
 
-        vcRef.clear();
+        if (clearVCRef) {
+            vcRef.clear();
+            $target.innerHTML = '';
+        }
+
         const component = vcRef.createComponent(componentRef);
 
-        $target.innerHTML = '';
         $target.appendChild(component.location.nativeElement);
 
         return postInitPromise;

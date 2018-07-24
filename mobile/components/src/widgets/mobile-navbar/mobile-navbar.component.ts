@@ -1,7 +1,7 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 
 import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef } from '@wm/components';
-import { App } from '@wm/core';
+import { App, AbstractNavigationService } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 
 import { registerProps } from './mobile-navbar.props';
@@ -35,6 +35,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
         app: App,
         private page: PageDirective,
         private deviceService: DeviceService,
+        private navigationService: AbstractNavigationService,
         inj: Injector
     ) {
         super(inj, WIDGET_CONFIG);
@@ -64,7 +65,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
             if (this.hasEventCallback('backbtnclick')) {
                 this.invokeEventCallback('backbtnclick', {$event});
             } else {
-                window.history.go(-1);
+                this.navigationService.goToPrevious();
             }
         }
     }

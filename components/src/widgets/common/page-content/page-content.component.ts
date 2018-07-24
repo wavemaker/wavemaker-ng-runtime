@@ -21,9 +21,6 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 })
 export class PageContentComponent extends StylableComponent {
 
-    public isContentLoading = false;
-    public hideContent = false;
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AbstractHttpService, AbstractDialogService, AbstractToasterService } from '@wm/core';
+import { AbstractHttpService, AbstractDialogService, AbstractToasterService, AbstractNavigationService } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
 
@@ -18,6 +18,7 @@ export class VariablesService {
     constructor(
         private httpService: AbstractHttpService,
         private metadataService: MetadataService,
+        private navigationService: AbstractNavigationService,
         private routerService: Router,
         private toasterService: AbstractToasterService,
         private oAuthService: OAuthService,
@@ -27,6 +28,7 @@ export class VariablesService {
         // set external dependencies, to be used across variable classes, managers and utils
         setDependency('http', this.httpService);
         setDependency('metadata', this.metadataService);
+        setDependency('navigationService', this.navigationService);
         setDependency('router', this.routerService);
         setDependency('toaster', this.toasterService);
         setDependency('oAuth', this.oAuthService);

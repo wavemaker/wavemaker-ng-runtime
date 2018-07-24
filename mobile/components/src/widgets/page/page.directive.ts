@@ -12,8 +12,6 @@ export class MobilePageDirective {
 
     private _$ele;
 
-    public showLoader = true;
-
     constructor(private page: PageDirective, elRef: ElementRef) {
         addClass(elRef.nativeElement, 'mobile-app-page');
         this._$ele = $(elRef.nativeElement);

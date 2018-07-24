@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
-import { AbstractSpinnerService, App } from '@wm/core';
+import { AbstractSpinnerService, App, noop } from '@wm/core';
 
 import { AppManagerService } from '../services/app.manager.service';
 import { PageRenderer } from '../services/render-utils/page-renderer';
@@ -47,18 +47,19 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
     }
 
     renderPage(pageName) {
-        this.resetViewContainer();
         const $target = this.getTargetNode();
 
         const spinnerId = this.spinnerService.show('', 'globalSpinner');
 
         this.appManager.loadAppVariables()
             .then(() => {
-                this.pageRenderer.render(pageName, this.vcRef, $target)
+                this.pageRenderer.render(pageName, this.vcRef, $target, false)
+                    .catch(noop)
                     .then(() => {
                         this.spinnerService.hide(spinnerId);
-                    }, (e) => {
-                        this.spinnerService.hide(spinnerId);
+                        if (this.vcRef.length > 1) {
+                            this.vcRef.remove(0);
+                        }
                     });
             });
     }
@@ -75,6 +76,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
             // there is only one route
             this.renderPrefabPreviewPage();
         } else {
+            $(this.getTargetNode()).find('>div:first').remove();
             this.subscription = this.route.params.subscribe(({pageName}: any) => {
                 this.ngZone.run(() => {
                     if (pageName) {
