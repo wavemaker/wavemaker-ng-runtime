@@ -56,6 +56,13 @@ export class CarouselDirective extends StylableComponent implements AfterContent
         }
     }
 
+    private startAnimation() {
+        if (this.animator) {
+            this.animator.interval = this.animationinterval * 1000;
+            this.animator.start();
+        }
+    }
+
     private onSlidesRender(slides) {
         setTimeout(() => {
             this.animator = new CarouselAnimator(this, this.interval, this.ngZone);
@@ -86,14 +93,17 @@ export class CarouselDirective extends StylableComponent implements AfterContent
         this.animation === 'auto' ? this.interval = this.animationinterval * 1000 : this.interval = 0 ;
         // TODO transition is pending
 
-        // For showing controls
-        this.navigationClass = navigationClassMap[this.controls];
     }
 
     // on property change handler
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'dataset') {
             this.onDataChange(nv);
+        } else if (key === 'controls') {
+            // For showing controls
+            this.navigationClass = navigationClassMap[this.controls];
+        }  else if (key === 'animation' || key === 'animationinterval') {
+            this.animation === 'none' ? this.stopAnimation() :  this.startAnimation();
         } else {
             super.onPropertyChange(key, nv, ov);
         }
