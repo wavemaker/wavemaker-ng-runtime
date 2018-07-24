@@ -1,13 +1,3 @@
-npm install
-start=`date +%s`
-RIMRAF=./node_modules/.bin/rimraf
-ROLLUP=./node_modules/.bin/rollup
-UGLIFYJS=./node_modules/.bin/uglifyjs
-NGC=./node_modules/.bin/ngc
-TSC=./node_modules/.bin/tsc
-
-set -e
-
 # Reset
 Color_Off='\033[0m'       # Text Reset
 
@@ -20,6 +10,36 @@ Blue='\033[0;34m'         # Blue
 Purple='\033[0;35m'       # Purple
 Cyan='\033[0;36m'         # Cyan
 White='\033[0;37m'        # White
+
+success_file=./dist/BUILD_SUCCESS
+
+if [ -f  $success_file ] ; then
+
+	working_directories=(security swipey node_modules core http-service oAuth showcase config components mobile runtime transpiler variables);
+
+	update_time=`find "${working_directories[@]}" -type f -printf '%Ts\n' | sort -n | tail -1`
+	build_time=`date -r $success_file  +%s`
+
+	if [ $update_time -le $build_time ] ; then
+		echo -e "${Yellow}No updates found. Skipping build.${Color_Off}"
+		exit 0
+	else
+		rm $success_file
+	fi
+fi
+
+
+npm install
+start=`date +%s`
+RIMRAF=./node_modules/.bin/rimraf
+ROLLUP=./node_modules/.bin/rollup
+UGLIFYJS=./node_modules/.bin/uglifyjs
+NGC=./node_modules/.bin/ngc
+TSC=./node_modules/.bin/tsc
+
+set -e
+
+
 
 
 #############################################################################
@@ -489,3 +509,5 @@ end=`date +%s`
 runtime=$((end-start))
 
 echo -e "${Purple}Execution time: ${runtime}sec${White}"
+
+touch $success_file
