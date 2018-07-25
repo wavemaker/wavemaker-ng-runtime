@@ -54,14 +54,14 @@ export class TableCUDDirective {
                 this.table.dataNavigator.dataSize += 1;
             }
             /*Update the data in the current page in the grid after insert/update operations.*/
-            if (!this.table.shownavigation) {
+            if (!this.table.isNavigationEnabled()) {
                 index = 'current';
             }
         }
         /*Re-calculate the paging values like pageCount etc that could change due to change in the dataSize.*/
         this.table.dataNavigator.calculatePagingValues();
         this.table.dataNavigator.navigatePage(index, null, true, () => {
-            if (this.table.shownavigation || isStaticVariable) {
+            if (this.table.isNavigationEnabled() || isStaticVariable) {
                 this.selectItemOnSuccess(row, skipSelectItem, callBack);
             }
         });
@@ -75,7 +75,7 @@ export class TableCUDDirective {
 
         dataSource.execute(DataSource.Operation.FETCH_DISTINCT_VALUES);
 
-        if (!this.table.shownavigation) {
+        if (!this.table.isNavigationEnabled()) {
             refreshDataSource(dataSource, {
                 page: 1
             }).then(() => {
