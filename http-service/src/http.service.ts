@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '@angular/common/http';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 import { AbstractHttpService, getClonedObject, getValidJSON, replace } from '@wm/core';
 
@@ -32,12 +32,12 @@ export class HttpServiceImpl extends AbstractHttpService {
 
         // headers
         if (headers) {
-            Object.entries(headers).forEach(([k, v]) => reqHeaders = reqHeaders.append(k, v));
+            Object.entries(headers).forEach(([k, v]) => reqHeaders = reqHeaders.append(k, v as string));
         }
 
         // params
         if (params) {
-            Object.entries(params).forEach(([k, v]) => reqParams = reqParams.append(k, v));
+            Object.entries(params).forEach(([k, v]) => reqParams = reqParams.append(k, v as string));
         }
 
         let third, fourth;

@@ -1,7 +1,7 @@
 import { AfterViewInit, OnDestroy } from '@angular/core';
 import { getDateObj, isString } from '@wm/core';
 import { BaseFormCustomComponent } from './base-form-custom.component';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
 
 declare const moment, _, $;

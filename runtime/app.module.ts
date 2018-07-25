@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -65,6 +65,13 @@ const routes = [
     }
 ];
 
+export const routerModule: ModuleWithProviders = RouterModule.forRoot(routes, {useHash: true});
+export const toasterModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened: 1, autoDismiss: true });
+export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.withOptions({
+    cookieName: 'wm_xsrf_token',
+    headerName: _WM_APP_PROPERTIES.xsrf_header_name
+});
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -88,15 +95,9 @@ const routes = [
         HttpClientModule,
         HttpServiceModule,
         BrowserAnimationsModule,
-        RouterModule.forRoot(routes, {useHash: true}),
-        ToastrModule.forRoot({
-            maxOpened: 1,
-            autoDismiss: true
-        }),
-        HttpClientXsrfModule.withOptions({
-            cookieName: 'wm_xsrf_token',
-            headerName: _WM_APP_PROPERTIES.xsrf_header_name
-        }),
+        routerModule,
+        toasterModule,
+        httpClientXsrfModule,
         WmMobileComponentsModule,
         MobileAppModule
     ],

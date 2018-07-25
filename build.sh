@@ -76,16 +76,6 @@ then
 fi
 echo -e "${Green}Done with ngc compilation ${White}\n"
 
-################################ inline-templates
-
-echo -e "${Cyan}Copy and inline html files ${White}"
-node inline-templates.js
-if [ "$?" != "0" ]
-then
-	echo -e "${Red}Error during inline templates ${White}\n"
-	exit 1
-fi
-echo -e "${Green}Done with inline templates ${White}\n"
 
 mkdir -p ./dist/bundles/wmapp/scripts
 mkdir -p ./dist/bundles/wmmobile/scripts
@@ -115,7 +105,7 @@ then
 
 
     echo -e "${Cyan}Building ngx-toastr ${White}"
-    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/esm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015
+    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/fesm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015
     $ROLLUP -c ./config/rollup.ngx-toastr.config.js --silent
     if [ "$?" != "0" ]
     then
@@ -135,7 +125,6 @@ then
     echo -e "${Green}Built ngx-mask\n"
 
     echo -e "${Cyan}Building angular-websocket ${White}"
-    $TSC ./node_modules/angular2-websocket/src/angular2-websocket.ts  --target es5 --module es2015  --lib ES2017,DOM --moduleResolution node --outDir ./dist/tmp
     $ROLLUP -c ./config/rollup.angular-websocket.config.js --silent
     if [ "$?" != "0" ]
     then
@@ -143,8 +132,6 @@ then
         exit 1
     fi
     echo -e "${Green}angular-websocket ${White}\n"
-
-
 
     echo -e "${Cyan}Building swipey ${White}"
     $ROLLUP -c ./swipey/rollup.config.js --silent
@@ -160,7 +147,7 @@ then
         ./dist/tmp/tslib.umd.js \
         ./dist/tmp/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
-        ./node_modules/rxjs/bundles/Rx.js \
+        ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
         ./node_modules/@angular/animations/bundles/animations.umd.js \
         ./node_modules/@angular/animations/bundles/animations-browser.umd.js \
@@ -180,7 +167,7 @@ then
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
-        ./node_modules/d3/d3.min.js \
+        ./node_modules/d3/dist/d3.min.js \
         ./node_modules/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
@@ -225,7 +212,7 @@ then
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
         ./node_modules/zone.js/dist/zone.js \
-        ./node_modules/rxjs/bundles/Rx.js \
+        ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
         ./node_modules/@angular/animations/bundles/animations.umd.js \
         ./node_modules/@angular/animations/bundles/animations-browser.umd.js \
@@ -244,7 +231,7 @@ then
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
-        ./node_modules/d3/d3.min.js \
+        ./node_modules/d3/dist/d3.min.js \
         ./node_modules/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
@@ -410,17 +397,8 @@ echo -e "${Green}Bundled wm-loader${White}\n"
 ################################ ngc
 echo -e "${Cyan}Compiling typescript files for mobile using ngc ${White}"
 $NGC -p ./runtime/tsconfig.build.json
+echo -e "${Green}Done with ngc compilation ${White}\n"
 
-################################ inline-templates
-
-echo -e "${Cyan}Copy and inline html files ${White}"
-node inline-templates.js
-if [ "$?" != "0" ]
-then
-	echo -e "${Red}Error during inline templates ${White}\n"
-	exit 1
-fi
-echo -e "${Green}Done with inline templates ${White}\n"
 
 ########## mobile core
 echo -e "${Cyan}Building mobile core task ${White}"

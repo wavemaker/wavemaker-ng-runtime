@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
+import { Observer } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 import { DeviceFileService } from './device-file.service';
 import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Observer } from 'rxjs/Observer';
+
 
 const MAX_CONCURRENT_DOWNLOADS = 2;
 
@@ -90,18 +92,21 @@ export class DeviceFileDownloadService {
             reportProgress: progressObserver != null
         });
         return this.http.request(req)
-            .map(e => {
-                if (progressObserver && progressObserver.next && e.type === HttpEventType.DownloadProgress) {
-                    progressObserver.next(e);
-                }
-                return e;
-            }).filter(e => e.type === HttpEventType.Response)
-            .map( e => {
-                if (progressObserver && progressObserver.complete) {
-                    progressObserver.complete();
-                }
-                return (e as HttpResponse<Blob>).body;
-            })
+            .pipe(
+                map(e => {
+                    if (progressObserver && progressObserver.next && e.type === HttpEventType.DownloadProgress) {
+                        progressObserver.next(e);
+                    }
+                    return e;
+                }),
+                filter(e => e.type === HttpEventType.Response),
+                map( e => {
+                    if (progressObserver && progressObserver.complete) {
+                        progressObserver.complete();
+                    }
+                    return (e as HttpResponse<Blob>).body;
+                })
+            )
             .toPromise();
     }
 }

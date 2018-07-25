@@ -1,5 +1,7 @@
 import { Attribute, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 
+import { debounceTime, filter } from 'rxjs/operators';
+
 import { WidgetRef } from '@wm/components';
 import { $invokeWatchers, noop } from '@wm/core';
 
@@ -66,8 +68,11 @@ export class PartialContainerDirective {
         });
 
         const subscription = componentInstance.params$
-            .filter(() => this.contentInitialized)
-            .debounceTime(200).subscribe(() => this.renderPartial(componentInstance.content));
+            .pipe(
+                filter(() => this.contentInitialized),
+                debounceTime(200)
+            )
+            .subscribe(() => this.renderPartial(componentInstance.content));
         // reload the partial content on partial param change
         componentInstance.registerDestroyListener(() => subscription.unsubscribe());
     }

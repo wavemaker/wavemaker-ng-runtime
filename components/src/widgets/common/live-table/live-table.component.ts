@@ -1,5 +1,7 @@
 import { AfterContentInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
 
+import { debounceTime } from 'rxjs/operators';
+
 import { $appDigest, AbstractDialogService, getClonedObject, isDefined, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
@@ -61,7 +63,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
             this.table.datagridElement.datatable('option', this.tableOptions);
 
             this.table.selectedItemChange$
-                .debounceTime(250)
+                .pipe(debounceTime(250))
                 .subscribe(this.onSelectedItemChange.bind(this));
 
             if (!this.isLayoutDialog && !this.form) {

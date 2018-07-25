@@ -45,17 +45,6 @@ fi
 echo -e "${Green}Done with ngc compilation ${White}\n"
 
 
-################################ inline-templates
-
-echo -e "${Cyan}Copy and inline html files ${White}"
-node inline-templates.js
-if [ "$?" != "0" ]
-then
-	echo -e "${Red}Error during inline templates ${White}\n"
-	exit 1
-fi
-echo -e "${Green}Done with inline templates ${White}\n"
-
 mkdir -p ./dist/bundles/wmapp/scripts
 mkdir ./dist/tmp
 

@@ -1,6 +1,7 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
+import { from, Observable, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
@@ -111,7 +112,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     observer.next(this.query);
                 }, 200)
             )
-            .mergeMap((token: string) => this.getDataSourceAsObservable(token));
+            .pipe(
+                mergeMap((token: string) => this.getDataSourceAsObservable(token))
+            );
 
         /**
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
@@ -357,18 +360,18 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
         // show dropdown only when there is change in query
         if (query && (this._lastQuery === query)) {
-            return Observable.of([]);
+            return of([]);
         }
         // search will show all the results fetched previously without making n/w calls all the time.
         if (!this.isformfield && this.dataProvider.hasNoMoreData && this.query) {
             // converting array to observable using "observable.to".
-            return Observable.of(this.getTransformedData(this.formattedDataset));
+            return of(this.getTransformedData(this.formattedDataset));
         }
 
         this._loadingItems = true;
 
         // converting promise to observable of datasetItem using "observable.from".
-        return Observable.from(this.getDataSource(query));
+        return from(this.getDataSource(query));
     }
 
 

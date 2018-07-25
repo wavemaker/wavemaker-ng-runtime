@@ -1,8 +1,7 @@
 import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, OnInit, QueryList } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subject } from 'rxjs';
 
 import { $watch } from '@wm/core';
 

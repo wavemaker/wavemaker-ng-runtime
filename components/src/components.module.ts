@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
 import { BsDatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule, PopoverModule  } from 'ngx-bootstrap';
@@ -257,22 +257,33 @@ const PIPES = [
     ImagePipe
 ];
 
+export const bsDatePickerModule: ModuleWithProviders = BsDatepickerModule.forRoot();
+export const timepickerModule: ModuleWithProviders = TimepickerModule.forRoot();
+export const bsDropdownModule: ModuleWithProviders = BsDropdownModule.forRoot();
+export const paginationModule: ModuleWithProviders = PaginationModule.forRoot();
+export const typeaheadModule: ModuleWithProviders = TypeaheadModule.forRoot();
+export const progressbarModule: ModuleWithProviders = ProgressbarModule.forRoot();
+export const modalModule: ModuleWithProviders = ModalModule.forRoot();
+export const ngxMaskModule: ModuleWithProviders = NgxMaskModule.forRoot();
+export const carouselModule: ModuleWithProviders = CarouselModule.forRoot();
+export const popoverModule: ModuleWithProviders = PopoverModule.forRoot();
+
 @NgModule({
     imports: [
         ColorPickerModule,
         CommonModule,
         FormsModule,
-        BsDatepickerModule.forRoot(),
-        TimepickerModule.forRoot(),
-        BsDropdownModule.forRoot(),
-        PaginationModule.forRoot(),
-        TypeaheadModule.forRoot(),
-        ProgressbarModule.forRoot(),
-        ModalModule.forRoot(),
-        NgxMaskModule.forRoot(),
-        CarouselModule.forRoot(),
-        PopoverModule.forRoot(),
-        SecurityModule
+        SecurityModule,
+        bsDatePickerModule,
+        timepickerModule,
+        bsDropdownModule,
+        paginationModule,
+        typeaheadModule,
+        progressbarModule,
+        modalModule,
+        ngxMaskModule,
+        carouselModule,
+        popoverModule
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],

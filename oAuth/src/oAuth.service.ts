@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+
+import { Subject } from 'rxjs';
 
 import { AbstractHttpService } from '@wm/core';
-import { performAuthorization, removeAccessToken, getAccessToken } from './oAuth.utils';
+
+import { getAccessToken, performAuthorization, removeAccessToken } from './oAuth.utils';
 
 declare const _;
 

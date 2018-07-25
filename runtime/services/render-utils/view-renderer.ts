@@ -2,7 +2,7 @@ import { AfterViewInit, Compiler, Component, CUSTOM_ELEMENTS_SCHEMA, Injectable,
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { BsDropdownModule, CarouselModule, PopoverModule } from 'ngx-bootstrap';
 
 import { App, extendProto, noop, UserDefinedExecutionContext } from '@wm/core';

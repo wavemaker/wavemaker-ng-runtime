@@ -1,7 +1,7 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormBuilder, FormGroup, ControlValueAccessor } from '@angular/forms';
+import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, isDataSourceEqual, isDefined, isMobile, triggerFn } from '@wm/core';
 

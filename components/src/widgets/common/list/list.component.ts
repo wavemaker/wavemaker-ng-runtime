@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { $appDigest, App, DataSource, getClonedObject, isDataSourceEqual, isDefined, isNumber, isObject, noop, switchClass } from '@wm/core';
 

@@ -1,7 +1,9 @@
 import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Self } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { DataType, debounce, FormWidgetType, isMobile, removeClass, toBoolean } from '@wm/core';
+import { debounceTime } from 'rxjs/operators';
+
+import { DataType, debounce, FormWidgetType, isMobile, removeClass } from '@wm/core';
 
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, provideAsWidgetRef } from '../../../../utils/widget-utils';
@@ -378,8 +380,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         this.ngform = this.form.ngform;
         this.ngform.addControl(fieldName, this.createControl());
-        const onValueChangeSubscription =  this._control.valueChanges
-            .debounceTime(200)
+        const onValueChangeSubscription = this._control.valueChanges
+            .pipe(debounceTime(200))
             .subscribe(this.onValueChange.bind(this));
         this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
         super.ngOnInit();

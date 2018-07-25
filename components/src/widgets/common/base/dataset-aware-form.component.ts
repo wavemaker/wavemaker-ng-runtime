@@ -1,6 +1,6 @@
 import { Injector } from '@angular/core';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 import { $appDigest, debounce, isDefined, toBoolean } from '@wm/core';
 

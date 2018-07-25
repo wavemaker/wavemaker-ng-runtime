@@ -40,9 +40,8 @@ export default {
     'ngx-color-picker': 'zef.ngxColorPicker',
     'ngx-mask': 'ngxMask',
     'ngx-toastr': 'ngxToastr',
-    'rxjs/Subject': 'Rx',
-    'rxjs/Observable': 'Rx',
-    'rxjs/ReplaySubject': 'Rx',
+    'rxjs': 'rxjs',
+    'rxjs/operators': 'rxjs.operators',
     'tslib': 'tslib',
     'angular2-websocket/angular2-websocket': 'angularWebSocket'
 };

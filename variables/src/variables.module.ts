@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,13 +12,12 @@ import { OAuthModule } from '@wm/oAuth';
 import { VariablesService } from './service/variables.service';
 import { MetadataService } from './service/metadata-service/metadata.service';
 
+export const toastrModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened: 1, autoDismiss: true});
+
 @NgModule({
     imports: [
         CommonModule,
-        ToastrModule.forRoot({
-            maxOpened: 1,
-            autoDismiss: true
-        }),
+        toastrModule,
         HttpClientModule,
         HttpServiceModule,
         OAuthModule,

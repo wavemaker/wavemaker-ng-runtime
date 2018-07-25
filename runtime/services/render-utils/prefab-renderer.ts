@@ -50,7 +50,7 @@ export class PrefabRenderer {
 
                 if (config) {
                     Object.entries((config.properties || {}))
-                        .forEach(([key, prop]) => {
+                        .forEach(([key, prop]: [string, any]) => {
                             if (prop.type === 'event') {
                                 instance[key] = (locals: any) => {
                                     const eventName = key.substr(2).toLowerCase();
@@ -71,7 +71,7 @@ export class PrefabRenderer {
 
                                 let expr;
 
-                                let value = _.trim(prop.value);
+                                const value = _.trim(prop.value);
 
                                 if (_.startsWith(value, 'bind:')) {
                                     expr = value.replace('bind:', '');
@@ -89,7 +89,7 @@ export class PrefabRenderer {
                                 if (expr) {
                                     instance.registerDestroyListener(
                                         $watch(expr, instance, {}, nv => containerWidget.widget[key] = nv)
-                                    )
+                                    );
                                 }
                             }
                         });

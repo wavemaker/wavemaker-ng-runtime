@@ -2,7 +2,7 @@
     <!-- drag and drop files UI in web -->
     <div class="app-multi-file-upload" *ngIf="!_isMobileType && multiple">
         <div class="drop-box" drag-files="onFileSelect($event,$event.target.files)">
-            <i class="{{iconclass}}"/>
+            <i class="{{iconclass}}"></i>
             <div class="message">
                 <label [innerHtml]="caption" class="caption"></label>
                 <form class="form-horizontal" name="{{formName}}">

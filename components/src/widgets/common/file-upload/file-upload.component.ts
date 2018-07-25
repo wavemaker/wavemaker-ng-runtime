@@ -1,5 +1,6 @@
 import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+
+import { Subject } from 'rxjs';
 
 import { App, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
 import { styler } from '@wm/components';

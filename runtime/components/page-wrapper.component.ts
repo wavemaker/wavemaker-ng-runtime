@@ -1,11 +1,12 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 
+import { Subscription } from 'rxjs';
+
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
-import { App, AbstractSpinnerService } from '@wm/core';
+import { AbstractSpinnerService, App } from '@wm/core';
 
-import { Subscription } from 'rxjs/Subscription';
 import { AppManagerService } from '../services/app.manager.service';
 import { PageRenderer } from '../services/render-utils/page-renderer';
 import { PrefabRenderer } from '../services/render-utils/prefab-renderer';
