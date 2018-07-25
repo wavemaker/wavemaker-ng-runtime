@@ -217,6 +217,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     onPropertyChange(key, nv, ov?) {
+        super.onPropertyChange(key, nv, ov);
+
         if (this.excludeProps.has(key)) {
             return;
         }
@@ -277,8 +279,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (key === 'tabindex') {
             return;
         }
-
-        super.onPropertyChange(key, nv, ov);
     }
 
     onStyleChange(key, nv, ov?) {

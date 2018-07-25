@@ -58,10 +58,12 @@ const setDefaultPlaceholder = (attrs, widgetType, index) => {
 };
 
 const getWidgetTemplate = (attrs, options) => {
-    const fieldName = (attrs.get('key') || attrs.get('name') || '').trim();
+    const name = attrs.get('name');
+    const fieldName = (attrs.get('key') || name || '').trim();
     const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
     const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
-    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef}`;
+    const widgetName = options.isMaxWidget ? `name="${name}_formWidgetMax"` : `name="${name}_formWidget"`;
+    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef} ${widgetName}`;
     return getFormWidgetTemplate(options.widgetType, defaultTmpl, attrs, {counter: options.counter, pCounter: options.pCounter});
 };
 
