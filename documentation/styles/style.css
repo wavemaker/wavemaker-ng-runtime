@@ -1,0 +1,17 @@
+@import "./reset.css";
+@import "./bootstrap.min.css";
+@import "./bootstrap-card.css";
+@import "./font-awesome.min.css";
+@import "./compodoc.css";
+
+.summary {
+    padding-left: 20px;
+}
+
+.tab-pane > h3:first-of-type {
+    display: none;
+}
+
+.tab-pane > p:nth-of-type(3) {
+    display: none;
+}
