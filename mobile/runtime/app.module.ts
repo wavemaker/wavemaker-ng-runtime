@@ -8,6 +8,7 @@ import { MobileCoreModule, DeviceService, ExtAppMessageService } from '@wm/mobil
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope } from '@wm/variables';
 
+import { CookieService } from './services/cookie.service';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { AppExtComponent } from './app-ext.component';
 
@@ -36,6 +37,7 @@ const KEYBOARD_CLASS = 'keyboard';
         WmMobileComponentsModule
     ],
     providers: [
+        CookieService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: MobileHttpInterceptor,
@@ -48,12 +50,15 @@ export class MobileAppModule {
 
     private _$appEl;
 
-    constructor(app: App, deviceService: DeviceService, private extAppMessageService: ExtAppMessageService) {
+    constructor(app: App, cookieService: CookieService, deviceService: DeviceService, private extAppMessageService: ExtAppMessageService) {
         this._$appEl = $('.wm-app:first');
         this._$appEl.addClass('wm-mobile-app');
         app.deployedUrl = this.getDeployedUrl();
         this.getDeviceOS().then(os => this.applyOSTheme(os));
         this.handleKeyBoardClass();
+        if (hasCordova()) {
+            deviceService.addStartUpService(cookieService);
+        }
         deviceService.start();
         deviceService.whenReady().then(() => {
             if (hasCordova()) {
@@ -61,6 +66,10 @@ export class MobileAppModule {
                 this.exposeOAuthService();
                 navigator.splashscreen.hide();
             }
+        });
+        app.subscribe('userLoggedIn', () => {
+            cookieService.persistCookie($rootScope.project.deployedUrl, 'JSESSIONID');
+            cookieService.persistCookie($rootScope.project.deployedUrl, 'SPRING_SECURITY_REMEMBER_ME_COOKIE');
         });
     }
 
