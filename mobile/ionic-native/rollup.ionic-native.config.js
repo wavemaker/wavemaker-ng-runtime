@@ -6,9 +6,10 @@ export default [
             format : 'umd',
             name: 'ionicNative.core',
             globals: {
-                'rxjs/add/observable/fromEvent': 'Rx.Observable.prototype',
-                'rxjs/Observable': 'Rx',
-                'rxjs/observable/throw' : 'Rx'
+                'rxjs/observable/fromEvent': 'rxjs',
+                'rxjs/Observable': 'rxjs',
+                'rxjs/observable/throw' : 'rxjs',
+                'rxjs/observable/merge': 'rxjs'
             }
         }
     },
@@ -21,9 +22,10 @@ export default [
             globals: {
                 '@angular/core': 'ng.core',
                 '@ionic-native/core': 'ionicNative.core',
-                'rxjs/add/observable/fromEvent': 'Rx.Observable.prototype',
-                'rxjs/Observable': 'Rx',
-                'rxjs/observable/throw' : 'Rx'
+                'rxjs/observable/fromEvent': 'rxjs',
+                'rxjs/Observable': 'rxjs',
+                'rxjs/observable/throw' : 'rxjs',
+                'rxjs/observable/merge': 'rxjs'
             }
         }
     }
