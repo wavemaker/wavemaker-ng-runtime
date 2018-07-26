@@ -167,7 +167,7 @@ then
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
-        ./node_modules/d3/dist/d3.min.js \
+        ./node_modules/d3/d3.min.js \
         ./node_modules/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
@@ -231,7 +231,7 @@ then
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
-        ./node_modules/d3/dist/d3.min.js \
+        ./node_modules/d3/d3.min.js \
         ./node_modules/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \

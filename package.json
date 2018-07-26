@@ -38,7 +38,7 @@
         "animate.css": "3.6.1",
         "bootstrap": "4.1.3",
         "core-js": "2.5.7",
-        "d3": "5.5.0",
+        "d3": "3.5.17",
         "font-awesome": "4.7.0",
         "fullcalendar": "3.9.0",
         "hammerjs": "2.0.8",
