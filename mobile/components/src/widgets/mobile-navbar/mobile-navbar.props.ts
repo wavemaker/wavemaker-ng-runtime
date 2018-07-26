@@ -22,6 +22,7 @@ export const navbarProps = new Map(
         ['imgsrc', PROP_STRING],
         ['query', {value: '', ...PROP_STRING}],
         ['leftnavpaneliconclass', {value: 'wi wi-menu', ...PROP_STRING}],
+        ['name', PROP_STRING],
         ['readonlySearchBar', PROP_BOOLEAN],
         ['searchbutton', {value: false, ...PROP_BOOLEAN}],
         ['searchbuttoniconclass', {value: 'wi wi-search', ...PROP_STRING}],

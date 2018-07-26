@@ -9,6 +9,7 @@ export const registerProps = () => {
                 ['dataset', PROP_ANY],
                 ['layout', {value: 'Single-row', ...PROP_STRING}],
                 ['mediaurl', PROP_STRING],
+                ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['thumbnailheight', {value: '100pt', ...PROP_STRING}],
                 ['thumbnailwidth', {value: '100pt', ...PROP_STRING}],

@@ -19,6 +19,7 @@ export const registerProps = () => {
                 ['imagetargetheight', PROP_NUMBER],
                 ['localFile', {value: '', ...PROP_STRING}],
                 ['localFilePath', {value: '', ...PROP_STRING}],
+                ['name', PROP_STRING],
                 ['savetogallery', {value: false, ...PROP_BOOLEAN}],
                 ['show', {value: true, ...PROP_BOOLEAN}]
             ]
