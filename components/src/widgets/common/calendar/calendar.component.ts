@@ -100,7 +100,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     public eventallday;
     public eventclass;
 
-    private eventSources = {
+    private eventSources: Array<any> = [];
+
+    private dataSetEvents = {
         events: []
     };
     private oldData;
@@ -409,6 +411,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super(inj, WIDGET_CONFIG);
 
         this.mobileCalendar = isMobile();
+        this.eventSources.push(this.dataSetEvents);
     }
 
     ngOnInit() {
@@ -465,7 +468,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 let dataSet;
                 const eventSet = [];
                 this.triggerMobileCalendarChange();
-                delete this.eventSources.events;
+                delete this.dataSetEvents.events;
                 this.dataset = nv;
                 dataSet = getClonedObject(nv);
                 dataSet = _.isArray(dataSet) ? dataSet : _.isObject(dataSet) ? [dataSet] : [];
@@ -477,7 +480,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                             eventSet.push(event);
                         }
                     });
-                    this.eventSources.events = eventSet;
+                    this.dataSetEvents.events = eventSet;
                 }
                 if (this.$fullCalendar) {
                     this.updateCalendarOptions('removeEvents');
@@ -504,11 +507,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             });
 
             this._datepickerInnerComponent = (this._datepicker as any)._datePicker;
-
+            this.renderMobileView(moment(this.datavalue));
             return;
         }
-
-        _.defer(this.redraw);
 
         this.$fullCalendar = $(this._calendar.nativeElement);
         this.$fullCalendar.fullCalendar(this.calendarOptions.calendar);
