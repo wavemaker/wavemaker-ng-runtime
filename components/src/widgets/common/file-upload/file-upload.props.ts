@@ -5,26 +5,22 @@ export const registerProps = () => {
         'wm-fileupload',
         new Map(
             [
-                ['uploadpath', {...PROP_STRING}],
-                ['contenttype', PROP_STRING],
-                ['datasource', PROP_STRING],
-                ['service', PROP_STRING],
-                ['operation', PROP_STRING],
-                ['mode', PROP_STRING],
+                ['caption', PROP_STRING],
+                ['name', PROP_STRING],
+                ['tabindex', PROP_NUMBER],
                 ['multiple', PROP_BOOLEAN],
                 ['fileuploadmessage' , PROP_STRING],
-                ['tabindex', PROP_NUMBER],
-                ['selectedFiles', PROP_STRING],
-                ['name', PROP_STRING],
-                ['mode', PROP_STRING],
-                ['destination', PROP_STRING],
-                ['maxfilesize', PROP_NUMBER],
-                ['caption', PROP_STRING],
+                ['show', {value: true, ...PROP_BOOLEAN}],
                 ['disabled', PROP_BOOLEAN],
+                ['contenttype', PROP_STRING],
+                ['maxfilesize', PROP_NUMBER],
                 ['iconclass', {value: 'wi wi-file-upload', ...PROP_STRING}],
-                ['filelistheight', PROP_NUMBER],
                 ['class', PROP_STRING],
-                ['show', {value: true, ...PROP_BOOLEAN}]
+                ['uploadpath', {...PROP_STRING}],
+                ['datasource', PROP_STRING],
+                ['selectedFiles', PROP_STRING],
+                ['destination', PROP_STRING],
+                ['filelistheight', PROP_NUMBER],
             ]
         )
     );
