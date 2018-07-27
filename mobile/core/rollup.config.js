@@ -1,9 +1,9 @@
 import rollupGlobals from '../../rollup-globals';
 
 export default {
-    input: './dist/out-tsc/mobile/core/index.js',
+    input: 'mobile/core/dist/out-tsc/index.js',
     output: {
-        file: './dist/tmp/mobile/wm-core.umd.js',
+        file: 'mobile/core/dist/wm-core.umd.js',
         format: 'umd'
     },
     name: 'wm.mobile.core',

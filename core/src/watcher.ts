@@ -1,6 +1,5 @@
 import { IDGenerator } from './id-generator';
 
-import { debounce } from './utils';
 import { $parseExpr } from './expression-parser';
 
 declare const _;
@@ -16,6 +15,14 @@ Object.freeze(FIRST_TIME_WATCH);
 export const isFirstTimeChange = v => v === FIRST_TIME_WATCH;
 
 let muted = false;
+
+export const debounce = (fn: Function, wait: number = 50) => {
+    let timeout;
+    return (...args) => {
+        window['__zone_symbol__clearTimeout'](timeout);
+        timeout = window['__zone_symbol__setTimeout'](() => fn(...args), wait);
+    };
+};
 
 export const muteWatchers = () => {
     muted = true;

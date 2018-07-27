@@ -1,5 +1,6 @@
-import { FormWidgetType } from '@wm/core';
 import { Element } from '@angular/compiler';
+
+import { FormWidgetType } from './enums';
 
 declare const _;
 

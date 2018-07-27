@@ -1,8 +1,70 @@
-declare const _WM_APP_PROPERTIES, moment, _;
+import { _WM_APP_PROJECT, hasCordova, isIE } from '@wm/core';
 
-import { CONSTANTS, VARIABLE_CONSTANTS } from '../../variables/src/constants/variables.constants';
-import { _WM_APP_PROJECT, isIE } from '@wm/core';
-import { parseConfig } from '../../variables/src/util/variable/live-variable.http.utils';
+declare const moment, _;
+
+const accessTokenSuffix = '.access_token';
+const isWaveLens = false;
+
+export const parseConfig = (serviceParams: any): any => {
+
+    let val, param, config;
+    const urlParams = serviceParams.urlParams;
+
+    config = {
+        url: 'services/oauth2/:providerId/authorizationUrl',
+        method: 'GET'
+    };
+
+    /*To handle dynamic urls, append the serviceParams.config.url with the static url(i.e., config.url)*/
+    if (serviceParams.config) {
+        config.url = (serviceParams.config.url || '') + config.url;
+        config.method = serviceParams.config.method || config.method;
+        config.headers = config.headers || {};
+
+        // TODO[Shubham] - change to for - of
+        for (const key in serviceParams.config.headers) {
+            val = serviceParams.config.headers[key];
+            config.headers[key] = val;
+        }
+    }
+    /* check for url parameters to replace the url */
+    if (urlParams) {
+        for (param in urlParams) {
+            if (urlParams.hasOwnProperty(param)) {
+                val = urlParams[param];
+                if (!_.isUndefined(val) && val !== null) {
+                    config.url = config.url.replace(new RegExp(':' + param, 'g'), val);
+                }
+            }
+        }
+    }
+
+    /* check for data */
+    if (serviceParams.params) {
+        config.params = serviceParams.params;
+    }
+    /* check for data */
+    if (!_.isUndefined(serviceParams.data)) {
+        config.data = serviceParams.data;
+    }
+    /* check for data parameters, written to support old service calls (.json calls) */
+    if (serviceParams.dataParams) {
+        config.data.params = serviceParams.dataParams;
+    }
+    /* check for headers */
+    if (serviceParams.headers) {
+        config.headers = serviceParams.headers;
+    }
+
+    /* set extra config flags */
+    config.byPassResult    = serviceParams.byPassResult;
+    config.isDirectCall    = serviceParams.isDirectCall;
+    config.isExtURL        = serviceParams.isExtURL;
+    config.preventMultiple = serviceParams.preventMultiple;
+    config.responseType    = serviceParams.responseType;
+
+    return config;
+};
 
 const listeners = {},
     ACCESSTOKEN_PLACEHOLDERS = {
@@ -27,7 +89,7 @@ export const removeAccessToken = (provider) => {
  */
 function getAccessTokenPlaceholder(provider) {
     let accessTokenKey;
-    accessTokenKey = ACCESSTOKEN_PLACEHOLDERS.RUN + _WM_APP_PROJECT.id + '_' + provider + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT;
+    accessTokenKey = ACCESSTOKEN_PLACEHOLDERS.RUN + _WM_APP_PROJECT.id + '_' + provider + accessTokenSuffix;
     return accessTokenKey;
 }
 
@@ -57,7 +119,7 @@ function setAccessToken(provider, accesstoken) {
  * @param evt
  */
 function checkAuthenticationStatus(providerId, successCallback, removeProviderConfigCallBack, evt) {
-    const accessTokenKey = providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT,
+    const accessTokenKey = providerId + accessTokenSuffix,
         accessToken = localStorage.getItem(accessTokenKey);
     if (evt && evt.origin !== window.location.origin) {
         return;
@@ -92,7 +154,7 @@ function checkAccessTokenInWindow(providerId, onSuccess, onError, startTime, log
     if (accessToken) {
         loginObj.accesstoken_retrieved = true;
         setAccessToken(providerId, accessToken);
-        localStorage.removeItem(providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT);
+        localStorage.removeItem(providerId + accessTokenSuffix);
         removeProviderConfigCallBack(providerId);
         if (onSuccess) {
             onSuccess();
@@ -159,10 +221,10 @@ function onAuthWindowOpen(provider, callback, removeProviderConfigCallBack) {
 function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack) {
     let oAuthWindow;
 
-     if (CONSTANTS.hasCordova) {
+     if (hasCordova) {
          window.open(url, '_system');
          window['OAuthInMobile'](providerId).then(accessToken => {
-             const key = providerId + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT;
+             const key = providerId + accessTokenSuffix;
              if (accessToken) {
                  localStorage.setItem(key, accessToken);
                  checkAuthenticationStatus(providerId, onSuccess, removeProviderConfigCallBack, null);
@@ -185,7 +247,7 @@ function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfi
  * @returns {*}
  */
 function getAuthorizationUrl(params, http) {
-    const action = CONSTANTS.isStudioMode ? 'getStudioAuthorizationUrl' : 'getAuthorizationUrl',
+    const action = 'getAuthorizationUrl',
         serviceSettings = parseConfig({
             target: 'oauthConfiguration',
             action: action,
@@ -208,7 +270,7 @@ function getAuthorizationUrl(params, http) {
 export const getAccessToken = (provider, checkLocalStorage) => {
     const accessTokenKey = getAccessTokenPlaceholder(provider);
     if (checkLocalStorage) {
-        return localStorage.getItem(provider + VARIABLE_CONSTANTS.REST_SERVICE.ACCESSTOKEN_PLACEHOLDER.RIGHT);
+        return localStorage.getItem(provider + accessTokenSuffix);
     }
     return sessionStorage.getItem(accessTokenKey);
 };
@@ -230,28 +292,26 @@ export const performAuthorization = (url, providerId, onSuccess, onError, http, 
             postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack);
         }
     } else {
-        if (CONSTANTS.isWaveLens) {
+        if (isWaveLens) {
             requestSourceType = 'WAVELENS';
-        } else if (CONSTANTS.hasCordova) {
+        } else if (hasCordova) {
             requestSourceType = 'MOBILE';
         }
         return getAuthorizationUrl({
             'providerId': providerId,
             'requestSourceType': requestSourceType
         }, http).then((response) => {
-            if (!CONSTANTS.isStudioMode) {
-                addProviderConfigCallBack({
-                    name: providerId,
-                    url: response.body,
-                    invoke: () => {
-                        if (isIE()) { // handling for IE
-                            handleLoginForIE(response, providerId, onSuccess, onError, removeProviderConfigCallBack);
-                        } else {
-                            postGetAuthorizationURL(response.body, providerId, onSuccess, removeProviderConfigCallBack);
-                        }
+            addProviderConfigCallBack({
+                name: providerId,
+                url: response.body,
+                invoke: () => {
+                    if (isIE()) { // handling for IE
+                        handleLoginForIE(response, providerId, onSuccess, onError, removeProviderConfigCallBack);
+                    } else {
+                        postGetAuthorizationURL(response.body, providerId, onSuccess, removeProviderConfigCallBack);
                     }
-                });
-            }
+                }
+            });
         });
     }
 };

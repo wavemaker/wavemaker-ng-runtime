@@ -1,9 +1,9 @@
 import rollupGlobals from '../rollup-globals';
 
 export default {
-    input: './dist/out-tsc/swipey/index.js',
+    input: 'swipey/dist/out-tsc/index.js',
     output: {
-        file: './dist/tmp/swipey.umd.js',
+        file: 'swipey/dist/swipey.umd.js',
         format: 'umd'
     },
     name: 'swipey',

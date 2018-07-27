@@ -1,9 +1,9 @@
 import rollupGlobals from '../rollup-globals';
 
 export default {
-    input: './dist/out-tsc/http-service/index.js',
+    input: 'http-service/dist/out-tsc/index.js',
     output: {
-        file: './dist/tmp/http-service.umd.js',
+        file: 'http-service/dist/http-service.umd.js',
         format: 'umd'
     },
     name: 'wm.http',

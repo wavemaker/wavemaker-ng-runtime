@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '@angular/common/http';
 
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { AbstractHttpService, getClonedObject, getValidJSON, replace } from '@wm/core';
 
@@ -184,7 +184,7 @@ export class HttpServiceImpl extends AbstractHttpService {
         return this.send(options);
     }
 
-    upload(url, data, options) {
+    upload(url, data, options): Observable<HttpEvent<any>> {
         const req = new HttpRequest('POST', url, data, {
             reportProgress: true // for progress data
         });

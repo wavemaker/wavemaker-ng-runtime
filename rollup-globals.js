@@ -26,6 +26,8 @@ export default {
     '@wm/core': 'wm.core',
     '@wm/transpiler': 'wm.transpiler',
     '@wm/components': 'wm.components',
+    '@wm/mobile/placeholder/components': 'wm.mobile.components',
+    '@wm/mobile/placeholder/runtime': 'wm.mobile.runtime',
     '@wm/mobile/components': 'wm.mobile.components',
     '@wm/mobile/core': 'wm.mobile.core',
     '@wm/runtime': 'wm.runtime',

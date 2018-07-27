@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { WmMobileComponentsModule } from '../components/src/component.module';
+import { WmMobileComponentsModule } from '@wm/mobile/placeholder/components';
 
 @NgModule({
     declarations: [],

@@ -1,6 +1,6 @@
 import { triggerFn } from '@wm/core';
-import { httpService } from '@wm/variables';
 import { NotifyPromise } from './notify-promise';
+import { httpService } from './variable/variables.utils';
 
 declare const _;
 
@@ -116,7 +116,7 @@ function uploadWithAjax(file, fd, url, options) {
     const promise = new NotifyPromise((resolve, reject, notify) => {
         httpService.upload(url, fd).subscribe(event => {
             if (event.type === HTTP_EVENT_TYPE.UploadProgress) {
-                const uploadProgress = Math.round(100 * event.loaded / event.total)
+                const uploadProgress = Math.round(100 * event.loaded / event.total);
                 notify(uploadProgress);
             }
 

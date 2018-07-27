@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { UtilsService } from './src/utils.service';
+import { UtilsService } from './utils.service';
 
 @NgModule({
     declarations: [],

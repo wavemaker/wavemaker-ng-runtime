@@ -9,3 +9,4 @@ export * from './src/services/device.service';
 export * from './src/services/device-start-up-service';
 export * from './src/services/ext-app-message.service';
 export * from './src/services/network.service';
+export * from './src/services/device-start-up-service';

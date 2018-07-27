@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Camera } from '@ionic-native/camera';
 
 import { convertToBlob, isAndroid, isIphone } from '@wm/core';
-import { FileBrowserComponent } from '@wm/mobile/components';
+import { FileBrowserComponent } from '../widgets/file-browser/file-browser.component';
 
 declare const _;
 declare const window;

@@ -1,9 +1,8 @@
-import { AfterViewInit, ApplicationRef, Component, DoCheck, ElementRef, NgZone } from '@angular/core';
+import { ApplicationRef, Component, DoCheck, ElementRef, NgZone } from '@angular/core';
 
-import { $invokeWatchers, _WM_APP_PROJECT, AbstractDialogService, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
+import { $invokeWatchers, _WM_APP_PROJECT, AbstractDialogService, AbstractSpinnerService, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
 
 import { OAuthService } from '@wm/oAuth';
-import { AbstractSpinnerService } from '@wm/core';
 
 import { PipeProvider } from './services/pipe-provider.service';
 import { setTheme } from 'ngx-bootstrap';

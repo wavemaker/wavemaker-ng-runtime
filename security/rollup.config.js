@@ -1,9 +1,9 @@
 import rollupGlobals from '../rollup-globals';
 
 export default {
-    input: './dist/out-tsc/security/index.js',
+    input: 'security/dist/out-tsc/index.js',
     output: {
-        file: './dist/tmp/wm-security.umd.js',
+        file: 'security/dist/wm-security.umd.js',
         format: 'umd'
     },
     name: 'wm.security',

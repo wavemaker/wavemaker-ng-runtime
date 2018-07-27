@@ -1,148 +1,262 @@
-# Reset
-Color_Off='\033[0m'       # Text Reset
+#!/bin/sh
 
-# Regular Colors
-Black='\033[0;30m'        # Black
-Red='\033[0;31m'          # Red
-Green='\033[0;32m'        # Green
-Yellow='\033[0;33m'       # Yellow
-Blue='\033[0;34m'         # Blue
-Purple='\033[0;35m'       # Purple
-Cyan='\033[0;36m'         # Cyan
-White='\033[0;37m'        # White
+start=`date +%s`
 
-success_file=./dist/BUILD_SUCCESS
+force=false
 
-if [ -f  $success_file ] ; then
-
-	update_time=`git ls-files | while read file; do date -r $file  +%s; done | sort -n | tail -1`
-	build_time=`date -r $success_file  +%s`
-
-	if [ $update_time -le $build_time ] ; then
-		echo -e "${Yellow}No updates found. Skipping build.${Color_Off}"
-		exit 0
-	else
-		rm $success_file
-	fi
+if [ "$#" == 0 ]; then
+    web=true
+    mobile=true
+    libs=true
+    copy=false
+else
+    web=false
+    mobile=false
+    libs=false
+    copy=true
 fi
 
+isSourceModified=false
 
-npm install
-start=`date +%s`
+for arg in "$@"
+do
+    case $arg in
+        -w | --web)
+            web=true
+            ;;
+        -m | --mobile)
+            mobile=true
+            ;;
+        -l | --libs)
+            libs=true
+            ;;
+        -f | --force)
+            force=true
+            ;;
+    esac
+done
+
 RIMRAF=./node_modules/.bin/rimraf
 ROLLUP=./node_modules/.bin/rollup
 UGLIFYJS=./node_modules/.bin/uglifyjs
 NGC=./node_modules/.bin/ngc
 TSC=./node_modules/.bin/tsc
 
-set -e
+SUCCESS_FILE="BUILD_SUCCESS"
 
-
-
-
-#############################################################################
-
-
-echo -e "${Cyan}Cleanup dist directory ${White} \n"
-$RIMRAF ./dist
-
-mkdir -p dist/tmp
-
-if [ "$?" != "0" ]
-then
-	echo -e "${Red}Error in cleaning dist directory ${White}\n"
-	exit 1
-fi
-
-################################ core-js
-
-echo -e "${Cyan}Build core-js umd ${White} \n"
-node ./core-js-builder.js
-if [ "$?" != "0" ]
-then
-	echo -e "${Red}Error in creating core-js umd ${White}\n"
-	exit 1
-fi
-
-################################ ngc
-
-echo -e "${Cyan}Compiling typescript files using ngc ${White}"
-$NGC -p ./runtime/tsconfig.build.json
-$NGC -p ./mobile/placeholder/tsconfig.build.json
-if [ "$?" != "0" ]
-then
-	echo -e "${Red}Error while ngc ${White}\n"
-	exit 1
-fi
-echo -e "${Green}Done with ngc compilation ${White}\n"
-
-
+mkdir -p ./dist/tmp
 mkdir -p ./dist/bundles/wmapp/scripts
 mkdir -p ./dist/bundles/wmmobile/scripts
 
-################################ Bundle libs
-
-if [ "$1" != "-sl" ]
-then
-    echo -e "${Cyan}Building tslib ${White}"
-    $ROLLUP ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent
-    if [ "$?" != "0" ]
-    then
-    	echo -e "${Red}Error in bundling tslib files"
-    	exit 1
-    fi
-    echo -e "${Green}Built tslib\n"
-
-    echo -e "${Cyan}Building ngx-bootstrap ${White}"
-    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015
-    $ROLLUP -c ./config/rollup.ngx-bootstrap.config.js --silent
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in building ngx-bootstrap"
+execCommand() {
+    local task=$1
+    local desc=$2
+    local command=$3
+    echo "$task: $desc"
+    `${command}`
+    if [ "$?" -ne "0" ]; then
+        echo "$task: $desc - failure"
         exit 1
+    else
+        echo "$task: $desc - success"
     fi
-    echo -e "${Green}Built ngx-bootstrap\n"
+}
 
-
-    echo -e "${Cyan}Building ngx-toastr ${White}"
-    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/fesm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015
-    $ROLLUP -c ./config/rollup.ngx-toastr.config.js --silent
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in building ngx-toastr"
-        exit 1
+hasLibChanges() {
+    if [ ${force} == true ]; then
+        return 0
     fi
-    echo -e "${Green}Built ngx-toastr\n"
 
-    echo -e "${Cyan}Building ngx-mask ${White}"
-    $TSC --outDir dist/tmp --target es5 ./node_modules/ngx-mask/esm2015/ngx-mask.js --allowJs --skipLibCheck --module es2015
-    $ROLLUP -c ./config/rollup.ngx-mask.config.js --silent
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in building ngx-mask"
-        exit 1
+    local successFile="./dist/$SUCCESS_FILE"
+
+    if ! [ -e ${successFile} ]; then
+        return 0
     fi
-    echo -e "${Green}Built ngx-mask\n"
 
-    echo -e "${Cyan}Building angular-websocket ${White}"
-    $ROLLUP -c ./config/rollup.angular-websocket.config.js --silent
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in angular-websocket ${White}\n"
-        exit 1
+    local updateTime=`date -r ./package.json +%s`
+    local buildTime=`date -r ${successFile} +%s`
+
+	if [ ${updateTime} -le ${buildTime} ]; then
+		return 1
+	else
+		return 0
+	fi
+    return 0
+}
+
+hasSourceChanges() {
+    if [ ${force} == true ]; then
+        return 0
     fi
-    echo -e "${Green}angular-websocket ${White}\n"
 
-    echo -e "${Cyan}Building swipey ${White}"
-    $ROLLUP -c ./swipey/rollup.config.js --silent
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in building swipey ${White}\n"
-        exit 1
+    local bundle=$1
+    local successFile="${bundle}/dist/${SUCCESS_FILE}"
+
+    if ! [ -e ${successFile} ]; then
+        return 0
     fi
-    echo -e "${Green}Built swipey ${White}\n"
 
-    echo -e "${Cyan}Bundling libs for wm-app ${White}"
+    local updateTime=`find ${bundle}/src -type f \( -name "*.ts" ! -name "*.doc.ts" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
+    local buildTime=`date -r ${successFile} +%s`
+
+	if [ ${updateTime} -le ${buildTime} ]; then
+		return 1
+	else
+		return 0
+	fi
+    return 0
+}
+
+rollup() {
+    local bundle=$1
+    execCommand rollup ${bundle} "$ROLLUP -c $bundle/rollup.config.js --silent"
+}
+
+ngCompile() {
+    local bundle=$1
+    execCommand ngc ${bundle} "$NGC -p $bundle/tsconfig.build.json"
+}
+
+build() {
+    local bundle=$1
+    hasSourceChanges ${bundle}
+    if [ "$?" -eq "0" ]; then
+        ngCompile ${bundle}
+        isSourceModified=true
+        if [ "$?" -eq "0" ]; then
+            rollup ${bundle}
+            if [ "$?" -eq "0" ]; then
+                touch ${bundle}/dist/${SUCCESS_FILE}
+            fi
+        fi
+    else
+        echo "No changes in $bundle"
+    fi
+}
+
+bundleWeb() {
+    echo "uglify: web"
+    ${UGLIFYJS} \
+        ./core/dist/wm-core.umd.js \
+        ./transpiler/dist/wm-transpiler.umd.js \
+        ./http-service/dist/http-service.umd.js \
+        ./oAuth/dist/oAuth.umd.js \
+        ./security/dist/wm-security.umd.js \
+        ./components/dist/wm-components.build-task.umd.js \
+        ./components/dist/wm-components.umd.js \
+        ./variables/dist/wm-variables.umd.js \
+        ./mobile/placeholder/components/dist/wm-components.umd.js \
+        ./mobile/placeholder/runtime/dist/wm-runtime.umd.js \
+        ./runtime/dist/wm-runtime.umd.js -o \
+        ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
+
+    if [ "$?" -eq "0" ]; then
+        echo "uglify: web - success"
+    else
+        echo -e "uglify: web - failure"
+    fi
+}
+
+bundleMobile() {
+    echo "uglify: mobile"
+    ${UGLIFYJS} \
+        ./core/dist/wm-core.umd.js \
+        ./transpiler/dist/wm-transpiler.umd.js \
+        ./http-service/dist/http-service.umd.js \
+        ./oAuth/dist/oAuth.umd.js \
+        ./security/dist/wm-security.umd.js \
+        ./components/dist/wm-components.build-task.umd.js \
+        ./components/dist/wm-components.umd.js \
+        ./mobile/core/dist/wm-core.umd.js \
+        ./mobile/components/dist/wm-components.build-task.umd.js \
+        ./mobile/components/dist/wm-components.umd.js \
+        ./variables/dist/wm-variables.umd.js \
+        ./mobile/variables/dist/wm-variables.umd.js \
+        ./mobile/runtime/dist/wm-runtime.umd.js \
+        ./runtime/dist/wm-runtime.umd.js -o \
+        ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
+    if [ "$?" -eq "0" ]; then
+        echo "uglify: mobile - success"
+    else
+        echo -e "uglify: mobile - failure"
+    fi
+}
+
+buildWeb() {
+    build swipey
+    build core
+    build transpiler
+    build security
+    build components
+    build http-service
+    build oAuth
+    build variables
+
+    if [ "${web}" == true ]; then
+        build mobile/placeholder/components
+        build mobile/placeholder/runtime
+    fi
+
+    build runtime
+
+    if [ "${web}" == true -a "${isSourceModified}" == true ]; then
+        bundleWeb
+    fi
+}
+
+buildMobile() {
+    if [ "${mobile}" == true ]; then
+        build mobile/core
+        build mobile/components
+        build mobile/variables
+        build mobile/runtime
+
+        if [ "${isSourceModified}" == true ]; then
+            bundleMobile
+        fi
+    fi
+}
+
+copyDist() {
+    if [ "${copy}" == true ]; then
+        if [ "${web}" == true ]; then
+            cp ./dist/bundles/wmapp/scripts/* ../wavemaker-studio-editor/src/main/webapp/wmapp/scripts/
+        elif [ "${mobile}" == true ]; then
+            cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/remote-studio/
+            cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/static-files/
+        fi
+    fi
+}
+
+buildCoreJs() {
+    execCommand "build" "core-js" "node ./core-js-builder.js"
+}
+
+buildTsLib() {
+    execCommand "rollup" "tslib" "${ROLLUP} ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent"
+}
+
+buildNgxBootstrap() {
+    execCommand "tsc" "ngx-bootstrap" "${TSC} --outDir dist/tmp --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015"
+    execCommand "rollup" "ngx-bootstrap" "${ROLLUP} -c ./config/rollup.ngx-bootstrap.config.js --silent"
+}
+
+buildNgxToastr() {
+    execCommand "tsc" "ngx-toastr" "${TSC} --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/fesm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015"
+    execCommand "rollup" "ngx-toastr" "${ROLLUP} -c ./config/rollup.ngx-toastr.config.js --silent"
+}
+
+buildNgxMask() {
+    execCommand "tsc" "ngx-mask" "${TSC} --outDir dist/tmp --target es5 ./node_modules/ngx-mask/esm2015/ngx-mask.js --allowJs --skipLibCheck --module es2015"
+    execCommand "rollup" "ngx-mask" "${ROLLUP} -c ./config/rollup.ngx-mask.config.js --silent"
+}
+
+buildAngularWebSocket() {
+    execCommand "rollup" "angular-websocket" "${ROLLUP} -c ./config/rollup.angular-websocket.config.js --silent"
+}
+
+bundleWebLibs() {
+    echo "uglify: web-libs"
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
         ./dist/tmp/core-js.umd.js \
@@ -185,30 +299,19 @@ then
         ./node_modules/hammerjs/hammer.min.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
-        ./dist/tmp/swipey.umd.js \
+        ./swipey/dist/swipey.umd.js \
         ./swipey/src/swipey.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
-
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in bundling libs for wm-app \n"
-        exit 1
+    if [ "$?" -eq "0" ]; then
+        echo "uglify: web-libs - success"
+    else
+        echo -e "uglify: web-libs - failure"
     fi
+}
 
-    echo -e "${Green}Bundled libs for wm-app \n"
-
-    ########## mobile components
-    echo -e "${Cyan}Building ionic-native ${White}"
-    $ROLLUP -c ./mobile/ionic-native/rollup.ionic-native.config.js --silent
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in ionic-native ${White}\n"
-        exit 1
-    fi
-    echo -e "${Green}Built ionic-native ${White}\n"
-
-    echo -e "${Cyan}Bundling libs for wm-mobile ${White}"
+bundleMobileLibs() {
+    echo "uglify: mobile-libs"
     $UGLIFYJS \
         ./dist/tmp/tslib.umd.js \
         ./node_modules/zone.js/dist/zone.js \
@@ -226,6 +329,7 @@ then
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/ngx-bootstrap.umd.js \
         ./dist/tmp/ngx-toastr.umd.js \
+        ./dist/tmp/angular-websocket.umd.js \
         ./dist/tmp/ngx-mask.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
@@ -247,7 +351,7 @@ then
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
-        ./dist/tmp/swipey.umd.js \
+        ./swipey/dist/swipey.umd.js \
         ./swipey/src/swipey.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
         ./dist/tmp/ionic-native-core.umd.js \
@@ -255,235 +359,69 @@ then
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b
-
-    if [ "$?" != "0" ]
-    then
-        echo -e "${Red}Error in bundling libs for wm-mobile \n"
-        exit 1
+    if [ "$?" -eq "0" ]; then
+        echo "uglify: mobile-libs - success"
+    else
+        echo -e "uglify: mobile-libs - failure"
     fi
-    echo -e "${Green}Bundled libs for wm-mobile\n"
-fi
+}
 
+buildWebLibs() {
+    if [ ${libs} == true ]
+    then
+        buildCoreJs
+        buildTsLib
+        buildNgxBootstrap
+        buildNgxToastr
+        buildNgxMask
+        buildAngularWebSocket
 
-##################################### bundle wm-loader
+        bundleWebLibs
+    fi
+}
 
-########## core
-echo -e "${Cyan}Building core ${White}"
-$ROLLUP -c ./core/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building core ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built core ${White}\n"
+buildIonicNative() {
+    execCommand "rollup" "ionic-native" "${ROLLUP} -c ./mobile/ionic-native/rollup.ionic-native.config.js --silent"
+}
 
-########## transpiler
-echo -e "${Cyan}Building transpiler ${White}"
-$ROLLUP -c ./transpiler/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building transpiler ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built transpiler ${White}\n"
+buildMobileLibs() {
+    if [ ${libs} == true -a ${mobile} == true ]
+    then
+        buildIonicNative
 
-########## components
-echo -e "${Cyan}Building components build task ${White}"
-$ROLLUP -c ./components/rollup.wm-components.build-task.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building components build task ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built components build task ${White}\n"
+        bundleMobileLibs
+    fi
+}
 
-echo -e "${Cyan}Building components ${White}"
-$ROLLUP -c ./components/rollup.wm-components.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building components ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built components ${White}\n"
-########## http-service
-echo -e "${Cyan}Building http-service ${White}"
-$ROLLUP -c ./http-service/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building http-service ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built http-service ${White}\n"
+buildLibs() {
+    if [ "${libs}" == true ]; then
+        hasLibChanges
 
-########## oAuth
-echo -e "${Cyan}Building oAuth ${White}"
-$ROLLUP -c ./oAuth/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building oAuth ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built oAuth ${White}\n"
+        if [ "$?" -eq "0" ]; then
+            npm install
+            buildWebLibs
+            buildMobileLibs
 
-########## Security
-echo -e "${Cyan}Building Security ${White}"
-$ROLLUP -c ./security/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building Security ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built Security ${White}\n"
+            if [ "$?" -eq "0" ]; then
+                touch ./dist/${SUCCESS_FILE}
+            fi
+        else
+            echo "No changes in package.json. use --force to re-build libs"
+        fi
+    fi
+}
 
-########## variables
-echo -e "${Cyan}Building Variables ${White}"
-$ROLLUP -c ./variables/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building Variables ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built Variables ${White}\n"
+buildApp() {
+    buildWeb
+    buildMobile
+}
 
-########## mobile components
-echo -e "${Cyan}Building mobile components task ${White}"
-$ROLLUP -c ./mobile/components/rollup.wm-components.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in mobile components task ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built mobile components task ${White}\n"
-########## mobile runtime
-echo -e "${Cyan}Building mobile runtime ${White}"
-$ROLLUP -c ./mobile/runtime/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in bundling runtime ${White}"
-    exit 1
-fi
-echo -e "${Green}Built runtime ${White}\n"
-
-########## runtime
-echo -e "${Cyan}Building runtime ${White}"
-$ROLLUP -c ./runtime/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in bundling runtime ${White}"
-    exit 1
-fi
-echo -e "${Green}Built runtime ${White}\n"
-
-########## final bundle
-echo -e "${Cyan}Bundling wm-loader ${White}"
-$UGLIFYJS ./dist/tmp/wm-core.umd.js \
-    ./dist/tmp/wm-transpiler.umd.js \
-    ./dist/tmp/http-service.umd.js \
-    ./dist/tmp/oAuth.umd.js \
-    ./dist/tmp/wm-security.umd.js \
-    ./dist/tmp/wm-components.build-task.umd.js \
-    ./dist/tmp/wm-components.umd.js \
-    ./dist/tmp/wm-variables.umd.js \
-    ./dist/tmp/mobile/wm-components.umd.js \
-    ./dist/tmp/mobile/wm-runtime.umd.js \
-    ./dist/tmp/wm-runtime.umd.js -o \
-    ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in bundling wm-loader ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Bundled wm-loader${White}\n"
-################################ ngc
-echo -e "${Cyan}Compiling typescript files for mobile using ngc ${White}"
-$NGC -p ./runtime/tsconfig.build.json
-echo -e "${Green}Done with ngc compilation ${White}\n"
-
-
-########## mobile core
-echo -e "${Cyan}Building mobile core task ${White}"
-$ROLLUP -c ./mobile/core/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building mobile core task ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built mobile core task ${White}\n"
-
-
-########## mobile components
-echo -e "${Cyan}Building mobile components build task ${White}"
-$ROLLUP -c ./mobile/components/rollup.wm-components.build-task.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building mobile components build task ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built mobile components build task ${White}\n"
-
-echo -e "${Cyan}Building mobile components ${White}"
-$ROLLUP -c ./mobile/components/rollup.wm-components.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in building mobile components ${White}\n"
-    exit 1
-fi
-echo -e "${Green}Built mobie components ${White}\n"
-
-########## mobile variables
-echo -e "${Cyan}Building mobile variables ${White}"
-$ROLLUP -c ./mobile/variables/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in bundling mobile variables ${White}"
-    exit 1
-fi
-echo -e "${Green}Built mobile variables ${White}\n"
-
-########## mobile runtime
-echo -e "${Cyan}Building mobile runtime ${White}"
-$ROLLUP -c ./mobile/runtime/rollup.config.js --silent
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in bundling mobile runtime ${White}"
-    exit 1
-fi
-echo -e "${Green}Built mobile runtime ${White}\n"
-
-########## final mobile bundle
-echo -e "${Cyan}Bundling wm-mobileloader${White}"
-$UGLIFYJS ./dist/tmp/wm-core.umd.js \
-    ./dist/tmp/wm-transpiler.umd.js \
-    ./dist/tmp/http-service.umd.js \
-    ./dist/tmp/oAuth.umd.js \
-    ./dist/tmp/wm-security.umd.js \
-    ./dist/tmp/wm-components.build-task.umd.js \
-    ./dist/tmp/wm-components.umd.js \
-    ./dist/tmp/mobile/wm-core.umd.js \
-    ./dist/tmp/mobile/wm-components.build-task.umd.js \
-    ./dist/tmp/mobile/wm-components.umd.js \
-    ./dist/tmp/wm-variables.umd.js \
-    ./dist/tmp/mobile/wm-variables.umd.js \
-    ./dist/tmp/mobile/wm-runtime.umd.js \
-    ./dist/tmp/wm-runtime.umd.js -o \
-    ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
-if [ "$?" != "0" ]
-then
-    echo -e "${Red}Error in bundling wm-mobileloader${White}\n"
-    exit 1
-fi
-echo -e "${Green}Bundled wm-mobileloader${White}\n"
-
-echo -e "${Cyan}Cleanup tmp directory ${White}\n"
-$RIMRAF ./dist/tmp
-
-echo -e "${Cyan}Cleanup out-tsc directory ${White}\n"
-$RIMRAF ./dist/out-tsc
+buildApp
+buildLibs
+copyDist
 
 end=`date +%s`
 
 runtime=$((end-start))
 
-echo -e "${Purple}Execution time: ${runtime}sec${White}"
-
-touch $success_file
+echo "Execution time: ${runtime}sec"

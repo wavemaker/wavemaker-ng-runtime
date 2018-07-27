@@ -2,9 +2,10 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app.module';
-import { environment } from './environments/environment';
 
-if (environment.production) {
+const DEBUG_MODE = 'debugMode';
+
+if (sessionStorage.getItem(DEBUG_MODE) !== 'true') {
     enableProdMode();
 }
 
@@ -23,3 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 export * from './services/i18n.service';
 
 export * from './services/angular1.polyfills';
+
+(window as any).debugMode = () => {
+    sessionStorage.setItem('debugMode', 'true');
+    window.location.reload();
+};

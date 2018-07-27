@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { AbstractHttpService } from '@wm/core';
 
@@ -16,7 +16,7 @@ export class OAuthService {
 
     providersConfig = [];
 
-    getOAuthProvidersAsObservable() {
+    getOAuthProvidersAsObservable(): Observable<any> {
         return this.providers.asObservable();
     }
 

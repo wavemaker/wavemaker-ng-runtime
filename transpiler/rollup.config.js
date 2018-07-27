@@ -1,9 +1,9 @@
 import rollupGlobals from '../rollup-globals';
 
 export default {
-    input: './dist/out-tsc/transpiler/index.js',
+    input: './transpiler/dist/out-tsc/index.js',
     output: {
-        file: './dist/tmp/wm-transpiler.umd.js',
+        file: './transpiler/dist/wm-transpiler.umd.js',
         format: 'umd'
     },
     name: 'wm.transpiler',

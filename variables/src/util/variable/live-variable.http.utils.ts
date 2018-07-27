@@ -1,8 +1,9 @@
-declare const _;
 import { getClonedObject, removeExtraSlashes } from '@wm/core';
-import { VARIABLE_URLS } from '../../constants/variables.constants';
-import { httpService, simulateFileDownload } from './variables.utils';
 
+import { VARIABLE_URLS } from '../../constants/variables.constants';
+import { httpService } from './variables.utils';
+
+declare const _;
 const isStudioMode = false;
 
 export const parseConfig = (serviceParams: any): any => {

@@ -2,7 +2,7 @@ import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseVariable } from '../base-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { DataSource, IDataSource, isDefined } from '@wm/core';
-import { appManager } from '@wm/variables';
+import { appManager } from '../../util/variable/variables.utils';
 
 const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.MODEL);

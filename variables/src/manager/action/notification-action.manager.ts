@@ -1,7 +1,6 @@
 import { BaseActionManager } from './base-action.manager';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { initiateCallback, toasterService } from '../../util/variable/variables.utils';
-import { dialogService } from '@wm/variables';
+import { initiateCallback, toasterService, dialogService } from '../../util/variable/variables.utils';
 
 declare const _;
 

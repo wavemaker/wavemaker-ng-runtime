@@ -1,0 +1,38 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@swipey": ["swipey/dist/out-tsc/", "swipey/"],
+            "@wm/core": ["core/dist/out-tsc/", "core/" ],
+            "@wm/transpiler": ["transpiler/dist/out-tsc/", "transpiler/"],
+            "@wm/security": ["security/dist/out-tsc/", "security/"],
+            "@wm/components": ["components/dist/out-tsc/", "components/"],
+            "@wm/http": ["http-service/dist/out-tsc/", "http-service/"],
+            "@wm/oAuth": ["oAuth/dist/out-tsc/", "oAuth/"],
+            "@wm/variables" : ["variables/dist/out-tsc/", "variables/"],
+            "@wm/runtime": ["runtime/dist/out-tsc/", "runtime/"],
+            "@wm/mobile/core": ["mobile/core/dist/out-tsc/", "mobile/core/"],
+            "@wm/mobile/components": ["mobile/components/dist/out-tsc/", "mobile/components/"],
+            "@wm/mobile/variables": ["mobile/variables/dist/out-tsc/", "mobile/variables/"],
+            "@wm/mobile/runtime": ["mobile/runtime/dist/out-tsc/", "mobile/runtime/"],
+            "@wm/mobile/placeholder/components": ["mobile/placeholder/components/dist/out-tsc/", "mobile/placeholder/components/"],
+            "@wm/mobile/runtime": ["mobile/placeholder/runtime/dist/out-tsc/", "mobile/placeholder/runtime/"]
+        },
+        "outDir": "./dist/out-tsc",
+        "sourceMap": false,
+        "declaration": true,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es5",
+        "module": "es2015",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "lib": [
+            "es2017",
+            "dom"
+        ]
+    }
+}

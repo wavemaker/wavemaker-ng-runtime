@@ -1,11 +1,11 @@
 import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
-import { IWidgetConfig } from '@wm/components';
 import { toBoolean } from '@wm/core';
 
 import { registerProps } from './alert-dialog.props';
 import { BaseDialog } from '../base/base-dialog';
 import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { IWidgetConfig } from '../../../framework/types';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-alert-dialog';
 

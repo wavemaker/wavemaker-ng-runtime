@@ -3,10 +3,10 @@ import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/
 import { Subject } from 'rxjs';
 
 import { App, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
-import { styler } from '@wm/components';
 
 import { registerProps } from './file-upload.props';
 import { StylableComponent } from '../base/stylable.component';
+import { styler } from '../../framework/styler';
 
 declare const _;
 

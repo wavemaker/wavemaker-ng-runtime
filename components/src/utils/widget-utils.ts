@@ -183,8 +183,8 @@ export const getBackGroundImageUrl = (urlString) => {
     return 'url(' + getImageUrl(urlString) + ')';
 };
 
-export const provideAs = (reference: any, key: any, multi?: boolean) => {
-    return  {
+export const provideAs = (reference: any, key: any, multi?: boolean): any => {
+    return {
         provide: key,
         useExisting: forwardRef(() => reference),
         multi: multi

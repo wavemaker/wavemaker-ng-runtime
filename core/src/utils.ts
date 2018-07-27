@@ -1,8 +1,8 @@
 import { Subject } from 'rxjs';
 
-import { $watch, DataSource } from '@wm/core';
-
+import { $watch } from './watcher';
 import { DataType } from './enums';
+import { DataSource } from './types';
 
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;
@@ -54,14 +54,6 @@ export const isDefined = v => 'undefined' !== typeof v;
 export const isObject = v => null !== v && 'object' === typeof v;
 
 export const toBoolean = (val, identity?) => (val === true || val === 'true' || (identity ? val === identity : false));
-
-export const debounce = (fn: Function, wait: number = 50) => {
-    let timeout;
-    return (...args) => {
-        window['__zone_symbol__clearTimeout'](timeout);
-        timeout = window['__zone_symbol__setTimeout'](() => fn(...args), wait);
-    };
-};
 
 function isIE11 () {
     return navigator.appVersion.indexOf('Trident/') > -1;

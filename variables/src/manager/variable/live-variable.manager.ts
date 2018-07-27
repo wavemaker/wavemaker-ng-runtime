@@ -1,12 +1,11 @@
 import { $invokeWatchers, getClonedObject, processFilterExpBindNode, triggerFn } from '@wm/core';
-import { appManager, DB_CONSTANTS } from '@wm/variables';
 
 import { BaseVariableManager } from './base-variable.manager';
-import { debounceVariableCall, formatExportExpression, initiateCallback, setInput } from '../../util/variable/variables.utils';
+import { debounceVariableCall, formatExportExpression, initiateCallback, setInput, appManager } from '../../util/variable/variables.utils';
 import LiveVariableUtils from '../../util/variable/live-variable.utils';
 import { $queue } from '../../util/inflight-queue';
 import * as LVService from '../../util/variable/live-variable.http.utils';
-import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
+import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS, DB_CONSTANTS } from '../../constants/variables.constants';
 
 declare const _;
 const emptyArr = [];
