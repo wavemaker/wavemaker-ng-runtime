@@ -15,7 +15,7 @@ export class ScrollableDirective implements AfterContentInit, AfterViewInit {
         // add the scroll event listener on the ul element.
         this.elementRef.nativeElement.addEventListener('scroll', this.notifyParent.bind(this));
         this.searchRef.dropdownEl = $(this.elementRef.nativeElement);
-        this.searchRef.onDropdownOpen();
+        (this.searchRef as any).onDropdownOpen();
     }
 
     ngAfterViewInit() {
