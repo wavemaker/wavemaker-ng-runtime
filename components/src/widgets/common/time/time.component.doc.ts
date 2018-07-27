@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmTime component defines the date widget.
+ * The wmTime component defines the time widget.
  */
 export class Time {
     /**
@@ -12,7 +12,7 @@ export class Time {
      * Placeholder for the time field.
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() placeholder: string;
+    @Input() placeholder: string = 'Select Time';
     /**
      * Title/hint for the time widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
@@ -33,6 +33,7 @@ export class Time {
     @Input() datavalue: string;
     /**
      * This property display pattern of the time widget.<br>
+     * <p><em>Allowed Values: </em><code>Standard Patterns like 'HH:mm:ss', 'h:m:s', 'hh:mm a', etc. </code></p>
      */
     @Input() timepattern: string = 'hh:mm a';
     /**
@@ -45,6 +46,7 @@ export class Time {
     @Input() minutestep: number = 15;
     /**
      * This property output format of the time widget.<br>
+     * <p><em>Allowed Values: </em><code>Standard Patterns like 'HH:mm:ss', 'h:m:s', 'hh:mm a', etc. </code></p>
      */
     @Input() outputformat: string = 'HH:mm:ss';
     /**
@@ -65,17 +67,17 @@ export class Time {
      */
     @Input() autofocus: boolean = false;
     /**
-     * This property will be used to make the date widget non-editable on the web page. <br>
+     * This property will be used to make the time widget non-editable on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() readonly: boolean = false;
     /**
-     * This property will be used to show/hide the date widget on the web page. <br>
+     * This property will be used to show/hide the time widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
     /**
-     * This property will be used to disable/enable the date widget on the web page. <br>
+     * This property will be used to disable/enable the time widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() disabled: boolean = false;
@@ -83,7 +85,7 @@ export class Time {
     /**
      * Callback function which will be triggered when the widget value changes.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the Date widget
+     * @param widget  Instance of the time widget
      * @param newVal  New value of the widget
      * @param oldVal  Old value of the widget
      */
@@ -91,37 +93,37 @@ export class Time {
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the time widget
      */
     focus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the time widget
      */
     blur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the time widget
      */
     click($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the time widget
      */
     mouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the time widget
      */
     mouseleave($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the time widget
      */
     tap($event: TouchEvent, widget: any) {}
 }

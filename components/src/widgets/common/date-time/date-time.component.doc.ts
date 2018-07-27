@@ -1,25 +1,25 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmDate component defines the date widget.
+ * The wmDateTime component defines the datetime widget.
  */
-export class Date {
+export class Datetime {
     /**
-     * Name of the date widget.
+     * Name of the datetime widget.
      */
     @Input() name: string;
     /**
-     * Placeholder for the date field.
+     * Placeholder for the datetime field.
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() placeholder: string = 'Select Date';
+    @Input() placeholder: string = 'Select Date Time';
     /**
-     * Title/hint for the date widget. <br>
+     * Title/hint for the datetime widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
     /**
-     * This property specifies the tab order of the date Widget.
+     * This property specifies the tab order of the datetime Widget.
      */
     @Input() tabindex: number = 0;
     /**
@@ -27,20 +27,28 @@ export class Date {
      */
     @Input() shortcutkey: string;
     /**
-     * This property defines the value of the date widget.
+     * This property defines the value of the datetime widget.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() datavalue: string;
     /**
-     * This property display pattern of the date widget.<br>
-     * <p><em>Allowed Values: </em><code>Standard Patterns like 'MM-dd-yy', 'yyyy-MM-dd', 'mm/dd/yyyy', etc. </code></p>
+     * This property display pattern of the datetime widget.<br>
+     * <p><em>Allowed Values: </em><code>Standard Patterns like 'yyyy-MM-dd hh:mm:ss a', 'yyyy-MM-ddTHH:mm:ss', 'yyyy, MMM dd', etc. </code></p>
      */
-    @Input() datepattern: string = 'yyyy-MM-dd';
+    @Input() datepattern: string = 'yyyy-MM-dd hh:mm:ss a';
     /**
-     * This property output format of the date widget.<br>
-     * <p><em>Allowed Values: </em><code>Standard Patterns like 'MM-dd-yy', 'yyyy-MM-dd', 'mm/dd/yyyy', etc. </code></p>
+     * This property decide number of hours to increase or decrease.<br>
      */
-    @Input() outputformat: string = 'yyyy-MM-dd';
+    @Input() hourstep: number = 1;
+    /**
+     * This property decide number of minutes to increase or decrease.<br>
+     */
+    @Input() minutestep: number = 15;
+    /**
+     * This property output format of the datetime widget.<br>
+     * <p><em>Allowed Values: </em><code>Standard Patterns like 'yyyy-MM-dd hh:mm:ss a', 'yyyy-MM-ddTHH:mm:ss', 'yyyy, MMM dd', etc. </code></p>
+     */
+    @Input() outputformat: string = 'timestamp';
     /**
      * If the required property is set to true, `required` class is applied to the label[an asterik will be displayed next to the content of the label']. <br>
      * <p><em>Bindable: </em><code>true</code></p>
@@ -67,11 +75,11 @@ export class Date {
      */
     @Input() excludedates: string;
     /**
-     * This property, when set, displays week number in date-picker UI. <br>
+     * This property, when set, displays week number in datetime-picker UI. <br>
      */
     @Input() showweeks: boolean = false;
     /**
-     * This property, when set, displays button bar in date-picker UI. <br>
+     * This property, when set, displays button bar in datetime-picker UI. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() showbuttonbar: boolean = true;
@@ -80,17 +88,17 @@ export class Date {
      */
     @Input() autofocus: boolean = false;
     /**
-     * This property will be used to make the date widget non-editable on the web page. <br>
+     * This property will be used to make the datetime widget non-editable on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() readonly: boolean = false;
     /**
-     * This property will be used to show/hide the date widget on the web page. <br>
+     * This property will be used to show/hide the datetime widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
     /**
-     * This property will be used to disable/enable the date widget on the web page. <br>
+     * This property will be used to disable/enable the datetime widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() disabled: boolean = false;
@@ -98,7 +106,7 @@ export class Date {
     /**
      * Callback function which will be triggered when the widget value changes.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the datetime widget
      * @param newVal  New value of the widget
      * @param oldVal  Old value of the widget
      */
@@ -106,37 +114,37 @@ export class Date {
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the datetime widget
      */
     focus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the datetime widget
      */
     blur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the datetime widget
      */
     click($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the datetime widget
      */
     mouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the datetime widget
      */
     mouseleave($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the date widget
+     * @param widget  Instance of the datetime widget
      */
     tap($event: TouchEvent, widget: any) {}
 }
