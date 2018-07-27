@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * The `wmComposite` directive defines a button group widget.
+ * The `wmComposite` directive defines a composite widget.
  */
 export class Composite {
     /**
