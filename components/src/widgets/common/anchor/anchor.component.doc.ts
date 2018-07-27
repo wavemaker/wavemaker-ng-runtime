@@ -65,6 +65,12 @@ export class Anchor {
     @Input() iconmargin: string;
     /**
      * Property to set the position of icon in the widget.
+     * <p><em>Allowed Values: </em><code>left, top, right</code></p>
+     * <div class="summary">
+     * <p><code>left</code><em>: Positions icon to the left.</em></p>
+     * <p><code>top</code><em>: Positions icon on the top.</em></p>
+     * <p><code>right</code><em>:  Positions icon to the right.</em></p>
+     * </div>
      */
     @Input() iconposition: string;
     /**
@@ -130,11 +136,11 @@ export class Anchor {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    tap($event: MouseEvent, widget: any) {}
+    tap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    doubletap($event: MouseEvent, widget: any) {}
+    doubletap($event: TouchEvent, widget: any) {}
 }

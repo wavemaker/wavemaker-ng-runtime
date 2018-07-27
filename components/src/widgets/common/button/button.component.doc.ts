@@ -51,6 +51,12 @@ export class Button {
     @Input() iconmargin: string;
     /**
      * Property to set the position of icon in the widget.
+     * <p><em>Allowed Values: </em><code>left, top, right</code></p>
+     * <div class="summary">
+     * <p><code>left</code><em>: Positions icon to the left.</em></p>
+     * <p><code>top</code><em>: Positions icon on the top.</em></p>
+     * <p><code>right</code><em>:  Positions icon to the right.</em></p>
+     * </div>
      */
     @Input() iconposition: string;
     /**
@@ -126,30 +132,30 @@ export class Button {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    tap($event: MouseEvent, widget: any) {}
+    tap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    doubletap($event: MouseEvent, widget: any) {}
+    doubletap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed down.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    keydown($event: MouseEvent, widget: any) {}
+    keydown($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    keypress($event: MouseEvent, widget: any) {}
+    keypress($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is released.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      * @returns {void} This method does not return anything
      */
-    keyup($event: MouseEvent, widget: any) {}
+    keyup($event: KeyboardEvent, widget: any) {}
 }
