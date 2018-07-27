@@ -1,6 +1,6 @@
 export const CONSTANTS = {
     hasCordova: window['cordova'] !== undefined,
-    isWaveLens: false,
+    isWaveLens: window['WaveLens'] !== undefined,
     isStudioMode: false,
     isRunMode: true,
     XSRF_COOKIE_NAME: 'wm_xsrf_token',

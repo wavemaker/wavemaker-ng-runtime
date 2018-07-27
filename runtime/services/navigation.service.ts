@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
 import { App, NavigationOptions, AbstractNavigationService } from '@wm/core';
+import { CONSTANTS } from '@wm/variables';
 
 
 declare const _;
@@ -70,6 +71,18 @@ export class NavigationServiceImpl implements AbstractNavigationService {
         this.transition = options.transition || '';
         this.history.push( new PageInfo(pageName, options.urlParams, this.transition));
         this.isPageAddedToHistory = true;
+        if (CONSTANTS.isWaveLens) {
+            const location = window['location'];
+            let strQueryParams = _.map(options.urlParams || [], (value, key) => key + '=' + value);
+            if (strQueryParams.length > 0) {
+                strQueryParams = '?' + strQueryParams;
+            }
+            location.href = location.origin
+                + location.pathname
+                + '#/' + pageName
+                + (strQueryParams.length > 0 ? '?' + strQueryParams.join('&') : '');
+            return;
+        }
         return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
     }
 
