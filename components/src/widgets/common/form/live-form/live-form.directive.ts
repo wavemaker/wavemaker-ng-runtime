@@ -2,13 +2,13 @@ import { Directive, Inject, Optional, Self } from '@angular/core';
 
 import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 
-import { registerLiveFormProps } from './form.props';
-import { FormComponent } from './form.component';
-import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField, Live_Operations, performDataOperation } from '../../../utils/data-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { parseValueByType } from '../../../utils/live-utils';
-import { isDataSetWidget } from '../../../utils/widget-utils';
-import { LiveTableComponent } from '../live-table/live-table.component';
+import { registerLiveFormProps } from '../form.props';
+import { FormComponent } from '../form.component';
+import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField, Live_Operations, performDataOperation } from '../../../../utils/data-utils';
+import { ToDatePipe } from '../../../../pipes/custom-pipes';
+import { parseValueByType } from '../../../../utils/live-utils';
+import { isDataSetWidget } from '../../../../utils/widget-utils';
+import { LiveTableComponent } from '../../live-table/live-table.component';
 
 declare const _;
 

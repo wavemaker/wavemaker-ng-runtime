@@ -219,7 +219,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     onPropertyChange(key, nv, ov?) {
-        super.onPropertyChange(key, nv, ov);
+        if (key !== 'tabindex') {
+            super.onPropertyChange(key, nv, ov);
+        }
 
         if (this.excludeProps.has(key)) {
             return;
@@ -276,10 +278,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             case 'readonly':
                this.setReadOnlyState();
                 break;
-        }
-
-        if (key === 'tabindex') {
-            return;
         }
     }
 

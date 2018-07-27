@@ -64,8 +64,8 @@ import { LayoutGridRowDirective } from './widgets/common/layout-grid/layout-grid
 import { LeftPanelDirective } from './widgets/common/left-panel/left-panel.directive';
 import { ListComponent } from './widgets/common/list/list.component';
 import { ListItemDirective } from './widgets/common/list/list-item.directive';
-import { LiveFormDirective } from './widgets/common/form/live-form.directive';
-import { LiveFilterDirective } from './widgets/common/form/live-filter.directive';
+import { LiveFormDirective } from './widgets/common/form/live-form/live-form.directive';
+import { LiveFilterDirective } from './widgets/common/form/live-filter/live-filter.directive';
 import { LiveTableComponent } from './widgets/common/live-table/live-table.component';
 import { LoginComponent } from './widgets/common/login/login.component';
 import { MarqueeDirective } from './widgets/common/marquee/marquee.directive';
