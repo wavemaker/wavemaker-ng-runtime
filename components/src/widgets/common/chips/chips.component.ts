@@ -44,7 +44,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
     private _datasource: any;
-    private _debounceResetSearchModel: Function;
     private _unsubscribeDv: boolean = false;
     private searchkey: string;
     private _debounceUpdateQueryModel: any;
@@ -116,10 +115,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.searchkey = this.searchkey;
 
         this.getTransformedData = this.searchComponent.getTransformedData;
-
-        this._debounceResetSearchModel = debounce(() => {
-            this.resetSearchModel();
-        }, 150);
     }
 
     ngAfterViewInit() {
@@ -191,6 +186,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (searchQuery.length && this.datasource) {
             this.getDefaultModel(searchQuery, this.nextItemIndex)
                 .then(response => {
+                    // do not add chip when response is empty
+                    if (!response.length) {
+                        return;
+                    }
                     this.chipsList = this.chipsList.concat(response);
 
                     const _dataValue = _.clone(data);
@@ -241,7 +240,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         let chipObj;
 
         if (searchComponent && isDefined(searchComponent.queryModel)) {
-            if (!searchComponent.query) {
+            if (!searchComponent.query || !_.trim(searchComponent.query)) {
                 return;
             }
             chipObj = searchComponent.queryModel;
@@ -256,7 +255,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
                     // return if the custom chip is empty
                     if (!dataObj) {
-                        this._debounceResetSearchModel();
+                        this.resetSearchModel();
                         return;
                     }
                 }
@@ -266,6 +265,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             chipObj = this.getTransformedData([data], this.nextItemIndex)[0];
         }
 
+        if (!isDefined(chipObj)) {
+            return;
+        }
+
         allowAdd = this.invokeEventCallback('beforeadd', {$event, newItem: chipObj});
 
         if (isDefined(allowAdd) && !toBoolean(allowAdd)) {
@@ -273,7 +276,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
 
         if (this.isDuplicate(chipObj)) {
-            this._debounceResetSearchModel();
+            this.resetSearchModel();
             return;
         }
         this.chipsList.push(chipObj);
@@ -288,14 +291,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this._unsubscribeDv = true;
         this.invokeOnTouched();
-        this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: prevDatavalue});
+        this.invokeOnChange(this._modelByValue, $event || {}, true);
 
         this.invokeEventCallback('add', {$event, $item: chipObj});
 
         this.updateMaxSize();
 
         // reset input box when item is added.
-        this._debounceResetSearchModel();
+        this.resetSearchModel();
 
         // stop the event to not to call the submit event on enter press.
         if ($event && (($event as any).key === 'Enter' || ($event as any).keyCode === 13)) {
