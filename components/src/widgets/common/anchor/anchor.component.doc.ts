@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmAnchor component defines the anchor widget.
+ * The `wmAnchor` component defines the anchor widget.
  */
 export class Anchor {
     /**
@@ -14,10 +14,6 @@ export class Anchor {
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() caption: string;
-    /**
-     * Class of the widget.
-     */
-    @Input() class: string = 'app-anchor';
     /**
      * This property allows user to bind expression to class property.
      * <p><em>Bindable: </em><code>true</code></p>
@@ -41,18 +37,20 @@ export class Anchor {
     /**
      * This property will enable the provided URL to be encoded at run time.
      */
-    @Input() encodeurl: boolean;
+    @Input() encodeurl: boolean = false;
     /**
      * Title/hint for the anchor. <br>
      * <p><em>Bindable: </em><code>false</code></p>
      */
     @Input() hint: string;
     /**
-     * CSS class of the icon.
+     * CSS class of the icon. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() iconclass: string;
     /**
-     * Url of the icon.
+     * Url of the icon. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() iconurl: string;
     /**
