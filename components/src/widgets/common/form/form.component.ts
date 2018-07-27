@@ -241,7 +241,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this._isGridLayoutPresent = this.$element.find('.panel-body [wmlayoutgrid]').length > 0;
     }
 
-    addEventsToContext(context) {
+    // Expose the events on context so that they can be accessed by form actions
+    private addEventsToContext(context) {
         context.cancel = () => this.cancel();
         context.reset = () => this.reset();
         context.save = evt => this.save(evt);
@@ -262,7 +263,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
-    // This method loops through the form fields and set touched state as touched
+    // This method loops through the form fields and highlights the invalid fields by setting state to touched
     highlightInvalidFields() {
         setTouchedState(this.ngform);
     }
@@ -358,7 +359,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
-    toggleMessage(show, msg?, type?, header?) {
+    // Display or hide the inline message/ toaster
+    toggleMessage(show: boolean, msg?: string, type?: string, header?: string) {
         let template;
         if (show && msg) {
             template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
@@ -375,10 +377,12 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
+    // Hide the inline message/ toaster
     clearMessage() {
         this.toggleMessage(false);
     }
 
+    // Set the classes on the form based on the captionposition and captionwidth properties
     private setLayoutConfig() {
         let layoutConfig;
         layoutConfig = getFieldLayoutConfig(this.captionwidth, this.captionposition);
@@ -403,6 +407,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.buttonArray.push(formAction);
     }
 
+    // Update the dataoutput whenever there is a change in inside form widget value
     updateFormDataOutput(dataObject) {
         // Set the values of the widgets inside the live form (other than form fields) in form data
         _.forEach(this.ngform.value, (val, key) => {
