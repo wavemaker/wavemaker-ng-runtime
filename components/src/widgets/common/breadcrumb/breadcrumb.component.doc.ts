@@ -1,0 +1,65 @@
+import { Input } from '@angular/core';
+
+/**
+ * The wmBreadcrumb component defines the Breadcrumb widget.
+ */
+export class Breadcrumb {
+
+    /**
+     * Class of the widget.
+     */
+    @Input() class: string;
+    /**
+     * Name of the Breadcrumb.
+     */
+    @Input() name: string;
+
+    /**
+     * Set this property to a data source to construct the breadcrumb. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() dataset: any;
+
+    /**
+     * This property should be the mapped to the page name so that the breadcrumb path is generated when the page is loaded. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() itemid: any;
+
+    /**
+     * Label for the breadcrumb item. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() itemlabel: any;
+
+    /**
+     * Class for the icon in the breadcrumb item. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() itemicon: any;
+
+    /**
+     * Link for the breadcrumb item. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() itemlink: any;
+
+    /**
+     * Children for the breadcrumb item.  <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() itemchildren: any;
+
+    /**
+     * This property will be used to show/hide the accordion widget on the web page. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() show: boolean = true;
+
+    /**
+     * Callback function which will be triggered when an breadcrumb item is clicked.
+     * @param widget  Instance of the breadcrumb widget.
+     * @param $item  The object used to construct the clicked item.
+     */
+    beforenavigate(widget: any, $item: any) {}
+}
