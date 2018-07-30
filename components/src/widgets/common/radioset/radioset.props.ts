@@ -11,15 +11,15 @@ export const radiosetProps = new Map(
         ['displayfield', PROP_STRING],
         ['itemclass', {value: '', ...PROP_STRING}],
         ['layout', {value: 'stacked', ...PROP_STRING}],
+        ['listclass', {value: '', ...PROP_STRING}],
         ['name', PROP_STRING],
         ['orderby', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
-        ['usekeys', PROP_BOOLEAN],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['type', PROP_STRING]
+        ['usekeys', PROP_BOOLEAN]
     ]
 );
 
