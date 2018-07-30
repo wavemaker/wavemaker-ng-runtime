@@ -10,7 +10,7 @@ export const registerProps = () => {
                 ['areaviewtype', {value: 'stack', ...PROP_STRING}],
                 ['barspacing', {value: 'medium', ...PROP_STRING}],
                 ['bubblesize', PROP_STRING],
-                ['centerlabel', {value: false, ...PROP_BOOLEAN}],
+                ['centerlabel', PROP_STRING],
                 ['customcolors', PROP_STRING],
                 ['dataset', PROP_ANY],
                 ['datasource', PROP_STRING],
