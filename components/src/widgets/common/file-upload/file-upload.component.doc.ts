@@ -25,7 +25,7 @@ export class FileUpload {
     /**
      * If set to true, multiple file upload is enabled. By default single file upload is enabled
      */
-    @Input() multiple: string = false;
+    @Input() multiple: boolean = false;
     /**
      * This property allows user to set message of the Fileuplaod widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
