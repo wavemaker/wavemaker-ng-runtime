@@ -118,11 +118,11 @@ export class Popover {
     /**
      * This property will be used to encode the provided URL at run time.
      */
-    @Input() popoverarrow: boolean = true;
+    @Input() encodeurl: boolean = true;
     /**
      * This property will be used to display the arrow on the popover.
      */
-    @Input() encodeurl: boolean = false;
+    @Input() popoverarrow: boolean = false;
 
     /**
      * This event handler is called when the widget is loaded.
