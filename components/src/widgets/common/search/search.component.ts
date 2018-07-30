@@ -1,7 +1,7 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 
 import { from, Observable, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, debounceTime } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
@@ -31,7 +31,6 @@ registerProps();
     ]
 })
 export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
-
     public casesensitive: boolean;
     public searchkey: string;
     public queryModel: Array<DataSetItem> | string;
@@ -54,7 +53,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     public tabindex: number;
     public startIndex: number;
-    public acceptsArray: boolean;
     public binddisplaylabel: string;
     public typeaheadContainer: TypeaheadContainerComponent;
 
@@ -62,7 +60,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     @ViewChild('ulElement') ulElement: ElementRef;
     @ViewChildren('liElements') liElements: QueryList<ElementRef>;
 
-    private typeaheadScrollable: boolean = true;
     private allowonlyselect: boolean;
     private class: string;
 
@@ -75,20 +72,16 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private showClosebtn: boolean;
     private _unsubscribeDv: boolean;
     private _datasource: any;
+    private isScrolled: boolean;
 
     // getter setter is added to pass the datasource to searchcomponent.
-    get datasource () {
+    get datasource() {
         return this._datasource;
     }
 
     set datasource(nv) {
         this._datasource = nv;
         this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue, this.datafield);
-    }
-
-    // Default check for container methods to access.
-    get typeaheadContainerInstance() {
-        return (this.typeaheadContainer as any).instance;
     }
 
     constructor(
@@ -106,15 +99,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
          * @type {Observable<any>}
          */
         this.typeaheadDataSource = Observable
-            .create(
-                // Runs on every search. debounce the query after 150ms
-                _.debounce((observer: any) => {
-                    observer.next(this.query);
-                }, 200)
-            )
+            .create((observer: any) => {
+            // Runs on every search
+            observer.next(this.query);
+        }).pipe(debounceTime(150))
             .pipe(
-                mergeMap((token: string) => this.getDataSourceAsObservable(token))
-            );
+            mergeMap((token: string) => this.getDataSourceAsObservable(token))
+        );
+
+        this.dataProvider = new DataProvider();
 
         /**
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
@@ -145,8 +138,47 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue, this.datafield);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+    }
 
-        this.dataProvider = new DataProvider();
+    // on clear, trigger search with page size 1
+    private clearSearch() {
+        this.query = '';
+        this.onInputChange();
+        this.dataProvider.isLastPage = false;
+        this.loadMoreData(true);
+    }
+
+    // Close the full screen mode in mobile view of auto complete
+    private closeSearch() {
+        this.page = 1;
+        if (!isDefined(this.datavalue)) {
+            this.queryModel = this.query = '';
+        }
+        this.$element.removeClass('full-screen');
+    }
+
+    private getDataSourceAsObservable(query: string): Observable<any> {
+        // show dropdown only when there is change in query
+        if (query && (this._lastQuery === query)) {
+            return of([]);
+        }
+
+        this._loadingItems = true;
+
+        return from(this.getDataSource(query));
+    }
+
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        if (!_.includes(['blur', 'focus', 'select', 'submit', 'change'], eventName)) {
+            super.handleEvent(node, eventName, eventCallback, locals);
+        }
+    }
+
+    // highlight the characters in the dropdown matching the query.
+    private highlight(match: TypeaheadMatch, query: String) {
+        // highlight of chars will work only when label are strings.
+        (match as any).value = match.item.label.toString();
+        return this.typeaheadContainer.highlight(match, query);
     }
 
     // Check if the widget is of type autocomplete in mobile view/ app
@@ -154,35 +186,31 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         return this.type === 'autocomplete' && isMobile();
     }
 
-    // On click of the typeahead item, invoke the container's selectMatch and set the queryModel, datavalue.
-    private selectMatch(match: TypeaheadMatch, $event: Event) {
-        this.typeaheadContainerInstance.selectMatch(match, $event);
-        this.typeaheadOnSelect(match, $event);
+    private loadMoreData(incrementPage?: boolean) {
+        if (this.dataProvider.isLastPage) {
+            return;
+        }
+        // Increase the page number and trigger force query update
+        this.page = incrementPage ? this.page + 1 : this.page;
+
+        this.isScrolled = true;
+
+        // trigger the typeahead change manually to fetch the next set of results.
+        this.typeahead.onInput({
+            target: {
+                value: '0' // dummy data to notify the observables
+            }
+        });
     }
 
-    // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
-    protected typeaheadOnSelect(match: TypeaheadMatch, $event: Event): void {
-        const item = match.item;
-        this.queryModel = item;
-        item.selected = true;
-        this._lastQuery = this.query = item.label;
-
-        // As item.key can vary from key in the datasetItems
-        this._modelByKey = item.key;
-        this._modelByValue = item.value;
-
-        this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue, $event || {}, true);
-
-        this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});
-        this.invokeEventCallback('submit', {$event});
-
-        this.updatePrevDatavalue(this.datavalue);
+    // on focusout, subscribe to the datavalue changes again
+    private onFocusOut() {
+        this._unsubscribeDv = false;
+        this._loadingItems = false;
     }
 
     private onInputChange() {
         // reset all the previous page details in order to fetch new set of result.
-        this.dataProvider.hasNoMoreData = false;
         this.result = [];
         this.page = 1;
         this._lastQuery = undefined;
@@ -195,22 +223,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.showClosebtn = (this.query !== '');
     }
 
-    // on clear, trigger search with page size 1
-    private clearSearch() {
-        this.query = '';
-        this.onInputChange();
-        this.dataProvider.isLastPage = false;
-        this.loadMoreData(true);
-    }
-
     // Triggerred when typeahead option is selected.
     private onSelect($event: Event) {
         let hasActiveEl = false;
         // when matches are available.
-        if (this.typeaheadContainerInstance && this.typeaheadContainerInstance.liElements.length) {
+        if (this.typeaheadContainer && this.liElements.length) {
             hasActiveEl = true;
-            this.typeaheadContainerInstance.selectActiveMatch();
-        } else if (!isDefined(this._modelByValue)) {
+            this.typeaheadContainer.selectActiveMatch();
+        } else if (this.parentRef && !isDefined(this._modelByValue)) {
             if (this.allowonlyselect) {
                 // matches are empty set the datavalue to undefined and set the query.
                 this.queryModel = this.query = '';
@@ -227,17 +247,55 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
 
         if (hasActiveEl) {
-            this.typeaheadOnSelect(this.typeaheadContainerInstance._active, $event);
-        } else if (isDefined(this._modelByValue)) {
+            this.typeaheadOnSelect(this.typeaheadContainer.active, $event);
+        } else if (this.parentRef && isDefined(this._modelByValue)) {
             this.typeaheadOnSelect(({item: {key: this.query, value: this._modelByValue, label: this.query}} as TypeaheadMatch), $event);
         }
     }
 
-    private selectNext() {
-        const activeItem = this.typeaheadContainerInstance._active;
-        const matches = this.typeaheadContainerInstance.matches;
+    // Triggers the method on the parent.
+    private notifyParent($event) {
+        if (this.parentRef) {
+            this._modelByValue = this.query;
+            this.parentRef.notifyEmptyValues($event);
+        }
+    }
 
-        const index = matches.indexOf(activeItem);
+    private onBeforeservicecall(inputData) {
+        this.invokeEventCallback('beforeservicecall', {inputData});
+    }
+
+    private onDropdownOpen() {
+        // setting the ulElements, liElement on typeaheadContainer.
+        // as we are using customOption template, liElements are not available on typeaheadContainer so append them explicitly.
+        const fn = _.debounce(() => {
+            this._isOpen = true;
+            this.typeaheadContainer = this.typeahead._container;
+            (this.typeaheadContainer as any).liElements = this.liElements;
+            (this.typeaheadContainer as any).ulElement = this.ulElement;
+        });
+
+        fn();
+
+        // open full-screen search view
+        if (this.isMobileAutoComplete()) {
+            // Add full screen class on focus of the input element.
+            this.$element.addClass('full-screen');
+
+            const dropdownEl = this.dropdownEl.closest('typeahead-container');
+
+            dropdownEl.insertAfter(this.$element.find('input:first'));
+            dropdownEl.css({position: 'relative', top: 0, height: '100%'});
+
+            if (this.isMobileAutoComplete() && !this.noMoreData) {
+                this.triggerSearch();
+            }
+        }
+    }
+
+    private selectNext() {
+        const matches = this.typeaheadContainer.matches;
+        const index = matches.indexOf(this.typeaheadContainer.active);
 
         // on keydown, if scroll is at the bottom and next page records are available, fetch next page items.
         if (!this._loadingItems && !this.dataProvider.isLastPage && index + 1 > matches.length - 1) {
@@ -247,135 +305,32 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    public getTransformedData(data: any, itemIndex?: number): DataSetItem[] {
-        if (isDefined(itemIndex)) {
-            itemIndex++;
+    private setLastActiveMatchAsSelected() {
+        if (this.lastSelectedIndex) {
+            (this.typeaheadContainer as any)._active = this.typeaheadContainer.matches[this.lastSelectedIndex];
+            this.typeaheadContainer.nextActiveMatch();
+            this.lastSelectedIndex = undefined;
         }
-
-        const transformedData = transformData(
-            this.viewParent,
-            data,
-            this.datafield,
-            {
-                displayField: this.displayfield || this.displaylabel,
-                displayExpr: this.displayexpression,
-                bindDisplayExpr: this.binddisplaylabel,
-                bindDisplayImgSrc: this.binddisplayimagesrc,
-                displayImgSrc: this.displayimagesrc
-            },
-            itemIndex
-        );
-
-        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
-            this.allowempty = false;
-        }
-
-        return getUniqObjsByDataField(transformedData, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty));
     }
 
-    private onBeforeservicecall(inputData) {
-        this.invokeEventCallback('beforeservicecall', {inputData});
+    private triggerSearch() {
+        if (this._loadingItems || this.isLastPage || !this.$element.hasClass('full-screen')) {
+            return;
+        }
+        const typeAheadDropDown = this.dropdownEl;
+        const $lastItem = typeAheadDropDown.find('li').last();
+
+        // Check if last item is not below the full screen
+        if ($lastItem.length && typeAheadDropDown.length && (typeAheadDropDown.height() + typeAheadDropDown.position().top >  $lastItem.height() + $lastItem.position().top)) {
+            this.loadMoreData(true);
+        }
     }
 
-    // This method returns a promise that provides the filtered data from the datasource.
-    public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
-        // For default datavalue, search key as to be on datafield to get the default data from the filter call.
-        const dataConfig: IDataProviderConfig = {
-            dataset: this.dataset ? convertDataToObject(this.dataset) : undefined,
-            binddataset: this.binddataset,
-            datasource: this.datasource,
-            datafield: this.datafield,
-            query: query,
-            searchKey: searchOnDataField ? this.datafield : this.searchkey,
-            casesensitive: this.casesensitive,
-            isformfield: this.isformfield,
-            orderby: this.orderby,
-            limit: this.limit,
-            pagesize: this.pagesize,
-            page: this.page,
-            onBeforeservicecall: this.onBeforeservicecall.bind(this)
-        };
-
-        if (this.dataoptions) {
-            dataConfig.dataoptions = this.dataoptions;
-            dataConfig.viewParent = this.viewParent;
-        }
-
-        return this.dataProvider.filter(dataConfig)
-            .then((response: any) => {
-                // on focusout i.e. on other widget focus, if n/w is pending loading icon is shown, when data is available then dropdown is shown again.
-                    if (this._unsubscribeDv) {
-                        response = {
-                            data: [],
-                            isLastPage: false
-                        };
-                        this.dataProvider.hasMoreData = false;
-                    }
-
-                    this.noMoreData = response.isLastPage;
-
-                    // response from dataProvider returns always data object.
-                    response = response.data || response;
-
-                    this._loadingItems = false;
-
-                    if (this.dataProvider.hasMoreData) {
-                        this.formattedDataset = this.formattedDataset.concat(response);
-                    } else {
-                        this.formattedDataset = response;
-                    }
-
-                    // explicitly setting the optionslimit as the matches more than 20 will be ignored if optionslimit is not specified.
-                    if (this.formattedDataset.length > 20) {
-                        this.typeahead.typeaheadOptionsLimit = this.formattedDataset.length;
-                    }
-
-                // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
-                if (this._isOpen && this.isMobileAutoComplete() && !this.noMoreData) {
-                    this.triggerSearch();
-                }
-
-                    const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
-
-                    // result contains the datafield values.
-                    this.result = _.map(transformedData, 'value');
-                    return transformedData;
-                }, (error) => {
-                    this._loadingItems = false;
-                    return [];
-                }
-            ).then(result => {
-                // When no result is found, set the datavalue to undefined.
-                if (!result.length) {
-                    this._modelByValue = undefined;
-                    this.queryModel = (query as string);
-                }
-                return result;
-            });
+    private typeaheadNoResults(event: boolean): void {
+        this.result = [];
     }
 
-    // This function returns an observable containing the search results.
-    // if searchKey is defined, then variable call is made using the searchkey and other filterfields
-    // else local data search is performed.
-    public getDataSourceAsObservable(query: string): Observable<DataSetItem[]> {
-        // show dropdown only when there is change in query
-        if (query && (this._lastQuery === query)) {
-            return of([]);
-        }
-        // search will show all the results fetched previously without making n/w calls all the time.
-        if (!this.isformfield && this.dataProvider.hasNoMoreData && this.query) {
-            // converting array to observable using "observable.to".
-            return of(this.getTransformedData(this.formattedDataset));
-        }
-
-        this._loadingItems = true;
-
-        // converting promise to observable of datasetItem using "observable.from".
-        return from(this.getDataSource(query));
-    }
-
-
-    public updateQueryModel(data: any, datafield: string) {
+    private updateQueryModel(data: any, datafield: string) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
         if (isDefined(data) && this.searchkey && !this._modelByKey && datafield !== ALLFIELDS) {
@@ -407,6 +362,120 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
 
+    // This method returns a promise that provides the filtered data from the datasource.
+    public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
+        // For default query, searchOnDataField is set to true, then do not make a n/w call when datafield is ALLFIELDS
+        if (searchOnDataField && this.datafield === ALLFIELDS) {
+            return Promise.resolve([]);
+        }
+
+        // For default datavalue, search key as to be on datafield to get the default data from the filter call.
+        const dataConfig: IDataProviderConfig = {
+            dataset: this.dataset ? convertDataToObject(this.dataset) : undefined,
+            binddataset: this.binddataset,
+            datasource: this.datasource,
+            datafield: this.datafield,
+            query: query,
+            searchKey: searchOnDataField ? this.datafield : this.searchkey,
+            casesensitive: this.casesensitive,
+            isformfield: this.isformfield,
+            orderby: this.orderby,
+            limit: this.limit,
+            pagesize: this.pagesize,
+            page: this.page,
+            onBeforeservicecall: this.onBeforeservicecall.bind(this)
+        };
+
+        if (this.dataoptions) {
+            dataConfig.dataoptions = this.dataoptions;
+            dataConfig.viewParent = this.viewParent;
+        }
+
+        return this.dataProvider.filter(dataConfig)
+            .then((response: any) => {
+                    // on focusout i.e. on other widget focus, if n/w is pending loading icon is shown, when data is available then dropdown is shown again.
+                    if (this._unsubscribeDv) {
+                        response = {
+                            data: [],
+                            isLastPage: false
+                        };
+                        this.dataProvider.hasMoreData = false;
+                    }
+
+                    this.noMoreData = response.isLastPage;
+
+                    // response from dataProvider returns always data object.
+                    response = response.data || response;
+
+                    this._loadingItems = false;
+
+                    if (this.dataProvider.hasMoreData) {
+                        this.formattedDataset = this.formattedDataset.concat(response);
+                    } else {
+                        this.formattedDataset = response;
+                    }
+
+                    // explicitly setting the optionslimit as the matches more than 20 will be ignored if optionslimit is not specified.
+                    if (this.formattedDataset.length > 20) {
+                        this.typeahead.typeaheadOptionsLimit = this.formattedDataset.length;
+                    }
+
+                    // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
+                    if (this._isOpen && this.isMobileAutoComplete() && !this.noMoreData) {
+                        // this.triggerSearch();
+                    }
+
+                    const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
+
+                    // result contains the datafield values.
+                    this.result = _.map(transformedData, 'value');
+                    return transformedData;
+                }, (error) => {
+                    this._loadingItems = false;
+                    return [];
+                }
+            ).then(result => {
+                if (this.isScrolled) {
+                    (_.debounce(() => {
+                        this.setLastActiveMatchAsSelected();
+                    }, 30))();
+                    this.isScrolled = false;
+                }
+                // When no result is found, set the datavalue to undefined.
+                if (!result.length) {
+                    this._modelByValue = undefined;
+                    this.queryModel = (query as string);
+                }
+                return result;
+            });
+    }
+
+    public getTransformedData(data: any, itemIndex?: number): DataSetItem[] {
+        if (isDefined(itemIndex)) {
+            itemIndex++;
+        }
+
+        const transformedData = transformData(
+            this.viewParent,
+            data,
+            this.datafield,
+            {
+                displayField: this.displayfield || this.displaylabel,
+                displayExpr: this.displayexpression,
+                bindDisplayExpr: this.binddisplaylabel,
+                bindDisplayImgSrc: this.binddisplayimagesrc,
+                displayImgSrc: this.displayimagesrc
+            },
+            itemIndex
+        );
+
+        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+            this.allowempty = false;
+        }
+
+        return getUniqObjsByDataField(transformedData, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty));
+    }
+
     // OptionsListTemplate listens to the scroll event and triggers this function.
     public onScroll($scrollEl: Element, evt: Event) {
         const totalHeight = $scrollEl.scrollHeight,
@@ -415,36 +484,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // If scroll is at the bottom and no request is in progress and next page records are available, fetch next page items.
         if (!this._loadingItems && !this.dataProvider.isLastPage && ($scrollEl.scrollTop + clientHeight >= totalHeight)) {
             this.loadMoreData(true);
-        }
-    }
-
-    private loadMoreData(incrementPage?: boolean) {
-        if (this.dataProvider.isLastPage) {
-            return;
-        }
-        // Increase the page number and trigger force query update
-        this.page = incrementPage ? this.page + 1 : this.page;
-
-        // trigger the typeahead change manually to fetch the next set of results.
-        this.typeahead.onInput({
-            target: {
-                value: '0' // dummy data to notify the observables
-            }
-        });
-    }
-
-    // highlight the characters in the dropdown matching the query.
-    private hightlight(match: TypeaheadMatch, query: String) {
-        // highlight of chars will work only when label are strings.
-        (match as any).value = match.item.label.toString();
-        return this.typeaheadContainerInstance.hightlight(match, query);
-    }
-
-    // Triggers the method on the parent.
-    private notifyParent($event) {
-        if (this.parentRef) {
-            this._modelByValue = this.query;
-            this.parentRef.notifyEmptyValues($event);
         }
     }
 
@@ -477,78 +516,24 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    private triggerSearch() {
-        if (this._loadingItems || this.isLastPage || !this.$element.hasClass('full-screen')) {
-            return;
-        }
-        const typeAheadDropDown = this.dropdownEl;
-        const $lastItem = typeAheadDropDown.find('li').last();
+    // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
+    public typeaheadOnSelect(match: TypeaheadMatch, $event: Event): void {
+        const item = match.item;
+        this.queryModel = item;
+        item.selected = true;
+        this._lastQuery = this.query = item.label;
 
-        // Check if last item is not below the full screen
-        if ($lastItem.length && typeAheadDropDown.length && (typeAheadDropDown.height() + typeAheadDropDown.position().top >  $lastItem.height() + $lastItem.position().top)) {
-            this.loadMoreData(true);
-        }
-    }
+        // As item.key can vary from key in the datasetItems
+        this._modelByKey = item.key;
+        this._modelByValue = item.value;
 
-    public onDropdownOpen() {
-        this._isOpen = true;
-        // open full-screen search view
-        if (this.isMobileAutoComplete()) {
-            // Add full screen class on focus of the input element.
-            this.$element.addClass('full-screen');
+        this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue, $event || {}, true);
 
-            const dropdownEl = this.dropdownEl.closest('typeahead-container');
+        this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});
+        this.invokeEventCallback('submit', {$event});
 
-            dropdownEl.insertAfter(this.$element.find('input:first'));
-            dropdownEl.css({position: 'relative', top: 0, height: '100%'});
-
-            if (this.isMobileAutoComplete() && !this.noMoreData) {
-                this.triggerSearch();
-            }
-        }
-
-        // setting the ulElements, liElement on typeaheadContainer with custom options template, as the typeaheadContainer implements the key events and scroll.
-        const matchesSubscription = this.liElements.changes.subscribe((data) => {
-            if (this.typeaheadContainerInstance) {
-                this.typeaheadContainerInstance.liElements = data;
-                this.typeaheadContainerInstance.ulElement = this.ulElement;
-
-                // unsubscribe when matches are not found.
-                if (!this.typeaheadContainerInstance.liElements.length) {
-                    this.result = [];
-                    matchesSubscription.unsubscribe();
-                }
-
-                // after fetching next set of page items, select the item with lastSelectedIndex from the dropdown.
-                if (isDefined(this.lastSelectedIndex) && this.typeaheadContainerInstance.liElements.length > this.lastSelectedIndex + 1) {
-                    this.typeaheadContainerInstance._active = this.typeaheadContainerInstance.matches[this.lastSelectedIndex];
-                    this.typeaheadContainerInstance.nextActiveMatch();
-                    this.lastSelectedIndex = undefined;
-                }
-            }
-        });
-        this.registerDestroyListener(() => matchesSubscription.unsubscribe());
-    }
-
-    // Close the full screen mode in mobile view of auto complete
-    private closeSearch() {
-        this.page = 1;
-        if (!isDefined(this.datavalue)) {
-            this.queryModel = this.query = '';
-        }
-        this.$element.removeClass('full-screen');
-    }
-
-    // on focusout, subscribe to the datavalue changes again
-    protected onFocusOut() {
-        this._unsubscribeDv = false;
-        this._loadingItems = false;
-    }
-
-    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'select', 'submit', 'change'], eventName)) {
-            super.handleEvent(node, eventName, eventCallback, locals);
-        }
+        this.updatePrevDatavalue(this.datavalue);
     }
 
     onPropertyChange(key: string, nv: any, ov: any) {
@@ -561,6 +546,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
         super.onPropertyChange(key, nv, ov);
     }
+
 }
 
 

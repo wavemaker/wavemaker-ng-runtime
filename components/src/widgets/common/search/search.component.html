@@ -1,15 +1,15 @@
 <ng-template #customItemTemplate let-model="item" let-index="index" let-query="query" let-match="match">
     <a>
         <img *ngIf="model.imgSrc" [src]="model.imgSrc" alt="Search" [style.width]="imagewidth">
-        <span [title]="model.label" [innerHtml]="hightlight(match, query) || model.label"></span>
+        <span [title]="model.label" [innerHtml]="_isOpen && highlight(match, query) || model.label"></span>
     </a>
 </ng-template>
 
 <ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
     <ul #ulElement class="app-search dropdown-menu" scrollable>
-        <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainerInstance.isActive(match)}"
-            (mouseenter)="typeaheadContainerInstance.selectActive(match);"
-            (click)="selectMatch(match, $event)">
+        <li #liElements *ngFor="let match of matches" [ngClass]="{active: _isOpen ? typeaheadContainer.isActive(match) : false}"
+            (mouseenter)="_isOpen && typeaheadContainer.selectActive(match);"
+            (click)="typeaheadContainer.selectMatch(match, $event)">
             <!-- itemTemplate comes from the <input> -->
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
@@ -66,17 +66,20 @@
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange()"
            (keydown.arrowdown)="selectNext($event)"
-           (keydown.enter)="onSelect($event)"
            (blur)="invokeOnTouched($event)"
            (focus)="invokeOnFocus($event)"
            (focusout)="onFocusOut()"
            [typeaheadLatinize]="false"
            [typeaheadMinLength]="minchars"
            (typeaheadLoading)="_loadingItems"
+           (typeaheadOnSelect)="typeaheadOnSelect($event)"
+           typeaheadOptionField="label"
+           (typeaheadNoResults)="typeaheadNoResults($event)"
+           [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
-           [attr.name]="name"/>
+           [attr.name]="name">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
     <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch()"></span>
@@ -88,4 +91,3 @@
         </form>
     </span>
 </ng-template>
-
