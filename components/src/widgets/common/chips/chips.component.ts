@@ -47,6 +47,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private _unsubscribeDv: boolean = false;
     private searchkey: string;
     private _debounceUpdateQueryModel: any;
+    private limit: number;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource () {
@@ -113,6 +114,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.binddataset = this.bindDataSet;
         this.searchComponent.dataset = this.dataset;
         this.searchComponent.searchkey = this.searchkey;
+        this.searchComponent.limit = this.limit;
 
         this.getTransformedData = this.searchComponent.getTransformedData;
     }

@@ -50,9 +50,9 @@ export class Search {
      */
     @Input() hint: string;
     /**
-     * Picture width This property allows to set the width of the picture.
+     * Picture width property allows to set the width of the picture.
      */
-    @Input() imagewidth: boolean;
+    @Input() imagewidth: string = '16px';
     /**
      * This property limits the search results to be displayed in the widget
      */
