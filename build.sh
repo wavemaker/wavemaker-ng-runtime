@@ -3,32 +3,15 @@
 start=`date +%s`
 
 force=false
-
-if [ "$#" == 0 ]; then
-    web=true
-    mobile=true
-    libs=true
-    copy=false
-else
-    web=false
-    mobile=false
-    libs=false
-    copy=true
-fi
+copy=false
 
 isSourceModified=false
 
 for arg in "$@"
 do
     case $arg in
-        -w | --web)
-            web=true
-            ;;
-        -m | --mobile)
-            mobile=true
-            ;;
-        -l | --libs)
-            libs=true
+        -c | --copy)
+            copy=true
             ;;
         -f | --force)
             force=true
@@ -183,7 +166,6 @@ bundleMobile() {
 }
 
 buildApp() {
-    build swipey
     build core
     build transpiler
     build security
@@ -191,40 +173,26 @@ buildApp() {
     build http-service
     build oAuth
     build variables
-    buildMobile
+    build mobile/placeholder/components
+    build mobile/placeholder/runtime
+    build mobile/core
+    build mobile/components
+    build mobile/variables
+    build mobile/runtime
     build runtime
 
     if [ "${isSourceModified}" == true ]; then
-        if [ "${web}" == true ]; then
-            bundleWeb
-        fi
-        if [ "${mobile}" == true ]; then
-            bundleMobile
-        fi
+        bundleWeb
+        bundleMobile
     fi
 }
 
-buildMobile() {
-    if [ "${web}" == true ]; then
-        build mobile/placeholder/components
-        build mobile/placeholder/runtime
-    fi
-    if [ "${mobile}" == true ]; then
-        build mobile/core
-        build mobile/components
-        build mobile/variables
-        build mobile/runtime
-    fi
-}
 
 copyDist() {
     if [ "${copy}" == true ]; then
-        if [ "${web}" == true ]; then
-            cp ./dist/bundles/wmapp/scripts/* ../wavemaker-studio-editor/src/main/webapp/wmapp/scripts/
-        elif [ "${mobile}" == true ]; then
-            cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/remote-studio/
-            cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/static-files/
-        fi
+        cp ./dist/bundles/wmapp/scripts/* ../wavemaker-studio-editor/src/main/webapp/wmapp/scripts/
+        cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/remote-studio/ 2> /dev/null
+        cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/static-files/ 2> /dev/null
     fi
 }
 
@@ -367,17 +335,15 @@ bundleMobileLibs() {
 }
 
 buildWebLibs() {
-    if [ ${libs} == true ]
-    then
-        buildCoreJs
-        buildTsLib
-        buildNgxBootstrap
-        buildNgxToastr
-        buildNgxMask
-        buildAngularWebSocket
+    build swipey
+    buildCoreJs
+    buildTsLib
+    buildNgxBootstrap
+    buildNgxToastr
+    buildNgxMask
+    buildAngularWebSocket
 
-        bundleWebLibs
-    fi
+    bundleWebLibs
 }
 
 buildIonicNative() {
@@ -385,29 +351,24 @@ buildIonicNative() {
 }
 
 buildMobileLibs() {
-    if [ ${libs} == true -a ${mobile} == true ]
-    then
-        buildIonicNative
+    buildIonicNative
 
-        bundleMobileLibs
-    fi
+    bundleMobileLibs
 }
 
 buildLibs() {
-    if [ "${libs}" == true ]; then
-        hasLibChanges
+    hasLibChanges
+
+    if [ "$?" -eq "0" ]; then
+        npm install
+        buildWebLibs
+        buildMobileLibs
 
         if [ "$?" -eq "0" ]; then
-            npm install
-            buildWebLibs
-            buildMobileLibs
-
-            if [ "$?" -eq "0" ]; then
-                touch ./dist/${SUCCESS_FILE}
-            fi
-        else
-            echo "No changes in package.json. use --force to re-build libs"
+            touch ./dist/${SUCCESS_FILE}
         fi
+    else
+        echo "No changes in package.json. use --force to re-build libs"
     fi
 }
 
