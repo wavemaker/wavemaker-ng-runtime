@@ -96,7 +96,7 @@ export class Radioset {
      */
     click($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered when the widget is clicked.
+     * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the radioset widget
      * @param newVal  datavalue of the radioset widget

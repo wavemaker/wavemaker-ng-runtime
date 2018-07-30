@@ -17,7 +17,7 @@ export const ratingProps = new Map(
         ['orderby', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['show', {value: true, ...PROP_BOOLEAN}],
-        ['showcaptions', PROP_BOOLEAN],
+        ['showcaptions', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['usekeys', PROP_BOOLEAN]
     ]

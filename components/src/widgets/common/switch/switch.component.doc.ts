@@ -17,12 +17,12 @@ export class Switch {
      * These options can be array of values, array of objects, object containing key-value pairs. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() dataset: Array<any> | Object;
+    @Input() dataset: Array<any> | Object = 'yes, no, maybe';
     /**
      * This property defines the initial selected value of the switch widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() datavalue: any;
+    @Input() datavalue: any = 'yes';
     /**
      * This property will be used to disable the switch widget.
      * If the disabled property is true (checked), the widget becomes display-only. <br>
@@ -78,7 +78,7 @@ export class Switch {
      */
     click($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered when the widget is clicked.
+     * Callback function which will be triggered when the widget is clicked or datavalue has changed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the switch widget
      * @param newVal  datavalue of the switch widget
