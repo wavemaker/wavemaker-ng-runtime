@@ -20,7 +20,6 @@ export class Radioset {
     @Input() dataset: Array<any> | Object = 'Option 1, Option 2, Option 3';
     /**
      * This property defines the initial selected value of the radioset widget. <br>
-     * Only when multiple is set to true, datavalue accepts array of values.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() datavalue: any;

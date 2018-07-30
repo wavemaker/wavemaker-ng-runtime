@@ -23,11 +23,10 @@ export class Checkboxset {
      */
     @Input() dataset: Array<any> | Object = 'Option 1, Option 2, Option 3';
     /**
-     * This property defines the initial selected value of the checkboxset widget. <br>
-     * Only when multiple is set to true, datavalue accepts array of values.
+     * This property defines the initial selected value of the checkboxset widget. Returns array of values. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() datavalue: any;
+    @Input() datavalue: Array<any>;
     /**
      * This property determines the date format to be applied on the group heading
      */
@@ -146,4 +145,9 @@ export class Checkboxset {
      * @param widget  Instance of the checkboxset widget
      */
     tap($event: TouchEvent, widget: any) {}
+    /**
+     * This can be invoked only when groupby and collapsible properties are set. This method is available on widget instance.
+     * This method toggles all the list items inside the each list group i.e. all the group lists can be collapsed or expanded.
+     */
+    toggleAllHeaders() {}
 }
