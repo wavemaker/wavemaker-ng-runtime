@@ -10,7 +10,7 @@ export class WizardStep {
      */
     @Input() class: string;
     /**
-     * Name of the wizardstep widget.
+     * Title of the wizardstep widget.
      */
     @Input() title: string = 'Step Title';
 
