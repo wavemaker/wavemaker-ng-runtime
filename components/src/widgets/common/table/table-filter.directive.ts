@@ -123,6 +123,7 @@ export class TableFilterSortDirective {
         table.emptyMatchModes = emptyMatchModes;
         table.getNavigationTargetBySortInfo = this.getNavigationTargetBySortInfo.bind(this);
         table.refreshData = this.refreshData.bind(this);
+        table.clearFilter = this.clearFilter.bind(this);
     }
 
     // Get first or last page based on sort info of primary key

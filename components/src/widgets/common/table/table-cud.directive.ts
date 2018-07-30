@@ -27,6 +27,7 @@ export class TableCUDDirective {
         table.insertRecord = this.insertRecord.bind(this);
         table.editRow = this.editRow.bind(this);
         table.addNewRow = this.addNewRow.bind(this);
+        table.addRow = this.addNewRow.bind(this);
         table.deleteRow = this.deleteRow.bind(this);
         table.onRecordDelete = this.onRecordDelete.bind(this);
         table.hideEditRow = this.hideEditRow.bind(this);

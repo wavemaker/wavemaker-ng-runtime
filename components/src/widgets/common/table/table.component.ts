@@ -181,6 +181,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     clearRowFilter = noop;
     getNavigationTargetBySortInfo: Function;
     refreshData: Function;
+    clearFilter: Function;
 
     // Inline Edit
     ngform: FormGroup;
@@ -190,6 +191,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     insertRecord: Function;
     editRow: Function;
     addNewRow: Function;
+    addRow: Function;
     deleteRow: Function;
     onRecordDelete: Function;
     initiateSelectItem: Function;

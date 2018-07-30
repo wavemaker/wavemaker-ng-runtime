@@ -105,7 +105,7 @@ export class Form {
      */
     @Input() postmessage: string = 'Data posted successfully';
     /**
-     * This property will be used to show/hide the button widget on the web page.
+     * This property will be used to show/hide the form widget on the web page.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean;
