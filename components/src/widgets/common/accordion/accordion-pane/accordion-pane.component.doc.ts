@@ -74,7 +74,7 @@ export class AccordionPane {
     expand($event: Event, widget: any) {}
 
     /**
-     * Callback function which will be triggered when the widget is collapsed.
+     * Callback function which will be triggered when the accordion pane is collapsed.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the accordion pane.
      */

@@ -24,31 +24,31 @@ export class Breadcrumb {
      * This property should be the mapped to the page name so that the breadcrumb path is generated when the page is loaded. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() itemid: any;
+    @Input() itemid: string;
 
     /**
      * Label for the breadcrumb item. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() itemlabel: any;
+    @Input() itemlabel: string;
 
     /**
      * Class for the icon in the breadcrumb item. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() itemicon: any;
+    @Input() itemicon: string;
 
     /**
      * Link for the breadcrumb item. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() itemlink: any;
+    @Input() itemlink: string;
 
     /**
      * Children for the breadcrumb item.  <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() itemchildren: any;
+    @Input() itemchildren: string;
 
     /**
      * This property will be used to show/hide the accordion widget on the web page. <br>
