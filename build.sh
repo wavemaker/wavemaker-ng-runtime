@@ -182,7 +182,7 @@ bundleMobile() {
     fi
 }
 
-buildWeb() {
+buildApp() {
     build swipey
     build core
     build transpiler
@@ -191,29 +191,29 @@ buildWeb() {
     build http-service
     build oAuth
     build variables
-
-    if [ "${web}" == true ]; then
-        build mobile/placeholder/components
-        build mobile/placeholder/runtime
-    fi
-
+    buildMobile
     build runtime
 
-    if [ "${web}" == true -a "${isSourceModified}" == true ]; then
-        bundleWeb
+    if [ "${isSourceModified}" == true ]; then
+        if [ "${web}" == true ]; then
+            bundleWeb
+        fi
+        if [ "${mobile}" == true ]; then
+            bundleMobile
+        fi
     fi
 }
 
 buildMobile() {
+    if [ "${web}" == true ]; then
+        build mobile/placeholder/components
+        build mobile/placeholder/runtime
+    fi
     if [ "${mobile}" == true ]; then
         build mobile/core
         build mobile/components
         build mobile/variables
         build mobile/runtime
-
-        if [ "${isSourceModified}" == true ]; then
-            bundleMobile
-        fi
     fi
 }
 
@@ -411,13 +411,8 @@ buildLibs() {
     fi
 }
 
-buildApp() {
-    buildWeb
-    buildMobile
-}
-
-buildApp
 buildLibs
+buildApp
 copyDist
 
 end=`date +%s`
