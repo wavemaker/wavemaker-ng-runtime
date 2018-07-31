@@ -17,6 +17,7 @@ import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } fro
 import { CalendarService } from './services/calendar-service';
 import { CameraService } from './services/camera-service';
 import { FileService } from './services/file-service';
+import { DatasyncService } from './services/datasync-service';
 import { DeviceService } from './services/device-service';
 import { ContactsService } from './services/contacts-service';
 import { ScanService } from './services/scan-service';
@@ -46,6 +47,7 @@ export class VariablesModule {
         deviceVariableManager.registerService(new CalendarService(calendar));
         deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
         deviceVariableManager.registerService(new ContactsService(contacts));
+        deviceVariableManager.registerService(new DatasyncService());
         deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
         deviceVariableManager.registerService(new ScanService(barcodeScanner));
     }
