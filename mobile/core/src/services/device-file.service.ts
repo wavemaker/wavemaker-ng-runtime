@@ -73,7 +73,7 @@ export class DeviceFileService implements IDeviceStartUpService {
         return Promise.resolve();
     }
 
-    public appendToFileName(fileName: string, attachment: string): string {
+    public appendToFileName(fileName: string, attachment?: string): string {
         let splits;
         attachment = attachment || '_' + now();
         fileName = fileName || 'noname';
@@ -131,7 +131,7 @@ export class DeviceFileService implements IDeviceStartUpService {
             .then(() => filePath);
     }
 
-    public listFiles(folder: string, search: string): Promise<Map<string, any>[]> {
+    public listFiles(folder: string, search: string | RegExp): Promise<Map<string, any>[]> {
         return new Promise((resolve, reject) => {
             resolveLocalFileSystemURL(folder, directory => {
                 if (!directory.files) {

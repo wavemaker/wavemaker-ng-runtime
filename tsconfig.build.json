@@ -14,10 +14,11 @@
             "@wm/runtime": ["runtime/dist/out-tsc/", "runtime/"],
             "@wm/mobile/core": ["mobile/core/dist/out-tsc/", "mobile/core/"],
             "@wm/mobile/components": ["mobile/components/dist/out-tsc/", "mobile/components/"],
+            "@wm/mobile/offline": ["mobile/offline/dist/out-tsc/", "mobile/offline/"],
             "@wm/mobile/variables": ["mobile/variables/dist/out-tsc/", "mobile/variables/"],
             "@wm/mobile/runtime": ["mobile/runtime/dist/out-tsc/", "mobile/runtime/"],
             "@wm/mobile/placeholder/components": ["mobile/placeholder/components/dist/out-tsc/", "mobile/placeholder/components/"],
-            "@wm/mobile/runtime": ["mobile/placeholder/runtime/dist/out-tsc/", "mobile/placeholder/runtime/"]
+            "@wm/mobile/placeholder/runtime": ["mobile/placeholder/runtime/dist/out-tsc/", "mobile/placeholder/runtime/"]
         },
         "outDir": "./dist/out-tsc",
         "sourceMap": false,

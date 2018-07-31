@@ -35,6 +35,7 @@
         "@ionic-native/geolocation": "4.10.0",
         "@ionic-native/media-capture": "4.10.0",
         "@ionic-native/network": "4.10.0",
+        "@ionic-native/sqlite": "4.10.0",
         "@ionic-native/vibration": "4.10.0",
         "angular2-websocket": "0.9.6",
         "animate.css": "3.6.1",

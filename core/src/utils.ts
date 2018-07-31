@@ -906,6 +906,44 @@ export const getRouteNameFromLink = (link) => {
 
 export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 
+export const defer = () => {
+    const d = {
+            promise: null,
+            resolve: noop,
+            reject : noop
+        };
+    d.promise = new Promise((resolve, reject) => {
+        d.resolve = resolve;
+        d.reject = reject;
+    });
+    return d;
+};
+
+/*
+ * Invokes the given list of functions sequentially with the given arguments. If a function returns a promise,
+ * then next function will be invoked only if the promise is resolved.
+ */
+export const executePromiseChain = (fns, args, d?, i?) => {
+    d = d || defer();
+    i = i || 0;
+    if (i === 0) {
+        fns = _.filter(fns, function (fn) {
+            return !(_.isUndefined(fn) || _.isNull(fn));
+        });
+    }
+    if (fns && i < fns.length) {
+        try {
+            toPromise(fns[i].apply(undefined, args))
+                .then(() => executePromiseChain(fns, args, d, i + 1), d.reject);
+        } catch (e) {
+            d.reject(e);
+        }
+    } else {
+        d.resolve();
+    }
+    return d.promise;
+};
+
 /**
  * This function accepts two data sources and will check if both are same by comparing the unique id and
  * context in which datasources are present

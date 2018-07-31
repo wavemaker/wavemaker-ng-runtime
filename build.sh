@@ -155,6 +155,7 @@ bundleMobile() {
         ./mobile/components/dist/wm-components.umd.js \
         ./variables/dist/wm-variables.umd.js \
         ./mobile/variables/dist/wm-variables.umd.js \
+        ./mobile/offline//dist/wm-offline.umd.js \
         ./mobile/runtime/dist/wm-runtime.umd.js \
         ./runtime/dist/wm-runtime.umd.js -o \
         ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
@@ -177,6 +178,7 @@ buildApp() {
     build mobile/placeholder/runtime
     build mobile/core
     build mobile/components
+    build mobile/offline
     build mobile/variables
     build mobile/runtime
     build runtime
