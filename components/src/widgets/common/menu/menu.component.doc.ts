@@ -43,6 +43,7 @@ export class Menu {
     @Input() menuposition: string;
     /**
      * Set this property to a variable to populate the list of values to display.
+     * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() dataset: any = 'Menu Item 1, Menu Item 2, Menu Item 3';
     /**
