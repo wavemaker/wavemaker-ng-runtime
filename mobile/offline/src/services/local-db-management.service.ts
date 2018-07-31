@@ -4,7 +4,7 @@ import { File } from '@ionic-native/file';
 import { SQLite } from '@ionic-native/sqlite';
 import { now } from 'moment';
 
-import { executePromiseChain, hasCordova, isArray, isIos, noop } from '@wm/core';
+import { executePromiseChain, isArray, isIos, noop } from '@wm/core';
 import { DeviceFileService } from '@wm/mobile/core';
 
 import { LocalKeyValueService } from './local-key-value.service';
@@ -74,9 +74,9 @@ const OFFLINE_WAVEMAKER_DATABASE_SCHEMA = {
 export class LocalDBManagementService {
 
     private callbacks: any[];
-    private readonly dbInstallDirectory: string;
-    private readonly dbInstallDirectoryName: string;
-    private readonly dbInstallParentDirectory: string;
+    private dbInstallDirectory: string;
+    private dbInstallDirectoryName: string;
+    private dbInstallParentDirectory: string;
     private databases: Map<string, DBInfo>;
 
     constructor(
@@ -84,18 +84,7 @@ export class LocalDBManagementService {
         private file: File,
         private localKeyValueService: LocalKeyValueService,
         private sqlite: SQLite
-    ) {
-        if (hasCordova()) {
-            if (isIos()) {
-                this.dbInstallDirectoryName = 'LocalDatabase';
-                this.dbInstallParentDirectory = cordova.file.applicationStorageDirectory +  'Library/';
-            } else {
-                this.dbInstallDirectoryName = 'databases';
-                this.dbInstallParentDirectory = cordova.file.applicationStorageDirectory;
-            }
-            this.dbInstallDirectory = this.dbInstallParentDirectory + this.dbInstallDirectoryName;
-        }
-    }
+    ) {}
 
     /**
      *  returns store bound to the dataModelName and entityName.
@@ -116,6 +105,15 @@ export class LocalDBManagementService {
         if (this.databases) {
             return Promise.resolve(this.databases);
         } else {
+            if (isIos()) {
+                this.dbInstallDirectoryName = 'LocalDatabase';
+                this.dbInstallParentDirectory = cordova.file.applicationStorageDirectory +  'Library/';
+            } else {
+                this.dbInstallDirectoryName = 'databases';
+                this.dbInstallParentDirectory = cordova.file.applicationStorageDirectory;
+            }
+            this.dbInstallDirectory = this.dbInstallParentDirectory + this.dbInstallDirectoryName;
+
             this.databases = new Map<string, DBInfo>();
             return this.setUpDatabases()
                 .then( flag => newDatabasesCreated = flag)
@@ -195,6 +193,7 @@ export class LocalDBManagementService {
         const reqEntity = transformedSchemas[entity['entityName']] as EntityInfo;
         reqEntity.entityName = entity['entityName'];
         reqEntity.name = entity['name'];
+        reqEntity.columns = [];
         entity.columns.forEach(col => {
             let defaultValue = col.columnValue ? col.columnValue.defaultValue : '';
             const type = col.sqlType;
@@ -214,7 +213,8 @@ export class LocalDBManagementService {
                 defaultValue: defaultValue
             });
         });
-        entity.relations.forEach(r => {
+
+        _.forEach(entity.relations, r => {
             let targetEntitySchema, targetEntity, col, sourceColumn, mapping;
             if (r.cardinality === 'ManyToOne' || r.cardinality === 'OneToOne') {
                 targetEntity = _.find(schema.tables, t => t.name === r.targetTable);
@@ -229,12 +229,12 @@ export class LocalDBManagementService {
                         targetEntity: targetEntity,
                         targetTable: r.targetTable,
                         targetColumn: mapping.targetColumn,
-                        targetFieldName: targetEntitySchema.columns.find(column => column.name === mapping.targetColumn).fieldName,
-                        targetPath: col.sourceFieldName + '.' + col.targetFieldName,
-                        dataMapper: _.chain(targetEntitySchema.columns)
-                            .keyBy(childCol => col.sourceFieldName + '.' + childCol.fieldName)
-                            .mapValues(childCol => new ColumnInfo(childCol.name, childCol.fieldName)).value()
+                        targetFieldName: targetEntitySchema.columns.find(column => column.name === mapping.targetColumn).fieldName
                     };
+                    col.foreignRelaton.targetPath = col.foreignRelaton.sourceFieldName + '.' + col.foreignRelaton.targetFieldName;
+                    col.foreignRelaton.dataMapper = _.chain(targetEntitySchema.columns)
+                        .keyBy(childCol => col.foreignRelaton.sourceFieldName + '.' + childCol.fieldName)
+                        .mapValues(childCol => new ColumnInfo(childCol.name, childCol.fieldName)).value();
                 }
             }
         });
@@ -244,16 +244,17 @@ export class LocalDBManagementService {
     // Loads necessary details of queries
     private compactQueries(queriesByDB): Map<string, NamedQueryInfo> {
         const queries = new Map<string, NamedQueryInfo>();
-        queriesByDB.queries.forEach(queryData => {
+
+        _.forEach(queriesByDB.queries, queryData => {
             let query, params;
             if (queryData.nativeSql && !queryData.update) {
                 query = queryData.queryString;
                 params = this.extractQueryParams(query).map(p => {
-                    const paramObj = _.find(queryData.parameters, {'name' : p});
+                    const paramObj = _.find(queryData.parameters, {'name': p});
                     return {
-                        name : paramObj.name,
-                        type : paramObj.type,
-                        variableType : paramObj.variableType
+                        name: paramObj.name,
+                        type: paramObj.type,
+                        variableType: paramObj.variableType
                     };
                 });
                 params.forEach(p => query = _.replace(query, ':' + p.name, '?'));
@@ -261,7 +262,7 @@ export class LocalDBManagementService {
                     name: queryData.name,
                     query: query,
                     params: params,
-                    response : {
+                    response: {
                         properties: _.map(queryData.response.properties, p => {
                             p.nameInUpperCase = p.name.toUpperCase();
                             return p;
@@ -280,7 +281,7 @@ export class LocalDBManagementService {
         schema.tables.forEach(entitySchema => {
             transformedSchemas[entitySchema.entityName] = {};
         });
-        schema.tables.forEach(schema.tables, entitySchema => {
+        schema.tables.forEach(entitySchema => {
             this.compactEntitySchema(schema, entitySchema, transformedSchemas);
         });
         dbInfo.schema.name = schema.name;
@@ -381,9 +382,7 @@ export class LocalDBManagementService {
                 schemas.push(OFFLINE_WAVEMAKER_DATABASE_SCHEMA);
                 schemas.map(s => this.compactSchema(s))
                     .forEach(s =>  {
-                        metadata[s.name] = {
-                            schema : s
-                        };
+                        metadata[s.schema.name] = s;
                     });
                 return metadata;
             });
@@ -469,7 +468,7 @@ export class LocalDBManagementService {
             });
             return Promise.all(storePromises).then(stores => {
                 _.forEach(stores, function (store) {
-                    database.stores[store.schema.entityName] = store;
+                    database.stores[store.entitySchema.entityName] = store;
                 });
                 return database;
             });

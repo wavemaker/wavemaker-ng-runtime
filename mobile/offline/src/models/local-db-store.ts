@@ -192,7 +192,7 @@ export class LocalDBStore {
             this.fieldToColumnMapping[c.fieldName] = c.name;
             if (c.foreignRelaton) {
                 this.fieldToColumnMapping[c.foreignRelaton.targetPath] = c.name;
-                c.foreignRelaton.dataMapper.forEach((childCol, childFieldName) => {
+                _.forEach(c.foreignRelaton.dataMapper, (childCol, childFieldName) => {
                     this.fieldToColumnMapping[childFieldName] = c.foreignRelaton.sourceFieldName + '.' + childCol.name;
                 });
             }
