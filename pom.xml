@@ -35,7 +35,28 @@
                             <executable>sh</executable>
                             <arguments>
                                 <argument>${basedir}/build.sh</argument>
+                                <argument>${wm_ng_runtime_docs_command_input}</argument>
                             </arguments>                                
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>read environment properties</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.props.file}</file>
+                            </files>
                         </configuration>
                     </execution>
                 </executions>
@@ -44,6 +65,18 @@
     </build>
     
     <profiles>
+        <profile>
+            <id>runtime</id>
+            <activation>
+                <property>
+                    <name>!project.props.file</name>
+                </property>
+            </activation>
+            <properties>
+                <project.props.file>${main.basedir}/build-helpers/filters/desktop-runtime-local.props
+                </project.props.file>
+            </properties>
+        </profile>
         <profile>
             <id>Snapshot</id>
             <activation>

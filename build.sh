@@ -4,6 +4,7 @@ start=`date +%s`
 
 force=false
 copy=false
+docs=false
 
 isSourceModified=false
 
@@ -16,6 +17,9 @@ do
         -f | --force)
             force=true
             ;;
+        -d | --docs)
+            docs=true
+            ;;
     esac
 done
 
@@ -24,11 +28,12 @@ ROLLUP=./node_modules/.bin/rollup
 UGLIFYJS=./node_modules/.bin/uglifyjs
 NGC=./node_modules/.bin/ngc
 TSC=./node_modules/.bin/tsc
+COMPODOC=./node_modules/.bin/compodoc
 
 SUCCESS_FILE="BUILD_SUCCESS"
 
 if [ ${force} == true ]; then
-    rimraf ./dist/
+    ${RIMRAF} ./dist/
 fi
 
 mkdir -p ./dist/tmp/libs/core-js
@@ -40,7 +45,7 @@ execCommand() {
     local desc=$2
     local command=$3
     echo "$task: $desc"
-    `${command}`
+    ${command} > /dev/null
     if [ "$?" -ne "0" ]; then
         echo "$task: $desc - failure"
         exit 1
@@ -190,12 +195,21 @@ buildApp() {
     fi
 }
 
+buildDocs() {
+    if [ "${docs}" == true ]; then
+        ${RIMRAF} ./dist/docs/
+        execCommand "compodoc" "docs" "${COMPODOC} --config documentation/compodocrc.json"
+    fi
+}
 
 copyDist() {
     if [ "${copy}" == true ]; then
         cp ./dist/bundles/wmapp/scripts/* ../wavemaker-studio-editor/src/main/webapp/wmapp/scripts/
         cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/remote-studio/ 2> /dev/null
         cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/static-files/ 2> /dev/null
+        if [ "${docs}" == true ]; then
+            cp -r ./dist/docs/* ../wavemaker-studio-editor/src/main/webapp/docs/
+        fi
     fi
 }
 
@@ -377,6 +391,7 @@ buildLibs() {
 
 buildLibs
 buildApp
+buildDocs
 copyDist
 
 end=`date +%s`
