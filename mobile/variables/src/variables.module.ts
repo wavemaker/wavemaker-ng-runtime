@@ -12,6 +12,8 @@ import { Vibration } from '@ionic-native/vibration';
 
 import { App } from '@wm/core';
 import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService } from '@wm/mobile/core';
+import { ChangeLogService, OfflineModule } from '@wm/mobile/offline';
+import { SecurityService } from '@wm/security';
 import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } from '@wm/variables';
 
 import { CalendarService } from './services/calendar-service';
@@ -21,9 +23,12 @@ import { DatasyncService } from './services/datasync-service';
 import { DeviceService } from './services/device-service';
 import { ContactsService } from './services/contacts-service';
 import { ScanService } from './services/scan-service';
+import { ProcessManagementService } from '@wm/mobile/components';
 
 @NgModule({
-    imports: [],
+    imports: [
+        OfflineModule
+    ],
     declarations: [],
     providers: []
 })
@@ -32,6 +37,7 @@ export class VariablesModule {
     constructor(app: App,
                 appVersion: AppVersion,
                 barcodeScanner: BarcodeScanner,
+                changeLogService: ChangeLogService,
                 calendar: Calendar,
                 contacts: Contacts,
                 camera: Camera,
@@ -40,6 +46,8 @@ export class VariablesModule {
                 device: Device,
                 geoLocation: Geolocation,
                 mediaCapture: MediaCapture,
+                processManagementService: ProcessManagementService,
+                securityService: SecurityService,
                 networkService: NetworkService,
                 vibrateService: Vibration) {
         const deviceVariableManager = VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.DEVICE) as DeviceVariableManager;
@@ -47,7 +55,7 @@ export class VariablesModule {
         deviceVariableManager.registerService(new CalendarService(calendar));
         deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
         deviceVariableManager.registerService(new ContactsService(contacts));
-        deviceVariableManager.registerService(new DatasyncService());
+        deviceVariableManager.registerService(new DatasyncService(app, changeLogService, processManagementService, securityService, networkService));
         deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
         deviceVariableManager.registerService(new ScanService(barcodeScanner));
     }

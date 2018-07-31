@@ -34,7 +34,6 @@ const KEYBOARD_CLASS = 'keyboard';
     ],
     imports: [
         MobileCoreModule,
-        OfflineModule,
         VariablesModule,
         WmMobileComponentsModule
     ],
