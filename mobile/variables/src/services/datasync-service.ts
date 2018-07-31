@@ -2,8 +2,8 @@ import { Observer } from 'rxjs/index';
 
 import { App, noop } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
-import { ProcessApi, ProcessManagementService } from '@wm/mobile/components';
-import { Change, ChangeLogService, PushInfo } from '@wm/mobile/offline';
+import { FileSelectorService, ProcessApi, ProcessManagementService } from '@wm/mobile/components';
+import { Change, ChangeLogService, LocalDBManagementService, PushInfo } from '@wm/mobile/offline';
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback } from '@wm/variables';
 import { SecurityService } from '@wm/security';
 
@@ -20,12 +20,148 @@ export class DatasyncService extends DeviceVariableService {
 
     constructor(app: App,
                 changeLogService: ChangeLogService,
+                fileSelectorService: FileSelectorService,
+                localDBManagementService: LocalDBManagementService,
                 processManagementService: ProcessManagementService,
                 securityService: SecurityService,
                 networkService: NetworkService) {
         super();
+        this.operations.push(new ExportDBOperation(localDBManagementService));
+        this.operations.push(new GetOfflineChangesOperation(changeLogService));
+        this.operations.push(new ImportDBOperation(fileSelectorService, localDBManagementService));
+        this.operations.push(new LastPushInfoOperation(changeLogService));
         this.operations.push(new PullOperation(networkService, securityService));
         this.operations.push(new PushOperation(app, changeLogService, processManagementService, networkService, securityService));
+    }
+}
+
+class ExportDBOperation implements IDeviceVariableOperation {
+    public readonly name = 'exportDB';
+    public readonly model = {path: ''};
+    public readonly properties = [
+        {target: 'spinnerContext', hide: false},
+        {target: 'spinnerMessage', hide: false}
+    ];
+    public readonly requiredCordovaPlugins = REQUIRED_PLUGINS;
+
+    constructor(private localDBManagementService: LocalDBManagementService) {
+    }
+
+    public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
+        if (window['SQLitePlugin']) {
+            return this.localDBManagementService.exportDB();
+        }
+        return Promise.reject(OFFLINE_PLUGIN_NOT_FOUND);
+    }
+}
+
+
+class GetOfflineChangesOperation implements IDeviceVariableOperation {
+    private static DATA_CHANGE_TEMPLATE = {
+        service: 'DatabaseService',
+        operation: 'operation',
+        params: {
+            data: {},
+            dataModelName: 'dataModelName',
+            entityName: 'entityName'
+        },
+        hasError: 0,
+        errorMessage: ''
+    };
+    private static CHANGE_LOG_SET = {
+        total: 0,
+        database: {
+            create: [GetOfflineChangesOperation.DATA_CHANGE_TEMPLATE],
+            update: [GetOfflineChangesOperation.DATA_CHANGE_TEMPLATE],
+            delete: [GetOfflineChangesOperation.DATA_CHANGE_TEMPLATE]
+        },
+        uploads: [{
+            service: 'OfflineFileUploadService',
+            operation: 'uploadToServer',
+            params: {
+                file: 'localFilePath',
+                serverUrl: 'serverUrl',
+                ftOptions: {}
+            },
+            hasError: 0,
+            errorMessage: ''
+        }]
+    };
+    public readonly name = 'getOfflineChanges';
+    public readonly model = {
+        total: 0,
+        pendingToSync: GetOfflineChangesOperation.CHANGE_LOG_SET,
+        failedToSync: GetOfflineChangesOperation.CHANGE_LOG_SET
+    };
+    public readonly properties = [
+        {target: 'startUpdate', type: 'boolean', value: true, hide: true},
+        {target: 'autoUpdate', type: 'boolean', value: true, hide: true}
+    ];
+    public readonly requiredCordovaPlugins = REQUIRED_PLUGINS;
+
+    constructor(private changeLogService: ChangeLogService) {
+    }
+
+    public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
+        if (window['SQLitePlugin']) {
+            return getOfflineChanges(this.changeLogService);
+        }
+        return Promise.reject(OFFLINE_PLUGIN_NOT_FOUND);
+    }
+}
+
+class LastPushInfoOperation implements IDeviceVariableOperation {
+    public readonly name = 'lastPushInfo';
+    public readonly model = {
+        successfulTaskCount: 0,
+        failedTaskCount: 0,
+        completedTaskCount: 0,
+        totalTaskCount: 0,
+        startTime: new Date().toJSON(),
+        endTime: new Date().toJSON()
+    };
+    public readonly properties = [
+        {target: 'startUpdate', type: 'boolean', value: true, hide: true},
+        {target: 'spinnerContext', hide: false},
+        {target: 'spinnerMessage', hide: false}
+    ];
+    public readonly requiredCordovaPlugins = REQUIRED_PLUGINS;
+
+    constructor(private changeLogService: ChangeLogService) {
+    }
+
+    public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
+        if (window['SQLitePlugin']) {
+            return this.changeLogService.getLastPushInfo();
+        }
+        return Promise.reject(OFFLINE_PLUGIN_NOT_FOUND);
+    }
+}
+
+class ImportDBOperation implements IDeviceVariableOperation {
+    public readonly name = 'importDB';
+    public readonly model = {};
+    public readonly properties = [
+        {target: 'spinnerContext', hide: false},
+        {target: 'spinnerMessage', hide: false}
+    ];
+    public readonly requiredCordovaPlugins = REQUIRED_PLUGINS;
+
+    constructor(
+        private fileSelectorService: FileSelectorService,
+        private localDBManagementService: LocalDBManagementService) {
+    }
+
+    public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
+        if (window['SQLitePlugin']) {
+            return this.fileSelectorService.selectFiles(false,  'zip')
+                .then(files => {
+                if (files && files.length) {
+                    return this.localDBManagementService.importDB(files[0].path, true);
+                }
+            });
+        }
+        return Promise.reject(OFFLINE_PLUGIN_NOT_FOUND);
     }
 }
 

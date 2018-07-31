@@ -12,7 +12,7 @@ import { Vibration } from '@ionic-native/vibration';
 
 import { App } from '@wm/core';
 import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService } from '@wm/mobile/core';
-import { ChangeLogService, OfflineModule } from '@wm/mobile/offline';
+import { ChangeLogService, LocalDBManagementService, OfflineModule } from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
 import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } from '@wm/variables';
 
@@ -23,7 +23,7 @@ import { DatasyncService } from './services/datasync-service';
 import { DeviceService } from './services/device-service';
 import { ContactsService } from './services/contacts-service';
 import { ScanService } from './services/scan-service';
-import { ProcessManagementService } from '@wm/mobile/components';
+import { FileSelectorService, ProcessManagementService } from '@wm/mobile/components';
 
 @NgModule({
     imports: [
@@ -42,9 +42,11 @@ export class VariablesModule {
                 contacts: Contacts,
                 camera: Camera,
                 fileOpener: DeviceFileOpenerService,
+                fileSelectorService: FileSelectorService,
                 fileUploader: DeviceFileUploadService,
                 device: Device,
                 geoLocation: Geolocation,
+                localDBManagementService: LocalDBManagementService,
                 mediaCapture: MediaCapture,
                 processManagementService: ProcessManagementService,
                 securityService: SecurityService,
@@ -55,7 +57,7 @@ export class VariablesModule {
         deviceVariableManager.registerService(new CalendarService(calendar));
         deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
         deviceVariableManager.registerService(new ContactsService(contacts));
-        deviceVariableManager.registerService(new DatasyncService(app, changeLogService, processManagementService, securityService, networkService));
+        deviceVariableManager.registerService(new DatasyncService(app, changeLogService, fileSelectorService, localDBManagementService, processManagementService, securityService, networkService));
         deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
         deviceVariableManager.registerService(new ScanService(barcodeScanner));
     }

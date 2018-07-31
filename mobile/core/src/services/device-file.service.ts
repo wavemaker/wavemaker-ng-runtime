@@ -4,7 +4,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
 import { now } from 'moment';
 
-import { isAndroid } from '@wm/core';
+import { isAndroid, noop } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 
@@ -173,6 +173,28 @@ export class DeviceFileService implements IDeviceStartUpService {
             dir = filePath.substring(0, i),
             file = filePath.substring(i + 1);
         return this.cordovaFile.removeFile(dir, file);
+    }
+
+    /**
+     * removes the directory at the specified location.
+     *
+     * @param {string} dirPath absolute path of directory
+     */
+    public removeDir(dirPath: string): Promise<any> {
+        const i = dirPath.lastIndexOf('/'),
+            parentdir = dirPath.substring(0, i + 1),
+            dir = dirPath.substring(i + 1),
+            movedDir = dir + now();
+        return this.cordovaFile.checkDir(parentdir, dir)
+            .then(() => {
+                /**
+                 * If folder is remove directly without moving, then INVALID_MODIFICATION_ERR is thrown in android
+                 * when a copy opertion is done with the same directory name. To avoid this, directory will be moved
+                 * first and removed.
+                 */
+                return this.cordovaFile.moveDir(parentdir, dir, parentdir, movedDir)
+                    .then(() => this.cordovaFile.removeDir(parentdir, movedDir))
+            }).catch(noop);
     }
 
     public start(): Promise<any> {
