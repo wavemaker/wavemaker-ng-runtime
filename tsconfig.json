@@ -14,6 +14,7 @@
             "@wm/runtime": ["runtime/"],
             "@wm/mobile/core": ["mobile/core/"],
             "@wm/mobile/components": ["mobile/components/"],
+            "@wm/mobile/offline": ["mobile/offline/"],
             "@wm/mobile/variables": ["mobile/variables/"],
             "@wm/mobile/runtime": ["mobile/runtime/"],
             "@wm/mobile/placeholder/components": ["mobile/placeholder/components/"],

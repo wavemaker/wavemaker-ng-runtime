@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { WmComponentsModule } from '@wm/components';
 
 import { FileSelectorService } from './services/file-selector.service';
+import { ProcessManagementService } from './services/process-management.service';
 
 import { AppUpdateComponent } from './widgets/app-update/app-update.component';
 import { BarcodeScannerComponent } from './widgets/barcode-scanner/barcode-scanner.component';
@@ -21,6 +22,7 @@ import { MobilePageDirective } from './widgets/page/page.directive';
 import { MobileNavbarComponent } from './widgets/mobile-navbar/mobile-navbar.component';
 import { NetworkInfoToasterComponent } from './widgets/network-info-toaster/network-info-toaster.component';
 import { PageContentLoaderComponent } from './widgets/page-content-loader/page-content-loader.component';
+import { ProcessManagerComponent } from './widgets/process-manager/process-manager.component';
 import { SearchDirective } from './widgets/search/search.directive';
 import { SegmentContentComponent } from './widgets/segmented-control/segment-content/segment-content.component';
 import { SegmentedControlComponent } from './widgets/segmented-control/segmented-control.component';
@@ -44,6 +46,7 @@ const wmMobileComponents = [
     MobileTabbarComponent,
     NetworkInfoToasterComponent,
     PageContentLoaderComponent,
+    ProcessManagerComponent,
     SearchDirective,
     SegmentContentComponent,
     SegmentedControlComponent,
@@ -60,7 +63,7 @@ const PIPES = [];
     ],
     declarations: [...wmMobileComponents, ...PIPES],
     exports: [...wmMobileComponents, ...PIPES],
-    providers: [FileSelectorService],
+    providers: [FileSelectorService, ProcessManagementService],
     entryComponents: []
 })
 export class WmMobileComponentsModule {
