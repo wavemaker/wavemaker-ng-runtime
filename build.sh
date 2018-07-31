@@ -160,8 +160,8 @@ bundleMobile() {
         ./dist/tmp/mobile/components/build-task.umd.js \
         ./dist/tmp/mobile/components/components.umd.js \
         ./dist/tmp/variables/variables.umd.js \
-        ./dist/tmp/mobile/variables/variables.umd.js \
         ./dist/tmp/mobile/offline/offline.umd.js \
+        ./dist/tmp/mobile/variables/variables.umd.js \
         ./dist/tmp/mobile/runtime/runtime.umd.js \
         ./dist/tmp/runtime/runtime.umd.js -o \
         ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b

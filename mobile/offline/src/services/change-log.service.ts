@@ -111,7 +111,7 @@ export class ChangeLogService {
     /**
      * Flush the current log. If a flush is already running, then the promise of that flush is returned back.
      */
-    public flush(progressObserver: Observer<PushInfo>) {
+    public flush(progressObserver: Observer<PushInfo>): Promise<PushInfo> {
         let flushPromise;
         if (!this.deferredFlush) {
             this.deferredFlush = getAbortableDefer();
@@ -204,6 +204,31 @@ export class ChangeLogService {
     */
     public getStore(): Promise<LocalDBStore> {
         return this.localDBManagementService.getStore('wavemaker', 'offlineChangeLog');
+    }
+
+    /**
+     * Returns true, if a flush process is in progress. Otherwise, returns false.
+     *
+     * @returns {boolean} returns true, if a flush process is in progress. Otherwise, returns false.
+     */
+    public isFlushInProgress(): boolean {
+        return !(_.isUndefined(this.deferredFlush) || _.isNull(this.deferredFlush));
+    }
+
+    /**
+     * Stops the ongoing flush process.
+     *
+     * @returns {object} a promise that is resolved when the flush process is stopped.
+     */
+    public stop(): Promise<void> {
+        return new Promise( resolve => {
+            if (this.deferredFlush) {
+                this.deferredFlush.promise.catch().then(resolve);
+                this.deferredFlush.promise.abort();
+            } else {
+                resolve();
+            }
+        });
     }
 
     private createContext() {

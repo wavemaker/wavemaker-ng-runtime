@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ProcessManagerComponent } from '../widgets/process-manager/process-manager.component';
+import { ProcessManagerComponent, ProcessApi } from '../widgets/process-manager/process-manager.component';
 
 @Injectable()
 export class ProcessManagementService {
@@ -37,10 +37,10 @@ export class ProcessManagementService {
      *
      * @returns {object} a promise
      */
-    public createInstance(name: string, min?: number, max?: number) {
+    public createInstance(name: string, min?: number, max?: number): Promise<ProcessApi> {
         if (!this.processManagerComponent) {
             return Promise.reject('ProcessManagerComponent is missing');
         }
-        this.createInstance(name, min, max);
+        return this.createInstance(name, min, max);
     }
 }
