@@ -1,4 +1,4 @@
-export default {
+export const rollupGlobals = {
     '@angular/animations': 'ng.animations',
     '@angular/common': 'ng.common',
     '@angular/common/http': 'ng.common.http',

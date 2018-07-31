@@ -1,9 +1,9 @@
-import rollupGlobals from '../rollup-globals';
+import { rollupGlobals } from '../rollup-utils';
 
 export default {
-    input: 'runtime/dist/out-tsc/index.js',
+    input: 'dist/out-tsc/runtime/index.js',
     output: {
-        file: 'runtime/dist/wm-runtime.umd.js',
+        file: 'dist/tmp/runtime/runtime.umd.js',
         format: 'umd',
         name: 'wm.runtime',
         globals: rollupGlobals

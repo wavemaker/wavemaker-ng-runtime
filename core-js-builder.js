@@ -6,7 +6,7 @@ require('core-js-builder')({
     library: false,                // flag for build without global namespace pollution, by default - false
     umd: true                      // use UMD wrapper for export `core` object, by default - true
 }).then(function(code) {
-    fs.writeFileSync('./dist/tmp/core-js.umd.js', code);
+    fs.writeFileSync('./dist/tmp/libs/core-js/core-js.umd.js', code);
 }).catch(function (error) {
     console.log(error);
 });

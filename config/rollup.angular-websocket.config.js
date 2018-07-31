@@ -4,7 +4,7 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 export default {
     input: './node_modules/angular2-websocket/angular2-websocket.js',
     output: {
-        file: './dist/tmp/angular-websocket.umd.js',
+        file: './dist/tmp/libs/angular-websocket/angular-websocket.umd.js',
         format: 'umd',
         name: 'angularWebSocket',
         globals: {

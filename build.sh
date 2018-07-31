@@ -27,7 +27,11 @@ TSC=./node_modules/.bin/tsc
 
 SUCCESS_FILE="BUILD_SUCCESS"
 
-mkdir -p ./dist/tmp
+if [ ${force} == true ]; then
+    rimraf ./dist/
+fi
+
+mkdir -p ./dist/tmp/libs/core-js
 mkdir -p ./dist/bundles/wmapp/scripts
 mkdir -p ./dist/bundles/wmmobile/scripts
 
@@ -73,7 +77,7 @@ hasSourceChanges() {
     fi
 
     local bundle=$1
-    local successFile="${bundle}/dist/${SUCCESS_FILE}"
+    local successFile="./dist/tmp/${bundle}"
 
     if ! [ -e ${successFile} ]; then
         return 0
@@ -108,9 +112,6 @@ build() {
         isSourceModified=true
         if [ "$?" -eq "0" ]; then
             rollup ${bundle}
-            if [ "$?" -eq "0" ]; then
-                touch ${bundle}/dist/${SUCCESS_FILE}
-            fi
         fi
     else
         echo "No changes in $bundle"
@@ -120,17 +121,17 @@ build() {
 bundleWeb() {
     echo "uglify: web"
     ${UGLIFYJS} \
-        ./core/dist/wm-core.umd.js \
-        ./transpiler/dist/wm-transpiler.umd.js \
-        ./http-service/dist/http-service.umd.js \
-        ./oAuth/dist/oAuth.umd.js \
-        ./security/dist/wm-security.umd.js \
-        ./components/dist/wm-components.build-task.umd.js \
-        ./components/dist/wm-components.umd.js \
-        ./variables/dist/wm-variables.umd.js \
-        ./mobile/placeholder/components/dist/wm-components.umd.js \
-        ./mobile/placeholder/runtime/dist/wm-runtime.umd.js \
-        ./runtime/dist/wm-runtime.umd.js -o \
+        ./dist/tmp/core/core.umd.js \
+        ./dist/tmp/transpiler/transpiler.umd.js \
+        ./dist/tmp/http-service/http-service.umd.js \
+        ./dist/tmp/oAuth/oAuth.umd.js \
+        ./dist/tmp/security/security.umd.js \
+        ./dist/tmp/components/build-task.umd.js \
+        ./dist/tmp/components/components.umd.js \
+        ./dist/tmp/variables/variables.umd.js \
+        ./dist/tmp/mobile/placeholder/components/components.umd.js \
+        ./dist/tmp/mobile/placeholder/runtime/runtime.umd.js \
+        ./dist/tmp/runtime/runtime.umd.js -o \
         ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 
     if [ "$?" -eq "0" ]; then
@@ -143,21 +144,21 @@ bundleWeb() {
 bundleMobile() {
     echo "uglify: mobile"
     ${UGLIFYJS} \
-        ./core/dist/wm-core.umd.js \
-        ./transpiler/dist/wm-transpiler.umd.js \
-        ./http-service/dist/http-service.umd.js \
-        ./oAuth/dist/oAuth.umd.js \
-        ./security/dist/wm-security.umd.js \
-        ./components/dist/wm-components.build-task.umd.js \
-        ./components/dist/wm-components.umd.js \
-        ./mobile/core/dist/wm-core.umd.js \
-        ./mobile/components/dist/wm-components.build-task.umd.js \
-        ./mobile/components/dist/wm-components.umd.js \
-        ./variables/dist/wm-variables.umd.js \
-        ./mobile/variables/dist/wm-variables.umd.js \
-        ./mobile/offline//dist/wm-offline.umd.js \
-        ./mobile/runtime/dist/wm-runtime.umd.js \
-        ./runtime/dist/wm-runtime.umd.js -o \
+        ./dist/tmp/core/core.umd.js \
+        ./dist/tmp/transpiler/transpiler.umd.js \
+        ./dist/tmp/http-service/http-service.umd.js \
+        ./dist/tmp/oAuth/oAuth.umd.js \
+        ./dist/tmp/security/security.umd.js \
+        ./dist/tmp/components/build-task.umd.js \
+        ./dist/tmp/components/components.umd.js \
+        ./dist/tmp/mobile/core/core.umd.js \
+        ./dist/tmp/mobile/components/build-task.umd.js \
+        ./dist/tmp/mobile/components/components.umd.js \
+        ./dist/tmp/variables/variables.umd.js \
+        ./dist/tmp/mobile/variables/variables.umd.js \
+        ./dist/tmp/mobile/offline/offline.umd.js \
+        ./dist/tmp/mobile/runtime/runtime.umd.js \
+        ./dist/tmp/runtime/runtime.umd.js -o \
         ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
     if [ "$?" -eq "0" ]; then
         echo "uglify: mobile - success"
@@ -203,21 +204,21 @@ buildCoreJs() {
 }
 
 buildTsLib() {
-    execCommand "rollup" "tslib" "${ROLLUP} ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/tslib.umd.js -f umd --name tslib --silent"
+    execCommand "rollup" "tslib" "${ROLLUP} ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/libs/tslib/tslib.umd.js -f umd --name tslib --silent"
 }
 
 buildNgxBootstrap() {
-    execCommand "tsc" "ngx-bootstrap" "${TSC} --outDir dist/tmp --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015"
+    execCommand "tsc" "ngx-bootstrap" "${TSC} --outDir dist/tmp/libs/ngx-bootstrap --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015"
     execCommand "rollup" "ngx-bootstrap" "${ROLLUP} -c ./config/rollup.ngx-bootstrap.config.js --silent"
 }
 
 buildNgxToastr() {
-    execCommand "tsc" "ngx-toastr" "${TSC} --outDir dist/tmp --target es5 ./node_modules/ngx-toastr/fesm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015"
+    execCommand "tsc" "ngx-toastr" "${TSC} --outDir dist/tmp/libs/ngx-toastr --target es5 ./node_modules/ngx-toastr/fesm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015"
     execCommand "rollup" "ngx-toastr" "${ROLLUP} -c ./config/rollup.ngx-toastr.config.js --silent"
 }
 
 buildNgxMask() {
-    execCommand "tsc" "ngx-mask" "${TSC} --outDir dist/tmp --target es5 ./node_modules/ngx-mask/esm2015/ngx-mask.js --allowJs --skipLibCheck --module es2015"
+    execCommand "tsc" "ngx-mask" "${TSC} --outDir dist/tmp/libs/ngx-mask --target es5 ./node_modules/ngx-mask/esm2015/ngx-mask.js --allowJs --skipLibCheck --module es2015"
     execCommand "rollup" "ngx-mask" "${ROLLUP} -c ./config/rollup.ngx-mask.config.js --silent"
 }
 
@@ -228,8 +229,8 @@ buildAngularWebSocket() {
 bundleWebLibs() {
     echo "uglify: web-libs"
     $UGLIFYJS \
-        ./dist/tmp/tslib.umd.js \
-        ./dist/tmp/core-js.umd.js \
+        ./dist/tmp/libs/tslib/tslib.umd.js \
+        ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
@@ -243,10 +244,10 @@ bundleWebLibs() {
         ./node_modules/@angular/common/bundles/common-http.umd.js \
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
-        ./dist/tmp/ngx-bootstrap.umd.js \
-        ./dist/tmp/ngx-toastr.umd.js \
-        ./dist/tmp/angular-websocket.umd.js \
-        ./dist/tmp/ngx-mask.umd.js \
+        ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
+        ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
+        ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
+        ./dist/tmp/libs/ngx-mask/ngx-mask.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
@@ -269,7 +270,7 @@ bundleWebLibs() {
         ./node_modules/hammerjs/hammer.min.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
-        ./swipey/dist/swipey.umd.js \
+        ./dist/tmp/swipey/swipey.umd.js \
         ./swipey/src/swipey.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
@@ -283,7 +284,7 @@ bundleWebLibs() {
 bundleMobileLibs() {
     echo "uglify: mobile-libs"
     $UGLIFYJS \
-        ./dist/tmp/tslib.umd.js \
+        ./dist/tmp/libs/tslib/tslib.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
@@ -297,10 +298,10 @@ bundleMobileLibs() {
         ./node_modules/@angular/common/bundles/common-http.umd.js \
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
-        ./dist/tmp/ngx-bootstrap.umd.js \
-        ./dist/tmp/ngx-toastr.umd.js \
-        ./dist/tmp/angular-websocket.umd.js \
-        ./dist/tmp/ngx-mask.umd.js \
+        ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
+        ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
+        ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
+        ./dist/tmp/libs/ngx-mask/ngx-mask.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
@@ -321,11 +322,11 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
-        ./swipey/dist/swipey.umd.js \
+        ./dist/tmp/swipey/swipey.umd.js \
         ./swipey/src/swipey.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
-        ./dist/tmp/ionic-native-core.umd.js \
-        ./dist/tmp/ionic-native-plugins.umd.js \
+        ./dist/tmp/libs/ionic-native/ionic-native-core.umd.js \
+        ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b

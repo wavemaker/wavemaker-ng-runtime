@@ -1,19 +1,19 @@
-import rollupGlobals from '../../rollup-globals';
+import { rollupGlobals } from '../../rollup-utils';
 
 export default [
     {
-        input: 'mobile/components/dist/out-tsc/index.js',
+        input: 'dist/out-tsc/mobile/components/index.js',
         output: {
-            file: 'mobile/components/dist/wm-components.umd.js',
+            file: 'dist/tmp/mobile/components/components.umd.js',
             format: 'umd',
             name: 'wm.mobile.components',
             globals: rollupGlobals
         }
     },
     {
-        input: 'mobile/components/dist/out-tsc/src/build-task.js',
+        input: 'dist/out-tsc/mobile/components/src/build-task.js',
         output: {
-            file: 'mobile/components/dist/wm-components.build-task.umd.js',
+            file: 'dist/tmp/mobile/components/build-task.umd.js',
             format: 'umd',
             name: 'wm.mobile.components.build',
             globals: rollupGlobals

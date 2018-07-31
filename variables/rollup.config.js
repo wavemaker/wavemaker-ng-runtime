@@ -1,9 +1,9 @@
-import rollupGlobals from '../rollup-globals';
+import { rollupGlobals } from '../rollup-utils';
 
 export default {
-    input: 'variables/dist/out-tsc/index.js',
+    input: 'dist/out-tsc/variables/index.js',
     output: {
-        file: 'variables/dist/wm-variables.umd.js',
+        file: 'dist/tmp/variables/variables.umd.js',
         format: 'umd'
     },
     name: 'wm.variables',

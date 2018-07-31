@@ -1,9 +1,9 @@
-import rollupGlobals from '../rollup-globals';
+import { rollupGlobals } from '../rollup-utils';
 
 export default {
-    input: 'oAuth/dist/out-tsc/index.js',
+    input: 'dist/out-tsc/oAuth/index.js',
     output: {
-        file: 'oAuth/dist/oAuth.umd.js',
+        file: 'dist/tmp/oAuth/oAuth.umd.js',
         format: 'umd'
     },
     name: 'wm.oAuth',

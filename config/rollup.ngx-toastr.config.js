@@ -1,9 +1,9 @@
-import rollupGlobals from '../rollup-globals';
+import { rollupGlobals } from '../rollup-utils';
 
 export default {
-    input: './dist/tmp/ngx-toastr.js',
+    input: './dist/tmp/libs/ngx-toastr/ngx-toastr.js',
     output: {
-        file: './dist/tmp/ngx-toastr.umd.js',
+        file: './dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js',
         format: 'umd',
         name: 'ngxToastr',
         globals: rollupGlobals

@@ -1,9 +1,9 @@
-import rollupGlobals from '../../rollup-globals';
+import { rollupGlobals } from '../../rollup-utils';
 
 export default {
-    input: 'mobile/variables/dist/out-tsc/index.js',
+    input: 'dist/out-tsc/mobile/variables/index.js',
     output: {
-        file: 'mobile/variables/dist/wm-variables.umd.js',
+        file: 'dist/tmp/mobile/variables/variables.umd.js',
         format: 'umd',
         name: 'wm.mobile.variables',
         globals: rollupGlobals

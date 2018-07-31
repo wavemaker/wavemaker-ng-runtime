@@ -1,9 +1,9 @@
-import rollupGlobals from '../rollup-globals';
+import { rollupGlobals } from '../rollup-utils';
 
 export default {
-    input: './dist/tmp/ngx-mask.js',
+    input: './dist/tmp/libs/ngx-mask/ngx-mask.js',
     output: {
-        file: './dist/tmp/ngx-mask.umd.js',
+        file: './dist/tmp/libs/ngx-mask/ngx-mask.umd.js',
         format: 'umd',
         name: 'ngxMask',
         globals: rollupGlobals
