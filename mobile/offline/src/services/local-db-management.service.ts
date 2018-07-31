@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 
+import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
 import { SQLite } from '@ionic-native/sqlite';
 import { now } from 'moment';
 
-import { executePromiseChain, isArray, isIos, noop } from '@wm/core';
+import { executePromiseChain, isAndroid, isArray, isIos, noop } from '@wm/core';
 import { DeviceFileService } from '@wm/mobile/core';
 
 import { LocalKeyValueService } from './local-key-value.service';
@@ -14,6 +15,7 @@ import { ColumnInfo, DBInfo, EntityInfo, NamedQueryInfo } from '../models/config
 
 declare const _;
 declare const cordova;
+declare const Zeep;
 
 const META_LOCATION = 'www/metadata/app';
 const OFFLINE_WAVEMAKER_DATABASE_SCHEMA = {
@@ -80,11 +82,98 @@ export class LocalDBManagementService {
     private databases: Map<string, DBInfo>;
 
     constructor(
+        private appVersion: AppVersion,
         private deviceFileService: DeviceFileService,
         private file: File,
         private localKeyValueService: LocalKeyValueService,
         private sqlite: SQLite
     ) {}
+
+    /**
+     * Closes all databases.
+     *
+     * @returns {object} a promise.
+     */
+    public close(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            // Before closing databases, give some time for the pending transactions (if any).
+            setTimeout(() => {
+                const closePromises = [];
+                const dbIterator = this.databases.values();
+                for (let db = dbIterator.next(); db; db = dbIterator.next()) {
+                    closePromises.push(db.value.sqliteObject.close());
+                }
+            return Promise.all(closePromises).then(resolve, reject);
+        }, 1000);
+    });
+    }
+
+    /**
+     * This function will export the databases in a zip format.
+     *
+     * @returns {object} a promise that is resolved when zip is created.
+     */
+    public exportDB(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            const folderToExport = 'offline_temp_' + _.now(),
+                folderToExportFullPath = cordova.file.cacheDirectory + folderToExport + '/',
+                zipFileName = '_offline_data.zip',
+                metaInfo = {
+                    app: null,
+                    OS: '',
+                    createdOn: 0
+                };
+            let zipDirectory;
+            if (isIos()) {
+                // In IOS, save zip to documents directory so that user can export the file from IOS devices using iTUNES.
+                zipDirectory = cordova.file.documentsDirectory;
+            } else {
+                // In Android, save zip to download directory.
+                zipDirectory = cordova.file.externalRootDirectory + 'Download/';
+            }
+            // Create a temporary folder to copy all the content to export
+            this.file.createDir(cordova.file.cacheDirectory, folderToExport, false)
+                .then(() => {
+                    // Copy databases to temporary folder for export
+                    return this.file.copyDir(this.dbInstallParentDirectory, this.dbInstallDirectoryName, folderToExportFullPath, 'databases')
+                        .then(() => {
+                            // Prepare meta info to identify the zip and other info
+                            return this.getAppInfo();
+                        }).then(appInfo => {
+                            metaInfo.app = appInfo;
+                            if (isIos()) {
+                                metaInfo.OS = 'IOS';
+                            } else if (isAndroid()) {
+                                metaInfo.OS = 'ANDROID';
+                            }
+                            metaInfo.createdOn = _.now();
+                            return metaInfo;
+                        }).then(() => executePromiseChain(_.map(this.callbacks, 'preExport'), [folderToExportFullPath, metaInfo]))
+                        .then(() => {
+                            // Write meta data to META.json
+                            return this.file.writeFile(folderToExportFullPath, 'META.json', JSON.stringify(metaInfo));
+                        });
+                }).then(() => {
+                    // Prepare name to use for the zip.
+                    let appName = metaInfo.app.name;
+                    appName = appName.replace(/\s+/g, '_');
+                    return this.deviceFileService.newFileName(zipDirectory, appName + zipFileName)
+                        .then(fileName => {
+                            // Zip the temporary folder for export
+                            return new Promise((rs, re) => {
+                                Zeep.zip({
+                                    from : folderToExportFullPath,
+                                    to   : zipDirectory + fileName
+                                }, () => resolve(zipDirectory + fileName), reject);
+                            });
+                        });
+                }).then(resolve, reject)
+                .catch(noop).then(() => {
+                    // Remove temporary folder for export
+                    this.file.removeDir(cordova.file.cacheDirectory, folderToExport);
+                });
+        });
+    }
 
     /**
      *  returns store bound to the dataModelName and entityName.
@@ -93,11 +182,95 @@ export class LocalDBManagementService {
      * @param entityName
      * @returns {*}
      */
-    public getStore(dataModelName, entityName) {
-        if (this.databases[dataModelName]) {
-            return this.databases[dataModelName].stores[entityName];
-        }
-        return null;
+    public getStore(dataModelName: string, entityName: string): Promise<LocalDBStore> {
+        return new Promise((resolve, reject) => {
+            if (this.databases[dataModelName]) {
+                resolve(this.databases[dataModelName].stores[entityName]);
+            }
+            reject(`store with name'${entityName}' in datamodel '${dataModelName}' is not found`);
+        });
+    }
+
+    /**
+     * This function will replace the databases with the files provided in zip. If import gets failed,
+     * then app reverts back to use old databases.
+     *
+     * @param {string} zipPath location of the zip file.
+     * @param {boolean} revertIfFails If true, then a backup is created and when import fails, backup is reverted back.
+     * @returns {object} a promise that is resolved when zip is created.
+     */
+    public importDB(zipPath: string, revertIfFails: boolean): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const importFolder = 'offline_temp_' + _.now(),
+                importFolderFullPath = cordova.file.cacheDirectory + importFolder + '/';
+            let zipMeta;
+            // Create a temporary folder to unzip the contents of the zip.
+            this.file.createDir(cordova.file.cacheDirectory, importFolder, false)
+                .then( () => {
+                    return new Promise<void>((rs, re) => {
+                        // Unzip to temporary location
+                        Zeep.unzip({
+                            from: zipPath,
+                            to: importFolderFullPath
+                        }, rs, re);
+                    });
+                }).then(() => {
+                /*
+                 * read meta data and allow import only package name of the app from which this zip is created
+                 * and the package name of this app are same.
+                 */
+                return this.file.readAsText(importFolderFullPath, 'META.json')
+                    .then(text => {
+                    zipMeta = JSON.parse(text);
+                    return this.getAppInfo();
+                }).then(appInfo => {
+                    if (!zipMeta.app) {
+                        return Promise.reject('meta information is not found in zip');
+                    }
+                    if (zipMeta.app.packageName !== appInfo.packageName) {
+                        return Promise.reject('database zip of app with same package name can only be imported');
+                    }
+                });
+            }).then(() => {
+                let backupZip;
+                return this.close()
+                    .then(() => {
+                        if (revertIfFails) {
+                            // create backup
+                            return this.exportDB()
+                                .then(path => backupZip = path);
+                        }
+                    }).then(() => {
+                        // delete existing databases
+                        return this.deviceFileService.removeDir(this.dbInstallDirectory);
+                    }).then(() => {
+                        // copy imported databases
+                        return this.file.copyDir(importFolderFullPath, 'databases', this.dbInstallParentDirectory, this.dbInstallDirectoryName);
+                    }).then(() => {
+                        // reload databases
+                        this.databases = null;
+                        return this.loadDatabases();
+                    }).then(() => executePromiseChain(_.map(this.callbacks, 'postImport'), [importFolderFullPath, zipMeta]))
+                    .then(() => {
+                        if (backupZip) {
+                            return this.deviceFileService.removeFile(backupZip);
+                        }
+                    }, (reason) => {
+                        if (backupZip) {
+                            return this.importDB(backupZip, false)
+                                .then(() => {
+                                    this.deviceFileService.removeFile(backupZip);
+                                    return Promise.reject(reason);
+                                });
+                        }
+                        return Promise.reject(reason);
+                    });
+            }).then(resolve, reject)
+            .catch(noop)
+            .then(() => {
+                this.file.removeDir(cordova.file.cacheDirectory, importFolder);
+            });
+        });
     }
 
     public loadDatabases(): Promise<any> {
@@ -312,7 +485,7 @@ export class LocalDBManagementService {
         const db = this.databases[dbName];
         if (db) {
             return db.connection.executeSql(sql, params)
-                .then(function (result) {
+                .then(result => {
                     const data = [],
                         rows = result.rows;
                     for (let i = 0; i < rows.length; i++) {
@@ -332,15 +505,38 @@ export class LocalDBManagementService {
         let params, aliasParams;
         aliasParams = query.match(/[^"'\w\\]:\s*\w+\s*/g) || [];
         if (aliasParams.length) {
-            params = aliasParams.map(
-                function (x) {
-                    return (/[=|\W]/g.test(x)) ? x.replace(/\W/g, '').trim() : x.trim();
-                }
-            );
+            params = aliasParams.map(x => (/[=|\W]/g.test(x)) ? x.replace(/\W/g, '').trim() : x.trim());
         } else {
             params = null;
         }
         return params;
+    }
+
+    /**
+     * Returns a promise that is resolved with application info such as packageName, appName, versionNumber, versionCode.
+     * @returns {*}
+     */
+    private getAppInfo() {
+        const appInfo = {
+            name: '',
+            packageName: '',
+            versionNumber: '',
+            versionCode: null
+        };
+        return this.appVersion.getPackageName()
+            .then(packageName => {
+                appInfo.packageName = packageName;
+                return this.appVersion.getAppName();
+            }).then(appName => {
+                appInfo.name = appName;
+                return this.appVersion.getVersionNumber();
+            }).then(versionNumber => {
+                appInfo.versionNumber = versionNumber;
+                return this.appVersion.getVersionCode();
+            }).then(versionCode => {
+                appInfo.versionCode = versionCode;
+                return appInfo;
+            });
     }
 
     /**
@@ -349,9 +545,7 @@ export class LocalDBManagementService {
      */
     private getDBSeedCreationTime() {
         return this.file.readAsText(cordova.file.applicationDirectory + 'www', 'config.json')
-            .then(function (appConfig) {
-                return JSON.parse(appConfig).buildTime;
-            });
+            .then(appConfig => JSON.parse(appConfig).buildTime);
     }
 
     /**
@@ -467,7 +661,7 @@ export class LocalDBManagementService {
                     sqliteObject);
             });
             return Promise.all(storePromises).then(stores => {
-                _.forEach(stores, function (store) {
+                _.forEach(stores, store => {
                     database.stores[store.entitySchema.entityName] = store;
                 });
                 return database;

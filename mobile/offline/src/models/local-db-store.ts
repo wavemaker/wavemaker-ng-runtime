@@ -239,6 +239,16 @@ export class LocalDBStore {
     }
 
     /**
+     * This function deserializes the given map object to FormData, provided that map object was
+     * serialized by using serialize method of this store.
+     * @param  {object} map object to deserialize
+     * @returns {object} promise that is resolved with the deserialized FormData.
+     */
+    public deserialize(map: any) {
+        return this.deserializeMapToFormData(map);
+    }
+
+    /**
      * filters data of this store that statisfy the given filter criteria.
      * @param {FilterCriterion[]} filterCriteria
      * @param  {string=} sort ex: 'filedname asc/desc'
@@ -307,6 +317,17 @@ export class LocalDBStore {
             return [this.replaceRecordSqlTemplate, params];
         });
         return this.sqliteObject.sqlBatch(queries);
+    }
+
+    /**
+     * Based on this store columns, this function converts the given FormData to a map object.
+     * Multipart file is stored as a local file. If form data cannot be serialized,
+     * then formData is returned back.
+     * @param  {FormData} formData object to serialize
+     * @returns {object} promise that is resolved with a map.
+     */
+    public serialize(formData: any) {
+        return this.serializeFormDataToMap(formData);
     }
 
     /**

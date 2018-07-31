@@ -26,7 +26,7 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public insertTableData(params: any, successCallback?: Function, failureCallback?: Function) {
+    public insertTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
             const isPKAutoIncremented = (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity');
             if (isPKAutoIncremented && params.data[store.primaryKeyName]) {
@@ -53,7 +53,7 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public insertMultiPartTableData(params: any, successCallback?: Function, failureCallback?: Function) {
+    public insertMultiPartTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
             store.serialize(params.data).then(data => {
                 params.data = data;
@@ -72,7 +72,7 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public updateTableData(params: any, successCallback?: Function, failureCallback?: Function) {
+    public updateTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
             return store.save(params.data);
         }).then(() => {
@@ -92,7 +92,7 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public updateMultiPartTableData(params: any, successCallback?: Function, failureCallback?: Function)  {
+    public updateMultiPartTableData(params: any, successCallback?: any, failureCallback?: any)  {
         const data = (params.data && params.data.rowData) || params.data;
         this.getStore(params).then(store => {
             return store.save(data);
@@ -113,7 +113,7 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public deleteTableData(params: any, successCallback?: Function, failureCallback?: Function) {
+    public deleteTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
             const pkField = store.primaryKeyField,
                 id = params[pkField.fieldName] || params[pkField.name];
@@ -131,7 +131,7 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public readTableData(params: any, successCallback?: Function, failureCallback?: Function) {
+    public readTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
             const filter = params.filter(filterGroup => {
                 this.convertFieldNameToColumnName(store, filterGroup);
