@@ -72,10 +72,15 @@ const OFFLINE_WAVEMAKER_DATABASE_SCHEMA = {
     ]
 };
 
+export interface CallBack {
+    postImport?: (importFolderPath: string, metaInfo: any) => any;
+    preExport?: (folderToExportFullPath: string, metaInfo: any) => any;
+}
+
 @Injectable()
 export class LocalDBManagementService {
 
-    private callbacks: any[];
+    private callbacks: CallBack[];
     private dbInstallDirectory: string;
     private dbInstallDirectoryName: string;
     private dbInstallParentDirectory: string;

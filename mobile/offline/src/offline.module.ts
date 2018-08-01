@@ -1,20 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { File } from '@ionic-native/file';
 import { SQLite } from '@ionic-native/sqlite';
 
-import { DeviceFileService, DeviceService, NetworkService } from '@wm/mobile/core';
+import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
 
 import { ChangeLogService, PushService } from './services/change-log.service';
 import { LocalDBManagementService } from './services/local-db-management.service';
 import { LocalKeyValueService } from './services/local-key-value.service';
 import { LocalDbService } from './services/local-db.service';
-import { FileHandler } from './services/workers/file-handler';
+import { FileHandler, UploadedFilesImportAndExportService } from './services/workers/file-handler';
 import { ErrorBlocker } from './services/workers/error-blocker';
 import { IdResolver } from './services/workers/id-resolver';
 import { MultiPartParamTransformer } from './services/workers/multi-part-param-transformer';
 import { PushServiceImpl } from './services/push.service';
 import { LiveVariableOfflineBehaviour } from './utils/live-variable.utils';
+import { FileUploadOfflineBehaviour } from './utils/file-upload.utils';
 
 @NgModule({
     imports: [
@@ -38,6 +40,8 @@ export class OfflineModule {
         changeLogService: ChangeLogService,
         deviceService: DeviceService,
         deviceFileService: DeviceFileService,
+        deviceFileUploadService: DeviceFileUploadService,
+        file: File,
         localDBManagementService: LocalDBManagementService,
         localDbService: LocalDbService,
         networkService: NetworkService
@@ -52,6 +56,8 @@ export class OfflineModule {
                         changeLogService.addWorker(new FileHandler());
                         changeLogService.addWorker(new MultiPartParamTransformer(deviceFileService, localDBManagementService));
                         new LiveVariableOfflineBehaviour(changeLogService, localDBManagementService, networkService, localDbService).add();
+                        new FileUploadOfflineBehaviour(changeLogService, deviceFileService, deviceFileUploadService, file, networkService, deviceFileService.getUploadDirectory()).add();
+                        localDBManagementService.registerCallback(new UploadedFilesImportAndExportService(changeLogService, deviceFileService, localDBManagementService, file));
                     });
                 }
             });
