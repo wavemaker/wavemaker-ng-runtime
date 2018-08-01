@@ -10,7 +10,8 @@ const noop = () => {};
 export enum Live_Operations {
     INSERT = 'insert',
     UPDATE = 'update',
-    DELETE = 'delete'
+    DELETE = 'delete',
+    READ = 'read'
 }
 
 export const ALLFIELDS = 'All Fields';

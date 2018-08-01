@@ -1,4 +1,4 @@
-import { Directive, Inject, Optional, Self } from '@angular/core';
+import { Directive, Inject, Optional, Self, Attribute } from '@angular/core';
 
 import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 
@@ -36,13 +36,16 @@ export class LiveFormDirective {
         @Self() @Inject(FormComponent) private form,
         @Optional() liveTable: LiveTableComponent,
         public datePipe: ToDatePipe,
-        private dialogService: AbstractDialogService
+        private dialogService: AbstractDialogService,
+        @Attribute('formlayout') formlayout: string
     ) {
 
         if (liveTable) {
             this.form._liveTableParent = liveTable;
             this.form.isLayoutDialog = liveTable.isLayoutDialog;
             liveTable.onFormReady(this.form);
+        } else {
+            this.form.isLayoutDialog = formlayout === 'dialog';
         }
         // CUD operations
         form.edit = this.edit.bind(this);
@@ -167,6 +170,7 @@ export class LiveFormDirective {
             this.form.new();
         } else {
             this.form.setFormData(response);
+            this.closeDialog();
         }
         this.form.isUpdateMode = isDefined(updateMode) ? updateMode : true;
     }
@@ -367,6 +371,12 @@ export class LiveFormDirective {
         this.form.constructDataObject();
     }
 
+    closeDialog() {
+        if (this.form.isLayoutDialog) {
+            this.dialogService.close(this.form.dialogId);
+        }
+    }
+
     cancel() {
         this.form.clearMessage();
         this.form.isUpdateMode = false;
@@ -377,9 +387,7 @@ export class LiveFormDirective {
             this.getPrevformFields();
         }
         this.form.isUpdateMode = false;
-        if (this.form.isLayoutDialog) {
-             this.dialogService.close(this.form.dialogId);
-        }
+        this.closeDialog();
         if (this.form._liveTableParent) {
             this.form._liveTableParent.onCancel();
         }

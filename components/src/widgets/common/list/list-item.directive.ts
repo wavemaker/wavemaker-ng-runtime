@@ -1,9 +1,9 @@
-import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, OnInit, QueryList } from '@angular/core';
+import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, OnInit, QueryList, AfterViewInit } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import { Observable, Subject } from 'rxjs';
 
-import { $watch } from '@wm/core';
+import { $watch, App } from '@wm/core';
 
 import { ListComponent } from './list.component';
 import { WidgetRef } from '../../framework/types';
@@ -12,7 +12,7 @@ import { WidgetRef } from '../../framework/types';
     selector: '[wmListItem]',
     exportAs: 'listItemRef'
 })
-export class ListItemDirective implements OnInit {
+export class ListItemDirective implements OnInit, AfterViewInit {
 
     public item;
     public context;
@@ -40,7 +40,7 @@ export class ListItemDirective implements OnInit {
         this.item = val;
     }
 
-    constructor(private inj: Injector, elRef: ElementRef) {
+    constructor(private inj: Injector, elRef: ElementRef, private app: App) {
         this.nativeElement = elRef.nativeElement;
         this.listComponent = (<ListComponent>(<any>inj).view.component);
         this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
@@ -70,6 +70,23 @@ export class ListItemDirective implements OnInit {
         }
     }
 
+    private triggerWMEvent(eventName) {
+        this.app.notify('wm-event', {eventName, widgetName: this.listComponent.name, row: this.listComponent.selecteditem});
+    }
+
+
+    private setUpCUDHandlers() {
+        // Triggered on click of edit action
+        this.nativeElement.querySelector('.edit-list-item').addEventListener('click', evt => {
+            this.triggerWMEvent('update');
+        });
+        // Triggered on click of delete action
+        this.nativeElement.querySelector('.delete-list-item').addEventListener('click', evt => {
+            this.triggerWMEvent('delete');
+        });
+    }
+
+
     ngOnInit() {
         if (this.listComponent.mouseEnterCB) {
             this.nativeElement.addEventListener('mouseenter', ($event) => {
@@ -81,6 +98,10 @@ export class ListItemDirective implements OnInit {
                 this.listComponent.invokeEventCallback('mouseleave', {$event});
             });
         }
+    }
+
+    ngAfterViewInit() {
+        this.setUpCUDHandlers();
     }
 }
 

@@ -52,11 +52,13 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             let dialogId;
             const role = parentLoginWidget && parentLoginWidget.get('isLogin') ? 'app-login' : '';
             const counter = idGen.nextUid();
+            const dependsOn = attrs.get('dependson') ? `dependson="${attrs.get('dependson')}"` : '';
+            attrs.delete('dependson');
             const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                         [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {
-                dialogId = parentLiveTable && parentLiveTable.get('liveform_dialog_id');
+                dialogId = parentLiveTable ? parentLiveTable.get('liveform_dialog_id') : `liveform_dialog_id_${counter}`;
                 attrs.set('dialogId', dialogId);
                 const dialogAttrsMap = new Map<string, string>();
                 dialogAttrsMap.set('title', attrs.get('title'));
@@ -64,13 +66,13 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                 dialogAttrsMap.set('width', attrs.get('width'));
                 attrs.set('width', '100%');
                 tmpl = getAttrMarkup(attrs);
-                return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog">
+                return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog" ${dependsOn} dialogid="${dialogId}">
                             <div wmDialog class="app-liveform-dialog" name="${dialogId}" role="form" ${getAttrMarkup(dialogAttrsMap)} modal="true">
                             <ng-template #dialogBody>
                             ${liveFormTmpl} ${tmpl}>`;
             }
             tmpl = getAttrMarkup(attrs);
-            return `${liveFormTmpl} ${tmpl}>`;
+            return `${liveFormTmpl} ${tmpl} ${dependsOn}>`;
         },
         post: (attrs) => {
             if (attrs.get('formlayout') === 'dialog') {

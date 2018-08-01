@@ -37,6 +37,7 @@ import { ContentComponent } from './widgets/common/content/content.component';
 import { CurrencyComponent } from './widgets/common/currency/currency.component';
 import { DateComponent } from './widgets/common/date/date.component';
 import { DatetimeComponent } from './widgets/common/date-time/date-time.component';
+import { DependsonDirective } from './widgets/common/form/live-actions/dependson.directive';
 import { DialogComponent } from './widgets/common/dialog/design-dialog/dialog.component';
 import { DialogBodyDirective } from './widgets/common/dialog/base/dialog-body/dialog-body.directive';
 import { DialogFooterDirective } from './widgets/common/dialog/base/dialog-footer/dialog-footer.directive';
@@ -64,6 +65,7 @@ import { LayoutGridRowDirective } from './widgets/common/layout-grid/layout-grid
 import { LeftPanelDirective } from './widgets/common/left-panel/left-panel.directive';
 import { ListComponent } from './widgets/common/list/list.component';
 import { ListItemDirective } from './widgets/common/list/list-item.directive';
+import { LiveActionsDirective } from './widgets/common/form/live-actions/live-actions.directive';
 import { LiveFormDirective } from './widgets/common/form/live-form/live-form.directive';
 import { LiveFilterDirective } from './widgets/common/form/live-filter/live-filter.directive';
 import { LiveTableComponent } from './widgets/common/live-table/live-table.component';
@@ -154,6 +156,7 @@ const wmComponents = [
     ChipsComponent,
     DateComponent,
     DatetimeComponent,
+    DependsonDirective,
     DialogComponent,
     DialogBodyDirective,
     DialogFooterDirective,
@@ -182,6 +185,7 @@ const wmComponents = [
     LeftPanelDirective,
     ListComponent,
     ListItemDirective,
+    LiveActionsDirective,
     LiveFilterDirective,
     LiveFormDirective,
     LiveTableComponent,

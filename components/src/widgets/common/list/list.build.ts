@@ -24,7 +24,7 @@ register(wmListTag, (): IBuildTaskDef => {
             }
             updateTemplateAttrs(node, boundExpr, widgetNameAttr.value, 'itemRef.');
         },
-        pre: (attrs) => `<${listTagName} wmList ${getAttrMarkup(attrs)}>`,
+        pre: (attrs) => `<${listTagName} wmList wmLiveActions ${getAttrMarkup(attrs)}>`,
         post: () => `</${listTagName}>`
     };
 });

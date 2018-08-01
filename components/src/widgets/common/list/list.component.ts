@@ -72,6 +72,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public itemclass: string;
     public selectedItemWidgets: Array<WidgetRef> | WidgetRef;
     public variableInflight;
+    public name;
 
     public handleHeaderClick: Function;
     public toggleAllHeaders: void;
