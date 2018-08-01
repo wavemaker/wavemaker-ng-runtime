@@ -35,7 +35,6 @@ export const registerProps = () => {
                 ['pagesize', PROP_NUMBER],
                 ['selectfirstitem', PROP_BOOLEAN],
                 ['selectionlimit', PROP_NUMBER],
-                ['shortcutkey', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showcount', PROP_BOOLEAN],
                 ['showrecordcount', PROP_BOOLEAN],
