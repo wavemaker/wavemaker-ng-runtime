@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmHtml component defines the html widget.
+ * The wmHtml directive defines the html widget.
  */
 export class Html {
     /**
