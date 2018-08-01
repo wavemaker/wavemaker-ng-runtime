@@ -273,6 +273,33 @@ export class LocalDBManagementService {
         });
     }
 
+    /**
+     * @param {string} dataModelName Name of the data model
+     * @param {string} entityName Name of the entity
+     * @param {string} operation Name of the operation (READ, INSERT, UPDATE, DELETE)
+     * @returns {boolean} returns true, if the given operation can be performed as per configuration.
+     */
+    public isOperationAllowed(dataModelName: string, entityName: string, operation: string): Promise<boolean> {
+        return this.getStore(dataModelName, entityName).then( store => {
+            if (!store) {
+                return false;
+            }
+            if (operation === 'READ') {
+                return store.entitySchema.pushConfig.readEnabled;
+            }
+            if (operation === 'INSERT') {
+                return store.entitySchema.pushConfig.insertEnabled;
+            }
+            if (operation === 'UPDATE') {
+                return store.entitySchema.pushConfig.updateEnabled;
+            }
+            if (operation === 'DELETE') {
+                return store.entitySchema.pushConfig.deleteEnabled;
+            }
+            return false;
+        });
+    }
+
     public loadDatabases(): Promise<any> {
         let newDatabasesCreated = false;
         if (this.databases) {

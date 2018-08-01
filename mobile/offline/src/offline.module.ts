@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { SQLite } from '@ionic-native/sqlite';
 
-import { DeviceFileService, DeviceService } from '@wm/mobile/core';
+import { DeviceFileService, DeviceService, NetworkService } from '@wm/mobile/core';
 
 import { ChangeLogService, PushService } from './services/change-log.service';
 import { LocalDBManagementService } from './services/local-db-management.service';
@@ -14,6 +14,7 @@ import { ErrorBlocker } from './services/workers/error-blocker';
 import { IdResolver } from './services/workers/id-resolver';
 import { MultiPartParamTransformer } from './services/workers/multi-part-param-transformer';
 import { PushServiceImpl } from './services/push.service';
+import { LiveVariableOfflineBehaviour } from './utils/live-variable.utils';
 
 @NgModule({
     imports: [
@@ -38,7 +39,8 @@ export class OfflineModule {
         deviceService: DeviceService,
         deviceFileService: DeviceFileService,
         localDBManagementService: LocalDBManagementService,
-        localDbService: LocalDbService
+        localDbService: LocalDbService,
+        networkService: NetworkService
     ) {
         if (window['cordova'] && window['SQLitePlugin']) {
             deviceService.addStartUpService({
@@ -49,6 +51,7 @@ export class OfflineModule {
                         changeLogService.addWorker(new ErrorBlocker(localDBManagementService));
                         changeLogService.addWorker(new FileHandler());
                         changeLogService.addWorker(new MultiPartParamTransformer(deviceFileService, localDBManagementService));
+                        new LiveVariableOfflineBehaviour(changeLogService, localDBManagementService, networkService, localDbService).add();
                     });
                 }
             });

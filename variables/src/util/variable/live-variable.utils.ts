@@ -1,6 +1,6 @@
 import { getClonedObject, isDateTimeType, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
 import { $rootScope, DB_CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import * as LVService from './live-variable.http.utils';
+import { LVService } from './live-variable.http.utils';
 import { formatDate, getEvaluatedOrderBy, initiateCallback } from './variables.utils';
 import { $queue } from '../inflight-queue';
 

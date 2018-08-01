@@ -5,5 +5,6 @@ export * from './src/manager/variable/device-variable-service';
 export * from './src/manager/variable/device-variable-operation';
 export * from './src/service/variables.service';
 export * from './src/service/metadata-service/metadata.service';
+export * from './src/util/variable/live-variable.http.utils';
 export * from './src/util/variable/variables.utils';
 export * from './src/variables.module';

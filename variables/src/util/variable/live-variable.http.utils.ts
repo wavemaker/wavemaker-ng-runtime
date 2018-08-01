@@ -186,67 +186,22 @@ const initiateAction = function (action, params, successCallback?, failureCallba
     }
 };
 
-export const searchTableDataWithQuery = function (params, successCallback, failureCallback) {
-    return initiateAction('searchTableDataWithQuery', params, successCallback, failureCallback, null);
-};
-
-export const executeAggregateQuery = function (params, successCallback, failureCallback) {
-    return initiateAction('executeAggregateQuery', params, successCallback, failureCallback, null);
-};
-
-export const searchTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('searchTableData', params, successCallback, failureCallback, null);
-};
-
-export const readTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('readTableData', params, successCallback, failureCallback, null);
-};
-
-export const insertTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('insertTableData', params, successCallback, failureCallback, null);
-};
-
-export const insertMultiPartTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('insertMultiPartTableData', params, successCallback, failureCallback, null);
-};
-
-export const updateTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('updateTableData', params, successCallback, failureCallback, null);
-};
-
-export const updateCompositeTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('updateCompositeTableData', params, successCallback, failureCallback, null);
-};
-
-export const periodUpdateCompositeTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('periodUpdateCompositeTableData', params, successCallback, failureCallback);
-};
-
-export const updateMultiPartTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('updateMultiPartTableData', params, successCallback, failureCallback, null);
-};
-
-export const updateMultiPartCompositeTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('updateMultiPartCompositeTableData', params, successCallback, failureCallback, null);
-};
-
-export const deleteTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('deleteTableData', params, successCallback, failureCallback, null);
-};
-
-export const deleteCompositeTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('deleteCompositeTableData', params, successCallback, failureCallback, null);
-};
-
-export const periodDeleteCompositeTableData = function (params, successCallback, failureCallback) {
-    return initiateAction('periodDeleteCompositeTableData', params, successCallback, failureCallback);
-};
-
-export const exportTableData = function (params) {
-    return initiateAction('exportTableData', params, null, null, null);
-};
-
-export const getDistinctDataByFields = function (params) {
-    return initiateAction('getDistinctDataByFields', params);
+export const LVService = {
+    searchTableDataWithQuery: (params, successCallback, failureCallback) => initiateAction('searchTableDataWithQuery', params, successCallback, failureCallback),
+    executeAggregateQuery: (params, successCallback, failureCallback) => initiateAction('executeAggregateQuery', params, successCallback, failureCallback),
+    searchTableData: (params, successCallback, failureCallback) => initiateAction('searchTableData', params, successCallback, failureCallback),
+    readTableData: (params, successCallback, failureCallback) => initiateAction('readTableData', params, successCallback, failureCallback),
+    insertTableData: (params, successCallback, failureCallback) => initiateAction('insertTableData', params, successCallback, failureCallback),
+    insertMultiPartTableData: (params, successCallback, failureCallback) => initiateAction('insertMultiPartTableData', params, successCallback, failureCallback),
+    updateTableData: (params, successCallback, failureCallback) => initiateAction('updateTableData', params, successCallback, failureCallback),
+    updateCompositeTableData: (params, successCallback, failureCallback) => initiateAction('updateCompositeTableData', params, successCallback, failureCallback),
+    periodUpdateCompositeTableData: (params, successCallback, failureCallback) => initiateAction('periodUpdateCompositeTableData', params, successCallback, failureCallback),
+    updateMultiPartTableData: (params, successCallback, failureCallback) => initiateAction('updateMultiPartTableData', params, successCallback, failureCallback),
+    updateMultiPartCompositeTableData: (params, successCallback, failureCallback) => initiateAction('updateMultiPartCompositeTableData', params, successCallback, failureCallback),
+    deleteTableData: (params, successCallback, failureCallback) => initiateAction('deleteTableData', params, successCallback, failureCallback),
+    deleteCompositeTableData: (params, successCallback, failureCallback) => initiateAction('deleteCompositeTableData', params, successCallback, failureCallback),
+    periodDeleteCompositeTableData: (params, successCallback, failureCallback) => initiateAction('periodDeleteCompositeTableData', params, successCallback, failureCallback),
+    exportTableData: params => initiateAction('exportTableData', params),
+    getDistinctDataByFields: params => initiateAction('getDistinctDataByFields', params)
 };
 
