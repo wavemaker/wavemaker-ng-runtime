@@ -239,72 +239,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.status.isopen = val;
     }
 
-    /**
-     * This function sets the keyboard events to Timepicker popup
-     */
-    private bindTimePickerKeyboardEvents() {
-        setTimeout(() => {
-            const $timepickerPopup = $('body').find('> bs-dropdown-container timepicker');
-            $timepickerPopup.attr('tabindex', 0);
-            this.addEventsOnTimePicker($timepickerPopup);
-        });
-    }
-
-    /**
-     * This function sets the events to given element
-     * @param $el - element on which the event is added
-     */
-    private addEventsOnTimePicker($el: JQuery) {
-        $el.on('keydown', evt => {
-            const $target = $(evt.target);
-            const $parent = $target.parent();
-
-            const action = this.keyEventPlugin.getEventFullKey(evt);
-
-            let stopPropogation, preventDefault;
-
-            if (action === 'escape') {
-                this.hideTimepickerDropdown();
-            }
-
-            if ($target.hasClass('bs-timepicker-field')) {
-                if ($parent.is(':first-child')) {
-                    if (action === 'shift.tab' || action === 'enter' || action === 'escape') {
-                        this.setIsTimeOpen(false);
-                        this.focus();
-                        stopPropogation = true;
-                        preventDefault = true;
-                    }
-                } else if ($parent.is(':last-child')) {
-                    if (action === 'tab' || action === 'escape') {
-                        this.setIsTimeOpen(false);
-                        this.focus();
-                        stopPropogation = true;
-                        preventDefault = true;
-                    }
-                } else {
-                    if (action === 'enter' || action === 'escape') {
-                        this.setIsTimeOpen(false);
-                        this.focus();
-                        stopPropogation = true;
-                        preventDefault = true;
-                    }
-                }
-                if (stopPropogation) {
-                    evt.stopPropagation();
-                }
-                if (preventDefault) {
-                    evt.preventDefault();
-                }
-            } else if ($target.hasClass('btn-default')) {
-                if (action === 'tab' || action === 'escape') {
-                    this.setIsTimeOpen(false);
-                    this.focus();
-                }
-            }
-        });
-    }
-
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (!_.includes(['blur', 'focus', 'change'], eventName)) {
@@ -321,16 +255,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         setTimeout(() => displayInputElem.focus());
     }
 
-    private focusPopover() {
-        // setTimeout is used so that by then time input has the updated value. focus is setting back to the input field
-        this.ngZone.runOutsideAngular(() => {
-            setTimeout(() => {
-                $('timepicker .form-group:first > input.form-control').focus();
-            });
-        });
-
-    }
-
     /**
      * This is an internal method to add css class for dropdown while opening the time dropdown
      */
@@ -339,7 +263,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         _.forEach(tpElements, element => {
             addClass(element.parentElement as HTMLElement, 'app-datetime');
         });
-        this.focusPopover();
+        this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
     }
 

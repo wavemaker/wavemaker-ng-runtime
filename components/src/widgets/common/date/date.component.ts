@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate, setAttr } from '@wm/core';
+import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -100,20 +100,11 @@ export class DateComponent extends BaseDateTimeComponent {
     onDatePickerOpen() {
         this.invokeOnTouched();
         this.isOpen = true;
-        const dateContainer  = document.querySelector(`.${this.dateContainerCls}`) as HTMLElement;
-        setAttr(dateContainer, 'tabindex', '0');
-        this.addDatepickerKeyboardEvents(dateContainer);
-        setTimeout(() => dateContainer.focus());
-
-    }
-    private addDatepickerKeyboardEvents(dateContainer) {
-        dateContainer.onkeydown = (event) => {
-            const action = this.keyEventPlugin.getEventFullKey(event);
-            // Check for Shift+Tab key or Tab key or escape
-            if (action === 'shift.tab' || action === 'tab' || action === 'escape') {
-                this.hideDatepickerDropdown();
-            }
-        };
+        this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
+        if (!this.bsDataValue) {
+            this.hightlightToday();
+        }
+        this.addDatepickerKeyboardEvents(this, false);
     }
 
     private hideDatepickerDropdown() {
