@@ -1,6 +1,5 @@
 <span class="input-group-addon" [textContent]="currencySymbol"></span>
-<!-- todo: Lovin localize aria text -->
-<input type="number" class="form-control app-textbox app-currency-input" aria-label="Currency (in dollars)"
+<input type="number" class="form-control app-textbox app-currency-input" [attr.aria-label]="name"
        focus-target
        #input
        [attr.name]="name"

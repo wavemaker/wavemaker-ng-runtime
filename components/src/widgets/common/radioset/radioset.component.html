@@ -5,8 +5,8 @@
     <label class="app-radioset-label"
            [ngClass]="{'disabled':disabled || readonly}"
            [title]="item.label">
-        <input [name]="'radioset_' + widgetId" type="radio" aria-label="radio options" [attr.data-attr-index]="i"
-               [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/><!--Todo aria-label value same as value attr-->
+        <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+               [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
         <span class="caption" [textContent]="item.label"></span>
     </label>
 </li>
