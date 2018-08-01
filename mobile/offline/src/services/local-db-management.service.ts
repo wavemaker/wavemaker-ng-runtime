@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
-import { SQLite } from '@ionic-native/sqlite';
-import { now } from 'moment';
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 
 import { executePromiseChain, isAndroid, isArray, isIos, noop, toPromise } from '@wm/core';
 import { DeviceFileService } from '@wm/mobile/core';
@@ -12,7 +11,7 @@ import { SecurityService } from '@wm/security';
 import { LocalKeyValueService } from './local-key-value.service';
 import { LocalDBStore } from '../models/local-db-store';
 import { escapeName } from '../utils/utils';
-import { ColumnInfo, DBInfo, EntityInfo, NamedQueryInfo } from '../models/config';
+import { ColumnInfo, DBInfo, EntityInfo, NamedQueryInfo, PullType } from '../models/config';
 
 declare const _;
 declare const cordova;
@@ -75,6 +74,7 @@ const OFFLINE_WAVEMAKER_DATABASE_SCHEMA = {
 };
 
 export interface CallBack {
+    onDbCreate?: (info: any) => any;
     postImport?: (importFolderPath: string, metaInfo: any) => any;
     preExport?: (folderToExportFullPath: string, metaInfo: any) => any;
 }
@@ -82,11 +82,12 @@ export interface CallBack {
 @Injectable()
 export class LocalDBManagementService {
 
-    private callbacks: CallBack[];
+    private callbacks: CallBack[] = [];
     private dbInstallDirectory: string;
     private dbInstallDirectoryName: string;
     private dbInstallParentDirectory: string;
     private databases: Map<string, DBInfo>;
+    private _logSql = false;
     private readonly systemProperties = {
         'USER_ID' : {
             'name' : 'USER_ID',
@@ -139,6 +140,54 @@ export class LocalDBManagementService {
     }
 
     /**
+     * Executes a named query.
+     *
+     * @param {string} dbName name of database on which the named query has to be run
+     * @param {string} queryName name of the query to execute
+     * @param {object} params parameters required for query.
+     * @returns {object} a promise.
+     */
+    public executeNamedQuery(dbName: string, queryName: string, params: any) {
+        let queryData, paramPromises;
+        if (!this.databases[dbName] || !this.databases[dbName].queries[queryName]) {
+            return Promise.reject(`Query by name ' ${queryName} ' Not Found`);
+        }
+        queryData = this.databases[dbName].queries[queryName];
+        paramPromises = _.chain(queryData.params)
+            .filter(p => p.variableType !== 'PROMPT')
+            .forEach(p => {
+                const paramValue = this.systemProperties[p.variableType].value(p.name, params);
+                return toPromise(paramValue).then(v => params[p.name] = v);
+            }).value();
+        return Promise.all(paramPromises).then(() => {
+            params = _.map(queryData.params, p => params[p.name]);
+            return this.executeSQLQuery(dbName, queryData.query, params)
+                .then(result => {
+                    let firstRow,
+                        needTransform;
+                    if (!_.isEmpty(result.rows)) {
+                        firstRow = result.rows[0];
+                        needTransform = _.find(queryData.response.properties, p => !firstRow.hasOwnProperty(p.fieldName));
+                        if (!_.isUndefined(needTransform)) {
+                            result.rows = _.map(result.rows, row => {
+                                const transformedRow = {},
+                                    rowWithUpperKeys = {};
+                                // This is to make search for data as case-insensitive
+                                _.forEach(row, (v, k) => rowWithUpperKeys[k.toUpperCase()] = v);
+                                _.forEach(queryData.response.properties, p => {
+                                    transformedRow[p.name] = row[p.name];
+                                    transformedRow[p.fieldName] = row[p.fieldName] || rowWithUpperKeys[p.nameInUpperCase];
+                                });
+                                return transformedRow;
+                            });
+                        }
+                    }
+                    return result;
+                });
+        });
+    }
+
+    /**
      * This function will export the databases in a zip format.
      *
      * @returns {object} a promise that is resolved when zip is created.
@@ -170,7 +219,7 @@ export class LocalDBManagementService {
                             // Prepare meta info to identify the zip and other info
                             return this.getAppInfo();
                         }).then(appInfo => {
-                            metaInfo.app = appInfo;
+                            metaInfo.app = (appInfo as any);
                             if (isIos()) {
                                 metaInfo.OS = 'IOS';
                             } else if (isAndroid()) {
@@ -380,10 +429,14 @@ export class LocalDBManagementService {
     /**
      * using this function one can listen events such as onDbCreate, 'preExport' and 'postImport'.
      *
-     * @param {object} listeners an object with functions mapped to event names.
+     * @param {object} listener an object with functions mapped to event names.
      */
-    public registerCallback(listeners) {
-        this.callbacks.push(listeners);
+    public registerCallback(listener: CallBack) {
+        this.callbacks.push(listener);
+    }
+
+    public setLogSQl(flag: boolean) {
+        this._logSql = flag;
     }
 
     /**
@@ -541,7 +594,7 @@ export class LocalDBManagementService {
     private executeSQLQuery(dbName, sql, params?: any[]) {
         const db = this.databases[dbName];
         if (db) {
-            return db.connection.executeSql(sql, params)
+            return db.sqliteObject.executeSql(sql, params)
                 .then(result => {
                     const data = [],
                         rows = result.rows;
@@ -555,54 +608,6 @@ export class LocalDBManagementService {
                 });
         }
         return Promise.reject(`No Database with name ${dbName} found`);
-    }
-
-    /**
-     * Executes a named query.
-     *
-     * @param {string} dbName name of database on which the named query has to be run
-     * @param {string} queryName name of the query to execute
-     * @param {object} params parameters required for query.
-     * @returns {object} a promise.
-     */
-    public executeNamedQuery(dbName: string, queryName: string, params: any) {
-        let queryData, paramPromises;
-        if (!this.databases[dbName] || !this.databases[dbName].queries[queryName]) {
-            return Promise.reject(`Query by name ' ${queryName} ' Not Found`);
-        }
-        queryData = this.databases[dbName].queries[queryName];
-        paramPromises = _.chain(queryData.params)
-            .filter(p => p.variableType !== 'PROMPT')
-            .forEach(p => {
-                const paramValue = this.systemProperties[p.variableType].value(p.name, params);
-                return toPromise(paramValue).then(v => params[p.name] = v);
-            }).value();
-        return Promise.all(paramPromises).then(() => {
-            params = _.map(queryData.params, p => params[p.name]);
-            return this.executeSQLQuery(dbName, queryData.query, params)
-                .then(result => {
-                    let firstRow,
-                        needTransform;
-                    if (!_.isEmpty(result.rows)) {
-                        firstRow = result.rows[0];
-                        needTransform = _.find(queryData.response.properties, p => !firstRow.hasOwnProperty(p.fieldName));
-                        if (!_.isUndefined(needTransform)) {
-                            result.rows = _.map(result.rows, row => {
-                                const transformedRow = {},
-                                    rowWithUpperKeys = {};
-                                // This is to make search for data as case-insensitive
-                                _.forEach(row, (v, k) => rowWithUpperKeys[k.toUpperCase()] = v);
-                                _.forEach(queryData.response.properties, p => {
-                                    transformedRow[p.name] = row[p.name];
-                                    transformedRow[p.fieldName] = row[p.fieldName] || rowWithUpperKeys[p.nameInUpperCase];
-                                });
-                                return transformedRow;
-                            });
-                        }
-                    }
-                    return result;
-                });
-        });
     }
 
     // get the params of the query or procedure.
@@ -639,7 +644,7 @@ export class LocalDBManagementService {
                 appInfo.versionNumber = versionNumber;
                 return this.appVersion.getVersionCode();
             }).then(versionCode => {
-                appInfo.versionCode = versionCode;
+                appInfo.versionCode = (versionCode as any);
                 return appInfo;
             });
     }
@@ -666,6 +671,18 @@ export class LocalDBManagementService {
             .then(files => Promise.all(_.map(files,
                 f => this.file.readAsText(folder, f['name']).then(JSON.parse)))
             );
+    }
+
+    /**
+     * Returns true, if the given entity's data is bundled along with application installer.
+     * @param dataModelName name of the data model
+     * @param entityName name of the entity
+     * @returns {Promise<any>}
+     */
+    public isBundled(dataModelName, entityName): Promise<any> {
+        return this.getStore(dataModelName, entityName).then(store => {
+            return store.entitySchema.pullConfig.pullType === PullType.BUNDLED;
+        });
     }
 
     /**
@@ -713,12 +730,34 @@ export class LocalDBManagementService {
             .then(configs => {
                 _.forEach(configs, config => {
                     _.forEach(config.entities, entityConfig => {
-                        const entitySchema = metadata[config.name].schema.entities[entityConfig.name];
+                        const entitySchema = _.find(metadata[config.name].schema.entities, schema => schema.name === entityConfig.name);
                         _.assignIn(entitySchema, entityConfig);
                     });
                 });
                 return metadata;
             });
+    }
+
+    private logSql(sqliteObject: SQLiteObject) {
+        const logger = console,
+            originalExecuteSql = sqliteObject.executeSql;
+        sqliteObject.executeSql = (sql, params) => {
+            const startTime = _.now();
+            return originalExecuteSql.call(sqliteObject, sql, params).then(result => {
+                if (this._logSql) {
+                    const objArr = [],
+                        rowCount = result.rows.length;
+                    for (let i = 0; i < rowCount; i++) {
+                        objArr.push(result.rows.item(i));
+                    }
+                    logger.debug('SQL "%s"  with params %O took [%d ms]. And the result is %O', sql, params, _.now() - startTime, objArr);
+                }
+                return result;
+            }, error => {
+                logger.error('SQL "%s" with params %O failed with error message %s', sql, params, error.message);
+                return Promise.reject(error);
+            });
+        };
     }
 
     /**
@@ -759,11 +798,13 @@ export class LocalDBManagementService {
                 location: 'default'
         }).then(sqliteObject => {
             database.sqliteObject = sqliteObject;
+            this.logSql(sqliteObject);
             const storePromises = _.map(database.schema.entities, entitySchema => {
-                return new LocalDBStore(this.deviceFileService,
+                const store = new LocalDBStore(this.deviceFileService,
                     entitySchema,
                     this.file,
                     sqliteObject);
+                return store.create();
             });
             return Promise.all(storePromises).then(stores => {
                 _.forEach(stores, store => {
@@ -793,7 +834,7 @@ export class LocalDBManagementService {
                             return this.cleanAndCopyDatabases()
                                 .then(() => {
                                     appInfo = appInfo || {};
-                                    appInfo.createdOn = dbSeedCreationTime || now();
+                                    appInfo.createdOn = dbSeedCreationTime || _.now();
                                     return this.file.writeFile(cordova.file.dataDirectory,
                                         'app.info',
                                         JSON.stringify(appInfo),

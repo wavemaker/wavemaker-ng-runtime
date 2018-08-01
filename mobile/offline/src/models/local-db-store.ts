@@ -58,7 +58,7 @@ const selectSqlTemplate = (schema) => {
         columns.push(escapeName(schema.name) + '.' + escapeName(col.name) + ' as ' + col.fieldName);
         if (col.targetEntity) {
             childTableName = col.sourceFieldName;
-            col.dataMapper.forEach((childCol, childFiledName) => {
+            _.forEach(col.dataMapper, (childCol, childFiledName) => {
                 columns.push(childTableName + '.' + escapeName(childCol.name) + ' as \'' + childFiledName + '\'');
             });
             joins.push(` LEFT JOIN ${escapeName(col.targetTable)} ${childTableName}
@@ -229,6 +229,14 @@ export class LocalDBStore {
     }
 
     /**
+     * creates the stores if it does not exist
+     * @returns {Promise<any>}
+     */
+    public create(): Promise<any> {
+        return this.sqliteObject.executeSql(this.createTableSql(this.entitySchema)).then(() => this);
+    }
+
+    /**
      * counts the number of records that satisfy the given filter criteria.
      * @param {FilterCriterion[]} filterCriteria
      * @returns {object} promise that is resolved with count
@@ -394,6 +402,21 @@ export class LocalDBStore {
             type: 'application/json'
         }));
         return Promise.all(promises).then(() => formData);
+    }
+
+    private createTableSql(schema) {
+        const fieldStr = _.reduce(schema.columns, (result, f) => {
+            let str = escapeName(f.name);
+            if (f.primaryKey) {
+                if (f.sqlType === 'number' && f.generatorType === 'identity') {
+                    str += ' INTEGER PRIMARY KEY AUTOINCREMENT';
+                } else {
+                    str += ' PRIMARY KEY';
+                }
+            }
+            return result ? result + ',' + str : str;
+        }, false);
+        return `CREATE TABLE IF NOT EXISTS ${escapeName(schema.name)} (${escapeName(fieldStr)})`;
     }
 
 }

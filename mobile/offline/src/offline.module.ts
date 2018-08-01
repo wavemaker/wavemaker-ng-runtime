@@ -13,6 +13,7 @@ import { SecurityService } from '@wm/security';
 import { ChangeLogService, PushService } from './services/change-log.service';
 import { LocalDBManagementService } from './services/local-db-management.service';
 import { LocalKeyValueService } from './services/local-key-value.service';
+import { LocalDBDataPullService } from './services/local-db-data-pull.service';
 import { LocalDbService } from './services/local-db.service';
 import { FileHandler, UploadedFilesImportAndExportService } from './services/workers/file-handler';
 import { ErrorBlocker } from './services/workers/error-blocker';
@@ -32,6 +33,7 @@ import { SecurityOfflineBehaviour } from './utils/security.utils';
     exports: [],
     providers: [
         ChangeLogService,
+        LocalDBDataPullService,
         LocalDBManagementService,
         LocalDbService,
         LocalKeyValueService,
@@ -55,10 +57,15 @@ export class OfflineModule {
         networkService: NetworkService,
         securityService: SecurityService
     ) {
-        if (window['cordova'] && window['SQLitePlugin']) {
-            deviceService.addStartUpService({
-                serviceName: 'OfflineStartupService',
-                start: () => {
+        deviceService.addStartUpService({
+            serviceName: 'OfflineStartupService',
+            start: () => {
+                if (window['cordova'] && window['SQLitePlugin']) {
+                    localDBManagementService.setLogSQl((localStorage.getItem('wm.logSql') === 'true'));
+                    (window as any).logSql = (flag = true) => {
+                        localDBManagementService.setLogSQl(flag);
+                        localStorage.setItem('wm.logSql', flag ? 'true' : 'false');
+                    };
                     return localDBManagementService.loadDatabases().then(() => {
                         changeLogService.addWorker(new IdResolver(localDBManagementService));
                         changeLogService.addWorker(new ErrorBlocker(localDBManagementService));
@@ -69,42 +76,10 @@ export class OfflineModule {
                         new NamedQueryExecutionOfflineBehaviour(changeLogService, httpService, localDBManagementService, networkService).add();
                         new SecurityOfflineBehaviour(app, file, networkService, securityService).add();
                         localDBManagementService.registerCallback(new UploadedFilesImportAndExportService(changeLogService, deviceFileService, localDBManagementService, file));
-                        this.logSql(localDBManagementService);
                     });
                 }
-            });
-            (window as any).logSql = (flag = true) => {
-                localStorage.setItem('logSql', flag ? 'true' : 'false');
-            };
-        }
-    }
-
-
-
-    private logSql(localDBManagementService: LocalDBManagementService) {
-        const logger = console;
-        localDBManagementService.loadDatabases().then( databases => {
-            databases.forEach(db => {
-                const sqliteObject = db.sqliteObject,
-                    originalExecuteSql = db.sqliteObject.executeSql;
-                sqliteObject.originalExecuteSql = (sql, params) => {
-                    const startTime = now();
-                    return originalExecuteSql.call(sqliteObject, sql, params).then(result => {
-                        if (localStorage.getItem('logSql') === 'true') {
-                            const objArr = [],
-                                rowCount = result.rows.length;
-                            for (let i = 0; i < rowCount; i++) {
-                                objArr.push(result.rows.item(i));
-                            }
-                            logger.debug('SQL "%s"  with params %O took [%d ms]. And the result is %O', sql, params, Date.now() - startTime, objArr);
-                        }
-                        return result;
-                    }, error => {
-                        logger.error('SQL "%s" with params %O failed with error message %s', sql, params, error.message);
-                        return Promise.reject(error);
-                    });
-                };
-            });
+                return Promise.resolve();
+            }
         });
     }
 }

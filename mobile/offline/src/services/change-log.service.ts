@@ -38,6 +38,14 @@ export interface Worker {
     transformParamsFromMap?: (change: Change) => (Promise<any> | void);
 }
 
+export interface PullInfo {
+    databases: Array<any>;
+    totalRecordsToPull: number;
+    totalPulledRecordCount: number;
+    startTime: Date;
+    endTime: Date;
+}
+
 export interface PushInfo {
     completedTaskCount: number;
     endTime: Date;
@@ -326,7 +334,7 @@ export class ChangeLogService {
         return this.getStore().then(s => s.filter(filterCriteria, 'id', {
             offset: 0,
             limit: 1
-        })).then(function (changes) {
+        })).then((changes: Array<Change>) => {
             return changes && changes[0];
         });
     }

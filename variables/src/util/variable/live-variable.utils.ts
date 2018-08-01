@@ -9,7 +9,7 @@ declare const _, window;
 
 const _initiateCallback = initiateCallback;
 
-export default class LiveVariableUtils {
+export class LiveVariableUtils {
 
     static isCompositeKey(primaryKey) {
         return !primaryKey || (primaryKey && (!primaryKey.length || primaryKey.length > 1));
@@ -403,7 +403,7 @@ export default class LiveVariableUtils {
      */
     static processFilterFields(rules, variable, options) {
         _.remove(rules, rule => {
-            return rule && (_.isString(rule.value) && rule.value.indexOf('bind:') === 0 || (rule.matchMode === 'between' ? (_.isString(rule.secondvalue) && rule.secondvalue.indexOf("bind:") === 0) : false));
+            return rule && (_.isString(rule.value) && rule.value.indexOf('bind:') === 0 || (rule.matchMode === 'between' ? (_.isString(rule.secondvalue) && rule.secondvalue.indexOf('bind:') === 0) : false));
         });
 
         _.forEach(rules, (rule, index) => {
@@ -442,7 +442,7 @@ export default class LiveVariableUtils {
 
         // If value is an empty array, do not generate the query
         // If values is NaN and number type, do not generate query for this field
-        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => {return (_.isNull(val) || _.isNaN(val) || val === "")})) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
+        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => { return (_.isNull(val) || _.isNaN(val) || val === ''); })) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
             return;
         }
         if (isValArray) {

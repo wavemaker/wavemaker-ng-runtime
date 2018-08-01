@@ -368,6 +368,32 @@ export class SecurityService {
     }
 
     /**
+     * This function returns a promise. Promise is resolved when security is
+     * 1. disabled
+     * 2. enabled and user is authenticated
+     * 3. enabled and user is not authenticated, then promise is resolved on user login
+     * @returns {*} promise
+     */
+    public onUserLogin(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.getConfig(config => {
+                if (config.securityEnabled) {
+                    if (config.authenticated) {
+                        resolve();
+                    } else {
+                        const unsubscribe = this.injector.get(App).subscribe('userLoggedIn', () => {
+                            resolve();
+                            unsubscribe();
+                        });
+                    }
+                } else {
+                    resolve();
+                }
+            }, reject);
+        });
+    }
+
+    /**
      * @returns a promise that is resolved with logged-in-user
      */
     getLoggedInUser() {

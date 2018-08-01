@@ -25,7 +25,7 @@ export class NamedQueryExecutionOfflineBehaviour {
         const orig = this.httpService.send;
         this.httpService.send = (params: any): Promise<any> => {
             if (this.networkService.isConnected()) {
-                return orig.apply(this.httpService, params);
+                return orig.call(this.httpService, params);
             } else if (params.url.indexOf('/queryExecutor/') > 0) {
                 this.executeLocally(params);
             }

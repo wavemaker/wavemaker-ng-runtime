@@ -3,7 +3,7 @@ import { Observer } from 'rxjs/index';
 import { App, noop } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 import { FileSelectorService, ProcessApi, ProcessManagementService } from '@wm/mobile/components';
-import { Change, ChangeLogService, LocalDBManagementService, PushInfo } from '@wm/mobile/offline';
+import { Change, ChangeLogService, LocalDBManagementService, LocalDBDataPullService, PushInfo, PullInfo } from '@wm/mobile/offline';
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback } from '@wm/variables';
 import { SecurityService } from '@wm/security';
 
@@ -24,13 +24,14 @@ export class DatasyncService extends DeviceVariableService {
                 localDBManagementService: LocalDBManagementService,
                 processManagementService: ProcessManagementService,
                 securityService: SecurityService,
-                networkService: NetworkService) {
+                networkService: NetworkService,
+                localDBDataPullService: LocalDBDataPullService) {
         super();
         this.operations.push(new ExportDBOperation(localDBManagementService));
         this.operations.push(new GetOfflineChangesOperation(changeLogService));
         this.operations.push(new ImportDBOperation(fileSelectorService, localDBManagementService));
         this.operations.push(new LastPushInfoOperation(changeLogService));
-        this.operations.push(new PullOperation(networkService, securityService));
+        this.operations.push(new PullOperation(app, processManagementService, networkService, securityService, localDBDataPullService));
         this.operations.push(new PushOperation(app, changeLogService, processManagementService, networkService, securityService));
     }
 }
@@ -167,17 +168,64 @@ class ImportDBOperation implements IDeviceVariableOperation {
 
 class PullOperation implements IDeviceVariableOperation {
     public readonly name = 'pull';
-    public readonly model = {};
-    public readonly properties = [];
+    public readonly model = {
+        totalTaskCount: 0,
+        completedTaskCount: 0,
+        inProgress: false
+    };
+    public readonly properties = [
+        {target: 'clearData', type: 'boolean', widgettype: 'boolean-inputfirst', value: true, group: 'properties', subGroup: 'behavior'},
+        {target: 'startUpdate', type: 'boolean', hide: false},
+        {target: 'onBefore', hide: false},
+        {target: 'onProgress', hide: false},
+        {target: 'showProgress', hide: false}
+    ];
     public readonly requiredCordovaPlugins = REQUIRED_PLUGINS;
 
     constructor(
+        private app: App,
+        private processManagementService: ProcessManagementService,
         private networkService: NetworkService,
-        private securityService: SecurityService) {
+        private securityService: SecurityService,
+        private localDBDataPullService: LocalDBDataPullService) {
     }
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
-        return Promise.reject('TO DO');
+        let progressInstance;
+        return canExecute(variable, this.networkService, this.securityService)
+            .then(() => {
+                if (variable.showProgress) {
+                    return this.processManagementService.createInstance(this.app.appLocale.LABEL_DATA_PULL_PROGRESS);
+                }
+                return null;
+            }).then((instance: ProcessApi) => {
+                const progressObserver: Observer<PullInfo> = {
+                    next: (pullInfo: PullInfo) => {
+                        // variable.dataSet = progress; Todo: progress
+                        initiateCallback('onProgress', variable, pullInfo);
+                        if (progressInstance) {
+                            progressInstance.set('max', pullInfo.totalRecordsToPull);
+                            progressInstance.set('value', pullInfo.totalPulledRecordCount);
+                        }
+                    }, error: noop, complete: noop};
+
+                const clearData = variable.clearData === 'true' || variable.clearData === true,
+                    pullPromise = this.localDBDataPullService.pullAllDbData(clearData, progressObserver);
+                if (instance) {
+                    progressInstance = instance;
+                    progressInstance.set('stopButtonLabel', this.app.appLocale.LABEL_DATA_PULL_PROGRESS_STOP_BTN);
+                    progressInstance.set('onStop', () => {
+                        this.localDBDataPullService.cancel(pullPromise);
+                    });
+                }
+            return pullPromise;
+        }).catch(pullInfo => pullInfo)
+            .then(pullInfo => {
+                if (progressInstance) {
+                    progressInstance.destroy();
+                }
+                return pullInfo;
+            });
     }
 }
 
@@ -240,14 +288,17 @@ class PushOperation implements IDeviceVariableOperation {
             })
             .catch(pushInfo => pushInfo)
             .then(pushInfo => {
-                pushInfo = addOldPropertiesForPushData(pushInfo);
-                if (progressInstance) {
-                    progressInstance.destroy();
+                if (pushInfo && pushInfo.totalTaskCount) {
+                    pushInfo = addOldPropertiesForPushData(pushInfo);
+                    if (progressInstance) {
+                        progressInstance.destroy();
+                    }
+                    if (pushInfo.failedTaskCount !== 0) {
+                        return Promise.reject(pushInfo);
+                    }
+                    return pushInfo;
                 }
-                if (pushInfo.failedTaskCount !== 0) {
-                    return Promise.reject(pushInfo);
-                }
-                return pushInfo;
+                return Promise.reject(pushInfo);
             });
     }
 }
@@ -273,22 +324,23 @@ const canExecute = (variable: any, networkService: NetworkService, securityServi
     if (!networkService.isConnected()) {
         return Promise.reject(APP_IS_OFFLINE);
     }
-    return initiateCallback('onBefore', variable, null)
-        .then(proceed => {
-            if (proceed === false) {
-                return Promise.reject(ON_BEFORE_BLOCKED);
-            }
-            // If user is authenticated and online, then start the data pull process.
-            // TODO:  return securityService.onUserLogin();
-        });
+    return Promise.resolve();
+    // return initiateCallback('onBefore', variable, null) // todo: [Bandhavya] returning undefined promise
+    //     .then(proceed => {
+    //         if (proceed === false) {
+    //             return Promise.reject(ON_BEFORE_BLOCKED);
+    //         }
+    //         // If user is authenticated and online, then start the data pull process.
+    //         return securityService.onUserLogin();
+    //     });
 };
 
 const generateChangeSet = (changes: Change[]) => {
-    const createChanges =  _.filter(changes, function (c) {
+    const createChanges =  _.filter(changes, c => {
         return c.service === 'DatabaseService' &&
             (c.operation === 'insertTableData'
                 || c.operation === 'insertMultiPartTableData');
-    }), updateChanges =  _.filter(changes, function (c) {
+    }), updateChanges =  _.filter(changes, c => {
         return c.service === 'DatabaseService' &&
             (c.operation === 'updateTableData'
                 || c.operation === 'updateMultiPartTableData');

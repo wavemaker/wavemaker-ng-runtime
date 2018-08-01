@@ -202,6 +202,7 @@ export const LVService = {
     deleteCompositeTableData: (params, successCallback, failureCallback) => initiateAction('deleteCompositeTableData', params, successCallback, failureCallback),
     periodDeleteCompositeTableData: (params, successCallback, failureCallback) => initiateAction('periodDeleteCompositeTableData', params, successCallback, failureCallback),
     exportTableData: params => initiateAction('exportTableData', params),
-    getDistinctDataByFields: params => initiateAction('getDistinctDataByFields', params)
+    getDistinctDataByFields: params => initiateAction('getDistinctDataByFields', params),
+    countTableDataWithQuery: (params, successCallback, failureCallback) => initiateAction('countTableDataWithQuery', params, successCallback, failureCallback)
 };
 

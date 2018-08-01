@@ -12,7 +12,7 @@ import { Vibration } from '@ionic-native/vibration';
 
 import { App } from '@wm/core';
 import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService } from '@wm/mobile/core';
-import { ChangeLogService, LocalDBManagementService, OfflineModule } from '@wm/mobile/offline';
+import { ChangeLogService, LocalDBManagementService, LocalDBDataPullService, OfflineModule } from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
 import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } from '@wm/variables';
 
@@ -46,6 +46,7 @@ export class VariablesModule {
                 fileUploader: DeviceFileUploadService,
                 device: Device,
                 geoLocation: Geolocation,
+                localDBDataPullService: LocalDBDataPullService,
                 localDBManagementService: LocalDBManagementService,
                 mediaCapture: MediaCapture,
                 processManagementService: ProcessManagementService,
@@ -57,7 +58,7 @@ export class VariablesModule {
         deviceVariableManager.registerService(new CalendarService(calendar));
         deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
         deviceVariableManager.registerService(new ContactsService(contacts));
-        deviceVariableManager.registerService(new DatasyncService(app, changeLogService, fileSelectorService, localDBManagementService, processManagementService, securityService, networkService));
+        deviceVariableManager.registerService(new DatasyncService(app, changeLogService, fileSelectorService, localDBManagementService, processManagementService, securityService, networkService, localDBDataPullService));
         deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
         deviceVariableManager.registerService(new ScanService(barcodeScanner));
     }

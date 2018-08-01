@@ -72,9 +72,9 @@ export class PullConfig {
 }
 
 export enum PullType {
-    LIVE,
-    BUNDLED,
-    APP_START
+    LIVE = 'LIVE',
+    BUNDLED = 'BUNDLED',
+    APP_START = 'APP_START'
 }
 
 export class OfflineDataFilter {
