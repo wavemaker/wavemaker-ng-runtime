@@ -6,8 +6,9 @@ import { SQLite } from '@ionic-native/sqlite';
 
 import { now } from 'moment';
 
-import { AbstractHttpService } from '@wm/core';
+import { AbstractHttpService, App } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
+import { SecurityService } from '@wm/security';
 
 import { ChangeLogService, PushService } from './services/change-log.service';
 import { LocalDBManagementService } from './services/local-db-management.service';
@@ -21,6 +22,7 @@ import { PushServiceImpl } from './services/push.service';
 import { LiveVariableOfflineBehaviour } from './utils/live-variable.utils';
 import { FileUploadOfflineBehaviour } from './utils/file-upload.utils';
 import { NamedQueryExecutionOfflineBehaviour } from './utils/query-executor.utils';
+import { SecurityOfflineBehaviour } from './utils/security.utils';
 
 @NgModule({
     imports: [
@@ -41,6 +43,7 @@ import { NamedQueryExecutionOfflineBehaviour } from './utils/query-executor.util
 export class OfflineModule {
 
     constructor(
+        app: App,
         changeLogService: ChangeLogService,
         deviceService: DeviceService,
         deviceFileService: DeviceFileService,
@@ -49,7 +52,8 @@ export class OfflineModule {
         httpService: AbstractHttpService,
         localDBManagementService: LocalDBManagementService,
         localDbService: LocalDbService,
-        networkService: NetworkService
+        networkService: NetworkService,
+        securityService: SecurityService
     ) {
         if (window['cordova'] && window['SQLitePlugin']) {
             deviceService.addStartUpService({
@@ -63,6 +67,7 @@ export class OfflineModule {
                         new LiveVariableOfflineBehaviour(changeLogService, localDBManagementService, networkService, localDbService).add();
                         new FileUploadOfflineBehaviour(changeLogService, deviceFileService, deviceFileUploadService, file, networkService, deviceFileService.getUploadDirectory()).add();
                         new NamedQueryExecutionOfflineBehaviour(changeLogService, httpService, localDBManagementService, networkService).add();
+                        new SecurityOfflineBehaviour(app, file, networkService, securityService).add();
                         localDBManagementService.registerCallback(new UploadedFilesImportAndExportService(changeLogService, deviceFileService, localDBManagementService, file));
                         this.logSql(localDBManagementService);
                     });
