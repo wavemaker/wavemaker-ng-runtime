@@ -83,7 +83,6 @@ class UploadFileOperation implements IDeviceVariableOperation {
                 loaded      : 0
             };
         return this.fileUploader.upload(serverUrl, 'files', filePath, fileName)
-            .post()
             .then(uploadResponse => {
                 _.assignIn(data, JSON.parse(uploadResponse.text)[0]);
                 data.loaded = data.length;
