@@ -9,6 +9,7 @@ import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/var
 import { appManager, formatExportExpression, setInput } from './../../util/variable/variables.utils';
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
+import { AdvancedOptions } from '../../advanced-options';
 
 declare const _;
 
@@ -33,8 +34,9 @@ export class ServiceVariableManager extends BaseVariableManager {
         if (!skipNotification) {
             initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, xhrObj, skipDefaultNotification);
         }
-        const methodInfo = this.getMethodInfo(variable, {}, {}),
-            securityDefnObj = _.get(methodInfo, 'securityDefinitions.0');
+        const methodInfo = this.getMethodInfo(variable, {}, {});
+        const securityDefnObj = _.get(methodInfo, 'securityDefinitions.0');
+        const advancedOptions: AdvancedOptions = {xhrObj: xhrObj};
         if (_.get(securityDefnObj, 'type') === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2
             && _.includes([VARIABLE_CONSTANTS.HTTP_STATUS_CODE.UNAUTHORIZED, VARIABLE_CONSTANTS.HTTP_STATUS_CODE.FORBIDDEN], _.get(xhrObj, 'status'))) {
             removeAccessToken(securityDefnObj['x-WM-PROVIDER_ID']);
@@ -48,7 +50,7 @@ export class ServiceVariableManager extends BaseVariableManager {
             $queue.process(variable);
 
             // EVENT: ON_CAN_UPDATE
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, xhrObj);
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, advancedOptions);
         }
     }
 
@@ -60,34 +62,36 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param success
      */
     private processSuccessResponse(response, variable, options, success) {
-        let dataSet, newDataSet, pagingOptions = {};
+        let dataSet, newDataSet, pagination = {}, advancedOptions: AdvancedOptions ;
 
         response = getValidJSON(response) || xmlToJson(response) || response;
 
+        const isResponsePageable = isPageable(response);
+        if (isResponsePageable) {
+            dataSet = response.content;
+            pagination = _.omit(response, 'content');
+            advancedOptions = {xhrObj: options.xhrObj, pagination: pagination};
+        } else {
+            dataSet = response;
+            advancedOptions = {xhrObj: options.xhrObj};
+        }
+
         // EVENT: ON_RESULT
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, options.xhrObj);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
 
         // trigger success callback, pass data received from server as it is.
-        triggerFn(success, response, pagingOptions);
+        triggerFn(success, response, pagination);
 
         /* if dataTransformation enabled, transform the data */
         if (variable.transformationColumns) {
             response = this.transformData(response, variable);
         }
 
-        const isResponsePageable = isPageable(response);
-        if (isResponsePageable) {
-            dataSet = response.content;
-            pagingOptions = _.omit(response, 'content');
-        } else {
-            dataSet = response;
-        }
-
         // if a primitive type response is returned, wrap it in an object
         dataSet = (!_.isObject(dataSet)) ? {'value': dataSet} : dataSet;
 
         // EVENT: ON_PREPARE_SETDATA
-        newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataSet, options.xhrObj);
+        newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataSet, advancedOptions);
         if (isDefined(newDataSet)) {
             // setting newDataSet as the response to service variable onPrepareSetData
             dataSet = newDataSet;
@@ -95,7 +99,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
-            variable.pagingOptions = pagingOptions;
+            variable.pagination = pagination;
             variable.dataSet = dataSet;
 
             // legacy properties in dataSet, [content]
@@ -111,7 +115,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         $invokeWatchers(true);
         setTimeout(() => {
             // EVENT: ON_SUCCESS
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataSet, options.xhrObj);
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataSet, advancedOptions);
 
             if (!CONSTANTS.isStudioMode) {
                 /* process next requests in the queue */
@@ -120,12 +124,12 @@ export class ServiceVariableManager extends BaseVariableManager {
             }
 
             // EVENT: ON_CAN_UPDATE
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataSet, options.xhrObj);
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataSet, advancedOptions);
         });
 
         return {
             data: variable.dataSet,
-            pagingOptions: variable.pagingOptions
+            pagination: variable.pagination
         };
     }
 
@@ -402,7 +406,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         // make the call
         return this.makeCall(requestParams).then((response) => {
-            const data = this.processSuccessResponse(response.body, variable, options, success);
+            const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response }), success);
             // notify variable success
             this.notifyInflight(variable, false, data);
             return Promise.resolve(data);

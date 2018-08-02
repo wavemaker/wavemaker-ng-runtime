@@ -116,7 +116,7 @@ export const setDependency = (type: string, ref: any) => {
     }
 };
 
-export const initiateCallback = (type: string, variable: any, data: any, xhrObj?: any, skipDefaultNotification?: boolean) => {
+export const initiateCallback = (type: string, variable: any, data: any, options?: any, skipDefaultNotification?: boolean) => {
 
     /*checking if event is available and variable has event property and variable event property bound to function*/
     const eventValues = variable[type],
@@ -129,7 +129,7 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
      */
     if (type === VARIABLE_CONSTANTS.EVENT.ERROR && !skipDefaultNotification) {
         // trigger the common error handler present in app.js
-        appManager.appOnServiceError(variable, data, xhrObj);
+        appManager.appOnServiceError(variable, data, options);
         if (!eventValues) {
             /* in case of error, if no event assigned, handle through default notification variable */
             errorVariable = callBackScope.Actions[VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION];
@@ -149,7 +149,15 @@ export const initiateCallback = (type: string, variable: any, data: any, xhrObj?
     }
     // TODO: [Vibhu], check whether to support legacy event calling mechanism (ideally, it should have been migrated)
     const fn = $parseEvent(variable[type]);
-    return fn(variable._context, {$event: variable, $scope: data});
+    if (type === VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE) {
+        if (variable.category === 'wm.LiveVariable' && variable.operation === 'read') {
+            return fn(variable._context, {variable: variable, dataFilter: data});
+        } else {
+            return fn(variable._context, {variable: variable, inputData: data});
+        }
+    } else {
+        return fn(variable._context, {variable: variable, data: data, options: options});
+    }
 };
 
 const triggerOnTimeout = (success) => {
@@ -595,7 +603,7 @@ const processBindObject = (obj, scope, root, variable) => {
     }
 };
 
-//*********************************************************** PUBLIC ***********************************************************//
+// *********************************************************** PUBLIC *********************************************************** //
 
 /**
  * Initializes watchers for binding expressions configured in the variable

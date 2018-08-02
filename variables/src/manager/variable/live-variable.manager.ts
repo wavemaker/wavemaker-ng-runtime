@@ -6,6 +6,7 @@ import LiveVariableUtils from '../../util/variable/live-variable.utils';
 import { $queue } from '../../util/inflight-queue';
 import { LVService } from '../../util/variable/live-variable.http.utils';
 import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS, DB_CONSTANTS } from '../../constants/variables.constants';
+import { AdvancedOptions } from '../../advanced-options';
 
 declare const _;
 const emptyArr = [];
@@ -33,19 +34,19 @@ export class LiveVariableManager extends BaseVariableManager {
         destroyFn(() => filterSubscription.unsubscribe());
     }
 
-    private updateDataset(variable, data, propertiesMap, pagingOptions) {
-        variable.pagingOptions = pagingOptions;
+    private updateDataset(variable, data, propertiesMap, pagination) {
+        variable.pagination = pagination;
         variable.dataSet = data;
 
-        // legacy properties in dataSet, [data, pagingOptions]
+        // legacy properties in dataSet, [data, pagination]
         Object.defineProperty(variable.dataSet, 'data', {
             get: () => {
                 return variable.dataSet;
             }
         });
-        Object.defineProperty(variable.dataSet, 'pagingOptions', {
+        Object.defineProperty(variable.dataSet, 'pagination', {
             get: () => {
-                return variable.pagingOptions;
+                return variable.pagination;
             }
         });
     }
@@ -57,13 +58,13 @@ export class LiveVariableManager extends BaseVariableManager {
         variable._options.filterFields = options && options.filterFields;
     }
 
-    private handleError(variable, errorCB, response, options) {
+    private handleError(variable, errorCB, response, options, advancedOptions?) {
         /* If callback function is provided, send the data to the callback.
          * The same callback if triggered in case of error also. The error-handling is done in grid.js*/
         triggerFn(errorCB, response);
 
         //  EVENT: ON_RESULT
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
 
         /* update the dataSet against the variable */
         if (!options.skipDataSetUpdate) {
@@ -74,7 +75,7 @@ export class LiveVariableManager extends BaseVariableManager {
         initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, options.errorDetails);
         //  EVENT: ON_CAN_UPDATE
         variable.canUpdate = true;
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
     }
 
     /**
@@ -175,27 +176,28 @@ export class LiveVariableManager extends BaseVariableManager {
             'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
         }).then((response) => {
             response = response.body;
+            dataObj.data = response.content;
+            dataObj.pagination = _.omit(response, 'content');
+            const advancedOptions: AdvancedOptions = {xhrObj: response, pagination: dataObj.pagination};
 
             if ((response && response.error) || !response || !_.isArray(response.content)) {
-                this.handleError(variable, error, response.error, options);
+                this.handleError(variable, error, response.error, options, advancedOptions);
                 return Promise.reject(response.error);
             }
 
             LiveVariableUtils.processBlobColumns(response.content, variable);
-            dataObj.data = response.content;
-            dataObj.pagingOptions = _.omit(response, 'content');
 
             if (!options.skipDataSetUpdate) {
                 //  EVENT: ON_RESULT
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, dataObj.data);
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, dataObj.data, advancedOptions);
                 //  EVENT: ON_PREPARESETDATA
-                newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataObj.data);
+                newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataObj.data, advancedOptions);
                 if (newDataSet) {
                     // setting newDataSet as the response to service variable onPrepareSetData
                     dataObj.data = newDataSet;
                 }
                 /* update the dataSet against the variable */
-                this.updateDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
+                this.updateDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagination);
                 this.setVariableOptions(variable, options);
 
                 // watchers should get triggered before calling onSuccess event.
@@ -203,16 +205,16 @@ export class LiveVariableManager extends BaseVariableManager {
                 $invokeWatchers(true);
                 setTimeout(() => {
                     // if callback function is provided, send the data to the callback
-                    triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagingOptions);
+                    triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagination);
 
                     //  EVENT: ON_SUCCESS
-                    initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data);
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data, advancedOptions);
                     //  EVENT: ON_CAN_UPDATE
                     variable.canUpdate = true;
-                    initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data);
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data, advancedOptions);
                 });
             }
-            return Promise.resolve({data: dataObj.data, pagingOptions: dataObj.pagingOptions});
+            return Promise.resolve({data: dataObj.data, pagination: dataObj.pagination});
         }, (e) => {
             this.setVariableOptions(variable, options);
             this.handleError(variable, error, e.error, _.extend(options, {errorDetails: e.details}));
@@ -549,10 +551,10 @@ export class LiveVariableManager extends BaseVariableManager {
              * equality does not work. So, removing the self related columns to acheive the quality*/
             const data = _.map(response.content, o => _.omit(o, selfRelatedCols));
 
-            const pagingOptions = Object.assign({}, response);
-            delete pagingOptions.content;
+            const pagination = Object.assign({}, response);
+            delete pagination.content;
 
-            const result = {data: data, pagingOptions};
+            const result = {data: data, pagination};
             triggerFn(success, result);
 
             return Promise.resolve(result);
@@ -602,10 +604,10 @@ export class LiveVariableManager extends BaseVariableManager {
                 return Promise.reject(response.error);
             }
             let result = response.body;
-            const pagingOptions = Object.assign({}, response.body);
-            delete pagingOptions.content;
+            const pagination = Object.assign({}, response.body);
+            delete pagination.content;
 
-            result = {data: result.content, pagingOptions};
+            result = {data: result.content, pagination};
             triggerFn(success, result);
             return Promise.resolve(result);
         }, errorMsg => {

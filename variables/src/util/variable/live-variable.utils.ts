@@ -3,6 +3,7 @@ import { $rootScope, DB_CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS } from 
 import { LVService } from './live-variable.http.utils';
 import { formatDate, getEvaluatedOrderBy, initiateCallback } from './variables.utils';
 import { $queue } from '../inflight-queue';
+import { AdvancedOptions } from '../../advanced-options';
 
 declare const _, window;
 
@@ -859,25 +860,27 @@ export default class LiveVariableUtils {
             'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
         }).then((data) => {
             let response = data.body;
+            const advancedOptions: AdvancedOptions  = {xhrObj: data};
+
             $queue.process(variable);
             /* if error received on making call, call error callback */
             if (response && response.error) {
                 // EVENT: ON_RESULT
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
                 // EVENT: ON_ERROR
                 _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
                 // EVENT: ON_CAN_UPDATE
                 variable.canUpdate = true;
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error);
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error, advancedOptions);
                 triggerFn(error, response.error);
                 return Promise.reject(response.error);
             }
 
             // EVENT: ON_RESULT
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
             if (variable.operation !== 'read') {
                 // EVENT: ON_PREPARESETDATA
-                const newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response);
+                const newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response, advancedOptions);
                 if (newDataSet) {
                     // setting newDataSet as the response to service variable onPrepareSetData
                     response = newDataSet;
@@ -885,23 +888,24 @@ export default class LiveVariableUtils {
                 variable.dataSet = response;
             }
             // EVENT: ON_SUCCESS
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, advancedOptions);
             // EVENT: ON_CAN_UPDATE
             variable.canUpdate = true;
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
             triggerFn(success, response);
             return Promise.resolve(response);
         }, (response) => {
             const errMsg = response.error;
+            const advancedOptions = {xhrObj: response};
             // EVENT: ON_RESULT
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
             // EVENT: ON_ERROR
             if (!options.skipNotification) {
                 _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
             }
             // EVENT: ON_CAN_UPDATE
             variable.canUpdate = true;
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg);
+            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, advancedOptions);
             triggerFn(error, errMsg);
             return Promise.reject(errMsg);
         });
