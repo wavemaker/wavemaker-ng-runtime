@@ -4,6 +4,8 @@ import { File } from '@ionic-native/file';
 
 import { convertToBlob } from '@wm/core';
 
+declare const _;
+
 export interface IUploadResponse {
     text: string;
     response: any;
@@ -86,9 +88,12 @@ export class DeviceFileUploadService {
 
     constructor(private cordovaFile: File) {}
 
-    public upload(url: string, fileParamName: string, path: string, fileName?: string): UploadRequest {
-        return new UploadRequest(url, this.cordovaFile)
+    public upload(url: string, fileParamName: string, path: string, fileName?: string, params?: any, headers?: any): Promise<IUploadResponse> {
+        const req = new UploadRequest(url, this.cordovaFile)
             .addFile(fileParamName, path, fileName);
+        _.forEach(params, (k, v) => req.addParam(k, v));
+        _.forEach(headers, (k, v) => req.addHeader(k, v));
+        return req.post();
     }
 
 }

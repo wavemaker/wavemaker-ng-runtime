@@ -366,4 +366,19 @@ export class SecurityService {
         }
         return this.getCookieByName(XSRF_COOKIE_NAME);
     }
+
+    /**
+     * @returns a promise that is resolved with logged-in-user
+     */
+    getLoggedInUser() {
+        return new Promise<any>((resolve, reject) => {
+            this.getConfig((config) => {
+                if (config && config.userInfo) {
+                    resolve(config.userInfo);
+                } else {
+                    reject();
+                }
+            }, reject);
+        });
+    }
 }

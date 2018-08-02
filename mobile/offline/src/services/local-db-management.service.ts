@@ -5,8 +5,9 @@ import { File } from '@ionic-native/file';
 import { SQLite } from '@ionic-native/sqlite';
 import { now } from 'moment';
 
-import { executePromiseChain, isAndroid, isArray, isIos, noop } from '@wm/core';
+import { executePromiseChain, isAndroid, isArray, isIos, noop, toPromise } from '@wm/core';
 import { DeviceFileService } from '@wm/mobile/core';
+import { SecurityService } from '@wm/security';
 
 import { LocalKeyValueService } from './local-key-value.service';
 import { LocalDBStore } from '../models/local-db-store';
@@ -15,6 +16,7 @@ import { ColumnInfo, DBInfo, EntityInfo, NamedQueryInfo } from '../models/config
 
 declare const _;
 declare const cordova;
+declare const moment;
 declare const Zeep;
 
 const META_LOCATION = 'www/metadata/app';
@@ -85,12 +87,35 @@ export class LocalDBManagementService {
     private dbInstallDirectoryName: string;
     private dbInstallParentDirectory: string;
     private databases: Map<string, DBInfo>;
+    private readonly systemProperties = {
+        'USER_ID' : {
+            'name' : 'USER_ID',
+            'value' : () => this.securityService.getLoggedInUser().then( userInfo => userInfo.userId)
+        },
+        'USER_NAME' : {
+            'name' : 'USER_NAME',
+            'value' : () => this.securityService.getLoggedInUser().then( userInfo => userInfo.userName)
+        },
+        'DATE_TIME' : {
+            'name' : 'DATE_TIME',
+            'value' : () => moment().format('YYYY-MM-DDThh:mm:ss')
+        },
+        'DATE' : {
+            'name' : 'CURRENT_DATE',
+            'value' : () => moment().format('YYYY-MM-DD')
+        },
+        'TIME' : {
+            'name' : 'TIME',
+            'value' : () => moment().format('hh:mm:ss')
+        }
+    };
 
     constructor(
         private appVersion: AppVersion,
         private deviceFileService: DeviceFileService,
         private file: File,
         private localKeyValueService: LocalKeyValueService,
+        private securityService: SecurityService,
         private sqlite: SQLite
     ) {}
 
@@ -169,13 +194,13 @@ export class LocalDBManagementService {
                                 Zeep.zip({
                                     from : folderToExportFullPath,
                                     to   : zipDirectory + fileName
-                                }, () => resolve(zipDirectory + fileName), reject);
+                                }, () => rs(zipDirectory + fileName), re);
                             });
                         });
                 }).then(resolve, reject)
                 .catch(noop).then(() => {
                     // Remove temporary folder for export
-                    this.file.removeDir(cordova.file.cacheDirectory, folderToExport);
+                    return this.file.removeDir(cordova.file.cacheDirectory, folderToExport);
                 });
         });
     }
@@ -530,6 +555,54 @@ export class LocalDBManagementService {
                 });
         }
         return Promise.reject(`No Database with name ${dbName} found`);
+    }
+
+    /**
+     * Executes a named query.
+     *
+     * @param {string} dbName name of database on which the named query has to be run
+     * @param {string} queryName name of the query to execute
+     * @param {object} params parameters required for query.
+     * @returns {object} a promise.
+     */
+    public executeNamedQuery(dbName: string, queryName: string, params: any) {
+        let queryData, paramPromises;
+        if (!this.databases[dbName] || !this.databases[dbName].queries[queryName]) {
+            return Promise.reject(`Query by name ' ${queryName} ' Not Found`);
+        }
+        queryData = this.databases[dbName].queries[queryName];
+        paramPromises = _.chain(queryData.params)
+            .filter(p => p.variableType !== 'PROMPT')
+            .forEach(p => {
+                const paramValue = this.systemProperties[p.variableType].value(p.name, params);
+                return toPromise(paramValue).then(v => params[p.name] = v);
+            }).value();
+        return Promise.all(paramPromises).then(() => {
+            params = _.map(queryData.params, p => params[p.name]);
+            return this.executeSQLQuery(dbName, queryData.query, params)
+                .then(result => {
+                    let firstRow,
+                        needTransform;
+                    if (!_.isEmpty(result.rows)) {
+                        firstRow = result.rows[0];
+                        needTransform = _.find(queryData.response.properties, p => !firstRow.hasOwnProperty(p.fieldName));
+                        if (!_.isUndefined(needTransform)) {
+                            result.rows = _.map(result.rows, row => {
+                                const transformedRow = {},
+                                    rowWithUpperKeys = {};
+                                // This is to make search for data as case-insensitive
+                                _.forEach(row, (v, k) => rowWithUpperKeys[k.toUpperCase()] = v);
+                                _.forEach(queryData.response.properties, p => {
+                                    transformedRow[p.name] = row[p.name];
+                                    transformedRow[p.fieldName] = row[p.fieldName] || rowWithUpperKeys[p.nameInUpperCase];
+                                });
+                                return transformedRow;
+                            });
+                        }
+                    }
+                    return result;
+                });
+        });
     }
 
     // get the params of the query or procedure.
