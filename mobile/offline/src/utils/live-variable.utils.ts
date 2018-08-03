@@ -56,7 +56,7 @@ export class LiveVariableOfflineBehaviour {
                         return this.localDBManagementService.isOperationAllowed(params.dataModelName, params.entityName, operation.type)
                             .then(isAllowedInOffline => {
                                 if (this.networkService.isConnected() || params.onlyOnline || !isAllowedInOffline) {
-                                    return this.remoteDBcall(operation, params, successCallback, failureCallback);
+                                    return this.remoteDBcall(operation, onlineHandler, params, successCallback, failureCallback);
                                 } else {
                                     return this.localDBcall(operation, params, successCallback, function () {
                                         triggerFn(failureCallback, 'Service call failed');
@@ -86,6 +86,7 @@ export class LiveVariableOfflineBehaviour {
                 }
             });
         }).then((response) => {
+            response = {body : response};
             triggerFn(successCallback, response);
             return response;
         }, failureCallback);
@@ -95,8 +96,8 @@ export class LiveVariableOfflineBehaviour {
      * During online, all read operations data will be pushed to offline database. Similarly, Update and Delete
      * operations are synced with the offline database.
      */
-    private remoteDBcall(operation, params, successCallback, failureCallback): Promise<any> {
-        return this.onlineDBService[operation](params, response => {
+    private remoteDBcall(operation, onlineHandler, params, successCallback, failureCallback): Promise<any> {
+        return onlineHandler(params, null, null).then(response => {
             if (!params.skipLocalDB) {
                 if (operation.type === 'READ') {
                     this.offlineDBService.getStore(params).then(store => {

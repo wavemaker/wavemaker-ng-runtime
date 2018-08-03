@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 
 import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
-import { now } from 'moment';
 
 import { isAndroid, noop } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 
+declare const _;
 declare const cordova;
 declare const resolveLocalFileSystemURL;
 declare const FileReader;
@@ -75,7 +75,7 @@ export class DeviceFileService implements IDeviceStartUpService {
 
     public appendToFileName(fileName: string, attachment?: string): string {
         let splits;
-        attachment = attachment || '_' + now();
+        attachment = attachment || '_' + _.now();
         fileName = fileName || 'noname';
         splits = fileName.split('.');
         if (splits.length > 1) {
@@ -160,9 +160,9 @@ export class DeviceFileService implements IDeviceStartUpService {
             .then(() => {
                 const extIndex = fileName.lastIndexOf('.');
                 if (extIndex > 0) {
-                    fileName = fileName.substring(0, extIndex) + '_' + Date.now() + '.' + fileName.substring(extIndex + 1);
+                    fileName = fileName.substring(0, extIndex) + '_' + _.now() + '.' + fileName.substring(extIndex + 1);
                 } else {
-                    fileName = fileName + '_' + Date.now();
+                    fileName = fileName + '_' + _.now();
                 }
                 return this.newFileName(folder, fileName);
             }, () => fileName);
@@ -184,7 +184,7 @@ export class DeviceFileService implements IDeviceStartUpService {
         const i = dirPath.lastIndexOf('/'),
             parentdir = dirPath.substring(0, i + 1),
             dir = dirPath.substring(i + 1),
-            movedDir = dir + now();
+            movedDir = dir + _.now();
         return this.cordovaFile.checkDir(parentdir, dir)
             .then(() => {
                 /**

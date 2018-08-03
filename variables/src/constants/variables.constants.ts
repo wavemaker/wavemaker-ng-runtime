@@ -42,6 +42,7 @@ export const VARIABLE_CONSTANTS = {
         'onOffline'],
     EVENT: {
         'CAN_UPDATE': 'onCanUpdate',
+        'BEFORE': 'onBefore',
         'BEFORE_UPDATE': 'onBeforeUpdate',
         'PREPARE_SETDATA': 'onBeforeDatasetReady',
         'RESULT': 'onResult',
@@ -289,6 +290,13 @@ export const VARIABLE_URLS = {
     executeNamedProcedure: {
         url: '/:service/:dataModelName/procedureExecutor/procedure/execute/:procedureName?page=:page&size=:size&:procedureParams',
             method: 'GET'
+    },
+    countTableDataWithQuery : {
+        url: '/:service/:dataModelName/:entityName/count',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
     }
 },
     oauthConfiguration : {

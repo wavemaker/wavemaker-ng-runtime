@@ -56,8 +56,8 @@ export class MobileAppModule {
         this._$appEl.addClass('wm-mobile-app');
         app.deployedUrl = this.getDeployedUrl();
         this.getDeviceOS().then(os => this.applyOSTheme(os));
-        this.handleKeyBoardClass();
         if (hasCordova()) {
+            this.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
         }
         deviceService.start();

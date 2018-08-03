@@ -407,7 +407,7 @@ export class LocalDBManagementService {
                             });
                     }));
                 }).then(() => {
-                    this.localKeyValueService.init(this.getStore('wavemaker', 'key-value'));
+                    this.getStore('wavemaker', 'key-value').then( store => this.localKeyValueService.init(store));
                     if (newDatabasesCreated) {
                         return this.normalizeData()
                             .then(() => this.disableForeignKeys())

@@ -41,6 +41,6 @@ export class ProcessManagementService {
         if (!this.processManagerComponent) {
             return Promise.reject('ProcessManagerComponent is missing');
         }
-        return this.createInstance(name, min, max);
+        return this.processManagerComponent.createInstance(name, min, max);
     }
 }

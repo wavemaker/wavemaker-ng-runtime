@@ -5,6 +5,7 @@ import { ChangeLogService } from '../services/change-log.service';
 import { LocalDBManagementService } from '../services/local-db-management.service';
 
 declare const _;
+const NUMBER_REGEX = /^\d+(\.\d+)?$/;
 let isOfflineBehaviourAdded = false;
 export class NamedQueryExecutionOfflineBehaviour {
 
@@ -24,10 +25,10 @@ export class NamedQueryExecutionOfflineBehaviour {
         isOfflineBehaviourAdded = true;
         const orig = this.httpService.send;
         this.httpService.send = (params: any): Promise<any> => {
-            if (this.networkService.isConnected()) {
+            if (!this.networkService.isConnected() && params.url.indexOf('/queryExecutor/') > 0) {
+                return this.executeLocally(params);
+            } else {
                 return orig.call(this.httpService, params);
-            } else if (params.url.indexOf('/queryExecutor/') > 0) {
-                this.executeLocally(params);
             }
         };
     }
@@ -48,15 +49,17 @@ export class NamedQueryExecutionOfflineBehaviour {
                         .then(() => result.rowsAffected);
                 } else {
                     return {
-                        totalPages: rows && rows.length > 0 ? 1 : 0,
-                        totalElements: rows.length,
-                        first: true,
-                        sort: null,
-                        numberOfElements: rows.length,
-                        last: true,
-                        size: params.size,
-                        number: 0,
-                        content: rows
+                        body: {
+                            totalPages: rows && rows.length > 0 ? 1 : 0,
+                            totalElements: rows.length,
+                            first: true,
+                            sort: null,
+                            numberOfElements: rows.length,
+                            last: true,
+                            size: params.size,
+                            number: 0,
+                            content: rows
+                        }
                     };
                 }
             });
@@ -77,7 +80,7 @@ export class NamedQueryExecutionOfflineBehaviour {
             str = decodeURIComponent(str);
             str.split('&').forEach(c => {
                 const csplits = c.split('=');
-                if (_.isEmpty(_.trim(csplits[1])) || _.isNaN(csplits[1])) {
+                if (_.isEmpty(_.trim(csplits[1])) || !NUMBER_REGEX.test(csplits[1])) {
                     result[csplits[0]] = csplits[1];
                 } else {
                     result[csplits[0]] = parseInt(csplits[1], 10);

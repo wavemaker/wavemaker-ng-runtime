@@ -19,7 +19,7 @@ export class IdResolver implements Worker {
     private transactionLocalId;
 
     constructor(private localDBManagementService: LocalDBManagementService) {
-        this.logger = console;
+        this.logger = window.console;
     }
 
     public preFlush(context: FlushContext) {

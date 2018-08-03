@@ -9,7 +9,7 @@ declare const _;
 declare const cordova;
 const SECURITY_FILE = 'logged-in-user.info';
 
-let isOfflineBehaviourAdded = false;
+let isOfflineBehaviourAdded = true;
 
 export class SecurityOfflineBehaviour {
 

@@ -35,7 +35,6 @@ export class DeviceVariableService {
                     variable.dataSet = {};
                     $invokeWatchers(true);
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null);
-                    return Promise.reject(reason);
                 });
         } else {
             return Promise.resolve()

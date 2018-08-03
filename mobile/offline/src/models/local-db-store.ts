@@ -155,7 +155,7 @@ const mapObjToRow = (store: LocalDBStore, entity: any) => {
     const row = {};
     store.entitySchema.columns.forEach(col => {
         const value = entity[col.fieldName];
-        if (col.foreignRelaton.targetEntity && entity[col.foreignRelaton.sourceFieldName]) {
+        if (col.foreignRelaton && col.foreignRelaton.targetEntity && entity[col.foreignRelaton.sourceFieldName]) {
             row[col.name] = entity[col.foreignRelaton.sourceFieldName][col.foreignRelaton.targetFieldName];
         } else if (_.isNil(value)) {
             row[col.name] = col.defaultValue;
@@ -416,7 +416,7 @@ export class LocalDBStore {
             }
             return result ? result + ',' + str : str;
         }, false);
-        return `CREATE TABLE IF NOT EXISTS ${escapeName(schema.name)} (${escapeName(fieldStr)})`;
+        return `CREATE TABLE IF NOT EXISTS ${escapeName(schema.name)} (${fieldStr})`;
     }
 
 }

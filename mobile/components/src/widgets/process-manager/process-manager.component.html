@@ -12,7 +12,7 @@
                                    {{instance.progressLabel}}</label>
                        </div>
                    </div>
-                   <div wmProgressBar minvalue.bind="instance.min" maxvalue.bind="instance.max" datavalue.bind="instance.value"></div>
+                   <ng-template [ngTemplateOutlet]="progressTemplate" [ngTemplateOutletContext]="{instance: instance}"></ng-template>
                    <button class="btn btn-secondary pull-right stop-btn" *ngIf="instance.onStop" (click)="instance.onStop();">
                        {{instance.stopButtonLabel}}
                    </button>
@@ -27,3 +27,6 @@
        </div>
    </div>
 </ng-container>
+<ng-template #progressTemplate let-instance="instance">
+    <div wmProgressBar minvalue.bind="instance.min" maxvalue.bind="instance.max" datavalue.bind="instance.value"></div>
+</ng-template>

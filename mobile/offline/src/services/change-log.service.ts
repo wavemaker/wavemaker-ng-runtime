@@ -23,7 +23,6 @@ export interface Change {
 export interface FlushContext {
     clear: () => Promise<any>;
     get: (key: string) => any;
-    set: (key: string, value: any) => Promise<any>;
     save: () => Promise<any>;
 }
 
@@ -97,8 +96,8 @@ export class ChangeLogService {
             params: params,
             hasError: 0
         };
-        return executePromiseChain(_.map(this.workers, 'transformParamsToMap'), [change])
-            .then(() => executePromiseChain(_.map(this.workers, 'onAddCall'), [change]))
+        return executePromiseChain(this.getWorkers('transformParamsToMap'), [change])
+            .then(() => executePromiseChain(this.getWorkers('onAddCall'), [change]))
             .then(() => {
                 change.params = JSON.stringify(change.params);
                 return this.getStore().then(store => store.add(change)).then(noop);
@@ -125,7 +124,7 @@ export class ChangeLogService {
             this.deferredFlush = getAbortableDefer();
             this.createContext().then(context => {
                 this.flushContext = context;
-                return executePromiseChain(_.map(this.workers, 'preFlush'), [this.flushContext]);
+                return executePromiseChain(this.getWorkers('preFlush'), [this.flushContext]);
             })
                 .then(() => {
                     flushPromise = this._flush(progressObserver);
@@ -147,7 +146,7 @@ export class ChangeLogService {
                         }
                         this.deferredFlush = null;
                     }).then(() => {
-                        return executePromiseChain(_.map(this.workers, 'postFlush'), [this.currentPushInfo, this.flushContext]);
+                        return executePromiseChain(this.getWorkers('postFlush'), [this.currentPushInfo, this.flushContext]);
                     });
                 });
         }
@@ -307,14 +306,14 @@ export class ChangeLogService {
 
     private flushChange(change: Change): Promise<Change> {
         const self = this;
-        return executePromiseChain(_.map(this.workers, 'preCall'), [change])
+        return executePromiseChain(this.getWorkers('preCall'), [change])
             .then(() => this.pushService.push(change))
             .then(function() {
-                return executePromiseChain(_.map(_.reverse(self.workers), 'postCallSuccess'), [change, arguments])
+                return executePromiseChain(_.reverse(self.getWorkers('postCallSuccess')), [change, arguments])
                     .then(() => change);
             }).catch(function() {
                 if (self.networkService.isConnected()) {
-                    return executePromiseChain(_.map(_.reverse(self.workers), 'postCallError'), [change, arguments])
+                    return executePromiseChain(_.reverse(self.getWorkers('postCallError')), [change, arguments])
                         .then(() => change);
                 }
                 return Promise.reject(change);
@@ -338,6 +337,10 @@ export class ChangeLogService {
             return changes && changes[0];
         });
     }
+
+    private getWorkers(type) {
+        return _.map(this.workers, w => w[type] && w[type].bind(w));
+    }
 }
 
 class FlushTracker {
@@ -348,7 +351,7 @@ class FlushTracker {
     constructor(private changeLogService: ChangeLogService,
                 private localKeyValueService: LocalKeyValueService,
                 private pushInfo: PushInfo) {
-        this.logger = console;
+        this.logger = window.console;
     }
 
     public onAddCall(change: Change) {

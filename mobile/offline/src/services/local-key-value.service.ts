@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 
+import { LocalDBStore } from '../models/local-db-store';
+
 @Injectable()
 export class LocalKeyValueService {
 
-    private store;
+    private store: LocalDBStore;
 
     /**
      * retrieves the value mapped to the key.
@@ -11,7 +13,7 @@ export class LocalKeyValueService {
      * @param {string} key key
      * @returns {object} a promise that is resolved when value is retrieved from store.
      */
-    public get(key) {
+    public get(key: string) {
         return this.fetchEntry(key)
             .then(result => {
                 let value;
@@ -31,7 +33,7 @@ export class LocalKeyValueService {
      * @param {object} storeToUse a store with id, key, value with fields.
      * @returns {object} a promise that is resolved when data is persisted.
      */
-    public init(storeToUse) {
+    public init(storeToUse: LocalDBStore) {
         this.store = storeToUse;
     }
 

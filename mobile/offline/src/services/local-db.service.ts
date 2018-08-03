@@ -8,8 +8,12 @@ declare const _;
 @Injectable()
 export class LocalDbService {
 
-    constructor(private localDBManagementService: LocalDBManagementService) {
+    private searchTableData;
+    private searchTableDataWithQuery;
 
+    constructor(private localDBManagementService: LocalDBManagementService) {
+        this.searchTableData = this.readTableData.bind(this);
+        this.searchTableDataWithQuery = this.readTableData.bind(this);
     }
 
     public getStore(params: any) {

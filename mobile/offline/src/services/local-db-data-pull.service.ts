@@ -223,10 +223,8 @@ export class LocalDBDataPullService {
      * @param params
      * @returns Promise
      */
-    private executeDatabaseCountQuery(params: Object) {
-        return new Promise((resolve, reject) => {
-            LVService.countTableDataWithQuery(params, resolve, reject);
-        });
+    private executeDatabaseCountQuery(params: Object): Promise<any> {
+        return LVService.countTableDataWithQuery(params, null, null).then(response => response.body);
     }
 
     /**
@@ -235,11 +233,7 @@ export class LocalDBDataPullService {
      * @returns Promise
      */
     private executeDatabaseSearchQuery(params: Object) {
-        return new Promise((resolve, reject) => {
-            LVService.searchTableDataWithQuery(params, (response) => {
-                resolve(response.content);
-            }, reject);
-        });
+        return LVService.searchTableDataWithQuery(params, null, null).then(response => response && response.body && response.body.content);
     }
 
     /**
@@ -381,14 +375,11 @@ export class LocalDBDataPullService {
      * @param promise
      * @returns {*}
      */
-    private _pullEntityData(db: DBInfo, entityName: string, filter: string, sort, maxNoOfPages: number, pageSize: number, currentPage: number, pullPromise: Promise<PullInfo>, promise?: Promise<any>, progressObserver?: Observer<any>) {
+    private _pullEntityData(db: DBInfo, entityName: string, filter: string, sort, maxNoOfPages: number, pageSize: number, currentPage: number, pullPromise: Promise<PullInfo>, deferred: any, progressObserver?: Observer<any>) {
         const dataModelName = db.schema.name;
-        let deferred;
 
-        if (promise) {
-            deferred = promise;
-        } else {
-            deferred = (defer()).promise;
+        if (!deferred) {
+            deferred = defer();
         }
 
         if (currentPage > maxNoOfPages) {
@@ -408,7 +399,7 @@ export class LocalDBDataPullService {
             return this.executeDatabaseSearchQuery(params);
         }, pullPromise).then(response => {
             progressObserver.next(response);
-            this._pullEntityData(db, entityName, filter, sort, maxNoOfPages, pageSize, currentPage + 1, pullPromise, deferred);
+            this._pullEntityData(db, entityName, filter, sort, maxNoOfPages, pageSize, currentPage + 1, pullPromise, deferred, progressObserver);
         }, deferred.reject);
 
         return deferred.promise;

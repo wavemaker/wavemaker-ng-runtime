@@ -1,10 +1,10 @@
 import { Observer } from 'rxjs/index';
 
-import { App, noop } from '@wm/core';
+import { App, noop, toPromise } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 import { FileSelectorService, ProcessApi, ProcessManagementService } from '@wm/mobile/components';
 import { Change, ChangeLogService, LocalDBManagementService, LocalDBDataPullService, PushInfo, PullInfo } from '@wm/mobile/offline';
-import { DeviceVariableService, IDeviceVariableOperation, initiateCallback } from '@wm/variables';
+import { DeviceVariableService, IDeviceVariableOperation, initiateCallback, VARIABLE_CONSTANTS } from '@wm/variables';
 import { SecurityService } from '@wm/security';
 
 declare const _;
@@ -324,15 +324,14 @@ const canExecute = (variable: any, networkService: NetworkService, securityServi
     if (!networkService.isConnected()) {
         return Promise.reject(APP_IS_OFFLINE);
     }
-    return Promise.resolve();
-    // return initiateCallback('onBefore', variable, null) // todo: [Bandhavya] returning undefined promise
-    //     .then(proceed => {
-    //         if (proceed === false) {
-    //             return Promise.reject(ON_BEFORE_BLOCKED);
-    //         }
-    //         // If user is authenticated and online, then start the data pull process.
-    //         return securityService.onUserLogin();
-    //     });
+    return toPromise(initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE, variable, null))
+        .then(proceed => {
+            if (proceed === false) {
+                return Promise.reject(ON_BEFORE_BLOCKED);
+            }
+            // If user is authenticated and online, then start the data pull process.
+            return securityService.onUserLogin();
+        });
 };
 
 const generateChangeSet = (changes: Change[]) => {

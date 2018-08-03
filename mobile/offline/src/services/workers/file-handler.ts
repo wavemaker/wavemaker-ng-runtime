@@ -13,7 +13,7 @@ const STORE_KEY = 'offlineFileUpload';
 export class FileHandler implements Worker {
 
     private fileStore;
-    private logger = console;
+    private logger = window.console;
 
     public preFlush(context: FlushContext) {
         this.fileStore = context.get(STORE_KEY);
