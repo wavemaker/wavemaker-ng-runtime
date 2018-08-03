@@ -76,14 +76,22 @@ export class ListItemDirective implements OnInit, AfterViewInit {
 
 
     private setUpCUDHandlers() {
-        // Triggered on click of edit action
-        this.nativeElement.querySelector('.edit-list-item').addEventListener('click', evt => {
-            this.triggerWMEvent('update');
-        });
-        // Triggered on click of delete action
-        this.nativeElement.querySelector('.delete-list-item').addEventListener('click', evt => {
-            this.triggerWMEvent('delete');
-        });
+        const $editItem = this.nativeElement.querySelector('.edit-list-item');
+        const $deleteItem = this.nativeElement.querySelector('.delete-list-item');
+
+        if ($editItem) {
+            // Triggered on click of edit action
+            $editItem.addEventListener('click', evt => {
+                this.triggerWMEvent('update');
+            });
+        }
+
+        if ($deleteItem) {
+            // Triggered on click of delete action
+            $deleteItem.addEventListener('click', evt => {
+                this.triggerWMEvent('delete');
+            });
+        }
     }
 
 

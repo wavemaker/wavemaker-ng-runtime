@@ -450,6 +450,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                     } else {
                         this.updateCalendarOptions('option', 'selectConstraint', {});
                     }
+                } else {
+                    this.calendarOptions.calendar.selectable = false;
+                    this.updateCalendarOptions('option', 'selectable', false);
                 }
                 break;
             case 'view':
