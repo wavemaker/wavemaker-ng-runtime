@@ -4,6 +4,7 @@ import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 
@@ -33,7 +34,6 @@ import { AppSpinnerComponent } from './components/app-spinner.component';
 import { SpinnerServiceImpl } from './services/spinner.service';
 import { ToasterServiceImpl } from './services/toaster.service';
 import { CustomToasterComponent } from './components/custom-toaster.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ViewRenderer, TempModule } from './services/render-utils/view-renderer';
 import { FragmentRenderer } from './services/render-utils/fragment-renderer';
 import { PageRenderer } from './services/render-utils/page-renderer';

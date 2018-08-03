@@ -3,23 +3,34 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { Subject } from 'rxjs';
-import { BsDropdownModule, CarouselModule, PopoverModule } from 'ngx-bootstrap';
+import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule } from 'ngx-bootstrap';
 
 import { App, extendProto, noop, UserDefinedExecutionContext } from '@wm/core';
 import { WmComponentsModule } from '@wm/components';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
+
 import { PartialContainerDirective } from '../../components/partial-container/partial-container.directive';
 import { PrefabDirective } from '../../components/prefab/prefab.directive';
 import { AccessrolesDirective } from '../../directives/accessroles.directive';
+import { PrefabPreviewComponent } from '../../components/prefab/prefab-preview.component';
 
 const componentCache = new Map<string, any>();
 
+export const modalModule = ModalModule.forRoot();
+
 @NgModule({
-    declarations: [PartialContainerDirective, PrefabDirective, AccessrolesDirective],
+    declarations: [PartialContainerDirective, PrefabDirective, AccessrolesDirective, PrefabPreviewComponent],
     exports: [
         PartialContainerDirective,
         PrefabDirective,
-        AccessrolesDirective
+        AccessrolesDirective,
+        PrefabPreviewComponent
+    ],
+    imports: [
+        WmComponentsModule,
+        CommonModule,
+        FormsModule,
+        modalModule
     ]
 })
 export class TempModule {}

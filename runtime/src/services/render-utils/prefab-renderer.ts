@@ -22,7 +22,7 @@ export class PrefabRenderer {
     public async renderForPreview(vcRef: ViewContainerRef, $target: HTMLElement) {
         return this.renderResource.render(
             `app-prefab-self`,
-            transpile(`<wm-prefab name="prefab-preview" prefabname="__self__"></wm-prefab>`),
+            transpile(`<wm-prefab-preview></wm-prefab-preview>`),
             '',
             undefined,
             noop,
@@ -86,7 +86,7 @@ export class PrefabRenderer {
                         .forEach(([key, prop]: [string, any]) => {
                             containerWidget[key] = (...args) => {
                                 try {
-                                    if(instance[key]) {
+                                    if (instance[key]) {
                                         return instance[key].apply(instance, args);
                                     }
                                 } catch (e) {

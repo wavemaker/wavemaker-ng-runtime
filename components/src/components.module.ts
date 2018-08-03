@@ -308,4 +308,3 @@ export const popoverModule: ModuleWithProviders = PopoverModule.forRoot();
 })
 export class WmComponentsModule {
 }
-

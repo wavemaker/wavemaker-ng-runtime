@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
 import { loadScripts, loadStyleSheets, stringStartsWith } from '@wm/core';
+import { MetadataService } from '@wm/variables';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
-import { MetadataService } from '@wm/variables';
 
 declare const _;
 
