@@ -56,7 +56,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
         this.isActive = true;
         this.$lazyLoad();
         this.redrawChildren();
-        this.invokeEventCallback('expand');
+        this.invokeEventCallback('expand', {$event: evt});
         this.notifyParent(true, evt);
     }
 
@@ -71,7 +71,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
             return;
         }
         this.isActive = false;
-        this.invokeEventCallback('collapse');
+        this.invokeEventCallback('collapse', {$event: evt});
         this.notifyParent(false, evt);
     }
 

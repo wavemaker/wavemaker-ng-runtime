@@ -42,6 +42,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public popoverwidth: string;
     public popoverheight: string;
     public contentanimation: string;
+    public contentsource: string;
+    public content: string;
 
 
     @ViewChild('anchor') anchorRef: ElementRef;
@@ -131,7 +133,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     ngAfterContentInit() {
         super.ngAfterContentInit();
 
-        if (!this.popoverTemplate) {
+        if ((!this.content && !this.contentsource) || (this.contentsource === 'partial' && !this.content)) {
             this.event = '';
         }
     }
