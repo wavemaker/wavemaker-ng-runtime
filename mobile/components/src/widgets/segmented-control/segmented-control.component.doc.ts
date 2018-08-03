@@ -1,0 +1,35 @@
+import { Input } from '@angular/core';
+
+/**
+ * The `wmSegmentedControl` directive defines the segmented control widget.
+ */
+export class Page {
+
+    /**
+     * Class of the widget.
+     */
+    @Input() class: string;
+    /**
+     * Name of the Segmented control.
+     */
+    @Input() name: string;
+    /**
+     * This property will be used to show/hide the segmented control widget. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() show: boolean = true;
+    /**
+     * Callback function which will be triggered when the widget value is changed.
+     * @param widget  Instance of the segmented control widget
+     * @param $new  Current selected index
+     * @param $old  Previous selected index
+     */
+    beforesegmentchange(widget: any, $old: number, $new: number) {}
+    /**
+     * Callback function which will be triggered when the widget value is changed.
+     * @param widget  Instance of the segmented control widget
+     * @param $new  Current selected index
+     * @param $old  Previous selected index
+     */
+    segmentchange(widget: any, $old: number, $new: number) {}
+}
