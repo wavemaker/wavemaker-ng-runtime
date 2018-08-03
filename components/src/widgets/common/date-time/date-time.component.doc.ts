@@ -14,16 +14,16 @@ export class Datetime {
      */
     @Input() placeholder: string = 'Select Date Time';
     /**
-     * Title/hint for the datetime widget. <br>
+     * Title/hint for the datetime widget. This is not available in mobile.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
     /**
-     * This property specifies the tab order of the datetime Widget.
+     * This property specifies the tab order of the datetime Widget. This is not available in mobile.
      */
     @Input() tabindex: number = 0;
     /**
-     * The shortcut key property specifies a shortcut key to activate/focus an element.
+     * The shortcut key property specifies a shortcut key to activate/focus an element. This is not available in mobile.
      */
     @Input() shortcutkey: string;
     /**
@@ -32,16 +32,16 @@ export class Datetime {
      */
     @Input() datavalue: string;
     /**
-     * This property display pattern of the datetime widget.<br>
+     * This property display pattern of the datetime widget. This is not available in mobile.<br>
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'yyyy-MM-dd hh:mm:ss a', 'yyyy-MM-ddTHH:mm:ss', 'yyyy, MMM dd', etc. </code></p>
      */
     @Input() datepattern: string = 'yyyy-MM-dd hh:mm:ss a';
     /**
-     * This property decide number of hours to increase or decrease.<br>
+     * This property decide number of hours to increase or decrease. This is not available in mobile.<br>
      */
     @Input() hourstep: number = 1;
     /**
-     * This property decide number of minutes to increase or decrease.<br>
+     * This property decide number of minutes to increase or decrease. This is not available in mobile.<br>
      */
     @Input() minutestep: number = 15;
     /**
@@ -65,17 +65,17 @@ export class Datetime {
      */
     @Input() maxdate: string;
     /**
-     * This property specifies the days which are to be excluded. <br>
+     * This property specifies the days which are to be excluded. This is not available in mobile.<br>
      * <p><em>Allowed Values: </em><code>Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday. </code></p>
      */
     @Input() excludedays: string;
     /**
-     * This property specifies the dates which are to be excluded. <br>
+     * This property specifies the dates which are to be excluded. This is not available in mobile.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() excludedates: string;
     /**
-     * This property, when set, displays week number in datetime-picker UI. <br>
+     * This property, when set, displays week number in datetime-picker UI. This is not available in mobile.<br>
      */
     @Input() showweeks: boolean = false;
     /**
@@ -124,19 +124,19 @@ export class Datetime {
      */
     blur($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered when the widget is clicked.
+     * Callback function which will be triggered when the widget is clicked. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
     click($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered when the mouse enters the widget.
+     * Callback function which will be triggered when the mouse enters the widget. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
     mouseenter($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered when the mouse leaves the widget.
+     * Callback function which will be triggered when the mouse leaves the widget. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
