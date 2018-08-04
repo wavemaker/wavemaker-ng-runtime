@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, ChangeDetectorRef, Component, Injector, OnInit, ViewChild } from '@angular/core';
 
- import { $appDigest, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
+import { $appDigest, debounce, $parseExpr, isAppleProduct, isDefined, toBoolean } from '@wm/core';
 
 import { registerProps } from './chips.props';
 import { styler } from '../../framework/styler';
@@ -48,6 +48,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private searchkey: string;
     private _debounceUpdateQueryModel: any;
     private limit: number;
+    private _classExpr: any;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource () {
@@ -67,7 +68,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         @Attribute('displayexpression.bind') private bindDisplayExpr,
         @Attribute('displayimagesrc.bind') private bindDisplayImgSrc,
         @Attribute('datafield.bind') private bindDataField,
-        @Attribute('dataset.bind') private bindDataSet
+        @Attribute('dataset.bind') private bindDataSet,
+        @Attribute('chipclass.bind') private bindChipclass
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
@@ -75,6 +77,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         // set the showsearchicon as false by default.
         if (_.isUndefined(this.showsearchicon)) {
             this.showsearchicon = false;
+        }
+        // parse the chipclass expression.
+        if (this.bindChipclass) {
+            this._classExpr = $parseExpr(this.bindChipclass);
         }
 
         this.multiple = true;
@@ -578,6 +584,16 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this.resetReorder();
         this.invokeEventCallback('reorder', {$event, $data: this.chipsList, $changedItem: changedItem});
+    }
+
+    /**
+     * This method returns the evaluated class expression.
+     * @param $index index of the chip
+     * @param item chip object containing the key, value, label
+     * @returns {any} evaluated class expression value
+     */
+    private getChipClass($index: number, item: DataSetItem) {
+        return this._classExpr(this.viewParent, {$index, item});
     }
 
     onPropertyChange(key: string, nv: any, ov: any) {
