@@ -59,6 +59,10 @@ export class MobileAppModule {
         if (hasCordova()) {
             this.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
+            app.subscribe('userLoggedIn', () => {
+                cookieService.persistCookie($rootScope.project.deployedUrl, 'JSESSIONID');
+                cookieService.persistCookie($rootScope.project.deployedUrl, 'SPRING_SECURITY_REMEMBER_ME_COOKIE');
+            });
         }
         deviceService.start();
         deviceService.whenReady().then(() => {
@@ -67,10 +71,6 @@ export class MobileAppModule {
                 this.exposeOAuthService();
                 navigator.splashscreen.hide();
             }
-        });
-        app.subscribe('userLoggedIn', () => {
-            cookieService.persistCookie($rootScope.project.deployedUrl, 'JSESSIONID');
-            cookieService.persistCookie($rootScope.project.deployedUrl, 'SPRING_SECURITY_REMEMBER_ME_COOKIE');
         });
     }
 

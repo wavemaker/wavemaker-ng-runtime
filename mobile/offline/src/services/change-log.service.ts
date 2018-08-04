@@ -276,8 +276,9 @@ export class ChangeLogService {
             .then(change => {
                 progressObserver.next(this.currentPushInfo);
                 if (change) {
-                    this.getStore().then(s => s.delete(change.id));
-                    this._flush(progressObserver, defer);
+                    return this.getStore()
+                        .then(s => s.delete(change.id))
+                        .then(() => this._flush(progressObserver, defer));
                 } else {
                     defer.resolve();
                 }

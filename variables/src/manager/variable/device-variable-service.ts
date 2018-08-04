@@ -1,7 +1,8 @@
+import { $invokeWatchers } from '@wm/core';
+
 import { initiateCallback } from '../../util/variable/variables.utils';
 import { IDeviceVariableOperation } from './device-variable-operation';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { $invokeWatchers } from '@wm/core';
 
 export class DeviceVariableService {
 

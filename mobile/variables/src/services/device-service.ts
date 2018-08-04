@@ -30,7 +30,7 @@ export class DeviceService extends DeviceVariableService {
             new GoOnlineOperation(networkService),
             new VibrateOperation(vibrateService));
         app.subscribe('onNetworkStateChange', data => {
-            app.networkStatus = data
+            app['$root'].networkStatus = data;
             $appDigest();
         });
         app.networkStatus = {
@@ -39,6 +39,7 @@ export class DeviceService extends DeviceVariableService {
             isNetworkAvailable : true,
             isServiceAvailable : true
         };
+        app['$root'] = app['$root'] || {};
     }
 }
 
@@ -169,7 +170,7 @@ class GetNetworkInfoOperation implements IDeviceVariableOperation {
     public readonly properties = [
         {target: 'autoUpdate', type: 'boolean', value: true, hide : true},
         {target: 'startUpdate', type: 'boolean', value: true, hide : true},
-        {target: 'networkStatus', type: 'boolean', value: 'bind:App.networkStatus', dataBinding: true, hide: true},
+        {target: 'networkStatus', type: 'boolean', value: 'bind:$root.networkStatus', dataBinding: true, hide: true},
         {target: 'onOnline', hide : false},
         {target: 'onOffline', hide : false}
     ];

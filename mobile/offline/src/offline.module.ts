@@ -6,7 +6,7 @@ import { SQLite } from '@ionic-native/sqlite';
 
 import { now } from 'moment';
 
-import { AbstractHttpService, App } from '@wm/core';
+import { AbstractHttpService, App, noop } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
@@ -76,6 +76,22 @@ export class OfflineModule {
                         new NamedQueryExecutionOfflineBehaviour(changeLogService, httpService, localDBManagementService, networkService).add();
                         new SecurityOfflineBehaviour(app, file, networkService, securityService).add();
                         localDBManagementService.registerCallback(new UploadedFilesImportAndExportService(changeLogService, deviceFileService, localDBManagementService, file));
+                        changeLogService.addWorker({
+                            onAddCall: () => {
+                                if (!networkService.isConnected()) {
+                                    networkService.disableAutoConnect();
+                                }
+                            },
+                            postFlush: stats => {
+                                if (stats.totalTaskCount > 0) {
+                                    localDBManagementService.close()
+                                        .catch(noop)
+                                        .then(() => {
+                                            location.assign(window.location.origin + window.location.pathname);
+                                        });
+                                }
+                            }
+                        });
                     });
                 }
                 return Promise.resolve();

@@ -103,8 +103,10 @@ export class LiveVariableOfflineBehaviour {
                     this.offlineDBService.getStore(params).then(store => {
                         store.saveAll(response.content);
                     });
+                } else if (operation.type === 'INSERT') {
+                    this.offlineDBService[operation.name](response.content, noop, noop);
                 } else {
-                    self[operation.name](params, noop, noop);
+                    this.offlineDBService[operation.name](params, noop, noop);
                 }
             }
             triggerFn(successCallback, response);
