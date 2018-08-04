@@ -230,34 +230,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this.typeaheadContainer && this.liElements.length) {
             hasActiveEl = true;
             this.typeaheadContainer.selectActiveMatch();
-        } else if (this.parentRef && !isDefined(this._modelByValue)) {
-            if (this.allowonlyselect) {
-                // matches are empty set the datavalue to undefined and set the query.
-                this.queryModel = this.query = '';
-                this._modelByValue = undefined;
-            } else if (this.query !== '' && isDefined(this.query)) {
-                // Used by chips, if allowonlyselect is false, set the datavalue to query.
-                this.queryModel = this.query;
-                this._modelByValue = undefined;
-                // adds custom chip object to the chipsList.
-                this.notifyParent($event);
-                this.invokeEventCallback('submit', {$event, widget: this, value: this.query});
-                return;
-            }
-        }
-
-        if (hasActiveEl) {
-            this.typeaheadOnSelect(this.typeaheadContainer.active, $event);
-        } else if (this.parentRef && isDefined(this._modelByValue)) {
-            this.typeaheadOnSelect(({item: {key: this.query, value: this._modelByValue, label: this.query}} as TypeaheadMatch), $event);
-        }
-    }
-
-    // Triggers the method on the parent.
-    private notifyParent($event) {
-        if (this.parentRef) {
-            this._modelByValue = this.query;
-            this.parentRef.notifyEmptyValues($event);
+        } else {
+            this.queryModel = this.query;
+            this._modelByValue = undefined;
         }
     }
 

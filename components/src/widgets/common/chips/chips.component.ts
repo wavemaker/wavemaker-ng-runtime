@@ -241,6 +241,27 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.focusSearchBox();
     }
 
+    // Triggerred when typeahead option is selected by enter keypress.
+    private onSelect($event: Event) {
+        // when matches are available, select the active match.
+        if (this.searchComponent.typeaheadContainer && this.searchComponent.liElements.length) {
+            this.searchComponent.typeaheadContainer.selectActiveMatch();
+        } else if (!isDefined(this.searchComponent._modelByValue)) {
+            if (this.allowonlyselect) {
+                // matches are empty set the datavalue to undefined and set the query.
+                this.searchComponent.queryModel = this.searchComponent.query = '';
+                this.searchComponent._modelByValue = undefined;
+            } else if (this.searchComponent.query !== '' && isDefined(this.searchComponent.query)) {
+                // Used by chips, if allowonlyselect is false, set the datavalue to query.
+                this.searchComponent.queryModel = this.searchComponent.query;
+                this.searchComponent._modelByValue = this.searchComponent.query;
+
+                // adds custom chip object to the chipsList.
+                this.addItem($event);
+            }
+        }
+    }
+
     // Add the newItem to the list
     private addItem($event: Event, widget?: SearchComponent) {
         const searchComponent = widget;
@@ -487,11 +508,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.updateMaxSize();
 
         this.invokeEventCallback('remove', {$event, item: items.length === 1 ? items[0] : items});
-    }
-
-    // Adds the custom chip when datavalue is undefined.
-    public notifyEmptyValues($event: Event) {
-        this.addItem($event);
     }
 
     /**
