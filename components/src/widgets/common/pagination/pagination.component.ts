@@ -75,7 +75,7 @@ export class PaginationComponent extends StylableComponent {
     filterFields;
     sortOptions;
     binddataset;
-    pagingOptions;
+    pagination;
 
     private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, 250);
     private _debouncedPageChanged = debounce(event => {
@@ -214,16 +214,16 @@ export class PaginationComponent extends StylableComponent {
             /*Check for number of elements in the data set*/
             if (newVal) {
                 if (this.isDataSourceHasPaging()) {
-                    this.pagingOptions = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS) || {};
+                    this.pagination = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS) || {};
                     // If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.
                     this.filterFields = variableOptions.filterFields || {};
                     this.sortOptions = variableOptions.orderBy ||
-                        (_.isArray(this.pagingOptions.sort) ? getOrderByExpr(this.pagingOptions.sort) : '');
-                    dataSize = this.pagingOptions.totalElements;
-                    maxResults = this.pagingOptions.size;
-                    if (this.pagingOptions.numberOfElements > 0) {
-                        if (isDefined(this.pagingOptions.number)) { // number is page number received from backend
-                            this.dn.currentPage = this.pagingOptions.number + 1;
+                        (_.isArray(this.pagination.sort) ? getOrderByExpr(this.pagination.sort) : '');
+                    dataSize = this.pagination.totalElements;
+                    maxResults = this.pagination.size;
+                    if (this.pagination.numberOfElements > 0) {
+                        if (isDefined(this.pagination.number)) { // number is page number received from backend
+                            this.dn.currentPage = this.pagination.number + 1;
                         }
                         currentPage = this.dn.currentPage || 1;
                     } else {
@@ -232,7 +232,7 @@ export class PaginationComponent extends StylableComponent {
                     /* Sending pageCount undefined to calculate it again for query.*/
                     this.setDefaultPagingValues(dataSize, maxResults, currentPage);
                     this.disableNavigation();
-                    this.checkDataSize(dataSize, this.pagingOptions.numberOfElements, this.pagingOptions.size);
+                    this.checkDataSize(dataSize, this.pagination.numberOfElements, this.pagination.size);
                     this.setResult(newVal);
                 } else if (!_.isString(newVal)) {
                     this.setNonPageableData(newVal);
@@ -404,7 +404,7 @@ export class PaginationComponent extends StylableComponent {
         const parts = binddataset.split('.');
         let bindPagingOptions;
         if (parts[0] === 'Variables' || parts[0] === 'Widgets') {
-            bindPagingOptions = `${parts[0]}.${parts[1]}.pagingOptions`;
+            bindPagingOptions = `${parts[0]}.${parts[1]}.pagination`;
         }
         this.binddataset = binddataset;
         setTimeout(() => {
