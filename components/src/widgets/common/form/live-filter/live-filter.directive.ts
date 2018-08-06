@@ -56,7 +56,7 @@ export class LiveFilterDirective {
             return this._options || {};
         }
         if (operation === DataSource.Operation.GET_PAGING_OPTIONS) {
-            return this.form.pagingOptions;
+            return this.form.pagination;
         }
         if (!this.form.datasource) {
             return {};
@@ -304,7 +304,7 @@ export class LiveFilterDirective {
             inFlightBehavior : 'executeAll'
         }).then(response => {
             const data = response.data;
-            this.form.pagingOptions = response.pagingOptions;
+            this.form.pagination = response.pagination;
 
             if (data.error) {
                 // disable readonly and show the appropriate error

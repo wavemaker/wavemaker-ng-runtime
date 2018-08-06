@@ -105,7 +105,7 @@ export class RemoteDataProvider implements IDataProvider {
         const $I = '[$i]';
 
         return new Promise((resolve, reject) => {
-            const pageOptions = response.pagingOptions;
+            const pageOptions = response.pagination;
 
             if (config.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
                 page = pageOptions.number + 1;

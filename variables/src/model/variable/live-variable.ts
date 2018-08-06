@@ -13,7 +13,7 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     matchMode;
     liveSource;
     propertiesMap;
-    pagingOptions;
+    pagination;
     type;
     _options;
 
@@ -105,7 +105,7 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = this.getRequestParams(options);
                 break;
             case DataSource.Operation.GET_PAGING_OPTIONS:
-                returnVal = this.pagingOptions;
+                returnVal = this.pagination;
                 break;
             case DataSource.Operation.IS_UPDATE_REQUIRED:
                 returnVal = true;
