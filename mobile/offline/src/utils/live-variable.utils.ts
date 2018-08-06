@@ -7,6 +7,8 @@ import { ChangeLogService } from '../services/change-log.service';
 import { LocalDBManagementService } from '../services/local-db-management.service';
 import { LocalDbService } from '../services/local-db.service';
 
+declare const _;
+
 const apiConfiguration = [{
         'name' : 'insertTableData',
         'type' : 'INSERT'
@@ -104,7 +106,9 @@ export class LiveVariableOfflineBehaviour {
                         store.saveAll(response.content);
                     });
                 } else if (operation.type === 'INSERT') {
-                    this.offlineDBService[operation.name](response.content, noop, noop);
+                    params = _.clone(params);
+                    params.data = response.body;
+                    this.offlineDBService[operation.name](params, noop, noop);
                 } else {
                     this.offlineDBService[operation.name](params, noop, noop);
                 }

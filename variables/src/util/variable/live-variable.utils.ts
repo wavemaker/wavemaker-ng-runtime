@@ -1,4 +1,4 @@
-import { getClonedObject, isDateTimeType, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
+import { getClonedObject, hasCordova, isDateTimeType, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
 import { $rootScope, DB_CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { LVService } from './live-variable.http.utils';
 import { formatDate, getEvaluatedOrderBy, initiateCallback } from './variables.utils';
@@ -72,9 +72,9 @@ export class LiveVariableUtils {
         if (_.isEmpty(blobCols)) {
             return;
         }
-        // if (CONSTANTS.hasCordova && isRunMode) {
-        //     href += _.endsWith(deployedUrl, '/') ? deployedUrl : deployedUrl + '/';
-        // }
+        if (hasCordova()) {
+             href += _.endsWith(deployedUrl, '/') ? deployedUrl : deployedUrl + '/';
+        }
         href += ((variable._prefabName !== '' && variable._prefabName !== undefined) ? 'prefabs/' + variable._prefabName : 'services') + '/' + variable.liveSource + '/' + variable.type + '/';
         primaryKeys = variable.propertiesMap.primaryFields || variable.propertiesMap.primaryKeys;
         _.forEach(responseData, data => {

@@ -16,7 +16,7 @@ export class DeviceVariableService {
         });
         if (operation == null) {
             initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null);
-            return Promise.reject('Could not find operation');
+            return Promise.reject(`Could not find operation '${variable.operation}' in service '${this.name}'`);
         } else if (CONSTANTS.hasCordova) {
             const dataBindings = new Map<string, any>();
             if (variable.dataBinding !== undefined) {

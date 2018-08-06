@@ -62,13 +62,13 @@ export class FileUploadOfflineBehaviour {
                     deleteOnUpload: true
                 });
             }).then(() => {
-                return {
+                return [{
                     fileName: soureFile,
                     path: filePath,
                     length: 0,
                     success: true,
                     inlinePath: filePath + '?inline'
-                };
+                }];
             });
     }
 
