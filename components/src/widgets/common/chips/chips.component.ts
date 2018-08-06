@@ -609,7 +609,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
      * @returns {any} evaluated class expression value
      */
     private getChipClass($index: number, item: DataSetItem) {
-        return this._classExpr(this.viewParent, {$index, item});
+        if (this._classExpr) {
+            return this._classExpr(this.viewParent, {$index, item});
+        }
     }
 
     onPropertyChange(key: string, nv: any, ov: any) {
