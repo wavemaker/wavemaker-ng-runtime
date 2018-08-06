@@ -129,14 +129,10 @@ export class LocalDBManagementService {
         return new Promise((resolve, reject) => {
             // Before closing databases, give some time for the pending transactions (if any).
             setTimeout(() => {
-                const closePromises = [];
-                const dbIterator = this.databases.values();
-                for (let db = dbIterator.next(); db; db = dbIterator.next()) {
-                    closePromises.push(db.value.sqliteObject.close());
-                }
-            return Promise.all(closePromises).then(resolve, reject);
-        }, 1000);
-    });
+                const closePromises = _.mapValues(this.databases, db => db.sqliteObject.close());
+                return Promise.all(closePromises).then(resolve, reject);
+            }, 1000);
+        });
     }
 
     /**

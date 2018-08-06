@@ -78,7 +78,7 @@ const countQueryTemplate = (schema) => {
                          ON ${childTableName}.${escapeName(col.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
         }
     });
-    return `SELECT count(*) FROM ${escapeName(schema.name)} ${joins.join(' ')}`;
+    return `SELECT count(*) as count FROM ${escapeName(schema.name)} ${joins.join(' ')}`;
 };
 
 const generateWherClause = (store: LocalDBStore, filterCriteria: FilterCriterion[]) => {

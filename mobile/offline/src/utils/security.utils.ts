@@ -1,7 +1,7 @@
 
 import { File } from '@ionic-native/file';
 
-import { App, triggerFn } from '@wm/core';
+import { App, noop, triggerFn } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
@@ -9,7 +9,7 @@ declare const _;
 declare const cordova;
 const SECURITY_FILE = 'logged-in-user.info';
 
-let isOfflineBehaviourAdded = true;
+let isOfflineBehaviourAdded = false;
 
 export class SecurityOfflineBehaviour {
 
@@ -43,7 +43,7 @@ export class SecurityOfflineBehaviour {
          */
         this.securityService.getConfig = (successCallback, failureCallback) => {
             if (this.networkService.isConnected()) {
-                origConfig.call(SecurityService, config => {
+                origConfig.call(this.securityService, config => {
                     this.securityConfig = config;
                     this.saveSecurityConfigLocally(config);
                     triggerFn(successCallback, config);
@@ -51,7 +51,7 @@ export class SecurityOfflineBehaviour {
             } else {
                 this.readLocalSecurityConfig().then(config => {
                     if (config.loggedOut) {
-                        origConfig.call(SecurityService, successCallback, failureCallback);
+                        origConfig.call(this.securityService, successCallback, failureCallback);
                     } else {
                         this.securityConfig = config;
                         triggerFn(successCallback, this.securityConfig);
@@ -73,9 +73,9 @@ export class SecurityOfflineBehaviour {
                 loggedOut : true,
                 loggedOutOffline : !this.networkService.isConnected()
             };
-            this.saveSecurityConfigLocally(this.securityConfig).finally(function () {
+            this._saveSecurityConfigLocally(this.securityConfig).catch(noop).then(() => {
                 if (this.networkService.isConnected()) {
-                    origAppLogout.call(SecurityService, successCallback, failureCallback);
+                    origAppLogout.call(this.securityService, successCallback, failureCallback);
                 } else {
                     location.assign(window.location.origin + window.location.pathname);
                 }
