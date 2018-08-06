@@ -38,12 +38,13 @@ export class FileHandler implements Worker {
     public postCallSuccess(change: Change, response: any) {
         if (change.service === 'OfflineFileUploadService'
             && change.operation === 'uploadToServer') {
+            const remoteFile = JSON.parse(response[0].text)[0];
             /*
              * A mapping will be created between local path and remote path.
              * This will be used to resolve local paths in entities.
              */
-            this.fileStore[change.params.file]             = response[0].path;
-            this.fileStore[change.params.file + '?inline'] = response[0].inlinePath;
+            this.fileStore[change.params.file]             = remoteFile.path;
+            this.fileStore[change.params.file + '?inline'] = remoteFile.inlinePath;
         }
     }
 

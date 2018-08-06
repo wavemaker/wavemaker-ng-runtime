@@ -22,14 +22,15 @@ export class DatasyncService extends DeviceVariableService {
                 changeLogService: ChangeLogService,
                 fileSelectorService: FileSelectorService,
                 localDBManagementService: LocalDBManagementService,
+                localDBDataPullService: LocalDBDataPullService,
                 processManagementService: ProcessManagementService,
                 securityService: SecurityService,
-                networkService: NetworkService,
-                localDBDataPullService: LocalDBDataPullService) {
+                networkService: NetworkService) {
         super();
         this.operations.push(new ExportDBOperation(localDBManagementService));
         this.operations.push(new GetOfflineChangesOperation(changeLogService));
         this.operations.push(new ImportDBOperation(fileSelectorService, localDBManagementService));
+        this.operations.push(new LastPullInfoOperation(localDBDataPullService));
         this.operations.push(new LastPushInfoOperation(changeLogService));
         this.operations.push(new PullOperation(app, processManagementService, networkService, securityService, localDBDataPullService));
         this.operations.push(new PushOperation(app, changeLogService, processManagementService, networkService, securityService));
@@ -106,6 +107,39 @@ class GetOfflineChangesOperation implements IDeviceVariableOperation {
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
         if (window['SQLitePlugin']) {
             return getOfflineChanges(this.changeLogService);
+        }
+        return Promise.reject(OFFLINE_PLUGIN_NOT_FOUND);
+    }
+}
+
+class LastPullInfoOperation implements IDeviceVariableOperation {
+    public readonly name = 'lastPullInfo';
+    public readonly model = {
+        databases : [{
+            name : 'datbaseName',
+            entities: [{
+                entityName: 'entityName',
+                pulledRecordCount: 0
+            }],
+            pulledRecordCount: 0
+        }],
+        totalPulledRecordCount: 0,
+        startTime: new Date().toJSON(),
+        endTime: new Date().toJSON()
+    };
+    public readonly properties = [
+        {target: 'startUpdate', type: 'boolean', value: true, hide: true},
+        {target: 'spinnerContext', hide: false},
+        {target: 'spinnerMessage', hide: false}
+    ];
+    public readonly requiredCordovaPlugins = REQUIRED_PLUGINS;
+
+    constructor(private localDBDataPullService: LocalDBDataPullService) {
+    }
+
+    public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
+        if (window['SQLitePlugin']) {
+            return this.localDBDataPullService.getLastPullInfo();
         }
         return Promise.reject(OFFLINE_PLUGIN_NOT_FOUND);
     }
