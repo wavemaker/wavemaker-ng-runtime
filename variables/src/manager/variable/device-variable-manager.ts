@@ -25,9 +25,16 @@ export class DeviceVariableManager extends BaseVariableManager {
         const service = this.serviceRegistry.get(variable.service);
         if (service == null) {
             initiateCallback('onError', variable, null);
-            return Promise.reject('Could not find operation');
+            return Promise.reject(`Could not find service '${service}'`);
         } else {
-            return service.invoke(variable, options);
+            this.notifyInflight(variable, true);
+            return service.invoke(variable, options).then( response => {
+                this.notifyInflight(variable, false, response);
+                return response;
+            }, err => {
+                this.notifyInflight(variable, false, err);
+                return Promise.reject(err);
+            });
         }
     }
 

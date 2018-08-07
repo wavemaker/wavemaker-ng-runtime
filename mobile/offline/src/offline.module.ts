@@ -61,10 +61,10 @@ export class OfflineModule {
             serviceName: 'OfflineStartupService',
             start: () => {
                 if (window['cordova'] && window['SQLitePlugin']) {
-                    localDBManagementService.setLogSQl((localStorage.getItem('wm.logSql') === 'true'));
+                    localDBManagementService.setLogSQl((sessionStorage.getItem('wm.logSql') === 'true') || (sessionStorage.getItem('debugMode') === 'true'));
                     (window as any).logSql = (flag = true) => {
                         localDBManagementService.setLogSQl(flag);
-                        localStorage.setItem('wm.logSql', flag ? 'true' : 'false');
+                        sessionStorage.setItem('wm.logSql', flag ? 'true' : 'false');
                     };
                     return localDBManagementService.loadDatabases().then(() => {
                         changeLogService.addWorker(new IdResolver(localDBManagementService));
