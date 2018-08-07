@@ -10,7 +10,7 @@ registerProps();
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-text',
-    hostClass: 'app-select-wrapper'
+    hostClass: 'app-input-wrapper'
 };
 
 @Component({
