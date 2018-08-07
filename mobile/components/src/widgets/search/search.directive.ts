@@ -8,6 +8,6 @@ import { switchClass } from '@wm/core';
 export class SearchDirective {
 
     constructor(elRef: ElementRef) {
-        switchClass(elRef.nativeElement, 'app-mobile-search', 'app-search');
+        switchClass(elRef.nativeElement, 'app-mobile-search');
     }
 }
