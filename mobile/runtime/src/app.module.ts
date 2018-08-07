@@ -5,7 +5,6 @@ import { NgModule } from '@angular/core';
 import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, removeNode } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { MobileCoreModule, DeviceService, ExtAppMessageService } from '@wm/mobile/core';
-import { OfflineModule } from '@wm/mobile/offline';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope } from '@wm/variables';
 

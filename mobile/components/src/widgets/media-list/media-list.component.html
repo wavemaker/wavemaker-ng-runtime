@@ -1,7 +1,9 @@
 <ul class="list-unstyled list-inline app-media-thumbnail">
     <li *ngFor="let item of fieldDefs; index as index;" [ngStyle]="{width: thumbnailwidth, height: thumbnailheight}" (click)="showFullScreen(index)">
         <div class="thumbnail">
-            <img class="thumbnail-image" [src]="item.thumbnailUrlVal">
+            <ng-container [ngTemplateOutlet]="imgTemplate"
+                          [ngTemplateOutletContext]="{src: item.thumbnailUrlVal, class: 'thumbnail-image'}">
+            </ng-container>
             <div class="thumbnail-details">
                 <ng-container [ngTemplateOutlet]="mediaListTemplate" [ngTemplateOutletContext]="{item:item, index:index}" [wmMediaListItem]="item">
                 </ng-container>
@@ -21,15 +23,21 @@
         <div wmPageContent>
             <div class="media-content">
                 <div class="image-container"  (swipeleft)="showNext()" (swiperight)="showPrev()">
-                    <img class="center-block" [src]="fieldDefs[selectedMediaIndex].mediaUrlVal">
+                    <ng-container [ngTemplateOutlet]="imgTemplate"
+                                  [ngTemplateOutletContext]="{src: fieldDefs[selectedMediaIndex].mediaUrlVal, class: 'center-block'}">
+                    </ng-container>
                     <a class="app-media-fullscreen-nav-control left" [hidden]="!(selectedMediaIndex > 0)" (click)="showPrev()">
-                        <i class="wi wi-chevron-left"></i>  
+                        <i class="wi wi-chevron-left"></i>
                     </a>
                     <a class="app-media-fullscreen-nav-control right" [hidden]="!(selectedMediaIndex < fieldDefs.length-1)" (click)="showNext()">
-                        <i class="wi wi-chevron-right"></i> 
-                    </a> 
-                </div> 
-            </div> 
+                        <i class="wi wi-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-</div> 
+</div>
+
+<ng-template #imgTemplate let-src="src" let-classname="class">
+    <img wmPicture class="classname" picturesource.bind="src" wmImageCache="{{offline}}" />
+</ng-template>
