@@ -1,11 +1,12 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
-import { enableProdMode, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
 import { Observable, Subject } from 'rxjs';
 
 import { App, executePromiseChain, hasCordova, noop, removeExtraSlashes } from '@wm/core';
 import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mobile/core';
+import { SecurityService } from '@wm/security';
 
 declare const cordova;
 declare const _;
@@ -19,8 +20,8 @@ export class MobileHttpInterceptor implements HttpInterceptor {
 
     private requestInterceptors: RequestInterceptor[] = [];
 
-    public constructor(private app: App, file: File, deviceFileDownloadService: DeviceFileDownloadService, private deviceService: DeviceService, private networkService: NetworkService) {
-        this.requestInterceptors.push(new SecurityInterceptor(file));
+    public constructor(private app: App, file: File, deviceFileDownloadService: DeviceFileDownloadService, private deviceService: DeviceService, private networkService: NetworkService, securityService: SecurityService) {
+        this.requestInterceptors.push(new SecurityInterceptor(file, securityService));
         this.requestInterceptors.push(new RemoteSyncInterceptor(app, file, deviceFileDownloadService, networkService));
         this.requestInterceptors.push(new ServiceCallInterceptor(app));
     }
@@ -166,24 +167,34 @@ class SecurityInterceptor implements RequestInterceptor {
     private static PAGE_URL_PATTERN = new RegExp('page.min.json$');
     private publicPages;
 
-    constructor(private file: File) {}
+    constructor(private file: File, private securityService: SecurityService) {}
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
-        if (hasCordova() && SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
-            return Promise.resolve().then(() => {
-                if (!this.publicPages) {
-                    return this.init();
-                }
-            }).then(() => {
-                const urlSplits = _.split(request.url, '/');
-                const pageName = urlSplits[urlSplits.length - 2];
-                if (this.publicPages && !this.publicPages[pageName]) {
-                    return Promise.reject(`Page '${pageName}' is not accessible to the user.`);
-                }
-                return Promise.resolve(request);
-            });
-        }
-        return Promise.resolve(request);
+        return new Promise<HttpRequest<any>>((resolve, reject) => {
+            if (hasCordova() && SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
+                Promise.resolve().then(() => {
+                    if (!this.publicPages) {
+                        return this.init();
+                    }
+                }).then(() => {
+                    const urlSplits = _.split(request.url, '/');
+                    const pageName = urlSplits[urlSplits.length - 2];
+                    if (!this.publicPages || this.publicPages[pageName]) {
+                        return Promise.resolve(request);
+                    } else {
+                        this.securityService.getConfig(config => {
+                            if (!config.securityEnabled || config.authenticated) {
+                                resolve(request);
+                            } else {
+                                reject(`Page '${pageName}' is not accessible to the user.`);
+                            }
+                        }, () => reject(`Security call failed.`));
+                    }
+                    return Promise.resolve(request);
+                });
+            }
+            return resolve(request);
+        });
     }
 
     /**
