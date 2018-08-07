@@ -1,8 +1,8 @@
 
 import { File } from '@ionic-native/file';
 
-import { App, noop, triggerFn } from '@wm/core';
-import { NetworkService } from '@wm/mobile/core';
+import { App, noop, triggerFn} from '@wm/core';
+import { NetworkService, DeviceService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
 declare const _;
@@ -19,6 +19,7 @@ export class SecurityOfflineBehaviour {
     constructor(
         private app: App,
         private file: File,
+        private deviceService: DeviceService,
         private networkService: NetworkService,
         private securityService: SecurityService
     ) {
@@ -32,7 +33,7 @@ export class SecurityOfflineBehaviour {
             return;
         }
         isOfflineBehaviourAdded = true;
-        const origConfig = this.securityService.getConfig;
+        const origLoad = this.securityService.load;
         const origAppLogout = this.securityService.appLogout;
         /**
          * Add offline behaviour to SecurityService.getConfig. When offline, this funcation returns security
@@ -41,28 +42,25 @@ export class SecurityOfflineBehaviour {
          * @param successCallback
          * @param failureCallback
          */
-        this.securityService.getConfig = (successCallback, failureCallback) => {
-            if (this.networkService.isConnected()) {
-                origConfig.call(this.securityService, config => {
-                    this.securityConfig = config;
-                    this.saveSecurityConfigLocally(config);
-                    triggerFn(successCallback, config);
-                }, failureCallback);
-            } else {
-                this.readLocalSecurityConfig().then(config => {
-                    if (config.loggedOut) {
-                        origConfig.call(this.securityService, successCallback, failureCallback);
-                    } else {
-                        this.securityConfig = config;
-                        triggerFn(successCallback, this.securityConfig);
-                    }
-                }, () => origConfig.call(this.securityConfig, successCallback, failureCallback));
-            }
-        };
-
         this.securityService.load = () => {
-            return new Promise<any>((resolve, reject) => {
-                this.securityService.getConfig(resolve, reject);
+            return new Promise((resolve, reject) => {
+                if (this.networkService.isConnected()) {
+                    origLoad.call(this.securityService).then(config => {
+                        this.securityConfig = config;
+                        this.saveSecurityConfigLocally(config);
+                        resolve(this.securityConfig);
+                    }, reject);
+                } else {
+                    this.readLocalSecurityConfig().then(config => {
+                        if (config.loggedOut) {
+                            return origLoad.call(this.securityService);
+                        } else {
+                            this.securityConfig = config;
+                            this.securityService.config = config;
+                            return config;
+                        }
+                    }, () => origLoad.call(this.securityConfig)).then(resolve, reject);
+                }
             });
         };
 
@@ -93,7 +91,7 @@ export class SecurityOfflineBehaviour {
         this.securityService.isAuthenticated = successCallback => {
             triggerFn(successCallback, this.securityConfig.authenticated === true);
         };
-        this.clearLastLoggedInUser();
+        this.deviceService.whenReady().then(() => this.clearLastLoggedInUser());
         /**
          * If the user has chosen to logout while app is offline, then invalidation of cookies happens when
          * app comes online next time.
