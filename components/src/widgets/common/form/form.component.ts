@@ -424,9 +424,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         // Get all form fields and prepare form data as key value pairs
         this.formFields.forEach(field => {
             let fieldName,
-                fieldTarget,
                 fieldValue;
-            fieldTarget = _.split(field.key || field.target, '.');
             fieldValue = field.datavalue || field._control.value;
             fieldValue = (fieldValue === null || fieldValue === '') ? undefined : fieldValue;
 
@@ -434,14 +432,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 fieldValue = getFiles(this.name, field.key + '_formWidget', field.multiple);
             }
 
-            fieldName   = fieldTarget[0] || field.key || field.name;
+            fieldName = field.key || field.target || field.name;
             // In case of update the field will be already present in form data
-            if (fieldTarget.length === 1) {
-                formData[fieldName] = fieldValue;
-            } else {
-                formData[fieldTarget[0]]                 = formData[fieldTarget[0]] || {};
-                formData[fieldTarget[0]][fieldTarget[1]] = fieldValue;
-            }
+            _.set(formData, fieldName, fieldValue);
         });
         this.updateFormDataOutput(formData);
         return this.dataoutput;
