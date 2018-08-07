@@ -10,7 +10,7 @@ export class DeviceVariableService {
 
     protected operations: IDeviceVariableOperation[];
 
-    invoke(variable: any, options: any) {
+    invoke(variable: any, options: any): Promise<any> {
         const operation = this.operations.find(o => {
             return o.name === variable.operation;
         });

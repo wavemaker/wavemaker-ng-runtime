@@ -223,7 +223,7 @@ export class LocalDBManagementService {
                             }
                             metaInfo.createdOn = _.now();
                             return metaInfo;
-                        }).then(() => executePromiseChain(_.map(this.callbacks, 'preExport'), [folderToExportFullPath, metaInfo]))
+                        }).then(() => executePromiseChain(this.getCallbacksFor('preExport'), [folderToExportFullPath, metaInfo]))
                         .then(() => {
                             // Write meta data to META.json
                             return this.file.writeFile(folderToExportFullPath, 'META.json', JSON.stringify(metaInfo));
@@ -245,7 +245,7 @@ export class LocalDBManagementService {
                 }).then(resolve, reject)
                 .catch(noop).then(() => {
                     // Remove temporary folder for export
-                    return this.file.removeDir(cordova.file.cacheDirectory, folderToExport);
+                    return this.deviceFileService.removeDir(cordova.file.cacheDirectory + folderToExport);
                 });
         });
     }
@@ -325,7 +325,7 @@ export class LocalDBManagementService {
                         // reload databases
                         this.databases = null;
                         return this.loadDatabases();
-                    }).then(() => executePromiseChain(_.map(this.callbacks, 'postImport'), [importFolderFullPath, zipMeta]))
+                    }).then(() => executePromiseChain(this.getCallbacksFor('postImport'), [importFolderFullPath, zipMeta]))
                     .then(() => {
                         if (backupZip) {
                             return this.deviceFileService.removeFile(backupZip);
@@ -343,7 +343,7 @@ export class LocalDBManagementService {
             }).then(resolve, reject)
             .catch(noop)
             .then(() => {
-                this.file.removeDir(cordova.file.cacheDirectory, importFolder);
+                return this.deviceFileService.removeDir(cordova.file.cacheDirectory + importFolder);
             });
         });
     }
@@ -643,6 +643,15 @@ export class LocalDBManagementService {
                 appInfo.versionCode = (versionCode as any);
                 return appInfo;
             });
+    }
+
+    private getCallbacksFor(event: string): any[] {
+        return this.callbacks.map(c => {
+            if (c[event]) {
+                return c[event].bind(c);
+            }
+            return null;
+        });
     }
 
     /**
