@@ -107,7 +107,7 @@ export class LiveVariableOfflineBehaviour {
                     });
                 } else if (operation.type === 'INSERT') {
                     params = _.clone(params);
-                    params.data = response.body;
+                    params.data = _.clone(response.body);
                     this.offlineDBService[operation.name](params, noop, noop);
                 } else {
                     this.offlineDBService[operation.name](params, noop, noop);
