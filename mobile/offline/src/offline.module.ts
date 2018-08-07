@@ -4,9 +4,8 @@ import { CommonModule } from '@angular/common';
 import { File } from '@ionic-native/file';
 import { SQLite } from '@ionic-native/sqlite';
 
-import { now } from 'moment';
 
-import { AbstractHttpService, App, noop } from '@wm/core';
+import { AbstractHttpService, App, hasCordova, noop } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
@@ -57,10 +56,13 @@ export class OfflineModule {
         networkService: NetworkService,
         securityService: SecurityService
     ) {
+        if (!hasCordova()) {
+            return;
+        }
         deviceService.addStartUpService({
             serviceName: 'OfflineStartupService',
             start: () => {
-                if (window['cordova'] && window['SQLitePlugin']) {
+                if (window['SQLitePlugin']) {
                     localDBManagementService.setLogSQl((sessionStorage.getItem('wm.logSql') === 'true') || (sessionStorage.getItem('debugMode') === 'true'));
                     (window as any).logSql = (flag = true) => {
                         localDBManagementService.setLogSQl(flag);
@@ -74,7 +76,6 @@ export class OfflineModule {
                         new LiveVariableOfflineBehaviour(changeLogService, localDBManagementService, networkService, localDbService).add();
                         new FileUploadOfflineBehaviour(changeLogService, deviceFileService, deviceFileUploadService, file, networkService, deviceFileService.getUploadDirectory()).add();
                         new NamedQueryExecutionOfflineBehaviour(changeLogService, httpService, localDBManagementService, networkService).add();
-                        new SecurityOfflineBehaviour(app, file, networkService, securityService).add();
                         localDBManagementService.registerCallback(new UploadedFilesImportAndExportService(changeLogService, deviceFileService, localDBManagementService, file));
                         changeLogService.addWorker({
                             onAddCall: () => {
@@ -97,5 +98,6 @@ export class OfflineModule {
                 return Promise.resolve();
             }
         });
+        new SecurityOfflineBehaviour(app, file, networkService, securityService).add();
     }
 }

@@ -60,6 +60,12 @@ export class SecurityOfflineBehaviour {
             }
         };
 
+        this.securityService.load = () => {
+            return new Promise<any>((resolve, reject) => {
+                this.securityService.getConfig(resolve, reject);
+            });
+        };
+
         /**
          * When users logs out, local config will be removed. If the user is offline and logs out, then user
          * will be logged out from the app and cookies are invalidated when app goes online next time.
