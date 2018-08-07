@@ -63,12 +63,13 @@ export class IdResolver implements Worker {
         if (change && change.service === 'DatabaseService'
             && (change.operation === 'insertTableData' || change.operation === 'insertMultiPartTableData')
             && this.transactionLocalId) {
+            const data = response[0].body;
             const entityName = change.params.entityName;
             const dataModelName = change.params.dataModelName;
             return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
-                this.pushIdToStore(dataModelName, entityName, this.transactionLocalId, response[0][store.primaryKeyName]);
+                this.pushIdToStore(dataModelName, entityName, this.transactionLocalId, data[store.primaryKeyName]);
                 store.delete(this.transactionLocalId);
-                store.save(response[0]);
+                store.save(data);
                 this.transactionLocalId = null;
             });
         }

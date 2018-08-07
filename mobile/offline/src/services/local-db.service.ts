@@ -180,6 +180,9 @@ export class LocalDbService {
                 this.convertFieldNameToColumnName(store, rule);
             } else {
                 rule.target = this.escapeName(store.fieldToColumnMapping[rule.target]);
+                if (rule.target.indexOf('.') < 0) {
+                    rule.target = this.escapeName(store.entitySchema.name) + '.' + rule.target;
+                }
             }
         });
     }

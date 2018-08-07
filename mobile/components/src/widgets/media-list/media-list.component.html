@@ -39,5 +39,5 @@
 </div>
 
 <ng-template #imgTemplate let-src="src" let-classname="class">
-    <img wmPicture class="classname" picturesource.bind="src" wmImageCache="{{offline}}" />
+    <img wmPicture class="{{classname}}" picturesource.bind="src" wmImageCache="{{offline}}" />
 </ng-template>

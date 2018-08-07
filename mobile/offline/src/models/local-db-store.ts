@@ -50,32 +50,32 @@ const deleteRecordTemplate = (schema: EntityInfo) => {
     return '';
 };
 
-const selectSqlTemplate = (schema) => {
+const selectSqlTemplate = (schema: EntityInfo) => {
     const columns = [],
         joins = [];
     schema.columns.forEach( col => {
         let childTableName;
         columns.push(escapeName(schema.name) + '.' + escapeName(col.name) + ' as ' + col.fieldName);
-        if (col.targetEntity) {
-            childTableName = col.sourceFieldName;
-            _.forEach(col.dataMapper, (childCol, childFiledName) => {
+        if (col.foreignRelaton) {
+            childTableName = col.foreignRelaton.sourceFieldName;
+            _.forEach(col.foreignRelaton.dataMapper, (childCol, childFiledName) => {
                 columns.push(childTableName + '.' + escapeName(childCol.name) + ' as \'' + childFiledName + '\'');
             });
-            joins.push(` LEFT JOIN ${escapeName(col.targetTable)} ${childTableName}
-                         ON ${childTableName}.${escapeName(col.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
+            joins.push(` LEFT JOIN ${escapeName(col.foreignRelaton.targetTable)} ${childTableName}
+                         ON ${childTableName}.${escapeName(col.foreignRelaton.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
         }
     });
     return `SELECT ${columns.join(',')} FROM ${escapeName(schema.name)} ${joins.join(' ')}`;
 };
 
-const countQueryTemplate = (schema) => {
+const countQueryTemplate = (schema: EntityInfo) => {
     const joins = [];
     schema.columns.forEach( col => {
         let childTableName;
-        if (col.targetEntity) {
-            childTableName = col.sourceFieldName;
-            joins.push(` LEFT JOIN ${escapeName(col.targetTable)} ${childTableName}
-                         ON ${childTableName}.${escapeName(col.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
+        if (col.foreignRelaton) {
+            childTableName = col.foreignRelaton.sourceFieldName;
+            joins.push(` LEFT JOIN ${escapeName(col.foreignRelaton.targetTable)} ${childTableName}
+                         ON ${childTableName}.${escapeName(col.foreignRelaton.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
         }
     });
     return `SELECT count(*) as count FROM ${escapeName(schema.name)} ${joins.join(' ')}`;
