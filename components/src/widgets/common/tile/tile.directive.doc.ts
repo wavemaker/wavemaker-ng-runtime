@@ -43,96 +43,96 @@ export class Tile {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblclick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse hovers over the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    mouseover($event: MouseEvent, widget: any) {}
+    onMouseover($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse moves away from this widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    mouseout($event: MouseEvent, widget: any) {}
+    onMouseout($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
 
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    doubletap($event: TouchEvent, widget: any) {}
+    onDoubletap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipeup event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    swipeup($event: TouchEvent, widget: any) {}
+    onSwipeup($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipedown event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    swipedown($event: TouchEvent, widget: any) {}
+    onSwipedown($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipeleft event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    swipeleft($event: TouchEvent, widget: any) {}
+    onSwipeleft($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swiperight event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    swiperight($event: TouchEvent, widget: any) {}
+    onSwiperight($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchin event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    pinchin($event: TouchEvent, widget: any) {}
+    onPinchin($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchout event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tile widget
      */
-    pinchout($event: TouchEvent, widget: any) {}
+    onPinchout($event: TouchEvent, widget: any) {}
 }

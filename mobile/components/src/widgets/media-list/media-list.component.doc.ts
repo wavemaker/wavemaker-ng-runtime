@@ -36,12 +36,12 @@ export class MediaList {
      */
     @Input() show: boolean = true;
     /**
-     * If checked, then picture is saved for offline.
+     * If checked, then picture is saved for offline display.
      */
     @Input() offline: boolean = true;
 
     /**
-     * This contains the url for the picture’s thumbnail url.
+     * This contains the url for the picture’s thumbnail.
      */
     @Input() thumbnailurl: string;
     /**

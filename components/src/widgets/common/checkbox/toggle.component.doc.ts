@@ -30,7 +30,7 @@ export class Toggle {
      */
     @Input() disabled: boolean;
     /**
-     * This property specifies the title/hint of the toggle. <br>
+     * Hint text is shown of the toggle widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -67,13 +67,13 @@ export class Toggle {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the toggle widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the toggle widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
@@ -81,29 +81,29 @@ export class Toggle {
      * @param newVal  datavalue of the toggle widget
      * @param oldVal  previously selected datavalue of the toggle widget
      */
-    change($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
+    onChange($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the toggle widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the toggle widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the toggle widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the toggle widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 }

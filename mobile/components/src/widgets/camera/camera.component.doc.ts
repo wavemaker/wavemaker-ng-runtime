@@ -10,7 +10,7 @@ export class Camera {
      */
     @Input() allowedit: boolean = false;
     /**
-     * This specifies whether the image or video that is to be captured. <br>
+     * This specifies whether image or video is to be captured. <br>
      * <p><em>Allowed Values: </em><code>IMAGE, VIDEO</code></p>
      * <div class="summary">
      * <p><code>IMAGE</code><em>: To capture a picture.</em></p>
@@ -91,5 +91,5 @@ export class Camera {
      * @param localFile File object
      * @param widget Instance of the widget
      */
-    success($event: MouseEvent, widget: any, localFilePath: string, localFile: any) {}
+    onSuccess($event: MouseEvent, widget: any, localFilePath: string, localFile: any) {}
 }

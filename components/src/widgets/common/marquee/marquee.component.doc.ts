@@ -16,14 +16,14 @@ export class Marquee {
     @Input() class: string;
 
     /**
-     * Direction of the content in the marquee widget <br>
+     * Direction of the scroll for the content in the marquee widget.  <br>
      * <p><em>Allowed Values: </em><code>up, down, left, right</code></p>
      *
      */
     @Input() direction: string;
 
     /**
-     * speed of the marquee widget content
+     * Speed of the scroll for the marquee widget content.
      */
     @Input() scrollamount: number;
 

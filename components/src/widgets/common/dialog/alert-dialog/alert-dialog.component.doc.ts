@@ -10,7 +10,7 @@ export class Alertdialog {
      */
     @Input() title: string = 'Alert';
     /**
-     * This property specifies the name of the alertdialog widget.
+     * Name of the alertdialog widget.
      */
     @Input() name: string;
     /**
@@ -68,11 +68,11 @@ export class Alertdialog {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the alertdialog widget
      */
-    ok($event: MouseEvent, widget: any) {}
+    onOk($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the dialog is opened.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the alertdialog widget
      */
-    open($event: MouseEvent, widget: any) {}
+    onOpen($event: MouseEvent, widget: any) {}
 }

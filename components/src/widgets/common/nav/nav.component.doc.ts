@@ -82,7 +82,7 @@ export class Nav {
     @Input() itemchildren: string;
 
     /**
-     * This property will be used to show/hide the accordion widget on the web page. <br>
+     * This property will be used to show/hide the nav widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -116,5 +116,5 @@ export class Nav {
      * @param widget  Instance of the nav.
      * @param $item  Nav item object.
      */
-    select($event: Event, widget: any, $item: any) {}
+    onSelect($event: Event, widget: any, $item: any) {}
 }

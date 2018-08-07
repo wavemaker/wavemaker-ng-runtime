@@ -31,13 +31,13 @@ export class Prefab {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the prefab widget
      */
-    load($event: MouseEvent, widget: any) {}
+    onLoad($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is being destroyed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the prefab widget
      */
-    destroy($event: MouseEvent, widget: any) {}
+    onDestroy($event: MouseEvent, widget: any) {}
     
 }

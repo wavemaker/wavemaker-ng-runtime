@@ -18,7 +18,7 @@ export class TableRowAction {
      */
     @Input() title: string;
     /**
-     * Icon Class for the action button.
+     * Icon Class for the row action widget.
      */
     @Input() iconclass: string;
     /**
@@ -30,16 +30,16 @@ export class TableRowAction {
      */
     @Input() shortcutkey: string;
     /**
-     * This property will be used to show/hide the button widget on the web page. <br>
+     * This property will be used to show/hide the table row action on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
     /**
-     * This property specifies the tab order of the Button Widget.
+     * This property specifies the tab order of the table row action.
      */
     @Input() tabindex: number = 0;
     /**
-     * This property will be used to disable/enable the button widget on the web page. <br>
+     * This property will be used to disable/enable the table row action on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() disabled: boolean;

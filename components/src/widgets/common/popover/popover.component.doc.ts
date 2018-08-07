@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class Popover {
     /**
-     * This Property specifies inline value to be displayed along with the label of the popover. <br>
+     * This property specifies the value to be displayed along with the label of the popover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() badgevalue: string;
@@ -19,7 +19,7 @@ export class Popover {
      */
     @Input() class: string;
     /**
-     * Title/hint for the popover. <br>
+     * Hint text is shown for the popover widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -116,7 +116,7 @@ export class Popover {
      */
     @Input() popoverplacement: string = 'Bottom';
     /**
-     * This property will be used to encode the provided URL at run time.
+     * This property when set to true will encode the provided URL at run time.
      */
     @Input() encodeurl: boolean = true;
     /**
@@ -128,17 +128,17 @@ export class Popover {
      * This event handler is called when the widget is loaded.
      * @param widget  Instance of the popover widget
      */
-    load(widget: any) {}
+    onLoad(widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the popover widget
      */
-    show($event: Event, widget: any) {}
+    onShow($event: Event, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the popover widget
      */
-    hide($event: Event, widget: any) {}
+    onHide($event: Event, widget: any) {}
 }

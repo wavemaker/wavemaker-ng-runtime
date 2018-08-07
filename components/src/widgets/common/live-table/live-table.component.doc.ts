@@ -9,11 +9,11 @@ export class LiveTable {
      */
     @Input() class: string;
     /**
-     * Name of the widget.
+     * Name of the data table widget.
      */
     @Input() name: string;
     /**
-     * This property will be used to show/hide the widget on the web page.
+     * This property will be used to show/hide the table widget on the web page.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean;

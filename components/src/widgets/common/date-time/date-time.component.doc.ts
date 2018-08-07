@@ -14,7 +14,7 @@ export class Datetime {
      */
     @Input() placeholder: string = 'Select Date Time';
     /**
-     * Title/hint for the datetime widget. This is not available in mobile.<br>
+     * Hint text is shown for the datetime widget on hover. This is not available in mobile.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -32,16 +32,16 @@ export class Datetime {
      */
     @Input() datavalue: string;
     /**
-     * This property display pattern of the datetime widget. This is not available in mobile.<br>
+     * This property is used to set the display pattern of the date widget. This is not available in mobile.<br>
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'yyyy-MM-dd hh:mm:ss a', 'yyyy-MM-ddTHH:mm:ss', 'yyyy, MMM dd', etc. </code></p>
      */
     @Input() datepattern: string = 'yyyy-MM-dd hh:mm:ss a';
     /**
-     * This property decide number of hours to increase or decrease. This is not available in mobile.<br>
+     * This property is used to decide number of hours to increase or decrease. This is not available in mobile.<br>
      */
     @Input() hourstep: number = 1;
     /**
-     * This property decide number of minutes to increase or decrease. This is not available in mobile.<br>
+     * This property is used to decide number of minutes to increase or decrease. This is not available in mobile.<br>
      */
     @Input() minutestep: number = 15;
     /**
@@ -110,41 +110,41 @@ export class Datetime {
      * @param newVal  New value of the widget
      * @param oldVal  Old value of the widget
      */
-    change($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
+    onChange($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the datetime widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 }

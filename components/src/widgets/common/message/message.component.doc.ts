@@ -44,5 +44,5 @@ export class Message {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the message widget
      */
-    close($event: MouseEvent, widget: any) {}
+    onClose($event: MouseEvent, widget: any) {}
 }

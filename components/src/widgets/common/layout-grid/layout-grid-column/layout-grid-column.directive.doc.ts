@@ -13,7 +13,7 @@ export class LayoutGridColumn {
      */
     @Input() name: string;
     /**
-     * This property adds number of columns into the row. <br>
+     * This property adds number of columns to the row. <br>
      * <p><em>Allowed Values: </em><code>1,2,3,4,5,6,7,8,9,10,11,12</code></p>
      */
      @Input() columnwidth: number;

@@ -27,7 +27,7 @@ export class List {
     @Input() dataset: Array<any> | Object;
 
     /**
-     * If the disable selection property is true (checked), selection of List item won't happen on the widget.
+     * If the disable selection property is true (checked), selection of List item will not be allowed.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() disableitem: boolean = false;
@@ -49,7 +49,7 @@ export class List {
     @Input() iconclass: string;
 
     /**
-     * This property allows user to select a pre-defined list item class name from the view-list drop down on the right.
+     * This property allows user to select a pre-defined list item class name from the view-list drop down.
      * <p><em>Default Options: </em><code>list-group-item, media</code></p>
      * <p><em>Bindable: </em><code>true</code></p>
      */
@@ -61,7 +61,7 @@ export class List {
     @Input() itemsperrow: string;
 
     /**
-     * This property allows user to select a pre-defined list class name from the view-list drop down on the right.
+     * This property allows user to select a pre-defined list item class name from the view-list drop down.
      * <p><em>Default Options: </em><code>list-group, media-list</code></p>
      * <p><em>Bindable: </em><code>true</code></p>
      */
@@ -90,7 +90,7 @@ export class List {
     @Input() loadingdatamsg: string = 'Loading...';
 
     /**
-     * This property can assign an icon that is shown while loading records.
+     * This property can be used to set an icon to be shown while loading records.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() loadingicon: string = 'fa fa-circle-o-notch';
@@ -165,7 +165,7 @@ export class List {
     @Input() pagesize: number = 20;
 
     /**
-     * If this property is enabled, the first item of the livelist will be selected automatically when the livelist is displayed.<br>
+     * If this property is enabled, the first item of the list will be selected automatically when the livelist is displayed.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() selectfirstitem: boolean = false;
@@ -214,49 +214,49 @@ export class List {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the list item is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblclick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse enters the list item.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+   onMouseenter($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse leaves the list item.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
 
     /**
-     * Callback function which will be triggered the tap event is triggered on a list item.
+     * Callback function which will be triggered when the tap event is triggered on a list item.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the double tap event is triggered on a list item.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    doubletap($event: TouchEvent, widget: any) {}
+    onDoubletap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered whenever a key is pressed when a list item is focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    keypress($event: KeyboardEvent, widget: any) {}
+    onKeypress($event: KeyboardEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered before the item in a list is reordered.
@@ -265,21 +265,21 @@ export class List {
      * @param $data Contains the list data with reordered list.
      * @param $changedItem List item that is reordered.
      */
-    reorder($event: MouseEvent, widget: any, $data: Array<any>, $changedItem: Object) {}
+    onReorder($event: MouseEvent, widget: any, $data: Array<any>, $changedItem: Object) {}
 
     /**
-     * Callback function which will be triggered when selected items cross the Selection Limit.
+     * Callback function which will be triggered when the items selected cross the specified Selection Limit.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the list widget
      */
-    selectionlimitexceed($event: Event, widget: any) {}
+    onSelectionlimitexceed($event: Event, widget: any) {}
 
     /**
      * This event handler is called before the list items are rendered on the list widget.
      * @param widget Instance of the list widget
      * @param $data Contains the new list data
      */
-    beforedatarender(widget: any, $data: Array<any>) {}
+    onBeforedatarender(widget: any, $data: Array<any>) {}
 
     /**
      * This event handler is called when the page is changed through navigation controls.
@@ -287,7 +287,7 @@ export class List {
      * @param widget  Instance of the list widget
      * @param $index  Current page
      */
-    paginationchange($event: Event, widget: any, $index: number) {}
+    onPaginationonChange($event: Event, widget: any, $index: number) {}
 
     /**
      * This event handler is called when the data is set using the pagination.
@@ -296,7 +296,7 @@ export class List {
      * @param $index  Current page
      * @param $data  Contains the new set of data.
      */
-    setrecord($event: Event, widget: any, $index: number, $data: Array<any>) {}
+    onSetrecord($event: Event, widget: any, $index: number, $data: Array<any>) {}
 
     /**
      * Clear method removes all the list items for the list widget.

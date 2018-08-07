@@ -24,7 +24,7 @@ export class Textarea {
      */
     @Input() disabled: boolean;
     /**
-     * Title/hint for the textarea. <br>
+     * Hint text is shown for the textarea widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -37,7 +37,7 @@ export class Textarea {
      */
     @Input() name: string;
     /**
-     * Placeholder /hint for the textarea.
+     * Placeholder for the textarea.
      */
     @Input() placeholder: string;
     /**
@@ -80,60 +80,60 @@ export class Textarea {
      * @param newVal  datavalue of the textarea widget
      * @param oldVal  previously selected datavalue of the textarea widget
      */
-    change($event: Event, widget: any, newVal: string|number, oldVal: string|number) {}
+    onChange($event: Event, widget: any, newVal: string|number, oldVal: string|number) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    blur($event: Event, widget: any) {}
+    onBlur($event: Event, widget: any) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    focus($event: Event, widget: any) {}
+    onFocus($event: Event, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed down.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    keydown($event: KeyboardEvent, widget: any) {}
+    onKeydown($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      */
-    keypress($event: KeyboardEvent, widget: any) {}
+    onKeypress($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is released.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
      * @returns {void} This method does not return anything
      */
-    keyup($event: KeyboardEvent, widget: any) {}
+    onKeyup($event: KeyboardEvent, widget: any) {}
 }

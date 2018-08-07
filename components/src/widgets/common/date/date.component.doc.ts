@@ -14,7 +14,7 @@ export class Date {
      */
     @Input() placeholder: string = 'Select Date';
     /**
-     * Title/hint for the date widget. This is not available in mobile.<br>
+     * Hint text is shown for the date widget on hover. This is not available in mobile.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -32,12 +32,12 @@ export class Date {
      */
     @Input() datavalue: string;
     /**
-     * This property display pattern of the date widget. This is not available in mobile.<br>
+     * This property is used to set the display pattern of the date widget. This is not available in mobile.<br>
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'MM-dd-yy', 'yyyy-MM-dd', 'mm/dd/yyyy', etc. </code></p>
      */
     @Input() datepattern: string = 'yyyy-MM-dd';
     /**
-     * This property output format of the date widget.<br>
+     * This property is used to set the output format of the date widget.<br>
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'MM-dd-yy', 'yyyy-MM-dd', 'mm/dd/yyyy', etc. </code></p>
      */
     @Input() outputformat: string = 'yyyy-MM-dd';
@@ -102,41 +102,41 @@ export class Date {
      * @param newVal  New value of the widget
      * @param oldVal  Old value of the widget
      */
-    change($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
+    onChange($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the date widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the date widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the date widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the date widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget. This is not available in mobile.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the date widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the date widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 }

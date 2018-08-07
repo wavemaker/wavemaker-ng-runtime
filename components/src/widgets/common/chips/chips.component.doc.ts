@@ -114,7 +114,7 @@ export class Chips {
      */
     @Input() showsearchicon: boolean;
     /**
-     * This property specifies the tab order of the search widget.
+     * This property specifies the tab order of the Chip widget.
      */
     @Input() tabindex: number = 0;
     /**
@@ -132,21 +132,21 @@ export class Chips {
      * @param widget  Instance of the chips widget
      * @param $item object containing chip data i.e. label(display value), key, value(datavalue), dataObject. dataObject has the object if dataset is bound to array of objects.
      */
-    add($event: MouseEvent, widget: any, $item: Object) {}
+    onAdd($event: MouseEvent, widget: any, $item: Object) {}
     /**
      * Callback function which will be triggered before adding the chip. If this function returns false then chip will not be added.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param newItem object containing chip data i.e. label(display value), key, value(datavalue), dataObject. dataObject has the object if dataset is bound to array of objects.
      */
-    beforeadd($event: MouseEvent, widget: any, newItem: Object) {}
+    onBeforeadd($event: MouseEvent, widget: any, newItem: Object) {}
     /**
      * Callback function which will be triggered before removing the chip. If this function returns false then chip will not be removed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param $item object containing chip data before removing the chip.
      */
-    beforeremove($event: MouseEvent, widget: any, $item: Object) {}
+    onBeforeremove($event: MouseEvent, widget: any, $item: Object) {}
     /**
      * Callback function which will be triggered before the service call.
      * @param $event  DOM event on which call back is triggered
@@ -154,27 +154,27 @@ export class Chips {
      * @param $data contains the list of chips data
      * @param $changedItem chip item that has to be reordered.
      */
-    beforereorder($event: MouseEvent, widget: any, $data: Array<Object>, $changedItem: Object) {}
+    onBeforereorder($event: MouseEvent, widget: any, $data: Array<Object>, $changedItem: Object) {}
     /**
      * Callback function which will be triggered before the service call.
      * @param widget  Instance of the chips widget
      * @param inputData object containing filter fields
      */
-    beforeservicecall(widget: any, inputData: Object) {}
+    onBeforeservicecall(widget: any, inputData: Object) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * * @param newVal contains the chip data.
      */
-    chipclick($event: MouseEvent, widget: any, newVal: Object) {}
+    onChipclick($event: MouseEvent, widget: any, newVal: Object) {}
     /**
      * Callback function which will be triggered before the service call.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param newVal contains the selected chip data.
      */
-    chipselect($event: MouseEvent, widget: any, newVal: Object) {}
+    onChipselect($event: MouseEvent, widget: any, newVal: Object) {}
     /**
      * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
@@ -182,14 +182,14 @@ export class Chips {
      * @param newVal  datavalue of the chips widget
      * @param oldVal  previously selected datavalue of the chips widget
      */
-    change($event: MouseEvent, widget: any, newVal: Array<any>, oldVal: Array<any>) {}
+    onChange($event: MouseEvent, widget: any, newVal: Array<any>, oldVal: Array<any>) {}
     /**
      * Callback function which will be triggered before the service call.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param $item object containing chip data that is removed from chips list.
      */
-    remove($event: MouseEvent, widget: any, $item: Object) {}
+    onRemove($event: MouseEvent, widget: any, $item: Object) {}
     /**
      * Callback function which will be triggered before the service call.
      * @param $event  DOM event on which call back is triggered
@@ -197,5 +197,5 @@ export class Chips {
      * @param $data contains the list of chips data
      * @param $changedItem chip item that is reordered.
      */
-    reorder($event: MouseEvent, widget: any, $data: Array<Object>, $changedItem: Object) {}
+    onReorder($event: MouseEvent, widget: any, $data: Array<Object>, $changedItem: Object) {}
 }

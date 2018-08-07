@@ -18,7 +18,7 @@ export class Layoutgrid {
      */
     @Input() columns: number;
     /**
-     * This property will be used to show/hide the composite widget on the web page.
+     * This property will be used to show/hide the layout grid widget on the web page.
      */
     @Input() show: boolean = true;
 }

@@ -15,12 +15,12 @@ export class Menu {
      */
     @Input() name: string;
     /**
-     * Title/hint for the button. <br>
+     * Hint text is shown for the Menu widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
     /**
-     * This property specifies the tab order of the Button Widget.
+     * This property specifies the tab order of the Menu Widget.
      */
     @Input() tabindex: number = 0;
     /**
@@ -37,7 +37,7 @@ export class Menu {
      */
     @Input() menulayout: string;
     /**
-     * This property sepcifies the position of menu item. <br>
+     * This property specifies the position of menu item.<br>
      * <p><em>Allowed Values: </em><code>'down,right', 'down,left', 'up,right', 'up,left', 'inline'</code></p>
      */
     @Input() menuposition: string;
@@ -133,6 +133,6 @@ export class Menu {
      * @param widget  Instance of the button widget
      * @param $item   which provides selected menu item details
      */
-    select ($event: MouseEvent, widget: any, $item: any) {}
+    onSelect($event: MouseEvent, widget: any, $item: any) {}
 
 }

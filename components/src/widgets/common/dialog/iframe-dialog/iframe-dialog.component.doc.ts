@@ -10,7 +10,7 @@ export class IFramedialog {
      */
     @Input() title: string = 'External Content';
     /**
-     * This property specifies the name of the iframedialog widget.
+     * Name of the iframedialog widget.
      */
     @Input() name: string;
     /**
@@ -75,17 +75,17 @@ export class IFramedialog {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the iframedialog widget
      */
-    ok($event: MouseEvent, widget: any) {}
+    onOk($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the close button for the dialog is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the iframedialog widget
      */
-    close($event: MouseEvent, widget: any) {}
+    onClose($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the dialog is opened.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the iframedialog widget
      */
-    open($event: MouseEvent, widget: any) {}
+    onOpen($event: MouseEvent, widget: any) {}
 }

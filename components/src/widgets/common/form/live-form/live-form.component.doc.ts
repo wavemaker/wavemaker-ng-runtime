@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class LiveForm {
     /**
-     * Enabling this property turns on auto-completion in the editor. As the user types into the pull-down select editor, the choices change dynamically.
+     * Enabling this property turns on auto-completion in the editor. As the user types the choices in the drop-down select editor change dynamically.
      */
     @Input() autocomplete: boolean = false;
     /**
@@ -80,7 +80,7 @@ export class LiveForm {
      */
     @Input() name: string;
     /**
-     * This property will be used to show/hide the button widget on the web page.
+     * This property will be used to show/hide the live form widget on the web page.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean;
@@ -119,7 +119,7 @@ export class LiveForm {
      */
     @Input() updatemessage: string = 'Record updated successfully';
     /**
-     * his message will be displayed, when data is deleted by liveform.
+     * This message will be displayed, when data is deleted by liveform.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() deletemessage: string = 'Record deleted successfully';
@@ -130,41 +130,41 @@ export class LiveForm {
     @Input() errormessage: string = 'An error occured. Please try again!';
 
     /**
-     * Callback is triggered on save of form and before sending service call. This callback an be used to validate or modify data.
+     * Callback is triggered on save of form and before sending service call. This callback can be used to validate or modify data.
      * @param $event DOM event on which call back is triggered
      * @param $operation current operation being performed on form - update/insert/delete
      * @param $data Input data collected from the form widget
      * @param options extra options can be passed by user here. Ex: setting options.period = true will send temporal call
      * @returns if the callback returns false, form submit is stopped. Anything else, form submit continues with modified data.
      */
-    beforeservicecall($event: MouseEvent, $operation: string, $data: any, options: any): void | boolean {}
+    onBeforeservicecall($event: MouseEvent, $operation: string, $data: any, options: any): void | boolean {}
     /**
      * This event is called after service call returns response, whether or not the service call was successful.
      * @param $event DOM event on which call back is triggered
      * @param $operation current operation being performed on form - update/insert/delete
      * @param $data response returned from the service call
      */
-    result($event: MouseEvent, $operation: string, $data: any) {}
+    onResult($event: MouseEvent, $operation: string, $data: any) {}
     /**
      * This event handler is called whenever the form submit is success.
      * @param $event DOM event on which call back is triggered
      * @param $operation current operation being performed on form - update/insert/delete
      * @param $data response returned from the service call
      */
-    success($event: MouseEvent, $operation: string, $data: any) {}
+    onSuccess($event: MouseEvent, $operation: string, $data: any) {}
     /**
      * This event handler is called whenever the form submit returns an error.
      * @param $event DOM event on which call back is triggered
      * @param $operation current operation being performed on form - update/insert/delete
      * @param $data response returned from the service call
      */
-    error($event: MouseEvent, $operation: string, $data: any) {}
+    onError($event: MouseEvent, $operation: string, $data: any) {}
 
 
     /**
      * This method is used to submit the form.
      */
-    submit() {}
+    onSubmit() {}
     /**
      * This method is used to edit the form. Form will go into edit mode.
      */

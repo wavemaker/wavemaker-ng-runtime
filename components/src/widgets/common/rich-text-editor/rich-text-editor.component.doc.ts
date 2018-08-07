@@ -44,5 +44,5 @@ export class RichTextEditor {
      * @param newVal  New value of the widget
      * @param oldVal  Old value of the widget
      */
-    change($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
+    onChange($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
 }

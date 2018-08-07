@@ -18,7 +18,7 @@ export class Picture {
      */
     @Input() name: string;
     /**
-     * Title/hint for the Picture. <br>
+     * Hint text is shown for the Picture widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -27,7 +27,7 @@ export class Picture {
      */
     @Input() tabindex: number = 0;
     /**
-     * This property specifies the source for the picture. The source can be either a file or a url:\r\n File: enter the directory and filename for the image to display (supported filetypes include .jpg, .gif and .png). By default, WaveMaker looks for images in the src/main/webapp directory of the project. Every WaveMaker project has a data directory under src/main/webapp, so this is a good place to put pictures.\r\n URL: enter a url to any internet-accessible image. \r\n  To display the file, foo.jpg, in the project directory src/main/webapp/resources/images/imagelists/, enter the following into the source property:resources/images/imagelists/foo.jpg or simply foo.jpg
+     * This property specifies the source for the picture.
      */
     @Input() picturesource;
     /**
@@ -36,7 +36,7 @@ export class Picture {
      */
     @Input() pictureplaceholder;
     /**
-     * This property can automatically size an image to the height or width of the picture widget. The options are: \r\n none: the image is displayed at its default size \r\n h: the image is resized so that the width of the image is the same as the width of the picture widget \r\n v: the image is resized so that the height of the image is the same as the height of the picture widget \r\n Both: the image is resized so that the height and width of the image is the same as the height of the picture widget<br>
+     * This property can automatically size an image to the height or width of the picture widget.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() pictureaspect;
@@ -51,7 +51,7 @@ export class Picture {
      */
     @Input() shape;
     /**
-     * This property will be used to show/hide the button widget on the web page. <br>
+     * This property will be used to show/hide the picture widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -64,36 +64,36 @@ export class Picture {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblclick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+   onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    doubletap($event: TouchEvent, widget: any) {}
+    onDoubletap($event: TouchEvent, widget: any) {}
 
 }

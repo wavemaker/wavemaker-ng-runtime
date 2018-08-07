@@ -19,7 +19,7 @@ export class Icon {
      */
     @Input() conditionalclass: string;
     /**
-     * Title/hint for the icon. <br>
+     * Hint text is shown for the icon widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;

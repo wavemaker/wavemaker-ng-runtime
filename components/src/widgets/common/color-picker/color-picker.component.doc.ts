@@ -56,13 +56,13 @@ export class ColorPicker {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the colorpicker widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the colorpicker widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget value is changed.
      * @param $event  DOM event on which call back is triggered
@@ -70,29 +70,29 @@ export class ColorPicker {
      * @param newVal  New value of the colorpicker widget
      * @param oldVal  Previous value of the colorpicker widget
      */
-    change($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
+    onChange($event: MouseEvent, widget: any, newVal: string, oldVal: string) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the colorpicker widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the colorpicker widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the colorpicker widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the colorpicker widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 }

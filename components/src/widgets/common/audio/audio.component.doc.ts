@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class Audio {
     /**
-     * Title/hint for the audio. <br>
+     * Hint text is shown for the audio on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -42,11 +42,11 @@ export class Audio {
      */
     @Input() enablecontrols: boolean = true;
     /**
-     * This property will be used to enable how the audio should be played when page loads.
+     * This property will be used to play the audio when page loads.
      */
     @Input() enableautoplay: boolean = false;
     /**
-     * This property will be used to allow the audio to be played again, once it is finished.
+     * This property will be used to allow the audio to be replayed, when completed.
      */
     @Input() loop: boolean = false;
     /**

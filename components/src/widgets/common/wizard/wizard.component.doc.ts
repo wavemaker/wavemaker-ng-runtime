@@ -96,12 +96,12 @@ export class Wizard {
      * @param widget  Instance of the wizard widget
      * @param steps  Instances of wizardsteps.
      */
-    cancel(widget: any, steps: Array<any>) {}
+    onCancel(widget: any, steps: Array<any>) {}
 
     /**
      * Callback function which will be triggered when the done button is clicked.
      * @param widget  Instance of the wizard widget
      * @param steps  Instances of wizardsteps
      */
-    done(widget: any, steps: Array<any>) {}
+    onDone(widget: any, steps: Array<any>) {}
 }

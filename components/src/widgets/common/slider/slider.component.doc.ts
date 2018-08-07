@@ -14,7 +14,7 @@ export class Slider {
      */
     @Input() disabled: boolean;
     /**
-     * Title/hint for the button. <br>
+     * Hint text is shown for the button widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -27,7 +27,7 @@ export class Slider {
      */
     @Input() shortcutkey: string;
     /**
-     * This property will be used to show/hide the button widget on the web page. <br>
+     * This property will be used to show/hide the slider widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -37,7 +37,7 @@ export class Slider {
      */
     @Input() readonly: boolean = false;
     /**
-     * This property specifies the tab order of the Button Widget.
+     * This property specifies the tab order of the slider Widget.
      */
     @Input() tabindex: number = 0;
     /**
@@ -66,5 +66,5 @@ export class Slider {
      * @param newVal  datavalue of the slider widget
      * @param oldVal  previously selected datavalue of the slider widget
      */
-    change($event: MouseEvent, widget: any, newVal: number, oldVal: number) {}
+    onChange($event: MouseEvent, widget: any, newVal: number, oldVal: number) {}
 }

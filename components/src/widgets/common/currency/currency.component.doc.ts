@@ -24,7 +24,7 @@ export class Currency {
      */
     @Input() disabled: boolean;
     /**
-     * Title/hint for the currency. <br>
+     * Hint text is shown for the currency widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -80,13 +80,13 @@ export class Currency {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the currency widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the currency widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget value is changed.
      * @param $event  DOM event on which call back is triggered
@@ -94,29 +94,29 @@ export class Currency {
      * @param newVal  New value of the currency widget
      * @param oldVal  Previous value of the currency widget
      */
-    change($event: MouseEvent, widget: any, newVal: number, oldVal: number) {}
+    onChange($event: MouseEvent, widget: any, newVal: number, oldVal: number) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the currency widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the currency widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the currency widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the currency widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 }

@@ -9,7 +9,7 @@ export class Search {
      */
     @Input() class: string;
     /**
-     * This message will be displayed when there there is no more data to load.
+     * This message will be displayed when there is no more data to load.
      */
     @Input() datacompletemsg: string = 'No more data to load';
     /**
@@ -45,7 +45,7 @@ export class Search {
      */
     @Input() displaylabel: string;
     /**
-     * This property specifies the title/hint of the search. <br>
+     * Hint text is shown for the search widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -74,7 +74,7 @@ export class Search {
      */
     @Input() orderby: string;
     /**
-     * This property specifies the placeholder for the search. <br>
+     * The placeholder for the search box.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() placeholder: string;
@@ -128,13 +128,13 @@ export class Search {
      * @param widget  Instance of the search widget
      * @param inputData object containing filter fields
      */
-    beforeservicecall(widget: any, inputData: Object) {}
+    onBeforeservicecall(widget: any, inputData: Object) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the search widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
@@ -142,24 +142,24 @@ export class Search {
      * @param newVal  datavalue of the search widget
      * @param oldVal  previously selected datavalue of the search widget
      */
-    change($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
+    onChange($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the search widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered on the search submit.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the search widget
      */
-    submit($event: MouseEvent, widget: any) {}
+    onSubmit($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered on selecting a item from the search results.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the search widget
      * @param selectedValue represents the datavalue of search widget.
      */
-    select($event: MouseEvent, widget: any, selectedValue: any) {}
+    onSelect($event: MouseEvent, widget: any, selectedValue: any) {}
 }

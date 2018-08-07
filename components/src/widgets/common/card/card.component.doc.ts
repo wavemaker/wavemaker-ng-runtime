@@ -95,7 +95,7 @@ export class Card {
      * @param item  Data of the card on which click event is triggered
      * @param currentItemWidgets  Widgets inside the card on which click event is triggered
      */
-    click($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
+    onClick($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
@@ -103,7 +103,7 @@ export class Card {
      * @param item  Data of the card on which double click event is triggered
      * @param currentItemWidgets   Widgets inside the card on which double click event is triggered
      */
-    dblclick($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
+    onDblclick($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
     /**
      * Callback function which will be triggered when the mouse moves over the card.
      * @param $event  DOM event on which call back is triggered
@@ -111,15 +111,15 @@ export class Card {
      * @param item  Data of the card on which mouse over event is triggered
      * @param currentItemWidgets  Widgets inside the card on which mouse over event is triggered
      */
-    mouseover($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
+    onMouseover($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
     /**
-     * Callback function which will be triggered when the mouse away from the card.
+     * Callback function which will be triggered when the mouse moves away from the card.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the card widget
      * @param item  Data of the card on which mouse out event is triggered
      * @param currentItemWidgets  Widgets inside the card on which mouse out event is triggered
      */
-    mouseout($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
+    onMouseout($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
@@ -127,7 +127,7 @@ export class Card {
      * @param item  Data of the card on which mouse enter event is triggered
      * @param currentItemWidgets  Widgets inside the card on which mouse enter event is triggered
      */
-    mouseenter($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
+   onMouseenter($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
@@ -135,15 +135,15 @@ export class Card {
      * @param item  Data of the card on which mouse leave event is triggered
      * @param currentItemWidgets  Widgets inside the card on which mouse leave event is triggered
      */
-    mouseleave($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
+    onMouseleave($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the card widget
      * @param item  Data of the card on which tap event is triggered
      * @param currentItemWidgets  Widgets inside the card on which tap event is triggered
      */
-    tap($event: TouchEvent, widget: any, item, currentItemWidgets) {}
+    onTap($event: TouchEvent, widget: any, item, currentItemWidgets) {}
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
@@ -151,6 +151,6 @@ export class Card {
      * @param item  Data of the card on which double tap event is triggered
      * @param currentItemWidgets  Widgets inside the card on which double tap event is triggered
      */
-    doubletap($event: TouchEvent, widget: any, item, currentItemWidgets) {}
+    onDoubletap($event: TouchEvent, widget: any, item, currentItemWidgets) {}
 
 }

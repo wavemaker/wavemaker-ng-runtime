@@ -23,7 +23,7 @@ export class ProgressBar {
     @Input() type: string = 'default';
 
     /**
-     * Title/hint for the progress bar. <br>
+     * Hint text is shown for the progress bar widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -85,62 +85,62 @@ export class ProgressBar {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblclick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+   onMouseenter($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
 
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    doubletap($event: TouchEvent, widget: any) {}
+    onDoubletap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered on start of the progress.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    start($event: MouseEvent, widget: any) {}
+    onStart($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered on complete of the progress.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    complete($event: MouseEvent, widget: any) {}
+    onComplete($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered on before update of the progress.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the progress bar widget
      */
-    beforeupdate($event: MouseEvent, widget: any) {}
+    onBeforeupdate($event: MouseEvent, widget: any) {}
 
 }

@@ -28,13 +28,13 @@ export class AccordionPane {
     @Input() name: string;
 
     /**
-     * This Property specifies inline value to be displayed on the pane title. <br>
+     * This property specifies the value to be displayed on the pane title. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() badgevalue: string;
 
     /**
-     * The property controls the color of the badge. <br>
+     * The property controls the state of the badge. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      * <p><em>Allowed Values: </em><code>default, primary, success, info, warning, danger</code></p>
      */
@@ -64,19 +64,19 @@ export class AccordionPane {
      * Callback function which will be triggered when the accordion pane is loaded.
      * @param widget  Instance of the accordion pane.
      */
-    load(widget: any) {}
+    onLoad(widget: any) {}
 
     /**
      * Callback function which will be triggered when the accordion pane is expanded.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the accordion pane.
      */
-    expand($event: Event, widget: any) {}
+    onExpand($event: Event, widget: any) {}
 
     /**
      * Callback function which will be triggered when the accordion pane is collapsed.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the accordion pane.
      */
-    collapse($event: Event, widget: any) {}
+    onCollapse($event: Event, widget: any) {}
 }

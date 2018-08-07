@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class Page {
     /**
-     * This property will be set as the document title in run mode.
+     * This property will be set as the page title in run mode.
      */
     @Input() pagetitle: string;
 }

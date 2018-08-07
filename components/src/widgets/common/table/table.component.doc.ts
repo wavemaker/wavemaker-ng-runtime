@@ -15,7 +15,7 @@ export class Table {
      */
     @Input() confirmdelete: string = 'Are you sure you want to delete this?';
     /**
-     * This property specifies the datasource from which data is fehced in table.
+     * This property specifies the datasource from which data is fetched for the data table.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() dataset: any;
@@ -61,7 +61,7 @@ export class Table {
      * <p><em>Allowed Values: </em><code>search, multicolumn</code></p>
      * <div class="summary">
      * <p><code>search</code><em>: Search box is displayed at top of the Data Table widget for filtering data.</em></p>
-     * <p><code>multicolumn</code><em>: This option enables multi-filtering for rows. In columns tab, filter can be disabled/ enabled for specific columns.</em></p>
+     * <p><code>multicolumn</code><em>: This option enables multi-column filtering for rows. In columns tab, filter can be disabled/ enabled for specific columns.</em></p>
      */
     @Input() filtermode: string;
     /**
@@ -125,7 +125,7 @@ export class Table {
      */
     @Input() nodatamessage: string = 'No data found.';
     /**
-     * This property sets the maximum number of row to show in the data table in single page.
+     * This property sets the maximum number of rows to be displayed in the data table per page.
      */
     @Input() pagesize: number;
     /**
@@ -141,7 +141,7 @@ export class Table {
      */
     @Input() rowngclass: string;
     /**
-     * The placeholder to show for the search box.
+     * The placeholder for the search box.
      */
     @Input() searchlabel: string = 'Search';
     /**
@@ -195,13 +195,13 @@ export class Table {
      * @param widget Instance of the widget
      * @param row row has the data of the row which is clicked and the index of the row
      */
-    click($event: MouseEvent, widget: any, row: any) {}
+    onClick($event: MouseEvent, widget: any, row: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event DOM event on which call back is triggered
      * @param $data $data has the data of the row which is clicked and the index of the row
      */
-    tap($event: TouchEvent, $data: any) {}
+    onTap($event: TouchEvent, $data: any) {}
     /**
      * This event will be called when the Data Table is shown.
      */
@@ -209,59 +209,59 @@ export class Table {
     /**
      * This event will be called when the Data Table is hidden.
      */
-    hide() {}
+    onHide() {}
     /**
      * This event will be called when a row from Data Table is selected.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row row has the data of the row which is clicked and the index of the row
      */
-    select($event: MouseEvent, widget: any, row: any) {}
+    onSelect($event: MouseEvent, widget: any, row: any) {}
     /**
      * This event will be called when a row from Data Table is deselected.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row row has the data of the row which is clicked and the index of the row
      */
-    deselect($event: MouseEvent, widget: any, row: any) {}
+    onDeselect($event: MouseEvent, widget: any, row: any) {}
     /**
      * This event will be called when the Data Table header is clicked to sort by a particular column.
      * @param $event DOM event on which call back is triggered
      * @param $data $data has sorted data information returned from server
      */
-    sort($event: MouseEvent, $data: any) {}
+    onSort($event: MouseEvent, $data: any) {}
     /**
      * This event will be called when the Data Table header is clicked.
      * @param $event DOM event on which call back is triggered
      * @param $data $data has the column definition data of the corresponding clicked header
      */
-    headerclick($event: MouseEvent, $data: any) {}
+    onHeaderonClick($event: MouseEvent, $data: any) {}
     /**
      * This event will be called when a row in Data Table is clicked.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row $data has the data of the row which is clicked and the index of the row
      */
-    rowclick($event: MouseEvent, widget: any, row: any) {}
+    onRowclick($event: MouseEvent, widget: any, row: any) {}
     /**
      * This event will be called when a row in Data Table is double-clicked.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row $data has the data of the row which is clicked and the index of the row
      */
-    rowdblclick($event: MouseEvent, widget: any, row: any) {}
+    onRowdblclick($event: MouseEvent, widget: any, row: any) {}
     /**
      * This event will be called when a column in Data Table is selected.
      * @param $event DOM event on which call back is triggered
      * @param $data $data has the object containing data and colDef. data has the selected column data. colDef has the selected column definition.
      */
-    columnselect($event: MouseEvent, $data: any) {}
+    onColumnselect($event: MouseEvent, $data: any) {}
     /**
      * This event will be called when a column in Data Table is deselected.
      * @param $event DOM event on which call back is triggered
      * @param $data $data has the object containing data and colDef. data has the selected column data. colDef has the selected column definition.
      */
-    columndeselect($event: MouseEvent, $data: any) {}
+    onColumndeselect($event: MouseEvent, $data: any) {}
     /**
      * This event is fired on the edit of a row and before the inline form is rendered.
      * @param $event DOM event on which call back is triggered
@@ -269,7 +269,7 @@ export class Table {
      * @param row row has the data of the row being edited/ inserted
      * @param $operation $operation value is 'new' for new row and 'edit' when row being edited.
      */
-    beforeformrender($event: MouseEvent, widget: any, row: any, $operation: string) {}
+    onBeforeformrender($event: MouseEvent, widget: any, row: any, $operation: string) {}
     /**
      * This event is fired after the inline form is rendered.
      * @param $event DOM event on which call back is triggered
@@ -277,23 +277,23 @@ export class Table {
      * @param formWidgets formWidgets has the scopes of all the widgets in the form. Individual widget can be accessed as formWidgets.[fieldName]
      * @param $operation  $operation value is 'new' for new row and 'edit' when row being edited
      */
-    formrender($event: MouseEvent, widget: any, formWidgets: any, $operation: string) {}
+    onFormrender($event: MouseEvent, widget: any, formWidgets: any, $operation: string) {}
     /**
-     * This event is fired before a record is deleted in the table.
+     * This event is fired before a record is deleted in the Data Table.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row row has the data of the row being edited/ inserted
      * @param options extra options can be passed by user here. Ex: setting options.period = true will send temporal call
      * @returns if the callback returns false, delete is stopped. Anything else, delete continues with modified data.
      */
-    beforerowdelete($event: MouseEvent, widget: any, row: any, options: any): void | boolean {}
+    onBeforerowdelete($event: MouseEvent, widget: any, row: any, options: any): void | boolean {}
     /**
      * This event will be called when a record is deleted from the underlying data entity.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row response returned from the service call
      */
-    rowdelete($event: MouseEvent, widget: any, row: any) {}
+    onRowdelete($event: MouseEvent, widget: any, row: any) {}
     /**
      * This event will be called before a new record is inserted in the underlying data entity.
      * @param $event DOM event on which call back is triggered
@@ -302,14 +302,14 @@ export class Table {
      * @param options extra options can be passed by user here. Ex: setting options.period = true will send temporal call
      * @returns if the callback returns false, insert is stopped. Anything else, insert continues with modified data.
      */
-    beforerowinsert($event: MouseEvent, widget: any, row: any, options: any): void | boolean {}
+    onBeforerowinsert($event: MouseEvent, widget: any, row: any, options: any): void | boolean {}
     /**
      *This event will be called after a new record is inserted in the underlying data entity.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row response returned from the service call
      */
-    rowinsert($event: MouseEvent, widget: any, row: any) {}
+    onRowinsert($event: MouseEvent, widget: any, row: any) {}
     /**
      * This event will be called before a record is updated to the underlying data entity.
      * @param $event DOM event on which call back is triggered
@@ -318,14 +318,14 @@ export class Table {
      * @param options extra options can be passed by user here. Ex: setting options.period = true will send temporal call
      * @returns if the callback returns false, update is stopped. Anything else, update continues with modified data.
      */
-    beforerowupdate($event: MouseEvent, widget: any, row: any, options: any): void | boolean {}
+    onBeforerowupdate($event: MouseEvent, widget: any, row: any, options: any): void | boolean {}
     /**
      * This event will be called after a record is updated to the underlying data entity.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param row response returned from the service call
      */
-    rowupdate($event: MouseEvent, widget: any, row: any) {}
+    onRowupdate($event: MouseEvent, widget: any, row: any) {}
     /**
      * This event will be called after the edit/insert/delete operation returns a failure response.
      * @param $event DOM event on which call back is triggered
@@ -333,32 +333,32 @@ export class Table {
      * @param $data response returned from the service call
      * @param $operation  $operation value is 'new' for new row and 'edit' when row being edited
      */
-    error($event: MouseEvent, widget: any, $data: any, $operation: string) {}
+    onError($event: MouseEvent, widget: any, $data: any, $operation: string) {}
     /**
-     * This event will be called the before the data is rendered in the Data Grid.
+     * This event will be called the before the data is rendered in the Data Table
      * @param widget Instance of the widget
      * @param $data $data has the data to be rendered in the current page of data table
      * @param $columns columns definition of the data table
      */
-    beforedatarender(widget: any, $data: any, $columns: any) {}
+    onBeforedatarender(widget: any, $data: any, $columns: any) {}
     /**
      * This event will be called when the data is rendered in the Data Table.
      * @param widget Instance of the widget
      * @param $data $data has the data rendered in the current page of data table
      */
-    datarender(widget: any, $data: any) {}
+    onDatarender(widget: any, $data: any) {}
     /**
      * This event handler is called when the data is set using the pagination.
      * @param $event DOM event on which call back is triggered
      * @param $data response returned from the service call
      */
-    setrecord($event: MouseEvent, $data: any) {}
+    onSetrecord($event: MouseEvent, $data: any) {}
     /**
      * This event will be called before downloading the file. Any data changes like file format changes, field expression, size changes etc can be performed here. Returning false from the script will stop the file download.
      * @param $data inputData containing exportType, columns, fileName. Expression and header can be modified.
      * @returns Returning false from the script will stop the file download. Else, file is dowloaded with modfiied $data options
      */
-    export($data: any): void | boolean {}
+    onExport($data: any): void | boolean {}
 
 
     /**
@@ -382,12 +382,12 @@ export class Table {
      */
     selectItem(item: Object | number) {}
     /**
-     * This method is used to deselect the item/ row.
+     * This method is used to deselect the item/ row in the Data Table
      * @param item item can be row index ir whole row object
      */
     deselectItem(item: Object | number) {}
     /**
-     * This method is used to edit a row
+     * This method is used to edit a row in the Data Table
      * @param event DOM event
      */
     editRow(event?: MouseEvent) {}

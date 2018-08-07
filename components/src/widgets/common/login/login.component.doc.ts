@@ -10,7 +10,7 @@ export class Login {
      */
     @Input() name: string;
     /**
-     * This property will be used to show/hide the show widget on the web page. <br>
+     * This property will be used to show/hide the login widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -24,25 +24,24 @@ export class Login {
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      */
-    submit($event: MouseEvent, widget: any) {}
+    onSubmit($event: MouseEvent, widget: any) {}
     /**
      * This event handler is called before rendering the fields.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      */
-    beforerender($event: MouseEvent, widget: any) {}
+    onBeforerender($event: MouseEvent, widget: any) {}
     /**
      * This event handler is called whenever a success event is triggered.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      */
-    success($event: MouseEvent, widget: any) {}
+    onSuccess($event: MouseEvent, widget: any) {}
     /**
      * This event handler is called whenever an error event is triggered.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      */
-    error($event: MouseEvent, widget: any) {}
-
+    onError($event: MouseEvent, widget: any) {}
 
 }

@@ -22,13 +22,13 @@ export class TabPane {
     @Input() title: string = 'Tab Title';
 
     /**
-     * Value to be displayed in the badge span for anchor and button
+     * This property specifies the value to be displayed along with the pane title.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() badgevalue: string;
 
     /**
-     * This property controls the color of the badge.
+     * This property controls the state of the badge.
      * <p><em>Bindable: </em><code>true</code></p>
      * <p><em>Allowed Values: </em><code>default, primary, success, info, warning, danger</code></p>
      */
@@ -47,7 +47,7 @@ export class TabPane {
     @Input() content: string = 'Inline Content';
 
     /**
-     * This property will be used to show/hide the wizardstep widget on the web page. <br>
+     * This property will be used to show/hide the tab pane on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -70,7 +70,7 @@ export class TabPane {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tab pane widget
      */
-    load($event: Event, widget: any) {}
+    onLoad($event: Event, widget: any) {}
 
 
     /**
@@ -78,7 +78,7 @@ export class TabPane {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tab pane widget
      */
-    select($event: Event, widget: any) {}
+    onSelect($event: Event, widget: any) {}
 
 
     /**
@@ -86,5 +86,5 @@ export class TabPane {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the tab pane widget
      */
-    deselect($event: Event, widget: any) {}
+    onDeselect($event: Event, widget: any) {}
 }

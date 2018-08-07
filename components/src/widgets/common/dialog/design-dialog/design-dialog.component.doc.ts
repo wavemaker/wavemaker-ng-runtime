@@ -5,12 +5,12 @@ import { Input } from '@angular/core';
  */
 export class Designdialog {
     /**
-     * This property specifies the title for the iframedialog widget. <br>
+     * This property specifies the title for the designdialog widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() title: string = 'Information';
     /**
-     * This property specifies the name of the designdialog widget.
+     * Name of the designdialog widget.
      */
     @Input() name: string;
     /**
@@ -57,11 +57,11 @@ export class Designdialog {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the designdialog widget
      */
-    close($event: MouseEvent, widget: any) {}
+    onClose($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the dialog is opened.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the designdialog widget
      */
-    open($event: MouseEvent, widget: any) {}
+    onOpen($event: MouseEvent, widget: any) {}
 }

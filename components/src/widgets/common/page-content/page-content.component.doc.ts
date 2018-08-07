@@ -24,40 +24,40 @@ export class PageContent {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the page content component
      */
-    swipeup($event: TouchEvent, widget: any) {}
+    onSwipeup($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipedown event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the page content component
      */
-    swipedown($event: TouchEvent, widget: any) {}
+    onSwipedown($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipeleft event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the page content component
      */
-    swipeleft($event: TouchEvent, widget: any) {}
+    onSwipeleft($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swiperight event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the page content component
      */
-    swiperight($event: TouchEvent, widget: any) {}
+    onSwiperight($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchin event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the page content component
      */
-    pinchin($event: TouchEvent, widget: any) {}
+    onPinchin($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchout event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the page content component
      */
-    pinchout($event: TouchEvent, widget: any) {}
+    onPinchout($event: TouchEvent, widget: any) {}
 }

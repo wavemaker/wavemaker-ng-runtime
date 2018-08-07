@@ -44,5 +44,5 @@ export class Accordion {
      * @param newPaneIndex  The current selected accordion pane index.
      * @param oldPaneIndex  The previously selected accordion pane index.
      */
-    change($event: Event, widget: any, newPaneIndex: number, oldPaneIndex: number) {}
+    onChange($event: Event, widget: any, newPaneIndex: number, oldPaneIndex: number) {}
 }

@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class Button {
     /**
-     * This Property specifies inline value to be displayed along with the label of the button. <br>
+     * This property specifies the value to be displayed along with the label of the button. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() badgevalue: string;
@@ -29,7 +29,7 @@ export class Button {
      */
     @Input() disabled: boolean;
     /**
-     * Title/hint for the button. <br>
+     * Hint text is shown for the button widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -96,66 +96,66 @@ export class Button {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblclick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+   onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event occurs on button widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
     /**
-     * Callback function which will be triggered when the double tap event is triggered on a widget.
+     * Callback function which will be triggered when the double tap event occurs on button widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    doubletap($event: TouchEvent, widget: any) {}
+    onDoubletap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed down.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    keydown($event: KeyboardEvent, widget: any) {}
+    onKeydown($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      */
-    keypress($event: KeyboardEvent, widget: any) {}
+    onKeypress($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is released.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the button widget
      * @returns {void} This method does not return anything
      */
-    keyup($event: KeyboardEvent, widget: any) {}
+    onKeyup($event: KeyboardEvent, widget: any) {}
 }

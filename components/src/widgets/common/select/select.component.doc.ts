@@ -45,7 +45,7 @@ export class Select {
      */
     @Input() displayfield: string;
     /**
-     * This property specifies the title/hint of the select. <br>
+     * Hint text is shown of the select widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -95,13 +95,13 @@ export class Select {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
@@ -109,54 +109,54 @@ export class Select {
      * @param newVal  datavalue of the select widget
      * @param oldVal  previously selected datavalue of the select widget
      */
-    change($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
+    onChange($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblclick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed down.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    keydown($event: KeyboardEvent, widget: any) {}
+    onKeydown($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      */
-    keypress($event: KeyboardEvent, widget: any) {}
+    onKeypress($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is released.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the select widget
      * @returns {void} This method does not return anything
      */
-    keyup($event: KeyboardEvent, widget: any) {}
+    onKeyup($event: KeyboardEvent, widget: any) {}
 }

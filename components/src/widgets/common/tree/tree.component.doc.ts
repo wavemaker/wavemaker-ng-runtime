@@ -5,11 +5,11 @@ import { Input } from '@angular/core';
  */
 export class Tree {
     /**
-     * Name of the menu widget.
+     * Name of the tree widget.
      */
     @Input() name: string;
     /**
-     * This property specifies the tab order of the Button Widget.
+     * This property specifies the tab order of the Tree Widget.
      */
     @Input() tabindex: number = 0;
     /**
@@ -65,7 +65,7 @@ export class Tree {
      */
     @Input() nodeclick: string = 'none';
     /**
-     * This property will be used to show/hide the Menu widget on the web page. <br>
+     * This property will be used to show/hide the tree widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -80,7 +80,7 @@ export class Tree {
      * @param $item   which provides expanded node details
      * @param $path   which provide expanded node path
      */
-    expand ($event: MouseEvent, widget: any, $item: any, $path: any) {}
+    onExpand($event: MouseEvent, widget: any, $item: any, $path: any) {}
     /**
      * Callback function which will be triggered when the tree node is collapsed.
      * @param $event  DOM event on which call back is triggered
@@ -88,7 +88,7 @@ export class Tree {
      * @param $item   which provides collapsed node details
      * @param $path   which provide collapsed node path
      */
-    collapse ($event: MouseEvent, widget: any, $item: any, $path: any) {}
+    onCollapse($event: MouseEvent, widget: any, $item: any, $path: any) {}
     /**
      * Callback function which will be triggered when the tree node is selected.
      * @param $event  DOM event on which call back is triggered
@@ -96,5 +96,5 @@ export class Tree {
      * @param $item   which provides selected node details
      * @param $path   which provide selected node path
      */
-    select ($event: MouseEvent, widget: any, $item: any) {}
+    onSelect($event: MouseEvent, widget: any, $item: any) {}
 }
