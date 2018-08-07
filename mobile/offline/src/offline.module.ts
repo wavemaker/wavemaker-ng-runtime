@@ -98,6 +98,6 @@ export class OfflineModule {
                 return Promise.resolve();
             }
         });
-        new SecurityOfflineBehaviour(app, file, networkService, securityService).add();
+        new SecurityOfflineBehaviour(app, file, deviceService, networkService, securityService).add();
     }
 }
