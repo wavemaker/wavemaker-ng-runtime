@@ -28,5 +28,6 @@
    iconclass.bind="iconclass"
    iconposition.bind="iconposition"
    shortcutkey.bind="shortcutkey"
-   tabindex.bind="tabindex">
+   tabindex.bind="tabindex"
+   (keydown)="onPopoverAnchorKeydown($event)">
 </a>
