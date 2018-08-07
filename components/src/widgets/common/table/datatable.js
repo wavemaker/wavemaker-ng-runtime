@@ -2344,7 +2344,7 @@ $.widget('wm.datatable', {
         if ($.isFunction(this.options.onDataRender)) {
             this.options.onDataRender();
         }
-        if (this.options.selectFirstRow) {
+        if (!isCreated && this.options.selectFirstRow) {
             if (this.options.multiselect) {
                 //Set selectFirstRow to false, to prevent first item being selected in next page
                 this.options.selectFirstRow = false;
