@@ -7,6 +7,7 @@ import { Observable, Subject } from 'rxjs';
 import { App, executePromiseChain, hasCordova, noop, removeExtraSlashes } from '@wm/core';
 import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
+import { CONSTANTS } from '@wm/variables';
 
 declare const cordova;
 declare const _;
@@ -21,9 +22,11 @@ export class MobileHttpInterceptor implements HttpInterceptor {
     private requestInterceptors: RequestInterceptor[] = [];
 
     public constructor(private app: App, file: File, deviceFileDownloadService: DeviceFileDownloadService, private deviceService: DeviceService, private networkService: NetworkService, securityService: SecurityService) {
-        this.requestInterceptors.push(new SecurityInterceptor(file, securityService));
-        this.requestInterceptors.push(new RemoteSyncInterceptor(app, file, deviceFileDownloadService, networkService));
-        this.requestInterceptors.push(new ServiceCallInterceptor(app));
+        if (hasCordova() && !CONSTANTS.isWaveLens) {
+            this.requestInterceptors.push(new SecurityInterceptor(file, securityService));
+            this.requestInterceptors.push(new RemoteSyncInterceptor(app, file, deviceFileDownloadService, networkService));
+            this.requestInterceptors.push(new ServiceCallInterceptor(app));
+        }
     }
 
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
