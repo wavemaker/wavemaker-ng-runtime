@@ -782,10 +782,15 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        // tap and doubleTap events are not getting propagated.So, using mouse events instead.
+        const touchToMouse = {
+            tap: 'click',
+            doubletap: 'dblclick'
+        };
         if (_.includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
             this.eventManager.addEventListener(
                 this.nativeElement,
-                eventName,
+                touchToMouse[eventName] || eventName,
                 (evt) => {
                     const target = $(evt.target).closest('.app-list-item');
                     if (target.length) {
