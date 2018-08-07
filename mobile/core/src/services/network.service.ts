@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Network } from '@ionic-native/network';
 
-import { App, getAbortableDefer, retryIfFails } from '@wm/core';
+import { App, getAbortableDefer, noop, retryIfFails } from '@wm/core';
 import { $rootScope } from '@wm/variables';
 import { Injectable } from '@angular/core';
 import { IDeviceStartUpService } from './device-start-up-service';
@@ -179,14 +179,14 @@ export class NetworkService implements IDeviceStartUpService {
     public start(): Promise<void> {
         if (cordova && window['Connection']) {
             networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
-            this.tryToConnect(true);
+            this.tryToConnect(true).catch(noop);
             /*
              * When the device comes online, check is the service is available. If the service is available and auto
              * connect flag is true, then app is automatically connected to remote server.
              */
             this.network.onConnect().subscribe(() => {
                 networkState.isNetworkAvailable = true;
-                this.tryToConnect();
+                this.tryToConnect().catch(noop);
             });
 
             /*
