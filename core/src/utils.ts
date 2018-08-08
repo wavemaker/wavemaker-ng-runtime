@@ -540,13 +540,19 @@ export const isPageable = (obj: any): boolean => {
  * Examples:
  * Utils.replace('Hello, ${first} ${last} !', {first: 'wavemaker', last: 'ng'}) --> Hello, wavemaker ng
  * Utils.replace('Hello, ${0} ${1} !', ['wavemaker','ng']) --> Hello, wavemaker ng
+ * Examples if parseError is true:
+ * Utils.replace('Hello, {0} {1} !', ['wavemaker','ng']) --> Hello, wavemaker ng
  */
-export const replace = (template, map) => {
+export const replace = (template, map, parseError?: boolean) => {
+    let regEx = REGEX.REPLACE_PATTERN;
     if (!template) {
         return;
     }
+    if (parseError) {
+        regEx = /\{([^\}]+)\}/g;
+    }
 
-    return template.replace(REGEX.REPLACE_PATTERN, function (match, key) {
+    return template.replace(regEx, function (match, key) {
         return _.get(map, key);
     });
 };
