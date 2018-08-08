@@ -39,8 +39,8 @@ export class LiveFormDirective {
         private dialogService: AbstractDialogService,
         @Attribute('formlayout') formlayout: string
     ) {
-
-        if (liveTable) {
+        // If parent live table is present and this form is first child of live table, set this form instance on livetable
+        if (liveTable && !this.form.parentForm) {
             this.form._liveTableParent = liveTable;
             this.form.isLayoutDialog = liveTable.isLayoutDialog;
             liveTable.onFormReady(this.form);
@@ -466,6 +466,7 @@ export class LiveFormDirective {
         if (this.form.operationType === Live_Operations.UPDATE && this.form.ngform && this.form.ngform.pristine &&
                 (this.form.isSelected && _.isEqual(data, prevData))) {
             this.form.toggleMessage(true, this.form.appLocale.MESSAGE_NO_CHANGES, 'info', '');
+            $appDigest();
             return;
         }
 

@@ -698,16 +698,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
+    resetFormControl(ctrl) {
+        ctrl.markAsUntouched();
+        ctrl.markAsPristine();
+    }
+
     clearForm(newRow?) {
         const ctrls = this.ngform.controls;
         _.keys(this.ngform.controls).forEach(key => {
             if (newRow) {
                 if (key.endsWith('_new')) {
                     ctrls[key].setValue('');
+                    this.resetFormControl(ctrls[key]);
                 }
                 return;
             }
             ctrls[key].setValue('');
+            this.resetFormControl(ctrls[key]);
         });
     }
 
