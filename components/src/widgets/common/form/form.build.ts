@@ -53,9 +53,10 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const role = parentLoginWidget && parentLoginWidget.get('isLogin') ? 'app-login' : '';
             const counter = idGen.nextUid();
             const dependsOn = attrs.get('dependson') ? `dependson="${attrs.get('dependson')}"` : '';
+            const classProp = attrs.get('formlayout') === 'page' ? 'app-device-liveform panel liveform-inline' : '';
             attrs.delete('dependson');
             const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
-                        [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
+                    class="${classProp}" [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             shared.set('counter', counter);
             if (attrs.get('formlayout') === 'dialog') {
                 dialogId = parentLiveTable ? parentLiveTable.get('liveform_dialog_id') : `liveform_dialog_id_${counter}`;
@@ -71,12 +72,36 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                             <ng-template #dialogBody>
                             ${liveFormTmpl} ${tmpl}>`;
             }
+            let mobileFormContentTmpl = '';
+            let buttonTemplate = '';
+            // Include mobile-navbar above the form when formlayout is set to page
+            if (attrs.get('formlayout') === 'page') {
+                const name = `device_liveform_header_${counter}`;
+                const navbarAttrsMap = new Map<string, string>();
+                navbarAttrsMap.set('title', attrs.get('title'));
+                navbarAttrsMap.set('backbtnclick.event', attrs.get('backbtnclick.event'));
+                buttonTemplate = `<ng-template #buttonRef let-btn="btn">
+                                            <button  wmButton name="{{btn.key}}" [ngClass]="{'navbar-btn': true}" class.bind="btn.class" iconclass.bind="btn.iconclass" show.bind="btn.show"
+                                                     (click)="${counter}.invokeActionEvent($event, btn.action)" type.bind="btn.type" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey" disabled.bind="btn.disabled"
+                                                     tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !${counter}.isUpdateMode : ${counter}.isUpdateMode"></button>
+                                        </ng-template>`;
+                mobileFormContentTmpl = `<header wmMobileNavbar name="${name}" ${getAttrMarkup(navbarAttrsMap)}>
+                                            <ng-container *ngFor="let btn of ${counter}.buttonArray" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+                                            </ng-container>
+                                        </header>
+                                        <div class="form-elements panel-body" >`;
+            }
+
             tmpl = getAttrMarkup(attrs);
-            return `${liveFormTmpl} ${tmpl} ${dependsOn}>`;
+            return `${liveFormTmpl} ${tmpl} ${dependsOn}>
+                       ${buttonTemplate} ${mobileFormContentTmpl}`;
         },
         post: (attrs) => {
             if (attrs.get('formlayout') === 'dialog') {
                 return '</form></ng-template></div></div>';
+            }
+            if (attrs.get('formlayout') === 'page') {
+                return `</div></${tagName}>`;
             }
             return `</${tagName}>`;
         },

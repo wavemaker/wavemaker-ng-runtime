@@ -1,30 +1,41 @@
-<div class="panel-heading" *ngIf="!isLayoutDialog && (title || subheading || iconclass || showButtons('header'))">
-    <h3 class="panel-title">
-        <div class="pull-left">
-            <i class="app-icon panel-icon" aria-hidden="true" [ngClass]="iconclass" *ngIf="iconclass"></i>
+<ng-template #content><ng-content></ng-content></ng-template>
+
+<ng-container *ngIf="formlayout === 'page'; then pageLayoutTemplate else defaultTemplate">
+</ng-container>
+
+<ng-template #defaultTemplate>
+    <div class="panel-heading" *ngIf="!isLayoutDialog && (title || subheading || iconclass || showButtons('header'))">
+        <h3 class="panel-title">
+            <div class="pull-left">
+                <i class="app-icon panel-icon" aria-hidden="true" [ngClass]="iconclass" *ngIf="iconclass"></i>
+            </div>
+            <div class="pull-left">
+                <div class="heading" [textContent]="title"></div>
+                <div class="description" [textContent]="subheading"></div>
+            </div>
+            <div class="form-action panel-actions basic-btn-grp">
+                <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'header'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+                </ng-container>
+                <button type="button" class="app-icon wi panel-action" *ngIf="collapsible" title="Collapse/Expand"
+                        [ngClass]="expanded ? 'wi-minus': 'wi-plus'" (click)="expandCollapsePanel();"></button>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body" [ngClass]="{'form-elements': isLayoutDialog, 'form-body': !isLayoutDialog}" [class.hidden]="!expanded">
+        <p wmMessage *ngIf="statusMessage.caption" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
+        <div [ngClass]="{'form-elements': !isLayoutDialog, 'form-content': isLayoutDialog}">
+            <ng-container *ngTemplateOutlet="content"></ng-container>
         </div>
-        <div class="pull-left">
-            <div class="heading" [textContent]="title"></div>
-            <div class="description" [textContent]="subheading"></div>
-        </div>
-        <div class="form-action panel-actions basic-btn-grp">
-            <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'header'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+        <div class="basic-btn-grp form-action panel-footer clearfix" [ngClass]="{'modal-footer': isLayoutDialog}" [class.hidden]="!expanded || !showButtons('footer')">
+            <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'footer'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
             </ng-container>
-            <button type="button" class="app-icon wi panel-action" *ngIf="collapsible" title="Collapse/Expand"
-                     [ngClass]="expanded ? 'wi-minus': 'wi-plus'" (click)="expandCollapsePanel();"></button>
         </div>
-    </h3>
-</div>
-<div class="panel-body" [ngClass]="{'form-elements': isLayoutDialog, 'form-body': !isLayoutDialog}" [class.hidden]="!expanded">
-    <p wmMessage *ngIf="statusMessage.caption" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
-    <div [ngClass]="{'form-elements': !isLayoutDialog, 'form-content': isLayoutDialog}">
-        <ng-content></ng-content>
     </div>
-    <div class="basic-btn-grp form-action panel-footer clearfix" [ngClass]="{'modal-footer': isLayoutDialog}" [class.hidden]="!expanded || !showButtons('footer')">
-        <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'footer'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
-        </ng-container>
-    </div>
-</div>
+</ng-template>
+
+<ng-template #pageLayoutTemplate>
+    <ng-container *ngTemplateOutlet="content"></ng-container>
+</ng-template>
 
 <ng-template #buttonRef let-btn="btn">
     <button  wmButton name="{{btn.key}}" caption.bind="btn.displayName" class.bind="btn.class" iconclass.bind="btn.iconclass" show.bind="btn.show"
