@@ -46,10 +46,6 @@ export class FormField {
      */
     @Input() maxplaceholder: string;
     /**
-     * This property specifies how to apply the filter.
-     */
-    @Input() matchmode: string;
-    /**
      * This property defines the type of validation applied on the form.<br>
      * <p><em>Allowed Values: </em><code>default, html, no validations</code></p>
      * <div class="summary">

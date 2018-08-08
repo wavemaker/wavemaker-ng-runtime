@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class Video {
     /**
-     * Title/hint for the video. <br>
+     * Hint text is shown for the video widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;

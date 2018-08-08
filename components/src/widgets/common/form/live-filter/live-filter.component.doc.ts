@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class LiveFilter {
     /**
-     * Enabling this property turns on auto-completion in the editor. As the user types into the pull-down select editor, the choices change dynamically.
+     * Enabling this property turns on auto-completion in the editor. As the user types the choices in the drop-down select editor change dynamically.
      */
     @Input() autocomplete: boolean = false;
     /**
@@ -53,11 +53,11 @@ export class LiveFilter {
      */
     @Input() iconclass: string = 'wi wi-filter-list';
     /**
-     * Name of the form widget.
+     * Name of the Live Filter widget.
      */
     @Input() name: string;
     /**
-     * This property will be used to show/hide the button widget on the web page.
+     * This property will be used to show/hide the live filter widget on the web page.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean;
@@ -67,11 +67,11 @@ export class LiveFilter {
      */
     @Input() subheading: string;
     /**
-     * This property specifies the tab order of the Form Widget.
+     * This property specifies the tab order of the Live Filter Widget.
      */
     @Input() tabindex: number = 0;
     /**
-     * Title of the form.
+     * Title of the Live Filter.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() title: string;
@@ -94,21 +94,21 @@ export class LiveFilter {
     @Input() pagesize: number = 20;
 
     /**
-     * Callback is triggered on click of filter button and before sending service call. This callback an be used to validate or modify data.
+     * Callback is triggered on save of form and before sending service call. This callback can be used to validate or modify data.
      * @param $data Input data collected from the filter widget
      * @returns if the callback returns false, filter call is stopped. Anything else, filter call continues with modified data.
      */
-    beforeservicecall($data: any): void | boolean {}
+    onBeforeservicecall($data: any): void | boolean {}
     /**
      * This event handler is called whenever the filter call is success.
      * @param $data response returned from the service call
      */
-    success($data: any) {}
+    onSuccess($data: any) {}
     /**
      * This event handler is called whenever the filter call returns an error.
      * @param $data response returned from the service call
      */
-    error($data: any) {}
+    onError($data: any) {}
 
 
     /**

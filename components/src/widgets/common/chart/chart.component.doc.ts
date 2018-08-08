@@ -126,7 +126,7 @@ export class Chart {
      */
     @Input() showlegend: string = 'top';
     /**
-     * This property controls showing of labels.
+     * This property controls the visibility of labels.
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'hide', 'outside', 'inside' </code></p>
      */
     @Input() showlabels: string = 'outside';
@@ -153,12 +153,12 @@ export class Chart {
      */
     @Input() barspacing: string = 'medium';
     /**
-     * This property controls the radius.
+     * This property controls the radius of a Donut chart.
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'small', 'medium', 'large' </code></p>
      */
     @Input() donutratio: string = 'medium';
     /**
-     * This property controls the size of the bubble.
+     * This property controls the size of the bubble for a Bubble chart.
      */
     @Input() bubblesize: string;
     /**
@@ -224,11 +224,11 @@ export class Chart {
      * @param selectedItem The data of selected item from data source
      * @param selectedChartItem The data of selected item on chart
      */
-    select($event: MouseEvent, widget: any, selectedItem: any, selectedChartItem: any) {}
+    onSelect($event: MouseEvent, widget: any, selectedItem: any, selectedChartItem: any) {}
     /**
      * Callback function which will be triggered for transform event.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chart widget
      */
-    transform($event: MouseEvent, widget: any) {}
+    onTransform($event: MouseEvent, widget: any) {}
 }

@@ -41,7 +41,7 @@ export class WizardStep {
      * @param widget  Instance of the wizardstep widget
      * @param stepIndex  Index of active wizard step
      */
-    load(widget: any, stepIndex: number) {}
+    onLoad(widget: any, stepIndex: number) {}
 
     /**
      * Callback function which will be triggered when the next step button is clicked on widget.
@@ -49,7 +49,7 @@ export class WizardStep {
      * @param currentStep  Instances of active wizardstep
      * @param stepIndex  Index of active wizardstep
      */
-    next(widget: any, currentStep: number, stepIndex: number) {}
+    onNext(widget: any, currentStep: number, stepIndex: number) {}
 
     /**
      * Callback function which will be triggered when the previous step button is clicked on widget.
@@ -57,7 +57,7 @@ export class WizardStep {
      * @param currentStep  Instances of active wizardstep
      * @param stepIndex  Index of active wizardstep
      */
-    prev(widget: any, currentStep: number, stepIndex: number) {}
+    onPrev(widget: any, currentStep: number, stepIndex: number) {}
 
     /**
      * Callback function which will be triggered when the skip link is clicked on widget.
@@ -65,5 +65,5 @@ export class WizardStep {
      * @param currentStep  Instances of active wizardstep
      * @param stepIndex  Index of active wizardstep
      */
-    skip(widget: any, currentStep: number, stepIndex: number) {}
+    onSkip(widget: any, currentStep: number, stepIndex: number) {}
 }

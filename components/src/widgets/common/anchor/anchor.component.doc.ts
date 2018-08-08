@@ -5,7 +5,7 @@ import { Input } from '@angular/core';
  */
 export class Anchor {
     /**
-     * This Property specifies inline value to be displayed along with the label of the anchor. <br>
+     * This property specifies the value to be displayed along with the label of the anchor. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() badgevalue: string;
@@ -39,7 +39,7 @@ export class Anchor {
      */
     @Input() encodeurl: boolean = false;
     /**
-     * Title/hint for the anchor. <br>
+     * Hint text is shown for the anchor widget on hover. <br>
      * <p><em>Bindable: </em><code>false</code></p>
      */
     @Input() hint: string;
@@ -98,47 +98,47 @@ export class Anchor {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    blur($event: MouseEvent, widget: any) {}
+    onBlur($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblonClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    focus($event: MouseEvent, widget: any) {}
+    onFocus($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+   onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event occurs on anchor widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the anchor widget
      */
-    doubletap($event: TouchEvent, widget: any) {}
+    onDoubletap($event: TouchEvent, widget: any) {}
 }

@@ -10,7 +10,7 @@ export class Logindialog {
      */
     @Input() title: string;
     /**
-     * This property specifies the name of the logindialog widget.
+     * Name of the logindialog widget.
      */
     @Input() name: string;
     /**
@@ -45,29 +45,29 @@ export class Logindialog {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the logindialog widget
      */
-    submit($event: MouseEvent, widget: any) {}
+    onSubmit($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the dialog is closed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the logindialog widget
      */
-    close($event: MouseEvent, widget: any) {}
+    onClose($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the dialog is opened.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the logindialog widget
      */
-    open($event: MouseEvent, widget: any) {}
+    onOpen($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the login is successful.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the logindialog widget
      */
-    success($event: MouseEvent, widget: any) {}
+    onSuccess($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the login fails.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the logindialog widget
      */
-    error($event: MouseEvent, widget: any) {}
+    onError($event: MouseEvent, widget: any) {}
 }

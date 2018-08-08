@@ -27,13 +27,6 @@ export class Calendar {
     @Input() dataset: Array<any>;
 
     /**
-     * This is the default value to display value for an editor widget. <br>
-     * Note that the display value is just what the user sees initially, and is not always the dataValue returned by the widget. <br>
-     * <p><em>Bindable: </em><code>true</code></p>
-     */
-    @Input() datavalue: Array<any>;
-
-    /**
      * Title for the Event, set from the Dataset fields.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
@@ -115,7 +108,7 @@ export class Calendar {
      * <p><code>multiple</code><em>: Many rows can be selected at a time.</em></p>
      * </div>
      */
-    @Input() selectionmode: string = 'month';
+    @Input() selectionmode: string = 'none';
 
 
     /**
@@ -125,13 +118,13 @@ export class Calendar {
      * @param $view  An object containing information about a calendar view.
      * @param $data  List of all the events that fall within selected dates.
      */
-    select($start: number, $end: number, $view: any, $data: Array<any>) {}
+    onSelect($start: number, $end: number, $view: any, $data: Array<any>) {}
 
     /**
      * Callback function which will be triggered when the calender view is changed or when the calendar is rendered.
      * @param $view  An object containing information about a calendar view.
      */
-    viewrender($view: any) {}
+    onViewrender($view: any) {}
 
     /**
      * Callback function which will be triggered when dragging of an event in calendar stops and the event has moved to a different day/time..
@@ -143,7 +136,7 @@ export class Calendar {
      * @param $ui  Holds an empty object.
      * @param $view  An object containing information about a calendar view.
      */
-    eventdrop($event: Event, $newData: any, $oldData: any, $delta: any, $revertFunc: Function, $ui: any, $view: any) {}
+    onEventdrop($event: Event, $newData: any, $oldData: any, $delta: any, $revertFunc: Function, $ui: any, $view: any) {}
 
     /**
      * Callback function which will be triggered when resizing of the event in calendar stops and the event has changed in duration..
@@ -155,7 +148,7 @@ export class Calendar {
      * @param $ui  Holds an empty object.
      * @param $view  An object containing information about a calendar view.
      */
-    eventresize($event: Event, $newData: any, $oldData: any, $delta: any, $revertFunc: Function, $ui: any, $view: any) {}
+    onEventresize($event: Event, $newData: any, $oldData: any, $delta: any, $revertFunc: Function, $ui: any, $view: any) {}
 
     /**
      * Callback function which will be triggered when resizing of the event in calendar stops and the event has changed in duration..
@@ -163,7 +156,7 @@ export class Calendar {
      * @param $data  Calendar event object.
      * @param $view  An object containing information about a calendar view.
      */
-    eventclick($event: Event, $data: any, $view: any) {}
+    onEventclick($event: Event, $data: any, $view: any) {}
 
     /**
      * Callback function which will be triggered when an event is rendered.
@@ -171,7 +164,7 @@ export class Calendar {
      * @param $data  Calendar event object.
      * @param $view  An object containing information about a calendar view.
      */
-    eventrender($event: Event, $data: any, $view: any) {}
+    onEventrender($event: Event, $data: any, $view: any) {}
 
 
     // Calendar Methods.
@@ -182,7 +175,7 @@ export class Calendar {
     selectDate() {}
 
     /**
-     * It shows the calendar view to default date given for the calendar.
+     * It shows the calendar view to specific date given for the calendar.
      */
     gotoDate() {}
 
@@ -192,12 +185,12 @@ export class Calendar {
     gotoNextYear() {}
 
     /**
-     * This method renders the calendar view to default month given for the calendar.
+     * This method renders the present view (i.e. month/week view will be the same) for the next year.
      */
     gotoPrevYear() {}
 
     /**
-     * This method renders the present view for the previous year.
+     * It shows the calendar view to specific month given for the calendar.
      */
     gotoMonth() {}
 

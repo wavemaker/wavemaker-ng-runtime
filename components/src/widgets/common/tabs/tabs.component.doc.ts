@@ -22,7 +22,7 @@ export class Tabs {
     @Input() show: boolean = true;
 
     /**
-     * This property determines if the tabs should be displayed w.r.t. the content
+     * This property determines where the tabs should be displayed w.r.t. the content.
      * <p><em>Allowed Values: </em><code>left, top,right, bottom</code></p>
      * <div class="summary">
      * <p><code>left</code><em>: Tabs will be align at left side of the tabs widget</em></p>
@@ -40,7 +40,7 @@ export class Tabs {
     @Input() defaultpaneindex: number = 0;
 
     /**
-     * This property determines if the tabs should be displayed w.r.t. the content
+     * This property determines how the tabs should be displayed w.r.t. the content
      * <p><em>Allowed Values: </em><code>none, slide</code></p>
      * <div class="summary">
      * <p><code>none</code><em>: There won't be any animations on tabs.</em></p>
@@ -62,6 +62,6 @@ export class Tabs {
      * @param newPaneIndex  New tab pane index number
      * @param oldPaneIndex  Old tab pane index number
      */
-    change(event: Event, widget: any, newPaneIndex:number, oldPaneIndex: number) {}
+    onChange(event: Event, widget: any, newPaneIndex:number, oldPaneIndex: number) {}
 
 }

@@ -23,7 +23,7 @@ export class Text {
      */
     @Input() placeholder: string = 'Enter text';
     /**
-     * Title/hint for the text. <br>
+     * Hint text is shown for the text widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -117,60 +117,60 @@ export class Text {
      * @param newVal  datavalue of the text widget
      * @param oldVal  previously selected datavalue of the text widget
      */
-    change($event: Event, widget: any, newVal: string|number, oldVal: string|number) {}
+    onChange($event: Event, widget: any, newVal: string|number, oldVal: string|number) {}
     /**
      * Callback function which will be triggered when the widget loses focus.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    blur($event: Event, widget: any) {}
+    onBlur($event: Event, widget: any) {}
     /**
      * Callback function which will be triggered when the widget gets focused.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    focus($event: Event, widget: any) {}
+    onFocus($event: Event, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed down.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    keydown($event: KeyboardEvent, widget: any) {}
+    onKeydown($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is pressed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      */
-    keypress($event: KeyboardEvent, widget: any) {}
+    onKeypress($event: KeyboardEvent, widget: any) {}
     /**
      * Callback function which will be triggered whenever a key is released.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget
      * @returns {void} This method does not return anything
      */
-    keyup($event: KeyboardEvent, widget: any) {}
+    onKeyup($event: KeyboardEvent, widget: any) {}
 }

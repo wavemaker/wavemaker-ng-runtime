@@ -80,7 +80,7 @@ export class TableColumn {
      */
     @Input() filterdisplaylabel: string;
     /**
-     * This property display pattern of column in view mode.<br>
+     * This property defines the display pattern of column in view mode.<br>
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'yyyy-MM-dd hh:mm:ss a', 'yyyy-MM-ddTHH:mm:ss', 'yyyy, MMM dd', etc. </code></p>
      */
     @Input() datepattern: string;
@@ -107,7 +107,7 @@ export class TableColumn {
      */
     @Input() fractionsize: number;
     /**
-     * Specify a formatter to customize how its displayed.<br>
+     * This property is used to specify a format from the allowed values.<br>
      * <p><em>Allowed Values: </em><code>toDate, toCurrency, prefix, suffix, numberToString, stringToNumber, timeFromNow, None</code></p>
      */
     @Input() formatpattern: string;
@@ -168,7 +168,7 @@ export class TableColumn {
      */
     @Input() widgetType: string;
     /**
-     * This property will be used to disable/enable the button widget on the web page. <br>
+     * This property will be used to disable/enable the table column on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() disabled: boolean;

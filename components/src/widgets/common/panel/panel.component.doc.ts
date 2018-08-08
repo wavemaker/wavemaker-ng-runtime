@@ -34,13 +34,13 @@ export class Panel {
     @Input() name: string;
 
     /**
-     * This Property specifies inline value to be displayed on the pane title. <br>
+     * This property specifies the value to be displayed on the panel title. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() badgevalue: string;
 
     /**
-     * The property controls the color of the badge. <br>
+     * The property controls the state of the badge. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      * <p><em>Allowed Values: </em><code>default, primary, success, info, warning, danger</code></p>
      */
@@ -100,7 +100,7 @@ export class Panel {
     @Input() itemchildren: string;
 
     /**
-     * This property will be used to show/hide the accordion widget on the web page. <br>
+     * This property will be used to show/hide the panel widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -156,7 +156,7 @@ export class Panel {
      * Callback function which will be triggered when the panel content is loaded.
      * @param widget  Instance of the panel.
      */
-    load(widget: any) {}
+    onLoad(widget: any) {}
 
 
     /**
@@ -164,28 +164,28 @@ export class Panel {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    mouseover($event: MouseEvent, widget: any) {}
+    onMouseover($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse moves away from this widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    mouseout($event: MouseEvent, widget: any) {}
+    onMouseout($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+   onMouseenter($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
 
 
     /**
@@ -193,42 +193,42 @@ export class Panel {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    swipeup($event: TouchEvent, widget: any) {}
+    onSwipeup($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is swiped down.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    swipedown($event: TouchEvent, widget: any) {}
+    onSwipedown($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is swiped right.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    swiperight($event: TouchEvent, widget: any) {}
+    onSwiperight($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is swiped left.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    swipeleft($event: TouchEvent, widget: any) {}
+    onSwipeleft($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchin event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    pinchin($event: TouchEvent, widget: any) {}
+    onPinchin($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchout event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel
      */
-    pinchout($event: TouchEvent, widget: any) {}
+    onPinchout($event: TouchEvent, widget: any) {}
 
 
     /**
@@ -236,39 +236,39 @@ export class Panel {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the panel.
      */
-    close($event: Event, widget: any) {}
+    onClose($event: Event, widget: any) {}
 
     /**
      * Callback function which will be triggered when the panel is expanded.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the panel.
      */
-    expand($event: Event, widget: any) {}
+    onExpand($event: Event, widget: any) {}
 
     /**
      * Callback function which will be triggered when the panel is collapsed.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the panel.
      */
-    collapse($event: Event, widget: any) {}
+    onCollapse($event: Event, widget: any) {}
 
     /**
      * Callback function is called when the actions item is clicked.
      * @param $item  The object used to construct the clicked dropdown item.
      */
-    actionsclick($item: any) {}
+    onActionsclick($item: any) {}
 
     /**
      * Callback function is called on the full screen state of the panel.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the panel.
      */
-    fullscreen($event: Event, widget: any) {}
+    onFullscreen($event: Event, widget: any) {}
 
     /**
-     * Callback function is called on the full screen state of the panel.
+     * Callback function is called on the full screen mode of the panel.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the panel.
      */
-    exitfullscreen($event: Event, widget: any) {}
+    onExitfullscreen($event: Event, widget: any) {}
 }

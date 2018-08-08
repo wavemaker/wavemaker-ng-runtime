@@ -40,7 +40,7 @@ export class Switch {
      */
     @Input() displayfield: string;
     /**
-     * This property specifies the title/hint of the switch. <br>
+     * Hint text is shown for the switch widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -76,7 +76,7 @@ export class Switch {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the switch widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked or datavalue has changed.
      * @param $event  DOM event on which call back is triggered
@@ -84,23 +84,23 @@ export class Switch {
      * @param newVal  datavalue of the switch widget
      * @param oldVal  previously selected datavalue of the switch widget
      */
-    change($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
+    onChange($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the switch widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the switch widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the switch widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 }

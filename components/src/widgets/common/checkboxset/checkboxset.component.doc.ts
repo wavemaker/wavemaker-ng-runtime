@@ -118,7 +118,7 @@ export class Checkboxset {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the checkboxset widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
@@ -126,25 +126,25 @@ export class Checkboxset {
      * @param newVal  datavalue of the checkboxset widget
      * @param oldVal  previously selected datavalue of the checkboxset widget
      */
-    change($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
+    onChange($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the checkboxset widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the checkboxset widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the checkboxset widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
     /**
      * This can be invoked only when groupby and collapsible properties are set. This method is available on widget instance.
      * This method toggles all the list items inside the each list group i.e. all the group lists can be collapsed or expanded.

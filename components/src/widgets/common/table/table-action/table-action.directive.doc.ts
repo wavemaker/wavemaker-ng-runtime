@@ -23,7 +23,7 @@ export class TableAction {
      */
     @Input() title: string;
     /**
-     * Icon Class for the action button/anchor.
+     * Icon Class for the table action widget.
      */
     @Input() iconclass: string;
     /**
@@ -31,7 +31,7 @@ export class TableAction {
      */
     @Input() action: string;
     /**
-     * This property determines the position at which actions column has to be rendered.
+     * This property determines the position at which actions widget has to be rendered within the Data Table
      * <p><em>Allowed Values: </em><code>footer, header</code></p>
      * <div class="summary">
      * <p><code>footer</code><em>: To add button actions on the footer.</em></p>
@@ -44,16 +44,16 @@ export class TableAction {
      */
     @Input() shortcutkey: string;
     /**
-     * This property will be used to show/hide the button widget on the web page. <br>
+     * This property will be used to show/hide the table action widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
     /**
-     * This property specifies the tab order of the Button Widget.
+     * This property specifies the tab order of the table action.
      */
     @Input() tabindex: number = 0;
     /**
-     * Type of the button widget. <br>
+     * Type of the widget to add. <br>
      * <p><em>Allowed Values: </em><code>anchor, button</code></p>
      * <div class="summary">
      * <p><code>anchor</code><em>: Adds an anchor widget.</em></p>
@@ -73,12 +73,12 @@ export class TableAction {
      */
     @Input() target: string;
     /**
-     * This property will be used to disable/enable the button widget on the web page. <br>
+     * This property will be used to disable/enable the table action on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() disabled: boolean;
     /**
-     * The web url you want to redirect to on clicking the anchor.
+     * The web url you want to redirect to on clicking the action widget.
      */
     @Input() hyperlink: string;
 }

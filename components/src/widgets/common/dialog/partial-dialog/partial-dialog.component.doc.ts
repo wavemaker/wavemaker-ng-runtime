@@ -10,11 +10,11 @@ export class Pagedialog {
      */
     @Input() title: string = 'Page Content';
     /**
-     * This property specifies the name of the pagedialog widget.
+     * Name of the pagedialog widget.
      */
     @Input() name: string;
     /**
-     * This property specifies the ok button text for the alertdialog widget. <br>
+     * This property specifies the ok button text for the pagedialog widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() oktext: string = 'OK';
@@ -66,23 +66,23 @@ export class Pagedialog {
      * Callback function which will be triggered when the dialog is loaded.
      * @param widget  Instance of the pagedialog widget
      */
-    load(widget: any) {}
+    onLoad(widget: any) {}
     /**
      * Callback function which will be triggered when the ok button for the dialog is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the pagedialog widget
      */
-    ok($event: MouseEvent, widget: any) {}
+    onOk($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the cancel button for the dialog is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the pagedialog widget
      */
-    cancel($event: MouseEvent, widget: any) {}
+    onCancel($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the dialog is opened.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the pagedialog widget
      */
-    open($event: MouseEvent, widget: any) {}
+    onOpen($event: MouseEvent, widget: any) {}
 }

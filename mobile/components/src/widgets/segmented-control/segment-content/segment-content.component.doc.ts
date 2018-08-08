@@ -6,7 +6,7 @@ import { Input } from '@angular/core';
 export class SegmentContent {
 
     /**
-     * The caption is the text that the end user sees on your label.<br>
+     * The property specifies the label of the segmented content.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() caption: string;
@@ -61,11 +61,11 @@ export class SegmentContent {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the segment content widget
      */
-    load($event: Event, widget: any) {}
+    onLoad($event: Event, widget: any) {}
     /**
      * This event handler is called when the container is loaded.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the segment content widget
      */
-    ready($event: Event, widget: any) {}
+    onReady($event: Event, widget: any) {}
 }

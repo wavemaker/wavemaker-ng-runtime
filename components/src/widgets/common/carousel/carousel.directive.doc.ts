@@ -46,5 +46,5 @@ export class Carousel {
      * @param newIndex  index of the active carousel in view
      * @param oldIndex  index of the previous carousel in view
      */
-    change(widget: any, newIndex: number, oldIndex: number) {}
+    onChange(widget: any, newIndex: number, oldIndex: number) {}
 }

@@ -144,49 +144,47 @@ export class Form {
      * */
     @Input() validationtype: string = 'default';
 
-
-
     /**
      * Callback function which will be triggered when a swipeup event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the widget
      */
-    swipeup($event: TouchEvent, widget: any) {}
+    onSwipeup($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipedown event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the widget
      */
-    swipedown($event: TouchEvent, widget: any) {}
+    onSwipedown($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipeleft event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the widget
      */
-    swipeleft($event: TouchEvent, widget: any) {}
+    onSwipeleft($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swiperight event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the widget
      */
-    swiperight($event: TouchEvent, widget: any) {}
+    onSwiperight($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchin event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the widget
      */
-    pinchin($event: TouchEvent, widget: any) {}
+    onPinchin($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchout event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the  widget
      */
-    pinchout($event: TouchEvent, widget: any) {}
+    onPinchout($event: TouchEvent, widget: any) {}
 
     /**
      * Callback is triggered on submit of form and before sending service call. This callback an be used to validate or modify data.
@@ -195,35 +193,35 @@ export class Form {
      * @param $data Input data collected from the form widget
      * @returns if the callback returns false, form submit is stopped. Anything else, form submit continues with modified data.
      */
-    beforesubmit($event: MouseEvent, widget: any, $data: any): void | boolean {}
+    onBeforesubmit($event: MouseEvent, widget: any, $data: any): void | boolean {}
     /**
      * This event handler is called whenever a submit event is triggered.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param $formData Input data collected from the form widget
      */
-    onsubmit($event: MouseEvent, widget: any, $formData: any) {}
+    onSubmit($event: MouseEvent, widget: any, $formData: any) {}
     /**
      * This event is called after service call returns response, whether or not the service call was successful.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param $data response returned from the service call
      */
-    result($event: MouseEvent, widget: any, $data: any) {}
+    onResult($event: MouseEvent, widget: any, $data: any) {}
     /**
      * This event handler is called whenever the form submit is success.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param $data response returned from the service call
      */
-    success($event: MouseEvent, widget: any, $data: any) {}
+    onSuccess($event: MouseEvent, widget: any, $data: any) {}
     /**
      * This event handler is called whenever the form submit returns an error.
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      * @param $data response returned from the service call
      */
-    error($event: MouseEvent, widget: any, $data: any) {}
+    onError($event: MouseEvent, widget: any, $data: any) {}
 
 
     /**

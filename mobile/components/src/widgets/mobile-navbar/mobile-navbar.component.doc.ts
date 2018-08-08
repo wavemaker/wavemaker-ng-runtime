@@ -73,7 +73,7 @@ export class MobileNavbar {
      */
     @Input() name: string;
     /**
-     * This property will be used to show/hide the search widget. <br>
+     * This property will be used to show/hide the navbar widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -98,11 +98,11 @@ export class MobileNavbar {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the navbar widget
      */
-    backbtnclick($event: MouseEvent, widget: any) {}
+    onBackbtnclick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the search query is submitted.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the navbar widget
      */
-    search($event: MouseEvent, widget: any) {}
+    onSearch($event: MouseEvent, widget: any) {}
 }

@@ -51,15 +51,15 @@ export class Breadcrumb {
     @Input() itemchildren: string;
 
     /**
-     * This property will be used to show/hide the accordion widget on the web page. <br>
+     * This property will be used to show/hide the breadcrumb widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
 
     /**
-     * Callback function which will be triggered when an breadcrumb item is clicked.
+     * Callback function is triggered before the page is redirected.
      * @param widget  Instance of the breadcrumb widget.
      * @param $item  The object used to construct the clicked item.
      */
-    beforenavigate(widget: any, $item: any) {}
+    onBeforenavigate(widget: any, $item: any) {}
 }

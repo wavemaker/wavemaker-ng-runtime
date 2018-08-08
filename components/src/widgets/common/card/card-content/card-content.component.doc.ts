@@ -31,6 +31,6 @@ export class CardContent {
      * @param item  Data of the card content on which load event is triggered
      * @param currentItemWidgets Widgets inside the card content on which load event is triggered
      */
-    load($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
+    onLoad($event: MouseEvent, widget: any, item: any, currentItemWidgets: any) {}
 
 }

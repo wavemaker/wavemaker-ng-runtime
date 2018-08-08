@@ -14,7 +14,7 @@ export class FileUpload {
      */
     @Input() name: string;
     /**
-     * Title/hint for the fileupload widget. <br>
+     * Hint text is shown for the fileupload widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
@@ -27,7 +27,7 @@ export class FileUpload {
      */
     @Input() multiple: boolean = false;
     /**
-     * This property allows user to set message of the Fileuplaod widget. <br>
+     * This property allows user to set message of the Fileupload widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() fileuploadmessage: string = 'You can also browse for files';
@@ -63,12 +63,12 @@ export class FileUpload {
      * @param widget        Instance of the Fleupload widget
      * @param selectedFiles List of selected files
      */
-    beforeselect($event: MouseEvent, widget: any, selectedFiles: any) {}
+    onBeforeselect($event: MouseEvent, widget: any, selectedFiles: any) {}
     /**
      * Callback function which will be triggered when the file is selected.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the Fleupload widget
      * @param files List of files to be selected
      */
-    select($event: MouseEvent, widget: any, files: any) {}
+    onSelect($event: MouseEvent, widget: any, files: any) {}
 }

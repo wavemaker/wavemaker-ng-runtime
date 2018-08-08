@@ -10,21 +10,21 @@ export class Confirmdialog {
      */
     @Input() title: string = 'Confirm';
     /**
-     * This property specifies the name of the confirmdialog widget.
+     * Name of the confirmdialog widget.
      */
     @Input() name: string;
     /**
-     * This property specifies themessage for the confirmdialog widget. <br>
+     * This property specifies the message for the confirmdialog widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() message: string = 'I am an confirm box!';
     /**
-     * This property specifies the ok button text for the alertdialog widget. <br>
+     * This property specifies the ok button text for the confirmdialog widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() oktext: string = 'OK';
     /**
-     * This property specifies the cancel button text for the alertdialog widget. <br>
+     * This property specifies the cancel button text for the confirmdialog widget. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() canceltext: string = 'CANCEL';
@@ -68,17 +68,17 @@ export class Confirmdialog {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the confirmdialog widget
      */
-    ok($event: MouseEvent, widget: any) {}
+    onOk($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the cancel button for the dialog is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the confirmdialog widget
      */
-    cancel($event: MouseEvent, widget: any) {}
+    onCancel($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the dialog is opened.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the confirmdialog widget
      */
-    open($event: MouseEvent, widget: any) {}
+    onOpen($event: MouseEvent, widget: any) {}
 }

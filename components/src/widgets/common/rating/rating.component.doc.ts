@@ -76,5 +76,5 @@ export class Rating {
      * @param newVal  datavalue of the rating widget
      * @param oldVal  previously selected datavalue of the rating widget
      */
-    change($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
+    onChange($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
 }

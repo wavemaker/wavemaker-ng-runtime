@@ -43,7 +43,7 @@ export class Barcodescanner {
      */
     @Input() name: string;
     /**
-     * This property will be used to show/hide the camera widget.
+     * This property will be used to show/hide the barcodescanner widget.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -52,5 +52,5 @@ export class Barcodescanner {
      * @param $event DOM event on which call back is triggered
      * @param widget Instance of the widget
      */
-    success($event: MouseEvent, widget: any) {}
+    onSuccess($event: MouseEvent, widget: any) {}
 }

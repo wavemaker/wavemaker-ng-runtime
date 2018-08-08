@@ -40,7 +40,7 @@ export class Radioset {
      */
     @Input() displayfield: string;
     /**
-     * This property allows user to select a pre-defined list class name from the view-list drop down on the right.
+     * This property allows user to select a pre-defined list item class name from the view-list drop down.
      * <p><em>Default Options: </em><code>list-group, media-list</code></p>
      */
     @Input() itemclass: string;
@@ -94,7 +94,7 @@ export class Radioset {
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the radioset widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
@@ -102,23 +102,23 @@ export class Radioset {
      * @param newVal  datavalue of the radioset widget
      * @param oldVal  previously selected datavalue of the radioset widget
      */
-    change($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
+    onChange($event: MouseEvent, widget: any, newVal: any, oldVal: any) {}
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the radioset widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the radioset widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the radioset widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 }

@@ -44,103 +44,103 @@ export class Container {
      * This event handler is called when the widget is loaded.
      * @param widget  Instance of the container widget
      */
-    load(widget: any) {}
+    onLoad(widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    click($event: MouseEvent, widget: any) {}
+    onClick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    dblclick($event: MouseEvent, widget: any) {}
+    onDblclick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse hovers over the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    mouseover($event: MouseEvent, widget: any) {}
+    onMouseover($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse moves away from this widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    mouseout($event: MouseEvent, widget: any) {}
+    onMouseout($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    mouseenter($event: MouseEvent, widget: any) {}
+    onMouseenter($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    mouseleave($event: MouseEvent, widget: any) {}
+    onMouseleave($event: MouseEvent, widget: any) {}
 
     /**
-     * Callback function which will be triggered the tap event is triggered on a widget.
+     * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    tap($event: TouchEvent, widget: any) {}
+    onTap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    doubletap($event: TouchEvent, widget: any) {}
+    onDoubletap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipeup event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    swipeup($event: TouchEvent, widget: any) {}
+    onSwipeup($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipedown event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    swipedown($event: TouchEvent, widget: any) {}
+    onSwipedown($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swipeleft event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    swipeleft($event: TouchEvent, widget: any) {}
+    onSwipeleft($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a swiperight event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    swiperight($event: TouchEvent, widget: any) {}
+    onSwiperight($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchin event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    pinchin($event: TouchEvent, widget: any) {}
+    onPinchin($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when a pinchout event is triggered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the container widget
      */
-    pinchout($event: TouchEvent, widget: any) {}
+    onPinchout($event: TouchEvent, widget: any) {}
 }
