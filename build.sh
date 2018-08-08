@@ -59,7 +59,7 @@ hasLibChanges() {
         return 0
     fi
 
-    local successFile="./dist/$SUCCESS_FILE"
+    local successFile="./dist/${SUCCESS_FILE}"
 
     if ! [ -e ${successFile} ]; then
         return 0
@@ -82,13 +82,13 @@ hasSourceChanges() {
     fi
 
     local bundle=$1
-    local successFile="./dist/tmp/${bundle}"
+    local successFile="./dist/tmp/${bundle}/${SUCCESS_FILE}"
 
     if ! [ -e ${successFile} ]; then
         return 0
     fi
 
-    local updateTime=`find ${bundle}/src -type f \( -name "*.ts" ! -name "*.doc.ts" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
+    local updateTime=`find ${bundle}/src -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
     local buildTime=`date -r ${successFile} +%s`
 
 	if [ ${updateTime} -le ${buildTime} ]; then
@@ -117,6 +117,7 @@ build() {
         isSourceModified=true
         if [ "$?" -eq "0" ]; then
             rollup ${bundle}
+            touch ./dist/tmp/${bundle}/${SUCCESS_FILE}
         fi
     else
         echo "No changes in $bundle"
