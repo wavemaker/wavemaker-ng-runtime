@@ -308,6 +308,7 @@ export class ChangeLogService {
     private flushChange(change: Change): Promise<Change> {
         const self = this;
         return executePromiseChain(this.getWorkers('preCall'), [change])
+            .then(() => change.hasError ? Promise.reject(change.errorMessage) : '')
             .then(() => executePromiseChain(this.getWorkers('transformParamsFromMap'), [change]))
             .then(() => this.pushService.push(change))
             .then(function() {
