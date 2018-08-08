@@ -63,7 +63,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private allowonlyselect: boolean;
     private class: string;
 
-    private parentRef: ChipsComponent; // used when search is inside chips.
     private lastSelectedIndex: number;
     private dataoptions: Object;
     public dropdownEl: any;
@@ -73,6 +72,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private _unsubscribeDv: boolean;
     private _datasource: any;
     private isScrolled: boolean;
+    private parentEl: any;
+    private position: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -154,6 +155,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (!isDefined(this.datavalue)) {
             this.queryModel = this.query = '';
         }
+        this.$element.appendTo(this.parentEl);
+        this.parentEl = undefined;
         this.$element.removeClass('full-screen');
     }
 
@@ -254,13 +257,24 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         // open full-screen search view
         if (this.isMobileAutoComplete()) {
+            if (!this.parentEl) {
+                this.parentEl = this.$element.parent();
+            }
+            this.$element.appendTo('div[data-role="pageContainer"]');
+
             // Add full screen class on focus of the input element.
             this.$element.addClass('full-screen');
+
+            // Add position to set the height to auto
+            if (this.position === 'inline') {
+                this.$element.addClass(this.position);
+            }
 
             const dropdownEl = this.dropdownEl.closest('typeahead-container');
 
             dropdownEl.insertAfter(this.$element.find('input:first'));
-            dropdownEl.css({position: 'relative', top: 0, height: '100%'});
+            const screenHeight = this.$element.closest('.app-content').height();
+            dropdownEl.css({position: 'relative', top: 0, height: screenHeight + 'px'});
 
             if (this.isMobileAutoComplete() && !this.noMoreData) {
                 this.triggerSearch();
@@ -391,14 +405,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     }
 
                     // explicitly setting the optionslimit as the matches more than 20 will be ignored if optionslimit is not specified.
-                    if (this.formattedDataset.length > 20) {
+                    if (this.formattedDataset.length > 20 && !isDefined(this.limit)) {
                         this.typeahead.typeaheadOptionsLimit = this.formattedDataset.length;
                     }
 
-                    // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
-                    if (this._isOpen && this.isMobileAutoComplete() && !this.noMoreData) {
-                        // this.triggerSearch();
-                    }
+                // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
+                if (this._isOpen && this.isMobileAutoComplete() && !this.noMoreData) {
+                    this.triggerSearch();
+                }
 
                     const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
 
@@ -485,10 +499,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         styler(this.nativeElement as HTMLElement, this);
 
         this.typeaheadContainer = (this.typeahead as any)._typeahead;
-
-        if (this.class === 'app-chip-input') {
-            this.parentRef = this.viewParent;
-        }
     }
 
     // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
