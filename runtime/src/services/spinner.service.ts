@@ -8,7 +8,7 @@ declare const _;
 
 @Injectable()
 export class SpinnerServiceImpl extends AbstractSpinnerService {
-    spinnerId;
+    spinnerId = 0;
     messageSource = new Subject();
     messagesByContext = {};
 
@@ -84,12 +84,7 @@ export class SpinnerServiceImpl extends AbstractSpinnerService {
         // find the spinner context of the id from the messagesByContext
         const ctx = _.findKey(this.messagesByContext, function (obj) {
             return _.includes(_.keys(obj), id);
-        });
-
-        // sanity check
-        if (!ctx) {
-            return;
-        }
+        }) || 'page';
 
         // if spinnerContext exists just remove the spinner from the reference and destroy the scope associated.
         if (ctx !== 'page') {
