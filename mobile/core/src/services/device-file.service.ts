@@ -215,6 +215,11 @@ export class DeviceFileService implements IDeviceStartUpService {
                     this._fileTypeVsPathMap.persistent));
                 promises.push(this.setupUploadDirectory());
                 return Promise.all(promises);
+            }).then(() => {
+                if (isAndroid()) {
+                    // this is necessary to prevent multiple file permission popup.
+                    return this.cordovaFile.readAsText(cordova.file.externalRootDirectory, 'random-file-for-permission').catch(noop);
+                }
             }).then(resolve, reject);
         });
     }
