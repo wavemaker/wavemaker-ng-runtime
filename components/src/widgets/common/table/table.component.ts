@@ -158,6 +158,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private serverData;
     private filternullrecords;
     private variableInflight;
+    private isDynamicGrid = true;
 
     private applyProps = new Map();
 
@@ -904,10 +905,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.serverData = serviceData;
         }
         // If fielddefs are not present, generate fielddefs from data
-        if (this.fieldDefs.length) {
-            this.setGridData(this.serverData);
-        } else {
+        if (this.isDynamicGrid || !this.fieldDefs.length) {
             this.createGridColumns(this.serverData);
+        } else {
+            this.setGridData(this.serverData);
         }
     }
 
@@ -1145,6 +1146,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
+        this.isDynamicGrid = false;
         if (isMobile()) {
             if (!tableColumn.mobileDisplay) {
                 return;
