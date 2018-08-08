@@ -72,6 +72,14 @@ export class MediaListComponent extends StylableComponent {
         }
     }
 
+    // Returns the field value (src) from the fieldDefs
+    private getSrc(field) {
+        if (field) {
+            return this.fieldDefs[this.selectedMediaIndex][field];
+        }
+        return '';
+    }
+
     public showPrev() {
         if (this.selectedMediaIndex > 0) {
             this.selectedMediaIndex--;

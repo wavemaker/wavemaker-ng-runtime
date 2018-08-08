@@ -24,7 +24,7 @@
             <div class="media-content">
                 <div class="image-container"  (swipeleft)="showNext()" (swiperight)="showPrev()">
                     <ng-container [ngTemplateOutlet]="imgTemplate"
-                                  [ngTemplateOutletContext]="{src: fieldDefs[selectedMediaIndex].mediaUrlVal, class: 'center-block'}">
+                                  [ngTemplateOutletContext]="{field: 'mediaUrlVal', class: 'center-block'}">
                     </ng-container>
                     <a class="app-media-fullscreen-nav-control left" [hidden]="!(selectedMediaIndex > 0)" (click)="showPrev()">
                         <i class="wi wi-chevron-left"></i>
@@ -38,6 +38,6 @@
     </div>
 </div>
 
-<ng-template #imgTemplate let-src="src" let-classname="class">
-    <img wmPicture class="{{classname}}" picturesource.bind="src" wmImageCache="{{offline}}" />
+<ng-template #imgTemplate let-src="src" let-classname="class" let-field="field">
+    <img wmPicture class="{{classname}}" picturesource.bind="src || getSrc(field)" wmImageCache="{{offline}}" />
 </ng-template>
