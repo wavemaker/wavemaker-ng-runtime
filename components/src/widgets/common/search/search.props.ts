@@ -22,6 +22,7 @@ export const searchProps = new Map(
         ['navsearchbar', {value: false, ...PROP_BOOLEAN}],
         ['orderby', PROP_STRING],
         ['placeholder', {value: 'Search', ...PROP_STRING}],
+        ['position', PROP_STRING],
         ['query', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],

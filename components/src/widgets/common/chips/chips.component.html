@@ -18,6 +18,7 @@
 </li>
 <li class="app-chip-search" [ngClass]="{'full-width': inputwidth === 'full'}">
     <div #search wmSearch class="app-chip-input"
+         name="app-chip-search"
          select.event="addItem($event, widget, selectedValue)"
          beforeservicecall.event="onBeforeservicecall(inputData)"
          disabled.bind="disabled || readonly || saturate"
