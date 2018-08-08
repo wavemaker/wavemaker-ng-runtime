@@ -188,9 +188,9 @@ export const DB_CONSTANTS = {
         'GREATER_THAN_OR_EQUALS' : '${0}>=${1}',
         'NULL'                   : '${0} is null',
         'IS_NOT_NULL'            : '${0} is not null',
-        'EMPTY'                  : '${0}=""',
-        'IS_NOT_EMPTY'           : '${0}<>""',
-        'NULL_OR_EMPTY'          : '${0} is null or ${0}=""'
+        'EMPTY'                  : '${0}=\'\'',
+        'IS_NOT_EMPTY'           : '${0}<>\'\'',
+        'NULL_OR_EMPTY'          : '${0} is null or ${0}=\'\''
     },
     'DATABASE_STRING_MODES': ['LIKE', 'STARTING_WITH', 'STARTING_WITH_IGNORECASE', 'ENDING_WITH', 'ENDING_WITH_IGNORECASE', 'CONTAINING', 'CONTAINING_IGNORECASE', 'EQUALS', 'EQUALS_IGNORECASE', 'NOT_EQUALS']
 };
