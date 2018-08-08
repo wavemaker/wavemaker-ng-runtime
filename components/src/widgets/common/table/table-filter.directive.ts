@@ -320,8 +320,6 @@ export class TableFilterSortDirective {
         }).then(() => {
             $appDigest();
             this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData});
-        }, (error) => {
-            this.table.toggleMessage(true, 'error', error);
         });
     }
 
