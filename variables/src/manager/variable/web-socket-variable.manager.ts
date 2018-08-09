@@ -234,13 +234,15 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * URL & other meta data is fetched from wmServiceOperationInfo
      * @returns {*}
      */
-    public open(variable: WebSocketVariable) {
+    public open(variable: WebSocketVariable, success?, error?) {
         const shouldOpen = this._onBeforeSocketOpen(variable);
         let socket;
         if (shouldOpen === false) {
+            triggerFn(error);
             return;
         }
         socket = this.getSocket(variable);
+        triggerFn(success);
         return socket;
     }
 

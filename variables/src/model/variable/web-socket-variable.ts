@@ -13,8 +13,8 @@ export class WebSocketVariable extends ApiAwareVariable {
         Object.assign(this as any, variable);
     }
 
-    open() {
-        return getManager().open(this);
+    open(success?, error?) {
+        return getManager().open(this, success, error);
     }
 
     close () {
@@ -33,8 +33,8 @@ export class WebSocketVariable extends ApiAwareVariable {
         return this.close();
     }
 
-    invoke() {
-        this.open();
+    invoke(options?, success?, error?) {
+        this.open(success, error);
     }
 
     init () {
