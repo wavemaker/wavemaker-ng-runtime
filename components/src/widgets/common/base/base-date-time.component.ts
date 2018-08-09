@@ -113,6 +113,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         });
         $('.bs-datepicker-body').click((event) => {
+            event.stopPropagation();
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForMonthOrDay();
@@ -222,9 +223,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;
             if (action === 'arrowdown') {
+                event.preventDefault();
                 newdate = moment(this.activeDate).add(+7, 'days').toDate();
                 this.setActiveDateFocus(newdate);
             } else if (action === 'arrowup') {
+                event.preventDefault();
                 newdate = moment(this.activeDate).add(-7, 'days').toDate();
                 this.setActiveDateFocus(newdate);
             } else if (action === 'arrowleft') {
@@ -266,9 +269,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;
             if (action === 'arrowdown') {
+                event.preventDefault();
                 newdate = moment(this.activeDate).add(+3, 'month').toDate();
                 this.setActiveMonthFocus(newdate);
             } else if (action === 'arrowup') {
+                event.preventDefault();
                 newdate = moment(this.activeDate).add(-3, 'month').toDate();
                 this.setActiveMonthFocus(newdate);
             } else if (action === 'arrowleft') {
@@ -330,9 +335,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;
             if (action === 'arrowdown') {
+                event.preventDefault();
                 newdate = moment(this.activeDate).add(+4, 'year').toDate();
                 this.setActiveYearFocus(newdate);
             } else if (action === 'arrowup') {
+                event.preventDefault();
                 newdate = moment(this.activeDate).add(-4, 'year').toDate();
                 this.setActiveYearFocus(newdate);
             } else if (action === 'arrowleft') {
