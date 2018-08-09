@@ -126,7 +126,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change'], eventName)) {
+        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }
@@ -136,6 +136,9 @@ export class DateComponent extends BaseDateTimeComponent {
      */
     toggleDpDropdown($event) {
         $event.stopPropagation();
+        if ($event.type === 'click') {
+            this.invokeEventCallback('click', {$event: $event});
+        }
         if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
             return;
         }

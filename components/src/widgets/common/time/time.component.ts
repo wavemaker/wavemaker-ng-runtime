@@ -145,6 +145,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private toggleDropdown($event): void {
         $event.preventDefault();
         $event.stopPropagation();
+        if ($event.type === 'click') {
+            this.invokeEventCallback('click', {$event: $event});
+        }
         if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
             return;
         }
@@ -241,7 +244,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change'], eventName)) {
+        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, eventCallback, locals);
         }
     }
