@@ -3,13 +3,15 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { addClass, addEventListenerOnElement, EVENT_LIFE, getDateObj, getFormattedDate, getNativeDateObject } from '@wm/core';
+import { addClass, addEventListenerOnElement, EVENT_LIFE, getDateObj, getFormattedDate, getNativeDateObject, isMobileApp } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
+
+declare const moment;
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
@@ -55,6 +57,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * @returns {any|string}
      */
     get displayValue(): any {
+        if (isMobileApp()) {
+            return moment(this.proxyModel).format('YYYY-MM-DDThh:mm');
+        }
         return getFormattedDate(this.datePipe, this.proxyModel, this._dateOptions.dateInputFormat) || '';
     }
 
@@ -95,13 +100,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (newVal === CURRENT_DATE) {
             this.isCurrentDate = true;
             this.setTimeInterval();
-            return;
+            this.proxyModel = new Date();
+        } else {
+            this.proxyModel = newVal ? getDateObj(newVal) : undefined;
+            this.clearTimeInterval();
+            this.isCurrentDate = false;
         }
-        this.proxyModel = newVal ? getDateObj(newVal) : undefined;
-
         this.bsTimeValue = this.bsDateValue = this.proxyModel;
-        this.isCurrentDate = false;
-        this.clearTimeInterval();
         this.cdRef.detectChanges();
     }
 

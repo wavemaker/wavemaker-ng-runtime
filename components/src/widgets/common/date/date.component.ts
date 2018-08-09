@@ -16,6 +16,7 @@ registerProps();
 
 declare const _;
 
+const CURRENT_DATE: string = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-date',
@@ -35,7 +36,9 @@ export class DateComponent extends BaseDateTimeComponent {
     public showdropdownon: string;
     public useDatapicker = true;
     private dateContainerCls: string;
+    private isCurrentDate = false;
     private isOpen: boolean;
+    private timeinterval;
 
     private keyEventPlugin;
     private deregisterEventListener;
@@ -55,10 +58,13 @@ export class DateComponent extends BaseDateTimeComponent {
     // Todo[Shubham]: needs to be redefined
     // sets the dataValue and computes the display model values
     set datavalue(newVal) {
-        if (newVal) {
-            this.bsDataValue = getDateObj(newVal);
+        if (newVal === CURRENT_DATE) {
+            this.isCurrentDate = true;
+            this.setTimeInterval();
+            this.bsDataValue = new Date();
         } else {
-            this.bsDataValue = undefined;
+            this.bsDataValue = newVal ? getDateObj(newVal) : undefined;
+            this.clearTimeInterval();
         }
         // update the previous datavalue.
         this.invokeOnChange(this.datavalue, undefined, true);
@@ -157,6 +163,28 @@ export class DateComponent extends BaseDateTimeComponent {
         const action = this.keyEventPlugin.getEventFullKey(event);
         if (action === 'enter' || action === 'arrowdown') {
             this.toggleDpDropdown(event);
+        }
+    }
+
+    /**
+     * This is an internal method used to maintain a time interval to update the time model when the data value is set to CURRENT_TIME
+     */
+    private setTimeInterval() {
+        if (this.timeinterval) {
+            return;
+        }
+        this.timeinterval = setInterval( () => {
+            this.bsDataValue = new Date();
+        }, 1000 * 60);
+    }
+
+    /**
+     * This is an internal method used to clear the time interval created
+     */
+    private clearTimeInterval() {
+        if (this.timeinterval) {
+            clearInterval(this.timeinterval);
+            this.timeinterval = null;
         }
     }
 

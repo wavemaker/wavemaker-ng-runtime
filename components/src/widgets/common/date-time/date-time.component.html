@@ -60,7 +60,7 @@
     <input type="datetime-local" class="form-control app-textbox"
            role="input"
            step="any"
-           [value]="proxyModel"
+           [value]="displayValue"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentDate"
            (change)="onModelUpdate($event.target.value)">
