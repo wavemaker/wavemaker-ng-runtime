@@ -12,12 +12,14 @@ if (sessionStorage.getItem(DEBUG_MODE) !== 'true') {
 console.time('bootstrap');
 
 document.addEventListener('DOMContentLoaded', () => {
-    platformBrowserDynamic()
-        .bootstrapModule(AppModule)
-        .then(() => {
-            console.timeEnd('bootstrap');
-        })
-        .catch(err => console.log(err));
+    new Promise( resolve => {
+        if (window['cordova']) {
+            document.addEventListener('deviceready', resolve);
+        } else {
+            resolve();
+        }
+    }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
+    .then(() => console.timeEnd('bootstrap'), err => console.log(err));
 });
 
 // exports

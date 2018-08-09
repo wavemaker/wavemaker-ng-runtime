@@ -36,14 +36,12 @@ export class AppUpdateComponent {
         addClass(this.elRef.nativeElement, DEFAULT_CLS);
         setCSS(this.elRef.nativeElement, 'display', 'block');
         if (hasCordova()) {
-            this.deviceService.whenReady().then(() => {
-                this.getBuildMeta().then(buildMeta => {
-                    if (buildMeta && buildMeta.buildMode === 'DEVELOPMENT_MODE') {
-                        this.file.removeFile(cordova.file.externalApplicationStorageDirectory, AUTO_UPDATE_FILENAME);
-                        this.checkForUpdate()
-                            .then(this.getUserConfirmation.bind(this));
-                    }
-                });
+            this.getBuildMeta().then(buildMeta => {
+                if (buildMeta && buildMeta.buildMode === 'DEVELOPMENT_MODE') {
+                    this.file.removeFile(cordova.file.externalApplicationStorageDirectory, AUTO_UPDATE_FILENAME).catch(noop);
+                    this.checkForUpdate()
+                        .then(this.getUserConfirmation.bind(this), noop);
+                }
             });
         }
     }
@@ -84,7 +82,7 @@ export class AppUpdateComponent {
                     } else {
                         reject();
                     }
-                });
+                }, reject);
         });
     }
 

@@ -59,6 +59,7 @@ export class DeviceService {
                     });
                 }));
             }).then(() => {
+                document.dispatchEvent(new CustomEvent('wmDeviceReady'));
                 this._startUpServices.length = 0;
                 this._whenReadyPromises.forEach(fn => fn());
                 this._isReady = true;

@@ -117,6 +117,6 @@ export class SecurityOfflineBehaviour {
     }
 
     private readLocalSecurityConfig(): Promise<any> {
-        return this.file.readAsText(cordova.file.dataDirectory, SECURITY_FILE).then(JSON.parse);
+        return this.file.readAsText(cordova.file.dataDirectory, SECURITY_FILE).then(JSON.parse, noop);
     }
 }
