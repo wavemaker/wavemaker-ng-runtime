@@ -28,7 +28,6 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
-        this.showContent(0);
     }
 
     public addContent(content: SegmentContentComponent) {
@@ -57,6 +56,7 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
         for (const child of Array.from(childEls)) {
             setCSS(child as HTMLElement, 'width', width);
         }
+        this.showContent(0, undefined, true);
     }
 
     public onPropertyChange(key, nv, ov?) {
@@ -81,15 +81,25 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
         }
     }
 
-    public showContent(content: number | SegmentContentComponent , $event?: any) {
+    public showContent(content: number | SegmentContentComponent , $event?: any, defaultLoad?: boolean) {
         let index: number;
+        let selectedContent: SegmentContentComponent;
         if (isNumber(content)) {
             index = content as number;
+            if (this.contents.length) {
+                selectedContent = this.contents[index];
+            }
         } else {
+            selectedContent = content as SegmentContentComponent;
             index = this.contents.findIndex(c => {
                 return c === content;
             });
         }
+
+        if (selectedContent) {
+            selectedContent.loadContent(defaultLoad);
+        }
+
         if (index < 0 || index >= this.contents.length) {
             return;
         }
