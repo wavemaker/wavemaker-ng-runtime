@@ -11,7 +11,7 @@ registerProps();
 const DEFAULT_CLS = 'network-info-toaster';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-network-info-toaster', hostClass: DEFAULT_CLS};
 
-enum NetworkState {
+export enum NetworkState {
     CONNECTED = 1,
     CONNECTING = 0,
     SERVICE_AVAILABLE_BUT_NOT_CONNECTED = -1,
