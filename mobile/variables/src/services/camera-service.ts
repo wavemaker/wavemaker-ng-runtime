@@ -36,13 +36,18 @@ class CaptureImageOperation implements IDeviceVariableOperation {
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
         const imageTargetWidth = dataBindings.get('imageTargetWidth'),
-            imageTargetHeight = dataBindings.get('imageTargetHeight'),
-            cameraOptions = {
+            imageTargetHeight = dataBindings.get('imageTargetHeight');
+        let imageEncodingType = parseInt(dataBindings.get('imageEncodingType'), 10),
+            cameraOptions;
+        if (isNaN(imageEncodingType)) {
+            imageEncodingType = (dataBindings.get('imageEncodingType') === 'JPEG' ? 0 : 1);
+        }
+        cameraOptions = {
                 quality           : dataBindings.get('imageQuality'),
                 destinationType   : 1, // only file url
                 sourceType        : 1, // camera
                 allowEdit         : dataBindings.get('allowImageEdit'),
-                encodingType      : parseInt(dataBindings.get('imageEncodingType'), 10),
+                encodingType      : imageEncodingType,
                 mediaType         : 0, // always picture
                 correctOrientation: dataBindings.get('correctOrientation'),
                 targetWidth       : isNumber(imageTargetWidth) ?  imageTargetWidth : undefined,
