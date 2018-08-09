@@ -27,7 +27,10 @@ export * from './services/i18n.service';
 
 export * from './services/angular1.polyfills';
 
-(window as any).debugMode = () => {
-    sessionStorage.setItem('debugMode', 'true');
-    window.location.reload();
+(window as any).debugMode = (on = true) => {
+    const value = on ? 'true' : 'false';
+    if (sessionStorage.getItem(DEBUG_MODE) !== value) {
+        sessionStorage.setItem(DEBUG_MODE, value);
+        window.location.reload();
+    }
 };
