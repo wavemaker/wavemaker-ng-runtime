@@ -60,7 +60,8 @@ export class DateComponent extends BaseDateTimeComponent {
         } else {
             this.bsDataValue = undefined;
         }
-        this.invokeOnChange(this.datavalue);
+        // update the previous datavalue.
+        this.invokeOnChange(this.datavalue, undefined, true);
         this.cdRef.detectChanges();
     }
 
