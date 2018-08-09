@@ -455,6 +455,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         setGridEditMode: (val) => {
             this.ngZone.run(() => {
                 this.isGridEditMode = val;
+                $appDigest();
             });
         },
         setGridState: (val) => {
