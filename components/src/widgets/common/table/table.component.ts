@@ -1294,7 +1294,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
-        if (eventName !== 'click') {
+        if (eventName !== 'click' && eventName !== 'select') {
             super.handleEvent(this.nativeElement, eventName, callback, locals);
         }
     }

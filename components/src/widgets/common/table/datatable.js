@@ -1182,7 +1182,7 @@ $.widget('wm.datatable', {
         data = this.options.data[rowId];
         selected = (rowData && rowData.selected) || false;
         if (!options.skipSingleCheck && (($row.hasClass('active') && !this.options.multiselect) || !rowData)) {
-            if (!isQuickEdit) { //For quick edit, row will be in edit mode. So,, no need to call events.
+            if (!isQuickEdit && options.operation !== 'new') { //For quick edit, row will be in edit mode. So, no need to call events.
                 callRowSelectionEvents();
             }
             return;
