@@ -109,17 +109,7 @@ export class HttpServiceImpl extends AbstractHttpService {
 
     parseError(errorObj) {
         let errMsg;
-        const localeObject = this.getLocale();
-        /*Check for local resources and code in the resource */
-        if (!localeObject || !localeObject[errorObj.messageKey]) {
-            errMsg = errorObj.message || (errorObj.parameters && errorObj.parameters[0]) || '';
-            return errMsg;
-        }
-
-        /*Assigning the error message*/
-        errMsg = getClonedObject(localeObject[errorObj.messageKey]);
-        /*Replace the parameters in the error code with the actual strings.*/
-        errMsg = replace(errMsg, errorObj.parameters);
+        errMsg = errorObj.message ? replace(errorObj.message, errorObj.parameters, true) : ((errorObj.parameters && errorObj.parameters[0]) || '');
         return errMsg;
     }
 
