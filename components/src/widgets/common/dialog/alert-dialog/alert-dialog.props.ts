@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['alerttype', {value: 'error', ...PROP_STRING}],
+                ['animation', PROP_STRING],
                 ['class', PROP_STRING],
                 ['closable', {value: true, PROP_BOOLEAN}],
                 ['iconclass', {value: 'wi wi-warning', PROP_STRING}],

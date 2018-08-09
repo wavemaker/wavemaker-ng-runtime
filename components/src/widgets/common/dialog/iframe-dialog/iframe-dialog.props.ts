@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-iframedialog',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['class', PROP_STRING],
                 ['closable', {value: true, PROP_BOOLEAN}],
                 ['encodeurl', {value: false, ...PROP_BOOLEAN}],

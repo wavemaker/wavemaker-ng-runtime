@@ -87,6 +87,11 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
         // Prevent the framework from setting the class on the host element.
         if (key === 'class' || key === 'name' || key === 'tabindex') {
             return;
+        } else if (key === 'animation') {
+            this.modalOptions.class = this.modalOptions.class.replace('animated ' + ov, '');
+            if (nv) {
+                this.modalOptions.class = this.modalOptions.class + 'animated ' + nv;
+            }
         }
         super.onPropertyChange(key, nv, ov);
     }

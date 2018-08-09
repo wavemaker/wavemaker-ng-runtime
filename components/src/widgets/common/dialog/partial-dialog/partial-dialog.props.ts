@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-partialdialog',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['class', PROP_STRING],
                 ['closable', {value: true, PROP_BOOLEAN}],
                 ['content', PROP_STRING],

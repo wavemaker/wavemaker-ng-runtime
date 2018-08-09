@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-confirmdialog',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['canceltext', {value: 'CANCEL', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['closable', {value: true, PROP_BOOLEAN}],

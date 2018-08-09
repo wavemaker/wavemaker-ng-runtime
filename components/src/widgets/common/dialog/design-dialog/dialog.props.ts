@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-dialog',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['class', PROP_STRING],
                 ['closable', {value: true, PROP_BOOLEAN}],
                 ['iconclass', {value: 'wi wi-file-text', PROP_STRING}],
