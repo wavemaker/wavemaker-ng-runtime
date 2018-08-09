@@ -96,7 +96,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
     constructor(private app: App, private file: File, private deviceFileDownloadService: DeviceFileDownloadService, private networkService: NetworkService) {}
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
-        if (sessionStorage.getItem('debugMode') === 'true') {
+        if (sessionStorage.getItem('debugMode') !== undefined) {
             return Promise.resolve(request.url).then(url => {
                 if (url.indexOf('://') < 0
                     && RemoteSyncInterceptor.URL_TO_SYNC.find(r => r.test(url))) {
@@ -144,19 +144,20 @@ class RemoteSyncInterceptor implements RequestInterceptor {
     private download(url: string, fileName: string): Promise<string> {
         const pageUrl = this.app.deployedUrl + '/' + url;
         let folderPath;
+        const isDebugMode = sessionStorage.getItem('debugMode') === 'true';
         return this.init(pageUrl)
             .then(pathToRemote => {
                 folderPath = pathToRemote;
                 return this.file.checkFile(folderPath + fileName, '');
             }).then(() => {
-                if (this.networkService.isConnected()) {
+                if (isDebugMode && this.networkService.isConnected()) {
                     return this.file.removeFile(folderPath, fileName)
                         .then(() => folderPath + fileName);
                 }
                 return folderPath + fileName;
             }, () => url)
             .then(path => {
-                if (this.networkService.isConnected()) {
+                if (isDebugMode && this.networkService.isConnected()) {
                     return this.deviceFileDownloadService.download(pageUrl, false, folderPath, fileName);
                 }
                 return path;

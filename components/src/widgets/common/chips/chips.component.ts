@@ -93,7 +93,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         const datasetSubscription = this.dataset$.subscribe(() => {
             this.searchComponent.dataset = this.dataset;
             this.nextItemIndex = this.datasetItems.length;
-            this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
+            this._debounceUpdateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
@@ -191,7 +191,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         });
 
         // make default query with all the values and if response for the value is not in datavalue then add a custom chip object.
-        if (searchQuery.length && this.datasource) {
+        if (searchQuery.length) {
+            if (!this.datasource) {
+                searchQuery.forEach(val => {
+                    const transformedData = this.getTransformedData([val], this.nextItemIndex);
+                    this.chipsList.push(transformedData[0]);
+                });
+                return;
+            }
             this.getDefaultModel(searchQuery, this.nextItemIndex)
                 .then(response => {
                     // do not add chip when response is empty
