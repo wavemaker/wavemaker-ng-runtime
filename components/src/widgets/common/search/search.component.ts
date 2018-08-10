@@ -515,7 +515,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, $event || {}, true);
-        this.closeSearch();
+        if (this.$element.hasClass('full-screen')) {
+            this.closeSearch();
+        }
         this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});
         this.invokeEventCallback('submit', {$event});
 

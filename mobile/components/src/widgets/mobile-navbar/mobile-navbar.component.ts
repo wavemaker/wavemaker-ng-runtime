@@ -1,4 +1,4 @@
-import { Component, Injector, OnDestroy } from '@angular/core';
+import { Attribute, Component, Injector, OnDestroy } from '@angular/core';
 
 import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef } from '@wm/components';
 import { App, AbstractNavigationService } from '@wm/core';
@@ -36,7 +36,8 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
         private page: PageDirective,
         private deviceService: DeviceService,
         private navigationService: AbstractNavigationService,
-        inj: Injector
+        inj: Injector,
+        @Attribute('backbtnclick.event') private backbtnClickEvt
     ) {
         super(inj, WIDGET_CONFIG);
         page.subscribe('wmLeftPanel:ready', (leftNavPanel: LeftPanelDirective) => {
@@ -62,7 +63,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
           * as details -> editPage -> details. For now, keeping this callback to react after 1 second.
           */
         if (this._isReady) {
-            if (this.hasEventCallback('backbtnclick')) {
+            if (this.backbtnClickEvt) {
                 this.invokeEventCallback('backbtnclick', {$event});
             } else {
                 this.navigationService.goToPrevious();
