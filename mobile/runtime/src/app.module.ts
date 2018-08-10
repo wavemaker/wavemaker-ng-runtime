@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 
 import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, removeNode } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
-import { MobileCoreModule, DeviceService, ExtAppMessageService } from '@wm/mobile/core';
+import { MobileCoreModule, DeviceService, DeviceFileOpenerService, ExtAppMessageService } from '@wm/mobile/core';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope } from '@wm/variables';
 
@@ -50,7 +50,7 @@ export class MobileAppModule {
 
     private _$appEl;
 
-    constructor(app: App, cookieService: CookieService, deviceService: DeviceService, private extAppMessageService: ExtAppMessageService) {
+    constructor(app: App, cookieService: CookieService, deviceFileOpenerService: DeviceFileOpenerService, deviceService: DeviceService, private extAppMessageService: ExtAppMessageService) {
         this._$appEl = $('.wm-app:first');
         this._$appEl.addClass('wm-mobile-app');
         app.deployedUrl = this.getDeployedUrl();
@@ -61,6 +61,9 @@ export class MobileAppModule {
             app.subscribe('userLoggedIn', () => {
                 cookieService.persistCookie($rootScope.project.deployedUrl, 'JSESSIONID');
                 cookieService.persistCookie($rootScope.project.deployedUrl, 'SPRING_SECURITY_REMEMBER_ME_COOKIE');
+            });
+            app.subscribe('device-file-download', (data) => {
+                deviceFileOpenerService.openRemoteFile(data.url, '', data.extension, data.name).then(data.successCb, data.errorCb);
             });
             const __zone_symbol__FileReader = window['__zone_symbol__FileReader'];
             if (__zone_symbol__FileReader && __zone_symbol__FileReader.READ_CHUNK_SIZE) {

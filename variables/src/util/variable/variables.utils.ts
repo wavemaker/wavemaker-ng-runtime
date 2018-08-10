@@ -645,14 +645,20 @@ export const processBinding = (variable: any, context: any, bindSource?: string,
  * 2. downloadThroughIframe
  *      - this method works across browsers and uses an iframe to downlad the file.
  * @param requestParams request params object
- * @param fileName name for the downloaded file via cordova file transfer in device
+ * @param fileName represents the file name
  * @param exportFormat downloaded file format
+ * @param success success callback
+ * @param error error callback
  */
 export const simulateFileDownload = (requestParams, fileName, exportFormat, success, error) => {
     /*success and error callbacks are executed incase of downloadThroughAnchor
      Due to technical limitation cannot be executed incase of iframe*/
     if (CONSTANTS.hasCordova) {
-        /*$rootScope.$emit('device-file-download', requestParams, getModifiedFileName(fileName, exportFormat));*/
+        let fileExtension;
+        if (exportFormat) {
+            fileExtension = exportTypesMap[exportFormat];
+        }
+        appManager.notify('device-file-download', { url: requestParams.url, name: fileName, extension: fileExtension, successCb: success, errorCb: error});
     } else if (!_.isEmpty(requestParams.headers) || isXsrfEnabled()) {
         downloadThroughAnchor(requestParams, success, error);
     } else {

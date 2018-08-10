@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
 import { FileOpener } from '@ionic-native/file-opener';
-import { now } from 'moment';
 
 import { isAndroid, isIos, noop } from '@wm/core';
 
@@ -13,6 +12,8 @@ import { IDeviceStartUpService } from './device-start-up-service';
 
 
 declare const cordova;
+declare const _;
+declare const resolveLocalFileSystemURL;
 
 @Injectable()
 export class DeviceFileOpenerService implements IDeviceStartUpService {
@@ -29,10 +30,27 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
 
     }
 
-    public openRemoteFile(url: string, mimeType: string, extension: string): Promise<void> {
-        return this.getLocalPath(url, extension)
+    // this method returns the mime type of file from the filePath.
+    public getFileMimeType(filePath): Promise<any> {
+        return new Promise<any> ((resolve) => {
+            // Read the file entry from the file URL
+            resolveLocalFileSystemURL(filePath, fileEntry => {
+                fileEntry.file(metadata => {
+                    resolve(metadata.type);
+                });
+            });
+        });
+    }
+
+    public openRemoteFile(url: string, mimeType: string, extension: string, fileName?: string): Promise<void> {
+        return this.getLocalPath(url, extension, fileName)
             .then(filePath => {
-                return this.cordovaFileOpener.open(filePath, mimeType);
+                if (mimeType) {
+                    return this.cordovaFileOpener.open(filePath, mimeType);
+                }
+                return this.getFileMimeType(filePath).then(type => {
+                    return this.cordovaFileOpener.open(filePath, type);
+                });
             });
     }
 
@@ -55,14 +73,14 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
     private generateFileName(url: string, extension: string): string {
         let fileName = url.split('?')[0];
         fileName = fileName.split('/').pop();
-        fileName = this.fileService.appendToFileName(fileName, '' + now());
+        fileName = this.fileService.appendToFileName(fileName, '' + _.now());
         if (extension) {
             return fileName.split('.')[0] + '.' + extension;
         }
         return fileName;
     }
 
-    private getLocalPath(url: string, extension: string): Promise<string> {
+    private getLocalPath(url: string, extension?: string, filename?: string): Promise<string> {
         return new Promise( (resolve, reject) => {
             return this.cacheService.getLocalPath(url, false, false)
                     .then( filePath => {
@@ -71,7 +89,7 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
                         if (filePath.startsWith(this._downloadsFolder)) {
                             resolve(filePath);
                         } else {
-                            fileName = this.generateFileName(url, extension);
+                            fileName = filename || this.generateFileName(url, extension);
                             i = filePath.lastIndexOf('/');
                             fromDir = filePath.substring(0, i);
                             fromFile = filePath.substring(i + 1);
@@ -83,7 +101,7 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
                                 });
                         }
                     }).catch(() => {
-                        const fileName = this.generateFileName(url, extension);
+                        const fileName = filename || this.generateFileName(url, extension);
                         this.downloadService.download(url, false, this._downloadsFolder, fileName)
                             .then(filePath => {
                                 this.cacheService.addEntry(url, filePath);
