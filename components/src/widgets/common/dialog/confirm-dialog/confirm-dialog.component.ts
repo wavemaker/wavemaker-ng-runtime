@@ -45,7 +45,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,
-                keyboard: toBoolean(closable)
+                keyboard: !toBoolean(modal)
             }
         );
     }
