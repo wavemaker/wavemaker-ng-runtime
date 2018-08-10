@@ -145,8 +145,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private clearSearch() {
         this.query = '';
         this.onInputChange();
-        this.dataProvider.isLastPage = false;
-        this.loadMoreData(true);
+        this.loadMoreData();
     }
 
     // Close the full screen mode in mobile view of auto complete
