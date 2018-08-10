@@ -7,7 +7,7 @@ import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, isDefine
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { isStyle } from '../../framework/styler';
-import { register } from '../../framework/widget-registry';
+import { register, renameWidget } from '../../framework/widget-registry';
 import { ChangeListener, Context, IWidgetConfig } from '../../framework/types';
 import { widgetIdGenerator } from '../../framework/widget-id-generator';
 import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
@@ -318,6 +318,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             switchClass(this.nativeElement, nv, ov);
         } else if (key === 'name' || key === 'tabindex') {
             setAttr(this.nativeElement, key, nv);
+            if (key === 'name' && nv) {
+                renameWidget(this.viewParent, this.widget, nv, ov);
+            }
         } else if (key === 'conditionalclass') {
             // update classes if old and nv value are different
             updateClasses(nv.toAdd, nv.toRemove, this.nativeElement);
@@ -507,7 +510,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Invoking this method will result in invocation of propertyChange handlers on the component for the first time
      */
     protected setInitProps() {
-        this.widget.name = this.initState.get('name');
+        if (this.initState.get('name')) {
+            this.widget.name = this.initState.get('name');
+        }
         this.initState.forEach((v, k) => {
             // name is already set, ignore name
             // if the key is part of to be ignored attributes list do not set it on the component instance

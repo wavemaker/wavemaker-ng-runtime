@@ -147,7 +147,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
 
 // If formControlName attribute is present, dont add the ngModel
 export const getNgModelAttr = attrs => {
-    if (attrs.has('formControlName')) {
+    if (attrs.has('formControlName') || attrs.has('formControlName.bind')) {
         return '';
     }
     return 'ngModel';

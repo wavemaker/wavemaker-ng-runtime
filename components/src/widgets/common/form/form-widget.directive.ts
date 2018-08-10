@@ -25,12 +25,22 @@ export class FormWidgetDirective implements OnInit {
         this.componentInstance.registerPropertyChangeListener((k, nv) => {
             if (k === 'datavalue' && this._control) {
                 this._control.setValue(nv);
+            } else if (k === 'name' && !this._control) {
+                this.addControl(this.key || nv);
             }
         });
     }
 
     get _control() {
-        return this.ngform && this.ngform.controls[this.key || this.name];
+        const fieldName = this.key || this.name;
+        if (!fieldName) {
+            return undefined;
+        }
+        return this.ngform && this.ngform.controls[fieldName];
+    }
+
+    addControl(fieldName) {
+        this.ngform.addControl(fieldName, this.createControl());
     }
 
     createControl() {
@@ -38,11 +48,11 @@ export class FormWidgetDirective implements OnInit {
     }
 
     ngOnInit() {
+        const fieldName = this.key || this.name;
         this.ngform = this.parent.ngform;
 
-        if (!this._control) {
-            this.ngform.addControl(this.key || this.name, this.createControl());
-
+        if (fieldName && !this._control) {
+            this.addControl(fieldName);
             this.parent.registerFormWidget(this.componentInstance);
         }
     }
