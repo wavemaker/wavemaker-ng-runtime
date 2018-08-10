@@ -103,7 +103,7 @@ export class LiveVariableOfflineBehaviour {
             if (!params.skipLocalDB) {
                 if (operation.type === 'READ') {
                     this.offlineDBService.getStore(params).then(store => {
-                        store.saveAll(response.content);
+                        store.saveAll(response.body.content);
                     });
                 } else if (operation.type === 'INSERT') {
                     params = _.clone(params);

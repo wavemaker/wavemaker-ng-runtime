@@ -2,7 +2,7 @@ import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-in
 
 import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { getClonedObject, getSessionStorageItem, isMobile } from '@wm/core';
+import { $watch, getClonedObject, getSessionStorageItem, isMobile } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IRedrawableComponent } from '../../framework/types';
@@ -113,6 +113,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     private eventData;
     private events;
     private changesStack = [];
+    private invokeOnViewRenderback = _.debounce(() => this.invokeEventCallback('viewrender', { $view: this.calendarOptions }), 300);
 
     // calendarOptions to the calendar
     private calendarOptions: any = {
@@ -498,19 +499,35 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super.ngAfterViewInit();
 
         if (this.mobileCalendar && this._datepicker) {
+            let lastActiveDate = (this._datepicker as any).activeDate;
             // renderview when active date changes
             (this._datepicker as any).activeDateChange.subscribe((dt) => {
-                const prevMonth = (this._datepicker as any).activeDate.getMonth();
+                const prevYear = lastActiveDate.getYear();
+                const prevMonth = lastActiveDate.getMonth();
+                const selectedYear = dt.getYear();
                 const selectedMonth = dt.getMonth();
 
                 // invoke renderView only when month is changed.
-                if (prevMonth !== selectedMonth) {
+                if (prevMonth !== selectedMonth || prevYear !== selectedYear) {
+                    lastActiveDate = dt;
                     this.renderMobileView(dt);
                 }
             });
 
             this._datepickerInnerComponent = (this._datepicker as any)._datePicker;
             this.renderMobileView(moment(this.datavalue));
+            this.registerDestroyListener(
+                $watch(
+                    '_datepickerInnerComponent.datepickerMode',
+                    this,
+                    {},
+                    (nv, ov) => {
+                        if (ov && !_.isEmpty(ov)) {
+                            this.invokeOnViewRenderback();
+                        }
+                    }
+                )
+            );
             return;
         }
 
@@ -586,6 +603,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         startDate = moment(viewObj).startOf('month').valueOf();
         endDate = moment(viewObj).endOf('month').valueOf();
         this.currentview = {start: startDate, end: endDate};
-        this.invokeEventCallback('viewrender', { $view: this.calendarOptions });
+        this.invokeOnViewRenderback();
     }
 }
