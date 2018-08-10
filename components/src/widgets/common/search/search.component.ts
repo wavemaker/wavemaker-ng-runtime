@@ -145,6 +145,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private clearSearch() {
         this.query = '';
         this.onInputChange();
+        this.dataProvider.isLastPage = false;
         this.loadMoreData();
     }
 
@@ -161,7 +162,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private getDataSourceAsObservable(query: string): Observable<any> {
         // show dropdown only when there is change in query
-        if (query && (this._lastQuery === query)) {
+        if (this.type !== 'autocomplete' && query && (this._lastQuery === query)) {
             return of([]);
         }
 
@@ -274,6 +275,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             dropdownEl.insertAfter(this.$element.find('input:first'));
             const screenHeight = this.$element.closest('.app-content').height();
             dropdownEl.css({position: 'relative', top: 0, height: screenHeight + 'px'});
+            this.showClosebtn = this.query && this.query !== '';
 
             if (this.isMobileAutoComplete() && !this.noMoreData) {
                 this.triggerSearch();
@@ -513,7 +515,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, $event || {}, true);
-
+        this.closeSearch();
         this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});
         this.invokeEventCallback('submit', {$event});
 
