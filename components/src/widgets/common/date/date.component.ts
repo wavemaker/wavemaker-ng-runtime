@@ -15,6 +15,7 @@ import { BaseDateTimeComponent } from '../base/base-date-time.component';
 registerProps();
 
 declare const _;
+declare const moment;
 
 const CURRENT_DATE: string = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';
@@ -42,6 +43,8 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private keyEventPlugin;
     private deregisterEventListener;
+    private mindate;
+    private maxdate;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -90,8 +93,20 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date input changes
      */
     onDisplayDateChange($event) {
-        const newVal = getDateObj($event.target.value);
-        this.setDataValue(newVal);
+        const dateFormat = 'YYYY-MM-DD';
+        let newVal = getDateObj($event.target.value);
+        if (newVal) {
+            newVal = moment(newVal).startOf('day').toDate();
+            if (this.mindate && newVal < moment(this.mindate, dateFormat).toDate()) {
+                alert(`Please choose a date greater than or equal to ${this.mindate}.`);
+                $($event.target).val(this.displayValue);
+            } else if (this.maxdate && newVal > moment(this.maxdate, dateFormat).toDate()) {
+                alert(`Please choose a date less than or equal to ${this.maxdate}.`);
+                $($event.target).val(this.displayValue);
+            } else {
+                this.setDataValue(newVal);
+            }
+        }
     }
 
     // sets the dataValue and computes the display model values
