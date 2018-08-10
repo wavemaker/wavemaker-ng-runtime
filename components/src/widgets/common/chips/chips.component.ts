@@ -234,18 +234,22 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this.removeDuplicates();
         this.updateMaxSize();
-        this.resetSearchModel();
+        // default chip data is adding focus on to the search input. Hence this flag helps not to focus.
+        this.resetSearchModel(true);
         $appDigest();
     }
 
-    private resetSearchModel() {
+    private resetSearchModel(hasFocus?: boolean) {
         this.searchComponent.query = '';
         this.searchComponent.queryModel = '';
         this.searchComponent._modelByValue = undefined;
 
         this._unsubscribeDv = false;
 
-        this.focusSearchBox();
+        // if hasFocus is false then focus the search input.
+        if (!hasFocus) {
+            this.focusSearchBox();
+        }
     }
 
     // Triggerred when typeahead option is selected by enter keypress.
