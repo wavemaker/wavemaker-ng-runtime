@@ -132,7 +132,5 @@ export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.wi
 export class AppModule {
     constructor () {
         $.fn.swipeAnimation.expressionEvaluator = $parseExpr;
-        // Native File Reader is required. Otherwise, file operations are failing.
-        window['FileReader'] = window['__zone_symbol__FileReader'];
     }
 }

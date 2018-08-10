@@ -62,6 +62,11 @@ export class MobileAppModule {
                 cookieService.persistCookie($rootScope.project.deployedUrl, 'JSESSIONID');
                 cookieService.persistCookie($rootScope.project.deployedUrl, 'SPRING_SECURITY_REMEMBER_ME_COOKIE');
             });
+            const __zone_symbol__FileReader = window['__zone_symbol__FileReader'];
+            if (__zone_symbol__FileReader && __zone_symbol__FileReader.READ_CHUNK_SIZE) {
+                // cordova File Reader is required. Otherwise, file operations are failing.
+                window['FileReader'] = __zone_symbol__FileReader;
+            }
         }
         deviceService.start();
         deviceService.whenReady().then(() => {
