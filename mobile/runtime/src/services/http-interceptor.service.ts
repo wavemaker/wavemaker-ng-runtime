@@ -168,6 +168,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
 
 class SecurityInterceptor implements RequestInterceptor {
 
+    private initialized = false;
     private static PAGE_URL_PATTERN = new RegExp('page.min.json$');
     private publicPages;
 
@@ -177,7 +178,7 @@ class SecurityInterceptor implements RequestInterceptor {
         return new Promise<HttpRequest<any>>((resolve, reject) => {
             if (hasCordova() && SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
                 Promise.resolve().then(() => {
-                    if (!this.publicPages) {
+                    if (!this.initialized) {
                         return this.init();
                     }
                 }).then(() => {
@@ -207,6 +208,7 @@ class SecurityInterceptor implements RequestInterceptor {
     private init(): Promise<any> {
         const folderPath = cordova.file.applicationDirectory + 'www/metadata/app',
             fileName = 'public-pages.json';
+        this.initialized = true;
         return this.file.readAsText(folderPath, fileName).then(text => {
             this.publicPages = {};
             _.forEach(JSON.parse(text), pageName => this.publicPages[pageName] = true);

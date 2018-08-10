@@ -14,7 +14,7 @@ export class DeviceService {
     public constructor() {
         const maxWaitTime = 10;
         setTimeout(() => {
-            if (this._isReady) {
+            if (!this._isReady) {
                 console.warn(`Device is not ready even after ${maxWaitTime} seconds`);
                 console.warn('Waiting For %O', this._startUpServices.map(i => i.serviceName));
             }

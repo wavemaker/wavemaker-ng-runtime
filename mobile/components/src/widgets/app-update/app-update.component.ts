@@ -88,7 +88,7 @@ export class AppUpdateComponent {
 
     private getBuildMeta() {
         if (!this._buildMeta) {
-            return this.file.readAsText(cordova.file.applicationDirectory + 'www', 'build_meta.json')
+            return this.file.readAsText(cordova.file.applicationDirectory + 'www/', 'build_meta.json')
                 .then(data => {
                     this._buildMeta = JSON.parse(data);
                     return this._buildMeta;
