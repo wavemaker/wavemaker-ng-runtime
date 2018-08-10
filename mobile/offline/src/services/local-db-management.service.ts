@@ -528,7 +528,7 @@ export class LocalDBManagementService {
             let query, params;
             if (queryData.nativeSql && !queryData.update) {
                 query = queryData.queryString;
-                params = this.extractQueryParams(query).map(p => {
+                params = _.map(this.extractQueryParams(query), p => {
                     const paramObj = _.find(queryData.parameters, {'name': p});
                     return {
                         name: paramObj.name,

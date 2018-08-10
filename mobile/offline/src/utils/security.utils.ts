@@ -51,7 +51,7 @@ export class SecurityOfflineBehaviour {
                         resolve(this.securityConfig);
                     }, reject);
                 } else {
-                    this.readLocalSecurityConfig().then(config => {
+                    this.readLocalSecurityConfig().then((config = {}) => {
                         if (config.loggedOut) {
                             return origLoad.call(this.securityService);
                         } else {
