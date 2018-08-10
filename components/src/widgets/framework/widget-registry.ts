@@ -39,6 +39,9 @@ export const register = (widget: any, viewParent: any, widgetId: string, name?: 
  * Deregisters the oldname in widgets registry and sets new name
  */
 export const renameWidget = (viewParent: any, widget: any, nv: string, ov?: string) => {
+    if (!isDefined(viewParent.Widgets)) {
+        return;
+    }
     if (ov) {
         viewParent.Widgets[ov] = undefined;
     }
