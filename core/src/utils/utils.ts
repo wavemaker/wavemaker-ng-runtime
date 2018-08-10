@@ -1,8 +1,8 @@
 import { Subject } from 'rxjs';
 
 import { $watch } from './watcher';
-import { DataType } from './enums';
-import { DataSource } from './types';
+import { DataType } from '../enums/enums';
+import { DataSource } from '../types/types';
 
 declare const _, X2JS, _WM_APP_PROPERTIES;
 declare const moment;

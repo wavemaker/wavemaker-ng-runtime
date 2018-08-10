@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import * as Utils from './utils';
+import * as Utils from '../utils/utils';
 
 declare const _;
 
