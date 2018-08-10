@@ -30,7 +30,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const toDay = new Date().getDate().toString();
         _.filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
             if ($(obj).text() === toDay) {
-                $(obj).addClass('currentDate');
+                $(obj).addClass('current-date text-info');
             }
         });
     }
