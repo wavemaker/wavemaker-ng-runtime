@@ -12,7 +12,7 @@
        [tabindex]="tabindex"
        [(ngModel)]="datavalue"
        (ngModelChange)="handleChange($event);"
-       [ngModelOptions]="{updateOn: 'blur'}"
+       [ngModelOptions]="{updateOn: 'change'}"
        (blur)="invokeOnTouched($event)"
        [attr.accesskey]="shortcutkey">
 <span class="input-group-addon colorpicker-container">
