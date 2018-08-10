@@ -295,7 +295,7 @@ class PushOperation implements IDeviceVariableOperation {
             .then(() => getOfflineChanges(this.changeLogService))
             .then(changes => {
                 if (changes.pendingToSync.total <= 0) {
-                    return Promise.reject('No Changes to flush');
+                    return Promise.reject(_.clone(this.model));
                 }
             }).then(() => {
                 if (variable.showProgress) {
@@ -322,7 +322,7 @@ class PushOperation implements IDeviceVariableOperation {
             })
             .catch(pushInfo => pushInfo)
             .then(pushInfo => {
-                if (pushInfo && pushInfo.totalTaskCount) {
+                if (pushInfo && pushInfo.totalTaskCount !== undefined) {
                     pushInfo = addOldPropertiesForPushData(pushInfo);
                     if (progressInstance) {
                         progressInstance.destroy();
