@@ -1,6 +1,6 @@
 import { Injectable, Injector, ViewContainerRef } from '@angular/core';
 
-import { $invokeWatchers, App, noop } from '@wm/core';
+import { $invokeWatchers, App, noop, triggerFn } from '@wm/core';
 
 import { commonPageWidgets, getFragmentUrl, FragmentRenderer } from './fragment-renderer';
 
@@ -42,7 +42,7 @@ export class PartialRenderer {
     }
 
     private resolveFragment(inj: Injector) {
-        (inj as any).view.component._resolveFragment();
+        triggerFn((inj as any).view.component._resolveFragment);
     }
 
     private invokeOnReady(instance: any, inj: Injector) {
@@ -58,7 +58,7 @@ export class PartialRenderer {
     public async render(partialName: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: any, inj: Injector) {
         const context = 'Partial';
 
-        (inj as any).view.component._registerFragment();
+        triggerFn((inj as any).view.component._registerFragment);
 
         return this.renderFragment.render(
             partialName,

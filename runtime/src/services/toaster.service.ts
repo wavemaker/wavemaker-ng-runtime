@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { ToastrService } from 'ngx-toastr';
 
-import { noop, AbstractToasterService, isDefined } from '@wm/core';
+import { AbstractToasterService, isDefined } from '@wm/core';
 import { CustomToasterComponent } from '../components/custom-toaster.component';
 
 declare const _;
