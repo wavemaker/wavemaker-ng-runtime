@@ -58,6 +58,7 @@ export class AppManagerService {
         });
         this.$app.subscribe('userLoggedIn', () => this.setLandingPage());
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage());
+        this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
     }
 
     /**

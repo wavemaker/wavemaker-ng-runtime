@@ -22,6 +22,8 @@ export class FormWidgetDirective implements OnInit {
         @Attribute('key') public key) {
         this.fb = fb;
         this.parent = form || table;
+        this.ngform = this.parent.ngform;
+
         this.componentInstance.registerPropertyChangeListener((k, nv) => {
             if (k === 'datavalue' && this._control) {
                 this._control.setValue(nv);
@@ -49,7 +51,6 @@ export class FormWidgetDirective implements OnInit {
 
     ngOnInit() {
         const fieldName = this.key || this.name;
-        this.ngform = this.parent.ngform;
 
         if (fieldName && !this._control) {
             this.addControl(fieldName);
