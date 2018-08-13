@@ -14,7 +14,6 @@ import { styler } from '../../framework/styler';
 import { registerProps } from './search.props';
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
-import { ChipsComponent } from '../chips/chips.component';
 
 declare const _;
 
@@ -74,6 +73,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private isScrolled: boolean;
     private parentEl: any;
     private position: string;
+    private elIndex: number;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -155,7 +155,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (!isDefined(this.datavalue)) {
             this.queryModel = this.query = '';
         }
-        this.$element.appendTo(this.parentEl);
+        // after closing the search, insert the element at its previous position (elIndex)
+        this.insertAtIndex(this.elIndex);
+        this.elIndex = undefined;
         this.parentEl = undefined;
         this.$element.removeClass('full-screen');
     }
@@ -182,6 +184,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // highlight of chars will work only when label are strings.
         (match as any).value = match.item.label.toString();
         return this.typeaheadContainer.highlight(match, query);
+    }
+
+    // inserts the element at the index position
+    private insertAtIndex(i) {
+        if (i === 0) {
+            this.parentEl.prepend(this.$element);
+        } else {
+            this.$element.insertBefore(this.parentEl.children().eq(i));
+        }
     }
 
     // Check if the widget is of type autocomplete in mobile view/ app
@@ -257,8 +268,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         // open full-screen search view
         if (this.isMobileAutoComplete()) {
-            if (!this.parentEl) {
+            // Get the parent element of the search element which can be next or prev element, if both are empty then get the parent of element.
+            if (!this.elIndex) {
                 this.parentEl = this.$element.parent();
+                this.elIndex = this.parentEl.children().index(this.$element);
             }
             this.$element.appendTo('div[data-role="pageContainer"]');
 
