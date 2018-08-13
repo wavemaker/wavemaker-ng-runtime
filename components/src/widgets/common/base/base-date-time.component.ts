@@ -24,6 +24,23 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected bsDatePickerDirective: BsDatepickerDirective;
 
     /**
+     * This method is used to validate min date and max date
+     */
+    protected minDateMaxDateValidationOnInput(newVal, $event, scope) {
+        const dateFormat = 'YYYY-MM-DD';
+        if (newVal) {
+            newVal = moment(newVal).startOf('day').toDate();
+            if (scope.mindate && newVal < moment(scope.mindate, dateFormat).toDate()) {
+                alert(`Please choose a date greater than or equal to ${scope.mindate}.`);
+                return $($event.target).val(scope.displayValue);
+            } else if (scope.maxdate && newVal > moment(scope.maxdate, dateFormat).toDate()) {
+                alert(`Please choose a date less than or equal to ${scope.maxdate}.`);
+                return $($event.target).val(scope.displayValue);
+            }
+        }
+    }
+
+    /**
      * This method is used to highlight the current date
      */
     protected hightlightToday() {
@@ -216,9 +233,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private addKeyBoardEventsForDays() {
         const datePickerBody = $('.bs-datepicker-body');
-        datePickerBody[0].addEventListener('mouseenter', (event) => {
-            event.stopPropagation();
-        }, true);
+        if (datePickerBody.length > 0) {
+            datePickerBody[0].addEventListener('mouseenter', (event) => {
+                event.stopPropagation();
+            }, true);
+        }
         datePickerBody.keydown((event) => {
             const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;

@@ -44,6 +44,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     public showdropdownon: string;
     public useDatapicker = true;
+    public mindate;
+    public maxdate;
     private keyEventPlugin;
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
@@ -276,6 +278,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private onDateChange($event) {
         let newVal = $event.target.value.trim();
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
+        if (this.minDateMaxDateValidationOnInput(newVal, $event, this)) {
+            return;
+        }
         this.onModelUpdate(newVal);
     }
 
