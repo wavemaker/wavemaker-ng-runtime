@@ -11,7 +11,7 @@
         </div>
     </li>
 </ul>
-<div class="app-media-fullscreen" *ngIf="selectedMediaIndex >= 0">
+<div class="app-media-fullscreen" *ngIf="selectedMediaIndex >= 0 && appendToBody()">
     <header wmMobileNavbar
             backbutton="true"
             backbtnclick.event="exitFullScreen()"
