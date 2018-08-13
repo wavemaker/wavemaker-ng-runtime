@@ -4,6 +4,8 @@ import { WidgetRef } from '@wm/components';
 import { hasCordova, noop } from '@wm/core';
 import { DeviceFileCacheService } from '@wm/mobile/core';
 
+const DEFAULT_IMAGE =  'resources/images/imagelists/default-image.png';
+
 @Directive({
     selector: '[wmImageCache]'
 })
@@ -22,11 +24,12 @@ export class ImageCacheDirective implements DoCheck {
         if (this._isEnabled && this.componentInstance.imgSource && this.componentInstance.imgSource.startsWith('http')) {
             if (this._lastUrl !== this.componentInstance.imgSource) {
                 this._lastUrl = this.componentInstance.imgSource;
+                this.componentInstance.imgSource = DEFAULT_IMAGE;
                 this.getLocalPath(this._lastUrl).then((localPath) => {
                     this._cacheUrl = localPath;
                     this.componentInstance.imgSource = this._cacheUrl;
                 });
-            } else {
+            } else if (this._cacheUrl) {
                 this.componentInstance.imgSource = this._cacheUrl;
             }
         }
