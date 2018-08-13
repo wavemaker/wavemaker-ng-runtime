@@ -1,10 +1,10 @@
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Network } from '@ionic-native/network';
 
 import { App, getAbortableDefer, noop, retryIfFails } from '@wm/core';
-import { $rootScope } from '@wm/variables';
-import { Injectable } from '@angular/core';
+
 import { IDeviceStartUpService } from './device-start-up-service';
 
 declare const _, cordova, Connection, navigator;
@@ -36,25 +36,14 @@ const blockUrl = url => {
 };
 
 // Intercept all XHR calls
-XMLHttpRequest.prototype.open = function (method, url) {
+XMLHttpRequest.prototype.open = function (method, url, async = true, user, password) {
     if (blockUrl(url)) {
-        // if the app is not connected, then all xhr calls will be blocked.
-        this.blockedByWM = true;
+        const urlSplits = url.split('://');
+        const pathIndex = urlSplits[1].indexOf('/');
+        urlSplits[1] = 'localhost' + (pathIndex > 0 ? urlSplits[1].substr(pathIndex) : '/');
+        url = urlSplits.join('://');
     }
-    return originalXMLHttpRequestOpen.apply(this, arguments);
-};
-
-// Intercept all XHR calls
-XMLHttpRequest.prototype.send = function () {
-    if (this.blockedByWM) {
-        // if the app is not connected, then all xhr calls will be blocked.
-        this.status = 0;
-        this.readyState = XMLHttpRequest.DONE;
-        this.statusText = 'BLOCKED';
-        this.onLoad();
-        return;
-    }
-    return originalXMLHttpRequestSend.apply(this, arguments);
+    return originalXMLHttpRequestOpen.apply(this, [method, url, async, user, password]);
 };
 
 @Injectable()

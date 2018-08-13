@@ -21,9 +21,14 @@ export class MobileHttpInterceptor implements HttpInterceptor {
 
     private requestInterceptors: RequestInterceptor[] = [];
 
-    public constructor(private app: App, file: File, deviceFileDownloadService: DeviceFileDownloadService, private deviceService: DeviceService, private networkService: NetworkService, securityService: SecurityService) {
+    public constructor(private app: App,
+                       file: File,
+                       deviceFileDownloadService: DeviceFileDownloadService,
+                       private deviceService: DeviceService,
+                       private networkService: NetworkService,
+                       securityService: SecurityService) {
         if (hasCordova() && !CONSTANTS.isWaveLens) {
-            this.requestInterceptors.push(new SecurityInterceptor(file, securityService));
+            this.requestInterceptors.push(new SecurityInterceptor(app, file, securityService));
             this.requestInterceptors.push(new RemoteSyncInterceptor(app, file, deviceFileDownloadService, networkService));
             this.requestInterceptors.push(new ServiceCallInterceptor(app));
         }
@@ -37,7 +42,7 @@ export class MobileHttpInterceptor implements HttpInterceptor {
             .then((url) => {
                 next.handle(data.request).subscribe(subject);
                 subject.subscribe({ error: value => this.onHttpError(value) });
-            });
+            }, error => subject.error(error));
         return subject;
     }
 
@@ -172,12 +177,12 @@ class SecurityInterceptor implements RequestInterceptor {
     private static PAGE_URL_PATTERN = new RegExp('page.min.json$');
     private publicPages;
 
-    constructor(private file: File, private securityService: SecurityService) {}
+    constructor(private app: App, private file: File, private securityService: SecurityService) {}
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
         return new Promise<HttpRequest<any>>((resolve, reject) => {
-            if (hasCordova() && SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
-                Promise.resolve().then(() => {
+            if (SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
+                return Promise.resolve().then(() => {
                     if (!this.initialized) {
                         return this.init();
                     }
@@ -192,11 +197,12 @@ class SecurityInterceptor implements RequestInterceptor {
                                 resolve(request);
                             } else {
                                 reject(`Page '${pageName}' is not accessible to the user.`);
+                                this.app.notify('http401', { page: pageName});
                             }
                         }, () => reject(`Security call failed.`));
                     }
                     return Promise.resolve(request);
-                });
+                }).then(resolve, reject);
             }
             return resolve(request);
         });
