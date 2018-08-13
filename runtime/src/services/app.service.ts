@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 
 import {
     EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService,
-    AbstractHttpService, AbstractSpinnerService, UtilsService
+    AbstractHttpService, AbstractSpinnerService, UtilsService, FieldTypeService, FieldWidgetService
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -14,7 +14,9 @@ const injectorMap = {
     i18nService: AbstractI18nService,
     SpinnerService: AbstractSpinnerService,
     ToasterService: AbstractToasterService,
-    Utils: UtilsService
+    Utils: UtilsService,
+    FIELD_TYPE: FieldTypeService,
+    FIELD_WIDGET: FieldWidgetService
 };
 
 const enum PROJECT_TYPE {
