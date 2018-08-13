@@ -24,6 +24,8 @@ enum Layout {
 })
 export class MediaListComponent extends StylableComponent {
 
+    private $fullScreenEle;
+
     public binddataset;
     public fieldDefs: any[]  [];
     public mediaurl: string;
@@ -35,6 +37,16 @@ export class MediaListComponent extends StylableComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+    }
+
+    public appendToBody() {
+        if (!this.$fullScreenEle) {
+            setTimeout(() => {
+                this.$fullScreenEle = this.$element.find('>.app-media-fullscreen');
+                this.$fullScreenEle.appendTo('body:first');
+            }, 100);
+        }
+        return true;
     }
 
     public onPropertyChange(key, nv, ov?) {
@@ -53,6 +65,8 @@ export class MediaListComponent extends StylableComponent {
 
     public exitFullScreen() {
         this.selectedMediaIndex = -1;
+        this.$fullScreenEle.appendTo(this.$element);
+        this.$fullScreenEle = null;
         $appDigest();
     }
 
