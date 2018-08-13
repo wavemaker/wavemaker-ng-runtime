@@ -76,6 +76,7 @@
          forceellipses.bind="forceellipses"
          directionlinks.bind="directionlinks"
          show.bind="!onDemandLoad"
+         paginationchange.event="beforePaginationChange($event, $index)"
     ></nav>
     <a *ngIf="onDemandLoad" href="javascript:void(0);"
        (click)="dataNavigator.navigatePage('next', $event)"

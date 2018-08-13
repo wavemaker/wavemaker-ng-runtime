@@ -781,6 +781,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
+    private beforePaginationChange($event, $index) {
+        this.invokeEventCallback('paginationchange', {$event, $index});
+    }
+
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         // tap and doubleTap events are not getting propagated.So, using mouse events instead.
         const touchToMouse = {
