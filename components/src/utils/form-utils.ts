@@ -1,4 +1,4 @@
-import { $parseEvent, AppDefaults, getClonedObject, getFormattedDate, isEqualWithFields } from '@wm/core';
+import { $parseEvent, AppDefaults, getClonedObject, getFormattedDate, isDefined, isEqualWithFields } from '@wm/core';
 
 import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 
@@ -133,16 +133,16 @@ export const transformData = (context: any, dataSet: any, myDataField?: string, 
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: option, index: startIndex + index});
+            data.push({key: option, value: option, label: isDefined(option) ? option.toString() : '', index: startIndex + index});
         });
     } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: option, index: startIndex + index});
+            data.push({key: option, value: option, label: isDefined(option) ? option.toString() : '', index: startIndex + index});
         });
     } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
         const i = 0;
         _.forEach(dataSet, (value, key) => {
-            data.push({key: _.trim(key), value: key, label: value, index: startIndex});
+            data.push({key: _.trim(key), value: key, label: isDefined(value) ? value.toString() : '', index: startIndex});
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
@@ -158,10 +158,10 @@ export const transformData = (context: any, dataSet: any, myDataField?: string, 
                     field: displayOptions.displayField,
                     expression: displayOptions.displayExpr,
                     bindExpression: displayOptions.bindDisplayExpr
-                }, context);
+                }, context) || '';
                 const dataSetItem = {
                     key: key,
-                    label: label,
+                    label: label.toString(),
                     value: myDataField === ALLFIELDS ? option : key,
                     dataObject: option, // represents the object when datafield is ALLFIELDS. This is used as innerItem while grouping the datasetItems.
                     index: startIndex + index
