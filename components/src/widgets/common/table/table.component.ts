@@ -217,8 +217,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         editmode: '',
         formPosition: '',
         isMobile: false,
-        dateFormat: '',
-        timeFormat: '',
         name: '',
         messages: {
             selectField: 'Select Field'
@@ -603,7 +601,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
-        // TODO: App defaults
         this.gridOptions.name = this.name;
         this.gridOptions.messages = {
             'selectField': 'Select Field'

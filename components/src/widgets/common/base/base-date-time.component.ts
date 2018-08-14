@@ -14,6 +14,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected activeDate;
     private keyEventPluginInstance;
     private elementScope;
+    protected datepattern: string;
+    protected timepattern: string;
+    protected showseconds: boolean;
+    protected ismeridian: boolean;
 
     private dateOnShowSubscription: Subscription;
 
@@ -479,6 +483,17 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         });
     }
 
+    protected updateFormat(pattern) {
+        if (pattern === 'datepattern') {
+            this._dateOptions.dateInputFormat = this.datepattern;
+            this.showseconds = _.includes(this.datepattern, 's');
+            this.ismeridian = _.includes(this.datepattern, 'h');
+        } else if (pattern === 'timepattern') {
+            this.showseconds = _.includes(this.timepattern, 's');
+            this.ismeridian = _.includes(this.timepattern, 'h');
+        }
+    }
+
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
@@ -486,7 +501,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
 
         if (key === 'datepattern') {
-            this._dateOptions.dateInputFormat = nv;
+            this.updateFormat(key);
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {

@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, E
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, App, DataSource, getClonedObject, isDataSourceEqual, isDefined, isNumber, isObject, noop, switchClass } from '@wm/core';
+import { $appDigest, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isNumber, isObject, noop, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -51,6 +51,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private debouncedFetchNextDatasetOnScroll: Function;
     private reorderProps: any;
     private app: any;
+    private appDefaults: any;
 
     public fieldDefs: Array<any>;
     public disableitem;
@@ -121,6 +122,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         cdRef: ChangeDetectorRef,
         datePipe: ToDatePipe,
         app: App,
+        appDefaults: AppDefaults,
         @Attribute('itemclass.bind') binditemclass: string,
         @Attribute('disableitem.bind') binddisableitem: string,
         @Attribute('dataset.bind') binddataset: string,
@@ -145,6 +147,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.binddatasource = binddatasource;
 
         this.app = app;
+        this.appDefaults = appDefaults;
         this.variableInflight = false;
 
         this.noDataFound = !binddataset;
@@ -341,7 +344,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.fieldDefs = getOrderedDataset(this.fieldDefs, this.orderby);
         }
         if (this.groupby) {
-            this.groupedData = groupData(this, this.fieldDefs, this.groupby, this.match, this.orderby, this.dateformat, this.datePipe);
+            this.groupedData = groupData(this, this.fieldDefs, this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, undefined, this.appDefaults);
         }
 
         if (!this.fieldDefs.length) {

@@ -1,7 +1,7 @@
 import { Attribute, Element } from '@angular/compiler';
 
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
-import { DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator } from '@wm/core';
+import { DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator, isDateTimeType } from '@wm/core';
 
 import { EDIT_MODE, getDataTableFilterWidget, getEditModeWidget } from '../../../../utils/live-utils';
 
@@ -112,14 +112,17 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
 
 const getFormatExpression = (attrs) => {
     const columnValue = `row.getProperty('${attrs.get('binding')}')`;
-    const formatPattern = attrs.get('formatpattern');
+    let formatPattern = attrs.get('formatpattern');
     let colExpression = '';
+    // For date time data types, if format pattern is not applied, Apply default toDate format
+    if (isDateTimeType(attrs.get('type')) && (!formatPattern || formatPattern === 'None')) {
+        attrs.set('formatpattern', 'toDate');
+        attrs.delete('datepattern');
+        formatPattern = 'toDate';
+    }
     switch (formatPattern) {
         case 'toDate':
-            const datePattern = attrs.get('datepattern');
-            if (datePattern) {
-                colExpression = `{{${columnValue} | toDate: '${datePattern}'}}`;
-            }
+            colExpression = `{{${columnValue} | toDate: colDef.datepattern}}`;
             break;
         case 'toCurrency':
             if (attrs.get('currencypattern')) {
@@ -181,14 +184,12 @@ register('wm-table-column', (): IBuildTaskDef => {
             if (shared.get('customExpression')) {
                 attrs.set('customExpression', 'true');
                 customExprTmpl = `${customExpr}<div data-col-identifier="${attrs.get('binding')}">`;
-            } else if (formatPattern) {
-                if (formatPattern !== 'None') {
-                    formatExprTmpl = getFormatExpression(attrs);
-                    if (formatExprTmpl) {
-                        shared.set('customExpression', true);
-                        attrs.set('customExpression', 'true');
-                        customExprTmpl = `${customExpr}<div data-col-identifier="${attrs.get('binding')}" title="${formatExprTmpl}">${formatExprTmpl}`;
-                    }
+            } else if ((formatPattern && formatPattern !== 'None') || isDateTimeType(attrs.get('type'))) {
+                formatExprTmpl = getFormatExpression(attrs);
+                if (formatExprTmpl) {
+                    shared.set('customExpression', true);
+                    attrs.set('customExpression', 'true');
+                    customExprTmpl = `${customExpr}<div data-col-identifier="${attrs.get('binding')}" title="${formatExprTmpl}">${formatExprTmpl}`;
                 }
             }
 

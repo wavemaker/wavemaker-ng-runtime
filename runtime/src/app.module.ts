@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 
-import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService, AbstractSpinnerService, AbstractNavigationService } from '@wm/core';
+import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService, AbstractSpinnerService, AbstractNavigationService, AppDefaults, _WM_APP_PROJECT } from '@wm/core';
 import { CoreModule } from '@wm/core';
 import { HttpServiceImpl, HttpServiceModule } from '@wm/http';
 import { MobileAppModule } from '@wm/mobile/runtime';
@@ -18,6 +18,7 @@ import { DialogServiceImpl, WmComponentsModule } from '@wm/components';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 
 import { AppComponent } from './app.component';
+import { AppDefaultsService } from './services/app-defaults.service';
 import { AppJSResolve } from './resolves/app-js.resolve';
 import { AppManagerService } from './services/app.manager.service';
 import { AppRef } from './services/app.service';
@@ -47,8 +48,7 @@ declare const _WM_APP_PROPERTIES;
 const appDependenciesResolve = {
     securityConfig: SecurityConfigResolve,
     metadata: MetadataResolve,
-    appJS: AppJSResolve,
-    i18n: I18nResolve
+    appJS: AppJSResolve
 };
 
 const routes = [
@@ -72,6 +72,18 @@ export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.wi
     cookieName: 'wm_xsrf_token',
     headerName: _WM_APP_PROPERTIES.xsrf_header_name
 });
+
+export function InitializeApp(I18nService) {
+    return () => {
+        _WM_APP_PROJECT.id = location.href.split('/')[3];
+        _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]').getAttribute('content');
+        return I18nService.loadDefaultLocale();
+    };
+}
+
+export function setAngularLocale(I18nService) {
+    return I18nService.isAngularLocaleLoaded() ? I18nService.getSelectedLocale() : I18nService.getDefaultSupportedLocale();
+}
 
 @NgModule({
     declarations: [
@@ -110,6 +122,18 @@ export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.wi
         {provide: AbstractHttpService, useClass: HttpServiceImpl},
         {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
         {provide: AbstractNavigationService, useClass: NavigationServiceImpl},
+        {provide: AppDefaults, useClass: AppDefaultsService},
+        {
+            provide: APP_INITIALIZER,
+            useFactory: InitializeApp,
+            deps: [AbstractI18nService],
+            multi: true
+        },
+        {
+            provide: LOCALE_ID,
+            useFactory: setAngularLocale,
+            deps: [AbstractI18nService]
+        },
         PipeProvider,
         ViewRenderer,
         FragmentRenderer,

@@ -1,13 +1,14 @@
 import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { Validators } from '@angular/forms';
 
+import { $watch, AppDefaults, DataSource, DataType, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
+
 import { BaseComponent } from '../../base/base.component';
 import { EDIT_MODE, getDataTableFilterWidget, getDefaultValue, getEditModeWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
 import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
-import { $watch, DataSource, FormWidgetType, isDefined } from '@wm/core';
 import {applyFilterOnField, fetchRelatedFieldData, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField} from '../../../../utils/data-utils';
 
 declare const _;
@@ -87,6 +88,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     textcolor;
     type;
     width;
+    datepattern;
     editdatepattern;
     filterdatafield;
     filterdisplayfield;
@@ -115,6 +117,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     constructor(
         inj: Injector,
+        private appDefaults: AppDefaults,
         @Optional() public table: TableComponent,
         @Optional() public group: TableColumnGroupDirective,
         @Attribute('filterdataset.bind') public bindfilterdataset,
@@ -400,6 +403,18 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.filterwidget =  this.filterwidget || getDataTableFilterWidget(this.type || 'string');
         this.isFilterDataSetBound = !!this.bindfilterdataset;
         this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
+
+        // For date time data types, if date pattern is not specified, set the app format or default format
+        if (isDateTimeType(this.type) && this.formatpattern === 'toDate' && !this.datepattern) {
+            const defaultFormat = getDisplayDateTimeFormat(this.type);
+            if (this.type === DataType.DATE) {
+                this.datepattern  = this.appDefaults.dateFormat || defaultFormat;
+            } else if (this.type === DataType.TIME) {
+                this.datepattern  = this.appDefaults.timeFormat || defaultFormat;
+            } else if (this.type === DataType.TIMESTAMP || this.type === DataType.DATETIME) {
+                this.datepattern  = this.appDefaults.dateTimeFormat || defaultFormat;
+            }
+        }
     }
 
     onPropertyChange(key, nv, ov) {

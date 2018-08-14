@@ -1,6 +1,6 @@
 import { Attribute, Component, Injector, OnInit } from '@angular/core';
 
-import { noop, switchClass } from '@wm/core';
+import { AppDefaults, noop, switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -37,7 +37,10 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
     public handleHeaderClick: ($event) => void;
     private toggleAllHeaders: void;
 
-    constructor(inj: Injector, @Attribute('groupby') protected groupby: string, public datePipe: ToDatePipe) {
+    constructor(inj: Injector,
+                @Attribute('groupby') protected groupby: string,
+                private appDefaults: AppDefaults,
+                public datePipe: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this.multiple = true;
@@ -45,7 +48,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         // If groupby is set, get the groupedData from the datasetItems.
         if (this.groupby) {
             const datasetSubscription = this.dataset$.subscribe(() => {
-                this.groupedData = groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject');
+                this.groupedData = groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults);
             });
             this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
@@ -81,7 +84,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         if (key === 'layout') {
             switchClass(this.nativeElement, nv, ov);
         } else if (key === 'groupby' || key === 'match') {
-            this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject') : [];
+            this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults) : [];
         } else {
             super.onPropertyChange(key, nv, ov);
         }

@@ -1,6 +1,6 @@
 import { ApplicationRef, Component, DoCheck, ElementRef, NgZone } from '@angular/core';
 
-import { $invokeWatchers, _WM_APP_PROJECT, AbstractDialogService, AbstractSpinnerService, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
+import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
 
 import { OAuthService } from '@wm/oAuth';
 
@@ -47,7 +47,6 @@ export class AppComponent implements DoCheck {
         setPipeProvider(_pipeProvider);
         setNgZone(ngZone);
         setAppRef(_appRef);
-        _WM_APP_PROJECT.id = location.href.split('/')[3];
         // subscribe to OAuth changes
         oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
             this.providersConfig = providers;

@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate } from '@wm/core';
+import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate, getDisplayDateTimeFormat, FormWidgetType, AppDefaults } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -77,7 +77,10 @@ export class DateComponent extends BaseDateTimeComponent {
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
-    constructor(inj: Injector, public datePipe: ToDatePipe, private cdRef: ChangeDetectorRef,
+    constructor(inj: Injector,
+                public datePipe: ToDatePipe,
+                private cdRef: ChangeDetectorRef,
+                private appDefaults: AppDefaults,
                 @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
@@ -87,6 +90,9 @@ export class DateComponent extends BaseDateTimeComponent {
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `theme-red ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
+
+        this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
+        this.updateFormat('datepattern');
     }
 
     /**

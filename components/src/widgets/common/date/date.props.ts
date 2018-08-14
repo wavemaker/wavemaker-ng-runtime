@@ -5,7 +5,7 @@ export const dateProps = new Map(
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
-        ['datepattern', {value: 'yyyy-MM-dd', ...PROP_STRING}],
+        ['datepattern', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['excludedays', PROP_STRING],
         ['excludedates', PROP_STRING],

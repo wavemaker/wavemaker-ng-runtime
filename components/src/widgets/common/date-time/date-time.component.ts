@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { addClass, addEventListenerOnElement, EVENT_LIFE, getDateObj, getFormattedDate, getNativeDateObject, isMobileApp } from '@wm/core';
+import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, isMobileApp } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -38,8 +38,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private bsDateTimeValue: any;
     private bsDateValue;
     private bsTimeValue;
-    private showseconds: boolean;
-    private ismeridian: boolean;
     private proxyModel;
 
     public showdropdownon: string;
@@ -112,7 +110,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.cdRef.detectChanges();
     }
 
-    constructor(inj: Injector, public datePipe: ToDatePipe, private ngZone: NgZone, private cdRef: ChangeDetectorRef,
+    constructor(inj: Injector,
+                public datePipe: ToDatePipe,
+                private ngZone: NgZone,
+                private cdRef: ChangeDetectorRef,
+                private appDefaults: AppDefaults,
                 @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
@@ -122,6 +124,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `theme-red ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
+
+        this.datepattern = this.appDefaults.dateTimeFormat || getDisplayDateTimeFormat(FormWidgetType.DATETIME);
+        this.updateFormat('datepattern');
     }
 
     /**
@@ -304,10 +309,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
-        if (key === 'datepattern') {
-            this.showseconds = _.includes(nv, 's');
-            this.ismeridian = _.includes(nv, 'h');
-        }
         super.onPropertyChange(key, nv, ov);
     }
 }

@@ -1,7 +1,7 @@
 import { Component, Inject, Injector, NgZone, OnDestroy } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
-import { $appDigest, addClass, addEventListenerOnElement, EVENT_LIFE, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
+import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
@@ -38,8 +38,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     public showdropdownon: string;
 
-    private showseconds: boolean;
-    private ismeridian: boolean;
     private deregisterEventListener;
 
     get timestamp() {
@@ -108,6 +106,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         inj: Injector,
         private datePipe: ToDatePipe,
         private ngZone: NgZone,
+        private appDefaults: AppDefaults,
         @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
         super(inj, WIDGET_CONFIG);
@@ -120,6 +119,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
          * Destroy the timer once the date widget is gone
          */
         this.registerDestroyListener(() => this.clearTimeInterval());
+
+        this.timepattern = this.appDefaults.timeFormat || getDisplayDateTimeFormat(FormWidgetType.TIME);
+        this.updateFormat('timepattern');
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
@@ -127,8 +129,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             return;
         }
         if (key === 'timepattern') {
-            this.showseconds = _.includes(nv, 's');
-            this.ismeridian = _.includes(nv, 'h');
+           this.updateFormat('timepattern');
         }
         if (key === 'mintime') {
             this.minTime = getNativeDateObject(nv); // TODO it is supposed to be time conversion, not to the day

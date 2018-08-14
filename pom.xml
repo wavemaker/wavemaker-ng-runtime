@@ -36,6 +36,7 @@
                             <arguments>
                                 <argument>${basedir}/build.sh</argument>
                                 <argument>${wm_ng_runtime_docs_command_input}</argument>
+                                <argument>--locale</argument>
                             </arguments>                                
                         </configuration>
                     </execution>

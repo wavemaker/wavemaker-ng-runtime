@@ -1,4 +1,4 @@
-import { AppDefaults, DataSource, findValueOf } from '@wm/core';
+import { AppConstants, DataSource, findValueOf } from '@wm/core';
 
 import { convertDataToObject } from '../../../../utils/form-utils';
 import { IDataProvider, IDataProviderConfig } from './data-provider';
@@ -58,7 +58,7 @@ export class RemoteDataProvider implements IDataProvider {
     // Check if the page retrieved currently is the last page. If last page, don't send any more request
     protected isLast(page: number, dataSize: number, maxResults: number, currentResults?: number): boolean {
         // if last page info is not returned by backend and current results is less than max results, this is the last page
-        if (dataSize === AppDefaults.INT_MAX_VALUE) {
+        if (dataSize === AppConstants.INT_MAX_VALUE) {
             return currentResults !== 0 && currentResults < maxResults;
         }
         const pageCount = ((dataSize > maxResults) ? (Math.ceil(dataSize / maxResults)) : (dataSize < 0 ? 0 : 1));
@@ -88,7 +88,7 @@ export class RemoteDataProvider implements IDataProvider {
     }
 
     private isLastPageForDistinctApi(data, page, totalElements, _isLastPage) {
-        return page > 1 && !_isLastPage && _.isEmpty(data) && totalElements === AppDefaults.INT_MAX_VALUE;
+        return page > 1 && !_isLastPage && _.isEmpty(data) && totalElements === AppConstants.INT_MAX_VALUE;
     }
 
 

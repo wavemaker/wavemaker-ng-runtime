@@ -1,4 +1,4 @@
-import { $parseEvent, AppDefaults, getClonedObject, getFormattedDate, isDefined, isEqualWithFields } from '@wm/core';
+import { $parseEvent, getClonedObject, getFormattedDate, isDefined, isEqualWithFields } from '@wm/core';
 
 import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 
@@ -254,7 +254,7 @@ const getSortedGroupedData = (groupedLiData: Object, groupBy: string) => {
  * @param innerItem, represents the innerItem on which groupby has to be applied. Incase of datasetItems, 'dataObject' contains the full object. Here innerItem is dataObject.
  * @returns {any[]} groupedData, array of objects, each object having key and data.
  */
-export const groupData = (compRef: any, data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string) => {
+export const groupData = (compRef: any, data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string, AppDefaults?: any) => {
     let groupedLiData = {};
     if (_.includes(groupby, '(')) {
         const groupDataByUserDefinedFn = $parseEvent(groupby);
@@ -262,7 +262,7 @@ export const groupData = (compRef: any, data: Array<Object | DataSetItem>, group
             return groupDataByUserDefinedFn(compRef.viewParent, {'row': val.dataObject || val});
         });
     } else {
-        groupedLiData = getGroupedData(data, groupby, match, orderby, dateformat, datePipe, innerItem);
+        groupedLiData = getGroupedData(data, groupby, match, orderby, dateformat, datePipe, innerItem, AppDefaults);
     }
 
     return getSortedGroupedData(groupedLiData, groupby);
@@ -278,7 +278,7 @@ export const groupData = (compRef: any, data: Array<Object | DataSetItem>, group
  * @param dateFormat string date format
  * @param innerItem, item to look for in the passed data
  */
-export const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateFormat: string, datePipe: ToDatePipe, innerItem?: string) => {
+const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateFormat: string, datePipe: ToDatePipe, innerItem?: string, AppDefaults?: any) => {
     // For day, set the relevant moment calendar options
     if (match === TIME_ROLLUP_OPTIONS.DAY) {
         momentLocale._calendar = momentCalendarDayOptions;
@@ -294,7 +294,7 @@ export const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: 
     });
 
     // extract the grouped data based on the field obtained from 'groupDataByField'.
-    const groupedLiData = _.groupBy(fieldDefs, groupDataByField.bind(undefined, groupby, match, innerItem, dateFormat, datePipe));
+    const groupedLiData = _.groupBy(fieldDefs, groupDataByField.bind(undefined, groupby, match, innerItem, dateFormat, datePipe, AppDefaults));
 
     momentLocale._calendar = momentCalendarOptions; // Reset to default moment calendar options
 
@@ -318,7 +318,7 @@ export const filterDate = (value: string | number, format: string, defaultFormat
  * @param rollUp string containing the match property.
  * @param dateformat string containing the date format to display the date.
  */
-export const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: string, datePipe?: ToDatePipe) => {
+const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: string, datePipe?: ToDatePipe, AppDefaults?: any) => {
     let groupByKey,
         strMoment  = moment(concatStr),
         dateFormat = dateformat;
@@ -373,7 +373,7 @@ export const getTimeRolledUpString = (concatStr: string, rollUp: string, datefor
 
 
 // groups the fields based on the groupby value.
-export const groupDataByField = (groupby: string, match: string, innerItem: string, dateFormat: string, datePipe: ToDatePipe, liData: Object) => {
+const groupDataByField = (groupby: string, match: string, innerItem: string, dateFormat: string, datePipe: ToDatePipe, AppDefaults: any, liData: Object) => {
     // get the groupby field value from the liData or innerItem in the liData.
     let concatStr = _.get(innerItem ? liData[innerItem] : liData, groupby);
 
@@ -389,7 +389,7 @@ export const groupDataByField = (groupby: string, match: string, innerItem: stri
 
     // if match contains the time options then get the concatStr using 'getTimeRolledUpString'
     if (_.includes(_.values(TIME_ROLLUP_OPTIONS), match)) {
-        concatStr = getTimeRolledUpString(concatStr, match, dateFormat, datePipe);
+        concatStr = getTimeRolledUpString(concatStr, match, dateFormat, datePipe, AppDefaults);
     }
 
     return concatStr;

@@ -111,6 +111,7 @@ export abstract class AbstractHttpService {
 export abstract class AbstractI18nService {
     public abstract registerLocalePath(path: string);
     public abstract getSelectedLocale(): string;
+    public abstract getDefaultSupportedLocale(): string;
     public abstract getAppLocale(): any;
     public abstract setSelectedLocale(locale);
     public abstract loadDefaultLocale();
@@ -159,3 +160,8 @@ export abstract class AbstractNavigationService {
     public abstract goToView(viewName: string, options: NavigationOptions, variable: any);
 }
 
+export abstract class AppDefaults {
+    public dateFormat;
+    public timeFormat;
+    public dateTimeFormat;
+}

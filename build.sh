@@ -5,6 +5,7 @@ start=`date +%s`
 force=false
 copy=false
 docs=false
+locale=false
 
 isSourceModified=false
 
@@ -19,6 +20,9 @@ do
             ;;
         -d | --docs)
             docs=true
+            ;;
+        -l | --locale)
+            locale=true
             ;;
     esac
 done
@@ -211,6 +215,24 @@ copyDist() {
         if [ "${docs}" == true ]; then
             cp -r ./dist/docs/* ../wavemaker-studio-editor/src/main/webapp/docs/
         fi
+        if [ "${locale}" == true ]; then
+            cp -r ./dist/bundles/wmapp/locales/* ../wavemaker-studio-editor/src/main/webapp/wmapp/locales/
+            cp -r ./dist/bundles/wmmobile/locales/* ../wavemaker-studio-editor/src/main/webapp/wmmobile/locales/
+        fi
+    fi
+}
+
+copyLocale() {
+    if [ "${locale}" == true ]; then
+        mkdir -p ./dist/bundles/wmapp/locales/angular
+        mkdir -p ./dist/bundles/wmmobile/locales/angular
+        cp ./node_modules/@angular/common/locales/*.js ./dist/bundles/wmapp/locales/angular/
+        cp ./node_modules/@angular/common/locales/*.js ./dist/bundles/wmmobile/locales/angular/
+
+        mkdir -p ./dist/bundles/wmapp/locales/moment
+        mkdir -p ./dist/bundles/wmmobile/locales/moment
+        cp ./node_modules/moment/locale/*.js ./dist/bundles/wmapp/locales/moment/
+        cp ./node_modules/moment/locale/*.js ./dist/bundles/wmmobile/locales/moment/
     fi
 }
 
@@ -393,6 +415,7 @@ buildLibs() {
 buildLibs
 buildApp
 buildDocs
+copyLocale
 copyDist
 
 end=`date +%s`

@@ -781,12 +781,8 @@ export const hasCordova = () => {
     return !!window['cordova'];
 };
 
-// TODO: Create AppDefaults Service and include the getter setter for key / value pairs.
-export const AppDefaults = {
-    INT_MAX_VALUE: 2147483647,
-    dateFormat: '',
-    timeFormat: '',
-    dateTimeFormat: ''
+export const AppConstants = {
+    INT_MAX_VALUE: 2147483647
 } ;
 
 export const openLink = (link: string, target: string = '_self') => {
@@ -1105,3 +1101,15 @@ $.cachedScript = (() => {
         return inProgress.get(url);
     };
 })();
+
+const DEFAULT_DISPLAY_FORMATS = {
+    DATE : 'yyyy-MM-dd',
+    TIME : 'hh:mm a',
+    TIMESTAMP : 'yyyy-MM-dd hh:mm:ss a',
+    DATETIME : 'yyyy-MM-dd hh:mm:ss a',
+};
+// This method returns the display date format for given type
+export const getDisplayDateTimeFormat = type => {
+    return DEFAULT_DISPLAY_FORMATS[_.toUpper(type)];
+};
+

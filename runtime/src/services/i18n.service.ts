@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { registerLocaleData } from '@angular/common';
 
-import {getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem} from '@wm/core';
+import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 
 
 declare const $, _, moment, _WM_APP_PROPERTIES, Cookies;
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
-const MOMENT_LOCALE_PATH = 'resources/momentLocale';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
     'ar-ma', 'ar-om', 'ar-qa', 'ar-sa', 'ar-sd', 'ar-sy', 'ar-tn', 'ar-ye', 'arc', 'bcc', 'bqi', 'ckb', 'dv', 'fa', 'glk',
     'he', 'ku', 'mzn', 'pnb', 'ps', 'sd', 'ug', 'ur', 'yi'];
@@ -17,8 +17,10 @@ const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 
 export class I18nServiceImpl extends AbstractI18nService {
 
     private selectedLocale: string;
+    private defaultSupportedLocale: string = 'en';
     private readonly appLocale: any;
     private messages: any;
+    private _isAngularLocaleLoaded = false;
 
     private componentLocalePaths = [];
 
@@ -55,6 +57,10 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     public getSelectedLocale(): string {
         return this.selectedLocale;
+    }
+
+    public getDefaultSupportedLocale(): string {
+        return this.defaultSupportedLocale;
     }
 
     public getAppLocale(): any {
@@ -99,14 +105,13 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadMomentLocaleBundle() {
-        return new Promise((resolve, reject) => {
-            let path;
-            if (!APP_LOCALE_ROOT_PATH || this.selectedLocale === 'en') {
-                moment.locale('en');
+        return new Promise(resolve => {
+            if (this.selectedLocale === this.defaultSupportedLocale) {
+                moment.locale(this.defaultSupportedLocale);
                 resolve();
                 return;
             }
-            path = `${MOMENT_LOCALE_PATH}/${this.selectedLocale}.js`;
+            const path = _WM_APP_PROJECT.cdnUrl + `/locales/moment/${this.selectedLocale}.js`;
             // load the script tag
             $.ajax({
                 dataType: 'script',
@@ -119,8 +124,32 @@ export class I18nServiceImpl extends AbstractI18nService {
         });
     }
 
+    protected loadAngularLocaleBundle() {
+        return new Promise(resolve => {
+            if (this.selectedLocale === this.defaultSupportedLocale) {
+                resolve();
+            }
+            const path = _WM_APP_PROJECT.cdnUrl + `/locales/angular/${this.selectedLocale}.js`;
+
+            this.$http.get(path, {responseType: 'text'})
+                .toPromise()
+                .then((response: any) => {
+                    const module: any = {}, exports: any = {};
+                    module.exports = exports;
+                    const fn = new Function('module', 'exports', response);
+                    fn(module, exports);
+                    registerLocaleData(exports.default);
+                    this._isAngularLocaleLoaded = true;
+                    resolve();
+                }, () => {
+                    resolve();
+                });
+        });
+    }
+
     protected loadLocaleBundles() {
         return this.loadComponentLocaleBundles()
+            .then(() => this.loadAngularLocaleBundle())
             .then(() => this.loadMomentLocaleBundle())
             .then(() => this.loadAppLocaleBundle());
     }
@@ -157,10 +186,10 @@ export class I18nServiceImpl extends AbstractI18nService {
         const _acceptLang = this.getAcceptedLanguages();
         _acceptLang.push(_WM_APP_PROPERTIES.defaultLanguage);
 
-        let _supportedLang = _.split(_WM_APP_PROPERTIES.supportedLanguages, ',') || ['en'];
+        let _supportedLang = _.split(_WM_APP_PROPERTIES.supportedLanguages, ',') || [this.defaultSupportedLocale];
 
         // check for the session storage to load any pre-requested locale
-        const _defaultLang = getSessionStorageItem('selectedLocale') || _.intersection(_acceptLang, _supportedLang)[0] || 'en';
+        const _defaultLang = getSessionStorageItem('selectedLocale') || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
 
         // if the supportedLocale is not available set it to defaultLocale
         _supportedLang = _supportedLang || [_defaultLang];
@@ -192,6 +221,10 @@ export class I18nServiceImpl extends AbstractI18nService {
             });
         }
         return _.map(languages, _.toLower);
+    }
+
+    public isAngularLocaleLoaded() {
+        return this._isAngularLocaleLoaded;
     }
 
 }
