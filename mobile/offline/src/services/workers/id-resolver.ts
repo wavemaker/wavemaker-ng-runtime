@@ -47,12 +47,9 @@ export class IdResolver implements Worker {
                     });
                 case 'updateTableData':
                 case 'updateMultiPartTableData':
-                    return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
-                        this.exchangeId(store, dataModelName, entityName, change.params);
-                        this.exchangeIds(store, dataModelName, entityName, change.params.data);
-                    });
                 case 'deleteTableData':
                     return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
+                        this.exchangeId(store, dataModelName, entityName, change.params);
                         this.exchangeIds(store, dataModelName, entityName, change.params.data);
                     });
             }
