@@ -495,6 +495,13 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
     }
 
+    // Returns the default date when the datavalue is provided
+    getDefaultDate() {
+        if (this.datavalue) {
+            return new Date(this.datavalue);
+        }
+    }
+
     ngAfterViewInit() {
         super.ngAfterViewInit();
 

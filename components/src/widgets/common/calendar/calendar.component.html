@@ -1,6 +1,7 @@
 <div *ngIf="!mobileCalendar" #calendar></div>
 
 <datepicker *ngIf="mobileCalendar" #datepicker [(ngModel)]="proxyModel"
+            [initDate]="getDefaultDate()"
             [minDate]="minDate"
             [datepickerMode]="view"
             [showWeeks]="false"
