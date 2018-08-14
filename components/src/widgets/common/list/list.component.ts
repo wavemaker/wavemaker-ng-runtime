@@ -82,6 +82,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public binditemclass: string;
     public binddisableitem: string;
     public binddataset: string;
+    private binddatasource: string;
     public mouseEnterCB: string;
     public mouseLeaveCB: string;
 
@@ -123,6 +124,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('itemclass.bind') binditemclass: string,
         @Attribute('disableitem.bind') binddisableitem: string,
         @Attribute('dataset.bind') binddataset: string,
+        @Attribute('datasource.bind') binddatasource: string,
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
     ) {
@@ -140,6 +142,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.binddataset = binddataset;
         this.mouseEnterCB = mouseEnterCB;
         this.mouseLeaveCB = mouseLeaveCB;
+        this.binddatasource = binddatasource;
 
         this.app = app;
         this.variableInflight = false;
@@ -404,7 +407,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     private onDataSetChange(newVal) {
         if (!this.dataNavigatorWatched) {
-            if (this.navigation !== 'None' && this.datasource) {
+            if (this.navigation !== 'None' && this.binddatasource) {
                 this.setupDataSource();
             } else {
                 this.onDataChange(newVal);
