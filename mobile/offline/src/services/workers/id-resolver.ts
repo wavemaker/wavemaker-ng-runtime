@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { noop } from '@wm/core';
+
 import { Change, FlushContext, Worker } from './../change-log.service';
 import { LocalDBManagementService } from './../local-db-management.service';
 import { LocalDBStore } from './../../models/local-db-store';
@@ -34,6 +36,7 @@ export class IdResolver implements Worker {
             switch (change.operation) {
                 case 'insertTableData':
                 case 'insertMultiPartTableData':
+                    change.params.skipLocalDB = true ;
                     return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
                         this.exchangeIds(store, dataModelName, entityName, change.params.data);
                         if (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity') {
@@ -65,9 +68,10 @@ export class IdResolver implements Worker {
             const dataModelName = change.params.dataModelName;
             return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
                 this.pushIdToStore(dataModelName, entityName, this.transactionLocalId, data[store.primaryKeyName]);
-                store.delete(this.transactionLocalId);
-                store.save(data);
-                this.transactionLocalId = null;
+                return store.delete(this.transactionLocalId).catch(noop).then(() => {
+                    this.transactionLocalId = null;
+                    return store.save(data);
+                });
             });
         }
     }
