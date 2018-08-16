@@ -15,7 +15,7 @@
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
             </ng-container>
         </li>
-        <div class="status" [hidden]="!(datacompletemsg && dataProvider.hasNoMoreData)">
+        <div class="status" [hidden]="_loadingItems || !(datacompletemsg && dataProvider.hasNoMoreData)">
             <span [textContent]="datacompletemsg"></span>
         </div>
         <div class="status" [hidden]="!_loadingItems">
