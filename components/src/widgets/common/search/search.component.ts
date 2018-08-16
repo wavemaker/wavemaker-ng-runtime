@@ -269,18 +269,20 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // open full-screen search view
         if (this.isMobileAutoComplete()) {
             // Get the parent element of the search element which can be next or prev element, if both are empty then get the parent of element.
-            if (!this.elIndex) {
+            if (!isDefined(this.elIndex)) {
                 this.parentEl = this.$element.parent();
                 this.elIndex = this.parentEl.children().index(this.$element);
             }
-            this.$element.appendTo('div[data-role="pageContainer"]');
+            if (!this.$element.hasClass('full-screen')) {
+                this.$element.appendTo('div[data-role="pageContainer"]');
 
-            // Add full screen class on focus of the input element.
-            this.$element.addClass('full-screen');
+                // Add full screen class on focus of the input element.
+                this.$element.addClass('full-screen');
 
-            // Add position to set the height to auto
-            if (this.position === 'inline') {
-                this.$element.addClass(this.position);
+                // Add position to set the height to auto
+                if (this.position === 'inline') {
+                    this.$element.addClass(this.position);
+                }
             }
 
             const dropdownEl = this.dropdownEl.closest('typeahead-container');
@@ -290,7 +292,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             dropdownEl.css({position: 'relative', top: 0, height: screenHeight + 'px'});
             this.showClosebtn = this.query && this.query !== '';
 
-            if (this.isMobileAutoComplete() && !this.noMoreData) {
+            if (!this.noMoreData) {
                 this.triggerSearch();
             }
         }
