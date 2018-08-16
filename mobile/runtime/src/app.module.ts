@@ -2,7 +2,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 
-import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, removeNode } from '@wm/core';
+import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, isObject, loadStyleSheet, noop, removeNode } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { MobileCoreModule, DeviceService, DeviceFileOpenerService, ExtAppMessageService } from '@wm/mobile/core';
 import { VariablesModule } from '@wm/mobile/variables';
@@ -59,8 +59,12 @@ export class MobileAppModule {
             this.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
             app.subscribe('userLoggedIn', () => {
-                cookieService.persistCookie($rootScope.project.deployedUrl, 'JSESSIONID');
-                cookieService.persistCookie($rootScope.project.deployedUrl, 'SPRING_SECURITY_REMEMBER_ME_COOKIE');
+                let url = $rootScope.project.deployedUrl;
+                if (url.endsWith('/')) {
+                    url = url.substr(0, url.length - 1);
+                }
+                cookieService.persistCookie(url, 'JSESSIONID');
+                cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
             });
             app.subscribe('device-file-download', (data) => {
                 deviceFileOpenerService.openRemoteFile(data.url, '', data.extension, data.name).then(data.successCb, data.errorCb);
