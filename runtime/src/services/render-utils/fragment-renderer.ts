@@ -138,10 +138,14 @@ export class FragmentRenderer {
 
                 return response;
             }, e => {
-                const details = e.details;
-                if (details.status === 404) {
+                const status = e.details.status;
+                const errorMsgMap = {
+                    404 : this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available',
+                    403 : this.app.appLocale.LABEL_ACCESS_DENIED || 'Access Denied'
+                };
+                if (errorMsgMap[status]) {
                     this.appManager.notifyApp(
-                        this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available',
+                        errorMsgMap[status],
                         'error'
                     );
                 }
