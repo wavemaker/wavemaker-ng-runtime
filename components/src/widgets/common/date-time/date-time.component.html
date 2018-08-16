@@ -63,5 +63,5 @@
            [value]="displayValue"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentDate"
-           (change)="onModelUpdate($event.target.value)">
+           (change)="onDateChange($event, true)">
 </ng-template>

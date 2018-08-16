@@ -275,10 +275,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     }
 
-    private onDateChange($event) {
+    private onDateChange($event, isNativePicker) {
         let newVal = $event.target.value.trim();
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
-        if (this.minDateMaxDateValidationOnInput(newVal, $event, this)) {
+        // min date and max date validation is required only in mobile view.
+        // if invalid dates are entered, device is showing an alert. Hence required in only web app.
+        if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this)) {
             return;
         }
         this.onModelUpdate(newVal);
