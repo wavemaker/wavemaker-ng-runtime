@@ -101,17 +101,17 @@ export class LiveVariableOfflineBehaviour {
     private remoteDBcall(operation, onlineHandler, params, successCallback, failureCallback): Promise<any> {
         return onlineHandler(params, null, null).then(response => {
             if (!params.skipLocalDB) {
-                if (operation.type === 'READ') {
-                    this.offlineDBService.getStore(params).then(store => {
+                this.offlineDBService.getStore(params).then((store) => {
+                    if (operation.type === 'READ') {
                         store.saveAll(response.body.content);
-                    });
-                } else if (operation.type === 'INSERT') {
-                    params = _.clone(params);
-                    params.data = _.clone(response.body);
-                    this.offlineDBService[operation.name](params, noop, noop);
-                } else {
-                    this.offlineDBService[operation.name](params, noop, noop);
-                }
+                    } else if (operation.type === 'INSERT') {
+                        params = _.clone(params);
+                        params.data = _.clone(response.body);
+                        this.offlineDBService[operation.name](params, noop, noop);
+                    } else {
+                        this.offlineDBService[operation.name](params, noop, noop);
+                    }
+                }).catch(noop);
             }
             triggerFn(successCallback, response);
             return response;

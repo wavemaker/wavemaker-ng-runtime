@@ -372,6 +372,8 @@ export class LocalDBManagementService {
                 return store.entitySchema.pushConfig.deleteEnabled;
             }
             return false;
+        }).catch(() => {
+            return false;
         });
     }
 
