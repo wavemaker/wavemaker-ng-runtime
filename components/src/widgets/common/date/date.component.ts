@@ -92,9 +92,11 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method triggered when the date input changes
      */
-    onDisplayDateChange($event) {
+    onDisplayDateChange($event, isNativePicker) {
         const newVal = getDateObj($event.target.value);
-        if (this.minDateMaxDateValidationOnInput(newVal, $event, this)) {
+        // min date and max date validation is required only in mobile view.
+        // if invalid dates are entered, device is showing an alert. Hence required in only web app.
+        if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this)) {
             return;
         }
         this.setDataValue(newVal);
