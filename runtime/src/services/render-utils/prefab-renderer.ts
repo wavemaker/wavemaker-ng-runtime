@@ -51,47 +51,46 @@ export class PrefabRenderer {
                 if (config) {
                     Object.entries((config.properties || {}))
                         .forEach(([key, prop]: [string, any]) => {
-                            if (prop.type === 'event') {
-                                instance[key] = (locals: any) => {
-                                    const eventName = key.substr(2).toLowerCase();
-                                    containerWidget.invokeEventCallback(eventName, (locals || {}));
-                                };
-                            } else if (prop.type === 'method') {
-                                containerWidget[key] = (...args) => {
-                                    try {
-                                        const path = prop.method.split('.');
-                                        const method = path.pop();
-                                        const ref = _.get(instance, path);
-                                        ref[method].apply(ref, args);
-                                    } catch (e) {
-                                        console.warn(`error in executing prefab-${prefabName} method-${key}`);
-                                    }
-                                };
-                            } else {
+                            let expr;
+                            const value = _.trim(prop.value);
 
-                                let expr;
-
-                                const value = _.trim(prop.value);
-
-                                if (_.startsWith(value, 'bind:')) {
-                                    expr = value.replace('bind:', '');
-                                }
-
-                                Object.defineProperty(instance, key, {
-                                    get: () => {
-                                        return containerWidget[key];
-                                    },
-                                    set: nv => {
-                                        containerWidget.widget[key] = nv;
-                                    }
-                                });
-
-                                if (expr) {
-                                    instance.registerDestroyListener(
-                                        $watch(expr, instance, {}, nv => containerWidget.widget[key] = nv)
-                                    );
-                                }
+                            if (_.startsWith(value, 'bind:')) {
+                                expr = value.replace('bind:', '');
                             }
+
+                            Object.defineProperty(instance, key, {
+                                get: () => {
+                                    return containerWidget[key];
+                                },
+                                set: nv => {
+                                    containerWidget.widget[key] = nv;
+                                }
+                            });
+
+                            if (expr) {
+                                instance.registerDestroyListener(
+                                    $watch(expr, instance, {}, nv => containerWidget.widget[key] = nv)
+                                );
+                            }
+                        });
+
+                    Object.entries((config.events || {}))
+                        .forEach(([key, prop]: [string, any]) => {
+                            instance[key] = (locals: any) => {
+                                const eventName = key.substr(2).toLowerCase();
+                                containerWidget.invokeEventCallback(eventName, (locals || {}));
+                            };
+                        });
+
+                    Object.entries((config.methods || {}))
+                        .forEach(([key, prop]: [string, any]) => {
+                            containerWidget[key] = (...args) => {
+                                try {
+                                    return instance[key].apply(instance, args);
+                                } catch (e) {
+                                    console.warn(`error in executing prefab-${prefabName} method-${key}`);
+                                }
+                            };
                         });
                 }
                 containerWidget.setProps(config);
