@@ -230,7 +230,7 @@ export class LiveVariableManager extends BaseVariableManager {
         options = options || {};
         options.inputFields = options.inputFields || getClonedObject(variable.inputFields);
         return $queue.submit(variable).then(() => {
-            this.notifyInflight(variable, true);
+            this.notifyInflight(variable, !options.skipToggleState);
             return LiveVariableUtils.doCUD(operation, variable, options, success, error)
                 .then((response) => {
                     $queue.process(variable);
@@ -289,7 +289,7 @@ export class LiveVariableManager extends BaseVariableManager {
         options = options || {};
         options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
         return $queue.submit(variable).then(() => {
-            this.notifyInflight(variable, true);
+            this.notifyInflight(variable, !options.skipToggleState);
             return this.getEntityData(variable, options, success, error)
                 .then((response) => {
                     $queue.process(variable);

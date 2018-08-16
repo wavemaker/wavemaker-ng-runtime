@@ -402,7 +402,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         }
 
         // notify variable progress
-        this.notifyInflight(variable, true);
+        this.notifyInflight(variable, !options.skipToggleState);
 
         // make the call
         return this.makeCall(requestParams).then((response) => {
