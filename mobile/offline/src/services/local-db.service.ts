@@ -120,7 +120,7 @@ export class LocalDbService {
     public deleteTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
             const pkField = store.primaryKeyField,
-                id = params[pkField.fieldName] || params[pkField.name];
+                id = params[pkField.fieldName] || params[pkField.name] || (params.data && params.data[pkField.fieldName]) || params.id;
             store.delete(id).then(successCallback);
         }).catch(failureCallback);
     }
