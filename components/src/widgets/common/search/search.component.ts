@@ -103,7 +103,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             .create((observer: any) => {
             // Runs on every search
             observer.next(this.query);
-        }).pipe(debounceTime(150))
+        }).pipe(debounceTime(500))
             .pipe(
             mergeMap((token: string) => this.getDataSourceAsObservable(token))
         );
