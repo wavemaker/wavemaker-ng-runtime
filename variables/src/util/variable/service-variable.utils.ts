@@ -1,6 +1,6 @@
 import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 import { isFileUploadSupported } from './variables.utils';
-import { extractType, getBlob, isDateTimeType, isDefined } from '@wm/core';
+import { extractType, getBlob, isDateTimeType, isDefined, replace } from '@wm/core';
 import { getAccessToken } from './../oAuth.utils';
 import { metadataService, formatDate } from '../../util/variable/variables.utils';
 
@@ -123,6 +123,7 @@ export class ServiceVariableUtils {
             return {
                 'error' : {
                     'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.USER_UNAUTHORISED,
+                    'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.USER_UNAUTHORISED,
                     'field': '_wmServiceOperationInfo'
                 }
             };
@@ -130,6 +131,7 @@ export class ServiceVariableUtils {
             return {
                 'error' : {
                     'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING,
+                    'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.METADATA_MISSING,
                     'field': '_wmServiceOperationInfo'
                 }
             };
@@ -177,7 +179,8 @@ export class ServiceVariableUtils {
                     } else {
                         return {
                             'error': {
-                                'type' : VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN
+                                'type' : VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN,
+                                'message' : VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.NO_ACCESSTOKEN
                             },
                             'securityDefnObj': securityDefnObj
                         };
@@ -196,7 +199,7 @@ export class ServiceVariableUtils {
                         return {
                             'error': {
                                 'type' : VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_CREDENTIALS,
-                                'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_CREDENTIALS
+                                'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.NO_CREDENTIALS
                             },
                             'securityDefnObj': securityDefnObj
                         };
@@ -291,9 +294,9 @@ export class ServiceVariableUtils {
         if (requiredParamMissing.length) {
             return {
                 'error': {
-                    'type': 'required_field_missing',
+                    'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.REQUIRED_FIELD_MISSING,
                     'field': requiredParamMissing.join(','),
-                    'message': 'Required field(s) missing: "' + requiredParamMissing + '"',
+                    'message': replace(VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.REQUIRED_FIELD_MISSING, requiredParamMissing.join(',').split(' ')),
                     'skipDefaultNotification': true
                 }
             };

@@ -90,7 +90,15 @@ export const VARIABLE_CONSTANTS = {
             NO_ACCESSTOKEN: 'missing_accesstoken',
             NO_CREDENTIALS: 'no_credentials',
             METADATA_MISSING: 'metadata_missing',
-            USER_UNAUTHORISED: 'user_unauthorised'
+            USER_UNAUTHORISED: 'user_unauthorised',
+            REQUIRED_FIELD_MISSING: 'required_field_missing',
+        },
+        ERR_MSG: {
+            NO_ACCESSTOKEN: 'Access token missing',
+            NO_CREDENTIALS: 'No credentials present',
+            METADATA_MISSING: 'Metadata missing',
+            USER_UNAUTHORISED: 'Unauthorized User',
+            REQUIRED_FIELD_MISSING: 'Required field(s) missing: "${0}"'
         },
         UNCLOAKED_HEADERS: ['CONTENT-TYPE', 'ACCEPT', 'CONTENT-LENGTH', 'ACCEPT-ENCODING', 'ACCEPT-LANGUAGE'],
         PREFIX: {
