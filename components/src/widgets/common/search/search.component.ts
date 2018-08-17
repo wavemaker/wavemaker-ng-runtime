@@ -380,6 +380,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             binddataset: this.binddataset,
             datasource: this.datasource,
             datafield: this.datafield,
+            hasData: this.formattedDataset && this.formattedDataset.length,
             query: query,
             searchKey: searchOnDataField ? this.datafield : this.searchkey,
             casesensitive: this.casesensitive,
