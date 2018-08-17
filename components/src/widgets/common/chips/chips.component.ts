@@ -290,7 +290,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
             let dataObj;
             if (this.datafield === ALLFIELDS) {
-                if (!_.isObject(this.searchComponent.query)) {
+                if (!_.isObject(this.searchComponent.query) && _.trim(this.searchComponent.query)) {
                     dataObj = this.createCustomDataModel(this.searchComponent.query);
 
                     // return if the custom chip is empty
@@ -301,8 +301,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 }
             }
 
-            const data = dataObj || this.searchComponent.query;
-            chipObj = this.getTransformedData([data], this.nextItemIndex)[0];
+            const data = dataObj || _.trim(this.searchComponent.query);
+            if (data) {
+                chipObj = this.getTransformedData([data], this.nextItemIndex)[0];
+            }
         }
 
         if (!isDefined(chipObj)) {
