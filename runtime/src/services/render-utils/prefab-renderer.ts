@@ -86,7 +86,9 @@ export class PrefabRenderer {
                         .forEach(([key, prop]: [string, any]) => {
                             containerWidget[key] = (...args) => {
                                 try {
-                                    return instance[key].apply(instance, args);
+                                    if(instance[key]) {
+                                        return instance[key].apply(instance, args);
+                                    }
                                 } catch (e) {
                                     console.warn(`error in executing prefab-${prefabName} method-${key}`);
                                 }
