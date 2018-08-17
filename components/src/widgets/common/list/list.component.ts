@@ -407,11 +407,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     private onDataSetChange(newVal) {
         if (!this.dataNavigatorWatched) {
-            if (this.navigation !== 'None' && this.binddatasource) {
+            if (this.navigation && this.navigation !== NAVIGATION_TYPE.NONE && this.binddatasource) {
                 this.setupDataSource();
             } else {
                 this.onDataChange(newVal);
             }
+        } else if (this.navigation && this.navigation !== NAVIGATION_TYPE.NONE) {
+            // If navigation is already setup and datasource is changed, update the datasource on navigation
+            this.dataNavigator.setDataSource(this.datasource);
         }
     }
 
