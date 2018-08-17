@@ -164,7 +164,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private getDataSourceAsObservable(query: string): Observable<any> {
         // show dropdown only when there is change in query
-        if (this.type !== 'autocomplete' && query && (this._lastQuery === query)) {
+        if (!isMobile() && query && (this._lastQuery === query)) {
             return of([]);
         }
 
