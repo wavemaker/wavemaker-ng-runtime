@@ -436,6 +436,11 @@ export class PaginationComponent extends StylableComponent {
         this.datasource = dataSource;
     }
 
+    // Set the datasource of pagination from the parent widget
+    setDataSource(dataSource) {
+        this.datasource = dataSource;
+    }
+
     onPropertyChange(key: string, nv, ov) {
         if (key === 'dataset') {
             let data;
