@@ -221,7 +221,7 @@ function onAuthWindowOpen(provider, callback, removeProviderConfigCallBack) {
 function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack) {
     let oAuthWindow;
 
-     if (hasCordova) {
+     if (hasCordova()) {
          window.open(url, '_system');
          window['OAuthInMobile'](providerId).then(accessToken => {
              const key = providerId + accessTokenSuffix;
