@@ -9,6 +9,7 @@ import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mo
 import { SecurityService } from '@wm/security';
 import { CONSTANTS } from '@wm/variables';
 
+declare const _WM_APP_PROPERTIES;
 declare const cordova;
 declare const _;
 
@@ -180,6 +181,11 @@ class SecurityInterceptor implements RequestInterceptor {
     constructor(private app: App, private file: File, private securityService: SecurityService) {}
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
+        const token = localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
+        if (token) {
+            // Clone the request to add the new header
+            request = request.clone({ headers: request.headers.set(_WM_APP_PROPERTIES.xsrf_header_name, token) });
+        }
         return new Promise<HttpRequest<any>>((resolve, reject) => {
             if (SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
                 return Promise.resolve().then(() => {
