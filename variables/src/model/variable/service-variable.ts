@@ -65,7 +65,7 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = this.pagination;
                 break;
             case DataSource.Operation.IS_UPDATE_REQUIRED:
-                returnVal = this.isUpdateRequired();
+                returnVal = this.isUpdateRequired(options);
                 break;
             case DataSource.Operation.IS_BOUND_TO_LOCALE:
                 returnVal = false;
@@ -94,16 +94,22 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
     }
 
     searchRecords(options, success?, error?) {
-        return getManager().searchRecords(this, options, success, error);
+        return new Promise((resolve, reject) => {
+            getManager().searchRecords(this, options, (response, pagination) => {
+                resolve({data: response.content || response, pagination});
+            }, reject);
+        });
     }
 
-    isUpdateRequired() {
+    isUpdateRequired(hasData) {
         const inputFields = getManager().getInputParms(this);
         const queryParams = ServiceVariableUtils.excludePaginationParams(inputFields);
 
         if (!queryParams.length) {
             // if we don't have any query params and variable data is available then we don't need variable update, so return false
-            return false;
+            if (hasData) {
+                return false;
+            }
         }
 
         return true;

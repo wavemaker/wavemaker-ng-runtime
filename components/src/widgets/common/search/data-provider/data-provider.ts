@@ -12,6 +12,7 @@ export interface IDataProviderConfig {
     datafield: string;
     binddataset?: string;
     datasource?: any;
+    hasData: boolean;
     query: Array<string> | string;
     searchKey?: string;
     casesensitive?: boolean;
@@ -56,7 +57,7 @@ export class DataProvider implements IDataProvider {
          */
         if (config.dataoptions || ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
             && config.searchKey
-            && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED))) {
+            && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED, config.hasData))) {
             promise = DataProvider.remoteDataProvider.filter(config);
         } else {
             promise = DataProvider.localDataProvider.filter(config);

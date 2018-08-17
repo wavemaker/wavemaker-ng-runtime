@@ -526,7 +526,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @returns {Promise<any>}
      */
     public searchRecords(variable, options, success, error) {
-        const inputFields = this.getQueryParams(options.searchKeys, options.searchValue, variable);
+        const inputFields = this.getQueryParams(options.searchKey, options.query, variable);
 
         const requestParams = {
             page: options.page,
