@@ -3,13 +3,12 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { AbstractHttpService, App, getClonedObject, triggerFn } from '@wm/core';
+import { AbstractHttpService, App, getClonedObject, hasCordova, triggerFn } from '@wm/core';
 
 declare const _WM_APP_PROPERTIES, _;
 
 // Todo[Shubham]: Move below constants to a common file
 const XSRF_COOKIE_NAME = 'wm_xsrf_token',
-    hasCordova = false,
     isApplicationType = true;
 
 @Injectable()
@@ -121,7 +120,7 @@ export class SecurityService {
             return;
         }
 
-        if (!hasCordova) {
+        if (!hasCordova()) {
             // for web project, return config returned from backend API call.
             this.getWebConfig(onSuccess, onError);
         }
@@ -293,11 +292,11 @@ export class SecurityService {
             'data': payload
         }).then((response) => {
             const config = this.get(),
-                xsrfCookieValue = response[XSRF_COOKIE_NAME];
+                xsrfCookieValue = response.body[XSRF_COOKIE_NAME];
 
             // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
             if (xsrfCookieValue) {
-                if (hasCordova) {
+                if (hasCordova()) {
                     localStorage.setItem(XSRF_COOKIE_NAME, xsrfCookieValue || '');
                 }
                 /*this.$http.defaults.xsrfCookieName = XSRF_COOKIE_NAME;
@@ -361,7 +360,7 @@ export class SecurityService {
      * @returns xsrf cookie value
      */
     isXsrfEnabled() {
-        if (hasCordova) {
+        if (hasCordova()) {
             return localStorage.getItem(XSRF_COOKIE_NAME);
         }
         return this.getCookieByName(XSRF_COOKIE_NAME);
