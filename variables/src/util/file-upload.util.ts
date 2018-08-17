@@ -93,17 +93,33 @@ function uploadWithFileTransfer(file, url, options) {}
 
 /* upload file with ajax calling */
 function uploadWithAjax(file, fd, url, options) {
-    _.forEach(fd, (value, key) => {
-        if (_.isArray(value)) {
-            if (value[0] instanceof File) {
-               fd.delete(key);
+    // The foreeach method on form data doesn't exist in IE. Hence we check if it exists
+    // or else use the lodash forEach
+    if (fd.forEach) {
+        fd.forEach((value, key) => {
+            if (_.isArray(value)) {
+                if (value[0] instanceof File) {
+                    fd.delete(key);
+                }
+            } else {
+                if (value instanceof File) {
+                    fd.delete(key);
+                }
             }
-        } else {
-            if (value instanceof File) {
-                fd.delete(key);
+        });
+    } else {
+        _.forEach(fd, (value, key) => {
+            if (_.isArray(value)) {
+                if (value[0] instanceof File) {
+                    fd.delete(key);
+                }
+            } else {
+                if (value instanceof File) {
+                    fd.delete(key);
+                }
             }
-        }
-    });
+        });
+    }
     /* append file to form data */
     if (_.isArray(file)) {
         _.forEach(file, function (fileObject) {
