@@ -296,7 +296,7 @@ export class ServiceVariableUtils {
                 'error': {
                     'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.REQUIRED_FIELD_MISSING,
                     'field': requiredParamMissing.join(','),
-                    'message': replace(VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.REQUIRED_FIELD_MISSING, requiredParamMissing.join(',').split(' ')),
+                    'message': replace(VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.REQUIRED_FIELD_MISSING, [requiredParamMissing.join(',')]),
                     'skipDefaultNotification': true
                 }
             };
