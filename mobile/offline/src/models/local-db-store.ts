@@ -388,11 +388,11 @@ export class LocalDBStore {
      */
     private deserializeMapToFormData(map) {
         const formData = new FormData(),
-            blobColumns = this.entitySchema.columns.filter(c => c.sqlType = 'blob'),
+            blobColumns = this.entitySchema.columns.filter(c => c.sqlType === 'blob'),
             promises = [];
         _.forEach(blobColumns, column => {
             const value = map[column.fieldName];
-            if (value) {
+            if (value && value.wmLocalPath) {
                 promises.push(convertToBlob(value.wmLocalPath)
                     .then(result => formData.append(column.fieldName, result.blob, value.name)));
                 map[column.fieldName] = '';
