@@ -292,7 +292,7 @@ export class SecurityService {
             'data': payload
         }).then((response) => {
             const config = this.get(),
-                xsrfCookieValue = response.body[XSRF_COOKIE_NAME];
+                xsrfCookieValue = response.body ? response.body[XSRF_COOKIE_NAME] : '';
 
             // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
             if (xsrfCookieValue) {
