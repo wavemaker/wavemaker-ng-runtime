@@ -197,6 +197,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                     const transformedData = this.getTransformedData([val], this.nextItemIndex);
                     this.chipsList.push(transformedData[0]);
                 });
+                this.updateMaxSize();
                 return;
             }
             this.getDefaultModel(searchQuery, this.nextItemIndex)
