@@ -294,7 +294,7 @@ export const performAuthorization = (url, providerId, onSuccess, onError, http, 
     } else {
         if (isWaveLens) {
             requestSourceType = 'WAVELENS';
-        } else if (hasCordova) {
+        } else if (hasCordova()) {
             requestSourceType = 'MOBILE';
         }
         return getAuthorizationUrl({
