@@ -633,11 +633,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             return;
         }
         if (key === 'displayfield') {
-            this.searchComponent.displaylabel = nv;
-            return;
-        }
-        if (key === 'displayexpression') {
-            this.searchComponent.binddisplaylabel = nv;
+            this.searchComponent.displaylabel = this.displayfield;
             return;
         }
         if (key === 'enablereorder' && nv) {
