@@ -222,7 +222,12 @@ export class ServiceVariableUtils {
             // Set params based on current workspace
             function setParamsOfChildNode() {
                 if (inputFields) {
-                    paramValueInfo = inputFields;
+                    // specific case for body type query/procedure variable with query params
+                    if (inputFields[param.name] && _.isObject(inputFields[param.name])) {
+                        paramValueInfo = inputFields[param.name];
+                    } else {
+                        paramValueInfo = inputFields;
+                    }
                     params = _.get(operationInfo, ['definitions', param.type]);
                 } else {
                     // For Api Designer
