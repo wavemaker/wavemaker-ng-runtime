@@ -93,14 +93,17 @@ export class LocalDBDataPullService {
      * @param query
      * @returns {any}
      */
-    private addDeltaCriteria(db: DBInfo, entityName: string, query: string) {
+    private addDeltaCriteria(db: DBInfo, entityName: string, query: string): Promise<string> {
         const entitySchema = db.schema.entities[entityName],
-            isBundledEntity = this.localDBManagementService.isBundled(db.schema.name, entityName),
             deltaFieldName = entitySchema.pullConfig.deltaFieldName,
             deltaField = _.find(entitySchema.columns, {'fieldName' : deltaFieldName}) || {};
 
+        let isBundledEntity;
+
         if (!_.isEmpty(deltaFieldName)) {
-            return this.getLastPullInfo()
+            return this.localDBManagementService.isBundled(db.schema.name, entityName)
+                .then(flag => isBundledEntity = flag)
+                .then(() => this.getLastPullInfo())
                 .then(lastPullInfo => {
                     let lastPullTime = (lastPullInfo && lastPullInfo.startTime && lastPullInfo.startTime.getTime());
                     const lastPullDBInfo = _.find(lastPullInfo && lastPullInfo.databases, {'name' : db.schema.name}),
@@ -124,11 +127,9 @@ export class LocalDBDataPullService {
                         }
                     }
                     return query;
-                }, () => {
-                    Promise.resolve(query);
-                });
+                }, () => Promise.resolve(query));
         }
-        return query;
+        return Promise.resolve(query);
     }
 
     /**
@@ -265,30 +266,32 @@ export class LocalDBDataPullService {
 
     private prepareQuery(db: DBInfo, entityName: string): Promise<string> {
         let query;
-        const entitySchema = db.schema.entities[entityName],
-            isBundledEntity = this.localDBManagementService.isBundled(db.schema.name, entityName);
+        const entitySchema = db.schema.entities[entityName];
 
-        let hasNullAttributeValue = false;
-        if (isBundledEntity || _.isEmpty(entitySchema.pullConfig.query)) {
-            query = _.cloneDeep(entitySchema.pullConfig.filter);
-            query = _.map(query, v => {
-                v.attributeValue = this.evalIfBind(v.attributeValue);
-                hasNullAttributeValue = hasNullAttributeValue || _.isNil(v.attributeValue);
-                return v;
-            });
-            if (hasNullAttributeValue) {
-                return Promise.reject('Null criteria values are present');
-            }
-            query = _.sortBy(query, 'attributeName');
-            query = LiveVariableUtils.getSearchQuery(query, ' AND ', true);
-        } else {
-            query = this.evalIfBind(entitySchema.pullConfig.query);
-        }
-        if (_.isNil(query)) {
-            return Promise.resolve(null);
-        }
+        return this.localDBManagementService.isBundled(db.schema.name, entityName)
+            .then(isBundledEntity => {
+                let hasNullAttributeValue = false;
+                if (isBundledEntity || _.isEmpty(entitySchema.pullConfig.query)) {
+                    query = _.cloneDeep(entitySchema.pullConfig.filter);
+                    query = _.map(query, v => {
+                        v.attributeValue = this.evalIfBind(v.attributeValue);
+                        hasNullAttributeValue = hasNullAttributeValue || _.isNil(v.attributeValue);
+                        return v;
+                    });
+                    if (hasNullAttributeValue) {
+                        return Promise.reject('Null criteria values are present');
+                    }
+                    query = _.sortBy(query, 'attributeName');
+                    query = LiveVariableUtils.getSearchQuery(query, ' AND ', true);
+                } else {
+                    query = this.evalIfBind(entitySchema.pullConfig.query);
+                }
+                if (_.isNil(query)) {
+                    return Promise.resolve(null);
+                }
 
-        return Promise.resolve(encodeURIComponent(query));
+                return Promise.resolve(encodeURIComponent(query));
+        });
     }
 
     /**
@@ -451,8 +454,8 @@ export class LocalDBDataPullService {
      * @returns {any} that has total no of records fetched, start and end timestamps of last successful pull
      * of data from remote server.
      */
-    public getLastPullInfo() {
-        return this.localKeyValueService.get(LAST_PULL_INFO_KEY).then(function (info) {
+    public getLastPullInfo(): Promise<PullInfo> {
+        return this.localKeyValueService.get(LAST_PULL_INFO_KEY).then(info => {
             if (_.isString(info.startTime)) {
                 info.startTime = new Date(info.startTime);
             }

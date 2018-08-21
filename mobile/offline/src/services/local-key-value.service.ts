@@ -13,7 +13,7 @@ export class LocalKeyValueService {
      * @param {string} key key
      * @returns {object} a promise that is resolved when value is retrieved from store.
      */
-    public get(key: string) {
+    public get(key: string): any {
         return this.fetchEntry(key)
             .then(result => {
                 let value;
