@@ -35,6 +35,8 @@ export class FormActionDirective extends BaseComponent implements OnInit {
     type;
     updateMode;
     buttonDef;
+    hyperlink;
+    target;
 
     private _propsInitialized: boolean;
 
@@ -47,7 +49,7 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             key: this.key || this.binding,
             displayName: this['display-name'],
             show: this.show,
-            class: this.class || '',
+            class: this.class ? this.class : (this['widget-type'] === 'button' ? 'btn-secondary' : ''),
             iconclass: this.iconclass || '',
             title: _.isUndefined(this.title) ? (this['display-name'] || '') : this.title,
             action: this.action,
@@ -58,7 +60,10 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             iconname: this.iconname,
             type: this.type,
             updateMode: this['update-mode'],
-            position: this.position
+            position: this.position,
+            widgetType: this['widget-type'],
+            hyperlink: this.hyperlink,
+            target: this.target
         };
         this._propsInitialized = true;
     }

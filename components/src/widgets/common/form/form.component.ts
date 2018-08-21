@@ -254,6 +254,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         context.highlightInvalidFields = () => this.highlightInvalidFields();
         context.filter = () => this.filter();
         context.clearFilter = () => this.clearFilter();
+        context.submit = evt => this.submit(evt);
     }
 
     // change and blur events are added from the template
@@ -465,9 +466,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     reset() {
         this.resetFormState();
         this.formFields.forEach(field => {
-            field.value = undefined;
+            field.value = '';
         });
         this.constructDataObject();
+        this.clearMessage();
     }
 
     submitForm($event) {

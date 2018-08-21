@@ -14,7 +14,8 @@
                 <div class="description" [textContent]="subheading"></div>
             </div>
             <div class="form-action panel-actions basic-btn-grp">
-                <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'header'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+                <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'header'"
+                              [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef" [ngTemplateOutletContext]="{btn:btn}">
                 </ng-container>
                 <button type="button" class="app-icon wi panel-action" *ngIf="collapsible" title="Collapse/Expand"
                         [ngClass]="expanded ? 'wi-minus': 'wi-plus'" (click)="expandCollapsePanel();"></button>
@@ -27,7 +28,8 @@
             <ng-container *ngTemplateOutlet="content"></ng-container>
         </div>
         <div class="basic-btn-grp form-action panel-footer clearfix" [ngClass]="{'modal-footer': isLayoutDialog}" [class.hidden]="!expanded || !showButtons('footer')">
-            <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'footer'" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+            <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'footer'"
+                          [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef" [ngTemplateOutletContext]="{btn:btn}">
             </ng-container>
         </div>
     </div>
@@ -41,6 +43,13 @@
     <button  wmButton name="{{btn.key}}" caption.bind="btn.displayName" class.bind="btn.class" iconclass.bind="btn.iconclass" show.bind="btn.show"
              (click)="invokeActionEvent($event, btn.action)" type.bind="btn.type" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey" disabled.bind="btn.disabled"
              tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+</ng-template>
+
+<ng-template #anchorRef let-btn="btn">
+    <a wmAnchor name="{{btn.key}}" caption.bind="btn.displayName" class.bind="btn.class" iconclass.bind="btn.iconclass" show.bind="btn.show"
+             (click)="invokeActionEvent($event, btn.action)" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey"
+             hyperlink.bind="btn.hyperlink" target.bind="btn.target"
+             tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></a>
 </ng-template>
 
 <ng-container #dynamicForm></ng-container>
