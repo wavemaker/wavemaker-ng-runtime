@@ -92,7 +92,7 @@ export class Popover {
      */
     @Input() contentsource: string = 'partial';
     /**
-     * Select any partial page or bind anything to the content<br>
+     * Html for inline source or Partial page in case of partials.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() content: string;

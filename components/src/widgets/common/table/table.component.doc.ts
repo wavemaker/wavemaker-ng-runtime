@@ -20,12 +20,12 @@ export class Table {
      */
     @Input() dataset: any;
     /**
-     * This text will be displayed on cancel button for delete dialog.
+     * This text will be displayed on cancel button for delete confirm dialog.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() deletecanceltext: string = 'Cancel';
     /**
-     * This text will be displayed on confirm button for delete dialog.
+     * This text will be displayed on confirm button for delete confirm dialog.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() deleteoktext: string = 'Ok';

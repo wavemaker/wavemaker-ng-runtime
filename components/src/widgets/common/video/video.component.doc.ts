@@ -67,11 +67,11 @@ export class Video {
      */
     @Input() enablecontrols: boolean = true;
     /**
-     * This property will be used to enable how the video should be played when page loads.
+     * This property will be used to play the video when page loads.
      */
     @Input() enableautoplay: boolean = false;
     /**
-     * This property will be used to allow the video to be played again, once it is finished.
+     * This property will be used to allow the video to be replayed, when completed.
      */
     @Input() loop: boolean = false;
     /**

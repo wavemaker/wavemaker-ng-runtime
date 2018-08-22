@@ -31,7 +31,7 @@ export class Switch {
     @Input() disabled: boolean;
     /**
      * This is an advanced property that gives more control over what is displayed in the switch options.
-     * A Display Expression uses a Javascript expression to format exactly what is shown <br>
+     * A Display Expression uses a JavaScript expression to format exactly what is shown <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() displayexpression: string;

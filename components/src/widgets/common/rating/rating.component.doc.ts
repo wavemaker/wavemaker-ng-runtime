@@ -26,7 +26,7 @@ export class Rating {
     @Input() datavalue: Array<any>;
     /**
      * This is an advanced property that gives more control over what is displayed as the rating caption.
-     * A Display Expression uses a Javascript expression to format exactly what is shown <br>
+     * A Display Expression uses a JavaScript expression to format exactly what is shown <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() displayexpression: string;

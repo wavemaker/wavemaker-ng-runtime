@@ -266,7 +266,7 @@ export class Panel {
     onFullscreen($event: Event, widget: any) {}
 
     /**
-     * Callback function is called on the full screen mode of the panel.
+     * Callback function is called on the exit from full screen mode of the panel.
      * @param $event  DOM event on which call back is triggered.
      * @param widget  Instance of the panel.
      */

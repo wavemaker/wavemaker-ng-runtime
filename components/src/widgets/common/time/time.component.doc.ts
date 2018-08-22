@@ -9,7 +9,7 @@ export class Time {
      */
     @Input() name: string;
     /**
-     * Placeholder for the time field.
+     * Placeholder for the time widget.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() placeholder: string = 'Select Time';
@@ -32,20 +32,20 @@ export class Time {
      */
     @Input() datavalue: string;
     /**
-     * This property display pattern of the time widget.<br>
+     * This property can be used to set the display pattern of the time widget.<br>
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'HH:mm:ss', 'h:m:s', 'hh:mm a', etc. </code></p>
      */
     @Input() timepattern: string = 'hh:mm a';
     /**
-     * This property decide number of hours to increase or decrease.<br>
+     * This property can be used to set the number of hours to increase or decrease per step.<br>
      */
     @Input() hourstep: number = 1;
     /**
-     * This property decide number of minutes to increase or decrease.<br>
+     * This property can be used to set the number of minutes to increase or decrease per step.<br>
      */
     @Input() minutestep: number = 15;
     /**
-     * This property output format of the time widget.<br>
+     * This property can be used to set the output format for the time widget.<br>
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'HH:mm:ss', 'h:m:s', 'hh:mm a', etc. </code></p>
      */
     @Input() outputformat: string = 'HH:mm:ss';

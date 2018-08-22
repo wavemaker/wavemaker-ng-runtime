@@ -47,7 +47,7 @@ export class Chips {
     @Input() disabled: boolean;
     /**
      * This is an advanced property that gives more control over what is displayed in the drop-down select list.
-     * A Display Expression uses a Javascript expression to format exactly what is shown <br>
+     * A Display Expression uses a JavaScript expression to format exactly what is shown <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() displayexpression: string;
@@ -96,7 +96,7 @@ export class Chips {
      */
     @Input() readonly: boolean;
     /**
-     * This is the property to be searched upon, in the list object
+     * This is the property to be searched upon, in the dataset
      */
     @Input() searchkey: string;
     /**
@@ -110,7 +110,7 @@ export class Chips {
     @Input() show: boolean = true;
     /**
      * This property shows the search icon when set to true.
-     * This value is false for autocomplete.
+     * This value is false when type is set to autocomplete.
      */
     @Input() showsearchicon: boolean;
     /**
@@ -148,7 +148,7 @@ export class Chips {
      */
     onBeforeremove($event: MouseEvent, widget: any, $item: Object) {}
     /**
-     * Callback function which will be triggered before the service call.
+     * Callback function which will be triggered before the chip item is reordered.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param $data contains the list of chips data
@@ -162,21 +162,21 @@ export class Chips {
      */
     onBeforeservicecall(widget: any, inputData: Object) {}
     /**
-     * Callback function which will be triggered when the widget loses focus.
+     * Callback function which will be triggered when chip is clicked.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * * @param newVal contains the chip data.
      */
     onChipclick($event: MouseEvent, widget: any, newVal: Object) {}
     /**
-     * Callback function which will be triggered before the service call.
+     * Callback function which will be triggered upon chip selection.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param newVal contains the selected chip data.
      */
     onChipselect($event: MouseEvent, widget: any, newVal: Object) {}
     /**
-     * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
+     * Callback function which will be triggered when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param newVal  datavalue of the chips widget
@@ -184,14 +184,14 @@ export class Chips {
      */
     onChange($event: MouseEvent, widget: any, newVal: Array<any>, oldVal: Array<any>) {}
     /**
-     * Callback function which will be triggered before the service call.
+     * Callback function which will be triggered on removing chip.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param $item object containing chip data that is removed from chips list.
      */
     onRemove($event: MouseEvent, widget: any, $item: Object) {}
     /**
-     * Callback function which will be triggered before the service call.
+     * Callback function which will be triggered on reordering of chips.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the chips widget
      * @param $data contains the list of chips data

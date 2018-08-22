@@ -6,7 +6,7 @@ import { Input } from '@angular/core';
 
 export class Card {
     /**
-     * This property sets the actions for the widget. To set the data and events for menu widget
+     * This property sets the the data and events action for the widget.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() actions: string;
