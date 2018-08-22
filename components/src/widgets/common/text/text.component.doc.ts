@@ -78,7 +78,7 @@ export class Text {
      */
     @Input() autocomplete: boolean = false;
     /**
-     * The keys in displayformat represent the special tokens/characters used to delimit acceptable ranges of inputs.<br>
+     * This property sets the format for the values displayed in the widget.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() displayformat: string;
@@ -97,17 +97,17 @@ export class Text {
      */
     @Input() updatedelay: number = 0;
     /**
-     * Bind or enter a minimum value to the text<br>
+     * Bind or enter a minimum value to the text when the type is set to numeric.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() minvalue: number;
     /**
-     * Bind or enter a maximum value to the text<br>
+     * Bind or enter a maximum value to the text when the type is set to numeric.<br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() maxvalue: number;
     /**
-     * Use the stepper to increment/decrement the input value by the specified step interval.
+     * Use the stepper to increment/decrement the input value by the specified step interval, when the type is set to numeric.
      */
     @Input() step: number;
     /**

@@ -148,7 +148,7 @@ export class Chart {
      */
     @Input() labeltype: string = 'percent';
     /**
-     * This property controls the spacing between the bars.
+     * This property controls the spacing between the bars for bar and column charts.
      * <p><em>Allowed Values: </em><code>Standard Patterns like 'small', 'medium', 'large' </code></p>
      */
     @Input() barspacing: string = 'medium';

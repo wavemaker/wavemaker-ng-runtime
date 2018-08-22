@@ -57,7 +57,7 @@ export class TopNav {
      */
     onPinchin($event: MouseEvent, widget: any) {}
     /**
-     * Callback function which will be triggered on `pinchdown` event the widget.
+     * Callback function which will be triggered on pinchdown event of the widget.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the top nav widget
      */

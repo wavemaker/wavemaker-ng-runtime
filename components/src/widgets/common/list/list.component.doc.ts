@@ -56,7 +56,7 @@ export class List {
     @Input() itemclass: string = 'list-group-item';
 
     /**
-     * This property controls the number of widgets that are displayed within this widget container in a horizontal layout.
+     * This property controls the number of list items that are displayed within each row of the list.
      */
     @Input() itemsperrow: string;
 
@@ -160,7 +160,7 @@ export class List {
     @Input() paginationclass: string;
 
     /**
-     * This property sets the maximum number of items to show in the drop-down list.
+     * This property sets the maximum number of items to display on each page of the list.
      */
     @Input() pagesize: number = 20;
 

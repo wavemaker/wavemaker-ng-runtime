@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * Tree Widget is used to represent data in hierarchical format.
+ * The 'wmTree' directive used to represent data in hierarchical format..
  */
 export class Tree {
     /**
@@ -18,7 +18,7 @@ export class Tree {
      */
     @Input() treeicons: string;
     /**
-     * This property is used to set number of levels of the to be expanded by default.
+     * This property is used to set depth in terms of the levels of the tree to be expanded by default.
      */
     @Input() levels: number = 0;
     /**
@@ -51,7 +51,7 @@ export class Tree {
      */
     @Input() nodeid: string;
     /**
-     * This property is used to set action.
+     * This property is used to set action for particular node.
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() nodeaction: string;

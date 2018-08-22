@@ -39,7 +39,7 @@ export class Checkboxset {
     @Input() disabled: boolean;
     /**
      * This is an advanced property that gives more control over what is displayed as the checkbox label.
-     * A Display Expression uses a Javascript expression to format exactly what is shown <br>
+     * A Display Expression uses a JavaScript expression to format exactly what is shown <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() displayexpression: string;
@@ -49,7 +49,7 @@ export class Checkboxset {
     @Input() displayfield: string;
     /**
      * This property allows for grouping the list of rows in the variable bound to a dataset by selecting one of the field names from the drop-down list.
-     * This can also be bound to a javascript function.
+     * This can also be bound to a JavaScript function.
      */
     @Input() groupby: string;
     /**

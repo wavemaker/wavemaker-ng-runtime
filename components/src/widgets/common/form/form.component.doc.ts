@@ -52,7 +52,7 @@ export class Form {
      * The encoding type property specifies how the form-data should be encoded when submitting it to the server.
      * <p><em>Allowed Values: </em><code>application/x-www-form-urlencoded, multipart/form-data, text/plain</code></p>
      * <div class="summary">
-     * <p><code>application/x-www-form-urlencoded</code><em>: Default. All characters are encoded before sent (spaces are converted to "+" symbols, and special characters are converted to ASCII HEX values)</em></p>
+     * <p><code>application/x-www-form-urlencoded</code><em>: Default. All characters are encoded before send (spaces are converted to "+" symbols, and special characters are converted to ASCII HEX values)</em></p>
      * <p><code>multipart/form-data</code><em>: No characters are encoded. This value is required when you are using forms that have a file upload control.</em></p>
      * <p><code>text/plain</code><em>: Spaces are converted to "+" symbols, but no special characters are encoded.</em></p>
      */
@@ -245,7 +245,7 @@ export class Form {
      */
     toggleMessage(show: boolean, msg?: string, type?: string, header?: string) {}
     /**
-     * This method loops through the form fields and highlights the invalid fields by setting state to touched.
+     * This method loops through the form fields and highlights the invalid fields.
      */
     highlightInvalidFields() {}
 }

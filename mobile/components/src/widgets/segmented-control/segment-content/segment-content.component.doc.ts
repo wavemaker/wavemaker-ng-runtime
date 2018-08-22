@@ -63,7 +63,7 @@ export class SegmentContent {
      */
     onLoad($event: Event, widget: any) {}
     /**
-     * This event handler is called when the container is loaded.
+     * This event handler is called when all the content inside the segment content is loaded.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the segment content widget
      */

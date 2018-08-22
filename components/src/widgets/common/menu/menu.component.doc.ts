@@ -86,7 +86,7 @@ export class Menu {
      */
     @Input() autoclose: string = 'always';
     /**
-     * This property specifies the animation of an inner items. The animation is based on the css classes. <br>
+     * This property specifies the animation of an inner items. The animation is based on the CSS classes. <br>
      * <p><em>Allowed Values: </em><code>slide, fade, scale</code></p>
      * <div class="summary">
      * <p><code>slide</code><em>: Inner items will have slide animation.</em></p>

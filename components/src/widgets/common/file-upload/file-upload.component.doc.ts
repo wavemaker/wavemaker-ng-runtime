@@ -43,7 +43,7 @@ export class FileUpload {
     @Input() disabled: boolean;
     /**
      * This property specifies the content types that are allowed to be uploaded. <br>
-     * <p><em>Allowed Values: </em><code>zip, pdf, rar, txt, ppt, pot, pps, pptx, potx, ppsx, mpg, mp4, mov, avi, mp3, docx, js, md, html, css, xlsx, png, jpg, jpeg, file, default</code></p>
+     * <p><em>Allowed Values: </em><code>zip, pdf, rar, txt, ppt, pot, pps, pptx, potx, ppsx, mpg, mp4, mov, avi, mp3, docx, js, md, html, CSS, xlsx, png, jpg, jpeg, file, default</code></p>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() contenttype: string;

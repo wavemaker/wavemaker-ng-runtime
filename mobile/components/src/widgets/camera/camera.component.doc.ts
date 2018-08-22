@@ -6,7 +6,7 @@ import { Input } from '@angular/core';
 
 export class Camera {
     /**
-     * Allow simple editing of image before selection.
+     * Allow simple editing on image after capturing.
      */
     @Input() allowedit: boolean = false;
     /**

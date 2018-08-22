@@ -137,7 +137,9 @@ export class LiveForm {
      * @param options extra options can be passed by user here. Ex: setting options.period = true will send temporal call
      * @returns if the callback returns false, form submit is stopped. Anything else, form submit continues with modified data.
      */
-    onBeforeservicecall($event: MouseEvent, $operation: string, $data: any, options: any): void | boolean {}
+    onBeforeservicecall($event: MouseEvent, $operation: string, $data: any, options: any): void | boolean {
+        return false;
+    }
     /**
      * This event is called after service call returns response, whether or not the service call was successful.
      * @param $event DOM event on which call back is triggered
@@ -213,7 +215,7 @@ export class LiveForm {
      */
     toggleMessage(show: boolean, msg?: string, type?: string, header?: string) {}
     /**
-     * This method loops through the form fields and highlights the invalid fields by setting state to touched.
+     * This method loops through the form fields and highlights the invalid fields.
      */
     highlightInvalidFields() {}
 }

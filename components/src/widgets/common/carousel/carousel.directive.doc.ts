@@ -28,7 +28,7 @@ export class Carousel {
      */
     @Input() controls: string = 'both';
     /**
-     * This property controls the animation of an element. The animation is based on the css classes and works only in the run mode.<br>
+     * This property controls the animation of an element. The animation is based on the CSS classes and works only in the run mode.<br>
      * <p><em>Allowed Values: </em><code>auto, none</code></p>
      * <div class="summary">
      * <p><code>auto</code><em>: Select to have an animation on the element</em></p>

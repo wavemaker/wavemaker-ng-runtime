@@ -3,7 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmSegmentedControl` directive defines the segmented control widget.
  */
-export class Page {
+export class SegmentedControl {
 
     /**
      * Class of the widget.

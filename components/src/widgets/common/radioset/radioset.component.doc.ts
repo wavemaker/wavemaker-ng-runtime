@@ -31,7 +31,7 @@ export class Radioset {
     @Input() disabled: boolean;
     /**
      * This is an advanced property that gives more control over what is displayed as the label for radio option.
-     * A Display Expression uses a Javascript expression to format exactly what is shown <br>
+     * A Display Expression uses a JavaScript expression to format exactly what is shown <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() displayexpression: string;

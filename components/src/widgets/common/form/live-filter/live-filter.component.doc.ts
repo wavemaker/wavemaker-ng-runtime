@@ -27,10 +27,6 @@ export class LiveFilter {
      */
     @Input() captionposition: string = 'left';
     /**
-     * Accepts integer(x) between 1-12 and adds class col-xs-(x) for mobile, col-sm-(x) for Tablet Potrait, col-md-(x) for Laptop Tablet Landscape , col-lg-(x) for Large screen to suit bootstrap fluid grid system.
-     */
-    @Input() captionwidth: string = 'xs-12 sm-3 md-3 lg-3';
-    /**
      * Class of the widget.
      */
     @Input() class: string;
