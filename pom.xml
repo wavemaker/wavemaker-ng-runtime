@@ -9,7 +9,7 @@
     <groupId>com.wavemaker.runtime</groupId>
     <artifactId>wavemaker-ng-runtime</artifactId>
     <version>9.9.9</version>
-
+    <name>wavemaker-ng-runtime</name>
     <packaging>pom</packaging>
 
     <properties>
@@ -18,8 +18,23 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
+    <distributionManagement>
+        <site>
+            <id>${project.artifactId}-site</id>
+            <url>./${project.artifactId}</url>
+        </site>
+    </distributionManagement>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <topSiteURL>./</topSiteURL>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
