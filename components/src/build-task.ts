@@ -54,6 +54,7 @@ export * from './widgets/common/menu/menu.build';
 export * from './widgets/common/nav/nav-item/nav-item.build';
 export * from './widgets/common/nav/nav.build';
 export * from './widgets/common/navbar/navbar.build';
+export * from './widgets/common/number/number.build';
 export * from './widgets/common/page-content/page-content.build';
 export * from './widgets/common/page/page.build';
 export * from './widgets/common/pagination/pagination.build';
