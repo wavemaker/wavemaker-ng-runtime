@@ -250,7 +250,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         data.wmTransformedData = [];
 
         const columnsArray = variable.transformationColumns,
-            dataArray = data[variable.dataField] || [],
+            dataArray = _.get(data, variable.dataField) || [],
             transformedData = data.wmTransformedData;
 
         _.forEach(dataArray, function (datum, index) {
