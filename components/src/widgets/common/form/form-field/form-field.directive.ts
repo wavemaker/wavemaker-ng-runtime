@@ -6,7 +6,7 @@ import { debounceTime } from 'rxjs/operators';
 import { DataType, debounce, FormWidgetType, isMobile, removeClass } from '@wm/core';
 
 import { registerProps } from './form-field.props';
-import { getEvaluatedData, provideAsWidgetRef } from '../../../../utils/widget-utils';
+import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { getDefaultViewModeWidget } from '../../../../utils/live-utils';
 import { StylableComponent } from '../../base/stylable.component';
 import { FormComponent } from '../form.component';
@@ -32,6 +32,7 @@ registerProps();
     exportAs: 'wmFormField',
     providers: [
         provideAsWidgetRef(FormFieldDirective),
+        provideAsNgValueAccessor(FormFieldDirective),
         {provide: Context, useValue: {}, multi: true}
     ]
 })

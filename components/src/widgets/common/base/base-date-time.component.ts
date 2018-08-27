@@ -1,4 +1,5 @@
 import { AfterViewInit, OnDestroy } from '@angular/core';
+import { Validator } from '@angular/forms';
 import { getDateObj, isString, setAttr } from '@wm/core';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 import { Subscription } from 'rxjs';
@@ -7,10 +8,12 @@ import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
 declare const moment, _, $;
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy {
+export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
     public excludedates;
     public outputformat;
+    public mindate;
+    public maxdate;
     protected activeDate;
     private keyEventPluginInstance;
     private elementScope;
@@ -18,6 +21,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected timepattern: string;
     protected showseconds: boolean;
     protected ismeridian: boolean;
+
+    protected dateNotInRange: boolean;
 
     private dateOnShowSubscription: Subscription;
 
@@ -28,19 +33,46 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected bsDatePickerDirective: BsDatepickerDirective;
 
     /**
-     * This method is used to validate min date and max date
+     * This method is used to show validation message depending on the isNativePicker flag.
      */
-    protected minDateMaxDateValidationOnInput(newVal, $event, scope) {
+    private showValidation($event, displayValue, isNativePicker, msg) {
+        if (isNativePicker) {
+            alert(msg);
+            return $($event.target).val(displayValue);
+        }
+    }
+
+    public validate() {
+        return (!this.dateNotInRange) ? null : {
+            dateNotInRange: {
+                valid: false
+            },
+        };
+    }
+
+    /**
+     * This method is used to validate min date and max date
+     * In mobile if invalid dates are entered, device is showing an alert.
+     * In web if invalid dates are entered, device is showing validation message.
+     */
+    protected minDateMaxDateValidationOnInput(newVal, $event?: Event, displayValue?: string, isNativePicker?: boolean) {
         const dateFormat = 'YYYY-MM-DD';
         if (newVal) {
             newVal = moment(newVal).startOf('day').toDate();
-            if (scope.mindate && newVal < moment(scope.mindate, dateFormat).toDate()) {
-                alert(`Please choose a date greater than or equal to ${scope.mindate}.`);
-                return $($event.target).val(scope.displayValue);
-            } else if (scope.maxdate && newVal > moment(scope.maxdate, dateFormat).toDate()) {
-                alert(`Please choose a date less than or equal to ${scope.maxdate}.`);
-                return $($event.target).val(scope.displayValue);
+            if (this.mindate && newVal < moment(this.mindate, dateFormat).toDate()) {
+                const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
+                this.dateNotInRange = true;
+                return this.showValidation($event, displayValue, isNativePicker, msg);
             }
+            if (this.maxdate && newVal > moment(this.maxdate, dateFormat).toDate()) {
+                const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
+                this.dateNotInRange = true;
+                return this.showValidation($event, displayValue, isNativePicker, msg);
+            }
+        }
+
+        if (!isNativePicker) {
+            this.dateNotInRange = false;
         }
     }
 

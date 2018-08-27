@@ -7,7 +7,7 @@ import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidge
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
@@ -26,6 +26,7 @@ registerProps();
     templateUrl: './date-time.component.html',
     providers: [
         provideAsNgValueAccessor(DatetimeComponent),
+        provideAsNgValidators(DatetimeComponent),
         provideAsWidgetRef(DatetimeComponent)
     ]
 })
@@ -42,8 +43,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     public showdropdownon: string;
     public useDatapicker = true;
-    public mindate;
-    public maxdate;
     private keyEventPlugin;
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
@@ -155,8 +154,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method to toggle the time picker
      */
-    private toggleTimePicker(newVal) {
+    private toggleTimePicker(newVal, $event?: any) {
         this.isTimeOpen = newVal;
+        if ($event && $event.type === 'click') {
+            this.invokeEventCallback('click', {$event: $event});
+        }
         this.invokeOnTouched();
         this.addTimepickerClickListener(this.isTimeOpen);
     }
@@ -221,6 +223,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to update the model
      */
     private onModelUpdate(newVal, type?) {
+        // min date and max date validation in web.
+        // if invalid dates are entered, device is showing validation message.
+        this.minDateMaxDateValidationOnInput(newVal);
         if (!newVal) {
             this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
             return;
@@ -250,6 +255,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      */
     private toggleDpDropdown($event) {
         $event.stopPropagation();
+        if ($event.type === 'click') {
+            this.invokeEventCallback('click', {$event: $event});
+        }
         if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
             return;
         }
@@ -283,9 +291,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private onDateChange($event, isNativePicker) {
         let newVal = $event.target.value.trim();
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
-        // min date and max date validation is required only in mobile view.
-        // if invalid dates are entered, device is showing an alert. Hence required in only web app.
-        if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this)) {
+        // min date and max date validation in mobile view.
+        // if invalid dates are entered, device is showing an alert.
+        if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
             return;
         }
         this.onModelUpdate(newVal);
@@ -303,7 +311,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change'], eventName)) {
+        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }

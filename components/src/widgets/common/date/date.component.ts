@@ -8,7 +8,7 @@ import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate, ge
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './date.props';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
@@ -29,6 +29,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './date.component.html',
     providers: [
         provideAsNgValueAccessor(DateComponent),
+        provideAsNgValidators(DateComponent),
         provideAsWidgetRef(DateComponent)
     ]
 })
@@ -43,8 +44,6 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private keyEventPlugin;
     private deregisterEventListener;
-    private mindate;
-    private maxdate;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -100,9 +99,9 @@ export class DateComponent extends BaseDateTimeComponent {
      */
     onDisplayDateChange($event, isNativePicker) {
         const newVal = getDateObj($event.target.value);
-        // min date and max date validation is required only in mobile view.
-        // if invalid dates are entered, device is showing an alert. Hence required in only web app.
-        if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this)) {
+        // min date and max date validation in mobile view.
+        // if invalid dates are entered, device is showing an alert.
+        if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
             return;
         }
         this.setDataValue(newVal);
@@ -110,6 +109,9 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
+        // min date and max date validation in web.
+        // if invalid dates are entered, device is showing validation message.
+        this.minDateMaxDateValidationOnInput(newVal);
         if (newVal) {
             this.bsDataValue = newVal;
         } else {
