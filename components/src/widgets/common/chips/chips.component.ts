@@ -192,7 +192,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         // make default query with all the values and if response for the value is not in datavalue then add a custom chip object.
         if (searchQuery.length) {
+            // add the chips only when allowonlyselect is false.
             if (!this.datasource) {
+                if (this.allowonlyselect) {
+                    return;
+                }
                 searchQuery.forEach(val => {
                     const transformedData = this.getTransformedData([val], this.nextItemIndex);
                     this.chipsList.push(transformedData[0]);

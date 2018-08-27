@@ -331,19 +331,16 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    private typeaheadNoResults(event: boolean): void {
-        this.result = [];
-    }
-
     private updateQueryModel(data: any, datafield: string) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
-        if (isDefined(data) && this.searchkey && !this._modelByKey && datafield !== ALLFIELDS) {
+        if (isDefined(data) && this.searchkey && !isDefined(this._modelByKey) && datafield !== ALLFIELDS) {
             this.getDataSource(data, true).then((response) => {
                 if (response.length) {
                     this.queryModel = response;
                     this._lastQuery = this.query = this.queryModel[0].label || '';
                     this._modelByValue = this.queryModel[0].value;
+                    this._modelByKey = this.queryModel[0].key;
                 }
             });
             return;
