@@ -13,3 +13,4 @@ export * from './src/widgets/framework/types';
 export * from './src/widgets/framework/widget-props';
 export * from './src/build-task';
 export * from './src/widgets/common/dialog/dialog.service';
+export * from './src/pipes/custom-pipes';

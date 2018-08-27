@@ -28,9 +28,9 @@ class OpenFileOperation implements IDeviceVariableOperation {
     public readonly model = {};
     public readonly properties = [
         {target: 'filePath', type: 'string', value: '', dataBinding: true},
-        {target: 'fileType', type: 'list', options: _.mapValues(this._defaultFileTypesToOpen, 'label'),  value: 'pdf', dataBinding: true},
-        {target: 'spinnerContext', hide : false},
-        {target: 'spinnerMessage', hide : false}
+        {target: 'fileType', type: 'list', options: _.mapValues(this._defaultFileTypesToOpen, 'label'),  value: 'pdf', dataBinding: true, hide: true},
+        {target: 'spinnerContext', hide: false},
+        {target: 'spinnerMessage', hide: false}
     ];
     public readonly requiredCordovaPlugins = [];
 
@@ -43,7 +43,7 @@ class OpenFileOperation implements IDeviceVariableOperation {
         if (!isValidWebURL(filePath)) {
             filePath = $rootScope.project.deployedUrl + filePath;
         }
-        return this.fileOpener.openRemoteFile(filePath, fileType.mimeType, fileType.extension);
+        return this.fileOpener.openRemoteFile(filePath, fileType.extension);
     }
 }
 

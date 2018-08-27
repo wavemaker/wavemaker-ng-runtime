@@ -15,7 +15,7 @@ import { Vibration } from '@ionic-native/vibration';
 
 
 import { hasCordova } from '@wm/core';
-
+import { FileExtensionFromMimePipe } from '@wm/components';
 
 import { DeviceFileCacheService } from './services/device-file-cache.service';
 import { DeviceFileDownloadService } from './services/device-file-download.service';
@@ -52,6 +52,7 @@ const ionicServices = [
         DeviceFileUploadService,
         DeviceService,
         ExtAppMessageService,
+        FileExtensionFromMimePipe,
         NetworkService,
         ...ionicServices
     ],

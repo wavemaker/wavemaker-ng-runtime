@@ -118,7 +118,7 @@ import { TimeComponent } from './widgets/common/time/time.component';
 import { TopNavDirective } from './widgets/common/top-nav/top-nav.directive';
 import { TreeDirective } from './widgets/common/tree/tree.directive';
 import { VideoComponent } from './widgets/common/video/video.component';
-import { FileIconClassPipe, FileSizePipe, FilterPipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
+import { FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { WizardComponent } from './widgets/common/wizard/wizard.component';
 import { WizardStepDirective } from './widgets/common/wizard/wizard-step/wizard-step.directive';
@@ -247,6 +247,7 @@ const wmComponents = [
 const PIPES = [
     ToDatePipe,
     FileIconClassPipe,
+    FileExtensionFromMimePipe,
     FilterPipe,
     FileSizePipe,
     ToNumberPipe,

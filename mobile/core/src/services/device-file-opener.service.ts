@@ -42,12 +42,9 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
         });
     }
 
-    public openRemoteFile(url: string, mimeType: string, extension: string, fileName?: string): Promise<void> {
+    public openRemoteFile(url: string, extension: string, fileName?: string): Promise<void> {
         return this.getLocalPath(url, extension, fileName)
             .then(filePath => {
-                if (mimeType) {
-                    return this.cordovaFileOpener.open(filePath, mimeType);
-                }
                 return this.getFileMimeType(filePath).then(type => {
                     return this.cordovaFileOpener.open(filePath, type);
                 });
@@ -101,8 +98,7 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
                                 });
                         }
                     }).catch(() => {
-                        const fileName = filename || this.generateFileName(url, extension);
-                        this.downloadService.download(url, false, this._downloadsFolder, fileName)
+                        this.downloadService.download(url, false, this._downloadsFolder, filename)
                             .then(filePath => {
                                 this.cacheService.addEntry(url, filePath);
                                 resolve(filePath);

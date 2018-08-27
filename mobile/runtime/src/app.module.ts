@@ -67,7 +67,7 @@ export class MobileAppModule {
                 cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
             });
             app.subscribe('device-file-download', (data) => {
-                deviceFileOpenerService.openRemoteFile(data.url, '', data.extension, data.name).then(data.successCb, data.errorCb);
+                deviceFileOpenerService.openRemoteFile(data.url, data.extension, data.name).then(data.successCb, data.errorCb);
             });
             const __zone_symbol__FileReader = window['__zone_symbol__FileReader'];
             if (__zone_symbol__FileReader && __zone_symbol__FileReader.READ_CHUNK_SIZE) {
