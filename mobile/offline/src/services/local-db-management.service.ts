@@ -673,10 +673,15 @@ export class LocalDBManagementService {
      * @returns {*} A promise that is resolved with an array
      */
     private getMetaInfo(fileNameRegex: RegExp) {
-        const folder = cordova.file.applicationDirectory + META_LOCATION;
+        const folder = cordova.file.applicationDirectory + META_LOCATION + '/';
         return this.deviceFileService.listFiles(folder, fileNameRegex)
-            .then(files => Promise.all(_.map(files,
-                f => this.file.readAsText(folder, f['name']).then(JSON.parse)))
+            .then(files => Promise.all(_.map(files, f => {
+                    return new Promise((resolve, reject) => {
+                        // Cordova File reader has buffer issues with large files.
+                        // so, using ajax to retrieve local json
+                        $.getJSON( folder + f['name'], data => resolve(data));
+                    });
+                }))
             );
     }
 
