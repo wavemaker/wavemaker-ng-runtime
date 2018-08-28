@@ -2,7 +2,7 @@
    <div class="modal-dialog app-dialog">
        <div class="modal-content">
            <ul class="instance-list list-unstyled">
-               <li *ngFor="let instance of instances; index as i" class="instance-list-item">
+               <li *ngFor="let instance of getVisibleInstances(instances); index as i" class="instance-list-item">
                    <div class="row">
                        <div class="col-xs-8">
                            <label class="app-global-progress-bar-name h6">{{instance.name}}</label>

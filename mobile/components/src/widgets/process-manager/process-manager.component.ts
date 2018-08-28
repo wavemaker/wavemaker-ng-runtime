@@ -11,6 +11,7 @@ export interface Process {
     name: string;
     onStop: () => void;
     progressLabel: string;
+    show: boolean;
     stopButtonLabel: string;
     value: number;
 }
@@ -41,13 +42,14 @@ export class ProcessManagerComponent implements DoCheck {
         addClass(this.el.nativeElement, 'app-global-progress-bar modal default');
     }
 
-    public createInstance(name: string, min?: number, max?: number): Promise<ProcessApi> {
+    public createInstance(name: string, min = 0, max = 100): Promise<ProcessApi> {
         const instance: Process = {
-            max: max || 100,
-            min: min || 0,
+            max: max,
+            min: min,
             name: name,
             onStop: null,
             progressLabel: '',
+            show: min !== max,
             stopButtonLabel : 'Cancel',
             value: 0
         };
@@ -59,11 +61,16 @@ export class ProcessManagerComponent implements DoCheck {
         return this.addToQueue(instance).then(() => api);
     }
 
+    public getVisibleInstances() {
+        return this.instances.filter(i => i.show);
+    }
+
     public ngDoCheck() {
-        if (this.isVisible && this.instances.length === 0) {
+        const hasInstancesToShow = !!this.instances.find(i => i.show);
+        if (this.isVisible && !hasInstancesToShow) {
             setAttr(this.el.nativeElement, 'hidden', 'true');
             this.isVisible = false;
-        } else if (!this.isVisible && this.instances.length > 0){
+        } else if (!this.isVisible && hasInstancesToShow) {
             removeAttr(this.el.nativeElement, 'hidden');
             this.isVisible = true;
         }
@@ -115,6 +122,7 @@ export class ProcessManagerComponent implements DoCheck {
         } else {
             instance[propertyName] = propertyValue;
         }
+        instance.show = instance.min !== instance.max;
     }
 
 }

@@ -96,7 +96,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
     private static URL_TO_SYNC = [
         new RegExp('page.min.json$'),
         new RegExp('app.js$'),
-        new RegExp('app.variables.jsonjs$')
+        new RegExp('app.variables.json$')
     ];
 
     constructor(private app: App, private file: File, private deviceFileDownloadService: DeviceFileDownloadService, private networkService: NetworkService) {}
