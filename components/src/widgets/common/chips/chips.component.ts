@@ -201,39 +201,32 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                     const transformedData = this.getTransformedData([val], this.nextItemIndex);
                     this.chipsList.push(transformedData[0]);
                 });
-                this.removeDuplicates();
-                this.updateMaxSize();
-                return;
-            }
-            this.getDefaultModel(searchQuery, this.nextItemIndex)
-                .then(response => {
-                    // do not add chip when response is empty
-                    if (!response.length) {
-                        return;
-                    }
-                    this.chipsList = this.chipsList.concat(response);
+            } else {
+                this.getDefaultModel(searchQuery, this.nextItemIndex)
+                    .then(response => {
+                        this.chipsList = this.chipsList.concat(response);
+                        dataValue.forEach((val: any, i: number) => {
+                            const isExists = _.find(this.chipsList, (obj) => {
+                                return obj.value.toString() === val.toString();
+                            });
 
-                    const _dataValue = _.clone(data);
-
-                    dataValue.forEach((val: any, i: number) => {
-                        const isExists = _.find(this.chipsList, (obj) => {
-                            return obj.value.toString() === val.toString();
-                        });
-
-                        if (!isExists) {
-                            if (this.allowonlyselect) {
-                                const index = data.indexOf(val);
-                                if (index > -1) {
-                                    data.splice(index, 1);
+                            if (!isExists) {
+                                if (this.allowonlyselect) {
+                                    const index = data.indexOf(val);
+                                    if (index > -1) {
+                                        data.splice(index, 1);
+                                    }
+                                    return;
                                 }
-                                return;
+                                const transformedData = this.getTransformedData([val], this.nextItemIndex);
+                                this.chipsList.push(transformedData[0]);
                             }
-                            const transformedData = this.getTransformedData([val], this.nextItemIndex);
-                            this.chipsList.push(transformedData[0]);
-                        }
+                        });
+                        this._modelByValue = data;
+                        this.removeDuplicates();
+                        this.updateMaxSize();
                     });
-                    this._modelByValue = data;
-                });
+            }
         }
 
         this._modelByValue = data;
