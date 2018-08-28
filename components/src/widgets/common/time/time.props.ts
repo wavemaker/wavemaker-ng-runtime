@@ -1,4 +1,5 @@
 import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import {isMobileApp} from '@wm/core';
 
 export const timeProps = new Map(
     [
@@ -26,6 +27,9 @@ export const timeProps = new Map(
 );
 
 export const registerProps = () => {
+    if (isMobileApp()) {
+        timeProps.set('timepattern', {value: 'hh:mm', ...PROP_STRING});
+    }
     register(
         'wm-time',
         timeProps

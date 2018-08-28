@@ -1,6 +1,7 @@
 export * from './src/components.module';
 export * from './src/utils/widget-utils';
 export * from './src/widgets/common/base/base.component';
+export * from './src/widgets/common/base/stylable.component';
 export * from './src/widgets/common/date/date.component';
 export * from './src/widgets/common/date-time/date-time.component';
 export * from './src/widgets/common/file-upload/file-upload.component';
@@ -8,7 +9,7 @@ export * from './src/widgets/common/left-panel/left-panel.directive';
 export * from './src/widgets/common/page/page.directive';
 export * from './src/widgets/common/prefab/prefab.directive';
 export * from './src/widgets/common/page-content/page-content.component';
-export * from './src/widgets/common/base/stylable.component';
+export * from './src/widgets/common/time/time.component';
 export * from './src/widgets/framework/styler';
 export * from './src/widgets/framework/types';
 export * from './src/widgets/framework/widget-props';
