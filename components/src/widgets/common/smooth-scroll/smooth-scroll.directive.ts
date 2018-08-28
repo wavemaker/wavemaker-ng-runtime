@@ -50,7 +50,7 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
         }
     }
 
-    private applySmoothScroll($events?: any[]) {
+    private applySmoothScroll($events?: any[], activeEl?: any) {
         if (!isMobileApp() || isKitkatDevice()) {
             return null;
         }
@@ -72,6 +72,10 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
         }
 
         this._$el.addClass('smoothscroll-wrapper');
+
+        if (activeEl && activeEl.tagName === 'INPUT') {
+            activeEl.focus();
+        }
 
         // Add fadeScrollbars options only when smoothscroll container is included, which means content is scrollable.
         if ($events) {
@@ -145,13 +149,14 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
             && iScroll.wrapper.scrollHeight > iScroll.wrapper.clientHeight) {
 
             const cloneEvents = iScroll._events;
+            const prevActiveEl = document.activeElement;
 
             // Adds the smoothscroll container div wrapper only when element has scrollable content.
             $(iScroll.wrapper.children).wrapAll('<div class="smoothscroll-container"></div>');
             this._smoothScrollInstance.destroy();
 
             // create new iscroll instance on the element
-            this._smoothScrollInstance = this.applySmoothScroll(cloneEvents);
+            this._smoothScrollInstance = this.applySmoothScroll(cloneEvents, prevActiveEl);
         }
         if (this._lastScrollY !== this._$el[0].iscroll.maxScrollY) {
             refreshIscrolls(this._smoothScrollInstance.iScroll);
