@@ -4,6 +4,7 @@ import { registerLocaleData } from '@angular/common';
 
 import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
+import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
 
 
 declare const $, _, moment, _WM_APP_PROPERTIES, Cookies;
@@ -24,7 +25,7 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     private componentLocalePaths = [];
 
-    constructor(private $http: HttpClient) {
+    constructor(private $http: HttpClient, private bsLocaleService: BsLocaleService) {
         super();
         this.appLocale = {};
     }
@@ -150,9 +151,35 @@ export class I18nServiceImpl extends AbstractI18nService {
         });
     }
 
+    protected loadBsLocaleBundle() {
+        return new Promise(resolve => {
+            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
+            if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
+                resolve();
+                return;
+            }
+            const path = _cdnUrl + `locales/ngx-bootstrap/${this.selectedLocale}.js`;
+
+            this.$http.get(path, {responseType: 'text'})
+                .toPromise()
+                .then((response: any) => {
+                    const module: any = {}, exports: any = {};
+                    module.exports = exports;
+                    const fn = new Function('module', 'exports', response);
+                    fn(module, exports);
+                    defineLocale(this.selectedLocale, exports[this.selectedLocale + 'Locale']);
+                    this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
+                    resolve();
+                }, () => {
+                    resolve();
+                });
+        });
+    }
+
     protected loadLocaleBundles() {
         return this.loadComponentLocaleBundles()
             .then(() => this.loadAngularLocaleBundle())
+            .then(() => this.loadBsLocaleBundle())
             .then(() => this.loadMomentLocaleBundle())
             .then(() => this.loadAppLocaleBundle());
     }

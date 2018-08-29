@@ -233,6 +233,13 @@ copyLocale() {
         mkdir -p ./dist/bundles/wmmobile/locales/moment
         cp ./node_modules/moment/locale/*.js ./dist/bundles/wmapp/locales/moment/
         cp ./node_modules/moment/locale/*.js ./dist/bundles/wmmobile/locales/moment/
+
+        mkdir -p ./dist/bundles/wmapp/locales/ngx-bootstrap
+        mkdir -p ./dist/bundles/wmmobile/locales/ngx-bootstrap
+        for filename in ./node_modules/ngx-bootstrap/chronos/i18n/*.js; do
+            ./node_modules/.bin/rollup $filename --o ./dist/bundles/wmapp/locales/ngx-bootstrap/`basename "$filename"` -f umd --name locale --silent
+            ./node_modules/.bin/rollup $filename --o ./dist/bundles/wmmobile/locales/ngx-bootstrap/`basename "$filename"` -f umd --name locale --silent
+        done
     fi
 }
 
