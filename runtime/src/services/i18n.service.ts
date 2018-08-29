@@ -106,12 +106,13 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     protected loadMomentLocaleBundle() {
         return new Promise(resolve => {
-            if (this.selectedLocale === this.defaultSupportedLocale) {
+            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
+            if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
                 moment.locale(this.defaultSupportedLocale);
                 resolve();
                 return;
             }
-            const path = _WM_APP_PROJECT.cdnUrl + `/locales/moment/${this.selectedLocale}.js`;
+            const path = _cdnUrl + `locales/moment/${this.selectedLocale}.js`;
             // load the script tag
             $.ajax({
                 dataType: 'script',
@@ -126,10 +127,12 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     protected loadAngularLocaleBundle() {
         return new Promise(resolve => {
-            if (this.selectedLocale === this.defaultSupportedLocale) {
+            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
+            if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
+                return;
             }
-            const path = _WM_APP_PROJECT.cdnUrl + `/locales/angular/${this.selectedLocale}.js`;
+            const path = _cdnUrl + `locales/angular/${this.selectedLocale}.js`;
 
             this.$http.get(path, {responseType: 'text'})
                 .toPromise()

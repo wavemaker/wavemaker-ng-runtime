@@ -76,7 +76,7 @@ export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.wi
 export function InitializeApp(I18nService) {
     return () => {
         _WM_APP_PROJECT.id = location.href.split('/')[3];
-        _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]').getAttribute('content');
+        _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
         return I18nService.loadDefaultLocale();
     };
 }
