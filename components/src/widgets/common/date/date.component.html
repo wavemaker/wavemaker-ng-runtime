@@ -1,6 +1,5 @@
 <ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate">
 </ng-container>
-
 <ng-template #dataPickerTemplate>
     <input class="form-control app-textbox app-dateinput display-input" aria-label="Select date"
            focus-target
@@ -17,9 +16,6 @@
            [attr.placeholder]="placeholder"
            (change)="onDisplayDateChange($event)"
            (keydown)="onDisplayKeydown($event)">
-    <span class="input-group-btn">
-            <button type="button" class="btn btn-default btn-time" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select date" aria-haspopup="true" aria-expanded="false" (click)="toggleDpDropdown($event)" focus-target><i aria-hidden="true" class="app-icon wi wi-calendar"></i></button>
-        </span>
     <div style="height: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">
         <input class="model-holder"
                container="body"
@@ -33,6 +29,13 @@
                (onShown)="onDatePickerOpen()"
                (bsValueChange)="onDateChange($event)">
     </div>
+    <span class="input-group-btn">
+            <button type="button" class="btn btn-default btn-time" [disabled]="disabled || readonly || isCurrentDate"
+                    aria-label="Select date" aria-haspopup="true" aria-expanded="false"
+                    (click)="toggleDpDropdown($event)" focus-target>
+                <i aria-hidden="true" class="app-icon wi wi-calendar"></i>
+            </button>
+    </span>
 </ng-template>
 <ng-template #nativeDateTemplate>
     <input type="date" class="form-control app-textbox app-dateinput"

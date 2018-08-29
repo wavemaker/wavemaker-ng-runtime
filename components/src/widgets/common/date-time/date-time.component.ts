@@ -122,7 +122,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // KeyEventsPlugin
         this.keyEventPlugin = evtMngrPlugins[1].constructor;
         this.dateContainerCls = `app-date-${this.widgetId}`;
-        this._dateOptions.containerClass = `theme-red ${this.dateContainerCls}`;
+        this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
 
         this.datepattern = this.appDefaults.dateTimeFormat || getDisplayDateTimeFormat(FormWidgetType.DATETIME);

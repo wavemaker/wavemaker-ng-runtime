@@ -88,7 +88,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // KeyEventsPlugin
         this.keyEventPlugin = evtMngrPlugins[1].constructor;
         this.dateContainerCls = `app-date-${this.widgetId}`;
-        this._dateOptions.containerClass = `theme-red ${this.dateContainerCls}`;
+        this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
 
         this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
