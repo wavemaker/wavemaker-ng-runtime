@@ -26,6 +26,7 @@ import { ProcessManagerComponent } from './widgets/process-manager/process-manag
 import { SearchDirective } from './widgets/search/search.directive';
 import { SegmentContentComponent } from './widgets/segmented-control/segment-content/segment-content.component';
 import { SegmentedControlComponent } from './widgets/segmented-control/segmented-control.component';
+import { TimeDirective } from './widgets/time/time.directive';
 import { MobileTabbarComponent } from './widgets/tabbar/tabbar.component';
 import { WidgetTemplateComponent } from './widgets/widget-template/widget-template.component';
 
@@ -50,6 +51,7 @@ const wmMobileComponents = [
     SearchDirective,
     SegmentContentComponent,
     SegmentedControlComponent,
+    TimeDirective,
     WidgetTemplateComponent
 ];
 

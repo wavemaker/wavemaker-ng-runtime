@@ -36,6 +36,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     outputformat: string;
 
+    public useDatapicker = true;
     public showdropdownon: string;
 
     private deregisterEventListener;
@@ -270,5 +271,4 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
     }
-
 }
