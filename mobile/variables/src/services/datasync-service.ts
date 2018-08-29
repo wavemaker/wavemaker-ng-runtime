@@ -229,7 +229,7 @@ class PullOperation implements IDeviceVariableOperation {
         return canExecute(variable, this.networkService, this.securityService)
             .then(() => {
                 if (variable.showProgress) {
-                    return this.processManagementService.createInstance(this.app.appLocale.LABEL_DATA_PULL_PROGRESS);
+                    return this.processManagementService.createInstance(this.app.appLocale.LABEL_DATA_PULL_PROGRESS, 0, 0);
                 }
                 return null;
             }).then((instance: ProcessApi) => {
@@ -299,7 +299,7 @@ class PushOperation implements IDeviceVariableOperation {
                 }
             }).then(() => {
                 if (variable.showProgress) {
-                    return this.processManagementService.createInstance(this.app.appLocale.LABEL_DATA_PUSH_PROGRESS);
+                    return this.processManagementService.createInstance(this.app.appLocale.LABEL_DATA_PUSH_PROGRESS, 0, 0);
                 }
                 return null;
             }).then((instance: ProcessApi) => {
@@ -322,11 +322,11 @@ class PushOperation implements IDeviceVariableOperation {
             })
             .catch(pushInfo => pushInfo)
             .then(pushInfo => {
+                if (progressInstance) {
+                    progressInstance.destroy();
+                }
                 if (pushInfo && pushInfo.totalTaskCount !== undefined) {
                     pushInfo = addOldPropertiesForPushData(pushInfo);
-                    if (progressInstance) {
-                        progressInstance.destroy();
-                    }
                     if (pushInfo.failedTaskCount !== 0) {
                         return Promise.reject(pushInfo);
                     }
