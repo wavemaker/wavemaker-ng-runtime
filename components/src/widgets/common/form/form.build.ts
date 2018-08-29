@@ -81,7 +81,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                 navbarAttrsMap.set('title', attrs.get('title'));
                 navbarAttrsMap.set('backbtnclick.event', attrs.get('backbtnclick.event'));
                 buttonTemplate = `<ng-template #buttonRef let-btn="btn">
-                                            <button  wmButton name="{{btn.key}}" [ngClass]="{'navbar-btn': true}" class.bind="btn.class" iconclass.bind="btn.iconclass" show.bind="btn.show"
+                                            <button  wmButton name="{{btn.key}}" class="navbar-btn btn-primary btn-transparent" iconclass.bind="btn.iconclass" show.bind="btn.show"
                                                      (click)="${counter}.invokeActionEvent($event, btn.action)" type.bind="btn.type" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey" disabled.bind="btn.disabled"
                                                      tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !${counter}.isUpdateMode : ${counter}.isUpdateMode"></button>
                                         </ng-template>`;
