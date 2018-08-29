@@ -1,4 +1,4 @@
-import { $invokeWatchers, getClonedObject, getValidJSON, isDefined, isPageable, isValidWebURL, triggerFn, xmlToJson } from '@wm/core';
+import { $invokeWatchers, getClonedObject, getValidJSON, isDefined, isPageable, isValidWebURL, noop, triggerFn, xmlToJson } from '@wm/core';
 
 import { upload } from '../../util/file-upload.util';
 import { ServiceVariable } from '../../model/variable/service-variable';
@@ -498,7 +498,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
     // Gets the input params of the service variable and also add params from the searchKeys (filterfields)
     private getQueryParams(filterFields, searchValue, variable) {
-        const inputParams = this.getInputParms(this);
+        const inputParams = this.getInputParms(variable);
         const queryParams = ServiceVariableUtils.excludePaginationParams(inputParams);
         const inputFields = {};
 
@@ -526,7 +526,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @returns {Promise<any>}
      */
     public searchRecords(variable, options, success, error) {
-        const inputFields = this.getQueryParams(options.searchKey, options.query, variable);
+        const inputFields = this.getQueryParams(_.split(options.searchKey, ','), options.query, variable);
 
         const requestParams = {
             page: options.page,
@@ -541,6 +541,6 @@ export class ServiceVariableManager extends BaseVariableManager {
             options.onBeforeservicecall(inputFields);
         }
 
-        return this.invoke(variable, requestParams, success, error);
+        return this.invoke(variable, requestParams, success, error).catch(noop);
     }
 }
