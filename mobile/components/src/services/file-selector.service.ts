@@ -100,10 +100,10 @@ export class FileSelectorService {
                 return _.map(filesList, fileObj => {
                     const path = fileObj.filepath;
                     return {
-                        'name'    : path.split('/').pop(),
-                        'path'    : path,
-                        'blob'    : fileObj.blob,
-                        'size'    : fileObj.blob.size
+                        name: path.split('/').pop(),
+                        path: path,
+                        content: fileObj.blob,
+                        size: fileObj.blob.size
                     };
                 });
             });

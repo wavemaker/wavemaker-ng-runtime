@@ -123,10 +123,10 @@ function uploadWithAjax(file, fd, url, options) {
     /* append file to form data */
     if (_.isArray(file)) {
         _.forEach(file, function (fileObject) {
-            fd.append(options.paramName, fileObject.blob || fileObject, fileObject.name);
+            fd.append(options.paramName, fileObject.content || fileObject, fileObject.name);
         });
     } else if (_.isObject(file)) {
-        fd.append(options.paramName, file.blob || file, file.name);
+        fd.append(options.paramName, file.content || file, file.name);
     }
 
     const promise = new NotifyPromise((resolve, reject, notify) => {

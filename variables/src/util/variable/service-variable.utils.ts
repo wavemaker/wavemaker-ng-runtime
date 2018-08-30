@@ -45,7 +45,7 @@ const getFormData = (formData, param, paramValue) => {
         } else {
             if (_.isArray(paramValue) && paramType === 'file') {
                 _.forEach(paramValue, function (fileObject) {
-                    formData.append(param.name, (fileObject && fileObject.blob) || getBlob(fileObject), fileObject.name);
+                    formData.append(param.name, (fileObject && fileObject.content) || getBlob(fileObject), fileObject.name);
                 });
             } else {
                 formData.append(param.name, getBlob(paramValue, paramContentType), paramValue && paramValue.name);
