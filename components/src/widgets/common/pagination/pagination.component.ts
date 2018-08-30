@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Injector, Output, SkipSelf } from '@angular/core';
+import { Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit } from '@angular/core';
 
 import { $appDigest, $watch, AppConstants, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
 
@@ -37,7 +37,7 @@ const sizeClasses = {
         provideAsWidgetRef(PaginationComponent)
     ]
 })
-export class PaginationComponent extends StylableComponent {
+export class PaginationComponent extends StylableComponent implements AfterViewInit {
 
     @Output() resultEmitter: EventEmitter<any> = new EventEmitter();
     @Output() maxResultsEmitter: EventEmitter<any> = new EventEmitter();
@@ -465,5 +465,12 @@ export class PaginationComponent extends StylableComponent {
         } else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    ngAfterViewInit() {
+        const paginationElem =  this.nativeElement as HTMLElement;
+        paginationElem.onclick = (event) => {
+            event.stopPropagation();
+        };
     }
 }
