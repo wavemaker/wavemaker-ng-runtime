@@ -71,6 +71,9 @@ export class DeviceFileDownloadService {
             blob = (e as HttpResponse<Blob>).body;
             return this.getFileName(e, req, blob.type);
         }).then((fileName) => {
+            if (!req.destFolder) {
+                req.destFolder = this.deviceFileService.findFolderPath(req.isPersistent, fileName);
+            }
             filePath = req.destFolder + fileName;
             return this.cordovaFile.writeFile(req.destFolder, fileName, blob);
         }).then(() => {
@@ -114,12 +117,16 @@ export class DeviceFileDownloadService {
         if (mimeType) {
             fileExtension = this.fileExtensionFromMimePipe.transform(mimeType);
         }
-
-        if (!_.endsWith(filename, fileExtension)) {
+        let hasFileExtension;
+        // one or more file extensions can have same mimeType then loop over the file extensions.
+        if (_.isArray(fileExtension)) {
+            hasFileExtension = _.find(fileExtension, extension => _.endsWith(filename, extension));
+        }
+        if (!hasFileExtension && !_.endsWith(filename, fileExtension)) {
             filename = filename + fileExtension;
         }
 
-        const folder = req.destFolder || this.deviceFileService.findFolderPath(req.isPersistent, req.destFile);
+        const folder = req.destFolder || this.deviceFileService.findFolderPath(req.isPersistent, filename);
         return this.deviceFileService.newFileName(folder, filename);
     }
 
