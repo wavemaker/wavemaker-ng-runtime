@@ -234,7 +234,7 @@ export class FileExtensionFromMimePipe implements PipeTransform {
             'image/x-icon': '.ico',
             'text/calendar': '.ics',
             'application/java-archive': '.jar',
-            'image/jpeg': '.jpeg',
+            'image/jpeg': ['.jpeg', '.jpg'],
             'application/javascript': '.js',
             'application/json': '.json',
             'audio/midi': '.mid',
