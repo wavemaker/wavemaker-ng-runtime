@@ -19,7 +19,7 @@
                [required]="required"
                [attr.placeholder]="placeholder"
                (keydown)="onDisplayKeydown($event)">
-        <div style="height: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">
+        <div style="height: 0; width: 0;" aria-label="datepicker dropdownmenu" aria-controls="date">
             <input class="model-holder"
                    focus-target
                    [container]="'body'"
@@ -35,12 +35,12 @@
         </div>
         <span class="input-group-btn">
             <button focus-target type="button" class="btn btn-default btn-date"
-                    [disabled]="disabled || readonly || isCurrentDate" aria-label="Select date" aria-haspopup="true"
+                    [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select date" aria-haspopup="true"
                     aria-expanded="false" (click)="toggleDpDropdown($event)">
                 <i aria-hidden="true" class="app-icon wi wi-calendar"></i>
             </button>
             <button focus-target type="button" class="btn btn-default btn-time"
-                    [disabled]="disabled || readonly || isCurrentDate" aria-label="Select time" aria-haspopup="true"
+                    [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select time" aria-haspopup="true"
                     aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)">
                 <i aria-hidden="true" class="app-icon wi wi-access-time"></i>
             </button>
