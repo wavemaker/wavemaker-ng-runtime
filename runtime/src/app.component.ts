@@ -68,7 +68,7 @@ export class AppComponent implements DoCheck {
 
         // set theme to bs3 on ngx-bootstrap. This avoids runtime calculation to determine bs theme. Thus resolves performance.
         setTheme('bs3');
-        if (hasCordova()) {
+        if (hasCordova() && !window['wmDeviceReady']) {
             document.addEventListener('wmDeviceReady' , () => this.startApp = true);
         } else {
             this.startApp = true;
