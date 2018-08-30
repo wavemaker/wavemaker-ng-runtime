@@ -25,7 +25,8 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     private componentLocalePaths = [];
 
-    constructor(private $http: HttpClient, private bsLocaleService: BsLocaleService) {
+    constructor(private $http: HttpClient,
+                private bsLocaleService: BsLocaleService) {
         super();
         this.appLocale = {};
     }
@@ -114,15 +115,23 @@ export class I18nServiceImpl extends AbstractI18nService {
                 return;
             }
             const path = _cdnUrl + `locales/moment/${this.selectedLocale}.js`;
-            // load the script tag
-            $.ajax({
-                dataType: 'script',
-                url: path,
-                cache: true // read the script tag from the cache when available
-            }).always(() => {
-                moment.locale(this.selectedLocale);
-                resolve();
-            });
+            this.$http.get(path, {responseType: 'text'})
+                .toPromise()
+                .then((response: any) => {
+                    const fn = new Function(response);
+
+                    // Call the script. In script, moment defines the loaded locale
+                    fn();
+                    moment.locale(this.selectedLocale);
+
+                    // For ngx bootstrap locale, get the config from script and apply locale
+                    let _config;
+                    fn.apply({moment: {defineLocale: (code, config) => _config = config}});
+                    defineLocale(this.selectedLocale, _config);
+                    this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
+
+                    resolve();
+                }, () => resolve());
         });
     }
 
@@ -145,41 +154,13 @@ export class I18nServiceImpl extends AbstractI18nService {
                     registerLocaleData(exports.default);
                     this._isAngularLocaleLoaded = true;
                     resolve();
-                }, () => {
-                    resolve();
-                });
-        });
-    }
-
-    protected loadBsLocaleBundle() {
-        return new Promise(resolve => {
-            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
-            if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
-                resolve();
-                return;
-            }
-            const path = _cdnUrl + `locales/ngx-bootstrap/${this.selectedLocale}.js`;
-
-            this.$http.get(path, {responseType: 'text'})
-                .toPromise()
-                .then((response: any) => {
-                    const module: any = {}, exports: any = {};
-                    module.exports = exports;
-                    const fn = new Function('module', 'exports', response);
-                    fn(module, exports);
-                    defineLocale(this.selectedLocale, exports[this.selectedLocale + 'Locale']);
-                    this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
-                    resolve();
-                }, () => {
-                    resolve();
-                });
+                }, () => resolve());
         });
     }
 
     protected loadLocaleBundles() {
         return this.loadComponentLocaleBundles()
             .then(() => this.loadAngularLocaleBundle())
-            .then(() => this.loadBsLocaleBundle())
             .then(() => this.loadMomentLocaleBundle())
             .then(() => this.loadAppLocaleBundle());
     }
