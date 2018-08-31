@@ -6,7 +6,7 @@ import { App, fetchContent, hasCordova, insertAfter, isIpad, isIphone, isIpod, i
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { MobileCoreModule, DeviceService, DeviceFileOpenerService, ExtAppMessageService } from '@wm/mobile/core';
 import { VariablesModule } from '@wm/mobile/variables';
-import { $rootScope } from '@wm/variables';
+import {$rootScope, CONSTANTS} from '@wm/variables';
 
 import { CookieService } from './services/cookie.service';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
@@ -73,6 +73,11 @@ export class MobileAppModule {
             if (__zone_symbol__FileReader && __zone_symbol__FileReader.READ_CHUNK_SIZE) {
                 // cordova File Reader is required. Otherwise, file operations are failing.
                 window['FileReader'] = __zone_symbol__FileReader;
+            }
+            if (!CONSTANTS.isWaveLens) {
+                (window as any).remoteSync = (flag = true) => {
+                    localStorage.setItem('remoteSync', flag ? 'true' : 'false');
+                };
             }
         }
         deviceService.start();
