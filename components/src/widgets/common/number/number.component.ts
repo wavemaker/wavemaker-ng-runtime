@@ -6,7 +6,7 @@ import { AbstractI18nService } from '@wm/core';
 import { registerProps } from './number.props';
 import { BaseInput } from '../text/base/base-input';
 import { IWidgetConfig } from '../../framework/types';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsNgValueAccessor, provideAsWidgetRef, provideAsNgValidators } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -22,6 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './number.component.html',
     providers: [
         provideAsNgValueAccessor(NumberComponent),
+        provideAsNgValidators(NumberComponent),
         provideAsWidgetRef(NumberComponent)
     ]
 })
@@ -30,7 +31,8 @@ export class NumberComponent extends BaseInput {
     private GROUP: string;
     private selectedLocale: string;
     private proxyModel: number;
-    private isValid: boolean;
+    private numberNotInRange: boolean;
+    private isInvalidNumber: boolean;
 
     public numberFilter: string;
     public localeFilter: string;
@@ -50,9 +52,8 @@ export class NumberComponent extends BaseInput {
         }
         // get a valid number form the text.
         const model = this.parseNumber(value.toString());
-        this.isValid = this.isValidNumber(model);
         // if the number is valid update the model value.
-        if (this.isValid) {
+        if (this.isValid(model)) {
             this.proxyModel = model;
             this.handleChange(model);
             // update the display value in the text box.
@@ -71,7 +72,12 @@ export class NumberComponent extends BaseInput {
         this.DECIMAL = getLocaleNumberSymbol(this.localeFilter || this.selectedLocale, NumberSymbol.Decimal);
         this.GROUP = getLocaleNumberSymbol(this.localeFilter || this.selectedLocale, NumberSymbol.Group);
         this.numberFilter = '1.0-16';
-        this.isValid = true;
+        this.resetValidations();
+    }
+
+    private resetValidations() {
+        this.isInvalidNumber = false;
+        this.numberNotInRange = false;
     }
 
     /**
@@ -79,16 +85,20 @@ export class NumberComponent extends BaseInput {
      * @param {number} val number to be validated
      * @returns {number}
      */
-    isValidNumber(val: number): boolean {
+    isValid(val: number): boolean {
         if (_.isNaN(val)) {
+            this.isInvalidNumber = true;
             return false;
         }
         if (!_.isNaN(this.minvalue) && val < this.minvalue) {
+            this.numberNotInRange = true;
             return false;
         }
         if (!_.isNaN(this.maxvalue) && val > this.maxvalue) {
+            this.numberNotInRange = true;
             return false;
         }
+        this.resetValidations();
         return true;
     }
 
@@ -114,6 +124,24 @@ export class NumberComponent extends BaseInput {
             return NaN;
         }
         return number + decimal;
+    }
+
+    public validate() {
+        if (this.isInvalidNumber) {
+            return {
+                invalidNumber: {
+                    valid: false
+                },
+            };
+        }
+        if (this.numberNotInRange) {
+            return {
+                numberNotInRange: {
+                    valid: false
+                },
+            };
+        }
+        return null;
     }
 
     /**

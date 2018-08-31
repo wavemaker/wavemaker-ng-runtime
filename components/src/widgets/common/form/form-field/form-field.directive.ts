@@ -194,6 +194,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (this.regexp) {
             this._validators.push(Validators.pattern(this.regexp));
         }
+        if (_.isFunction(this.formWidget.validate)) {
+            this._validators.push(this.formWidget.validate.bind(this.formWidget));
+        }
         if (customValidator) {
             this._validators.push(customValidator);
         }
