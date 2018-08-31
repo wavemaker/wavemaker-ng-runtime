@@ -36,7 +36,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmDateTime ${innerTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<wm-input ${innerTmpl} type="number" aria-label="Only numbers" ${updateOnTmpl}></wm-input>`;
+            tmpl = `<div wmNumber ${innerTmpl} type="number" aria-label="Only numbers" ${updateOnTmpl}></div>`;
             break;
         case FormWidgetType.PASSWORD:
             tmpl = `<wm-input ${innerTmpl} type="password" aria-label="Enter password" ${updateOnTmpl}></wm-input>`;
