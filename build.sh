@@ -322,6 +322,7 @@ bundleMobileLibs() {
     echo "uglify: mobile-libs"
     $UGLIFYJS \
         ./dist/tmp/libs/tslib/tslib.umd.js \
+        ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
