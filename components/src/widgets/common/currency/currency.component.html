@@ -1,18 +1,23 @@
 <span class="input-group-addon" [textContent]="currencySymbol"></span>
-<input type="number" class="form-control app-textbox app-currency-input" [attr.aria-label]="name"
-       focus-target
+<input class="form-control app-textbox app-currency-input"
        #input
-       [attr.name]="name"
-       [tabindex]="tabindex"
-       [(ngModel)]="datavalue"
-       (ngModelChange)="handleChange($event);"
-       [ngModelOptions]="{updateOn: 'blur'}"
-       (blur)="invokeOnTouched($event)"
-       [attr.step]="step"
-       [attr.min]="minvalue"
-       [attr.max]="maxvalue"
-       [required]="required"
-       [disabled]="disabled"
+       role="input"
+       type="text"
+       focus-target
+       [autofocus]="autofocus"
        [readonly]="readonly"
+       [disabled]="disabled"
+       [required]="required"
+       [pattern]="regexp"
+       [attr.name]="name"
+       [attr.aria-label]="name"
+       [attr.tabindex]="tabindex"
+       [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
-       [attr.placeholder]="placeholder">
+       [ngModel]="displayValue"
+       [ngModelOptions]="ngModelOptions"
+
+       (blur)="handleBlur($event)"
+       (ngModelChange)="datavalue=$event"
+       (keydown.ArrowUp)="onArrowPress($event, 'UP')"
+       (keydown.ArrowDown)="onArrowPress($event, 'DOWN')">
