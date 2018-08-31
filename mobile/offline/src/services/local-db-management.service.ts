@@ -5,7 +5,7 @@ import { File } from '@ionic-native/file';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 
 import { executePromiseChain, isAndroid, isArray, isIos, noop, toPromise } from '@wm/core';
-import { DeviceFileService } from '@wm/mobile/core';
+import { DeviceFileService, DeviceService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
 import { LocalKeyValueService } from './local-key-value.service';
@@ -113,6 +113,7 @@ export class LocalDBManagementService {
 
     constructor(
         private appVersion: AppVersion,
+        private deviceService: DeviceService,
         private deviceFileService: DeviceFileService,
         private file: File,
         private localKeyValueService: LocalKeyValueService,
@@ -409,7 +410,7 @@ export class LocalDBManagementService {
                     if (newDatabasesCreated) {
                         return this.normalizeData()
                             .then(() => this.disableForeignKeys())
-                            .then(() => this.getDBSeedCreationTime())
+                            .then(() => this.deviceService.getAppBuildTime())
                             .then(dbSeedCreationTime => {
                                 return executePromiseChain(_.map(this.callbacks, 'onDbCreate'), [{
                                     'databases' : this.databases,
@@ -657,15 +658,6 @@ export class LocalDBManagementService {
     }
 
     /**
-     * Returns the timestamp when the seed db is created
-     * @returns {*}
-     */
-    private getDBSeedCreationTime() {
-        return this.file.readAsText(cordova.file.applicationDirectory + 'www', 'config.json')
-            .then(appConfig => JSON.parse(appConfig).buildTime);
-    }
-
-    /**
      * Searches for the files with given regex in 'www/metadata/app'and returns an array that contains the JSON
      * content present in each file.
      *
@@ -835,26 +827,17 @@ export class LocalDBManagementService {
      * if existing databases are being used.
      */
     private setUpDatabases(): Promise<boolean> {
-        return this.getDBSeedCreationTime()
-            .then((dbSeedCreationTime) => {
-                let appInfo;
-                return this.file.readAsText(cordova.file.dataDirectory, 'app.info')
-                    .then(content =>  appInfo = JSON.parse(content), noop)
-                    .then(() => !appInfo || appInfo.createdOn < dbSeedCreationTime)
-                    .then( cleanAndCreate => {
-                        if (cleanAndCreate) {
-                            return this.cleanAndCopyDatabases()
-                                .then(() => {
-                                    appInfo = appInfo || {};
-                                    appInfo.createdOn = dbSeedCreationTime || _.now();
-                                    return this.file.writeFile(cordova.file.dataDirectory,
-                                        'app.info',
-                                        JSON.stringify(appInfo),
-                                        { replace: true });
-                                }).then(() => true);
-                        }
-                        return cleanAndCreate;
-                    });
+        return this.deviceService.getAppBuildTime()
+            .then((buildTime) => {
+                const dbInfo = this.deviceService.getEntry('database') || {};
+                if (!dbInfo.lastBuildTime || dbInfo.lastBuildTime !== buildTime) {
+                    return this.cleanAndCopyDatabases()
+                        .then(() => {
+                            dbInfo.lastBuildTime = buildTime;
+                            return this.deviceService.storeEntry('database', dbInfo);
+                        }).then(() => true);
+                }
+                return false;
             });
     }
 }

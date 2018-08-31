@@ -30,7 +30,7 @@ export class MobileHttpInterceptor implements HttpInterceptor {
                        securityService: SecurityService) {
         if (hasCordova() && !CONSTANTS.isWaveLens) {
             this.requestInterceptors.push(new SecurityInterceptor(app, file, securityService));
-            this.requestInterceptors.push(new RemoteSyncInterceptor(app, file, deviceFileDownloadService, networkService));
+            this.requestInterceptors.push(new RemoteSyncInterceptor(app, deviceFileDownloadService, deviceService, file, networkService));
             this.requestInterceptors.push(new ServiceCallInterceptor(app));
         }
     }
@@ -93,25 +93,36 @@ class ServiceCallInterceptor implements RequestInterceptor {
 
 class RemoteSyncInterceptor implements RequestInterceptor {
 
+    private checkRemoteDirectory = true;
+    private hasRemoteChanges = false;
+
     private static URL_TO_SYNC = [
         new RegExp('page.min.json$'),
         new RegExp('app.js$'),
         new RegExp('app.variables.json$')
     ];
 
-    constructor(private app: App, private file: File, private deviceFileDownloadService: DeviceFileDownloadService, private networkService: NetworkService) {}
+    constructor(private app: App,
+                private deviceFileDownloadService: DeviceFileDownloadService,
+                private deviceService: DeviceService,
+                private file: File,
+                private networkService: NetworkService) {
+        this.file.checkDir(cordova.file.dataDirectory, 'remote').then(() => this.hasRemoteChanges = true, noop);
+    }
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
-        if (sessionStorage.getItem('debugMode') !== undefined) {
+        const isRemoteSyncEnabled = localStorage.getItem('remoteSync') === 'true';
+        if (this.hasRemoteChanges || isRemoteSyncEnabled) {
             return Promise.resolve(request.url).then(url => {
                 if (url.indexOf('://') < 0
                     && RemoteSyncInterceptor.URL_TO_SYNC.find(r => r.test(url))) {
                     const fileNameFromUrl = _.last(_.split(url, '/'));
-                    return this.download(url, fileNameFromUrl);
+                    return this.download(url, fileNameFromUrl, isRemoteSyncEnabled);
                 }
                 return url;
             }).then(url => {
                 if (url !== request.url) {
+                    this.hasRemoteChanges = true;
                     return request.clone({
                         url: url
                     });
@@ -137,33 +148,54 @@ class RemoteSyncInterceptor implements RequestInterceptor {
         return parentFolder;
     }
 
-    private init(pageUrl: string) {
+    private init(pageUrl: string, isRemoteSyncEnabled: boolean) {
         const fileName = _.last(_.split(pageUrl, '/')),
             path = _.replace(pageUrl, fileName, ''),
             folderPath = 'remote' + _.replace(path, this.app.deployedUrl, ''),
             downloadsParent = cordova.file.dataDirectory;
-        return this.file.checkDir(downloadsParent, folderPath)
+        return new Promise((resolve, reject) => {
+                if (this.checkRemoteDirectory) {
+                    return this.deviceService.getAppBuildTime().then(buildTime => {
+                        const remoteSyncInfo = this.deviceService.getEntry('remote-sync') || {};
+                        if (!remoteSyncInfo.lastBuildTime || remoteSyncInfo.lastBuildTime !== buildTime) {
+                            return this.file.removeDir(cordova.file.dataDirectory, 'remote')
+                                .catch(noop).then(() => {
+                                    remoteSyncInfo.lastBuildTime = buildTime;
+                                    this.hasRemoteChanges = false;
+                                    return this.deviceService.storeEntry('remote-sync', remoteSyncInfo);
+                                });
+                        }
+                    }).then(() => this.checkRemoteDirectory = false)
+                        .then(resolve, reject);
+                }
+                resolve();
+            })
+            .then(() => this.file.checkDir(downloadsParent, folderPath))
             .then(() => downloadsParent + folderPath,
-                () => this.createFolderStructure(downloadsParent, _.split(folderPath, '/')));
+                () => {
+                    if (isRemoteSyncEnabled) {
+                        return this.createFolderStructure(downloadsParent, _.split(folderPath, '/'));
+                    }
+                    return Promise.reject('Could not find equivalent remote path');
+                });
     }
 
-    private download(url: string, fileName: string): Promise<string> {
+    private download(url: string, fileName: string, isRemoteSyncEnabled: boolean): Promise<string> {
         const pageUrl = this.app.deployedUrl + '/' + url;
         let folderPath;
-        const isDebugMode = sessionStorage.getItem('debugMode') === 'true';
-        return this.init(pageUrl)
+        return this.init(pageUrl, isRemoteSyncEnabled)
             .then(pathToRemote => {
                 folderPath = pathToRemote;
                 return this.file.checkFile(folderPath + fileName, '');
             }).then(() => {
-                if (isDebugMode && this.networkService.isConnected()) {
+                if (isRemoteSyncEnabled && this.networkService.isConnected()) {
                     return this.file.removeFile(folderPath, fileName)
                         .then(() => folderPath + fileName);
                 }
                 return folderPath + fileName;
             }, () => url)
             .then(path => {
-                if (isDebugMode && this.networkService.isConnected()) {
+                if (isRemoteSyncEnabled && this.networkService.isConnected()) {
                     return this.deviceFileDownloadService.download(pageUrl, false, folderPath, fileName);
                 }
                 return path;
