@@ -33,6 +33,15 @@ export class WidgetProxyProvider {
 
             // If the native Proxy is not supported, IE11
             const widget = Object.create(instance);
+
+            // bind proper context for the methods
+            for (const key in instance) {
+                if (_.isFunction(instance[key])) {
+                    instance[key] = instance[key].bind(instance);
+                }
+            }
+
+
             // define setters and getters for styles
             Object.keys(propNameCSSKeyMap)
                 .forEach(key => {
