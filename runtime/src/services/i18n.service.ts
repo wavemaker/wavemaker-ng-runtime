@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 
-import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT } from '@wm/core';
+import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT, AppDefaults } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
 
@@ -23,10 +23,9 @@ export class I18nServiceImpl extends AbstractI18nService {
     private messages: any;
     private _isAngularLocaleLoaded = false;
 
-    private componentLocalePaths = [];
-
     constructor(private $http: HttpClient,
-                private bsLocaleService: BsLocaleService) {
+                private bsLocaleService: BsLocaleService,
+                private appDefaults: AppDefaults) {
         super();
         this.appLocale = {};
     }
@@ -44,17 +43,6 @@ export class I18nServiceImpl extends AbstractI18nService {
         this.messages = {};
 
         Object.setPrototypeOf(this.appLocale, this.messages);
-    }
-
-    public registerLocalePath(path: string) {
-        if (!path) {
-            return;
-        }
-        if (!this.componentLocalePaths.includes(path)) {
-            this.componentLocalePaths.push(path);
-        }
-
-        this.loadComponentLocaleBundle(`${path}/${this.selectedLocale}.json`);
     }
 
     public getSelectedLocale(): string {
@@ -82,28 +70,12 @@ export class I18nServiceImpl extends AbstractI18nService {
             });
     }
 
-    protected loadComponentLocaleBundle(path) {
-        return this.loadResource(`${path}/${this.selectedLocale}.json`)
-            .then(messages => this.extendMessages(messages));
-    }
-
-    protected loadComponentLocaleBundles(): Promise<any> {
-        if (!this.componentLocalePaths.length) {
-            return Promise.resolve({});
-        }
-
-        const promises: Array<Promise<any>> = [];
-
-        for (const path of this.componentLocalePaths) {
-            promises.push(this.loadComponentLocaleBundle(path));
-        }
-
-        return Promise.all(promises);
-    }
-
     protected loadAppLocaleBundle() {
         return this.loadResource(`${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
-            .then(messages => this.extendMessages(messages));
+            .then(bundle => {
+                this.extendMessages(bundle.messages);
+                this.appDefaults.setFormats(bundle.formats);
+            });
     }
 
     protected loadMomentLocaleBundle() {
@@ -159,8 +131,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadLocaleBundles() {
-        return this.loadComponentLocaleBundles()
-            .then(() => this.loadAngularLocaleBundle())
+        return this.loadAngularLocaleBundle()
             .then(() => this.loadMomentLocaleBundle())
             .then(() => this.loadAppLocaleBundle());
     }

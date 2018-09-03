@@ -109,15 +109,12 @@ export abstract class AbstractHttpService {
 }
 
 export abstract class AbstractI18nService {
-    public abstract registerLocalePath(path: string);
     public abstract getSelectedLocale(): string;
     public abstract getDefaultSupportedLocale(): string;
     public abstract getAppLocale(): any;
     public abstract setSelectedLocale(locale);
     public abstract loadDefaultLocale();
     public abstract getLocalizedMessage(message, ...args);
-    protected abstract loadComponentLocaleBundle(path);
-    protected abstract loadComponentLocaleBundles(): Promise<any>;
     protected abstract loadAppLocaleBundle();
     protected abstract loadMomentLocaleBundle();
     protected abstract loadLocaleBundles();
@@ -164,4 +161,5 @@ export abstract class AppDefaults {
     public dateFormat;
     public timeFormat;
     public dateTimeFormat;
+    public abstract setFormats(formats: any);
 }

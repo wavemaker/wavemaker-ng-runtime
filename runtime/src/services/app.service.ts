@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 
 import {
     EventNotifier, AbstractToasterService, AbstractDialogService, isDefined, isString, AbstractI18nService,
-    AbstractHttpService, AbstractSpinnerService, UtilsService, FieldTypeService, FieldWidgetService, AppDefaults
+    AbstractHttpService, AbstractSpinnerService, UtilsService, FieldTypeService, FieldWidgetService
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -71,8 +71,7 @@ export class AppRef {
         private inj: Injector,
         private i18nService: AbstractI18nService,
         private httpService: AbstractHttpService,
-        private securityService: SecurityService,
-        private appDefaults: AppDefaults
+        private securityService: SecurityService
     ) {
 
         this.projectName = _WM_APP_PROPERTIES.name;
@@ -84,18 +83,6 @@ export class AppRef {
 
         this.appLocale = this.i18nService.getAppLocale();
         this.httpService.setLocale(this.appLocale);
-
-        this.setAppDefaults();
-    }
-
-    private setAppDefaults() {
-        const dateFormat = _WM_APP_PROPERTIES.dateFormat;
-        const timeFormat = _WM_APP_PROPERTIES.timeFormat;
-        const dateTimeFormat = (dateFormat && timeFormat) ? dateFormat + ' ' + timeFormat : undefined;
-
-        this.appDefaults.dateFormat = dateFormat;
-        this.appDefaults.timeFormat = timeFormat;
-        this.appDefaults.dateTimeFormat = dateTimeFormat;
     }
 
     public notify(eventName: string, ...data: Array<any>) {
