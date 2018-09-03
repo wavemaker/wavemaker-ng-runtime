@@ -24,6 +24,19 @@ export const proxyHandler = {
     }
 };
 
+const $RAF = window.requestAnimationFrame;
+const $RAFQueue = [];
+
+const invokeLater = fn => {
+    if (!$RAFQueue.length) {
+        $RAF(() => {
+            $RAFQueue.forEach(f => f());
+            $RAFQueue.length = 0;
+        });
+    }
+    $RAFQueue.push(fn);
+};
+
 export class WidgetProxyProvider {
     public static create(instance: BaseComponent, widgetSubType: string, propsByWidgetSubType: Map<string, any>) {
         // If the native Proxy is supported
@@ -35,12 +48,13 @@ export class WidgetProxyProvider {
             const widget = Object.create(instance);
 
             // bind proper context for the methods
-            for (const key in instance) {
-                if (_.isFunction(instance[key])) {
-                    instance[key] = instance[key].bind(instance);
+            invokeLater(() => {
+                for (const key in instance) {
+                    if (_.isFunction(instance[key]) && key !== 'constructor' && key !== 'super' && !_.startsWith(key, 'ng')) {
+                        instance[key] = instance[key].bind(instance);
+                    }
                 }
-            }
-
+            });
 
             // define setters and getters for styles
             Object.keys(propNameCSSKeyMap)
