@@ -1,4 +1,4 @@
-import { Attribute, Element } from '@angular/compiler';
+import { Attribute, Element, Text } from '@angular/compiler';
 
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator, isDateTimeType } from '@wm/core';
@@ -165,6 +165,10 @@ register('wm-table-column', (): IBuildTaskDef => {
         requires: ['wm-table'],
         template: (node: Element, shared) => {
             if (node.children.length) {
+                // If node has children, but an empty text node dont generate custom expression
+                if (node.children.length === 1 && node.children[0] instanceof Text && (node.children[0] as Text).value.trim().length === 0) {
+                    return;
+                }
                 shared.set('customExpression', true);
                 addNgModelStandalone(node.children);
             }
