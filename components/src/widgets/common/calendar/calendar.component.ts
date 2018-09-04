@@ -30,13 +30,6 @@ const SELECTION_MODES = {
     SINGLE: 'single',
     MULTIPLE: 'multiple'
 };
-const BUTTON_TEXT = {
-    DAY: 'Day',
-    MONTH: 'Month',
-    YEAR: 'Year',
-    WEEK: 'Week',
-    TODAY: 'Today'
-};
 const getEventMomentValue = (value, key) => {
     let isDate = false;
 
@@ -124,13 +117,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             locale: getSessionStorageItem('selectedLocale') || 'en',
             selectable: false,
             header: defaultHeaderOptions,
-            buttonText: {
-                month: BUTTON_TEXT.MONTH,
-                week : BUTTON_TEXT.WEEK,
-                day  : BUTTON_TEXT.DAY,
-                year : BUTTON_TEXT.YEAR,
-                today: BUTTON_TEXT.TODAY
-            },
             views: {
                 month: {
                     eventLimit: 0

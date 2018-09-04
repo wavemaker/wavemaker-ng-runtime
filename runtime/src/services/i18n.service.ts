@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 
-import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT, AppDefaults } from '@wm/core';
+import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT, AppDefaults, isMobile } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
 
@@ -130,10 +130,33 @@ export class I18nServiceImpl extends AbstractI18nService {
         });
     }
 
+    protected loadCalendarLocaleBundle() {
+        return new Promise(resolve => {
+            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
+            const path = _cdnUrl + `locales/fullcalendar/${this.selectedLocale}.js`;
+
+            // return in case of mobile app.
+            if (isMobile()) {
+                resolve();
+                return;
+            }
+
+            this.$http.get(path, {responseType: 'text'})
+                .toPromise()
+                .then((response: any) => {
+                    const fn = new Function(response);
+                    // Call the script. In script, moment defines the loaded locale
+                    fn();
+                    resolve();
+                }, () => resolve());
+        });
+    }
+
     protected loadLocaleBundles() {
         return this.loadAngularLocaleBundle()
             .then(() => this.loadMomentLocaleBundle())
-            .then(() => this.loadAppLocaleBundle());
+            .then(() => this.loadAppLocaleBundle())
+            .then(() => this.loadCalendarLocaleBundle());
     }
 
     public setSelectedLocale(locale) {

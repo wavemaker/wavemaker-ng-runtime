@@ -229,6 +229,9 @@ copyLocale() {
         cp ./node_modules/@angular/common/locales/*.js ./dist/bundles/wmapp/locales/angular/
         cp ./node_modules/@angular/common/locales/*.js ./dist/bundles/wmmobile/locales/angular/
 
+        mkdir -p ./dist/bundles/wmapp/locales/fullcalendar
+        cp ./node_modules/fullcalendar/dist/locale/*.js ./dist/bundles/wmapp/locales/fullcalendar/
+
         mkdir -p ./dist/bundles/wmapp/locales/moment
         mkdir -p ./dist/bundles/wmmobile/locales/moment
         cp ./node_modules/moment/locale/*.js ./dist/bundles/wmapp/locales/moment/
