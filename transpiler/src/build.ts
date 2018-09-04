@@ -218,6 +218,9 @@ const processDimensionAttributes = attrMap => {
     });
 };
 
+// replace <:svg:svg> -> <svg>, <:svg:*> -> <svg:*>
+const getNodeName = name => name.replace(':svg:svg', 'svg').replace(':svg:', 'svg:');
+
 const processNode = (node, providers?: Array<IProviderInfo>) => {
     const nodeDef = registry.get(node.name);
 
@@ -252,6 +255,8 @@ const processNode = (node, providers?: Array<IProviderInfo>) => {
         attrMap = getAttrMap(node.attrs);
         processDimensionAttributes(attrMap);
 
+        const nodeName = getNodeName(node.name);
+
         if (nodeDef) {
             markup = (<any>pre)(attrMap, shared, ...requiredProviders);
             if (nodeDef.provide) {
@@ -262,7 +267,7 @@ const processNode = (node, providers?: Array<IProviderInfo>) => {
                 providers.push(provideInfo);
             }
         } else {
-            markup = `<${node.name} ${getAttrMarkup(attrMap)}>`;
+            markup = `<${nodeName} ${getAttrMarkup(attrMap)}>`;
         }
 
         node.children.forEach(child => markup += processNode(child, providers));
@@ -274,7 +279,7 @@ const processNode = (node, providers?: Array<IProviderInfo>) => {
             markup += (<any>post)(attrMap, shared, ...requiredProviders);
         } else {
             if (node.endSourceSpan && !getHtmlTagDefinition(node.name).isVoid) {
-                markup += `</${node.name}>`;
+                markup += `</${nodeName}>`;
             }
         }
     } else if (node instanceof Text) {
