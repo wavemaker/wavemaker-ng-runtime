@@ -4,7 +4,7 @@ import { setCSS } from '@wm/core';
 
 import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';
-import { PROP_TYPE, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_TYPE, register } from '../../framework/widget-props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { prefabProps } from './prefab.props';
 

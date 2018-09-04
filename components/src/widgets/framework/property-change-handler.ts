@@ -6,6 +6,8 @@ import { isStyle } from './styler';
 import { getConditionalClasses, getWatchIdentifier } from '../../utils/widget-utils';
 import { isBooleanAttr, isDimensionProp } from './constants';
 
+declare const _;
+
 /**
  * Returns the parsed value based on the provided type
  * if the type is PROP_TYPE.NUMBER returns a number/NaN
@@ -61,6 +63,14 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
 
         if (isDimensionProp(key)) {
             nv = toDimension(nv);
+        } else if (_.startsWith(nv, 'resources/')) {
+            const ref: any = component;
+            if (ref._parentPrefab_ === undefined) {
+                ref._parentPrefab_ = component.$element.closest('[prefabname]').attr('prefabname') || '';
+            }
+            if (ref._parentPrefab_) {
+                nv = `./app/prefabs/${ref._parentPrefab_}/${nv}`;
+            }
         }
 
         component[key] = nv;
