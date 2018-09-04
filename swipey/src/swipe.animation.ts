@@ -13,11 +13,11 @@ export abstract class SwipeAnimation {
     public direction() { return $.fn.swipey.DIRECTIONS.HORIZONTAL; }
     public setGesturesEnabled(enabled: boolean) { this._isGesturesEnabled = enabled; }
     public isGesturesEnabled() { return this._isGesturesEnabled; }
-    public goToLower() {
-        this._$ele.swipeAnimation('gotoLower');
+    public goToLower(time?) {
+        this._$ele.swipeAnimation('gotoLower', time);
     }
-    public goToUpper() {
-        this._$ele.swipeAnimation('gotoUpper');
+    public goToUpper(time?) {
+        this._$ele.swipeAnimation('gotoUpper', time);
     }
     public onAnimation() {}
     public onUpper() {}

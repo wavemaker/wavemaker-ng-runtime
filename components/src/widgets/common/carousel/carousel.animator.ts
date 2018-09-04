@@ -12,6 +12,7 @@ export class CarouselAnimator extends SwipeAnimation {
     private _indicators;
     private _items;
     private _intervalId;
+    private _pauseCaroselTill = 0;
     private _swiping;
     private _width;
 
@@ -29,9 +30,11 @@ export class CarouselAnimator extends SwipeAnimation {
             });
         });
         this._$el.find('>.left.carousel-control').on('click', () => {
+            this._pauseCaroselTill = Date.now() + this.interval;
             this.goToUpper();
         });
         this._$el.find('>.right.carousel-control').on('click', () => {
+            this._pauseCaroselTill = Date.now() + this.interval;
             this.goToLower();
         });
         this.setActiveItem();
@@ -84,8 +87,8 @@ export class CarouselAnimator extends SwipeAnimation {
     public start() {
         this.ngZone.runOutsideAngular(() => {
             this._intervalId = setInterval(() => {
-                if (!this._swiping) {
-                    this.goToLower();
+                if (!this._swiping && this._pauseCaroselTill < Date.now()) {
+                    this.goToLower(600);
                 }
             }, this.interval);
         });
