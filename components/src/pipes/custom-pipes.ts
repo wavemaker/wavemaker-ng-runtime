@@ -26,7 +26,7 @@ export class ToDatePipe implements PipeTransform {
             return '';
         }
         if (!isDefined(data)) {
-            return undefined;
+            return '';
         }
         timestamp = getEpochValue(data);
         if (timestamp) {
@@ -35,7 +35,7 @@ export class ToDatePipe implements PipeTransform {
             }
             return this.datePipe.transform(timestamp, format);
         }
-        return undefined;
+        return '';
     }
 
     constructor(private datePipe: DatePipe) {}

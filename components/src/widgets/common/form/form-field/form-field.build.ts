@@ -88,16 +88,23 @@ const getCaptionByWidget = (attrs, widgetType, counter) => {
     let caption = `${counter}.value`;
     if (widgetType === FormWidgetType.DATETIME || widgetType === FormWidgetType.TIMESTAMP) {
         caption += ` | toDate:${counter}.datepattern || 'yyyy-MM-dd hh:mm:ss a'`;
-    } else if (widgetType === FormWidgetType.TIME) {
+        return caption;
+    }
+    if (widgetType === FormWidgetType.TIME) {
         caption += ` | toDate:${counter}.timepattern || 'hh:mm a'`;
-    } else if (widgetType === FormWidgetType.DATE) {
+        return caption;
+    }
+    if (widgetType === FormWidgetType.DATE) {
         caption += ` | toDate:${counter}.datepattern ||  'yyyy-MMM-dd'`;
-    } else if (widgetType === FormWidgetType.RATING || widgetType === FormWidgetType.UPLOAD) {
-        caption = '';
-    } else if (isDataSetWidget(widgetType) && attrs.get('datafield') === ALLFIELDS) {
+        return caption;
+    }
+    if (widgetType === FormWidgetType.RATING || widgetType === FormWidgetType.UPLOAD) {
+        return '';
+    }
+    if (isDataSetWidget(widgetType) && attrs.get('datafield') === ALLFIELDS) {
         return `${counter}.getDisplayExpr()`;
     }
-    return caption;
+    return `${counter}.getCaption()`;
 };
 
 const registerFormField = (isFormField): IBuildTaskDef => {

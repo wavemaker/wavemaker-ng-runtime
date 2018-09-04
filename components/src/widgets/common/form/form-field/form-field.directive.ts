@@ -173,7 +173,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             }
             return _.join(caption, ',');
         }
-        return value;
+        return (value === undefined || value === null) ? '' : this.value;
+    }
+
+    getCaption() {
+        return (this.value === undefined || this.value === null) ? '' : this.value;
     }
 
     // Method to setup validators for reactive form control
