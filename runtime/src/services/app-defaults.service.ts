@@ -15,8 +15,8 @@ export class AppDefaultsService implements AppDefaults {
     dateTimeFormat: string;
 
     setFormats(formats: any) {
-        const dateFormat = formats.dateFormat;
-        const timeFormat = formats.timeFormat;
+        const dateFormat = formats.date;
+        const timeFormat = formats.time;
         const dateTimeFormat = (dateFormat && timeFormat) ? dateFormat + ' ' + timeFormat : undefined;
 
         this.dateFormat = dateFormat;
