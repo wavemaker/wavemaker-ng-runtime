@@ -2,7 +2,7 @@ import { AfterContentInit, Attribute, ChangeDetectorRef, Component, ContentChild
 
 import { debounceTime } from 'rxjs/operators';
 
-import { $appDigest, AbstractDialogService, getClonedObject, isDefined, triggerFn } from '@wm/core';
+import { $appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './live-table.props';
@@ -45,6 +45,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         elRef: ElementRef,
         cdr: ChangeDetectorRef,
         private dialogService: AbstractDialogService,
+        private app: App,
         @Attribute('formlayout') layoutType: string,
         @Attribute('dialogid') dialogId: string
     ) {
@@ -230,7 +231,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     showErrorMessage() {
-        // TODO: wmToaster.show('error', 'ERROR', $rs.appLocale.LABEL_ACCESS_DENIED);
+        this.app.notifyApp(this.appLocale.LABEL_ACCESS_DENIED, 'error');
     }
 
     // In dialog mode, on form render call the queued functions

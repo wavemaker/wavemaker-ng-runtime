@@ -11,7 +11,7 @@
             <ng-container *ngFor="let btn of _actions.header"
                           [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef" [ngTemplateOutletContext]="{btn:btn}">
             </ng-container>
-            <div wmMenu dropdown caption="Export" *ngIf="exportOptions.length"  autoclose="always" attr.name="{{name}}-export"
+            <div wmMenu dropdown caption.bind="appLocale.LABEL_EXPORT" *ngIf="exportOptions.length"  autoclose="always" attr.name="{{name}}-export"
                 dataset.bind="exportOptions" select.event="export($item)" menuposition="down,left"></div>
         </div>
     </h3>
