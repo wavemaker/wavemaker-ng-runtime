@@ -1252,7 +1252,6 @@ $.widget('wm.datatable', {
             $column.removeClass(selectedClass);
             $th.removeClass(selectedClass);
             if ($.isFunction(this.options.onColumnDeselect) && e) {
-                /*TODO: Confirm what to send to the callback (coldef?).*/
                 this.options.onColumnDeselect(colInfo, e);
             }
         }

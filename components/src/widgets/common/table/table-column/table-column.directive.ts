@@ -9,7 +9,7 @@ import { registerProps } from './table-column.props';
 import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
-import {applyFilterOnField, fetchRelatedFieldData, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField} from '../../../../utils/data-utils';
+import { applyFilterOnField, fetchRelatedFieldData, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField } from '../../../../utils/data-utils';
 
 declare const _;
 
@@ -339,7 +339,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 }
             }
             if (this.filterwidget === FormWidgetType.TIME) {
-                this.filterInstance.timepattern = 'hh:mm:ss a'; // TODO: Set application time format
+                this.filterInstance.timepattern = this.appDefaults.timeFormat || 'hh:mm:ss a';
             }
             this.filterInstance.placeholder = this.filterplaceholder || '';
         });

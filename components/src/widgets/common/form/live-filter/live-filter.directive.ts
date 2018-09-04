@@ -4,7 +4,7 @@ import { DataSource } from '@wm/core';
 
 import { FormComponent } from '../form.component';
 import { registerLiveFilterProps } from '../form.props';
-import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../../utils/data-utils';
+import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode, LIVE_CONSTANTS } from '../../../../utils/data-utils';
 import { isDataSetWidget } from '../../../../utils/widget-utils';
 
 declare const _;
@@ -12,11 +12,7 @@ declare const _;
 registerLiveFilterProps();
 
 const FILTER_CONSTANTS = {
-    'EMPTY_KEY'   : 'EMPTY_NULL_FILTER',
-    'EMPTY_VALUE' : 'No Value',
-    'NULLEMPTY'   : ['null', 'empty'],
-    'NULL'        : 'null',
-    'EMPTY'       : 'empty'
+    'EMPTY_KEY'   : 'EMPTY_NULL_FILTER'
 };
 const noop = () => {};
 
@@ -64,7 +60,8 @@ export class LiveFilterDirective {
         if (operation === DataSource.Operation.FETCH_DISTINCT_VALUES) {
             return fetchDistinctValues(this.form.datasource, this.form.formFields, {
                 widget: 'widgettype',
-                enableemptyfilter: this.form.enableemptyfilter
+                enableemptyfilter: this.form.enableemptyfilter,
+                EMPTY_VALUE: this.form.appLocale.LABEL_NO_VALUE
             });
         }
         return this.form.datasource.execute(operation, options);
@@ -77,7 +74,9 @@ export class LiveFilterDirective {
     }
 
     onFieldValueChange(field, nv) {
-        applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv);
+        applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv, {
+            EMPTY_VALUE: this.form.appLocale.LABEL_NO_VALUE
+        });
         if (this.form.autoupdate) {
             this._filter();
         }
@@ -100,9 +99,13 @@ export class LiveFilterDirective {
             if (isDataSetWidget(field.widgettype)) {
                 getDistinctValuesForField(dataSource, field.widget, {
                     widget: 'widgettype',
-                    enableemptyfilter: this.form.enableemptyfilter
+                    enableemptyfilter: this.form.enableemptyfilter,
+                    EMPTY_VALUE: this.form.appLocale.LABEL_NO_VALUE
                 });
-                applyFilterOnField(dataSource, field.widget, this.form.formFields, field.value, {isFirst: true});
+                applyFilterOnField(dataSource, field.widget, this.form.formFields, field.value, {
+                    isFirst: true,
+                    EMPTY_VALUE: this.form.appLocale.LABEL_NO_VALUE
+                });
             }
         });
 

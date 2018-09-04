@@ -260,7 +260,7 @@ function setFieldDataSet(formField, data, options?) {
         !formField['is-range'] && !formField.multiple) {
         // If empty option is selected, push an empty object in to dataSet
         emptyOption[LIVE_CONSTANTS.LABEL_KEY]   = LIVE_CONSTANTS.EMPTY_KEY;
-        emptyOption[LIVE_CONSTANTS.LABEL_VALUE] = LIVE_CONSTANTS.EMPTY_VALUE;
+        emptyOption[LIVE_CONSTANTS.LABEL_VALUE] = options.EMPTY_VALUE || LIVE_CONSTANTS.EMPTY_VALUE;
         dataSet.push(emptyOption);
     }
     _.each(data, key => {
@@ -331,7 +331,8 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
                 setFieldDataSet(res.field, res.data, {
                     aliasColumn: res.aliasColumn,
                     widget: options.widget,
-                    isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
+                    isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter),
+                    EMPTY_VALUE: options.EMPTY_VALUE
                 });
             });
         });
@@ -510,7 +511,6 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
         }
         fieldColumn = filterKey;
 
-        // TODO: handle search widget
         if (isSearchWidgetType(filterWidget) && filterField.dataoptions) {
             filterField.dataoptions.filterFields = filterFields;
         } else {
@@ -522,7 +522,8 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
                 setFieldDataSet(filterField, response.data, {
                     aliasColumn: fieldColumn,
                     widget: options.widget || 'widgettype',
-                    isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter)
+                    isEnableEmptyFilter: getEnableEmptyFilter(options.enableemptyfilter),
+                    EMPTY_VALUE: options.EMPTY_VALUE
                 });
             }, noop);
         }

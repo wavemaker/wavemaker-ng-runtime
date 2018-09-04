@@ -120,6 +120,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     subheading;
     title;
     shownewrow;
+    deleteoktext;
+    deletecanceltext;
 
     selectedItemChange = new Subject();
     selectedItemChange$ = this.selectedItemChange.asObservable();
@@ -524,7 +526,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     get selecteditem() {
         if (this.multiselect) {
-            return getClonedObject(this.items); // TODO: is cloning required?
+            return getClonedObject(this.items);
         }
         if (_.isEmpty(this.items)) {
             return {};
@@ -560,6 +562,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         // Show loading status based on the variable life cycle
         this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
+
+        this.deleteoktext = this.appLocale.LABEL_OK;
+        this.deletecanceltext = this.appLocale.LABEL_CANCEL;
     }
 
     ngAfterContentInit() {
@@ -1021,8 +1026,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.checkFiltersApplied(this.getSortExpr());
         }
 
-        // TODO: Handle selected item reference data
-
         if (!_.isObject(newVal) || newVal === '' || (newVal && newVal.dataValue === '')) {
             if (!this.variableInflight) {
                 // If variable has finished loading and resultSet is empty, ender empty data
@@ -1189,7 +1192,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (data) {
             this.serverData = data;
         }
-        // TODO: For live variable, on update/insert while selecting the row, remove the keys with empty array
         if (_.isObject(item)) {
             item = _.omitBy(item, (value) => {
                 return _.isArray(value) && _.isEmpty(value);
