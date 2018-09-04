@@ -556,7 +556,7 @@ window.requestAnimationFrame = (function () {
             a.target.css({
                 'transition': 'all ease-out ' + time + 'ms'
             });
-            a.target.one('webkitTransitionEnd', function() {
+            a.target.one('webkitTransitionEnd transitionend', function() {
                 a.target.css({
                     'transition': ''
                 });
