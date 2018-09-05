@@ -1,4 +1,5 @@
 import { Injector } from '@angular/core';
+import { Validator, AbstractControl } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol, DecimalPipe } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
@@ -7,7 +8,7 @@ import { IWidgetConfig } from '../../../framework/types';
 
 declare const _;
 
-export abstract class NumberLocale extends BaseInput {
+export abstract class NumberLocale extends BaseInput implements Validator {
     private DECIMAL: string;
     private GROUP: string;
     private selectedLocale: string;
@@ -43,6 +44,8 @@ export abstract class NumberLocale extends BaseInput {
         // set text value to null if data value is empty.
         if (_.includes([null, undefined, ''], value)) {
             this.displayValue = this.proxyModel = null;
+            this.resetValidations();
+            this._onChange();
             return;
         }
         // get a valid number form the text.
@@ -53,6 +56,8 @@ export abstract class NumberLocale extends BaseInput {
             this.handleChange(model);
             // update the display value in the text box.
             this.updateDisplayText();
+        } else {
+            this._onChange();
         }
     }
 
@@ -173,7 +178,7 @@ export abstract class NumberLocale extends BaseInput {
      * method is called fomr the from widget. to check whether the value entered is valid or not.
      * @returns {object}
      */
-    public validate() {
+    public validate(c: AbstractControl) {
         if (this.isInvalidNumber) {
             return {
                 invalidNumber: {

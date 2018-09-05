@@ -1,11 +1,11 @@
-import { Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import {  DecimalPipe } from '@angular/common';
 
 import { CURRENCY_INFO, AbstractI18nService } from '@wm/core';
 
 import { IWidgetConfig } from '../../framework/types';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './currency.props';
 import { NumberLocale } from '../text/locale/number-locale';
 
@@ -23,10 +23,11 @@ registerProps();
     templateUrl: './currency.component.html',
     providers: [
         provideAsNgValueAccessor(CurrencyComponent),
+        provideAsNgValidators(CurrencyComponent),
         provideAsWidgetRef(CurrencyComponent)
     ]
 })
-export class CurrencyComponent extends NumberLocale implements OnInit {
+export class CurrencyComponent extends NumberLocale {
     currency: string;
     currencySymbol: string;
 
@@ -35,10 +36,6 @@ export class CurrencyComponent extends NumberLocale implements OnInit {
 
     constructor(inj: Injector, i18nService: AbstractI18nService, decimalPipe: DecimalPipe) {
         super(inj, WIDGET_CONFIG, i18nService, decimalPipe);
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

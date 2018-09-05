@@ -135,8 +135,8 @@ export class I18nServiceImpl extends AbstractI18nService {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
             const path = _cdnUrl + `locales/fullcalendar/${this.selectedLocale}.js`;
 
-            // return in case of mobile app.
-            if (isMobile()) {
+            // return in case of mobile app or if selected locale is default supported locale.
+            if (isMobile() || !_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
                 return;
             }

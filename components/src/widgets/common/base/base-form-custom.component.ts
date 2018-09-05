@@ -4,7 +4,7 @@ import { BaseFormComponent } from './base-form.component';
 
 export abstract class BaseFormCustomComponent extends BaseFormComponent implements ControlValueAccessor {
 
-    private _onChange: any = () => {};
+    protected _onChange: any = () => {};
     private _onTouched: any = () => {};
 
     public registerOnChange(fn) {
