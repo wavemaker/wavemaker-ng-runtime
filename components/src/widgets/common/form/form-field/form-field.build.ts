@@ -87,15 +87,15 @@ const getCaptionByWidget = (attrs, widgetType, counter) => {
     }
     let caption = `${counter}.value`;
     if (widgetType === FormWidgetType.DATETIME || widgetType === FormWidgetType.TIMESTAMP) {
-        caption += ` | toDate:${counter}.datepattern || 'yyyy-MM-dd hh:mm:ss a'`;
+        caption += ` | toDate:${counter}.formWidget.datepattern || 'yyyy-MM-dd hh:mm:ss a'`;
         return caption;
     }
     if (widgetType === FormWidgetType.TIME) {
-        caption += ` | toDate:${counter}.timepattern || 'hh:mm a'`;
+        caption += ` | toDate:${counter}.formWidget.timepattern || 'hh:mm a'`;
         return caption;
     }
     if (widgetType === FormWidgetType.DATE) {
-        caption += ` | toDate:${counter}.datepattern ||  'yyyy-MMM-dd'`;
+        caption += ` | toDate:${counter}.formWidget.datepattern ||  'yyyy-MMM-dd'`;
         return caption;
     }
     if (widgetType === FormWidgetType.RATING || widgetType === FormWidgetType.UPLOAD) {
