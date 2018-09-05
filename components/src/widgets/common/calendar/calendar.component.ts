@@ -30,6 +30,10 @@ const SELECTION_MODES = {
     SINGLE: 'single',
     MULTIPLE: 'multiple'
 };
+const NEXT_DAY_THRESHOLD = {
+    START: '00:00',
+    END: '24:00'
+};
 const getEventMomentValue = (value, key) => {
     let isDate = false;
 
@@ -117,6 +121,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             locale: getSessionStorageItem('selectedLocale') || 'en',
             selectable: false,
             header: defaultHeaderOptions,
+            nextDayThreshold: NEXT_DAY_THRESHOLD,
             views: {
                 month: {
                     eventLimit: 0
