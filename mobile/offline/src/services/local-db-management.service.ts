@@ -506,17 +506,21 @@ export class LocalDBManagementService {
                     sourceColumn = mapping.sourceColumn;
                     col = reqEntity.columns.find(column => column.name === sourceColumn);
                     targetEntitySchema = schema.tables.find(table => table.name === r.targetTable);
-                    col.foreignRelaton = {
+                    const foreignRelation = {
                         sourceFieldName: r.fieldName,
                         targetEntity: targetEntity,
                         targetTable: r.targetTable,
                         targetColumn: mapping.targetColumn,
+                        targetPath: '',
+                        dataMapper: [],
                         targetFieldName: targetEntitySchema.columns.find(column => column.name === mapping.targetColumn).fieldName
                     };
-                    col.foreignRelaton.targetPath = col.foreignRelaton.sourceFieldName + '.' + col.foreignRelaton.targetFieldName;
-                    col.foreignRelaton.dataMapper = _.chain(targetEntitySchema.columns)
-                        .keyBy(childCol => col.foreignRelaton.sourceFieldName + '.' + childCol.fieldName)
+                    foreignRelation.targetPath = foreignRelation.sourceFieldName + '.' + foreignRelation.targetFieldName;
+                    foreignRelation.dataMapper = _.chain(targetEntitySchema.columns)
+                        .keyBy(childCol => foreignRelation.sourceFieldName + '.' + childCol.fieldName)
                         .mapValues(childCol => new ColumnInfo(childCol.name, childCol.fieldName)).value();
+                    col.foreignRelations = col.foreignRelations || [];
+                    col.foreignRelations.push(foreignRelation);
                 }
             }
         });

@@ -80,13 +80,15 @@ export class ErrorBlocker implements Worker {
         if (change.hasError === 0) {
             this.checkForPreviousError(store, change, dataModelName, entityName, data);
             store.entitySchema.columns.forEach(col => {
-                const foreignRelaton = col.foreignRelaton;
-                if (foreignRelaton) {
-                    if (data[foreignRelaton.sourceFieldName]) {
-                        this.blockCall(store, change, dataModelName, foreignRelaton.targetEntity, data[foreignRelaton.sourceFieldName]);
-                    } else if (data[col.fieldName]) {
-                        this.checkForPreviousError(store, change, dataModelName, foreignRelaton.targetEntity, data, col.fieldName);
-                    }
+                if (col.foreignRelations) {
+                    col.foreignRelations.some(foreignRelation => {
+                        if (data[foreignRelation.sourceFieldName]) {
+                            this.blockCall(store, change, dataModelName, foreignRelation.targetEntity, data[foreignRelation.sourceFieldName]);
+                        } else if (data[col.fieldName]) {
+                            this.checkForPreviousError(store, change, dataModelName, foreignRelation.targetEntity, data, col.fieldName);
+                        }
+                        return change.hasError === 1;
+                    });
                 }
             });
         }

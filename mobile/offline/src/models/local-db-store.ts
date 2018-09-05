@@ -56,13 +56,15 @@ const selectSqlTemplate = (schema: EntityInfo) => {
     schema.columns.forEach( col => {
         let childTableName;
         columns.push(escapeName(schema.name) + '.' + escapeName(col.name) + ' as ' + col.fieldName);
-        if (col.foreignRelaton) {
-            childTableName = col.foreignRelaton.sourceFieldName;
-            _.forEach(col.foreignRelaton.dataMapper, (childCol, childFiledName) => {
-                columns.push(childTableName + '.' + escapeName(childCol.name) + ' as \'' + childFiledName + '\'');
+        if (col.foreignRelations) {
+            col.foreignRelations.forEach(foreignRelation => {
+                childTableName = foreignRelation.sourceFieldName;
+                _.forEach(foreignRelation.dataMapper, (childCol, childFiledName) => {
+                    columns.push(childTableName + '.' + escapeName(childCol.name) + ' as \'' + childFiledName + '\'');
+                });
+                joins.push(` LEFT JOIN ${escapeName(foreignRelation.targetTable)} ${childTableName}
+                         ON ${childTableName}.${escapeName(foreignRelation.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
             });
-            joins.push(` LEFT JOIN ${escapeName(col.foreignRelaton.targetTable)} ${childTableName}
-                         ON ${childTableName}.${escapeName(col.foreignRelaton.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
         }
     });
     return `SELECT ${columns.join(',')} FROM ${escapeName(schema.name)} ${joins.join(' ')}`;
@@ -72,10 +74,12 @@ const countQueryTemplate = (schema: EntityInfo) => {
     const joins = [];
     schema.columns.forEach( col => {
         let childTableName;
-        if (col.foreignRelaton) {
-            childTableName = col.foreignRelaton.sourceFieldName;
-            joins.push(` LEFT JOIN ${escapeName(col.foreignRelaton.targetTable)} ${childTableName}
-                         ON ${childTableName}.${escapeName(col.foreignRelaton.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
+        if (col.foreignRelations) {
+            col.foreignRelations.forEach(foreignRelation => {
+                childTableName = foreignRelation.sourceFieldName;
+                joins.push(` LEFT JOIN ${escapeName(foreignRelation.targetTable)} ${childTableName}
+                         ON ${childTableName}.${escapeName(foreignRelation.targetColumn)} = ${escapeName(schema.name)}.${escapeName(col.name)}`);
+            });
         }
     });
     return `SELECT count(*) as count FROM ${escapeName(schema.name)} ${joins.join(' ')}`;
@@ -135,15 +139,17 @@ const mapRowDataToObj = (schema: EntityInfo, dataObj: any) => {
     schema.columns.forEach(col => {
         let childEntity;
         const val = dataObj[col.fieldName];
-        if (col.foreignRelaton) {
-            _.forEach(col.foreignRelaton.dataMapper, function (childCol, childFieldName) {
-                if (dataObj[childFieldName]) {
-                    childEntity = childEntity || {};
-                    childEntity[childCol.fieldName] = dataObj[childFieldName];
-                }
-                delete dataObj[childFieldName];
+        if (col.foreignRelations) {
+            col.foreignRelations.forEach(foreignRelation => {
+                _.forEach(foreignRelation.dataMapper, function (childCol, childFieldName) {
+                    if (dataObj[childFieldName]) {
+                        childEntity = childEntity || {};
+                        childEntity[childCol.fieldName] = dataObj[childFieldName];
+                    }
+                    delete dataObj[childFieldName];
+                });
+                dataObj[foreignRelation.sourceFieldName] = childEntity;
             });
-            dataObj[col.foreignRelaton.sourceFieldName] = childEntity;
         } else if (col.sqlType === 'boolean' && !_.isNil(val)) {
             dataObj[col.fieldName] = (val === 1);
         }
@@ -151,20 +157,29 @@ const mapRowDataToObj = (schema: EntityInfo, dataObj: any) => {
     return dataObj;
 };
 
+const getValue = (entity: any, col: ColumnInfo) => {
+    let value = entity[col.fieldName];
+    if (col.foreignRelations) {
+        col.foreignRelations.some(foreignRelation => {
+            if (foreignRelation.targetEntity && entity[foreignRelation.sourceFieldName]) {
+                value = entity[foreignRelation.sourceFieldName][foreignRelation.targetFieldName];
+                return true;
+            }
+            return false;
+        });
+    }
+    if (_.isNil(value)) {
+        return col.defaultValue;
+    } else if (col.sqlType === 'boolean') {
+        return (value === true ? 1 : 0);
+    } else {
+        return value;
+    }
+};
+
 const mapObjToRow = (store: LocalDBStore, entity: any) => {
     const row = {};
-    store.entitySchema.columns.forEach(col => {
-        const value = entity[col.fieldName];
-        if (col.foreignRelaton && col.foreignRelaton.targetEntity && entity[col.foreignRelaton.sourceFieldName]) {
-            row[col.name] = entity[col.foreignRelaton.sourceFieldName][col.foreignRelaton.targetFieldName];
-        } else if (_.isNil(value)) {
-            row[col.name] = col.defaultValue;
-        } else if (col.sqlType === 'boolean') {
-            row[col.name] = (value === true ? 1 : 0);
-        } else {
-            row[col.name] = value;
-        }
-    });
+    store.entitySchema.columns.forEach(col => row[col.name] = getValue(entity, col));
     return row;
 };
 
@@ -190,10 +205,12 @@ export class LocalDBStore {
         this.primaryKeyName = this.primaryKeyField ? this.primaryKeyField.fieldName : undefined;
         this.entitySchema.columns.forEach(c => {
             this.fieldToColumnMapping[c.fieldName] = c.name;
-            if (c.foreignRelaton) {
-                this.fieldToColumnMapping[c.foreignRelaton.targetPath] = c.name;
-                _.forEach(c.foreignRelaton.dataMapper, (childCol, childFieldName) => {
-                    this.fieldToColumnMapping[childFieldName] = c.foreignRelaton.sourceFieldName + '.' + childCol.name;
+            if (c.foreignRelations) {
+                c.foreignRelations.forEach( foreignRelation => {
+                    this.fieldToColumnMapping[foreignRelation.targetPath] = c.name;
+                    _.forEach(foreignRelation.dataMapper, (childCol, childFieldName) => {
+                        this.fieldToColumnMapping[childFieldName] = foreignRelation.sourceFieldName + '.' + childCol.name;
+                    });
                 });
             }
         });
@@ -302,6 +319,18 @@ export class LocalDBStore {
         return this.filter(filterCriteria).then(function (obj) {
             return obj && obj.length === 1 ? obj[0] : undefined;
         });
+    }
+
+    /**
+     * retrieve the value for the given field.
+     *
+     * @param entity
+     * @param {string} fieldName
+     * @returns {undefined | any | number}
+     */
+    public getValue(entity: any, fieldName: string) {
+        const column = this.entitySchema.columns.find( col => col.fieldName === fieldName);
+        return getValue(entity, column);
     }
 
     /**
