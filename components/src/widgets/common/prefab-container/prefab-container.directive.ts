@@ -8,7 +8,7 @@ import { registerProps } from './prefab-container.props';
 
 registerProps();
 
-const DEFAULT_CLS = 'app-prefab-container';
+const DEFAULT_CLS = 'app-prefab-container full-height';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-prefab-container',
     hostClass: DEFAULT_CLS
