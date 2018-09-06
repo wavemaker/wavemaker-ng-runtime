@@ -4,10 +4,10 @@ import { $appDigest, noop, removeAttr, setCSS, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './panel.props';
 import { RedrawableDirective } from '../redraw/redrawable.directive';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { MenuAdapterComponent } from '../base/menu-adapator.component';
 
 registerProps();
 
@@ -22,7 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-panel', hostClass: DEFAULT
     ]
 })
 
-export class PanelComponent extends StylableComponent implements OnInit, AfterContentInit {
+export class PanelComponent extends MenuAdapterComponent implements OnInit, AfterContentInit {
 
     public $lazyLoad = noop;
     public iconurl: string;

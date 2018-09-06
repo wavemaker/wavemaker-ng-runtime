@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmCurrency component defines the currency widget.
+ * The wmNumber component defines the number widget.
  */
 export class Number {
     /**

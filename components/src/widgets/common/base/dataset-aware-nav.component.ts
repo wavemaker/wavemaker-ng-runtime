@@ -72,18 +72,19 @@ export class DatasetAwareNavComponent extends StylableComponent {
      * @param node
      */
     private getNode(fields, node): NavNode {
-        const children = getEvaluatedData(node, {expression: 'itemchildren', bindExpression: this.binditemchildren}, this.viewParent) || node[fields.childrenField];
+        const context = this.viewParent.pageScope || this.viewParent;
+        const children = getEvaluatedData(node, {expression: 'itemchildren', bindExpression: this.binditemchildren}, context) || node[fields.childrenField];
         const navNode = {
-            action: getEvaluatedData(node, {expression: 'itemaction', bindExpression: this.binditemaction}, this.viewParent) || node[fields.actionField],
-            badge: getEvaluatedData(node, {expression: 'itembadge', bindExpression: this.binditembadge}, this.viewParent) || node[fields.badgeField],
+            action: getEvaluatedData(node, {expression: 'itemaction', bindExpression: this.binditemaction}, context) || node[fields.actionField],
+            badge: getEvaluatedData(node, {expression: 'itembadge', bindExpression: this.binditembadge}, context) || node[fields.badgeField],
             children: Array.isArray(children) ? this.getNodes(children) : [],
             class: node[fields.classField],
             disabled: node.disabled,
-            icon: getEvaluatedData(node, {expression: 'itemicon', bindExpression: this.binditemicon}, this.viewParent) || node[fields.iconField],
-            id: getEvaluatedData(node, {expression: 'itemid', bindExpression: this.binditemid}, this.viewParent) || node[fields.idField],
-            label: getEvaluatedData(node, {expression: 'itemlabel', bindExpression: this.binditemlabel}, this.viewParent) || node[fields.labelField],
-            link: getValidLink(getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}, this.viewParent) || node[fields.linkField]),
-            role: getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}, this.viewParent),
+            icon: getEvaluatedData(node, {expression: 'itemicon', bindExpression: this.binditemicon}, context) || node[fields.iconField],
+            id: getEvaluatedData(node, {expression: 'itemid', bindExpression: this.binditemid}, context) || node[fields.idField],
+            label: getEvaluatedData(node, {expression: 'itemlabel', bindExpression: this.binditemlabel}, context) || node[fields.labelField],
+            link: getValidLink(getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}, context) || node[fields.linkField]),
+            role: getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}, context),
             // older projects have display field & data field property for menu.
             value: this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
         };
