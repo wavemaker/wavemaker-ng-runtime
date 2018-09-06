@@ -6,14 +6,15 @@
        [name]="'wm-switch-' + opt.key"
        [ngClass]="{'selected': opt.selected, 'disabled': disabled}"
        (click)="selectOpt($event, $index, opt)"
-       [textContent] = "opt[displayfield] || opt.label">
-        <i *ngIf="opt[iconclass || 'icon']" aria-hidden="true" [ngClass]="['app-icon', opt[iconclass] || opt['icon']]"></i>
+    >
+        <i *ngIf="opt.dataObject && opt.dataObject[iconclass]" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
+        <span class="caption" [textContent]="opt[displayfield] || opt.label"></span>
     </a>
 </div>
 <span [title]="selectedItem ? selectedItem.label : modelByKey"
       class="btn btn-primary app-switch-overlay switch-handle">
     <i *ngIf="iconclass"
-       [ngClass]="['app-icon', iconclass]"></i>
+       class="app-icon {{(selectedItem && selectedItem.dataObject) && selectedItem.dataObject[iconclass]}}"></i>
     {{selectedItem ? selectedItem.label : modelByKey}}
 </span>
 <input [name]="name" class="model-holder ng-hide" [disabled]="disabled" [value]="modelByKey" [required]="required">

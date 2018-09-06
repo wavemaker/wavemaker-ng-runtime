@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
-import { $appDigest, isDefined, setCSS } from '@wm/core';
+import {$appDigest, isDefined, setCSS, toBoolean} from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
@@ -148,6 +148,14 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         if (this.datasetItems.length > 0) {
             this.datavalue = this.datasetItems[0].value;
             this.selectedItem = this.datasetItems[0];
+        }
+    }
+
+    onPropertyChange(key, nv, ov?) {
+        if (key === 'disabled' && !toBoolean(nv)) {
+            this.nativeElement.removeAttribute(key);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }
