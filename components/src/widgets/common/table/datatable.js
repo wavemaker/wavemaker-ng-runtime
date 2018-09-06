@@ -687,7 +687,7 @@ $.widget('wm.datatable', {
         // Need to update code with suitable fix. For now 250ms is added as workaround
         this._setStatus = _.debounce(function () {
             this.__setStatus();
-        }, 250);
+        }, 100);
         this._prepareHeaderData();
         this._prepareData();
         this._render(true);

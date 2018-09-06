@@ -165,6 +165,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private applyProps = new Map();
 
     redraw = _.debounce(this._redraw, 150);
+    debouncedHandleLoading = _.debounce(this.handleLoading, 350);
 
     // Filter and Sort Methods
     rowFilter: any = {};
@@ -561,7 +562,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.addEventsToContext(this.context);
 
         // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
+        this.app.subscribe('toggle-variable-state', options => {
+            if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
+                isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
+            }
+        });
 
         this.deleteoktext = this.appLocale.LABEL_OK;
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
@@ -676,19 +681,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     handleLoading(data) {
-        const dataSource = this.datasource;
+        this.variableInflight = data.active;
         // based on the active state and response toggling the 'loading data...' and 'no data found' messages.
-        if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
-            this.variableInflight = data.active;
-            if (data.active) {
-                this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        if (data.active) {
+            this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        } else {
+            // If grid is in edit mode or grid has data, dont show the no data message
+            if (!this.isGridEditMode && _.isEmpty(this.dataset)) {
+                this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
             } else {
-                // If grid is in edit mode or grid has data, dont show the no data message
-                if (!this.isGridEditMode && _.isEmpty(this.dataset)) {
-                    this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
-                } else {
-                    this.callDataGridMethod('setStatus', 'ready');
-                }
+                this.callDataGridMethod('setStatus', 'ready');
             }
         }
     }
@@ -823,53 +825,51 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     enablePageNavigation() {
-        if (this.dataset && !_.isEmpty(this.dataset)) {
+        if (this.dataset && this.binddataset && this.dataNavigator) {
             /*Check for sanity*/
-            if (this.dataNavigator) {
-                this.dataNavigatorWatched = true;
+            this.dataNavigatorWatched = true;
 
-                if (this.navigatorResultWatch) {
-                    this.navigatorResultWatch.unsubscribe();
-                }
-                /*Register a watch on the "result" property of the "dataNavigator" so that the paginated data is displayed in the live-list.*/
-                this.navigatorResultWatch = this.dataNavigator.resultEmitter.subscribe((newVal) => {
-                    /* Check for sanity. */
-                    if (isDefined(newVal)) {
-                        // Watch will not be triggered if dataset and new value are equal. So trigger the property change handler manually
-                        // This happens in case, if dataset is directly updated.
-                        if (_.isEqual(this.dataset, newVal)) {
-                            this.watchVariableDataSet(newVal);
-                        } else {
-                            if (_.isArray(newVal)) {
-                                this.widget.dataset = [].concat(newVal);
-                            } else if (_.isObject(newVal)) {
-                                this.widget.dataset = _.extend({}, newVal);
-                            } else {
-                                this.widget.dataset = newVal;
-                            }
-                        }
-                    } else {
-                        this.widget.dataset = undefined;
-                    }
-                }, true);
-                /*De-register the watch if it is exists */
-                if (this.navigatorMaxResultWatch) {
-                    this.navigatorMaxResultWatch.unsubscribe();
-                }
-                /*Register a watch on the "maxResults" property of the "dataNavigator" so that the "pageSize" is displayed in the live-list.*/
-                this.navigatorMaxResultWatch = this.dataNavigator.maxResultsEmitter.subscribe((newVal) => {
-                    this.pagesize = newVal;
-                });
-                // If dataset is a pageable object, data is present inside the content property
-                this.__fullData = this.dataset;
-
-                this.dataNavigator.widget.maxResults = this.pagesize || 5;
-                this.dataNavigator.options = {
-                    maxResults: this.pagesize || 5
-                };
-                this.removePropertyBinding('dataset');
-                this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource);
+            if (this.navigatorResultWatch) {
+                this.navigatorResultWatch.unsubscribe();
             }
+            /*Register a watch on the "result" property of the "dataNavigator" so that the paginated data is displayed in the live-list.*/
+            this.navigatorResultWatch = this.dataNavigator.resultEmitter.subscribe((newVal) => {
+                /* Check for sanity. */
+                if (isDefined(newVal)) {
+                    // Watch will not be triggered if dataset and new value are equal. So trigger the property change handler manually
+                    // This happens in case, if dataset is directly updated.
+                    if (_.isEqual(this.dataset, newVal)) {
+                        this.watchVariableDataSet(newVal);
+                    } else {
+                        if (_.isArray(newVal)) {
+                            this.widget.dataset = [].concat(newVal);
+                        } else if (_.isObject(newVal)) {
+                            this.widget.dataset = _.extend({}, newVal);
+                        } else {
+                            this.widget.dataset = newVal;
+                        }
+                    }
+                } else {
+                    this.widget.dataset = undefined;
+                }
+            }, true);
+            /*De-register the watch if it is exists */
+            if (this.navigatorMaxResultWatch) {
+                this.navigatorMaxResultWatch.unsubscribe();
+            }
+            /*Register a watch on the "maxResults" property of the "dataNavigator" so that the "pageSize" is displayed in the live-list.*/
+            this.navigatorMaxResultWatch = this.dataNavigator.maxResultsEmitter.subscribe((newVal) => {
+                this.pagesize = newVal;
+            });
+            // If dataset is a pageable object, data is present inside the content property
+            this.__fullData = this.dataset;
+
+            this.dataNavigator.widget.maxResults = this.pagesize || 5;
+            this.dataNavigator.options = {
+                maxResults: this.pagesize || 5
+            };
+            this.removePropertyBinding('dataset');
+            this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource);
         }
     }
 
@@ -1008,7 +1008,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
 
         // If value is empty or in studio mode, dont enable the navigation
-        if (newVal && !_.isEmpty(newVal)) {
+        if (newVal) {
             if (this.shownavigation && !this.dataNavigatorWatched) {
                 this.enablePageNavigation();
                 return;
