@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
-import { $appDigest, setCSS } from '@wm/core';
+import { $appDigest, isDefined, setCSS } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
@@ -65,10 +65,9 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         if (this.datafield === 'All Fields' && this.compareby && this.compareby.length) {
             setItemByCompare(this.datasetItems, this.datavalue, this.compareby);
         }
-        const selectedItem = _.find(this.datasetItems, {value: this.datavalue});
 
-        if (selectedItem) {
-            this.selectedItem = selectedItem;
+        if (isDefined(this.datavalue) || isDefined(this.toBeProcessedDatavalue)) {
+            this.selectedItem = _.find(this.datasetItems, {value: isDefined(this.datavalue) ? this.datavalue : this.toBeProcessedDatavalue});
             return;
         }
 
