@@ -66,7 +66,7 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
         } else if (_.startsWith(nv, 'resources/')) {
             const ref: any = component;
             if (ref._parentPrefab_ === undefined) {
-                ref._parentPrefab_ = component.$element.closest('[prefabname]').attr('prefabname') || '';
+                ref._parentPrefab_ = component.$element.closest('[prefabname][prefabname!="__self__"]').attr('prefabname') || '';
             }
             if (ref._parentPrefab_) {
                 nv = `./app/prefabs/${ref._parentPrefab_}/${nv}`;
