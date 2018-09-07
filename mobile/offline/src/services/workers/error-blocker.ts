@@ -58,7 +58,7 @@ export class ErrorBlocker implements Worker {
             const entityName = change.params.entityName;
             const dataModelName = change.params.dataModelName;
             return this.localDBManagementService.getStore(dataModelName, entityName).then( store => {
-                const id = change['dataLocalId'] || change.params.data[store.primaryKeyName];
+                const id = change['dataLocalId'] || (change.params.data && change.params.data[store.primaryKeyName]) || change.params[store.primaryKeyName] || change.params.id;
                 if (!(_.isUndefined(id) || _.isNull(id))) {
                     this.recordError(dataModelName, entityName, id);
                 }
