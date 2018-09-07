@@ -317,7 +317,7 @@ export class ChangeLogService {
             }).catch(function() {
                 if (self.networkService.isConnected()) {
                     return executePromiseChain(_.reverse(self.getWorkers('postCallError')), [change, arguments])
-                        .then(() => change);
+                        .catch(noop).then(() => Promise.reject(change));
                 }
                 return Promise.reject(change);
             });
