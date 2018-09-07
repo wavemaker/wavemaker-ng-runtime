@@ -334,7 +334,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private updateQueryModel(data: any, datafield: string) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
-        if (isDefined(data) && this.searchkey && !isDefined(this._modelByKey) && datafield !== ALLFIELDS) {
+        if (isDefined(data) && !_.isObject(data) && this.searchkey && !isDefined(this._modelByKey) && datafield !== ALLFIELDS) {
             // Avoid making default query if queryModel already exists.
             if (isDefined(this.queryModel) && !_.isEmpty(this.queryModel)) {
                 this._modelByValue = this.queryModel.length ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
@@ -363,6 +363,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         } else {
             // no value is found, set the datavalue to undefined.
             this._modelByValue = undefined;
+            this.queryModel = undefined;
+            this.query = '';
             return;
         }
 
