@@ -67,7 +67,10 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         }
 
         if (isDefined(this.datavalue) || isDefined(this.toBeProcessedDatavalue)) {
-            this.selectedItem = _.find(this.datasetItems, {value: isDefined(this.datavalue) ? this.datavalue : this.toBeProcessedDatavalue});
+            const dataVal = isDefined(this.datavalue) ? this.datavalue : this.toBeProcessedDatavalue;
+            this.selectedItem = _.find(this.datasetItems, (item) => {
+                return _.toString(item.value).toLowerCase() === _.toString(dataVal).toLowerCase();
+            });
             return;
         }
 
