@@ -136,6 +136,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         const datasetSubscription = this.dataset$.subscribe(() => {
             // set the next item index.
             this.startIndex = this.datasetItems.length;
+            this.queryModel = undefined;
+            this.query = '';
             this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue, this.datafield);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
