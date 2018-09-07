@@ -16,8 +16,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     private numberNotInRange: boolean;
     private isInvalidNumber: boolean;
     private displayValue: string;
-    private numberFilter: string;
-    private localeFilter: string;
+    private numberfilter: string;
+    private localefilter: string;
+    private readonly: boolean;
 
     public placeholder: string;
     public minvalue: number;
@@ -33,9 +34,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     ) {
         super(inj, config);
         this.selectedLocale = i18nService.getSelectedLocale();
-        this.DECIMAL = getLocaleNumberSymbol(this.localeFilter || this.selectedLocale, NumberSymbol.Decimal);
-        this.GROUP = getLocaleNumberSymbol(this.localeFilter || this.selectedLocale, NumberSymbol.Group);
-        this.numberFilter = '1.0-16';
+        this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
+        this.GROUP = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Group);
+        this.numberfilter = '1.0-16';
         this.resetValidations();
     }
 
@@ -112,7 +113,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {string}
      */
     private transformNumber(number): string {
-        return this.decimalPipe.transform(number, this.numberFilter, this.localeFilter);
+        return this.decimalPipe.transform(number, this.numberfilter, this.localefilter);
     }
 
     /**
@@ -170,8 +171,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     protected onArrowPress($event, key) {
         $event.preventDefault();
+        if (this.readonly) {
+            return;
+        }
         const step = (this.step && this.step > 0) ? this.step : 1;
-        this.datavalue = this.getValueInRange(Math.trunc(this.proxyModel || 0) + (key === 'UP' ? step : -step));
+        let model = this.proxyModel || 0;
+        if (step % 1 === 0) {
+            model = Math.trunc(this.proxyModel);
+        }
+        this.datavalue = this.getValueInRange( model + (key === 'UP' ? step : -step));
     }
 
     /**
