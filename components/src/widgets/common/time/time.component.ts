@@ -113,7 +113,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         super(inj, WIDGET_CONFIG);
 
         // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1].constructor;
+        this.keyEventPlugin = evtMngrPlugins[1];
 
         styler(this.nativeElement, this);
         /**
@@ -184,7 +184,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method triggered when pressing key on the time input
      */
     private onDisplayKeydown(event) {
-        const action = this.keyEventPlugin.getEventFullKey(event);
+        const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter' || action === 'arrowdown') {
             this.toggleDropdown(event);
         }

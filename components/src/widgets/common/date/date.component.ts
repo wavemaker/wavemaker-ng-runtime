@@ -85,7 +85,7 @@ export class DateComponent extends BaseDateTimeComponent {
         styler(this.nativeElement, this);
 
         // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1].constructor;
+        this.keyEventPlugin = evtMngrPlugins[1];
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
@@ -179,7 +179,7 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when pressing key on the date input
      */
     private onDisplayKeydown(event) {
-        const action = this.keyEventPlugin.getEventFullKey(event);
+        const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter' || action === 'arrowdown') {
             this.toggleDpDropdown(event);
         }

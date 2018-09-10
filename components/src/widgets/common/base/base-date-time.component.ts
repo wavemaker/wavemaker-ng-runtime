@@ -233,7 +233,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param isDateTime - boolean value represents the loaded widget is date or datetime
      */
     protected addDatepickerKeyboardEvents(scope, isDateTime) {
-        this.keyEventPluginInstance = scope.keyEventPlugin;
+        this.keyEventPluginInstance = scope.keyEventPlugin.constructor;
         this.elementScope = scope;
         const dateContainer  = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
         setAttr(dateContainer, 'tabindex', '0');
@@ -438,7 +438,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param scope - scope of the time picker widget
      */
     protected focusTimePickerPopover(scope) {
-        this.keyEventPluginInstance = scope.keyEventPlugin;
+        this.keyEventPluginInstance = scope.keyEventPlugin.constructor;
         this.elementScope = scope;
         // setTimeout is used so that by then time input has the updated value. focus is setting back to the input field
         this.elementScope.ngZone.runOutsideAngular(() => {

@@ -56,7 +56,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         super(inj, WIDGET_CONFIG);
 
         // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1].constructor;
+        this.keyEventPlugin = evtMngrPlugins[1];
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
 
@@ -103,14 +103,14 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
         const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
         popoverStartBtn.onkeydown = (event) => {
-            const action = this.keyEventPlugin.getEventFullKey(event);
+            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Shift+Tab key
             if (action === 'shift.tab') {
                 this.isOpen = false;
             }
         };
         popoverEndBtn.onkeydown = (event) => {
-            const action = this.keyEventPlugin.getEventFullKey(event);
+            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Tab key
             if (action === 'tab') {
                 this.isOpen = false;
@@ -130,7 +130,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
 
     private onPopoverAnchorKeydown($event) {
-        const action = this.keyEventPlugin.getEventFullKey(event);
+        const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter') {
             this.showPopover();
         }
