@@ -255,6 +255,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      */
     private toggleDpDropdown($event) {
         $event.stopPropagation();
+        $event.preventDefault();
         if ($event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
         }

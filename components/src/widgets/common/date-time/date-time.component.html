@@ -41,7 +41,7 @@
             </button>
             <button focus-target type="button" class="btn btn-default btn-time"
                     [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select time" aria-haspopup="true"
-                    aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen)">
+                    aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen, $event)">
                 <i aria-hidden="true" class="app-icon wi wi-access-time"></i>
             </button>
         </span>

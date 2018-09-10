@@ -152,6 +152,7 @@ export class DateComponent extends BaseDateTimeComponent {
      */
     toggleDpDropdown($event) {
         $event.stopPropagation();
+        $event.preventDefault();
         if ($event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
         }
