@@ -121,7 +121,8 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
     nodes.forEach((childNode: Element) => {
         if (childNode.name) {
             childNode.attrs.forEach((attr) => {
-                let value = attr.value;
+                // trim the extra spaces in bindings
+                let value = attr.value && attr.value.trim();
                 if (_.startsWith(value, 'bind:')) {
                     // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                     if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet) {
