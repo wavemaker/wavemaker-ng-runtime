@@ -51,9 +51,10 @@ export class CameraComponent extends StylableComponent {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
-    onPropertyChange(key, nv, ov?) {
-        if (key === 'capturetype') {
-            if (nv === CAPTURE_TYPE.IMAGE) {
+    @HostListener('click', ['$event'])
+    public openCamera($event) {
+        if (hasCordova()) {
+            if (this.capturetype === CAPTURE_TYPE.IMAGE) {
                 this._cameraOptions = {
                     quality           : this.imagequality,
                     destinationType   : 1, // 0-data url,1- file url
@@ -65,24 +66,13 @@ export class CameraComponent extends StylableComponent {
                     targetWidth       : this.imagetargetwidth,
                     targetHeight      : this.imagetargetheight
                 };
-            } else {
-                this._cameraOptions = {
-                    limit: 1
-                };
-            }
-        } else {
-            super.onPropertyChange(key, nv, ov);
-        }
-    }
-
-    @HostListener('click', ['$event'])
-    public openCamera($event) {
-        if (hasCordova()) {
-            if (this.capturetype === CAPTURE_TYPE.IMAGE) {
                 // start camera
                 this.camera.getPicture(this._cameraOptions)
                     .then(path => this.updateModel($event, path));
             } else {
+                this._cameraOptions = {
+                    limit: 1
+                };
                 // start video capture
                 this.mediaCapture.captureVideo(this._cameraOptions)
                     .then(mediaFiles => this.updateModel($event, mediaFiles[0].fullPath));

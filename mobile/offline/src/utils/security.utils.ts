@@ -52,13 +52,9 @@ export class SecurityOfflineBehaviour {
                     }, reject);
                 } else {
                     this.readLocalSecurityConfig().then((config = {}) => {
-                        if (config.loggedOut) {
-                            return origLoad.call(this.securityService);
-                        } else {
-                            this.securityConfig = config;
-                            this.securityService.config = config;
-                            return config;
-                        }
+                        this.securityConfig = config;
+                        this.securityService.config = config;
+                        return config;
                     }, () => origLoad.call(this.securityConfig)).then(resolve, reject);
                 }
             });
@@ -73,9 +69,12 @@ export class SecurityOfflineBehaviour {
          */
         this.securityService.appLogout = (successCallback, failureCallback) => {
             this.securityConfig = {
-                authenticated : false,
-                loggedOut : true,
-                loggedOutOffline : !this.networkService.isConnected()
+                authenticated: false,
+                loggedOut: true,
+                securityEnabled: this.securityConfig && this.securityConfig.securityEnabled,
+                loggedOutOffline: !this.networkService.isConnected(),
+                loginConfig: this.securityConfig && this.securityConfig.loginConfig,
+                userInfo: null
             };
             this._saveSecurityConfigLocally(this.securityConfig).catch(noop).then(() => {
                 if (this.networkService.isConnected()) {
