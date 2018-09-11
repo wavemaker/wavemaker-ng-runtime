@@ -14,6 +14,8 @@ import { PrefabDirective } from '../../components/prefab/prefab.directive';
 import { AccessrolesDirective } from '../../directives/accessroles.directive';
 import { PrefabPreviewComponent } from '../../components/prefab/prefab-preview.component';
 
+declare const _;
+
 const componentCache = new Map<string, any>();
 
 export const modalModule = ModalModule.forRoot();
@@ -62,7 +64,8 @@ export class ViewRenderer {
         vcRef: ViewContainerRef,
         $target: HTMLElement,
         context?: any,
-        clearVCRef = true
+        clearVCRef = true,
+        modules?: Array<any>
     ): Promise<void> {
 
         let postInitResolveFn;
@@ -78,8 +81,8 @@ export class ViewRenderer {
                 providers
             );
 
-            const moduleDef = this.getDynamicModule(componentDef);
-            componentRef = this.getComponentFactory(componentDef, moduleDef);
+            const moduleDef = this.getDynamicModule(componentDef, modules);
+            componentRef = this.getComponentFactory(componentDef, moduleDef, vcRef);
             componentCache.set(selector, componentRef);
         }
 
@@ -103,7 +106,7 @@ export class ViewRenderer {
             $target.innerHTML = '';
         }
 
-        const component = vcRef.createComponent(componentRef);
+        const component = vcRef.createComponent(componentRef, 0, componentRef.injector);
 
         $target.appendChild(component.location.nativeElement);
 
@@ -162,7 +165,8 @@ export class ViewRenderer {
         return DynamicComponent;
     }
 
-    private getDynamicModule(component) {
+    private getDynamicModule(component, modules?) {
+        const moduleRefs = _.map(modules, m => _.get(window, m));
         @NgModule({
             declarations: [component],
             imports: [
@@ -174,7 +178,8 @@ export class ViewRenderer {
                 CommonModule,
                 CarouselModule.forRoot(),
                 BsDropdownModule.forRoot(),
-                PopoverModule.forRoot()
+                PopoverModule.forRoot(),
+                ...moduleRefs
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
         })
@@ -183,10 +188,12 @@ export class ViewRenderer {
         return DynamicModule;
     }
 
-    private getComponentFactory(componentDef, moduleDef) {
-        return this.compiler
-            .compileModuleAndAllComponentsSync(moduleDef)
-            .componentFactories
-            .filter(factory => factory.componentType === componentDef)[0];
+    private getComponentFactory(componentDef, moduleDef, vcRef) {
+        const moduleRef =  this.compiler.compileModuleAndAllComponentsSync(moduleDef);
+        const injector = moduleRef.ngModuleFactory.create(vcRef.injector).injector;
+        const componentRef: any = moduleRef.componentFactories.filter(factory => factory.componentType === componentDef)[0];
+        componentRef.injector = injector;
+
+        return componentRef;
     }
 }

@@ -130,20 +130,25 @@ export class PrefabRenderer {
 
         return this.prefabMngr.loadDependencies(prefabName)
             .then(() => {
-                return this.renderFragment.render(
-                    prefabName,
-                    this.prefabMngr.getPrefabMinJsonUrl(prefabName),
-                    context,
-                    `app-prefab-${prefabName}`,
-                    (instance: any) => {
-                        this.componentInitFn(prefabName, instance, containerWidget);
-                    },
-                    vcRef,
-                    $target,
-                    false
-                ).then(({instance, variableCollection}) => {
-                    this.postReady(instance, containerWidget, variableCollection);
+                return this.prefabMngr.getConfig(prefabName).then((config: any) => {
+                    return this.renderFragment.render(
+                        prefabName,
+                        this.prefabMngr.getPrefabMinJsonUrl(prefabName),
+                        context,
+                        `app-prefab-${prefabName}`,
+                        (instance: any) => {
+                            this.componentInitFn(prefabName, instance, containerWidget);
+                        },
+                        vcRef,
+                        $target,
+                        false,
+                        false,
+                        config.resources.modules || []
+                    ).then(({instance, variableCollection}) => {
+                        this.postReady(instance, containerWidget, variableCollection);
+                    });
                 });
+
             });
     }
 
