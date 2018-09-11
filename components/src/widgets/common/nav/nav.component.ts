@@ -37,6 +37,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
 
     private activeNavLINode: HTMLElement;
     private itemActionFn: Function;
+    private pageScope: any;
     private get activePageName() {
         return this.app.activePageName;
     }
@@ -52,6 +53,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.disableMenuContext = !!selectEventCB;
+        this.pageScope = this.viewParent;
     }
 
 
