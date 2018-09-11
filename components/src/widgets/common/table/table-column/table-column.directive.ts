@@ -1,7 +1,7 @@
 import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { Validators } from '@angular/forms';
 
-import { $watch, AppDefaults, DataSource, DataType, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
+import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
 
 import { BaseComponent } from '../../base/base.component';
 import { EDIT_MODE, getDataTableFilterWidget, getDefaultValue, getEditModeWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
@@ -17,8 +17,10 @@ registerProps();
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
-const inlineWidgetProps = ['datafield', 'displayfield', 'disabled', 'required', 'placeholder', 'searchkey', 'displaylabel',
+let inlineWidgetProps = ['datafield', 'displayfield', 'disabled', 'placeholder', 'searchkey', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataset'];
+const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required'];
+inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
 
 class FieldDef {
     widget;
@@ -81,6 +83,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     pcdisplay;
     readonly;
     required;
+    maxchars;
+    minvalue;
+    maxvalue;
+    regexp;
     searchable;
     show;
     sortable;
@@ -114,6 +120,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     isFilterDataSetBound;
     private _dataoptions: any;
     private _datasource: any;
+    private _debounceSetUpValidators;
+    private _debounceSetUpValidatorsNew;
 
     constructor(
         inj: Injector,
@@ -124,6 +132,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
+
+        this._debounceSetUpValidators = debounce(this.setUpValidators.bind(this, 'inlineInstance'), 250);
+        this._debounceSetUpValidatorsNew = debounce(this.setUpValidators.bind(this, 'inlineInstanceNew'), 250);
     }
 
     get dataoptions() {
@@ -345,19 +356,43 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         });
     }
 
+    // On change of any validation property, set the angular form validators
+    setUpValidators(widget) {
+        const control = this.getFormControl(widget === 'inlineInstanceNew' ? '_new' : undefined);
+        if (!control) {
+            return;
+        }
+        const validators = [];
+        if (this.required) {
+            validators.push(Validators.required);
+        }
+        if (this.maxchars) {
+            validators.push(Validators.maxLength(this.maxchars));
+        }
+        if (this.minvalue) {
+            validators.push(Validators.min(this.minvalue));
+        }
+        if (this.maxvalue) {
+            validators.push(Validators.max(this.maxvalue));
+        }
+        if (this.regexp) {
+            validators.push(Validators.pattern(this.regexp));
+        }
+        if (this[widget] && _.isFunction(this[widget].validate)) {
+            validators.push(this[widget].validate.bind(this[widget]));
+        }
+        control.setValidators(validators);
+        control.updateValueAndValidity();
+    }
+
     // Set the props on the inline edit widget
     setInlineWidgetProp(widget, prop, nv) {
         if (this[widget] && isDefined(nv)) {
             this[widget][prop] = nv;
         }
-        if (prop === 'required') {
-            const control = this.getFormControl(widget === 'inlineInstanceNew' ? '_new' : undefined);
-            if (nv) {
-                control.setValidators([Validators.required]);
-            } else {
-                control.setValidators([]);
-            }
-            control.updateValueAndValidity();
+        if (validationProps.includes(prop)) {
+            this._debounceSetUpValidators();
+            this._debounceSetUpValidatorsNew();
         }
     }
 

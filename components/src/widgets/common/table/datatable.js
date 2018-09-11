@@ -1405,8 +1405,9 @@ $.widget('wm.datatable', {
                     });
                     $el.addClass('cell-editing editable-expression').html(editableTemplate).data('originalText', cellText);
                 }
+                $el.addClass('form-group');
                 if (colDef.required) {
-                    $el.addClass('required-field form-group');
+                    $el.addClass('required-field');
                 }
             }
         });
