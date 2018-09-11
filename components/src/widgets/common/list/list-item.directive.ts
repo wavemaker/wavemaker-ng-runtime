@@ -19,8 +19,8 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     public destroy: Subject<any> = new Subject();
     public destroy$: Observable<any> = this.destroy.asObservable();
     public nativeElement: HTMLElement;
+    public readonly listComponent: ListComponent;
 
-    private readonly listComponent: ListComponent;
     private itemClass: string = '';
 
     @HostBinding('class.active') isActive: boolean = false;
