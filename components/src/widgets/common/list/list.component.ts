@@ -539,7 +539,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             const target = $($event.target).closest('.app-list-item');
             if (target[0]) {
                 const listItemContext = target.data('listItemContext');
-                this.onItemClick($event, listItemContext);
+                // Trigger click event only if the list item is from the corresponding list.
+                if (listItemContext.listComponent === this) {
+                    this.onItemClick($event, listItemContext);
+                }
             }
         }, true);
     }
