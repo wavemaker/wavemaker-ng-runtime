@@ -20,7 +20,7 @@
                (change)="onDisplayTimeChange($event)"
                (keydown)="onDisplayKeydown($event)">
         <span class="input-group-btn dropdown-toggle">
-          <button focus-target type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
+          <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
         </span>
         <div *dropdownMenu class="dropdown-menu" (click)="preventTpClose($event)">
             <timepicker class="model-holder"
