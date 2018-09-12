@@ -234,7 +234,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // when input is cleared, reset the datavalue
         if (this.query === '') {
             this.queryModel = '';
-            this.datavalue = '';
+            this._modelByValue = '';
+            this.invokeOnChange(this._modelByValue, {}, true);
         }
         this.showClosebtn = (this.query !== '');
     }
