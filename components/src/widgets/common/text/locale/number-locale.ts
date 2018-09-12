@@ -144,6 +144,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (parts.length > 2) {
             return NaN;
         }
+        // If number have decimal point and not have a decimal value then return.
+        if (parts[1] === '') {
+            return NaN;
+        }
         // replaces all group separators form the number.
         const number = Number(parts[0].split(this.GROUP).join(''));
         const decimal = Number(`0.${parts[1] || 0}`);
