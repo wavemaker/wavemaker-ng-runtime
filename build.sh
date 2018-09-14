@@ -224,18 +224,30 @@ copyDist() {
 
 copyLocale() {
     if [ "${locale}" == true ]; then
-        mkdir -p ./dist/bundles/wmapp/locales/angular
-        mkdir -p ./dist/bundles/wmmobile/locales/angular
-        cp ./node_modules/@angular/common/locales/*.js ./dist/bundles/wmapp/locales/angular/
-        cp ./node_modules/@angular/common/locales/*.js ./dist/bundles/wmmobile/locales/angular/
 
-        mkdir -p ./dist/bundles/wmapp/locales/fullcalendar
-        cp ./node_modules/fullcalendar/dist/locale/*.js ./dist/bundles/wmapp/locales/fullcalendar/
+        local appDest=./dist/bundles/wmapp/locales
+        local mobileDest=./dist/bundles/wmmobile/locales
 
-        mkdir -p ./dist/bundles/wmapp/locales/moment
-        mkdir -p ./dist/bundles/wmmobile/locales/moment
-        cp ./node_modules/moment/locale/*.js ./dist/bundles/wmapp/locales/moment/
-        cp ./node_modules/moment/locale/*.js ./dist/bundles/wmmobile/locales/moment/
+        local angularSrc=./node_modules/@angular/common/locales
+        local fullCalendarSrc=./node_modules/fullcalendar/dist/locale
+        local momentSrc=./node_modules/moment/locale
+
+        mkdir -p ${appDest}/angular
+        mkdir -p ${mobileDest}/angular
+        mkdir -p ${appDest}/fullcalendar
+        mkdir -p ${appDest}/moment
+        mkdir -p ${mobileDest}/moment
+
+        for file in $angularSrc/*.js; do
+            local fileName=`echo $(basename $file) | tr 'A-Z' 'a-z'`
+            cp $angularSrc/$fileName ${appDest}/angular/$fileName
+        done
+        cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
+
+        cp ${fullCalendarSrc}/*.js ${appDest}/fullcalendar/
+
+        cp ${momentSrc}/*.js ${appDest}/moment/
+        cp ${momentSrc}/*.js ${mobileDest}/moment/
     fi
 }
 
