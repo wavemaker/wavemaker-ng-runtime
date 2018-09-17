@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
-import {$appDigest, isDefined, setCSS, toBoolean} from '@wm/core';
+import {$appDigest, debounce, isDefined, setCSS, toBoolean} from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
@@ -32,17 +32,22 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     private btnwidth;
     private compareby;
     private disabled: boolean;
+    private _debounceSetSelectedValue: Function;
 
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);
+
+        this._debounceSetSelectedValue = debounce((val) => {
+            this.setSelectedValue();
+            this.updateHighlighter(val);
+        }, 200);
 
         const datasetSubscription = this.dataset$.subscribe(() => this.updateSwitchOptions());
 
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
 
         const datavalueSubscription = this.datavalue$.subscribe(() => {
-            this.setSelectedValue();
-            this.updateHighlighter(true);
+            this._debounceSetSelectedValue(true);
         });
         this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
     }
@@ -86,8 +91,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
             setCSS(this.nativeElement.querySelector('.app-switch-overlay') as HTMLElement, 'width', this.btnwidth + '%');
         }
 
-        this.setSelectedValue();
-        this.updateHighlighter(true);
+        this._debounceSetSelectedValue(true);
     }
 
     // This function animates the highlighted span on to the selected value.

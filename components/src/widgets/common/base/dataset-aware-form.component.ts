@@ -179,7 +179,12 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 this._modelByKey = itemByValue.key;
             }
         }
+        // delaying the datavalue update as the widgets in liveform are having datavalue as undefined and not the default provided value
+        // because datavalue is updated later when new dataset is available.
+        this._debounceDatavalueUpdation(values);
+    }
 
+    protected readonly _debounceDatavalueUpdation = _.debounce((values) => {
         // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in toBeProcessedDatavalue.
         if (!isDefined(this._modelByKey) || (_.isArray(this._modelByKey) && !this._modelByKey.length)) {
             this.toBeProcessedDatavalue = values;
@@ -194,7 +199,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         }
 
         this.initDisplayValues();
-    }
+    }, 100);
 
     // Updates the displayValue property.
     protected initDisplayValues() {
