@@ -2331,14 +2331,12 @@ $.widget('wm.datatable', {
         this.options.clearRowActions();
         this._appendRowActions($htm);
         this.attachEventHandlers($htm);
-        this.__setStatus();
+        this.__setStatus(isCreated);
         //Add new row, if always show new row is present for quick edit
         if (this.options.editmode === this.CONSTANTS.QUICK_EDIT && this.options.showNewRow) {
             this.addNewRow(false, true);
         }
-        if (!isCreated) {
-            this.setColGroupWidths();
-        } else {
+        if (isCreated) {
             this._setColSpan(this.options.headerConfig);
         }
         if ($.isFunction(this.options.onDataRender)) {
@@ -2386,7 +2384,7 @@ $.widget('wm.datatable', {
         }
         this._renderGrid(isCreated);
     },
-    __setStatus: function () {
+    __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
             state = this.dataStatus.state;
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
@@ -2414,6 +2412,9 @@ $.widget('wm.datatable', {
             this.gridContainer.addClass('show-msg');
         } else {
             this.gridContainer.removeClass('show-msg');
+            if (!isCreated) {
+                this.setColGroupWidths();
+            }
         }
         this.addOrRemoveScroll();
     },
