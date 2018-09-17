@@ -153,6 +153,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         // update the model when model has items more than maxsize
         if (this.maxsize && dataValue.length > this.maxsize) {
             this._modelByValue = dataValue = _.slice(dataValue, 0, this.maxsize);
+            data = dataValue;
         }
 
         const searchQuery: Array<string> = [];
@@ -630,9 +631,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (key === 'tabindex') {
             return;
         }
+        if (key === 'dataoptions') {
+            (this.searchComponent as any).dataoptions = nv;
+        }
         if (key === 'displayfield') {
             this.searchComponent.displaylabel = this.displayfield;
-            return;
+        }
+        if (key === 'displayexpression') {
+            this.searchComponent.binddisplaylabel = this.displayexpression;
         }
         if (key === 'enablereorder' && nv) {
             this.configureDnD();
