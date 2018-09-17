@@ -226,6 +226,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                         this._modelByValue = data;
                         this.removeDuplicates();
                         this.updateMaxSize();
+                        $appDigest();
                     });
             }
         }
@@ -642,6 +643,13 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         if (key === 'enablereorder' && nv) {
             this.configureDnD();
+        }
+        if (key === 'readonly') {
+            if (nv) {
+                this.$element.addClass('readonly');
+            } else {
+                this.$element.removeClass('readonly');
+            }
         }
         if (key === 'inputposition') {
             const $inputEl = this.$element.find('li.app-chip-search');
