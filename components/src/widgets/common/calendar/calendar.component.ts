@@ -372,11 +372,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     // constructs the calendar dataset by mapping the eventstart, eventend, eventtitle etc.,
     private constructCalendarDataset(eventSource) {
         const properties = {
-            title: this.eventtitle,
-            allday: this.eventallday,
-            start: this.eventstart,
-            end: this.eventend,
-            className: this.eventclass
+            title: this.eventtitle || 'title',
+            allday: this.eventallday || 'allday',
+            start: this.eventstart || 'start',
+            end: this.eventend || 'end',
+            className: this.eventclass || 'className'
         };
 
         eventSource.forEach((obj) => {
@@ -385,7 +385,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 if (key === 'title') {
                     objVal = getEvaluatedData(obj, {expression: value}, this.viewParent);
                 } else {
-                    objVal = _.get(obj, key);
+                    objVal = _.get(obj, value);
                 }
                 if (!objVal) {
                     return;
