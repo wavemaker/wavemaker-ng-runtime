@@ -1866,6 +1866,41 @@ $.widget('wm.datatable', {
         self.options.safeApply();
         self.setFocusOnElement(undefined, $row, true);
     },
+  _onEnter: function ($target, $row, quickEdit, event) {
+        var self = this;
+        if($target.is('button')){
+          return;
+        }
+        if (quickEdit && $target.hasClass('app-datagrid-row') && !$target.hasClass('row-editing')) {
+          $row.trigger('click', [undefined, {action: 'edit'}]);
+        } else {
+          //On click of enter while inside a widget in editing row, save the row
+          if ($row.hasClass('row-editing') && $target.closest('[data-field-name]').length) {
+            $target.blur(); //Blur the input, to update the model
+            self.toggleEditRow(event, {
+              'action': 'save',
+              'success': function (skipFocus, error) {
+                //On error, focus the same field. Else, focus the row
+                if (error) {
+                  $target.focus();
+                } else {
+                  self.focusActiveRow();
+                }
+              }
+            });
+          } else {
+            $row.trigger('click');
+          }
+        }
+        //Stop the enter keypress from submitting any parent form. If target is button, event should not be stopped as this stops click event on button
+        if (!$target.is('button')) {
+          event.stopPropagation();
+        }
+      },
+    _debounceOnEnter: function($target, $row, quickEdit, event) {
+        var _this = this;
+      return _.debounce(_this._onEnter.bind(this, $target, $row, quickEdit, event), 150);
+    },
     // Handles keydown event on row items.
     onKeyDown: function (event) {
         var $target = $(event.target),
@@ -1897,35 +1932,8 @@ $.widget('wm.datatable', {
             return;
         }
         if (event.which === 13) { //Enter key
-            if($target.is('button')){
-                return;
-            }
-            if (quickEdit && $target.hasClass('app-datagrid-row') && !$target.hasClass('row-editing')) {
-                $row.trigger('click', [undefined, {action: 'edit'}]);
-            } else {
-                //On click of enter while inside a widget in editing row, save the row
-                if ($row.hasClass('row-editing') && $target.closest('[data-field-name]').length) {
-                    $target.blur(); //Blur the input, to update the model
-                    self.toggleEditRow(event, {
-                        'action': 'save',
-                        'success': function (skipFocus, error) {
-                            //On error, focus the same field. Else, focus the row
-                            if (error) {
-                                $target.focus();
-                            } else {
-                                self.focusActiveRow();
-                            }
-                        }
-                    });
-                } else {
-                    $row.trigger('click');
-                }
-            }
-            //Stop the enter keypress from submitting any parent form. If target is button, event should not be stopped as this stops click event on button
-            if (!$target.is('button')) {
-                event.stopPropagation();
-            }
-            return;
+          this._debounceOnEnter($target, $row, quickEdit, event)();
+          return;
         }
         if (event.which === 38) { // up-arrow action
             this.processUpDownKeys(event, $row, 'up');
