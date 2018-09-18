@@ -320,11 +320,18 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
 /**
  * method to get the date object from the input received
  */
-export const getDateObj = (value?: string): Date => {
+export const getDateObj = (value): Date => {
+
+    /*if the value is a timestamp string, convert it to a number*/
+    if (!isNaN(value)) {
+        value = parseInt(value, 10);
+    }
+
     const dateObj = new Date(value);
     if (!moment(value).isValid() || value === '' || value === null || value === undefined) {
         return undefined;
     }
+
     if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
         return now;
     }
