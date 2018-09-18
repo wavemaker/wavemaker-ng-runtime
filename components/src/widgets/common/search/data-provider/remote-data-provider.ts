@@ -1,4 +1,4 @@
-import { AppConstants, DataSource, findValueOf } from '@wm/core';
+import { AppConstants, DataSource, findValueOf, getClonedObject } from '@wm/core';
 
 import { convertDataToObject } from '../../../../utils/form-utils';
 import { IDataProvider, IDataProviderConfig } from './data-provider';
@@ -41,7 +41,7 @@ export class RemoteDataProvider implements IDataProvider {
                         fields: dataoptions.distinctField,
                         entityName: dataoptions.tableName,
                         filterFields: _.assign(dataoptions.filterFields, requestParams.filterFields),
-                        filterExpr: dataoptions.filterExpr || {}
+                        filterExpr: getClonedObject(dataoptions.filterExpr || {})
 
                     }
                 );
