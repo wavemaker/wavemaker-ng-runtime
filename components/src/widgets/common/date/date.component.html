@@ -27,6 +27,7 @@
                [isDisabled]="disabled || readonly || isCurrentDate"
                [bsValue]="bsDataValue"
                (onShown)="onDatePickerOpen()"
+               (onHidden)="hideDatepickerDropdown()"
                (bsValueChange)="onDateChange($event)">
     </div>
     <span class="input-group-btn">

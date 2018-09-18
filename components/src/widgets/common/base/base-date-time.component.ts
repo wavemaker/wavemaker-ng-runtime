@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
 
 declare const moment, _, $;
+const CURRENT_DATE: string = 'CURRENT_DATE';
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
@@ -537,9 +538,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {
-            this._dateOptions.minDate = getDateObj(nv);
+            this._dateOptions.minDate = (nv === CURRENT_DATE) ?  new Date() : getDateObj(nv);
         } else if (key === 'maxdate') {
-            this._dateOptions.maxDate = getDateObj(nv);
+            this._dateOptions.maxDate = (nv === CURRENT_DATE) ? new Date() : getDateObj(nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
