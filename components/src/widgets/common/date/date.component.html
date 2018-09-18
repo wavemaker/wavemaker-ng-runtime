@@ -14,6 +14,7 @@
            [autofocus]="autofocus"
            [required]="required"
            [attr.placeholder]="placeholder"
+           [attr.accesskey]="shortcutkey"
            (change)="onDisplayDateChange($event)"
            (keydown)="onDisplayKeydown($event)">
     <div style="width: 0;display: inline-block;" aria-label="datepicker dropdownmenu" aria-controls="date">
