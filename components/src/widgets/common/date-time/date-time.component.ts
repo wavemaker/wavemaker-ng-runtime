@@ -56,9 +56,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * @returns {any|string}
      */
     get displayValue(): any {
-        if (isMobileApp() && this.proxyModel) {
-            return moment(this.proxyModel).format('YYYY-MM-DDThh:mm');
-        }
         return getFormattedDate(this.datePipe, this.proxyModel, this._dateOptions.dateInputFormat) || '';
     }
 
