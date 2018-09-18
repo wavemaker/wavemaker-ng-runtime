@@ -71,7 +71,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadAppLocaleBundle() {
-        return this.loadResource(`${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
+        this.loadResource(`${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
             .then(bundle => {
                 this.extendMessages(bundle.messages);
                 this.appDefaults.setFormats(bundle.formats);
@@ -79,32 +79,27 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadMomentLocaleBundle() {
-        return new Promise(resolve => {
-            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
-            if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
-                moment.locale(this.defaultSupportedLocale);
-                resolve();
-                return;
-            }
-            const path = _cdnUrl + `locales/moment/${this.selectedLocale}.js`;
-            this.$http.get(path, {responseType: 'text'})
-                .toPromise()
-                .then((response: any) => {
-                    const fn = new Function(response);
+        const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
+        if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
+            moment.locale(this.defaultSupportedLocale);
+            return;
+        }
+        const path = _cdnUrl + `locales/moment/${this.selectedLocale}.js`;
+        this.$http.get(path, {responseType: 'text'})
+            .toPromise()
+            .then((response: any) => {
+                const fn = new Function(response);
 
-                    // Call the script. In script, moment defines the loaded locale
-                    fn();
-                    moment.locale(this.selectedLocale);
+                // Call the script. In script, moment defines the loaded locale
+                fn();
+                moment.locale(this.selectedLocale);
 
-                    // For ngx bootstrap locale, get the config from script and apply locale
-                    let _config;
-                    fn.apply({moment: {defineLocale: (code, config) => _config = config}});
-                    defineLocale(this.selectedLocale, _config);
-                    this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
-
-                    resolve();
-                }, () => resolve());
-        });
+                // For ngx bootstrap locale, get the config from script and apply locale
+                let _config;
+                fn.apply({moment: {defineLocale: (code, config) => _config = config}});
+                defineLocale(this.selectedLocale, _config);
+                this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
+            });
     }
 
     protected loadAngularLocaleBundle() {
@@ -131,32 +126,28 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadCalendarLocaleBundle() {
-        return new Promise(resolve => {
-            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
-            const path = _cdnUrl + `locales/fullcalendar/${this.selectedLocale}.js`;
+        const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
+        const path = _cdnUrl + `locales/fullcalendar/${this.selectedLocale}.js`;
 
-            // return in case of mobile app or if selected locale is default supported locale.
-            if (isMobile() || isMobileApp() || !_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
-                resolve();
-                return;
-            }
+        // return in case of mobile app or if selected locale is default supported locale.
+        if (isMobile() || isMobileApp() || !_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
+            return;
+        }
 
-            this.$http.get(path, {responseType: 'text'})
-                .toPromise()
-                .then((response: any) => {
-                    const fn = new Function(response);
-                    // Call the script. In script, moment defines the loaded locale
-                    fn();
-                    resolve();
-                }, () => resolve());
-        });
+        this.$http.get(path, {responseType: 'text'})
+            .toPromise()
+            .then((response: any) => {
+                const fn = new Function(response);
+                // Call the script. In script, moment defines the loaded locale
+                fn();
+            });
     }
 
     protected loadLocaleBundles() {
-        return this.loadAngularLocaleBundle()
-            .then(() => this.loadMomentLocaleBundle())
-            .then(() => this.loadAppLocaleBundle())
-            .then(() => this.loadCalendarLocaleBundle());
+        this.loadMomentLocaleBundle();
+        this.loadAppLocaleBundle();
+        this.loadCalendarLocaleBundle();
+        return this.loadAngularLocaleBundle();
     }
 
     public setSelectedLocale(locale) {
