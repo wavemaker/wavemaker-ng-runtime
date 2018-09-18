@@ -43,7 +43,7 @@ export class ExtAppMessageService {
         const handler = {
             pattern : new RegExp(messageAddressPattern),
             callBack : listener
-        }, i = this.handlers.length;
+        };
         this.handlers.push(handler);
         return () => _.remove(this.handlers, handler);
     }

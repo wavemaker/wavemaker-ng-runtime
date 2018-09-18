@@ -30,7 +30,6 @@ const getUpdatedExpr = (expr: string) => {
          */
         if (ch === '$' && next === '[') {
             matchCount = 1;
-            subStr = '';
             isQuotedStrEvaluated = false;
             isQuotedStr = false;
 

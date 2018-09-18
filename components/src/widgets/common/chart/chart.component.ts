@@ -733,7 +733,6 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             yDomainValues,
             chart;
         const yformatOptions: any = {};
-        const element = this.$element;
 
         if (datum.length > 0) {
             if (isAxisDomainValid(this, 'x')) {
@@ -807,7 +806,6 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     }
 
     plotChartProxy() {
-        const element = this.nativeElement;
         this.showContentLoadError = false;
         this.invalidConfig = false;
         // Checking if x and y axis are chosen

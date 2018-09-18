@@ -25,7 +25,6 @@ export class FileUploadDirective {
     }
 
     public openFileSelector(): Promise<FileContent[]> {
-        const multiple = this.fileUploadComponent['multiple'];
         switch (this.fileUploadComponent['contenttype']) {
             case 'image':
                 return this.fileSelectorService.selectImages();

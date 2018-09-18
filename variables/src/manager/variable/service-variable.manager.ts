@@ -84,7 +84,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         /* if dataTransformation enabled, transform the data */
         if (variable.transformationColumns) {
-            response = this.transformData(response, variable);
+            this.transformData(response, variable);
         }
 
         // if a primitive type response is returned, wrap it in an object
@@ -259,7 +259,6 @@ export class ServiceVariableManager extends BaseVariableManager {
                 transformedData[index][column] = datum[columnIndex];
             });
         });
-        return data;
     }
 
     /**

@@ -1442,7 +1442,6 @@ $.widget('wm.datatable', {
             $deleteButton = $row.find('.delete-row-button'),
             rowData = _.cloneDeep(this.options.data[$row.attr('data-row-id')]) || {},
             self = this,
-            rowId = parseInt($row.attr('data-row-id'), 10),
             action,
             isNewRow,
             $editableElements,
@@ -1997,10 +1996,8 @@ $.widget('wm.datatable', {
     },
     /* Attaches all event handlers for the table. */
     attachEventHandlers: function ($htm) {
-        var rowOperationsCol = this._getRowActionsColumnDef(),
-            $header = this.gridHeader,
-            self = this,
-            deleteRowHandler;
+        var $header = this.gridHeader,
+            self = this;
 
         if (this.options.enableRowSelection) {
             $htm.on('click', this.rowSelectionHandler.bind(this));
@@ -2453,21 +2450,19 @@ $.widget('wm.datatable', {
     /*Change the column header title. function will be called if display name changes in runmode*/
     setColumnProp: function (fieldName, property, val, isGroup) {
         var $col;
-        switch (property) {
-            case 'displayName':
-                if (isGroup) {
-                    $col = this.gridHeader.find('th[data-col-group="' + fieldName + '"]');
-                } else {
-                    $col = this.gridHeader.find('th[data-col-field="' + fieldName + '"]');
-                }
-                $col.attr('title', val);
-                $col.find('.header-data').html(val);
+        if (property === 'displayName') {
+            if (isGroup) {
+                $col = this.gridHeader.find('th[data-col-group="' + fieldName + '"]');
+            } else {
+                $col = this.gridHeader.find('th[data-col-field="' + fieldName + '"]');
+            }
+            $col.attr('title', val);
+            $col.find('.header-data').html(val);
 
-                //Change the display name in the search filter options
-                if (this.options.filtermode === this.CONSTANTS.SEARCH && this.gridSearch) {
-                    this.gridSearch.find('select option[value="' + fieldName + '"]').text(val);
-                }
-                break;
+            //Change the display name in the search filter options
+            if (this.options.filtermode === this.CONSTANTS.SEARCH && this.gridSearch) {
+                this.gridSearch.find('select option[value="' + fieldName + '"]').text(val);
+            }
         }
     },
 

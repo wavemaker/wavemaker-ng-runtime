@@ -109,8 +109,7 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
         const eventData = {
                 $old : this.currentSelectedIndex,
                 $new : index
-            },
-            $segmentsCtr = this.$element.find('>.app-segments-container');
+            };
 
         this.currentSelectedIndex = index;
         this.invokeEventCallback('beforesegmentchange', eventData);

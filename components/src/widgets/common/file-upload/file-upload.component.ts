@@ -168,7 +168,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     /*this function to append upload status dom elements to widget */
     onFileSelect($event, $files) {
-        const uploadOptions = {formName: this.formName};
         let beforeSelectVal;
         $files = this.getValidFiles($files);
         // Make call if there are valid files else no call is made

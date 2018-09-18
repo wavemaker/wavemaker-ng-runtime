@@ -252,10 +252,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // Triggerred when typeahead option is selected.
     private onSelect($event: Event) {
-        let hasActiveEl = false;
         // when matches are available.
         if (this.typeaheadContainer && this.liElements.length) {
-            hasActiveEl = true;
             this.typeaheadContainer.selectActiveMatch();
         } else {
             this.queryModel = this.query;

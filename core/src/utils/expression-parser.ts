@@ -503,7 +503,6 @@ export function $parseExpr(expr: string): ParseExprResult {
         const pipeNameVsIsPureMap = pipeProvider.getPipeNameVsIsPureMap();
         const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Binding, pipeNameVsIsPureMap);
         fn = astCompiler.compile();
-        boundFn = fn;
         if (fn.usedPipes.length) {
             const pipeArgs = [];
             let hasPurePipe = false;

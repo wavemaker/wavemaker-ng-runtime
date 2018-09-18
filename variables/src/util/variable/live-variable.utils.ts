@@ -340,12 +340,6 @@ export class LiveVariableUtils {
                 param = LiveVariableUtils.encodeAndAddQuotes('%' + value + '%', type, skipEncode);
                 param = LiveVariableUtils.wrapInLowerCase(param, options, ignoreCase);
                 break;
-            case dbModes.exactignorecase:
-            case dbModes.exact:
-            case dbModes.notequals:
-                param = LiveVariableUtils.encodeAndAddQuotes(value, type, skipEncode);
-                param = LiveVariableUtils.wrapInLowerCase(param, options, ignoreCase);
-                break;
             case dbModes.between:
                 param = _.join(_.map(value, val => {
                     return LiveVariableUtils.wrapInLowerCase(LiveVariableUtils.encodeAndAddQuotes(val, type, skipEncode), options, ignoreCase);
@@ -357,6 +351,10 @@ export class LiveVariableUtils {
                 }), ', ');
                 param = '(' + param + ')';
                 break;
+            /*case dbModes.exactignorecase:
+            case dbModes.exact:
+            case dbModes.notequals:
+            The above three cases will be handled by default*/
             default:
                 param = LiveVariableUtils.encodeAndAddQuotes(value, type, skipEncode);
                 param = LiveVariableUtils.wrapInLowerCase(param, options, ignoreCase);

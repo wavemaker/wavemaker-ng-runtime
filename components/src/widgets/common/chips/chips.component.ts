@@ -324,8 +324,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         this.chipsList.push(chipObj);
 
-        const prevDatavalue = _.clone(this.datavalue);
-
         if (!this.datavalue) {
             this._modelByValue = [chipObj.value];
         } else {

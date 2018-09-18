@@ -66,10 +66,6 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
             }
             break;
         case VARIABLE_CONSTANTS.CATEGORY.SERVICE:
-            if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
-                _invoke(variable, 'invoke');
-            }
-            break;
         case VARIABLE_CONSTANTS.CATEGORY.LOGIN:
             if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
                 _invoke(variable, 'invoke');
@@ -210,7 +206,6 @@ const downloadFilefromResponse = (response, headerFn, success, error) => {
                     if (!popup) {
                         window.location.href = url;
                     }
-                    url = undefined; // release reference before dispatching
                 };
                 reader.onload = triggerOnTimeout.bind(undefined, success);
                 reader.onerror = error;

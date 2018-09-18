@@ -23,11 +23,9 @@ window.requestAnimationFrame = (function () {
             'TOP_TO_DOWN': 5,
             'DOWN_TO_TOP': 6
         },
-        discardSwipe,
         SwipeTracer,
         abs = Math.abs,
         max = Math.max,
-        queue = [],
         activeEventProcessor,
         swipeMask = $('<div style="background-color:rgba(0, 0, 0, 0);position: fixed; top: 0;width:100vw; height: 100vh;z-index: 100000;"></div>'),
         touchMoveListeners = [],
@@ -112,7 +110,6 @@ window.requestAnimationFrame = (function () {
 
         function process() {
             if (queue.length > 0) {
-                time = Date.now();
                 try {
                     queue.shift()();
                 } catch (e) {
@@ -290,12 +287,9 @@ window.requestAnimationFrame = (function () {
     }
 
     function listenPassiveSwipe(touch, settings) {
-        var passiveSwipeHandler,
-            destroyListeners;
+        var passiveSwipeHandler;
         settings.scrollObserver = new ScrollObserver(event.currentTarget, event.target, settings.direction);
-        discardSwipe = 0;
         passiveSwipeHandler = function(em) {
-            var distance;
             if (isThresholdReached(getTouchEvent(em), settings)) {
                 if (settings.scrollObserver.hasSrcolled() || listenActiveSwipe(em, settings)) {
                     return false;

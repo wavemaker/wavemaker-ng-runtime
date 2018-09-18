@@ -291,16 +291,13 @@ export class SecurityService {
             url: 'j_spring_security_check',
             'data': payload
         }).then((response) => {
-            const config = this.get(),
-                xsrfCookieValue = response.body ? response.body[XSRF_COOKIE_NAME] : '';
+            const xsrfCookieValue = response.body ? response.body[XSRF_COOKIE_NAME] : '';
 
             // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
             if (xsrfCookieValue) {
                 if (hasCordova()) {
                     localStorage.setItem(XSRF_COOKIE_NAME, xsrfCookieValue || '');
                 }
-                /*this.$http.defaults.xsrfCookieName = XSRF_COOKIE_NAME;
-                this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;*/
             }
             // After the successful login in device, this function triggers the pending onLoginCallbacks.
             this.injector.get(App).notify('userLoggedIn', {});

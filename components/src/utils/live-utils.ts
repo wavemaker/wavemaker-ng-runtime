@@ -196,30 +196,6 @@ export const getEditModeWidget = colDef => {
 
 /**
  * @ngdoc function
- * @name wm.widgets.live.LiveWidgetUtils#formatBooleanValue
- * @methodOf wm.widgets.live.LiveWidgetUtils
- * @function
- *
- * @description
- * return the formatted boolean value
- *
- * @param {string} value value to be formatted
- */
-const formatBooleanValue = value => {
-    if (value === 'true') {
-        return true;
-    }
-    if (value === 'false') {
-        return false;
-    }
-    if (/^\d+$/.test(value)) { // Check if the value is a string of number type like '123'
-        return +value;
-    }
-    return value;
-};
-
-/**
- * @ngdoc function
  * @name wm.widgets.live.LiveWidgetUtils#getDefaultValue
  * @methodOf wm.widgets.live.LiveWidgetUtils
  * @function
@@ -236,7 +212,7 @@ export const getDefaultValue = (value, type, widget) => {
             return isNaN(Number(value)) ? null : Number(value);
         }
         if (widget === FormWidgetType.CHECKBOX || widget === FormWidgetType.TOGGLE) {
-            return formatBooleanValue(value);
+            return parseBooleanValue(value);
         }
         return value;
     }
@@ -244,7 +220,7 @@ export const getDefaultValue = (value, type, widget) => {
         return isNaN(Number(value)) ? null : Number(value);
     }
     if (type === DataType.BOOLEAN) {
-        return formatBooleanValue(value);
+        return parseBooleanValue(value);
     }
     return value;
 };
