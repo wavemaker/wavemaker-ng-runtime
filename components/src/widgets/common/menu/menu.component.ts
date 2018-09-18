@@ -49,6 +49,12 @@ const PULL_CLS = {
     RIGHT: 'pull-right'
 };
 
+const AUTO_OPEN = {
+    NEVER: 'never',
+    ACTIVE_PAGE: 'activepage',
+    ALWAYS: 'always'
+};
+
 const WIDGET_CONFIG = {widgetType: 'wm-menu', hostClass: 'dropdown app-menu'};
 @Component({
     selector: '[wmMenu]',
@@ -68,6 +74,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public animateitems: string;
     public disableMenuContext: boolean;
     public autoclose: string;
+    public autoopen: string;
 
     private menuCaret: string = 'fa-caret-down';
     private _selectFirstItem = false;
@@ -153,8 +160,8 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
 
     protected resetNodes() {
         super.resetNodes();
-        // open the menu if any of its menu items has link to current page and if its inside nav component
-        if (this.parentNav && this.hasLinkToCurrentPage(this.nodes)) {
+        // open the menu if any of its menu items has link to current page and if autoopen value is 'active page'
+        if ((this.autoopen === AUTO_OPEN.ACTIVE_PAGE && this.hasLinkToCurrentPage(this.nodes)) || this.autoopen === AUTO_OPEN.ALWAYS) {
             this.bsDropdown.show();
         }
     }
