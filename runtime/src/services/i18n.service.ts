@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 
-import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT, AppDefaults, isMobile } from '@wm/core';
+import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT, AppDefaults, isMobile, isMobileApp } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
 
@@ -136,7 +136,7 @@ export class I18nServiceImpl extends AbstractI18nService {
             const path = _cdnUrl + `locales/fullcalendar/${this.selectedLocale}.js`;
 
             // return in case of mobile app or if selected locale is default supported locale.
-            if (isMobile() || !_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
+            if (isMobile() || isMobileApp() || !_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
                 return;
             }
