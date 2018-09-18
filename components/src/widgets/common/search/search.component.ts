@@ -126,6 +126,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
 
             if (!this._unsubscribeDv) {
+                // if prev datavalue is not equal to current datavalue then clear the modelByKey and queryModel
+                if (!_.isObject(val) && (this as any).prevDatavalue !== val) {
+                    this._modelByKey = undefined;
+                    this.query = this.queryModel = '';
+                }
                 // if the datafield is ALLFILEDS do not fetch the records
                 // update the query model with the values we have
                 this.updateQueryModel(val, this.datafield);
