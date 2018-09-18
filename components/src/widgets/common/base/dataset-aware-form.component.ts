@@ -199,7 +199,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         }
 
         this.initDisplayValues();
-    }, 100);
+    }, 150);
 
     // Updates the displayValue property.
     protected initDisplayValues() {

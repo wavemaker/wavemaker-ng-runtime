@@ -1,11 +1,11 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 
 import { from, Observable, of } from 'rxjs';
-import { mergeMap, debounceTime } from 'rxjs/operators';
+import {mergeMap, debounceTime } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
-import { addClass, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, DataSource, debounce, isDefined, isMobile, toBoolean } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, transformData } from '../../../utils/form-utils';
@@ -74,6 +74,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private parentEl: any;
     private position: string;
     private elIndex: number;
+    private _debounceUpdateQueryModel: any;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -110,6 +111,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         this.dataProvider = new DataProvider();
 
+        this._debounceUpdateQueryModel = debounce((val) => {
+            this.updateQueryModel(val, this.datafield);
+        }, 150);
+
         /**
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
          * after getting the response, set the queryModel and query.
@@ -133,7 +138,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 }
                 // if the datafield is ALLFILEDS do not fetch the records
                 // update the query model with the values we have
-                this.updateQueryModel(val, this.datafield);
+                this._debounceUpdateQueryModel(val);
             }
         });
         this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
@@ -143,7 +148,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.startIndex = this.datasetItems.length;
             this.queryModel = undefined;
             this.query = '';
-            this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue, this.datafield);
+            this._debounceUpdateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
@@ -342,7 +347,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private updateQueryModel(data: any, datafield: string) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
-        if (isDefined(data) && !_.isObject(data) && this.searchkey && !isDefined(this._modelByKey) && datafield !== ALLFIELDS) {
+        if (isDefined(data) && !_.isObject(data) && this.datasource && !isDefined(this._modelByKey) && datafield !== ALLFIELDS) {
             // Avoid making default query if queryModel already exists.
             if (isDefined(this.queryModel) && !_.isEmpty(this.queryModel)) {
                 this._modelByValue = this.queryModel.length ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
@@ -369,8 +374,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         } else if (this.datafield === ALLFIELDS && _.isObject(data)) {
             this.queryModel = this.getTransformedData(extractDataAsArray(data));
         } else {
-            // no value is found, set the datavalue to undefined.
-            this._modelByValue = undefined;
             this.queryModel = undefined;
             this.query = '';
             return;
