@@ -1057,9 +1057,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 this.watchVariableDataSet(nv);
                 break;
-            case 'gridclass':
-                this.callDataGridMethod('option', 'cssClassNames.grid', nv);
-                break;
             case 'filtermode':
                 this.setDataGridOption('filtermode', nv);
                 break;

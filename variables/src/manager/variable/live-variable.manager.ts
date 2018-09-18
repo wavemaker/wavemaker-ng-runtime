@@ -440,7 +440,7 @@ export class LiveVariableManager extends BaseVariableManager {
         if (options.data.fileName) {
             data.fileName = options.data.fileName;
         }
-        LVService[dbOperation]({
+        return LVService[dbOperation]({
             'projectID': projectID,
             'service': variable.getPrefabName() ? '' : 'services',
             'dataModelName': variable.liveSource,

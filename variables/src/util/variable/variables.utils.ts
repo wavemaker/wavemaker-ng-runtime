@@ -212,7 +212,7 @@ const downloadFilefromResponse = (response, headerFn, success, error) => {
                     }
                     url = undefined; // release reference before dispatching
                 };
-                reader.onload = triggerOnTimeout(success);
+                reader.onload = triggerOnTimeout.bind(undefined, success);
                 reader.onerror = error;
                 reader.readAsDataURL(blob);
             } else {

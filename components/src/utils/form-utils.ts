@@ -210,12 +210,11 @@ export const getUniqObjsByDataField = (data: Array<DataSetItem>, dataField: stri
  */
 export const setItemByCompare = (datasetItems: Array<DataSetItem>, compareWithDataObj: Object, compareByField: string) => {
     // compare the fields based on fields given to compareby property.
-    datasetItems.some(function (opt) {
+    _.forEach(datasetItems, opt => {
         if (isEqualWithFields(opt.value, compareWithDataObj, compareByField)) {
             opt.selected = true;
-            return true;
+            return false;
         }
-        return false;
     });
 };
 

@@ -601,7 +601,7 @@ window.requestAnimationFrame = (function () {
         metaData.$D = moveTo === 'lower' ? bounds.lower : bounds.upper;
         metaData.bounds = bounds;
 
-        animate(settings, metaData, time, $ele, true);
+        animate(settings, metaData, time, $ele);
     }
 
     // This function adds swipe functionality on the element.

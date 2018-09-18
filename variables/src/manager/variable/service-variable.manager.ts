@@ -446,20 +446,20 @@ export class ServiceVariableManager extends BaseVariableManager {
         // If request params returns error then show an error toaster
         if (_.hasIn(requestParams, 'error.message')) {
             triggerFn(errorHandler, requestParams.error.message);
-        } else {
-            httpService.send(requestParams).then(response => {
-                if (response && isValidWebURL(response.body.result)) {
-                    window.location.href = response.body.result;
-                    triggerFn(successHandler, response);
-                } else {
-                    initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
-                    triggerFn(errorHandler, response);
-                }
-            }, (response, xhrObj) => {
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, xhrObj);
-                triggerFn(errorHandler, response);
-            });
+            return Promise.reject(requestParams.error.message);
         }
+        return httpService.send(requestParams).then(response => {
+            if (response && isValidWebURL(response.body.result)) {
+                window.location.href = response.body.result;
+                triggerFn(successHandler, response);
+            } else {
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response);
+                triggerFn(errorHandler, response);
+            }
+        }, (response, xhrObj) => {
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, xhrObj);
+            triggerFn(errorHandler, response);
+        });
     }
 
     public getInputParms(variable) {

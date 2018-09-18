@@ -264,12 +264,12 @@ export class LiveVariableUtils {
     }
 
     static getFilterOptions(variable, filterFields, options) {
-        const filterOptions = [];
+        let filterOptions = [];
         _.each(filterFields, (fieldOptions) => {
             const filterOption = LiveVariableUtils.getFilterOption(variable, fieldOptions, options);
             if (!_.isNil(filterOption)) {
                 if (_.isArray(filterOption)) {
-                    filterOptions.concat(filterOption);
+                    filterOptions = filterOptions.concat(filterOption);
                 } else {
                     filterOptions.push(filterOption);
                 }

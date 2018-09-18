@@ -6,7 +6,7 @@ import {hasCordova, noop} from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 
-declare const cordova;
+declare const cordova, _;
 
 const REGISTRY_FILE_NAME = 'registry.info';
 
@@ -28,7 +28,7 @@ export class DeviceService {
             }
         }, maxWaitTime * 1000);
         document.addEventListener('backbutton', ($event) => {
-            this._backBtnTapListeners.every(fn => {
+            _.forEach(this._backBtnTapListeners, fn => {
                 return fn($event) !== false;
             });
         });

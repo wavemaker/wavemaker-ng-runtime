@@ -30,15 +30,13 @@ export class TimerActionManager extends BaseActionManager {
     }
 
     cancel(variable) {
-        let status;
         if (isDefined(variable._promise)) {
             if (variable.repeating) {
-                status = clearInterval(variable._promise);
+                clearInterval(variable._promise);
             } else {
-                status = clearTimeout(variable._promise);
+                clearTimeout(variable._promise);
             }
             variable._promise = undefined;
         }
-        return status;
     }
 }
