@@ -38,6 +38,10 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         this._debounceSetSelectedValue = debounce((val) => {
             this.setSelectedValue();
             this.updateHighlighter(val);
+            // only for default value trigger app digest to apply the selectedItem
+            if (val) {
+                $appDigest();
+            }
         }, 200);
 
         const datasetSubscription = this.dataset$.subscribe(() => this.updateSwitchOptions());
@@ -65,15 +69,8 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
 
     // This function sets the selectedItem by either using compareby fields or selected flag on datasetItems.
     private setSelectedValue() {
-        if (this.datafield === 'All Fields' && this.compareby && this.compareby.length) {
-            setItemByCompare(this.datasetItems, this.datavalue, this.compareby);
-        }
-
         if (isDefined(this.datavalue) || isDefined(this.toBeProcessedDatavalue)) {
-            const dataVal = isDefined(this.datavalue) ? this.datavalue : this.toBeProcessedDatavalue;
-            this.selectedItem = _.find(this.datasetItems, (item) => {
-                return _.toString(item.value).toLowerCase() === _.toString(dataVal).toLowerCase();
-            });
+            this.selectedItem = _.find(this.datasetItems, {selected: true});
             return;
         }
 
@@ -99,7 +96,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         this.setSelectedValue();
 
         let left,
-            index = this.selectedItem ? this.selectedItem.index - 1 : -1;
+            index = this.selectedItem ? _.findIndex(this.datasetItems, {key: this.selectedItem.key}) : -1;
 
         if (index === undefined || index === null) {
             index = -1;
@@ -134,7 +131,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
             return;
         }
 
-        if (this.selectedItem && $index === (this.selectedItem.index - 1)) {
+        if (this.selectedItem && $index === _.findIndex(this.datasetItems, {key: this.selectedItem.key})) {
             if (this.datasetItems.length === 2) {
                 $index = $index === 1 ? 0 : 1;
             } else {
@@ -147,13 +144,6 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         // invoke on datavalue change.
         this.invokeOnChange(this.datavalue, $event || {}, true);
         $appDigest();
-    }
-
-    reset() {
-        if (this.datasetItems.length > 0) {
-            this.datavalue = this.datasetItems[0].value;
-            this.selectedItem = this.datasetItems[0];
-        }
     }
 
     onPropertyChange(key, nv, ov?) {
