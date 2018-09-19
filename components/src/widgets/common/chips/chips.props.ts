@@ -6,6 +6,7 @@ export const chipsProps = new Map(
         ['autofocus', PROP_BOOLEAN],
         ['chipclass', PROP_STRING],
         ['class', PROP_STRING],
+        ['compareby', PROP_STRING],
         ['datafield', PROP_STRING],
         ['dataoptions', PROP_ANY],
         ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_ANY}],

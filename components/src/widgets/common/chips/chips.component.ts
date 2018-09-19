@@ -122,7 +122,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.searchkey = this.searchkey;
         this.searchComponent.limit = this.limit;
 
-        this.getTransformedData = this.searchComponent.getTransformedData;
+        this.getTransformedData = (val) => {
+            return this.searchComponent.getTransformedData([val], this.nextItemIndex);
+        };
     }
 
     ngAfterViewInit() {
@@ -186,7 +188,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 }
                 dataObj = dataObj || val;
 
-                const transformedData = this.getTransformedData([dataObj], this.nextItemIndex);
+                const transformedData = this.getTransformedData(dataObj);
                 this.chipsList.push(transformedData[0]);
             }
         });
@@ -199,7 +201,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                     return;
                 }
                 searchQuery.forEach(val => {
-                    const transformedData = this.getTransformedData([val], this.nextItemIndex);
+                    const transformedData = this.getTransformedData(val);
                     this.chipsList.push(transformedData[0]);
                 });
             } else {
@@ -219,7 +221,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                                     }
                                     return;
                                 }
-                                const transformedData = this.getTransformedData([val], this.nextItemIndex);
+                                const transformedData = this.getTransformedData(val);
                                 this.chipsList.push(transformedData[0]);
                             }
                         });
@@ -304,7 +306,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
             const data = dataObj || _.trim(this.searchComponent.query);
             if (data) {
-                chipObj = this.getTransformedData([data], this.nextItemIndex)[0];
+                const transformedData = this.getTransformedData(data);
+                chipObj = transformedData[0];
             }
         }
 

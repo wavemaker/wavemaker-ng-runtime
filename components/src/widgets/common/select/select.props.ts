@@ -4,6 +4,7 @@ export const selectProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
         ['class', {value: '', ...PROP_STRING}],
+        ['compareby', PROP_STRING],
         ['datafield', PROP_STRING],
         ['dataset', PROP_ANY],
         ['datavalue', PROP_STRING],

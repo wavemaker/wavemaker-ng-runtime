@@ -2,10 +2,11 @@ import { Injector } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, debounce, isDefined, toBoolean } from '@wm/core';
+import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean } from '@wm/core';
 
-import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, setItemByCompare, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
+import { ALLFIELDS } from '../../../utils/data-utils';
 
 declare const _;
 
@@ -39,6 +40,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public toBeProcessedDatavalue: any;
     private readonly _debouncedInitDatasetItems: Function;
     protected allowempty: boolean = true;
+    public compareby: any;
 
     protected get modelByKey() {
         return this._modelByKey;
@@ -158,10 +160,17 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             return;
         }
 
+        const filterField = this.datafield === ALLFIELDS ? 'dataObject' : 'key';
+
         if (_.isArray(values)) {
             this._modelByKey = [];
             values.forEach(val => {
                 const itemByValue = _.find(this.datasetItems, item => {
+                    if (filterField === 'dataObject') {
+                        if (this.compareby && this.compareby.length) {
+                            return isEqualWithFields(item[filterField], val, this.compareby);
+                        }
+                    }
                     return (_.isObject(item.value) ? _.isEqual(item.value, val) : (_.toString(item.value)).toLowerCase() === (_.toString(val)).toLowerCase());
                 });
                 if (itemByValue) {
@@ -172,6 +181,11 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         } else {
             this._modelByKey = undefined;
             const itemByValue = _.find(this.datasetItems, item => {
+                if (filterField === 'dataObject') {
+                    if (this.compareby && this.compareby.length) {
+                        return isEqualWithFields(item[filterField], values, this.compareby);
+                    }
+                }
                 return (_.isObject(item.value)  ? _.isEqual(item.value, values) : (_.toString(item.value)).toLowerCase() === (_.toString(values)).toLowerCase());
             });
             if (itemByValue) {

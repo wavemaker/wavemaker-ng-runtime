@@ -28,9 +28,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     options = [];
     selectedItem: DataSetItem;
     iconclass;
-    private oldVal;
     private btnwidth;
-    private compareby;
     private disabled: boolean;
     private _debounceSetSelectedValue: Function;
 

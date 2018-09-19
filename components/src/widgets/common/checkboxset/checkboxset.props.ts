@@ -4,6 +4,7 @@ export const checkboxsetProps = new Map(
     [
         ['class', PROP_STRING],
         ['collapsible', PROP_BOOLEAN],
+        ['compareby', PROP_STRING],
         ['datafield', PROP_STRING],
         ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_ANY}],
         ['datavalue', PROP_STRING],
