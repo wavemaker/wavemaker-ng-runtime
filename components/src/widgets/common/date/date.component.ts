@@ -182,7 +182,9 @@ export class DateComponent extends BaseDateTimeComponent {
     private onDisplayKeydown(event) {
         const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter' || action === 'arrowdown') {
-            this.toggleDpDropdown(event);
+             setTimeout( () => {
+                this.toggleDpDropdown(event);
+            });
         }
     }
 

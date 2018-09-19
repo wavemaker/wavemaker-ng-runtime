@@ -298,6 +298,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.loadMonths();
                 this.setActiveMonthFocus(this.activeDate);
             } else if (action === 'enter') {
+                if($(document.activeElement).hasClass("disabled")) {
+                    return;
+                }
                 $(document.activeElement).click();
                 this.elementScope.hideDatepickerDropdown();
             }
@@ -344,6 +347,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.loadYears();
                 this.setActiveYearFocus(this.activeDate);
             } else if (action === 'control.arrowdown' || action === 'enter') {
+                if($(document.activeElement).parent().hasClass("disabled")) {
+                    return;
+                }
                 $(document.activeElement).click();
                 this.loadDays();
                 this.setActiveDateFocus(this.activeDate);
@@ -405,6 +411,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 newdate = moment(this.activeDate).add(+1, 'year').toDate();
                 this.setActiveYearFocus(newdate);
             }  else if (action === 'control.arrowdown' || action === 'enter') {
+                if($(document.activeElement).parent().hasClass("disabled")) {
+                    return;
+                }
                 $(document.activeElement).click();
                 this.loadMonths();
                 this.setActiveMonthFocus(this.activeDate);
@@ -538,9 +547,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {
-            this._dateOptions.minDate = (nv === CURRENT_DATE) ?  new Date() : getDateObj(nv);
+            this._dateOptions.minDate = (nv === CURRENT_DATE) ?  this.mindate = new Date() : getDateObj(nv);
         } else if (key === 'maxdate') {
-            this._dateOptions.maxDate = (nv === CURRENT_DATE) ? new Date() : getDateObj(nv);
+           this._dateOptions.maxDate = (nv === CURRENT_DATE) ?  this.maxdate = new Date() : getDateObj(nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
