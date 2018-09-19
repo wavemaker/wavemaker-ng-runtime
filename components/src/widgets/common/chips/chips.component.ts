@@ -642,6 +642,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (key === 'displayexpression') {
             this.searchComponent.binddisplaylabel = this.binddisplayexpression ? this.binddisplayexpression : this.displayexpression;
         }
+        if (key === 'displayimagesrc') {
+            this.searchComponent.binddisplayimagesrc = this.binddisplayimagesrc ? this.binddisplayimagesrc : this.displayimagesrc;
+        }
         if (key === 'enablereorder' && nv) {
             this.configureDnD();
         }
