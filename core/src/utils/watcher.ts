@@ -8,7 +8,7 @@ const registry = new Map<string, any>();
 
 const watchIdGenerator = new IDGenerator('watch-id-');
 
-export const FIRST_TIME_WATCH = Object.create(null);
+export const FIRST_TIME_WATCH = {};
 
 Object.freeze(FIRST_TIME_WATCH);
 

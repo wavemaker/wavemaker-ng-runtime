@@ -133,7 +133,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     new: Function;
     cancel: Function;
     delete: Function;
-    findOperationType: Function;
     save: Function;
     saveAndNew: Function;
     saveAndView: Function;
@@ -240,6 +239,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }, 250);
         this._isGridLayoutPresent = this.$element.find('.panel-body [wmlayoutgrid]').length > 0;
     }
+
+    findOperationType() {}
 
     // Expose the events on context so that they can be accessed by form actions
     private addEventsToContext(context) {
