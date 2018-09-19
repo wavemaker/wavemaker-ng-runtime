@@ -5,7 +5,8 @@ export const registerProps = () => {
         'wm-nav',
         new Map(
             [
-                ['autoclose', Object.assign({value: 'always'}, PROP_STRING)],
+                ['autoclose', {value: 'always', ...PROP_STRING}],
+                ['autoopen', {value: 'never', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['dataset', PROP_ANY],
                 ['itemlabel', PROP_STRING],
