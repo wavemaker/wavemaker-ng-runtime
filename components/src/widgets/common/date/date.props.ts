@@ -18,7 +18,7 @@ export const dateProps = new Map(
         ['placeholder', {value: 'Select Date', ...PROP_STRING}],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
-        ['shortcutkey', PROP_STRING], // TODO not addressed
+        ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showdropdownon', {value: 'default', ...PROP_STRING}],
         ['showbuttonbar', {value: true, ...PROP_BOOLEAN}], // TODO not addressed

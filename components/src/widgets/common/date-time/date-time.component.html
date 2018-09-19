@@ -18,6 +18,7 @@
                [disabled]="disabled || readonly || isCurrentDate"
                [required]="required"
                [attr.placeholder]="placeholder"
+               [attr.accesskey]="shortcutkey"
                (keydown)="onDisplayKeydown($event)">
         <div style="width: 0;display: inline-block;" aria-label="datepicker dropdownmenu" aria-controls="date">
             <input class="model-holder"
