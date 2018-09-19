@@ -1563,20 +1563,26 @@ $.widget('wm.datatable', {
                         }
                     });
 
-                    if (isNewRow && advancedEdit && _.isEmpty(rowData)) {
-                        self.removeNewRow($row);
+                    $requiredEls = $editableElements.find('.ng-invalid');
+                    //If required fields are present and value is not filled, return here
+                    if ($requiredEls.length > 0) {
+                        $requiredEls.each(function (index) {
+                            var $invalidTd = $(this).closest('td.app-datagrid-cell');
+                            if (index === 0) {
+                                $invalidTd.find('[focus-target]').focus();
+                            }
+                            self.options.setTouched($invalidTd.find('[formcontrolname]').attr('formcontrolname'));
+                        });
                         if ($.isFunction(options.success)) {
-                            options.success(false, undefined, true);
+                            options.success(false, true);
                         }
                         return;
                     }
 
-                    $requiredEls = $editableElements.find('.ng-invalid');
-                    //If required fields are present and value is not filled, return here
-                    if ($requiredEls.length > 0) {
-                        $requiredEls.addClass('ng-touched');
+                    if (isNewRow && advancedEdit && _.isEmpty(rowData)) {
+                        self.removeNewRow($row);
                         if ($.isFunction(options.success)) {
-                            options.success(false, true);
+                            options.success(false, undefined, true);
                         }
                         return;
                     }
@@ -1853,6 +1859,8 @@ $.widget('wm.datatable', {
         var rowData = {},
             self = this;
 
+        this.options.clearForm(true);
+
         self.setDefaultRowData(rowData);
 
         //Set the default values for widgets in the row
@@ -1861,8 +1869,6 @@ $.widget('wm.datatable', {
                 fieldName = $input.attr('data-field-name') + '_new';
             self.options.setFieldValue(fieldName, rowData[fieldName] || '')
         });
-        //Remove ng touched classes
-        $row.find('.ng-touched').removeClass('ng-touched');
         self.options.safeApply();
         self.setFocusOnElement(undefined, $row, true);
     },

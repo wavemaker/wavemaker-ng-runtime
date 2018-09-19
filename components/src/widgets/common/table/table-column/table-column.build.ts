@@ -102,11 +102,17 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
     }
     const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
     const eventsTmpl = getEventsTmpl(attrs);
-    const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-col-identifier="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
+    const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
 
-    return `<ng-template ${tmplRef} let-row="row">
-                 ${widgetTmpl}
+    return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage">
+                <div data-col-identifier="${fieldName}" >
+                     ${widgetTmpl}
+                     <span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error"
+                        *ngIf="getValidationMessage() && getControl() && getControl().invalid && getControl().touched">
+                     </span>
+                     <span class="sr-only" *ngIf="getValidationMessage()">{{getValidationMessage()}}</span>
+                 </div>
             </ng-template>`;
 };
 

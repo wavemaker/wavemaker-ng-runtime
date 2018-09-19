@@ -400,8 +400,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.inlineNewCompliedTl = {};
                 // For all the columns inside the table, generate the inline widget
                 this.inlineWidgetNewTmpl.forEach(tmpl => {
-                    const rootNode = this.inlineEditNewViewRef.createEmbeddedView(tmpl, {row}).rootNodes[0];
-                    this.inlineNewCompliedTl[rootNode.getAttribute('data-col-identifier')] = rootNode;
+                    let fieldName;
+                    const context = {
+                        row,
+                        getControl: () => {
+                            return this.ngform.controls[fieldName + '_new'] || {};
+                        },
+                        getValidationMessage: () => {
+                            return this.columns[fieldName] && this.columns[fieldName].validationmessage;
+                        }
+                    };
+                    const rootNode = this.inlineEditNewViewRef.createEmbeddedView(tmpl, context).rootNodes[0];
+                    fieldName = rootNode.getAttribute('data-col-identifier');
+                    this.inlineNewCompliedTl[fieldName] = rootNode;
                 });
                 this.clearForm(true);
                 return;
@@ -412,8 +423,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.clearForm();
             // For all the columns inside the table, generate the inline widget
             this.inlineWidgetTmpl.forEach(tmpl => {
-                const rootNode = this.inlineEditViewRef.createEmbeddedView(tmpl, {row}).rootNodes[0];
-                this.inlineCompliedTl[rootNode.getAttribute('data-col-identifier')] = rootNode;
+                let fieldName;
+                const context = {
+                    row,
+                    getControl: () => {
+                        return this.ngform.controls[fieldName] || {};
+                    },
+                    getValidationMessage: () => {
+                        return this.columns[fieldName] && this.columns[fieldName].validationmessage;
+                    }
+                 };
+                const rootNode = this.inlineEditViewRef.createEmbeddedView(tmpl, context).rootNodes[0];
+                fieldName = rootNode.getAttribute('data-col-identifier');
+                this.inlineCompliedTl[fieldName] = rootNode;
             });
         },
         getInlineEditWidget: (fieldName, value, alwaysNewRow) => {
@@ -483,7 +505,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         safeApply: () => {
             $appDigest();
-        }
+        },
+        setTouched: (name) => {
+            const ctrl = this.ngform.controls[name];
+            if (ctrl) {
+                ctrl.markAsTouched();
+            }
+        },
+        clearForm: this.clearForm.bind(this)
     };
 
     private _gridData;

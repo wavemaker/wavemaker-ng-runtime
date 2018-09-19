@@ -64,6 +64,7 @@ export const registerProps = () => {
                 ['textcolor', PROP_STRING],
                 ['type', {value: 'string', ...PROP_STRING}],
                 ['uncheckedvalue', PROP_STRING],
+                ['validationmessage', PROP_STRING],
                 ['widget-type', PROP_STRING],
                 ['width', PROP_STRING],
             ]

@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { Subject } from 'rxjs';
-import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule } from 'ngx-bootstrap';
+import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule, TooltipModule } from 'ngx-bootstrap';
 
 import { App, extendProto, noop, UserDefinedExecutionContext } from '@wm/core';
 import { WmComponentsModule } from '@wm/components';
@@ -174,7 +174,8 @@ export class ViewRenderer {
                 CommonModule,
                 CarouselModule.forRoot(),
                 BsDropdownModule.forRoot(),
-                PopoverModule.forRoot()
+                PopoverModule.forRoot(),
+                TooltipModule.forRoot()
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
         })

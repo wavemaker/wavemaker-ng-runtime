@@ -7,6 +7,7 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
+import { TooltipModule } from 'ngx-bootstrap';
 
 import { $parseExpr, App, AbstractDialogService, AbstractToasterService, AbstractI18nService, AbstractHttpService, AbstractSpinnerService, AbstractNavigationService, AppDefaults, _WM_APP_PROJECT } from '@wm/core';
 import { CoreModule } from '@wm/core';
@@ -72,6 +73,7 @@ export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.wi
     cookieName: 'wm_xsrf_token',
     headerName: _WM_APP_PROPERTIES.xsrf_header_name
 });
+export const tooltipModule: ModuleWithProviders = TooltipModule.forRoot();
 
 export function InitializeApp(I18nService) {
     return () => {
@@ -110,6 +112,7 @@ export function setAngularLocale(I18nService) {
         BrowserAnimationsModule,
         routerModule,
         toasterModule,
+        tooltipModule,
         httpClientXsrfModule,
         WmMobileComponentsModule,
         MobileAppModule
