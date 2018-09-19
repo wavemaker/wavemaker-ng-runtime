@@ -688,6 +688,9 @@ $.widget('wm.datatable', {
         this._setStatus = _.debounce(function () {
             this.__setStatus();
         }, 100);
+        this._debounceOnEnter = _.debounce(function ($target, $row, quickEdit, event) {
+            this._onEnter($target, $row, quickEdit, event);
+        }, 150);
         this._prepareHeaderData();
         this._prepareData();
         this._render(true);
@@ -1903,10 +1906,6 @@ $.widget('wm.datatable', {
           event.stopPropagation();
         }
       },
-    _debounceOnEnter: function($target, $row, quickEdit, event) {
-        var _this = this;
-      return _.debounce(_this._onEnter.bind(this, $target, $row, quickEdit, event), 150);
-    },
     // Handles keydown event on row items.
     onKeyDown: function (event) {
         var $target = $(event.target),
@@ -1938,7 +1937,7 @@ $.widget('wm.datatable', {
             return;
         }
         if (event.which === 13) { //Enter key
-          this._debounceOnEnter($target, $row, quickEdit, event)();
+          this._debounceOnEnter($target, $row, quickEdit, event);
           return;
         }
         if (event.which === 38) { // up-arrow action
