@@ -490,7 +490,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             });
     }
 
-    public getTransformedData(data: any, itemIndex?: number): DataSetItem[] {
+    public getTransformedData(data: any, itemIndex?: number, iscustom?: boolean): DataSetItem[] {
         if (isDefined(itemIndex)) {
             itemIndex++;
         }
@@ -501,8 +501,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.datafield,
             {
                 displayField: this.displayfield || this.displaylabel,
-                displayExpr: this.displayexpression,
-                bindDisplayExpr: this.binddisplaylabel,
+                displayExpr: iscustom ? '' : this.displayexpression,
+                bindDisplayExpr: iscustom ? '' : this.binddisplaylabel,
                 bindDisplayImgSrc: this.binddisplayimagesrc,
                 displayImgSrc: this.displayimagesrc
             },
