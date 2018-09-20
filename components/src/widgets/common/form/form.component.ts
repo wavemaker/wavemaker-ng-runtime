@@ -108,9 +108,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     formWidgets = {};
     filterWidgets = {};
     buttonArray = [];
-    dataoutput;
+    dataoutput = {};
     datasource;
-    formdata;
+    formdata = {};
     isSelected;
     prevDataValues;
     prevDataObject;

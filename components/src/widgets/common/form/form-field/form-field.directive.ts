@@ -83,8 +83,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     private _debounceSetUpValidators;
     private _initPropsRes;
-    private _name;
-    private _key;
+    private _fieldName;
 
     constructor(
         inj: Injector,
@@ -117,8 +116,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
-        this._name = name;
-        this._key = key;
+        this._fieldName = key || name;
         this.isRange = isRange;
         this.excludeProps = new Set(['type', 'name']);
         this.widgettype = _widgetType;
@@ -177,7 +175,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     getCaption() {
-        return (this.value === undefined || this.value === null) ? '' : this.value;
+        return (this.value === undefined || this.value === null) ? (_.get(this.form.dataoutput, this._fieldName) || '') : this.value;
     }
 
     // Method to setup validators for reactive form control
@@ -273,7 +271,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 break;
             case 'primary-key':
                 if (nv) {
-                    this.form.setPrimaryKey(this._key);
+                    this.form.setPrimaryKey(this._fieldName);
                 }
                 break;
             case 'display-name':
@@ -333,12 +331,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     // Get the reactive form control
     get _control() {
-        return this.ngform && this.ngform.controls[this._key || this._name];
+        return this.ngform && this.ngform.controls[this._fieldName];
     }
 
     // Get the reactive max form control
     get _maxControl() {
-        return this.ngform && this.ngform.controls[(this._key || this._name) + '_max'];
+        return this.ngform && this.ngform.controls[this._fieldName + '_max'];
     }
 
     // Create the reactive form control
@@ -382,7 +380,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     ngOnInit() {
-        const fieldName = this._key || this._name;
+        const fieldName = this._fieldName;
 
         this.ngform = this.form.ngform;
         this.ngform.addControl(fieldName, this.createControl());
@@ -409,7 +407,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
 
         this.registerReadyStateListener(() => {
-            this.key = this._key || this.target || this.binding || this._name;
+            this.key = this._fieldName || this.target || this.binding;
             this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
 
             // For upload widget, generate the permitted field
