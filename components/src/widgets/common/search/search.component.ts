@@ -5,7 +5,7 @@ import {mergeMap, debounceTime } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
-import { addClass, DataSource, debounce, isDefined, isMobile, toBoolean } from '@wm/core';
+import { $appDigest, addClass, DataSource, debounce, isDefined, isMobile, toBoolean } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, transformData } from '../../../utils/form-utils';
@@ -113,7 +113,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         this._debounceUpdateQueryModel = debounce((val) => {
             this.updateQueryModel(val, this.datafield);
-        }, 150);
+        }, 300);
 
         /**
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
@@ -342,6 +342,22 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
+    private debounceDefaultQuery = debounce((data) => {
+        this.getDataSource(data, true).then((response) => {
+            if (response.length) {
+                this.queryModel = response;
+                this._lastQuery = this.query = this.queryModel[0].label || '';
+                this._modelByValue = this.queryModel[0].value;
+                this._modelByKey = this.queryModel[0].key;
+            } else {
+                this._modelByValue = undefined;
+                this.queryModel = undefined;
+                this.query = '';
+            }
+            $appDigest();
+        });
+    }, 300);
+
     private updateQueryModel(data: any, datafield: string) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
@@ -352,15 +368,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.toBeProcessedDatavalue = undefined;
                 return;
             }
-
-            this.getDataSource(data, true).then((response) => {
-                if (response.length) {
-                    this.queryModel = response;
-                    this._lastQuery = this.query = this.queryModel[0].label || '';
-                    this._modelByValue = this.queryModel[0].value;
-                    this._modelByKey = this.queryModel[0].key;
-                }
-            });
+            this.debounceDefaultQuery(data);
             return;
         }
 
