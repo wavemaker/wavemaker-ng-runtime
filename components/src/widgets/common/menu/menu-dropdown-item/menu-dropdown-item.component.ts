@@ -156,7 +156,8 @@ export class MenuDropdownItemComponent implements OnInit {
             }
 
             this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
-        } else if (menuLink) {
+        }
+        if (menuLink) {
             if (menuLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
                 const queryParams = getUrlParams(menuLink);
                 menuLink = getRouteNameFromLink(menuLink);
