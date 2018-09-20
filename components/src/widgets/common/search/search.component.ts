@@ -85,7 +85,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     set datasource(nv) {
         this._datasource = nv;
         const data = this.datavalue || this.toBeProcessedDatavalue;
-        this.updateByDataSource(data);
+        this._debounceUpdateQueryModel(data);
     }
 
     constructor(
@@ -150,8 +150,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         const datasetSubscription = this.dataset$.subscribe(() => {
             // set the next item index.
             this.startIndex = this.datasetItems.length;
-            this.queryModel = undefined;
-            this.query = '';
             this.updateByDataset(this.datavalue || this.toBeProcessedDatavalue);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
