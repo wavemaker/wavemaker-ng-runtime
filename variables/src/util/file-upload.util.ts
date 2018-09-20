@@ -91,6 +91,17 @@ class AjaxFileTransferObject extends FileTransferObject {
 /* upload file using fileTransfer */
 function uploadWithFileTransfer(file, url, options) {}
 
+function appendFileToFormData(file, fd, options) {
+    /* append file to form data */
+    if (_.isArray(file)) {
+        _.forEach(file, function (fileObject) {
+            fd.append(options.paramName, fileObject.content || fileObject, fileObject.name);
+        });
+    } else if (_.isObject(file)) {
+        fd.append(options.paramName, file.content || file, file.name);
+    }
+}
+
 /* upload file with ajax calling */
 function uploadWithAjax(file, fd, url, options) {
     // The foreeach method on form data doesn't exist in IE. Hence we check if it exists
@@ -106,6 +117,7 @@ function uploadWithAjax(file, fd, url, options) {
                     fd.delete(key);
                 }
             }
+            appendFileToFormData(file, fd, options);
         });
     } else {
         _.forEach(fd, (value, key) => {
@@ -118,15 +130,8 @@ function uploadWithAjax(file, fd, url, options) {
                     fd.delete(key);
                 }
             }
+            appendFileToFormData(file, fd, options);
         });
-    }
-    /* append file to form data */
-    if (_.isArray(file)) {
-        _.forEach(file, function (fileObject) {
-            fd.append(options.paramName, fileObject.content || fileObject, fileObject.name);
-        });
-    } else if (_.isObject(file)) {
-        fd.append(options.paramName, file.content || file, file.name);
     }
 
     const promise = new NotifyPromise((resolve, reject, notify) => {
