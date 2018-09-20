@@ -727,8 +727,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     setDisabledOnField(operation, colDef, widgetType) {
         if (operation !== 'new' && colDef['primary-key'] && colDef.generator === 'assigned' && !colDef['related-entity-name'] && !colDef.period) {
             colDef[widgetType].disabled = true;
-        } else {
-            colDef[widgetType].disabled = colDef.disabled;
         }
     }
 

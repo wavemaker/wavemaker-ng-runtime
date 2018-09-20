@@ -17,7 +17,7 @@ registerProps();
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
-let inlineWidgetProps = ['datafield', 'displayfield', 'disabled', 'placeholder', 'searchkey', 'displaylabel',
+let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataset'];
 const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required'];
 inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
@@ -72,7 +72,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     caption;
     dataset;
     defaultvalue;
-    disabled;
     editWidgetType;
     filterwidget;
     field;

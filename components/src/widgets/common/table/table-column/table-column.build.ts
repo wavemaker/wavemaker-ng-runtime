@@ -78,6 +78,19 @@ const getEventsTmpl = attrs => {
     return tmpl;
 };
 
+// Generate inline edit properties template. Properties requiring row instance are generated here.
+const getInlineEditRowPropsTmpl = attrs => {
+    const propAttrs = new Map();
+    const props = ['disabled', 'disabled.bind'];
+    props.forEach(prop => {
+        if (attrs.get(prop)) {
+            propAttrs.set(prop, attrs.get(prop));
+            attrs.delete(prop);
+        }
+    });
+    return getAttrMarkup(propAttrs);
+};
+
 // get the inline widget template
 const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
     const options: any = {};
@@ -102,7 +115,8 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
     }
     const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
     const eventsTmpl = getEventsTmpl(attrs);
-    const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl}`;
+    const rowPropsTl = getInlineEditRowPropsTmpl(attrs);
+    const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl} ${rowPropsTl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
 
     return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage">
