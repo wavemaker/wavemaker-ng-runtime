@@ -1,4 +1,4 @@
-<a href="javascript:void(0);" [title]="item.label" [target]="menuRef.linktarget" [wmNavigationControl]="item.link" [disableMenuContext]="menuRef.disableMenuContext">
+<a href="javascript:void(0);" [title]="item.label" [target]="menuRef.linktarget" [wmNavigationControl]="item.link" [disableMenuContext]="menuRef.disableMenuContext || !!item.action">
     <span *ngIf="item.children.length" class="pull-right fa caret {{menualign}}"></span>
     <i class="app-icon {{item.icon}}"></i>
     {{item.label}}
