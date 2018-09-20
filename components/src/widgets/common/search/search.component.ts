@@ -75,6 +75,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private position: string;
     private elIndex: number;
     private _debounceUpdateQueryModel: any;
+    private listenQuery: boolean;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -83,7 +84,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     set datasource(nv) {
         this._datasource = nv;
-        this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue, this.datafield);
+        const data = this.datavalue || this.toBeProcessedDatavalue;
+        this.updateByDataSource(data);
     }
 
     constructor(
@@ -103,7 +105,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.typeaheadDataSource = Observable
             .create((observer: any) => {
             // Runs on every search
-            observer.next(this.query);
+            if (this.listenQuery) {
+                observer.next(this.query);
+            }
         }).pipe(debounceTime(500))
             .pipe(
             mergeMap((token: string) => this.getDataSourceAsObservable(token))
@@ -112,7 +116,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataProvider = new DataProvider();
 
         this._debounceUpdateQueryModel = debounce((val) => {
-            this.updateQueryModel(val, this.datafield);
+            this.updateByDatavalue(val);
         }, 300);
 
         /**
@@ -148,7 +152,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.startIndex = this.datasetItems.length;
             this.queryModel = undefined;
             this.query = '';
-            this._debounceUpdateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
+            this.updateByDataset(this.datavalue || this.toBeProcessedDatavalue);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
@@ -233,6 +237,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private onFocusOut() {
         this._unsubscribeDv = false;
         this._loadingItems = false;
+        this._isOpen = false;
+        this.listenQuery = false;
     }
 
     private onInputChange() {
@@ -358,10 +364,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         });
     }, 300);
 
-    private updateQueryModel(data: any, datafield: string) {
+    private updateByDatavalue(data) {
+        this.updateByDataset(data);
+        this.updateByDataSource(data);
+    }
+
+    private updateByDataSource(data) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
-        if (isDefined(data) && !_.isObject(data) && this.datasource && !isDefined(this._modelByKey) && datafield !== ALLFIELDS) {
+        if (isDefined(data) && !_.isObject(data) && this.datasource && !isDefined(this._modelByKey) && this.datafield !== ALLFIELDS) {
             // Avoid making default query if queryModel already exists.
             if (isDefined(this.queryModel) && !_.isEmpty(this.queryModel)) {
                 this._modelByValue = this.queryModel.length ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
@@ -369,10 +380,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 return;
             }
             this.debounceDefaultQuery(data);
-            return;
         }
+    }
 
-        const selectedItem = _.find(this.datasetItems, {selected: true});
+    private updateByDataset(data: any) {
+        const selectedItem = _.find(this.datasetItems, (item) => {
+            return  (_.isObject(item.value) ? _.isEqual(item.value, data) : (_.toString(item.value)).toLowerCase() === (_.toString(data)).toLowerCase());
+        });
 
         // set the default only when it is available in dataset.
         if (selectedItem) {
