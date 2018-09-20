@@ -235,7 +235,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private onFocusOut() {
         this._unsubscribeDv = false;
         this._loadingItems = false;
-        this._isOpen = false;
         this.listenQuery = false;
     }
 
