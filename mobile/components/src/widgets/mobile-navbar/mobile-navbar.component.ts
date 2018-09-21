@@ -8,7 +8,7 @@ import { registerProps } from './mobile-navbar.props';
 
 registerProps();
 
-const DEFAULT_CLS = 'app-header app-mobile-navbar';
+const DEFAULT_CLS = 'app-mobile-header app-mobile-navbar';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass: DEFAULT_CLS};
 
 @Component({
