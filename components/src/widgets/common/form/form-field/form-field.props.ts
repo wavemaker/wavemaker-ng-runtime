@@ -1,6 +1,6 @@
 import { FormWidgetType } from '@wm/core';
 
-import { PROP_BOOLEAN, PROP_STRING, register } from '../../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 import { searchProps } from '../../search/search.props';
 import { checkboxProps } from '../../checkbox/checkbox.props';
 import { colorPickerProps } from '../../color-picker/color-picker.props';
@@ -72,6 +72,7 @@ const formFieldMap = new Map(
         ['is-related', PROP_BOOLEAN],
         ['isformfield', {value: true}],
         ['key', PROP_STRING],
+        ['limit', PROP_NUMBER],
         ['lookup-type', PROP_STRING],
         ['lookup-field', PROP_STRING],
         ['name', PROP_STRING],
