@@ -471,6 +471,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     /**
+     * This function checks whether the given date is valid or not
+     * @returns boolean value, true if date is valid else returns false
+     */
+    private isValidDate(date) {
+        return date instanceof Date && !isNaN(date.getTime());
+    }
+    /**
      * This function sets the events to given element
      * @param $el - element on which the event is added
      */
@@ -478,33 +485,34 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $el.on('keydown', evt => {
             const $target = $(evt.target);
             const $parent = $target.parent();
+            const elementScope = this.elementScope;
 
             const action = this.keyEventPluginInstance.getEventFullKey(evt);
 
             let stopPropogation, preventDefault;
 
             if (action === 'escape') {
-                this.elementScope.hideTimepickerDropdown();
+                elementScope.hideTimepickerDropdown();
             }
 
             if ($target.hasClass('bs-timepicker-field')) {
                 if ($parent.is(':first-child')) {
                     if (action === 'shift.tab' || action === 'enter' || action === 'escape') {
-                        this.elementScope.setIsTimeOpen(false);
+                        elementScope.setIsTimeOpen(false);
                         this.focus();
                         stopPropogation = true;
                         preventDefault = true;
                     }
                 } else if ($parent.is(':last-child')) {
                     if (action === 'tab' || action === 'escape') {
-                        this.elementScope.setIsTimeOpen(false);
+                        elementScope.setIsTimeOpen(false);
                         this.focus();
                         stopPropogation = true;
                         preventDefault = true;
                     }
                 } else {
                     if (action === 'enter' || action === 'escape') {
-                        this.elementScope.setIsTimeOpen(false);
+                        elementScope.setIsTimeOpen(false);
                         this.focus();
                         stopPropogation = true;
                         preventDefault = true;
@@ -516,10 +524,28 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 if (preventDefault) {
                     evt.preventDefault();
                 }
+                if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
+                    if (action === "arrowdown") {
+                        elementScope.bsTimeValue = elementScope.maxTime;
+                    } else if (action === "arrowup") {
+                        elementScope.bsTimeValue = elementScope.minTime;
+                    }
+                }
             } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {
-                    this.elementScope.setIsTimeOpen(false);
+                    elementScope.setIsTimeOpen(false);
                     this.focus();
+                }
+            }
+        });
+        $el.find('a').on('click', evt => {
+            const elementScope = this.elementScope;
+            const $target = $(evt.target);
+            if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
+                if ($target.find('span').hasClass('bs-chevron-down')) {
+                    elementScope.bsTimeValue = elementScope.maxTime;
+                } else if ($target.find('span').hasClass('bs-chevron-up')) {
+                    elementScope.bsTimeValue = elementScope.minTime;
                 }
             }
         });
