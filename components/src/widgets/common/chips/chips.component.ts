@@ -636,6 +636,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (key === 'dataoptions') {
             (this.searchComponent as any).dataoptions = nv;
         }
+        if (key === 'datafield') {
+            this.searchComponent.datafield = this.datafield;
+        }
         if (key === 'displayfield') {
             this.searchComponent.displaylabel = this.displayfield;
         }
