@@ -76,6 +76,7 @@ export class MenuDropdownItemComponent implements OnInit {
         return KEY_MOVEMENTS;
     }
 
+    @HostListener('keydown.tab', ['$event', '"TAB"'])
     @HostListener('keydown.escape', ['$event', '"ESC"'])
     @HostListener('keydown.enter', ['$event', '"ENTER"'])
     @HostListener('keydown.arrowup', ['$event', '"UP-ARROW"'])
@@ -92,20 +93,28 @@ export class MenuDropdownItemComponent implements OnInit {
             // preventing from page scroll when up/down arrow is pressed, in case of menu is opened.
             $event.preventDefault();
         }
-        if ((eventAction === KEY_MOVEMENTS.ON_ENTER && !this.item.link) || eventAction === KEY_MOVEMENTS.MOVE_RIGHT) {
+
+        if ((eventAction === KEY_MOVEMENTS.ON_TAB && $parentUl.children().last()[0] === this.nativeElement) || eventAction === KEY_MOVEMENTS.ON_ESCAPE) {
+            /*closing all the children elements when
+            * 1. Tab is clicked on the last $element
+            * 2. When Escape key is clicked*/
+            $event.preventDefault();
+            this.menuRef.bsDropdown.hide();
+        } else if ((eventAction === KEY_MOVEMENTS.ON_ENTER && !this.item.link) || eventAction === KEY_MOVEMENTS.MOVE_RIGHT) {
             // when there is no link for the menu, on enter open the inner child elements and focus the first $element
             $event.stopPropagation();
-            if (this.item.children.length > 1) {
+            if (this.item.children.length) {
                 $li.toggleClass('open');
                 $li.find('li:first > a').focus();
             } else {
                 $li.find('> a').focus();
             }
-        } else if (eventAction === KEY_MOVEMENTS.MOVE_LEFT) {
+        } else if (eventAction === KEY_MOVEMENTS.MOVE_LEFT || (eventAction === KEY_MOVEMENTS.ON_TAB && $ul.children().last()[0] === this.nativeElement)) {
             if ($parentUl[0] !== $ul[0]) {
                 const $parentItem = $ul.parent();
                 $parentItem.toggleClass('open').find('li.open').removeClass('open');
                 $parentItem.find('> a').focus();
+                $event.preventDefault();
                 $event.stopPropagation();
             }
         } else if (eventAction === KEY_MOVEMENTS.MOVE_UP) {
@@ -120,14 +129,10 @@ export class MenuDropdownItemComponent implements OnInit {
             } else {
                 $li.next().find('> a').focus();
             }
-        } else if ((eventAction === KEY_MOVEMENTS.ON_TAB && $parentUl.children().last()[0] === this.nativeElement) || eventAction === KEY_MOVEMENTS.ON_ESCAPE) {
-            /*closing all the children elements when
-            * 1. Tab is clicked on the last $element
-            * 2. When Escape key is clicked*/
-            $event.preventDefault();
-            this.menuRef.bsDropdown.hide();
         } else if (eventAction === KEY_MOVEMENTS.ON_ENTER) {
             this.onSelect($event, this.item);
+        } else {
+            $event.stopPropagation();
         }
     }
 
