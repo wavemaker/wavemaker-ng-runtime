@@ -31,12 +31,21 @@ export class RatingComponent extends DatasetAwareFormComponent {
     public showcaptions: boolean;
     public maxvalue;
 
-    private selectedRatingValue;
+    private _selectedRatingValue;
     private ratingsWidth;
     private ratingItems;
     private _id;
 
     @ViewChild('ratingInput', {read: ElementRef}) ratingEl: ElementRef;
+
+    get selectedRatingValue() {
+        return this._selectedRatingValue;
+    }
+
+    set selectedRatingValue(val) {
+        this._selectedRatingValue = val;
+        this.calculateRatingsWidth();
+    }
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -142,7 +151,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
             if (!selectedItem) {
                 // reset the  model if there is no item found.
                 this.modelByKey = undefined;
-                return;
+                this.caption = '';
             }
 
             this.selectedRatingValue = selectedItem ? selectedItem.index : 0;
@@ -166,6 +175,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
         );
 
         if (this.datavalue === undefined || this.datavalue === '' || this.datavalue === null) {
+            this.caption = '';
             return 0;
         }
         if (selectedRating <= maxValue && selectedRating >= 0) {
