@@ -1,6 +1,6 @@
-import { Attribute, Component, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Attribute, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
-import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef } from '@wm/components';
+import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef, SearchComponent } from '@wm/components';
 import { App, AbstractNavigationService } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 
@@ -18,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass:
         provideAsWidgetRef(MobileNavbarComponent)
     ]
 })
-export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
+export class MobileNavbarComponent extends BaseComponent implements OnDestroy, AfterViewInit {
 
     private _isReady = false;
 
@@ -30,6 +30,27 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
     public showSearchbar: boolean;
 
     private _backBtnListenerDestroyer;
+
+    @ViewChild(SearchComponent) searchComponent: SearchComponent;
+    private searchkey: string;
+    private dataset: any;
+    private binddataset: any;
+    private datafield: string;
+    private binddisplaylabel: string;
+    private displaylabel: string;
+    private binddisplayimagesrc: string;
+    private displayimagesrc: string;
+    private _datasource: any;
+
+    // getter setter is added to pass the datasource to searchcomponent.
+    get datasource () {
+        return this._datasource;
+    }
+
+    set datasource(nv) {
+        this._datasource = nv;
+        this.searchComponent.datasource = nv;
+    }
 
     constructor(
         app: App,
@@ -56,6 +77,16 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
         setTimeout(() => this._isReady = true, 1000);
     }
 
+    ngAfterViewInit() {
+        this.searchComponent.displayimagesrc = this.binddisplayimagesrc ? this.binddisplayimagesrc : this.displayimagesrc;
+        this.searchComponent.displaylabel = this.binddisplaylabel ? this.binddisplaylabel : this.displaylabel;
+        this.searchComponent.datafield = this.datafield;
+        this.searchComponent.binddataset = this.binddataset;
+        this.searchComponent.dataset = this.dataset;
+        this.searchComponent.searchkey = this.searchkey;
+        this.searchComponent.datasource = this.datasource;
+    }
+
 
     public goBack($event): void {
          /**
@@ -77,6 +108,15 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
     }
 
     public onPropertyChange(key, nv, ov?) {
+        if (this.searchComponent) {
+            if (key === 'datafield') {
+                this.searchComponent.datafield = this.datafield;
+            }
+            if (key === 'displaylabel') {
+                this.searchComponent.displaylabel = this.binddisplaylabel ? this.binddisplaylabel : this.displaylabel;
+            }
+        }
+
         if (key === 'imgsrc') {
             this.imagesrc = getImageUrl(nv);
         } else if (key === 'dataset') {
@@ -90,10 +130,23 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy {
         }
     }
 
-    public onSubmission($event, widget, value): void {
-        this.datavalue = value;
-        this.query = value;
+    public onSubmission($event): void {
         this.invokeEventCallback('search', {$event});
+    }
+
+    private onSelect($event, widget, selectedValue) {
+        this.datavalue = selectedValue;
+        this.query = widget.query;
+        this.invokeEventCallback('change', {
+            $event,
+            newVal: selectedValue,
+            oldVal: widget.prevDatavalue
+        });
+    }
+
+    private onClear() {
+        this.datavalue = '';
+        this.query = '';
     }
 
 }

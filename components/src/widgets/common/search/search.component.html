@@ -29,6 +29,9 @@
 <ng-container *ngIf="navsearchbar; else searchTemplate">
     <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs app-search-input" [placeholder]="placeholder || ''"
            focus-target
+           container="body"
+           [disabled]="disabled"
+           autocomplete="off"
            [(ngModel)]="query"
            [readonly]="readonly"
            [disabled]="disabled"
@@ -43,6 +46,9 @@
            [typeaheadMinLength]="minchars"
            [typeaheadOptionsLimit]="limit"
            (typeaheadLoading)="_loadingItems"
+           (typeaheadOnSelect)="typeaheadOnSelect($event)"
+           typeaheadOptionField="label"
+           [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
@@ -80,7 +86,7 @@
            [attr.name]="name">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
-    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch()"></span>
+    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch(true)"></span>
     <span class="sr-only">Clear button</span>
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>

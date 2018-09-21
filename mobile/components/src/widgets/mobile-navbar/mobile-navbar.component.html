@@ -46,10 +46,10 @@
     </div>
     <div class="mobile-navbar-center search-container">
         <div wmSearch query.bind="query"
-             dataset.bind="binddataset"
+             clearsearch.event="onClear();"
+             select.event="onSelect($event, widget, selectedValue)"
              searchkey.bind="searchkey"
-             displaylabel.bind="displaylabel"
-             datafield.bind="datafield"
+             dataset.bind="dataset"
              displayimagesrc.bind="displayimagesrc"
              datavalue.bind="datavalue"
              submit.event="onSubmission($event, widget, value)"

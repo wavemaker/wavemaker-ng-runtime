@@ -156,11 +156,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // on clear, trigger search with page size 1
-    private clearSearch() {
+    private clearSearch(loadOnClear) {
         this.query = '';
         this.onInputChange();
         this.dataProvider.isLastPage = false;
-        this.loadMoreData();
+        if (loadOnClear) {
+            this.loadMoreData();
+        }
+        this.invokeEventCallback('clearsearch');
     }
 
     // Close the full screen mode in mobile view of auto complete
