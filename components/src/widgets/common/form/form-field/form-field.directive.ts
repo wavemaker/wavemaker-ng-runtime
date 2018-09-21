@@ -191,7 +191,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (this.minvalue) {
             this._validators.push(Validators.min(this.minvalue));
         }
-        if (this.maxvalue) {
+        if (this.maxvalue && this.widgettype !== FormWidgetType.RATING) {
             this._validators.push(Validators.max(this.maxvalue));
         }
         if (this.regexp) {
