@@ -298,7 +298,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.loadMonths();
                 this.setActiveMonthFocus(this.activeDate);
             } else if (action === 'enter') {
-                if($(document.activeElement).hasClass("disabled")) {
+                if ($(document.activeElement).hasClass('disabled')) {
                     return;
                 }
                 $(document.activeElement).click();
@@ -347,7 +347,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.loadYears();
                 this.setActiveYearFocus(this.activeDate);
             } else if (action === 'control.arrowdown' || action === 'enter') {
-                if($(document.activeElement).parent().hasClass("disabled")) {
+                if ($(document.activeElement).parent().hasClass('disabled')) {
                     return;
                 }
                 $(document.activeElement).click();
@@ -411,7 +411,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 newdate = moment(this.activeDate).add(+1, 'year').toDate();
                 this.setActiveYearFocus(newdate);
             }  else if (action === 'control.arrowdown' || action === 'enter') {
-                if($(document.activeElement).parent().hasClass("disabled")) {
+                if ($(document.activeElement).parent().hasClass('disabled')) {
                     return;
                 }
                 $(document.activeElement).click();
@@ -475,7 +475,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @returns boolean value, true if date is valid else returns false
      */
     private isValidDate(date) {
-        return date instanceof Date && !isNaN(date.getTime());
+        return date && date instanceof Date && !isNaN(date.getTime());
     }
     /**
      * This function sets the events to given element
@@ -525,9 +525,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     evt.preventDefault();
                 }
                 if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
-                    if (action === "arrowdown") {
+                    if (action === 'arrowdown') {
                         elementScope.bsTimeValue = elementScope.maxTime;
-                    } else if (action === "arrowup") {
+                    } else if (action === 'arrowup') {
                         elementScope.bsTimeValue = elementScope.minTime;
                     }
                 }
