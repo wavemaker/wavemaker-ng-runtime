@@ -27,7 +27,7 @@ export class NotificationActionManager extends BaseActionManager {
         // duration
         duration = duration === 0 ? duration : (duration || DEFAULT_DURATION);
         if (variable.dataBinding.content && variable.dataBinding.content === 'page' && partialPage) {
-            toaster = toasterService.showCustom(partialPage, {positionClass: positionClass, timeOut: duration});
+            toaster = toasterService.showCustom(partialPage, {positionClass: positionClass, timeOut: duration, partialParams: variable.dataSet});
         } else {
             toaster = toasterService.show(type, title, body || null, {positionClass: positionClass, timeOut: duration});
         }
