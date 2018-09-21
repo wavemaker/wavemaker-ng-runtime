@@ -173,7 +173,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
         const bodyElement = document.querySelector('body');
         setTimeout(() => {
-            const dropdownElement = bodyElement.querySelector('.dropdown-menu');
+            const dropdownElement = $(bodyElement).find('>bs-dropdown-container .dropdown-menu').get(0);
             this.deregisterEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', () => {
                 this.status.isopen = false;
             }, EVENT_LIFE.ONCE, true);
