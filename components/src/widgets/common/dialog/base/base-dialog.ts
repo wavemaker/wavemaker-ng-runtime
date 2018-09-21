@@ -6,6 +6,26 @@ import { AbstractDialogService } from '@wm/core';
 import { IDialog, IWidgetConfig } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 
+const openedDialogs = [];
+
+let eventsRegistered = false;
+
+const handleDialogOpen = ref => {
+    openedDialogs.push(ref);
+};
+
+const invokeOpenedCallback = () => {
+    const ref = openedDialogs[openedDialogs.length - 1];
+    if (ref) {
+        ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
+    }
+};
+
+const invokeClosedCallback = () => {
+    const ref = openedDialogs.pop();
+    ref.invokeEventCallback('close');
+};
+
 export abstract class BaseDialog extends BaseComponent implements IDialog {
 
     public name: string;
@@ -15,8 +35,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
 
     private dialogRef: BsModalRef;
 
-    private isOpened = false;
-
     protected constructor(
         inj: Injector,
         widgetConfig: IWidgetConfig,
@@ -25,6 +43,13 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
         super(inj, widgetConfig);
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
+
+        if (!eventsRegistered) {
+            eventsRegistered = true;
+            this.bsModal.onShown.subscribe(() => invokeOpenedCallback());
+
+            this.bsModal.onHidden.subscribe(() => invokeClosedCallback());
+        }
     }
 
     /**
@@ -32,29 +57,13 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
      * Subscribe to the onShown event emitter of bsModal and trigger on-opened event callback
      */
     public open(initState?: any) {
-        if (this.isOpened) {
-            return;
-        }
-        const showSubscription = this.bsModal.onShown.subscribe(() => {
 
-            const hideSubscription = this.bsModal.onHidden.subscribe(() => {
-                if (!this.isOpened) {
-                    return;
-                }
-                this.isOpened = false;
-                this.invokeEventCallback('close');
-                hideSubscription.unsubscribe();
-            });
-
-            this.invokeEventCallback('opened', {$event: {type: 'opened'}});
-            showSubscription.unsubscribe();
-        });
+        handleDialogOpen(this);
 
         // extend the context with the initState
         Object.assign(this.context, initState);
 
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
-        this.isOpened = true;
     }
 
     /**
@@ -62,9 +71,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
      * invokes the on-close event callback
      */
     public close() {
-        if (!this.isOpened) {
-            return;
-        }
         this.dialogRef.hide();
     }
 
@@ -96,9 +102,3 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
         super.onPropertyChange(key, nv, ov);
     }
 }
-
-// Todo:Bandhavya - handle DeviceServie.onBackButtonTap
-// DeviceService.onBackButtonTap(function () {
-// dialogCtrl._CancelButtonHandler();
-// return false;
-// });
