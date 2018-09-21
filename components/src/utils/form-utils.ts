@@ -133,16 +133,16 @@ export const transformData = (context: any, dataSet: any, myDataField?: string, 
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: isDefined(option) ? option.toString() : '', index: startIndex + index});
+            data.push({key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index});
         });
     } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: isDefined(option) ? option.toString() : '', index: startIndex + index});
+            data.push({key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index});
         });
     } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
         const i = 0;
         _.forEach(dataSet, (value, key) => {
-            data.push({key: _.trim(key), value: key, label: isDefined(value) ? value.toString() : '', index: startIndex});
+            data.push({key: _.trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '', index: startIndex, dataObject: dataSet});
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
