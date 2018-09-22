@@ -187,8 +187,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             return of([]);
         }
 
-        this._loadingItems = true;
-
         return from(this.getDataSource(query));
     }
 
@@ -227,6 +225,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.page = incrementPage ? this.page + 1 : this.page;
 
         this.isScrolled = true;
+        this._loadingItems = true;
 
         // trigger the typeahead change manually to fetch the next set of results.
         this.typeahead.onInput({
@@ -436,6 +435,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             dataConfig.viewParent = this.viewParent;
         }
 
+        this._loadingItems = true;
+
         return this.dataProvider.filter(dataConfig)
             .then((response: any) => {
                     // on focusout i.e. on other widget focus, if n/w is pending loading icon is shown, when data is available then dropdown is shown again.
@@ -451,8 +452,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
                     // response from dataProvider returns always data object.
                     response = response.data || response;
-
-                    this._loadingItems = false;
 
                     if (this.dataProvider.hasMoreData) {
                         this.formattedDataset = this.formattedDataset.concat(response);
@@ -491,6 +490,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this._modelByValue = undefined;
                     this.queryModel = (query as string);
                 }
+                this._loadingItems = false;
                 return result;
             });
     }
