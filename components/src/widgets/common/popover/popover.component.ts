@@ -11,6 +11,9 @@ import { registerProps } from './popover.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
+
+declare const _;
+
 const DEFAULT_CLS = 'app-popover-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-popover',
@@ -47,6 +50,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public contentanimation: string;
     public contentsource: string;
     public content: string;
+    public popoverplacement: string;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor') anchorRef: ElementRef;
@@ -65,6 +69,34 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         this.invokeEventCallback('hide', {$event: {type: 'show'}});
         setTimeout(() => this.anchorRef.nativeElement.focus(), 10);
     }
+
+    private adjustPopoverPosition(popoverElem, parentDimesion, popoverLeftShift) {
+        const arrowLeftShift = (parentDimesion.left + (parentDimesion.width/2)) - popoverLeftShift;
+        this.bsPopoverDirective._popover._ngZone.onStable.subscribe(() => {
+            popoverElem.css('left', popoverLeftShift + 'px');
+            popoverElem.find('.popover-arrow').css('left', arrowLeftShift + 'px');
+        })
+    }
+
+    private calculatePopoverPostion(element) {
+        const popoverElem = $(element);
+        const popoverLeft = _.parseInt(popoverElem.css('left'));
+        const popoverWidth = _.parseInt(popoverElem.css('width'));
+        const viewPortWidth = $(window).width();
+        const parentDimesion = this.anchorRef.nativeElement.getBoundingClientRect();
+        // Adjusting popover position, if it is not visible at left side
+        if (popoverLeft < 0) {
+            const popoverLeftShift = 4;
+            this.adjustPopoverPosition(popoverElem, parentDimesion, popoverLeftShift);
+        }
+        // Adjusting popover position, if it is not visible at right side
+        if (popoverLeft + popoverWidth > viewPortWidth) {
+            const popoverLeftAdjust = (popoverLeft + popoverWidth) - viewPortWidth;
+            const popoverLeftShift =  popoverLeft - popoverLeftAdjust - 50;
+            this.adjustPopoverPosition(popoverElem, parentDimesion, popoverLeftShift);
+        }
+    }
+
 
     // Trigger on showing popover
     public onShown() {
@@ -106,19 +138,25 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Shift+Tab key
             if (action === 'shift.tab') {
-                this.isOpen = false;
+                this.bsPopoverDirective.hide();
             }
         };
         popoverEndBtn.onkeydown = (event) => {
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Tab key
             if (action === 'tab') {
-                this.isOpen = false;
+                this.bsPopoverDirective.hide();
             }
         };
 
         setAttr(popoverContainer, 'tabindex', 0);
         setTimeout(() => popoverStartBtn.focus(), 50);
+        // Adjusting popover position if the popover placement is top or bottom
+        setTimeout( () => {
+            if(this.popoverplacement === 'bottom' || this.popoverplacement === 'top') {
+                this.calculatePopoverPostion(popoverContainer);
+            }
+        });
     }
 
     private hidePopover() {
@@ -132,6 +170,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private onPopoverAnchorKeydown($event) {
         const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter') {
+            $event.stopPropagation();
             this.showPopover();
         }
     }
@@ -161,5 +200,3 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         styler(this.anchorRef.nativeElement, this);
     }
 }
-
-// todo(swathi) keyboard events
