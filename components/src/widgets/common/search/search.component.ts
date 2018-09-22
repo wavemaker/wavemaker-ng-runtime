@@ -94,6 +94,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
+        // this flag will not allow the empty datafield values.
+        this.allowempty = false;
 
         addClass(this.nativeElement, 'app-search', true);
 
@@ -511,11 +513,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             },
             itemIndex
         );
-
-        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
-            this.allowempty = false;
-        }
-
         return getUniqObjsByDataField(transformedData, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty));
     }
 
