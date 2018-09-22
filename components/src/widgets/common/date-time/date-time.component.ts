@@ -166,7 +166,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         const bodyElement = document.querySelector('body');
         setTimeout(() => {
-            const dropdownElement = bodyElement.querySelector('.dropdown-menu');
+            const dropdownElement = $(bodyElement).find('>bs-dropdown-container .dropdown-menu').get(0);
             this.deregisterTimepickeEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', () => {
                 this.toggleTimePicker(false);
             }, EVENT_LIFE.ONCE, true);
