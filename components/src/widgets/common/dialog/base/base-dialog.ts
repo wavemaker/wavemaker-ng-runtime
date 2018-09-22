@@ -24,6 +24,7 @@ const invokeOpenedCallback = () => {
 const invokeClosedCallback = () => {
     const ref = openedDialogs.pop();
     ref.invokeEventCallback('close');
+    ref.dialogRef = undefined;
 };
 
 export abstract class BaseDialog extends BaseComponent implements IDialog {
@@ -71,7 +72,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
      * invokes the on-close event callback
      */
     public close() {
-        this.dialogRef.hide();
+        if (this.dialogRef) {
+            this.dialogRef.hide();
+        }
     }
 
     /**
