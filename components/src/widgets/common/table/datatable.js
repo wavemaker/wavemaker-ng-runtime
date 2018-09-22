@@ -1211,7 +1211,7 @@ $.widget('wm.datatable', {
         //If the DataTable is in the popover, popover shouldn't be closed
         if (!this.element.closest('.app-popover').length) {
             //removes all the popovers
-            $('.app-popover').remove();
+            $('.app-popover-wrapper').click();
         }
     },
     headerClickHandler: function (e) {
