@@ -41,6 +41,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private isCurrentDate = false;
     private isOpen: boolean;
     private timeinterval;
+    private isEnterPressedOnDateInput = false;
 
     private keyEventPlugin;
     private deregisterEventListener;
@@ -98,6 +99,10 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date input changes
      */
     onDisplayDateChange($event, isNativePicker) {
+        if (this.isEnterPressedOnDateInput) {
+            this.isEnterPressedOnDateInput = false;
+            return;
+        }
         const newVal = getDateObj($event.target.value);
         // min date and max date validation in mobile view.
         // if invalid dates are entered, device is showing an alert.
@@ -180,11 +185,12 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when pressing key on the date input
      */
     private onDisplayKeydown(event) {
+        const newVal = getDateObj(event.target.value);
         const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter' || action === 'arrowdown') {
-             setTimeout( () => {
-                this.toggleDpDropdown(event);
-            });
+            this.isEnterPressedOnDateInput = true;
+            this.bsDatePickerDirective.bsValue =  newVal;
+            this.toggleDpDropdown(event);
         }
     }
 
