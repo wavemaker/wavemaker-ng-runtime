@@ -46,6 +46,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private keyEventPlugin;
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
+    private isEnterPressedOnDateInput = false;
 
     get timestamp() {
         return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
@@ -287,6 +288,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     private onDateChange($event, isNativePicker) {
+        if (this.isEnterPressedOnDateInput) {
+            this.isEnterPressedOnDateInput = false;
+            return;
+        }
         let newVal = $event.target.value.trim();
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
         // min date and max date validation in mobile view.
@@ -301,8 +306,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method triggered when pressing key on the datetime input
      */
     private onDisplayKeydown(event) {
+        let newVal = event.target.value.trim();
+        newVal = newVal ? getNativeDateObject(newVal) : undefined;
         const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter' || action === 'arrowdown') {
+            this.isEnterPressedOnDateInput = true;
+            this.bsDatePickerDirective.bsValue =  newVal;
             this.toggleDpDropdown(event);
         }
     }
