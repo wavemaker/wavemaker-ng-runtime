@@ -31,6 +31,7 @@ export interface IDataProvider {
     hasNoMoreData?: boolean;
     isPaginatedData?: boolean;
     page?: number;
+    updateDataset?: boolean;
 
     filter(config: IDataProviderConfig): Promise<any>;
 }
@@ -41,7 +42,7 @@ export class DataProvider implements IDataProvider {
     public isLastPage: boolean;
     public page: number;
     public isPaginatedData: boolean;
-    public hasNoMoreData: boolean;
+    public updateDataset: boolean;
 
     static remoteDataProvider = new RemoteDataProvider();
     static localDataProvider = new LocalDataProvider();
@@ -54,20 +55,22 @@ export class DataProvider implements IDataProvider {
          * Make call to remoteDataProvider when searchkey is available and data is not from local / model variable.
          * Otherwise use localDataProvider
          * If datasource is a serviceVariable with no input params, then perform local search.
+         * when there is no dataset on the datasource when first time make a remote call to set the dataset for service variable.
          */
+        const hasNoVariableDataset = config.datasource && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED, config.hasData);
         if (config.dataoptions || ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
             && config.searchKey
-            && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED, config.hasData))) {
+            && hasNoVariableDataset)) {
             promise = DataProvider.remoteDataProvider.filter(config);
         } else {
             promise = DataProvider.localDataProvider.filter(config);
         }
 
         return promise.then(response => {
+            this.updateDataset = config.datasource && !config.datasource.execute(DataSource.Operation.SUPPORTS_CRUD) && hasNoVariableDataset;
             this.hasMoreData = response.hasMoreData;
             this.isLastPage = response.isLastPage;
             this.page = response.page;
-            this.hasNoMoreData = response.isLastPage;
             this.isPaginatedData = response.isPaginatedData;
 
             return response;

@@ -5,7 +5,7 @@ import {mergeMap, debounceTime } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
-import { $appDigest, addClass, DataSource, debounce, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, transformData } from '../../../utils/form-utils';
@@ -45,8 +45,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private _loadingItems: boolean;
     private dataProvider: IDataProvider;
     private result: Array<any>; // contains the search result i.e. matches
-    private noMoreData: boolean;
-    private isLastPage: boolean;
     private formattedDataset: any;
     private isformfield: boolean;
 
@@ -74,8 +72,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private parentEl: any;
     private position: string;
     private elIndex: number;
-    private _debounceUpdateQueryModel: any;
     private listenQuery: boolean;
+    private _domUpdated: boolean;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -85,7 +83,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     set datasource(nv) {
         this._datasource = nv;
         const data = this.datavalue || this.toBeProcessedDatavalue;
-        this._debounceUpdateQueryModel(data);
+        this.updateByDatavalue(data);
     }
 
     constructor(
@@ -108,6 +106,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             .create((observer: any) => {
             // Runs on every search
             if (this.listenQuery) {
+                this._defaultQueryInvoked = false;
                 observer.next(this.query);
             }
         }).pipe(debounceTime(500))
@@ -116,10 +115,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         );
 
         this.dataProvider = new DataProvider();
-
-        this._debounceUpdateQueryModel = debounce((val) => {
-            this.updateByDatavalue(val);
-        }, 300);
 
         /**
          * When default datavalue is not found within the dataset, a filter call is made to get the record using fetchDefaultModel.
@@ -137,6 +132,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
 
             if (!this._unsubscribeDv) {
+                this._defaultQueryInvoked = false;
                 // if prev datavalue is not equal to current datavalue then clear the modelByKey and queryModel
                 if (!_.isObject(val) && (this as any).prevDatavalue !== val) {
                     this._modelByKey = undefined;
@@ -144,7 +140,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 }
                 // if the datafield is ALLFILEDS do not fetch the records
                 // update the query model with the values we have
-                this._debounceUpdateQueryModel(val);
+                this.updateByDatavalue(val);
             }
         });
         this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
@@ -158,11 +154,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // on clear, trigger search with page size 1
-    private clearSearch(loadOnClear) {
+    private clearSearch($event, loadOnClear) {
         this.query = '';
-        this.onInputChange();
+        this.onInputChange($event);
         this.dataProvider.isLastPage = false;
         if (loadOnClear) {
+            this.listenQuery = true;
             this.loadMoreData();
         }
         this.invokeEventCallback('clearsearch');
@@ -170,15 +167,20 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // Close the full screen mode in mobile view of auto complete
     private closeSearch() {
-        this.page = 1;
-        if (!isDefined(this.datavalue)) {
-            this.queryModel = this.query = '';
-        }
-        // after closing the search, insert the element at its previous position (elIndex)
-        this.insertAtIndex(this.elIndex);
-        this.elIndex = undefined;
-        this.parentEl = undefined;
-        this.$element.removeClass('full-screen');
+        const fn = _.debounce(() => {
+            this.page = 1;
+            if (!isDefined(this.datavalue)) {
+                this.queryModel = this.query = '';
+            }
+            // after closing the search, insert the element at its previous position (elIndex)
+            this.insertAtIndex(this.elIndex);
+            this.elIndex = undefined;
+            this.parentEl = undefined;
+            this.$element.removeClass('full-screen');
+            this.listenQuery = false;
+            this.typeahead.hide();
+        }, 100);
+        fn();
     }
 
     private getDataSourceAsObservable(query: string): Observable<any> {
@@ -237,12 +239,21 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // on focusout, subscribe to the datavalue changes again
     private onFocusOut() {
-        this._unsubscribeDv = false;
-        this._loadingItems = false;
-        this.listenQuery = false;
+        const fn = _.debounce(() => {
+            this._unsubscribeDv = false;
+            this._loadingItems = false;
+            // if domUpdated is true then do not hide the dropdown in the fullscreen
+            if (!this._domUpdated) {
+                this.listenQuery = false;
+                this.typeahead.hide();
+                this._unsubscribeDv = true;
+            }
+            this._domUpdated = false;
+        }, 100);
+        fn();
     }
 
-    private onInputChange() {
+    private onInputChange($event) {
         // reset all the previous page details in order to fetch new set of result.
         this.result = [];
         this.page = 1;
@@ -253,6 +264,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.queryModel = '';
             this._modelByValue = '';
             this.invokeOnChange(this._modelByValue, {}, true);
+
+            // trigger onSubmit only when the search input is cleared off and do not trigger when tab is pressed.
+            if ($event.which !== 9) {
+                this.invokeEventCallback('submit', {$event});
+            }
         }
         this.showClosebtn = (this.query !== '');
     }
@@ -277,7 +293,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // as we are using customOption template, liElements are not available on typeaheadContainer so append them explicitly.
         const fn = _.debounce(() => {
             this._isOpen = true;
-            this.typeaheadContainer = this.typeahead._container;
+            if (!this.typeaheadContainer) {
+                this.typeaheadContainer = this.typeahead._container || (this.typeahead as any)._typeahead.instance;
+            }
             (this.typeaheadContainer as any).liElements = this.liElements;
             (this.typeaheadContainer as any).ulElement = this.ulElement;
         });
@@ -292,8 +310,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.elIndex = this.parentEl.children().index(this.$element);
             }
             if (!this.$element.hasClass('full-screen')) {
+                // this flag is set to notify that the typeahead-container dom has changed its position
+                this._domUpdated = true;
                 this.$element.appendTo('div[data-role="pageContainer"]');
-
                 // Add full screen class on focus of the input element.
                 this.$element.addClass('full-screen');
 
@@ -310,7 +329,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             dropdownEl.css({position: 'relative', top: 0, height: screenHeight + 'px'});
             this.showClosebtn = this.query && this.query !== '';
 
-            if (!this.noMoreData) {
+            if (!this.dataProvider.isLastPage) {
                 this.triggerSearch();
             }
         }
@@ -337,7 +356,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     private triggerSearch() {
-        if (this._loadingItems || this.isLastPage || !this.$element.hasClass('full-screen')) {
+        if (this.dataProvider.isLastPage || !this.$element.hasClass('full-screen')) {
             return;
         }
         const typeAheadDropDown = this.dropdownEl;
@@ -349,7 +368,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    private debounceDefaultQuery = debounce((data) => {
+    private debounceDefaultQuery(data) {
+        this._defaultQueryInvoked = true;
         this.getDataSource(data, true).then((response) => {
             if (response.length) {
                 this.queryModel = response;
@@ -361,9 +381,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.queryModel = undefined;
                 this.query = '';
             }
-            $appDigest();
         });
-    }, 300);
+    }
 
     private updateByDatavalue(data) {
         this.updateByDataset(data);
@@ -380,11 +399,19 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.toBeProcessedDatavalue = undefined;
                 return;
             }
-            this.debounceDefaultQuery(data);
+
+            // Make default query call only when datasource supports CRUD (live variable).
+            if (!this._defaultQueryInvoked && this.datasource.execute(DataSource.Operation.SUPPORTS_CRUD)) {
+                this.debounceDefaultQuery(data);
+            }
         }
     }
 
     private updateByDataset(data: any) {
+        // default query is already invoked then do not make other default query call.
+        if (this._defaultQueryInvoked) {
+            return;
+        }
         const selectedItem = _.find(this.datasetItems, (item) => {
             return  (_.isObject(item.value) ? _.isEqual(item.value, data) : (_.toString(item.value)).toLowerCase() === (_.toString(data)).toLowerCase());
         });
@@ -446,12 +473,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                             isLastPage: false
                         };
                         this.dataProvider.hasMoreData = false;
+                        this._loadingItems = false;
                     }
-
-                    this.noMoreData = response.isLastPage;
 
                     // response from dataProvider returns always data object.
                     response = response.data || response;
+
+                    if (this.dataProvider.updateDataset) {
+                        this.dataset = response;
+                    }
 
                     if (this.dataProvider.hasMoreData) {
                         this.formattedDataset = this.formattedDataset.concat(response);
@@ -465,7 +495,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     }
 
                 // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
-                if (this._isOpen && this.isMobileAutoComplete() && !this.noMoreData) {
+                if (this._isOpen && this.isMobileAutoComplete() && !this.dataProvider.isLastPage) {
                     this.triggerSearch();
                 }
 
@@ -548,8 +578,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         super.ngAfterViewInit();
 
         styler(this.nativeElement as HTMLElement, this);
-
-        this.typeaheadContainer = (this.typeahead as any)._typeahead;
     }
 
     // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
