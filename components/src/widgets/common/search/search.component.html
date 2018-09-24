@@ -15,7 +15,7 @@
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
             </ng-container>
         </li>
-        <div class="status" [hidden]="_loadingItems || !(datacompletemsg && dataProvider.hasNoMoreData)">
+        <div class="status" [hidden]="_loadingItems || !(datacompletemsg && dataProvider.isLastPage)">
             <span [textContent]="datacompletemsg"></span>
         </div>
         <div class="status" [hidden]="!_loadingItems">
@@ -38,10 +38,10 @@
            [typeahead]="typeaheadDataSource"
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
-           (input)="onInputChange()"
+           (input)="onInputChange($event)"
            (keydown.arrowdown)="selectNext($event)"
            (blur)="invokeOnTouched($event)"
-           (focus)="listenQuery = true; invokeOnFocus($event);"
+           (focus)="_unsubscribeDv = false; listenQuery = true; invokeOnFocus($event);"
            (focusout)="onFocusOut()"
            [typeaheadMinLength]="minchars"
            [typeaheadOptionsLimit]="limit"
@@ -53,7 +53,7 @@
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
            [attr.name]="name"/>
-    <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch();"></i>
+    <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch($event);"></i>
 </ng-container>
 <!--This template is for both web and fullscreen mode in mobile.-->
 <ng-template #searchTemplate>
@@ -69,10 +69,10 @@
            [typeahead]="typeaheadDataSource"
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
-           (input)="onInputChange()"
+           (input)="onInputChange($event)"
            (keydown.arrowdown)="selectNext($event)"
            (blur)="invokeOnTouched($event)"
-           (focus)="listenQuery = true; invokeOnFocus($event)"
+           (focus)="_unsubscribeDv = false; listenQuery = true; invokeOnFocus($event)"
            (focusout)="onFocusOut()"
            [typeaheadMinLength]="minchars"
            [typeaheadOptionsLimit]="limit"
@@ -86,7 +86,7 @@
            [attr.name]="name">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
-    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch(true)"></span>
+    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch($event, true)"></span>
     <span class="sr-only">Clear button</span>
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>

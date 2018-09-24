@@ -35,6 +35,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     protected _modelByKey: any;
     public _modelByValue: any;
+    public _defaultQueryInvoked: boolean; // for search/chips if datavalue is obtained from the default n/w call then set to true and do not update the modelByKeys.
 
     // this field contains the initial datavalue which needs to be processed once the dataset is available
     public toBeProcessedDatavalue: any;
@@ -256,7 +257,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     // Once the datasetItems are ready, set the proxyModel by using datavalue.
     protected postDatasetItemsInit() {
-        if (this.datasetItems.length) {
+        if (this.datasetItems.length && !this._defaultQueryInvoked) {
             // use the latest of toBeProcessedDatavalue, datavalue
             const _datavalue = !isDefined(this.toBeProcessedDatavalue) ? this.datavalue : this.toBeProcessedDatavalue;
             this.selectByValue(_datavalue);
