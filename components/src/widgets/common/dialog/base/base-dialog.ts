@@ -1,4 +1,4 @@
-import { Injector, TemplateRef } from '@angular/core';
+import { Injector, OnDestroy, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
 import { AbstractDialogService } from '@wm/core';
@@ -27,7 +27,7 @@ const invokeClosedCallback = () => {
     ref.dialogRef = undefined;
 };
 
-export abstract class BaseDialog extends BaseComponent implements IDialog {
+export abstract class BaseDialog extends BaseComponent implements IDialog, OnDestroy {
 
     public name: string;
 
@@ -103,5 +103,10 @@ export abstract class BaseDialog extends BaseComponent implements IDialog {
             }
         }
         super.onPropertyChange(key, nv, ov);
+    }
+
+    public ngOnDestroy() {
+        this.close();
+        super.ngOnDestroy();
     }
 }
