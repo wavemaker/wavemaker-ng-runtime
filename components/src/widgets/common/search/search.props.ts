@@ -13,6 +13,7 @@ export const searchProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['displayimagesrc', PROP_STRING],
         ['displaylabel', PROP_STRING],
+        ['dropup', PROP_BOOLEAN],
         ['hint', PROP_STRING],
         ['imagewidth', {value: '16px', ...PROP_STRING}],
         ['limit', PROP_NUMBER],
