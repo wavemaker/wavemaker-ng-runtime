@@ -34,7 +34,7 @@
         </ul>
     </div>
 </nav>
-<nav class="navbar searchbar" *ngIf="showSearchbar">
+<nav class="navbar searchbar" [hidden]="!showSearchbar">
     <div class="mobile-navbar-left">
         <ul class="nav navbar-nav navbar-left">
             <li>
