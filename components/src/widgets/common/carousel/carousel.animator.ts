@@ -15,6 +15,7 @@ export class CarouselAnimator extends SwipeAnimation {
     private _pauseCaroselTill = 0;
     private _swiping;
     private _width;
+    private _oldIndex = 0;
 
     public constructor(private carousel: CarouselDirective, private interval: number, private ngZone: NgZone) {
         super();
@@ -82,6 +83,12 @@ export class CarouselAnimator extends SwipeAnimation {
         this._activeIndex += 1;
         this.setActiveItem();
         this._swiping = false;
+    }
+
+    public onAnimation() {
+        const newIndex = (this._items.length + this._activeIndex) % this._items.length;
+        this.carousel.invokeEventCallback('change', {newIndex: newIndex, oldIndex: this._oldIndex});
+        this._oldIndex = newIndex;
     }
 
     public start() {
