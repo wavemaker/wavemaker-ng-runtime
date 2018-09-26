@@ -109,10 +109,9 @@ export class RemoteDataProvider implements IDataProvider {
 
             if (config.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
                 page = pageOptions.number + 1;
-                _isLastPage = this.isLast(page, pageOptions.totalElements, pageOptions.size, pageOptions.numberOfElements);
+                _isLastPage = this.isLast(page, (config.limit > 0 && config.limit) || pageOptions.totalElements, pageOptions.size, pageOptions.numberOfElements);
                 isPaginatedData = true;
 
-                // TODO: [bandhavya] This workaround is because backend is not giving the last page in distinct api. Remove after issue is fixed in backend
                 if (this.isLastPageForDistinctApi(data, page, pageOptions.totalElements, _isLastPage)) {
                     _isLastPage = true;
                     resolve({
