@@ -49,9 +49,9 @@ export class NotificationActionManager extends BaseActionManager {
             notification: {
                 'title' : options.title || variable.dataBinding.title,
                 'text' : options.message || variable.dataBinding.text,
-                'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText,
-                'cancelButtonText' : options.cancelButtonText || variable.dataBinding.cancelButtonText,
-                'alerttype' : options.alerttype || variable.dataBinding.alerttype,
+                'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText || 'OK',
+                'cancelButtonText' : options.cancelButtonText || variable.dataBinding.cancelButtonText || 'CANCEL',
+                'alerttype' : options.alerttype || variable.dataBinding.alerttype || 'information',
                 onOk: () => {
                     initiateCallback('onOk', variable, options.data);
                 },
