@@ -109,6 +109,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this._defaultQueryInvoked = false;
                 observer.next(this.query);
             }
+            // on keydown, while scrolling the dropdown items, when last item is reached next call is triggered
+            // unless the call is resolved, we are able to scroll next to first item and soon
+            // This shows flickering from first item to next new items appended.
+            // By setting container to undefined, key events changes will be stopped while loading items
+            if (this.lastSelectedIndex) {
+                this.typeahead._container = undefined;
+            }
         }).pipe(debounceTime(500))
             .pipe(
             mergeMap((token: string) => this.getDataSourceAsObservable(token))
@@ -210,7 +217,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (i === 0) {
             this.parentEl.prepend(this.$element);
         } else {
-            this.$element.insertBefore(this.parentEl.children().eq(i));
+            const $elAtIndex = this.parentEl.children().eq(i);
+            if ($elAtIndex.length) {
+                this.$element.insertBefore(this.parentEl.children().eq(i));
+            } else {
+                this.$element.insertAfter(this.parentEl.children().eq(i - 1));
+            }
         }
     }
 
@@ -258,6 +270,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.result = [];
         this.page = 1;
         this._lastQuery = undefined;
+        this.listenQuery = true;
 
         // when input is cleared, reset the datavalue
         if (this.query === '') {
@@ -298,6 +311,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
             (this.typeaheadContainer as any).liElements = this.liElements;
             (this.typeaheadContainer as any).ulElement = this.ulElement;
+
+            // focus is lost when element is changed to full-screen, keydown to select next items will not work
+            // Hence explicitly focusing the input
+            if (this.$element.hasClass('full-screen')) {
+                this.$element.find('.app-search-input').focus();
+            }
+
         });
 
         fn();
@@ -337,6 +357,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private selectNext() {
         const matches = this.typeaheadContainer.matches;
+
+        if (!matches) {
+            return;
+        }
         const index = matches.indexOf(this.typeaheadContainer.active);
 
         // on keydown, if scroll is at the bottom and next page records are available, fetch next page items.
