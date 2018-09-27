@@ -8,6 +8,10 @@ import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
 declare const moment, _, $;
 const CURRENT_DATE: string = 'CURRENT_DATE';
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DATEPICKER_DROPDOWN_OPTIONS = {
+    BUTTON: 'button',
+    DEFAULT: 'default'
+};
 
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
@@ -32,6 +36,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
+
+    /**
+     * returns true if the input value is default (i.e open date picker on input click)
+     * @param1 dropdownvalue, user selected value (by default datepicker opens on input click)
+     * **/
+    protected isDropDownDisplayEnabledOnInput(dropdownvalue) {
+        return dropdownvalue === DATEPICKER_DROPDOWN_OPTIONS.DEFAULT;
+    }
 
     /**
      * This method is used to show validation message depending on the isNativePicker flag.
