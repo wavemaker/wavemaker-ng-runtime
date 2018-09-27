@@ -826,6 +826,15 @@ $.widget('wm.datatable', {
             self.selectRow(rows, true);
         }
     },
+    toggleRowFilter: function(show) {
+        if (this.options.filtermode === this.CONSTANTS.MULTI_COLUMN && this.gridSearch) {
+            if (show) {
+                this.gridSearch.show();
+            } else {
+                this.gridSearch.hide();
+            }
+        }
+    },
     /*Set the default widths for the colgroup*/
     setColGroupWidths: function () {
         var self = this,
@@ -839,6 +848,8 @@ $.widget('wm.datatable', {
         }
         //Set the col spans for the header groups
         this._setColSpan(this.options.headerConfig);
+        // Hide the row filter. As different widgets are present inside row filter, this will effect the column size
+        this.toggleRowFilter();
         //First Hide or show the column based on the show property so that width is calculated correctly
         headerCells.each(function () {
             var id = Number($(this).attr('data-col-id')),
@@ -903,6 +914,7 @@ $.widget('wm.datatable', {
             $(headerCols[id]).css('width', width);
             $(bodyCols[id]).css('width', width);
         });
+        this.toggleRowFilter(true);
         this.gridElement.parent().prop('scrollLeft', scrollLeft);
     },
 
