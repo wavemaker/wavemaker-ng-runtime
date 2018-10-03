@@ -129,12 +129,14 @@ export class IdResolver implements Worker {
     private exchangeIds(store: LocalDBStore, dataModelName: string, entityName: string, data: any) {
         this.exchangeId(store, dataModelName, entityName, data);
         store.entitySchema.columns.forEach(col => {
-            if (col.foreignRelaton) {
-                if (data[col.foreignRelaton.sourceFieldName]) {// if object reference
-                    this.exchangeIds(store, dataModelName, col.foreignRelaton.targetEntity, data[col.foreignRelaton.sourceFieldName]);
-                } else if (data[col.fieldName]) {// if id value
-                    this.exchangeId(store, dataModelName, col.foreignRelaton.targetEntity, data, col.fieldName);
-                }
+            if (col.foreignRelations) {
+                col.foreignRelations.forEach( foreignRelation => {
+                    if (data[foreignRelation.sourceFieldName]) {// if object reference
+                        this.exchangeIds(store, dataModelName, foreignRelation.targetEntity, data[foreignRelation.sourceFieldName]);
+                    } else if (data[col.fieldName]) {// if id value
+                        this.exchangeId(store, dataModelName, foreignRelation.targetEntity, data, col.fieldName);
+                    }
+                });
             }
         });
     }

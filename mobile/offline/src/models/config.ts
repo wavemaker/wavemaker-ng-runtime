@@ -28,7 +28,7 @@ export class ColumnInfo {
     public sqlType: string;
     public primaryKey = false;
     public defaultValue: any;
-    public foreignRelaton?: ForeignRelationInfo;
+    public foreignRelations?: ForeignRelationInfo[];
 
     constructor(public name: string, public fieldName?: string) {
         this.fieldName = this.fieldName || this.name;

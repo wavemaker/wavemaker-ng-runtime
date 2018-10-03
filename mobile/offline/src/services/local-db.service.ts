@@ -16,7 +16,7 @@ export class LocalDbService {
         this.searchTableDataWithQuery = this.readTableData.bind(this);
     }
 
-    public getStore(params: any) {
+    public getStore(params: any): Promise<LocalDBStore> {
         return this.localDBManagementService.getStore(params.dataModelName, params.entityName);
     }
 
