@@ -134,7 +134,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
         }
     }
 
-    private createFolderStructure(parentFolder: string, folderNamesList: string[]) {
+    private createFolderStructure(parentFolder: string, folderNamesList: string[]): Promise<string> {
         const folderName = folderNamesList[0];
         if (!_.isEmpty(folderName)) {
             return this.file.createDir(parentFolder, folderName, false)
@@ -145,7 +145,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
                     return this.createFolderStructure(parentFolder, folderNamesList);
                 });
         }
-        return parentFolder;
+        return Promise.resolve(parentFolder);
     }
 
     private init(pageUrl: string, isRemoteSyncEnabled: boolean) {

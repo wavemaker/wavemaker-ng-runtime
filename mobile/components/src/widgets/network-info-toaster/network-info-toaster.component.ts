@@ -42,8 +42,8 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
         this.isServiceAvailable = <boolean> this.networkService.isAvailable();
         this.isServiceConnected = this.networkService.isConnected();
         this._listenerDestroyer = app.subscribe('onNetworkStateChange', (data) => {
+            const oldState = this.networkState;
             let autoHide = false;
-            this.showMessage = true;
             if (data.isConnected) {
                 this.networkState = NetworkState.CONNECTED;
                 autoHide = true;
@@ -56,7 +56,8 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
             } else {
                 this.networkState = NetworkState.NETWORK_NOT_AVAIABLE;
             }
-            if (autoHide) {
+            this.showMessage = (!(oldState === undefined && data.isConnected)  && oldState !== this.networkState);
+            if (autoHide && this.showMessage) {
                 setTimeout(() => {
                     this.showMessage = false;
                     $appDigest();
