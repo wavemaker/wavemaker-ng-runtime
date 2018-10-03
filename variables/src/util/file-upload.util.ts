@@ -104,34 +104,19 @@ function appendFileToFormData(file, fd, options) {
 
 /* upload file with ajax calling */
 function uploadWithAjax(file, fd, url, options) {
+    const iterate = (value, key) => {
+        const fileObject = (_.isArray(value) ? value[0] : value);
+        if (fileObject instanceof File || fileObject instanceof Blob) {
+            fd.delete(key);
+        }
+        appendFileToFormData(file, fd, options);
+    };
     // The foreeach method on form data doesn't exist in IE. Hence we check if it exists
     // or else use the lodash forEach
     if (fd.forEach) {
-        fd.forEach((value, key) => {
-            if (_.isArray(value)) {
-                if (value[0] instanceof File) {
-                    fd.delete(key);
-                }
-            } else {
-                if (value instanceof File) {
-                    fd.delete(key);
-                }
-            }
-            appendFileToFormData(file, fd, options);
-        });
+        fd.forEach(iterate);
     } else {
-        _.forEach(fd, (value, key) => {
-            if (_.isArray(value)) {
-                if (value[0] instanceof File) {
-                    fd.delete(key);
-                }
-            } else {
-                if (value instanceof File) {
-                    fd.delete(key);
-                }
-            }
-            appendFileToFormData(file, fd, options);
-        });
+        _.forEach(fd, iterate);
     }
 
     const promise = new NotifyPromise((resolve, reject, notify) => {
