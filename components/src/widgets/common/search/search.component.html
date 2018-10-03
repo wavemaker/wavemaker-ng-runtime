@@ -51,6 +51,7 @@
            [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
+           [dropup]="dropup"
            [tabindex]="tabindex"
            [attr.name]="name"/>
     <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch($event);"></i>
@@ -83,6 +84,7 @@
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
+           [dropup]="dropup"
            [attr.name]="name">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>

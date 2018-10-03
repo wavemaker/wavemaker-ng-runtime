@@ -45,6 +45,11 @@ export class Search {
      */
     @Input() displaylabel: string;
     /**
+     * This property sets the typeahead dropdown position. If set to true, dropdown will be shown above the input. By default dropup is false <br>
+     * To apply the dropup, include dropup="true" on the search widget markup.
+     */
+    @Input() dropup: boolean;
+    /**
      * Hint text is shown for the search widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
