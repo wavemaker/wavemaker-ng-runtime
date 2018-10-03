@@ -41,6 +41,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
     private binddisplayimagesrc: string;
     private displayimagesrc: string;
     private _datasource: any;
+    private defaultview: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource () {
@@ -78,6 +79,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
     }
 
     ngAfterViewInit() {
+        this.searchComponent.binddisplayimagesrc = this.binddisplayimagesrc;
         this.searchComponent.displayimagesrc = this.binddisplayimagesrc ? this.binddisplayimagesrc : this.displayimagesrc;
         this.searchComponent.displaylabel = this.binddisplaylabel ? this.binddisplaylabel : this.displaylabel;
         this.searchComponent.datafield = this.datafield;
@@ -132,6 +134,22 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
 
     public onSubmission($event): void {
         this.invokeEventCallback('search', {$event});
+    }
+
+    // switches the view based on defaultview
+    private switchView(view) {
+        this.showSearchbar = (view !== 'actionview');
+    }
+
+    // goto previous view or page
+    private goBacktoPreviousView($event) {
+        if (this.defaultview === 'actionview') {
+            // switches the view from search to action or action to search.
+            this.switchView('actionview');
+        } else {
+            // goes back to the previous visited page.
+            this.goBack($event);
+        }
     }
 
     private onSelect($event, widget, selectedValue) {
