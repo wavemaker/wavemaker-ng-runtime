@@ -73,7 +73,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
     }
 
     private getCurrentRoute(): string {
-        return this.location.path().substr(1);
+        return this.location.path().substr(1).split('?')[0];
     }
 
     // over rides resetNode function, generating path for the breadcrumb.
