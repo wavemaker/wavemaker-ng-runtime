@@ -252,12 +252,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method used to toggle the dropdown of the date widget
      */
     private toggleDpDropdown($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
         if ($event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
         }
-        if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
+        if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             return;
         }
         this.bsDatePickerDirective.toggle();
@@ -306,13 +304,17 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method triggered when pressing key on the datetime input
      */
     private onDisplayKeydown(event) {
-        let newVal = event.target.value.trim();
-        newVal = newVal ? getNativeDateObject(newVal) : undefined;
-        const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-        if (action === 'enter' || action === 'arrowdown') {
-            this.isEnterPressedOnDateInput = true;
-            this.bsDatePickerDirective.bsValue =  newVal;
-            this.toggleDpDropdown(event);
+        if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
+            event.stopPropagation();
+            let newVal = event.target.value.trim();
+            newVal = newVal ? getNativeDateObject(newVal) : undefined;
+            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
+            if (action === 'enter' || action === 'arrowdown') {
+                event.preventDefault();
+                this.isEnterPressedOnDateInput = true;
+                this.bsDatePickerDirective.bsValue = newVal;
+                this.toggleDpDropdown(event);
+            }
         }
     }
 

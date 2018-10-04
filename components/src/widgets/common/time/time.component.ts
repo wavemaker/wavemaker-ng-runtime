@@ -145,12 +145,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method used to toggle the dropdown of the time widget
      */
     private toggleDropdown($event): void {
-        $event.preventDefault();
-        $event.stopPropagation();
         if ($event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
         }
-        if ($event.target && $($event.target).is('input') && (this.showdropdownon === 'button')) {
+        if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             return;
         }
         this.ngZone.run(() => {
@@ -184,9 +182,13 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method triggered when pressing key on the time input
      */
     private onDisplayKeydown(event) {
-        const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-        if (action === 'enter' || action === 'arrowdown') {
-            this.toggleDropdown(event);
+        if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
+            event.stopPropagation();
+            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
+            if (action === 'enter' || action === 'arrowdown') {
+                event.preventDefault();
+                this.toggleDropdown(event);
+            }
         }
     }
 
