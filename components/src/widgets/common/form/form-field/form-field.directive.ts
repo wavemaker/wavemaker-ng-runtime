@@ -183,7 +183,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this._validators = [];
 
         if (this.required && this.show !== false) {
-            this._validators.push(Validators.required);
+            // For checkbox/toggle widget, required validation should consider true value only
+            if (this.widgettype === FormWidgetType.CHECKBOX || this.widgettype === FormWidgetType.TOGGLE) {
+                this._validators.push(Validators.requiredTrue);
+            } else {
+                this._validators.push(Validators.required);
+            }
         }
         if (this.maxchars) {
             this._validators.push(Validators.maxLength(this.maxchars));
