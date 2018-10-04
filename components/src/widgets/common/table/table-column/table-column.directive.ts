@@ -363,7 +363,12 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
         const validators = [];
         if (this.required) {
-            validators.push(Validators.required);
+            // For checkbox/toggle widget, required validation should consider true value only
+            if (this.editWidgetType === FormWidgetType.CHECKBOX || this.editWidgetType === FormWidgetType.TOGGLE) {
+                validators.push(Validators.requiredTrue);
+            } else {
+                validators.push(Validators.required);
+            }
         }
         if (this.maxchars) {
             validators.push(Validators.maxLength(this.maxchars));
