@@ -7,6 +7,7 @@ import { App, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
 import { registerProps } from './file-upload.props';
 import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -19,7 +20,10 @@ const WIDGET_CONFIG = {
 
 @Component({
     selector: '[wmFileUpload]',
-    templateUrl: './file-upload.component.html'
+    templateUrl: './file-upload.component.html',
+    providers: [
+        provideAsWidgetRef(FileUploadComponent)
+    ]
 })
 
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit {
@@ -105,7 +109,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     /* this return the array of files which are having the file size not more than maxfilesize and filters based on contenttype */
     getValidFiles($files) {
         const validFiles = [];
-        const MAXFILEUPLOAD_SIZE = parseInt(this.maxfilesize, 10) * this.FILESIZE_MB || this.FILESIZE_MB;
+        const MAXFILEUPLOAD_SIZE = parseFloat(this.maxfilesize) * this.FILESIZE_MB || this.FILESIZE_MB;
         const MAX_FILE_UPLOAD_FORMATTED_SIZE = (this.maxfilesize || '1') + 'MB';
 
         // if contenttype is files for mobile projects.

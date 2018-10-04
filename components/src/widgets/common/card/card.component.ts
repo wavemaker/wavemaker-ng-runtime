@@ -4,6 +4,7 @@ import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './card.props';
 import { MenuAdapterComponent } from '../base/menu-adapator.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
@@ -15,7 +16,10 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmCard]',
-    templateUrl: './card.component.html'
+    templateUrl: './card.component.html',
+    providers: [
+        provideAsWidgetRef(CardComponent)
+    ]
 })
 export class CardComponent extends MenuAdapterComponent implements OnInit, AfterViewInit {
     private showHeader: boolean;
