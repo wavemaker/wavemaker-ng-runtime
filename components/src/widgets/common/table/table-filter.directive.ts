@@ -103,6 +103,17 @@ const setFilterFields = (filterFields, searchObj) => {
     }
 };
 
+// Transform filter fields from array to object having field names as keys
+const transformFilterField = (userFilters, filterField) => {
+    if (filterField.field) {
+        userFilters[filterField.field] = {
+            value: filterField.value,
+            matchMode: filterField.matchMode,
+            type: filterField.type
+        };
+    }
+};
+
 @Directive({
     selector: '[wmTableFilterSort]'
 })
@@ -324,18 +335,44 @@ export class TableFilterSortDirective {
     }
 
     private searchHandler(searchSortObj, e, type) {
+        let filterFields = getClonedObject(searchSortObj);
         const dataSource = this.table.datasource;
         if (!dataSource) {
             return;
         }
+        let output;
+        const userFilters = {};
+        // Transform filter fields from array to object having field names as keys
+        if (_.isArray(filterFields)) {
+            filterFields.forEach(filterField => {
+                transformFilterField(userFilters, filterField);
+            });
+        } else {
+            transformFilterField(userFilters, filterFields);
+        }
+        output = this.table.invokeEventCallback('beforefilter', {$event: e, $data: userFilters});
+        // If callback returns false, don't trigger the filter call
+        if (output === false) {
+            return;
+        }
+        // Transform back the filter fields from object to array
+        filterFields = [];
+        _.forEach(userFilters, (val, key) => {
+            filterFields.push({
+                field: key,
+                matchMode: val.matchMode,
+                type: val.type,
+                value: val.value
+            });
+        });
         if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
-            this.handleServerSideSearch(searchSortObj);
+            this.handleServerSideSearch(filterFields);
             return;
         }
         if (dataSource.execute(DataSource.Operation.IS_API_AWARE) && dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
-            this.handleSinglePageSearch(searchSortObj);
+            this.handleSinglePageSearch(filterFields);
         } else {
-            this.handleClientSideSortSearch(searchSortObj, e, type);
+            this.handleClientSideSortSearch(filterFields, e, type);
         }
     }
 
