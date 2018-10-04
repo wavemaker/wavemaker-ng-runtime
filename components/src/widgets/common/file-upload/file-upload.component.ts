@@ -165,7 +165,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         setTimeout(() => {
             this.invokeEventCallback('select', {
                 $event: $.extend($event.$files || {}, $files),
-                files: $files
+                selectedFiles: $files
             });
         });
     }
@@ -196,12 +196,12 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                         }
                     });
                 });
-                if (beforeSelectVal !== false) {
-                    // EVENT: ON_SELECT
-                    this.onSelectEventCall($event, $files);
-                }
             } else {
                 this.selectedFiles = $files;
+            }
+            if (beforeSelectVal !== false) {
+                // EVENT: ON_SELECT
+                this.onSelectEventCall($event, $files);
             }
         }
     }
