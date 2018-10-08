@@ -28,6 +28,7 @@ export const registerProps = () => {
                 ['gridfirstrowselect', PROP_BOOLEAN],
                 ['iconclass', PROP_STRING],
                 ['insertmessage', {value: 'Record added successfully', ...PROP_STRING}],
+                ['isdynamictable', PROP_BOOLEAN], // internal property to determine dynamic table
                 ['loadingdatamsg', {value: 'Loading...', ...PROP_STRING}],
                 ['loadingicon', {value: 'fa fa-circle-o-notch fa-spin', ...PROP_STRING}],
                 ['maxsize', {value: 5, ...PROP_NUMBER}],

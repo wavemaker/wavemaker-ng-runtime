@@ -3,7 +3,8 @@ import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, isDataSourceEqual, isDefined, isMobile, triggerFn } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn } from '@wm/core';
+import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -27,6 +28,8 @@ const exportIconMapping = {
 };
 
 const ROW_OPS_FIELD = 'rowOperations';
+const idGen = new IDGenerator('app-table-dynamic-');
+const getSelector = id => `${id}-${idGen.nextUid()}`;
 
 const noop = () => {};
 
@@ -79,6 +82,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
     @ViewChild('customExprView', {read: ViewContainerRef}) customExprViewRef: ViewContainerRef;
+
+    @ViewChild('dynamicTable', {read: ViewContainerRef}) dynamicTableRef: ViewContainerRef;
 
     private rowActionsCompiledTl: any  = {};
     private rowFilterCompliedTl: any = {};
@@ -160,7 +165,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private serverData;
     private filternullrecords;
     private variableInflight;
-    private isDynamicGrid = true;
+    private isdynamictable;
+    private _dynamicContext;
+    private noOfColumns;
 
     private applyProps = new Map();
 
@@ -359,8 +366,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         generateCustomExpressions: (rowData, index) => {
             const row = this.getClonedRowObject(rowData);
-            // For all the columns inside the table, generate the inline widget
-            this.customExprTmpl.forEach(tmpl => {
+            const compileTemplate = (tmpl) => {
+                if (!tmpl) {
+                    return;
+                }
                 const colDef = {};
                 const context = {
                     row,
@@ -372,7 +381,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const fieldName = rootNode.getAttribute('data-col-identifier');
                 _.extend(colDef, this.columns[fieldName]);
                 this.customExprCompiledTl[fieldName + index] = rootNode;
-            });
+            };
+            if (this.isdynamictable) {
+                this.fieldDefs.forEach(col => {
+                    compileTemplate(col.customExprTmpl);
+                });
+                return;
+            }
+            // For all the columns inside the table, generate the custom expression
+            this.customExprTmpl.forEach(compileTemplate.bind(this));
         },
         getCustomExpression: (fieldName, index) => {
             return this.customExprCompiledTl[fieldName + index] || '';
@@ -543,7 +560,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.setDataGridOption('colDefs', getClonedObject(this.fieldDefs));
             }
             // If data and colDefs are present, call on before data render event
-            if (!_.isEmpty(newValue) && gridOptions.colDefs.length) {
+            if (!this.isdynamictable && !_.isEmpty(newValue) && gridOptions.colDefs.length) {
                 this.invokeEventCallback('beforedatarender', {$data: newValue, $columns: this.columns});
             }
             this.setDataGridOption('data', getClonedObject(newValue));
@@ -938,14 +955,56 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.serverData = serviceData;
         }
         // If fielddefs are not present, generate fielddefs from data
-        if (this.isDynamicGrid || !this.fieldDefs.length) {
+        if (this.isdynamictable || !this.fieldDefs.length) {
             this.createGridColumns(this.serverData);
         } else {
             this.setGridData(this.serverData);
         }
     }
 
-    prepareFieldDefs(data) {
+    // Function to generate and compile the form fields from the metadata
+    generateDynamicColumns(columns) {
+        this.fieldDefs = []; // empty the form fields
+
+        if (_.isEmpty(columns)) {
+            return;
+        }
+
+        let tmpl = '';
+        columns.forEach(col => {
+            let attrsTmpl = '';
+            let customTmpl = '';
+            _.forEach(col, (val, key) => {
+                if (val) {
+                    // If custom expression is present, keep it inside table column. Else, keep as attribute
+                    if (key === 'customExpression') {
+                        customTmpl = val;
+                    } else {
+                        attrsTmpl += ` ${key}="${val}"`;
+                    }
+                }
+            });
+            tmpl += `<wm-table-column ${attrsTmpl}>${customTmpl}</wm-table-column>`;
+        });
+        this.dynamicTableRef.clear();
+        if (!this._dynamicContext) {
+            this._dynamicContext = Object.create(this.viewParent);
+            this._dynamicContext.table = this;
+        }
+        this.noOfColumns = columns.length;
+        this.app.notify('render-resource', {
+            selector: getSelector(this.widgetId),
+            markup: transpile(tmpl),
+            styles: '',
+            providers: undefined,
+            initFn: () => {},
+            vcRef: this.dynamicTableRef,
+            $target: this.$element.find('.dynamic-table-container')[0],
+            context: this._dynamicContext
+        });
+    }
+
+    prepareColDefs(data) {
         let defaultFieldDefs;
         let properties;
 
@@ -958,24 +1017,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         /*append additional properties*/
         _.forEach(defaultFieldDefs, columnDef => {
+            columnDef.binding = columnDef.field;
+            columnDef.caption = columnDef.displayName;
             columnDef.pcDisplay = true;
             columnDef.mobileDisplay = true;
             columnDef.searchable = true;
             columnDef.type  = 'string';
-            this.headerConfig.push({
-                'name'  : columnDef.field,
-                'field' : columnDef.field
-            });
         });
 
-        /*prepare a copy of fieldDefs prepared
-         (defaultFieldDefs will be passed to markup and fieldDefs are used for grid)
-         (a copy is kept to prevent changes made by ng-grid in the fieldDefs)
-         */
-        this.fieldDefs = getClonedObject(defaultFieldDefs);
+        defaultFieldDefs.forEach(col => {
+            this.columns[col.field] = col;
+        });
 
-        this.renderOperationColumns();
-        this.setDataGridOption('colDefs', this.fieldDefs);
+        this.invokeEventCallback('beforedatarender', {$data: data, $columns: this.columns});
+
+        defaultFieldDefs = [];
+        // Apply the changes made by the user
+        _.forEach(this.columns, val => {
+            defaultFieldDefs.push(val);
+        });
+
+        this.generateDynamicColumns(defaultFieldDefs);
     }
 
     createGridColumns(data) {
@@ -986,15 +1048,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (dataValid && !_.isArray(data)) {
             data = [data];
         }
-        /* if new columns to be rendered, prepare default fieldDefs for the data provided*/
-        this.prepareFieldDefs(data);
-        /* Arranging Data for Pagination */
-        /* if data exists and data is not error type the render the data on grid using setGridData function */
-        if (dataValid) {
-            /*check for nested data if existed*/
-            this.serverData = data;
-            this.setGridData(this.serverData);
+
+        if (_.isEmpty(data) || !dataValid) {
+            return;
         }
+        /* if new columns to be rendered, prepare default fieldDefs for the data provided*/
+        this.prepareColDefs(data);
+
+        this.serverData = data;
+        this.setGridData(this.serverData);
     }
 
     getSortExpr() {
@@ -1174,7 +1236,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
-        this.isDynamicGrid = false;
         if (isMobile()) {
             if (!tableColumn.mobileDisplay) {
                 return;
@@ -1184,7 +1245,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 return;
             }
         }
-        this.fieldDefs.push(tableColumn);
+        const colCount = this.fieldDefs.push(tableColumn);
         this.fullFieldDefs.push(tableColumn);
         this.rowFilter[tableColumn.field] = {
             value: undefined
@@ -1192,6 +1253,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.fieldDefs.forEach(col => {
             this.columns[col.field] = col;
         });
+        // If dynamic datatable and last column, pass the columns to jquery datatable
+        if (this.isdynamictable && colCount === this.noOfColumns) {
+            this.renderOperationColumns();
+            this.setDataGridOption('colDefs', this.fieldDefs);
+        }
     }
 
     registerFormField(name, formField) {
