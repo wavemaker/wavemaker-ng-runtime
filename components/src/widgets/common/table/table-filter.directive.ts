@@ -179,7 +179,9 @@ export class TableFilterSortDirective {
         this.table.filterInfo = {};
         if (this.table.filtermode === 'multicolumn') {
             this.table.fieldDefs.forEach(col => {
-                col.resetFilter();
+                if (col.resetFilter) {
+                    col.resetFilter();
+                }
             });
             if (!skipFilter) {
                 this.table.onRowFilterChange();

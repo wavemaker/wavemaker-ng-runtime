@@ -194,12 +194,19 @@ register('wm-table-column', (): IBuildTaskDef => {
             }
         },
         pre: (attrs, shared, parentTable) => {
-            const pCounter = parentTable.get('table_reference');
-            const rowFilterTmpl = (parentTable.get('filtermode') === 'multicolumn' && attrs.get('searchable') !== 'false') ? getFilterTemplate(attrs, pCounter) : '';
-            const editMode = parentTable.get('editmode');
-            const isInlineEdit = (editMode !== EDIT_MODE.DIALOG && editMode !== EDIT_MODE.FORM && attrs.get('readonly') !== 'true');
-            const inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs) : '';
-            const inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
+            let rowFilterTmpl = '';
+            let inlineEditTmpl = '';
+            let inlineNewEditTmpl = '';
+            let parentForm = '';
+            if (parentTable) {
+                const pCounter = parentTable.get('table_reference');
+                rowFilterTmpl = (parentTable.get('filtermode') === 'multicolumn' && attrs.get('searchable') !== 'false') ? getFilterTemplate(attrs, pCounter) : '';
+                const editMode = parentTable.get('editmode');
+                const isInlineEdit = (editMode !== EDIT_MODE.DIALOG && editMode !== EDIT_MODE.FORM && attrs.get('readonly') !== 'true');
+                inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs) : '';
+                inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
+                parentForm = ` [formGroup]="${pCounter}.ngform" `;
+            }
             const formatPattern = attrs.get('formatpattern');
             const customExpr = `<ng-template #customExprTmpl let-row="row" let-colDef="colDef" let-editRow="editRow" let-deleteRow="deleteRow" let-addNewRow="addNewRow">`;
             let customExprTmpl = '';
@@ -217,7 +224,7 @@ register('wm-table-column', (): IBuildTaskDef => {
                 }
             }
 
-            return `<${tagName} wmTableColumn ${getAttrMarkup(attrs)} [formGroup]="${pCounter}.ngform">
+            return `<${tagName} wmTableColumn ${getAttrMarkup(attrs)} ${parentForm}>
                     ${rowFilterTmpl}
                     ${inlineEditTmpl}
                     ${inlineNewEditTmpl}

@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChildren, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
@@ -56,6 +56,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     @ContentChildren('filterWidget') _filterInstances;
     @ContentChildren('inlineWidget') _inlineInstances;
     @ContentChildren('inlineWidgetNew') _inlineInstancesNew;
+    @ContentChild('customExprTmpl') customExprTmpl;
 
     private _propsInitialized: boolean;
     private _filterDataSet;
@@ -157,12 +158,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
         // Set the default values and register with table
         this.populateFieldDef();
-        this.table.registerColumns(this.widget);
-
-        this._isRowFilter = this.table.filtermode === 'multicolumn' && this.searchable;
-        this._isInlineEditable = !this.readonly && (this.table.editmode !== EDIT_MODE.DIALOG && this.table.editmode !== EDIT_MODE.FORM);
-        this._isNewEditableRow = this._isInlineEditable && this.table.editmode === EDIT_MODE.QUICK_EDIT && this.table.shownewrow;
-        this.setUpControls();
 
         // Register column with header config to create group structure
         setHeaderConfigForTable(this.table.headerConfig, {
@@ -170,8 +165,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             displayName: this.displayName
         }, this.group && this.group.name);
 
-        this._propsInitialized = true;
+        this.table.registerColumns(this.widget);
 
+        this._isRowFilter = this.table.filtermode === 'multicolumn' && this.searchable;
+        this._isInlineEditable = !this.readonly && (this.table.editmode !== EDIT_MODE.DIALOG && this.table.editmode !== EDIT_MODE.FORM);
+        this._isNewEditableRow = this._isInlineEditable && this.table.editmode === EDIT_MODE.QUICK_EDIT && this.table.shownewrow;
+        this.setUpControls();
+
+        this._propsInitialized = true;
     }
 
     ngAfterContentInit() {

@@ -1,3 +1,4 @@
+import { Element } from '@angular/compiler';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { IDGenerator } from '@wm/core';
 
@@ -6,9 +7,21 @@ const idGen = new IDGenerator('table_');
 
 register('wm-table', (): IBuildTaskDef => {
     return {
+        template: (node: Element, shared) => {
+            // If table does not have child columns, set isdynamictable to true
+            if (node.children.length) {
+                const isColumnsPresent = node.children.some(childNode => {
+                    return (<any>childNode).name === 'wm-table-column' || (<any>childNode).name === 'wm-table-column-group';
+                });
+                shared.set('isdynamictable', isColumnsPresent ? 'false' : 'true');
+            } else {
+                shared.set('isdynamictable', 'true');
+            }
+        },
         pre: (attrs, shared) => {
             const counter = idGen.nextUid();
             shared.set('counter', counter);
+            attrs.set('isdynamictable', shared.get('isdynamictable'));
             return `<${tagName} wmTable wmTableFilterSort wmTableCUD #${counter} data-identifier="table" role="table" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`,
