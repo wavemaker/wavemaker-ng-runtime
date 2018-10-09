@@ -44,7 +44,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     set datavalue (value: number) {
         // set text value to null if data value is empty.
         if (_.includes([null, undefined, ''], value)) {
-            this.displayValue = this.proxyModel = null;
+            const input = this.inputEl.nativeElement;
+            this.displayValue = input.value = this.proxyModel = null;
             this.resetValidations();
             this._onChange();
             return;
