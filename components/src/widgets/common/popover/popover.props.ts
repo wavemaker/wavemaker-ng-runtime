@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['conditionalclass', PROP_ANY],
                 ['content', PROP_STRING],
                 ['contentanimation', PROP_STRING],
-                ['contentsource', PROP_STRING],
+                ['contentsource', {value: 'partial', ...PROP_STRING}],
                 ['encodeurl', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
                 ['hyperlink', PROP_STRING],

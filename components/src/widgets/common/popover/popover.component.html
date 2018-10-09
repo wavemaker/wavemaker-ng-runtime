@@ -10,7 +10,8 @@
    [isOpen]="isOpen"
    [tabindex]="tabindex"
    [name]="name"
-   [ngClass]="class"
+   [class] = "class"
+   [ngClass]="{'disable-popover': !canPopoverOpen}"
 
    #anchor
    name.bind="name"

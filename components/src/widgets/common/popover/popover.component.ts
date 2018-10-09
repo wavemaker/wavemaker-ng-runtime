@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild, Inject } from '@angular/core';
+import { AfterViewInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild, Inject } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { PopoverDirective } from 'ngx-bootstrap';
 
@@ -36,12 +36,13 @@ let activePopover: PopoverComponent;
     ]
 })
 
-export class PopoverComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
+export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
     private event: string;
     private isOpen: boolean = false;
     private closePopoverTimeout;
     private readonly popoverContainerCls;
     private keyEventPlugin;
+    private canPopoverOpen: boolean = true;
 
     public interaction: string;
     public popoverarrow: boolean;
@@ -168,6 +169,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
 
     private onPopoverAnchorKeydown($event) {
+        // if there is no content available, the popover should not open through enter key. So checking whether the canPopoverOpen flag is true or not.
+        if(!this.canPopoverOpen) {
+           return;
+        }
         const action = this.keyEventPlugin.constructor.getEventFullKey(event);
         if (action === 'enter') {
             $event.stopPropagation();
@@ -179,20 +184,21 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (key === 'class' || key === 'tabindex') {
             return;
         }
+        if(key === 'contentsource') {
+            // if there is no partial content available, the popover should not open
+            if (this.contentsource === 'partial' && !this.content) {
+                this.canPopoverOpen = false;
+            }
+        }
+        if(key === 'content' && nv) {
+            this.canPopoverOpen = true;
+        }
         super.onPropertyChange(key, nv, ov);
     }
 
     ngOnInit() {
         super.ngOnInit();
         this.event = eventsMap[this.interaction];
-    }
-
-    ngAfterContentInit() {
-        super.ngAfterContentInit();
-
-        if ((!this.content && !this.contentsource) || (this.contentsource === 'partial' && !this.content)) {
-            this.event = '';
-        }
     }
 
     ngAfterViewInit() {
