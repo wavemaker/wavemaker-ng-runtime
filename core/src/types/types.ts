@@ -132,11 +132,11 @@ export abstract class AbstractToasterService {
 
 export abstract class AbstractSpinnerService {
     public abstract getMessageSource();
-    public abstract showContextSpinner();
-    public abstract showAppSpinner(msg, id);
-    public abstract hideContextSpinner(ctx, id);
-    public abstract show(message, id?, spinnerClass?, spinnerContext?, variableScopeId?);
-    public abstract hide(id);
+    public abstract showContextSpinner(spinnerContext: string, message: string, id: string);
+    public abstract showAppSpinner(msg: string, id: string);
+    public abstract hideContextSpinner(ctx: string, id: string);
+    public abstract show(message: string, id?: string, spinnerClass?: string, spinnerContext?: string, variableScopeId?: string);
+    public abstract hide(id: string);
 }
 export abstract class UserDefinedExecutionContext {
 
