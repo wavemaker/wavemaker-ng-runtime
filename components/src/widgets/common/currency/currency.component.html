@@ -19,5 +19,6 @@
 
        (blur)="handleBlur($event)"
        (ngModelChange)="datavalue=$event"
+       (keydown.enter)="onEnter($event)"
        (keydown.ArrowUp)="onArrowPress($event, 'UP')"
        (keydown.ArrowDown)="onArrowPress($event, 'DOWN')">
