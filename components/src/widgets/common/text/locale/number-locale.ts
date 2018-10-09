@@ -207,4 +207,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         return null;
     }
+
+    onEnter($event) {
+        this.datavalue = $event.target.value;
+    }
 }
