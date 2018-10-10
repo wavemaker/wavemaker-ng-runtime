@@ -58,7 +58,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     set datasource(nv) {
         this._datasource = nv;
         this.searchComponent.datasource = nv;
-        this.updateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
+        this._debounceUpdateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
     }
 
     constructor(
@@ -75,7 +75,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         styler(this.nativeElement, this);
 
         // set the showsearchicon as false by default.
-        if (_.isUndefined(this.showsearchicon)) {
+        if (!isDefined(this.showsearchicon)) {
             this.showsearchicon = false;
         }
         // parse the chipclass expression.
@@ -100,6 +100,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         const datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
             // update queryModel only when parentRef is available.
             if (!this._unsubscribeDv) {
+                this.chipsList = [];
                 // if the datafield is ALLFILEDS do not fetch the records
                 // update the query model with the values we have
                 this._debounceUpdateQueryModel(val);
@@ -142,7 +143,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     // This method updates the queryModel.
     // default call to get the default data can be done only when defaultQuery is true.
     private updateQueryModel(data: any) {
-        if (!data) {
+        if (!data || !this.datasetItems.length) {
             this.chipsList = [];
             return;
         }
