@@ -74,6 +74,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private elIndex: number;
     private listenQuery: boolean;
     private _domUpdated: boolean;
+    private searchon: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -258,7 +259,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             if (!this._domUpdated) {
                 this.listenQuery = false;
                 this.typeahead.hide();
-                this._unsubscribeDv = true;
+                this._unsubscribeDv = this.isUpdateOnKeyPress();
             }
             this._domUpdated = false;
         }, 100);
@@ -270,7 +271,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.result = [];
         this.page = 1;
         this._lastQuery = undefined;
-        this.listenQuery = true;
+        this.listenQuery = this.isUpdateOnKeyPress();
 
         // when input is cleared, reset the datavalue
         if (this.query === '') {
@@ -288,12 +289,24 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // Triggerred when typeahead option is selected.
     private onSelect($event: Event) {
+        // searchOn is set as onBtnClick, then invoke the search api call manually.
+        if (!this.isUpdateOnKeyPress()) {
+            this.listenQuery = true;
+            // trigger the typeahead change manually to fetch the next set of results.
+            this.typeahead.onInput({
+                target: {
+                    value: '0' // dummy data to notify the observables
+                }
+            });
+            return;
+        }
         // when matches are available.
         if (this.typeaheadContainer && this.liElements.length) {
             this.typeaheadContainer.selectActiveMatch();
         } else {
             this.queryModel = this.query;
             this._modelByValue = undefined;
+            this.invokeEventCallback('submit', {$event});
         }
     }
 
@@ -388,6 +401,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if ($lastItem.length && typeAheadDropDown.length && (typeAheadDropDown.height() + typeAheadDropDown.position().top >  $lastItem.height() + $lastItem.position().top)) {
             this.loadMoreData(true);
         }
+    }
+
+    private isUpdateOnKeyPress() {
+        return this.searchon === 'typing';
     }
 
     private debounceDefaultQuery(data) {
@@ -590,6 +607,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.minchars = 1;
             }
         }
+
+        this.listenQuery = this.isUpdateOnKeyPress();
 
         // by default for autocomplete do not show the search icon
         // by default show the searchicon for type = search
