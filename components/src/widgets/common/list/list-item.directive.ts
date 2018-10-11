@@ -1,4 +1,4 @@
-import { ContentChildren, Directive, ElementRef, HostBinding, Injector, Input, OnInit, QueryList, AfterViewInit } from '@angular/core';
+import { AfterViewInit, ContentChildren, Directive, ElementRef, HostBinding, HostListener, Injector, Input, OnInit, QueryList } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import { Observable, Subject } from 'rxjs';
@@ -25,6 +25,12 @@ export class ListItemDirective implements OnInit, AfterViewInit {
 
     @HostBinding('class.active') isActive: boolean = false;
     @HostBinding('class.disable-item') disableItem: boolean = false;
+
+    @HostListener('focus')
+    onFocus() {
+        // maintains which element is focused/selected most recently.
+        this.listComponent.lastSelectedItem = this;
+    }
 
     @ContentChildren(WidgetRef) _currentItemWidgets: QueryList<WidgetRef>;
 

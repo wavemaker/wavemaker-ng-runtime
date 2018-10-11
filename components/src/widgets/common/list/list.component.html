@@ -38,7 +38,7 @@
         <li *ngFor="let item of fieldDefs; index as $index; first as $isFirst; last as $isLast;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
-            tabindex="-1">
+            tabindex="0">
             <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index:$index, itemRef: listItemRef, $isFirst:$isFirst, $isLast:$isLast}"></ng-container>
         </li>
     </ng-template>

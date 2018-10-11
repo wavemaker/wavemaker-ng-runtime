@@ -38,7 +38,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     private itemsPerRowClass: string;
     private firstSelectedItem: ListItemDirective;
-    private lastSelectedItem: ListItemDirective;
     private navigatorMaxResultWatch: Subscription;
     private navigatorResultWatch: Subscription;
     private navControls: string;
@@ -53,6 +52,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private app: any;
     private appDefaults: any;
 
+    public lastSelectedItem: ListItemDirective;
     public fieldDefs: Array<any>;
     public disableitem;
     public navigation: string;
@@ -622,6 +622,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     public handleKeyDown($event, action: string) {
+        $event.stopPropagation();
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
         let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
@@ -656,15 +657,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         }
         if (action === 'focusPrev') {
-            if (presentIndex !== 0) {
-                this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex - 1);
-                this.lastSelectedItem.nativeElement.focus();
-            }
+            presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
+            this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex);
+            this.lastSelectedItem.nativeElement.focus();
         } else if (action === 'focusNext') {
-            if (presentIndex !== listItems.length - 1) {
-                this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
-                this.lastSelectedItem.nativeElement.focus();
-            }
+            presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length -1);
+            this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex);
+            this.lastSelectedItem.nativeElement.focus();
         } else if (action === 'select') {
             if (presentIndex === -1) {
                 const $li = $($event.target).closest('li.app-list-item');
@@ -698,6 +697,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         } else if (key === 'itemsperrow') {
             this.setListClass();
+        } else if (key === 'tabindex') {
+            return;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
