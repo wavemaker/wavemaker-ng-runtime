@@ -1,15 +1,29 @@
 <ng-template #menuRef let-item="item" let-index="index">
-    <div wmMenu dropdown type="anchor" autoclose.bind="autoclose" iconclass.bind="item.icon" autoopen.bind="autoopen"
-         caption.bind="item.label" dataset.bind="item.children" select.event="onMenuItemSelect($event, widget, $item)"></div>
+    <div wmMenu dropdown
+         type="anchor"
+         autoclose.bind="autoclose"
+         iconclass.bind="item.icon"
+         autoopen.bind="autoopen"
+         caption.bind="item.label"
+         dataset.bind="item.children"
+         iconposition.bind="iconposition"
+         select.event="onMenuItemSelect($event, widget, $item)"></div>
+</ng-template>
+
+<ng-template #anchorRef let-item="item" let-index="index">
+    <a wmAnchor
+       [disableMenuContext]="disableMenuContext || !!item.action"
+       [wmNavigationControl]="item.link"
+       caption.bind="item.label"
+       iconclass.bind="item.icon"
+       badgevalue.bind="item.badge"
+       iconposition.bind="iconposition"
+       click.event="onNavSelect($event, item, liRef)"></a>
 </ng-template>
 
 <li class="app-nav-item {{item.class}}" *ngFor="let item of nodes; let index = index;" #liRef [ngClass]="{active: item.link === '#/' + activePageName}">
-    <a class="app-anchor" [wmNavigationControl]="item.link" [disableMenuContext]="disableMenuContext || !!item.action" *ngIf="!item.children.length" (click)="onNavSelect($event, item, liRef)">
-        <i class="app-nav-icon" [ngClass]="item.icon"></i>
-        <span class="anchor-caption" [textContent]="item.label"></span>
-        <span class="badge" [textContent]="item.badge"></span>
-    </a>
-    <ng-container [ngTemplateOutlet]="menuRef" [ngTemplateOutletContext]="{item: item, index:index}" *ngIf="item.children.length"></ng-container>
+    <ng-container [ngTemplateOutlet]="anchorRef" [ngTemplateOutletContext]="{item: item, index:index}" *ngIf="!item.children.length"></ng-container>
+    <ng-container [ngTemplateOutlet]="menuRef" [ngTemplateOutletContext]="{item: item, index:index}"  *ngIf="item.children.length"></ng-container>
 </li>
 
 <ng-content *ngIf="!nodes.length" select="[wmNavItem]"></ng-content>

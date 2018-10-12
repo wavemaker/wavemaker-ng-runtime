@@ -1,24 +1,45 @@
 <ng-template #menuTemplate>
-    <button [title]="hint" class="btn app-button dropdown-toggle {{menuclass}}" dropdownToggle [attr.accesskey]="shortcutkey"
-            aria-haspopup="true" aria-expanded="false" [tabindex]="tabindex">
-        <ng-container [ngTemplateOutlet]="innerTemplate"></ng-container>
+    <button wmButton
+            dropdownToggle
+            aria-haspopup="true"
+            aria-expanded="false"
+
+            class="btn app-button dropdown-toggle {{menuclass}}"
+            hint.bind="hint"
+            shortcutkey.bind="shortcutkey"
+            tabindex.bind="tabindex"
+            caption.bind="caption"
+            iconclass.bind="iconclass"
+            iconposition.bind="iconposition">
+        <span class="pull-right caret fa {{menuCaret}}"></span>
     </button>
 </ng-template>
 
 <ng-template #innerTemplate>
     <i class="app-icon {{iconclass}}"></i>
     <span class="caption" [textContent]="caption"></span>
-    <span>
-        <ng-content></ng-content>
-    </span>
     <span class="pull-right caret fa {{menuCaret}}"></span>
 </ng-template>
 
 <ng-container *ngIf="type === 'anchor'; else menuTemplate">
-    <a [title]="hint" href="javascript:void(0);" role="button" class="app-anchor dropdown-toggle {{menuclass}}"
-       dropdownToggle aria-haspopup="true" aria-expanded="false" [attr.accesskey]="shortcutkey" [tabindex]="tabindex">
-        <ng-container [ngTemplateOutlet]="innerTemplate"></ng-container>
+    <a wmAnchor
+       dropdownToggle
+
+       href="javascript:void(0);"
+       role="button"
+       aria-haspopup="true"
+       aria-expanded="false"
+
+       hint.bind="hint"
+       class="dropdown-toggle {{menuclass}}"
+       shortcutkey.bind="shortcutkey"
+       tabindex.bind="tabindex"
+       caption.bind="caption"
+       iconclass.bind="iconclass"
+       iconposition.bind="iconposition"
+    >
+        <span class="pull-right caret fa {{menuCaret}}"></span>
     </a>
 </ng-container>
 
-<ul wmMenuDropdown [items]="nodes" [ngClass]="menulayout" *dropdownMenu aria-labelledby="dropdownmenu"></ul>
+<ul wmMenuDropdown [items]="nodes" [ngClass]="menulayout" class="icon-position-{{iconposition}}" *dropdownMenu aria-labelledby="dropdownmenu"></ul>
