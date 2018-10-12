@@ -665,7 +665,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex);
             this.lastSelectedItem.nativeElement.focus();
         } else if (action === 'select') {
-            if (presentIndex === -1) {
+            // if the enter click is pressed on the item which is not the last selected item, the find the item from which the event is originated.
+            if (presentIndex === -1 || !$($event.target).closest(this.lastSelectedItem.nativeElement)) {
                 const $li = $($event.target).closest('li.app-list-item');
                 const $ul = $li.closest('ul.app-livelist-container');
                 presentIndex = $ul.find('li.app-list-item').index($li);

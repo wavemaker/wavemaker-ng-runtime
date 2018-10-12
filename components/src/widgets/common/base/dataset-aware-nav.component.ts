@@ -167,6 +167,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             case 'itemicon':
             case 'itemlabel':
             case 'itemlink':
+            case 'itemclass':
             case 'itemchildren':
             case 'orderby':
                 // calls resetnodes method after 50ms. any calls within 50ms will be ignored.
