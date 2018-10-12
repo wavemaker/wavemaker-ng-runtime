@@ -54,7 +54,12 @@ export class MobileAppModule {
         this._$appEl = $('.wm-app:first');
         this._$appEl.addClass('wm-mobile-app');
         app.deployedUrl = this.getDeployedUrl();
-        this.getDeviceOS().then(os => this.applyOSTheme(os));
+        this.getDeviceOS().then(os => {
+            app.selectedViewPort = {
+                os: os
+            };
+            this.applyOSTheme(os);
+        });
         if (hasCordova()) {
             this.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
