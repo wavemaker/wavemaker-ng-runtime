@@ -1010,6 +1010,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         this.fieldDefs = [];
         this.headerConfig = [];
+        this.columns = {};
         /* if properties map is existed then fetch the column configuration for all nested levels using util function */
         properties = data;
         /*call utility function to prepare fieldDefs for grid against given data (A MAX OF 10 COLUMNS ONLY)*/
