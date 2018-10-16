@@ -10,7 +10,7 @@
          select.event="onMenuItemSelect($event, widget, $item)"></div>
 </ng-template>
 
-<ng-template #anchorRef let-item="item" let-index="index">
+<ng-template #anchorRef let-item="item" let-index="index" let-liRef="liRef">
     <a wmAnchor
        [disableMenuContext]="disableMenuContext || !!item.action"
        [wmNavigationControl]="item.link"
@@ -22,7 +22,7 @@
 </ng-template>
 
 <li class="app-nav-item {{item.class}}" *ngFor="let item of nodes; let index = index;" #liRef [ngClass]="{active: item.link === '#/' + activePageName}">
-    <ng-container [ngTemplateOutlet]="anchorRef" [ngTemplateOutletContext]="{item: item, index:index}" *ngIf="!item.children.length"></ng-container>
+    <ng-container [ngTemplateOutlet]="anchorRef" [ngTemplateOutletContext]="{item: item, index:index, liRef: liRef}" *ngIf="!item.children.length"></ng-container>
     <ng-container [ngTemplateOutlet]="menuRef" [ngTemplateOutletContext]="{item: item, index:index}"  *ngIf="item.children.length"></ng-container>
 </li>
 
