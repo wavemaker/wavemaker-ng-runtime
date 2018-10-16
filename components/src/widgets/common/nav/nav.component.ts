@@ -87,7 +87,8 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
             }
 
             this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
-        } else if (itemLink) {
+        }
+        if (itemLink) {
             if (itemLink.startsWith('#/')) {
                 const queryParams = getUrlParams(itemLink);
                 itemLink = getRouteNameFromLink(itemLink);
