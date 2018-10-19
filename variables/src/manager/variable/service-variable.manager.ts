@@ -289,9 +289,9 @@ export class ServiceVariableManager extends BaseVariableManager {
                     if (param.name === 'size') {
                         param.sampleValue = options.size || param.sampleValue || parseInt(variable.maxResults, 10);
                     } else if (param.name === 'page') {
-                        param.sampleValue = options.page || param.sampleValue || 1;
+                        param.sampleValue = options.page || param.sampleValue;
                     } else if (param.name === 'sort') {
-                        param.sampleValue = getEvaluatedOrderBy(variable.orderBy, options.orderBy) || param.sampleValue || '';
+                        param.sampleValue = getEvaluatedOrderBy(variable.orderBy, options.orderBy) || param.sampleValue;
                     }
                 } else if (param.name === 'access_token' && isOAuthTypeService) {
                     param.sampleValue = getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], null);
