@@ -76,9 +76,9 @@ export class PrefabRenderer {
 
                     Object.entries((config.events || {}))
                         .forEach(([key, prop]: [string, any]) => {
-                            instance[key] = (locals: any) => {
+                            instance[key] = (...args) => {
                                 const eventName = key.substr(2).toLowerCase();
-                                containerWidget.invokeEventCallback(eventName, (locals || {}));
+                                containerWidget.invokeEventCallback(eventName, {$event: args[0], $data: args[1]});
                             };
                         });
 
