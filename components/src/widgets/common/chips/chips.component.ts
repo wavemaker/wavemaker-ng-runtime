@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, ChangeDetectorRef, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { $appDigest, debounce, $parseExpr, isAppleProduct, isDefined, toBoolean } from '@wm/core';
 
@@ -63,7 +63,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     constructor(
         inj: Injector,
-        private cdRef: ChangeDetectorRef,
         @Attribute('displayfield.bind') private bindDisplayField,
         @Attribute('displayexpression.bind') private bindDisplayExpr,
         @Attribute('displayimagesrc.bind') private bindDisplayImgSrc,
@@ -613,7 +612,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         changedItem.item = this.chipsList[newIndex];
 
         this.chipsList = [...this.chipsList];
-        this.cdRef.detectChanges();
 
         this.resetReorder();
         this.invokeEventCallback('reorder', {$event, $data: this.chipsList, $changedItem: changedItem});
