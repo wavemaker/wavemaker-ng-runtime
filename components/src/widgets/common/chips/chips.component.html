@@ -10,7 +10,7 @@
        (blur)="readonly ? 0 : item.active = false"
        [ngClass]="{'chip-duplicate bg-danger': item.isDuplicate, 'chip-picture': item.imgSrc}">
         <img data-identifier="img" alt="Chip Image" class="button-image-icon" [src]="item.imgSrc" *ngIf="item.imgSrc"/>
-        <span [textContent]="item.label"></span>
+        <span class="app-chip-title" [textContent]="item.label" [title]="item.label"></span>
         <button type="button" tabindex="-1" arial-label="Clear Button" class="btn btn-transparent" (click)="removeItem($event, item, $index);" *ngIf="!readonly">
             <i class="app-icon wi wi-close"></i>
         </button>
