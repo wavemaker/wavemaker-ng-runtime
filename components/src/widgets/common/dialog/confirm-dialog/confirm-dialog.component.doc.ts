@@ -51,6 +51,11 @@ export class Confirmdialog {
      */
     @Input() iconclass: string = 'wi wi-done';
     /**
+     * This property sets the url for icon in dialog header.
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() iconurl: string;
+    /**
      * This property sets the icon width for icon in dialog header.
      */
     @Input() iconwidth: string;

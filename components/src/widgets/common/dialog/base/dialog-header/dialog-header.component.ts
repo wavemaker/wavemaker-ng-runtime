@@ -18,6 +18,7 @@ export class DialogHeaderComponent {
     @Input() public iconheight = DEFAULT_ICON_DIMENSIONS;
     @Input() public iconmargin: string;
     @Input() public iconclass: string;
+    @Input() public iconurl: string;
     @Input() public closable = true;
     @Input() public heading: string;
     @Input() public subheading: string;
