@@ -524,7 +524,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     // response from dataProvider returns always data object.
                     response = response.data || response;
 
-                    if (this.dataProvider.updateDataset) {
+                    // for service variable, updating the dataset only if it is not defined or empty
+                    if ((!isDefined(this.dataset) || !this.dataset.length) && this.dataProvider.updateDataset) {
                         this.dataset = response;
                     }
 
