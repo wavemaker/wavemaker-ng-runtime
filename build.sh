@@ -29,7 +29,7 @@ done
 
 RIMRAF=./node_modules/.bin/rimraf
 ROLLUP=./node_modules/.bin/rollup
-UGLIFYJS=./node_modules/.bin/uglifyjs
+UGLIFYJS='./node_modules/.bin/uglifyjs -b ascii_only=true'
 NGC=./node_modules/.bin/ngc
 TSC=./node_modules/.bin/tsc
 COMPODOC=./node_modules/.bin/compodoc
