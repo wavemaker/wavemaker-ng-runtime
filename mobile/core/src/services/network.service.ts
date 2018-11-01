@@ -36,7 +36,7 @@ const blockUrl = url => {
 };
 
 // Intercept all XHR calls
-XMLHttpRequest.prototype.open = function (method, url, async = true, user, password) {
+XMLHttpRequest.prototype.open = function (method: string, url: string, async: boolean = true, user?: string, password?: string) {
     if (blockUrl(url)) {
         const urlSplits = url.split('://');
         const pathIndex = urlSplits[1].indexOf('/');

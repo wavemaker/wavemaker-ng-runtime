@@ -13,6 +13,7 @@
         "debug": false,
         "skipTemplateCodegen": true,
         "enableResourceInlining": true,
-        "skipMetadataEmit": true
+        "skipMetadataEmit": true,
+        "annotationsAs": "static fields"
     }
 }
