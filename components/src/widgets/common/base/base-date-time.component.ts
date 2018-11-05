@@ -587,8 +587,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {
             this._dateOptions.minDate = (nv === CURRENT_DATE) ?  this.mindate = new Date() : getDateObj(nv);
+            this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'maxdate') {
            this._dateOptions.maxDate = (nv === CURRENT_DATE) ?  this.maxdate = new Date() : getDateObj(nv);
+            this.minDateMaxDateValidationOnInput(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
