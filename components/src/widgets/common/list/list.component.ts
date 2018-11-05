@@ -1,8 +1,8 @@
-import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ContentChildren, ElementRef, Injector, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isNumber, isObject, noop, switchClass } from '@wm/core';
+import { $appDigest, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -11,8 +11,10 @@ import { registerProps } from './list.props';
 import { NAVIGATION_TYPE, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
+import { ListAnimator } from './list.animator';
 import { configureDnD, getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 import { WidgetRef } from '../../framework/types';
+import { ButtonComponent } from '../button/button.component';
 
 declare const _;
 declare const $;
@@ -29,9 +31,13 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(ListComponent)
     ]
 })
-export class ListComponent extends StylableComponent implements OnInit, AfterViewInit {
+export class ListComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
+
+    @ContentChild('listLeftActionTemplate') listLeftActionTemplate:  TemplateRef<ElementRef>;
+    @ContentChild('listRightActionTemplate') listRightActionTemplate:  TemplateRef<ElementRef>;
+    @ContentChildren(ButtonComponent) btnComponents;
 
     @ViewChild(PaginationComponent) dataNavigator;
     @ViewChildren(ListItemDirective) listItems: QueryList<ListItemDirective>;
@@ -94,6 +100,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private promiseResolverFn: Function;
     private propsInitPromise: Promise<any>;
     private $ulEle: any;
+    private _listAnimator: ListAnimator;
+    public _leftPanelSwipeTarget: ButtonComponent;
+    public _rightPanelSwipeTarget: ButtonComponent;
+    private $btnSubscription: Subscription;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -661,7 +671,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex);
             this.lastSelectedItem.nativeElement.focus();
         } else if (action === 'focusNext') {
-            presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length -1);
+            presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
             this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex);
             this.lastSelectedItem.nativeElement.focus();
         } else if (action === 'select') {
@@ -849,7 +859,30 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.setListClass();
         });
         this.setupHandlers();
-        styler(this.nativeElement.querySelector('ul.app-livelist-container') as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        const $ul = this.nativeElement.querySelector('ul.app-livelist-container');
+        styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+
+        if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
+            // retrieves all the button components which are placed outside the listTemplate.
+            this.$btnSubscription = this.btnComponents.changes.subscribe((items) => {
+                items.forEach(item => {
+                    // assign the swipeTarget elements depending on swipe-target-position attribute.
+                    if (item.$attrs.get('swipe-target-position') === 'left') {
+                        this._leftPanelSwipeTarget = item;
+                    }
+                    if (item.$attrs.get('swipe-target-position') === 'right') {
+                        this._rightPanelSwipeTarget = item;
+                    }
+                });
+            });
+            this._listAnimator = new ListAnimator(this);
+        }
+    }
+
+    ngOnDestroy() {
+        if (this.$btnSubscription) {
+            this.$btnSubscription.unsubscribe();
+        }
     }
 }
 

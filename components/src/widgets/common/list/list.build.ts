@@ -1,4 +1,4 @@
-import { Element } from '@angular/compiler';
+import { Attribute, Element } from '@angular/compiler';
 import { updateTemplateAttrs } from '@wm/core';
 
 import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/transpiler';
@@ -33,6 +33,44 @@ register('wm-listtemplate', (): IBuildTaskDef => {
     return {
         pre: () => `<ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$isFirst="$isFirst" let-$isLast="$isLast">`,
         post: () => `</ng-template>`
+    };
+});
+
+function copyAttribute(from: Element, fromAttrName: string, to: Element, toAttrName: string) {
+    const fromAttr = from.attrs.find( a => a.name === fromAttrName);
+    if (fromAttr) {
+        to.attrs.push(new Attribute(toAttrName, fromAttr.value, fromAttr.sourceSpan, fromAttr.valueSpan));
+    }
+}
+
+register('wm-list-action-template', (): IBuildTaskDef => {
+    return {
+        template: (node: Element) => {
+
+            const position = node.attrs.find(attr => attr.name === 'position').value;
+
+            const btns = <Element[]> node.children
+                .filter(e => e instanceof Element && (<Element> e).name === 'wm-button');
+
+            // on leftactionpanel fullswipe i.e. towards right, first child action will be triggered similarly last child action for rightactionpanel.
+            // Hence get the first child for the left action template and last for right action template.
+            const template = btns.find((e, i) => (position === 'left' && i === 0) || (position === 'right' && i === btns.length - 1));
+            // assigning swipe-target-position on above buttons
+            if (template != null && template.attrs.find(attr => attr.name === 'on-tap')) {
+                copyAttribute(node, 'position', template, 'swipe-target-position');
+            }
+        },
+        pre: (attrs, el) => {
+            if (attrs.get('position') === 'left') {
+                return `<ng-template #listLeftActionTemplate>
+                            <li class="app-list-item-action-panel app-list-item-left-action-panel actionMenu" ${getAttrMarkup(attrs)}>`;
+            }
+            if (attrs.get('position') === 'right') {
+                return `<ng-template #listRightActionTemplate>
+                            <li class="app-list-item-action-panel app-list-item-right-action-panel actionMenu" ${getAttrMarkup(attrs)}>`;
+            }
+        },
+        post: () => `</li></ng-template>`
     };
 });
 

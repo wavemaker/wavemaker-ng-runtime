@@ -75,7 +75,7 @@ window.requestAnimationFrame = (function () {
             var result;
             $.each(elementsToObserve, function() {
                 if (this.$ele[0].iscroll) {
-                    if (this.$ele[0].iscroll.y !== this.last.scrollTop) {
+                    if (!isNaN(this.$ele[0].iscroll.y) && this.$ele[0].iscroll.y !== this.last.scrollTop) {
                         result = true;
                     }
                 } else if (this.$ele[0].scrollTop !== this.last.scrollTop) {
@@ -89,7 +89,7 @@ window.requestAnimationFrame = (function () {
             var result;
             $.each(elementsToObserve, function() {
                 if (this.$ele[0].iscroll) {
-                    if (this.$ele[0].iscroll.x !== this.last.scrollLeft) {
+                    if (!isNaN(this.$ele[0].iscroll.x) && this.$ele[0].iscroll.x !== this.last.scrollLeft) {
                         result = true;
                     }
                 } else if (this.$ele[0].scrollLeft !== this.last.scrollLeft) {
@@ -529,7 +529,7 @@ window.requestAnimationFrame = (function () {
      * @param time , time to persist transition
      * @param $el , element on which swipe is applied
      */
-    function animate(settings, metaData, time, $el) {
+    function animate(settings, metaData, time, $el, distanceMoved, e) {
         _.forEach(settings.animation, function(a) {
             if (!a.target) {
                 return;
@@ -563,7 +563,7 @@ window.requestAnimationFrame = (function () {
                 } else if (metaData.$D === metaData.bounds.upper) {
                     settings.onUpper.call($el);
                 }
-                settings.onAnimation();
+                settings.onAnimation(e, distanceMoved);
             });
         }, time);
     }
@@ -722,7 +722,7 @@ window.requestAnimationFrame = (function () {
                 state.$D = localState.$D;
                 time = state.vc.getTime(localState.$D - cd);
 
-                animate(settings, localState, time, $ele);
+                animate(settings, localState, time, $ele, cd, e);
             }
         });
     }

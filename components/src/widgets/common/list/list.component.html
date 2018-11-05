@@ -42,6 +42,8 @@
             <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index:$index, itemRef: listItemRef, $isFirst:$isFirst, $isLast:$isLast}"></ng-container>
         </li>
     </ng-template>
+    <ng-container [ngTemplateOutlet]="listLeftActionTemplate"></ng-container>
+    <ng-container [ngTemplateOutlet]="listRightActionTemplate"></ng-container>
 </ul>
 
 <div class="no-data-msg" *ngIf="noDataFound && !variableInflight" [textContent]="nodatamessage"></div>

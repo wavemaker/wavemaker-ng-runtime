@@ -8,7 +8,7 @@ export abstract class SwipeAnimation {
 
     public abstract animation(): [{}] | {};
     public bindEvents() { return ['touch']; }
-    public bounds() { return {}; }
+    public bounds(e?, $d?: number) { return {}; }
     public context() { return {}; }
     public direction() { return $.fn.swipey.DIRECTIONS.HORIZONTAL; }
     public setGesturesEnabled(enabled: boolean) { this._isGesturesEnabled = enabled; }
@@ -19,7 +19,7 @@ export abstract class SwipeAnimation {
     public goToUpper(time?) {
         this._$ele.swipeAnimation('gotoUpper', time);
     }
-    public onAnimation() {}
+    public onAnimation(e, distanceMoved: number) {}
     public onUpper() {}
     public onLower() {}
     public threshold() { return 30; }
