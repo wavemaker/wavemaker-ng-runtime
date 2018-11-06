@@ -200,7 +200,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (datePickerBody.find('table.days').length > 0) {
             this.loadDays();
             const newMonth = months.indexOf(activeMonthOrYear);
-            const newDate = new Date(this.activeDate.getFullYear(), newMonth, this.activeDate.getDate());
+            const newDate = new Date(this.activeDate.getFullYear(), newMonth, 1);
             this.setActiveDateFocus(newDate, true);
         }
     }
@@ -364,7 +364,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 }
                 $(document.activeElement).click();
                 this.loadDays();
-                this.setActiveDateFocus(this.activeDate);
+                const newDate = new Date(this.activeDate.getFullYear(), this.activeDate.getMonth(), 1);
+                this.setActiveDateFocus(newDate);
             }
         });
     }
