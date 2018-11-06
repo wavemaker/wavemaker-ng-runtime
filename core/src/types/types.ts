@@ -113,12 +113,13 @@ export abstract class AbstractI18nService {
     public abstract getSelectedLocale(): string;
     public abstract getDefaultSupportedLocale(): string;
     public abstract getAppLocale(): any;
-    public abstract setSelectedLocale(locale);
+    public abstract setSelectedLocale(locale, libLocale);
     public abstract loadDefaultLocale();
     public abstract getLocalizedMessage(message, ...args);
     protected abstract loadAppLocaleBundle();
-    protected abstract loadMomentLocaleBundle();
-    protected abstract loadLocaleBundles();
+    protected abstract loadMomentLocaleBundle(localeLang);
+    protected abstract loadLocaleBundles(localeLang);
+    public abstract getPrefabLocaleBundle(prefabName: string): any;
 }
 
 export abstract class AbstractToasterService {
