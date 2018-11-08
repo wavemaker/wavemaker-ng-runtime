@@ -254,17 +254,18 @@ export class TableFilterSortDirective {
         data = this.getSearchResult(data, this.table.filterInfo);
         data = this.getSortResult(data, this.table.sortInfo);
         this.table.serverData = data;
+
+        if (type === 'sort') {
+            // Calling 'onSort' event
+            this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData});
+        }
+
         if (this.table.isNavigationEnabled()) {
             // Reset the page number to 1
             this.table.dataNavigator.dn.currentPage = 1;
             this.table.dataNavigator.setPagingValues(data);
         } else {
             this.table.setGridData(this.table.serverData);
-        }
-
-        if (type === 'sort') {
-            // Calling 'onSort' event
-            this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData});
         }
     }
 
