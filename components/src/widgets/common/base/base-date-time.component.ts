@@ -516,8 +516,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                         stopPropogation = true;
                         preventDefault = true;
                     }
-                } else if ($parent.is(':last-child')) {
-                    if (action === 'tab' || action === 'escape') {
+                } else if ($parent.is(':last-child') || ($parent.next().next().find('button.disabled').length)) {
+                    if (action === 'tab' || action === 'escape' || action === 'enter') {
                         elementScope.setIsTimeOpen(false);
                         this.focus();
                         stopPropogation = true;
