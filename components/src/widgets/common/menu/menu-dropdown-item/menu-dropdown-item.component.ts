@@ -49,8 +49,8 @@ export class MenuDropdownItemComponent implements OnInit {
         // add active class to the item only if it is in nav component.
         if (this.parentNav) {
             if (isActiveNavItem(this.item.link, this.menuRef.route.url)) {
+                // add active class to the li, if the menu item's link is same as the current page name.
                 addClass(this.nativeElement, 'active');
-                $(this.nativeElement).parentsUntil(this.menuRef.$element, '.dropdown-submenu').addClass('open');
             }
         }
     }
