@@ -1,5 +1,6 @@
-import { Component, Inject, Injector, NgZone, OnDestroy } from '@angular/core';
+import {Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
+import { TimepickerComponent} from 'ngx-bootstrap';
 
 import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
 
@@ -13,7 +14,7 @@ const CURRENT_TIME: string = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
 const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
 
-declare const _;
+declare const _, moment;
 
 registerProps();
 
@@ -102,6 +103,8 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private bsTimeValue: Date;
 
     private keyEventPlugin;
+
+    @ViewChild(TimepickerComponent) bsTimePicker;
 
     constructor(
         inj: Injector,
@@ -204,10 +207,33 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method used to execute the on time change functionality
      */
     private onTimeChange(newVal) {
+        var timeValue,
+            timeInputValue,
+            minTimeMeridian,
+            maxTimeMeridian;
         if (newVal) {
             this.bsTimeValue = newVal;
+            //if the newVal is valid but not in the given range then highlight the input field
+            if (this.minTime && this.maxTime && ( newVal < this.minTime || newVal > this.maxTime)) {
+                this.$element.addClass('ng-invalid');
+            } else {
+                this.$element.removeClass('ng-invalid');
+            }
         } else {
-            this.bsTimeValue = undefined;
+            //sometimes library is not returning the correct value when the min and max time are given, displaying the datavalue based on the value given by the user
+            if (this.bsTimePicker && this.bsTimePicker.min && this.bsTimePicker.max) {
+                minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
+                maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
+                timeValue = this.bsTimePicker.hours + ":" + (this.bsTimePicker.minutes || 0) + ":" + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian): '');
+                timeInputValue =  new Date((moment().format('YYYY-MM-DD') + ' ' + moment(timeValue, this.timepattern).format('HH:mm')).valueOf());
+                this.bsTimePicker.meridian = minTimeMeridian;
+                if (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue) {
+                    this.$element.addClass('ng-invalid');
+                } else {
+                    this.$element.removeClass('ng-invalid');
+                }
+            }
+            this.bsTimeValue = timeInputValue;
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, {}, true);
