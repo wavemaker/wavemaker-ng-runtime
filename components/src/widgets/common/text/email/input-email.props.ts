@@ -1,6 +1,6 @@
 import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
-export const textProps = new Map(
+export const inputEmailTypeProps = new Map(
     [
         ['autocomplete', {value: true, ...PROP_BOOLEAN}],
         ['autofocus', PROP_BOOLEAN],
@@ -25,6 +25,6 @@ export const textProps = new Map(
 export const registerProps = () => {
     register(
         'wm-input-email',
-        textProps
+        inputEmailTypeProps
     );
 };
