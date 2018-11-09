@@ -9,8 +9,12 @@ import { checkboxsetProps } from '../../checkboxset/checkboxset.props';
 import { chipsProps } from '../../chips/chips.props';
 import { dateProps } from '../../date/date.props';
 import { dateTimeProps } from '../../date-time/date-time.props';
+import { numberProps } from '../../number/number.props';
 import { inputNumberTypeProps } from '../../text/number/input-number.props';
 import { inputTextTypeProps } from '../../text/text/input-text.props';
+import { inputCalendarTypeProps } from '../../text/calendar/input-calendar.props';
+import { inputColorTypeProps } from '../../text/color/input-color.props';
+import { inputEmailTypeProps } from '../../text/email/input-email.props';
 import { radiosetProps } from '../../radioset/radioset.props';
 import { ratingProps } from '../../rating/rating.props';
 import { richTextProps } from '../../rich-text-editor/rich-text-editor.props';
@@ -20,7 +24,6 @@ import { switchProps } from '../../switch/switch.props';
 import { textareaProps } from '../../textarea/textarea.props';
 import { timeProps } from '../../time/time.props';
 
-
 const uploadProps = new Map([
     ['disabled', PROP_BOOLEAN],
     ['extensions', PROP_STRING],
@@ -29,6 +32,17 @@ const uploadProps = new Map([
     ['readonly', PROP_BOOLEAN],
     ['required', PROP_BOOLEAN]
 ]);
+
+const textProps = new Map(inputTextTypeProps);
+
+const mergeTextProps = (typeProps) => {
+    typeProps.forEach((v: any, k) => textProps.set(k, v));
+};
+mergeTextProps(inputCalendarTypeProps);
+mergeTextProps(inputColorTypeProps);
+mergeTextProps(inputEmailTypeProps);
+mergeTextProps(inputNumberTypeProps);
+
 const widgetPropsMap = new Map(
 [
         [FormWidgetType.AUTOCOMPLETE, searchProps],
@@ -39,7 +53,7 @@ const widgetPropsMap = new Map(
         [FormWidgetType.CURRENCY, currencyProps],
         [FormWidgetType.DATE, dateProps],
         [FormWidgetType.DATETIME, dateTimeProps],
-        [FormWidgetType.NUMBER, inputNumberTypeProps],
+        [FormWidgetType.NUMBER, numberProps],
         [FormWidgetType.PASSWORD, inputTextTypeProps],
         [FormWidgetType.RADIOSET, radiosetProps],
         [FormWidgetType.RATING, ratingProps],
@@ -47,7 +61,7 @@ const widgetPropsMap = new Map(
         [FormWidgetType.SELECT, selectProps],
         [FormWidgetType.SLIDER, sliderProps],
         [FormWidgetType.SWITCH, switchProps],
-        [FormWidgetType.TEXT, inputTextTypeProps],
+        [FormWidgetType.TEXT, textProps],
         [FormWidgetType.TEXTAREA, textareaProps],
         [FormWidgetType.TIME, timeProps],
         [FormWidgetType.TIMESTAMP, dateTimeProps],
