@@ -755,7 +755,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         const ctrls = this.ngform.controls;
         _.keys(this.ngform.controls).forEach(key => {
             // If new row, clear the controls in the new row. Else, clear the controls in edit row
-            if ((key.endsWith('_new') && newRow) || (!key.endsWith('_new') && !newRow)) {
+            if (!key.endsWith('_filter') && ((key.endsWith('_new') && newRow) || (!key.endsWith('_new') && !newRow))) {
                 ctrls[key].setValue('');
                 this.resetFormControl(ctrls[key]);
             }
