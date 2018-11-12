@@ -1527,7 +1527,9 @@ $.widget('wm.datatable', {
             $saveButton.removeClass('hidden');
             $editableElements = $row.find('td.cell-editing');
             if (!options.skipFocus && $editableElements) {
-                self.setFocusOnElement(e, $editableElements);
+                this.options.timeoutCall(function () {
+                    self.setFocusOnElement(e, $editableElements);
+                });
             }
             //Event for on before form render. User can access form widgets here.
             if ($.isFunction(this.options.onFormRender)) {
