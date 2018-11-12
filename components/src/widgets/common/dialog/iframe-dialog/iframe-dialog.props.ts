@@ -13,6 +13,7 @@ export const registerProps = () => {
                 ['iconclass', {value: 'wi wi-globe', PROP_STRING}],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],
+                ['iconurl', PROP_STRING],
                 ['iconwidth', PROP_STRING],
                 ['modal', {value: false, ...PROP_BOOLEAN}],
                 ['name', PROP_STRING],

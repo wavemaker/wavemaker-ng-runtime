@@ -12,6 +12,7 @@ export const registerProps = () => {
                 ['iconclass', {value: 'wi wi-done', PROP_STRING}],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],
+                ['iconurl', PROP_STRING],
                 ['iconwidth', PROP_STRING],
                 ['message', {value: 'I am confirm box!', ...PROP_STRING}],
                 ['modal', {value: false, ...PROP_BOOLEAN}],
