@@ -113,7 +113,7 @@ export abstract class AbstractI18nService {
     public abstract getSelectedLocale(): string;
     public abstract getDefaultSupportedLocale(): string;
     public abstract getAppLocale(): any;
-    public abstract setSelectedLocale(locale, libLocale);
+    public abstract setSelectedLocale(locale);
     public abstract loadDefaultLocale();
     public abstract getLocalizedMessage(message, ...args);
     protected abstract loadAppLocaleBundle();

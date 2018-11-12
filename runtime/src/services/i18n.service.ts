@@ -182,8 +182,9 @@ export class I18nServiceImpl extends AbstractI18nService {
         return this.loadAngularLocaleBundle(libLocale.angular);
     }
 
-    public setSelectedLocale(locale, libLocale) {
+    public setSelectedLocale(locale) {
 
+        const libLocale = _WM_APP_PROPERTIES.supportedLanguages[locale];
         const supportedLocale = Object.keys(_WM_APP_PROPERTIES.supportedLanguages);
 
         // check if the event is propagated from the select or any such widget
@@ -223,7 +224,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         _supportedLang = _supportedLang || [_defaultLang];
 
         const defaultLanguage = _defaultLang || _supportedLang[0];
-        return this.setSelectedLocale(defaultLanguage, _WM_APP_PROPERTIES.supportedLanguages[defaultLanguage]);
+        return this.setSelectedLocale(defaultLanguage);
     }
 
     public getLocalizedMessage(message, ...args) {
