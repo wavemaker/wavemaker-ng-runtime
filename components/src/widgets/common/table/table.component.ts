@@ -267,8 +267,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.items.length = 0;
                     this.items.push(row);
                 }
+                // Call row click only if click is triggered by user
+                if (e && e.hasOwnProperty('originalEvent')) {
+                    this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
+                }
                 this.invokeEventCallback('select', {$data: row, $event: e, row});
-                this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
             });
         },
         onRowDblClick: (row, e) => {
