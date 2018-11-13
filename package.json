@@ -50,7 +50,7 @@
         "js-cookie": "2.2.0",
         "lodash": "4.17.11",
         "moment": "2.22.2",
-        "ngx-bootstrap": "3.1.1",
+        "ngx-bootstrap": "3.0.1",
         "ngx-color-picker": "6.8.0",
         "ngx-mask": "6.5.18",
         "ngx-toastr": "9.1.1",
