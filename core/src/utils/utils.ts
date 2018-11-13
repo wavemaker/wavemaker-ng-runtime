@@ -321,6 +321,10 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
  * method to get the date object from the input received
  */
 export const getDateObj = (value): Date => {
+    /*if the value is a date object, no need to covert it*/
+    if (_.isDate(value)) {
+        return value;
+    }
 
     /*if the value is a timestamp string, convert it to a number*/
     if (!isNaN(value)) {
