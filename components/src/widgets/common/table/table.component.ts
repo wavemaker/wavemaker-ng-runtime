@@ -267,11 +267,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.items.length = 0;
                     this.items.push(row);
                 }
-                // Call row click only if click is triggered by user
-                if (e && e.hasOwnProperty('originalEvent')) {
-                    this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
-                }
-                this.invokeEventCallback('select', {$data: row, $event: e, row});
+                this.invokeEventCallback('rowselect', {$data: row, $event: e, row});
             });
         },
         onRowDblClick: (row, e) => {
@@ -282,8 +278,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.ngZone.run(() => {
                     this.items = _.pullAllWith(this.items, [row], _.isEqual);
                     this.selectedItems = this.callDataGridMethod('getSelectedRows');
-                    this.invokeEventCallback('deselect', {$data: row, $event: e, row});
+                    this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
                 });
+            }
+        },
+        callOnRowDeselectEvent: (row, e) => {
+            this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
+        },
+        callOnRowClickEvent: (row, e) => {
+            // Call row click only if click is triggered by user
+            if (e && e.hasOwnProperty('originalEvent')) {
+                this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
             }
         },
         onColumnSelect: (col, e) => {

@@ -1102,7 +1102,7 @@ $.widget('wm.datatable', {
     },
 
     /* Toggles the table row selection. */
-    toggleRowSelection: function ($row, selected) {
+    toggleRowSelection: function ($row, selected, e) {
         if (!$row.length) {
             return;
         }
@@ -1130,7 +1130,7 @@ $.widget('wm.datatable', {
             this.preparedData[rowId].checked = selected;
             this.updateSelectAllCheckboxState();
         } else {
-            this._deselectPreviousSelection($row);
+            this._deselectPreviousSelection($row, e);
         }
     },
 
@@ -1202,8 +1202,9 @@ $.widget('wm.datatable', {
             }
             return;
         }
+        this.options.callOnRowClickEvent(data, e);
         selected = !selected;
-        this.toggleRowSelection($row, selected);
+        this.toggleRowSelection($row, selected, e);
         callRowSelectionEvents();
     },
     /*Handles the double click of the grid row*/
@@ -1783,7 +1784,7 @@ $.widget('wm.datatable', {
     },
 
     /* Keeps a track of the currently selected row, and deselects the previous row, if multiselect is false. */
-    _deselectPreviousSelection: function ($row) {
+    _deselectPreviousSelection: function ($row, e) {
         var selectedRows = this.gridBody.find('tr.active'),
             rowId = $row.attr('data-row-id'),
             self = this;
@@ -1794,6 +1795,7 @@ $.widget('wm.datatable', {
                 $(this).find('input[rowSelectInput]:radio').prop('checked', false);
                 preparedData.selected = preparedData.checked = false;
                 $(this).removeClass('active');
+                self.options.callOnRowDeselectEvent(preparedData, e);
             }
         });
     },
@@ -2221,7 +2223,7 @@ $.widget('wm.datatable', {
                 var $row = $(this).closest('tr'),
                     rowId = $row.attr('data-row-id'),
                     rowData = self.options.data[rowId];
-                self.toggleRowSelection($row, checked);
+                self.toggleRowSelection($row, checked, e);
                 if (checked && $.isFunction(self.options.onRowSelect)) {
                     self.options.onRowSelect(rowData, e);
                 }
