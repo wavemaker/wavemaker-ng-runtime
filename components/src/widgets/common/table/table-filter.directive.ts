@@ -257,7 +257,10 @@ export class TableFilterSortDirective {
 
         if (type === 'sort') {
             // Calling 'onSort' event
-            this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData});
+            this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData, $sortInfo: {
+                    sortDirection: this.table.sortInfo.direction,
+                    colDef: this.table.columns[this.table.sortInfo.field]
+                }});
         }
 
         if (this.table.isNavigationEnabled()) {
@@ -331,9 +334,13 @@ export class TableFilterSortDirective {
             page : 1,
             filterFields : filterFields,
             orderBy : sortOptions
-        }).then(() => {
+        }).then((response) => {
             $appDigest();
-            this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData});
+            const data = (response && response.data) ? response.data : response;
+            this.table.invokeEventCallback('sort', {$event: e, $data: data, $sortInfo: {
+                    sortDirection: sortObj.direction,
+                    colDef: this.table.columns[sortObj.field]
+                }});
         });
     }
 
