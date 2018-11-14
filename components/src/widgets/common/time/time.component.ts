@@ -6,7 +6,7 @@ import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIF
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef} from '../../../utils/widget-utils';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
@@ -23,6 +23,7 @@ registerProps();
     templateUrl: './time.component.html',
     providers: [
         provideAsNgValueAccessor(TimeComponent),
+        provideAsNgValidators(TimeComponent),
         provideAsWidgetRef(TimeComponent)
     ]
 })
@@ -214,11 +215,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (newVal) {
             this.bsTimeValue = newVal;
             //if the newVal is valid but not in the given range then highlight the input field
-            if (this.minTime && this.maxTime && ( newVal < this.minTime || newVal > this.maxTime)) {
-                this.$element.addClass('ng-invalid');
-            } else {
-                this.$element.removeClass('ng-invalid');
-            }
+            this.timeNotInRange = this.minTime && this.maxTime && (newVal < this.minTime || newVal > this.maxTime);
         } else {
             //sometimes library is not returning the correct value when the min and max time are given, displaying the datavalue based on the value given by the user
             if (this.bsTimePicker && this.bsTimePicker.min && this.bsTimePicker.max) {
@@ -227,11 +224,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 timeValue = this.bsTimePicker.hours + ":" + (this.bsTimePicker.minutes || 0) + ":" + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian): '');
                 timeInputValue =  new Date((moment().format('YYYY-MM-DD') + ' ' + moment(timeValue, this.timepattern).format('HH:mm')).valueOf());
                 this.bsTimePicker.meridian = minTimeMeridian;
-                if (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue) {
-                    this.$element.addClass('ng-invalid');
-                } else {
-                    this.$element.removeClass('ng-invalid');
-                }
+                this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
             }
             this.bsTimeValue = timeInputValue;
         }
