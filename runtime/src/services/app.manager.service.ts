@@ -224,7 +224,10 @@ export class AppManagerService {
                     if (!page) {
                         page = that.$security.getCurrentRoutePage();
                     }
-                    that.$router.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
+                    // the redirect page should not be same as session timeout login page
+                    if ( page !== sessionTimeoutConfig.pageName) {
+                        that.$router.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
+                    }
                     break;
                 case LOGIN_METHOD.SSO:
                     this.handleSSOLogin(config);
