@@ -247,7 +247,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // trigger the typeahead change manually to fetch the next set of results.
         this.typeahead.onInput({
             target: {
-                value: '0' // dummy data to notify the observables
+                value: _.trim(this.query) || '0' // dummy data to notify the observables
             }
         });
     }
@@ -301,7 +301,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // trigger the typeahead change manually to fetch the next set of results.
             this.typeahead.onInput({
                 target: {
-                    value: '0' // dummy data to notify the observables
+                    value: this.query // dummy data to notify the observables
                 }
             });
             return;
