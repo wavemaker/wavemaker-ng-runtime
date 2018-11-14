@@ -242,7 +242,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.selectedItemChange.next(this.selectedItems);
 
                 if (this.gridData.length) {
-                    this.invokeEventCallback('datarender', {$data: this.gridData});
+                    this.invokeEventCallback('datarender', {$data: this.gridData, data: this.gridData});
                 }
                 // On render, apply the filters set for query service variable
                 if (this._isPageSearch && this.filterInfo) {
@@ -301,7 +301,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         onHeaderClick: (col, e) => {
             // if onSort function is registered invoke it when the column header is clicked
-            this.invokeEventCallback('headerclick', {$event: e, $data: col});
+            this.invokeEventCallback('headerclick', {$event: e, $data: col, column: col});
         },
         onRowDelete: (row, cancelRowDeleteCallback, e, callBack, options) => {
             this.ngZone.run(() => {
@@ -568,7 +568,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             // If data and colDefs are present, call on before data render event
             if (!this.isdynamictable && !_.isEmpty(newValue) && gridOptions.colDefs.length) {
-                this.invokeEventCallback('beforedatarender', {$data: newValue, $columns: this.columns});
+                this.invokeEventCallback('beforedatarender', {$data: newValue, $columns: this.columns, data: newValue, columns: this.columns});
             }
             this.setDataGridOption('data', getClonedObject(newValue));
         }
@@ -1037,7 +1037,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.columns[col.field] = col;
         });
 
-        this.invokeEventCallback('beforedatarender', {$data: data, $columns: this.columns});
+        this.invokeEventCallback('beforedatarender', {$data: data, $columns: this.columns, data: data, columns: this.columns});
 
         defaultFieldDefs = [];
         // Apply the changes made by the user

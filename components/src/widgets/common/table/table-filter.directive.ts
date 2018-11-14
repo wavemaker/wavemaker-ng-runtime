@@ -257,7 +257,8 @@ export class TableFilterSortDirective {
 
         if (type === 'sort') {
             // Calling 'onSort' event
-            this.table.invokeEventCallback('sort', {$event: e, $data: this.table.serverData, $sortInfo: {
+            this.table.invokeEventCallback('sort', {$event: e, $data: {
+                    data: this.table.serverData,
                     sortDirection: this.table.sortInfo.direction,
                     colDef: this.table.columns[this.table.sortInfo.field]
                 }});
@@ -337,7 +338,8 @@ export class TableFilterSortDirective {
         }).then((response) => {
             $appDigest();
             const data = (response && response.data) ? response.data : response;
-            this.table.invokeEventCallback('sort', {$event: e, $data: data, $sortInfo: {
+            this.table.invokeEventCallback('sort', {$event: e, $data: {
+                    data,
                     sortDirection: sortObj.direction,
                     colDef: this.table.columns[sortObj.field]
                 }});

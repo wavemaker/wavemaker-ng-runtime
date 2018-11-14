@@ -84,7 +84,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         if (currentPage !== this.dn.currentPage) {
             const inst = (this as any).parent || this;
             this.dn.currentPage = currentPage;
-            inst.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage, $pageIndex: this.dn.currentPage});
+            inst.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
             this.goToPage();
         }
     }, 250);
@@ -364,7 +364,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
 
     /*Function to navigate to the respective pages.*/
     navigatePage(index, event, isRefresh, callback) {
-        this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage, $pageIndex: this.dn.currentPage});
+        this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
 
         // Convert the current page to a valid page number.
         this.dn.currentPage = +this.dn.currentPage;

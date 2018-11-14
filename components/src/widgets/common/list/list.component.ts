@@ -811,7 +811,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private beforePaginationChange($event, $index) {
-        this.invokeEventCallback('paginationchange', {$event, $index, $pageIndex: $index});
+        this.invokeEventCallback('paginationchange', {$event, $index});
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
