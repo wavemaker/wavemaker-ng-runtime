@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ContentChildren, ElementRef, Injector, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ContentChildren, ElementRef, Injector, NgZone, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -57,6 +57,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private reorderProps: any;
     private app: any;
     private appDefaults: any;
+    private ngZone: NgZone;
 
     public lastSelectedItem: ListItemDirective;
     public fieldDefs: Array<any>;
@@ -133,6 +134,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         datePipe: ToDatePipe,
         app: App,
         appDefaults: AppDefaults,
+        ngZone: NgZone,
         @Attribute('itemclass.bind') binditemclass: string,
         @Attribute('disableitem.bind') binddisableitem: string,
         @Attribute('dataset.bind') binddataset: string,
@@ -147,6 +149,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
         this.cdRef = cdRef;
+        this.ngZone = ngZone;
         this.datePipe = datePipe;
 
         this.binditemclass = binditemclass;
@@ -169,7 +172,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     handleLoading(data) {
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
-            this.variableInflight = data.active;
+            this.ngZone.run(() => {
+                this.variableInflight = data.active;
+            });
         }
     }
 
