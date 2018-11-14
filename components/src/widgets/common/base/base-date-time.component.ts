@@ -28,6 +28,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected ismeridian: boolean;
 
     protected dateNotInRange: boolean;
+    protected timeNotInRange: boolean;
 
     private dateOnShowSubscription: Subscription;
 
@@ -56,11 +57,21 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     public validate() {
-        return (!this.dateNotInRange) ? null : {
-            dateNotInRange: {
-                valid: false
-            },
-        };
+        if (!_.isUndefined(this.dateNotInRange) && this.dateNotInRange) {
+            return {
+                dateNotInRange: {
+                    valid: false
+                },
+            };
+        }
+        if (!_.isUndefined(this.timeNotInRange) && this.timeNotInRange) {
+            return {
+                timeNotInRange: {
+                    valid: false
+                },
+            };
+        }
+        return null;
     }
 
     /**
