@@ -323,9 +323,9 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     invokeSetRecord(event, data) {
         // Trigger the event handler if exists.
         if (this.parent) {
-            this.parent.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage, $pageIndex: this.dn.currentPage});
+            this.parent.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage, $pageIndex: this.dn.currentPage, data});
         } else {
-            this.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage, $pageIndex: this.dn.currentPage});
+            this.invokeEventCallback('setrecord', {$event: event, $data: data, $index: this.dn.currentPage, $pageIndex: this.dn.currentPage, data});
         }
     }
 

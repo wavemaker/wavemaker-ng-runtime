@@ -362,7 +362,7 @@ export class TableFilterSortDirective {
         } else {
             transformFilterField(userFilters, filterFields);
         }
-        output = this.table.invokeEventCallback('beforefilter', {$event: e, $data: userFilters});
+        output = this.table.invokeEventCallback('beforefilter', {$event: e, $data: userFilters, columns: userFilters});
         // If callback returns false, don't trigger the filter call
         if (output === false) {
             return;
