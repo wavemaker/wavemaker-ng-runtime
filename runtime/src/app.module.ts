@@ -67,7 +67,7 @@ const routes = [
     }
 ];
 
-export const routerModule: ModuleWithProviders = RouterModule.forRoot(routes, {useHash: true});
+export const routerModule: ModuleWithProviders = RouterModule.forRoot(routes, {useHash: true, scrollPositionRestoration: 'top'});
 export const toasterModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened: 1, autoDismiss: true });
 export const httpClientXsrfModule: ModuleWithProviders = HttpClientXsrfModule.withOptions({
     cookieName: 'wm_xsrf_token',
