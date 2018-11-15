@@ -89,7 +89,8 @@ export class PullToRefresh extends SwipeAnimation {
             target: this.infoContainer,
             css: {
                 transform: 'translate3d(0, ${{$D + $d}}px, 0)',
-                spin: '${{spin($d)}}'
+                spin: '${{spin($d)}}',
+                opacity: '${{min(($D + $d) / 100, 1)}}'
             }
         };
     }
@@ -113,6 +114,9 @@ export class PullToRefresh extends SwipeAnimation {
             this.runAnimation = false;
             this.spinner.stop();
             this.infoContainer.hide();
+            this.infoContainer.css({
+                transform: 'none'
+            });
             this.infoContainer.removeClass('entry');
         }, 800);
     }

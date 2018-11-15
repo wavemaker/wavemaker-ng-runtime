@@ -601,10 +601,12 @@ window.requestAnimationFrame = (function () {
     // This function adds swipe functionality on the element.
     function addSwipey($ele, settings) {
         var state = {
-            'max': Math.max,
-            'min': Math.min,
-            'abs': Math.abs,
             '$D': 0
+        },
+        baseContext = {
+          'max': Math.max,
+          'min': Math.min,
+          'abs': Math.abs
         };
 
         if (!_.isArray(settings.animation)) {
@@ -655,7 +657,7 @@ window.requestAnimationFrame = (function () {
                     return false;
                 }
                 state.vc = VelocityComputator();
-                state.context = getObject(settings.context, $ele);
+                state.context = _.extend(baseContext, getObject(settings.context, $ele));
                 state.localState = _.extend({}, state.context);
 
                 retrieveTargets(settings);
