@@ -533,8 +533,8 @@ export class LocalDBManagementService {
 
         _.forEach(queriesByDB.queries, queryData => {
             let query, params;
-            if (queryData.nativeSql && !queryData.update) {
-                query = queryData.queryString;
+            if (queryData.nativeSql && queryData.type === 'SELECT') {
+                query = _.isEmpty(queryData.offlineQueryString) ? queryData.queryString : queryData.offlineQueryString;
                 params = _.map(this.extractQueryParams(query), p => {
                     const paramObj = _.find(queryData.parameters, {'name': p});
                     return {
