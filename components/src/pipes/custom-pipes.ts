@@ -119,10 +119,15 @@ export class StringToNumberPipe implements PipeTransform {
     name: 'filter'
 })
 export class FilterPipe implements PipeTransform {
-    transform(data: any[], field: string, value: any) {
+    transform(data: any[], field: any, value: any) {
         if (!data) {
             return [];
         }
+        // If object is passed as first paramter
+        if (_.isObject(field)) {
+            return _.filter(data, field);
+        }
+        // If key value pair is provided
         return _.filter(data, item => {
             return _.includes(item[field], value);
         });
