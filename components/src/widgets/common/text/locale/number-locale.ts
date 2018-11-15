@@ -170,21 +170,50 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     /**
+     * returns the number of decimal places a number have.
+     * @param value: number
+     * @returns {number}
+     */
+    private countDecimals (value) {
+        if ((value % 1) !== 0) {
+            return value.toString().split('.')[1].length;
+        }
+        return 0;
+    }
+
+    /**
      * handles the arrow press event. Increases or decreases the number. triggered fom the template
      * @param $event keyboard event.
      * @param key identifier to increase or decrease the number.
      */
     protected onArrowPress($event, key) {
         $event.preventDefault();
-        if (this.readonly) {
+        if (this.readonly || this.isInvalidNumber) {
             return;
         }
         const step = (this.step && this.step > 0) ? this.step : 1;
-        let model = this.proxyModel || 0;
-        if (step % 1 === 0) {
-            model = Math.trunc(this.proxyModel);
+        let proxyModel = this.proxyModel || 0;
+        let value;
+
+        // if the number is not in range and when arrow buttons are pressed need to get appropriate number value.
+        if (this.numberNotInRange) {
+            const inputValue = this.parseNumber(this.inputEl.nativeElement.value);
+            // take the textbox value as current model if the value is valid.
+            if (!_.isNaN(inputValue)) {
+               value = this.getValueInRange(inputValue);
+               proxyModel = inputValue;
+            }
+        } else {
+            value = this.getValueInRange( proxyModel + (key === 'UP' ? step : -step));
         }
-        this.datavalue = this.getValueInRange( model + (key === 'UP' ? step : -step));
+        if ((key === 'UP' && proxyModel <= value) || (key === 'DOWN' && proxyModel >= value)) {
+            const decimalRoundValue = Math.max(this.countDecimals(proxyModel), this.countDecimals(this.step));
+
+            // update the modelProxy.
+            this.proxyModel = _.round(value, decimalRoundValue);
+            this.updateDisplayText();
+            this._onChange();
+        }
     }
 
     /**
