@@ -11,8 +11,8 @@ register('wm-pagedialog', (): IBuildTaskDef => {
             const boundContent = attrs.get('content.bind');
             attrs.delete('content.bind');
 
-            const onLoad = attrs.get('on-load');
-            attrs.delete('on-load');
+            const onLoad = attrs.get('load.event');
+            attrs.delete('load.event');
 
             let onLoadEvtMarkup = '';
             let contentMarkup = '';
