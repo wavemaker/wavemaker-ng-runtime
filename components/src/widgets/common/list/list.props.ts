@@ -33,6 +33,7 @@ export const registerProps = () => {
                 ['orderby', PROP_STRING],
                 ['paginationclass', PROP_STRING],
                 ['pagesize', PROP_NUMBER],
+                ['pulltorefresh', {value: true, ...PROP_BOOLEAN}],
                 ['selectfirstitem', PROP_BOOLEAN],
                 ['selectionlimit', PROP_NUMBER],
                 ['show', {value: true, ...PROP_BOOLEAN}],

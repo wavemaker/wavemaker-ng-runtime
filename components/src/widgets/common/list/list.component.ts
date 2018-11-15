@@ -106,7 +106,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public _leftPanelSwipeTarget: ButtonComponent;
     public _rightPanelSwipeTarget: ButtonComponent;
     private $btnSubscription: Subscription;
-    private pullToRefresh: PullToRefresh;
+    private pullToRefreshIns: PullToRefresh;
+    private pulltorefresh: boolean;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -175,7 +176,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.ngZone.run(() => {
-                this.variableInflight = !this.pullToRefresh && data.active;
+                this.variableInflight = !this.pulltorefresh && data.active;
             });
         }
     }
@@ -718,6 +719,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.setListClass();
         } else if (key === 'tabindex') {
             return;
+        } else if (key === 'pulltorefresh' && nv) {
+            this.initPullToRefresh();
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -845,6 +848,18 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
+    // appends pullToRefresh element on the list.
+    // Invoke the datasource variable by default when pulltorefresh event is not specified.
+    private initPullToRefresh() {
+        this.pullToRefreshIns = new PullToRefresh($(this.nativeElement), this.app, () => {
+            if (this.hasEventCallback('pulltorefresh')) {
+                this.invokeEventCallback('pulltorefresh');
+            } else if (this.datasource) {
+                this.datasource.listRecords();
+            }
+        });
+    }
+
     ngOnInit() {
         super.ngOnInit();
         this.handleHeaderClick = noop;
@@ -889,10 +904,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 });
             });
             this._listAnimator = new ListAnimator(this);
-        }
-
-        if (this.nativeElement.getAttribute('pulltorefresh.event')) {
-            this.pullToRefresh = new PullToRefresh(this, this.app);
         }
     }
 

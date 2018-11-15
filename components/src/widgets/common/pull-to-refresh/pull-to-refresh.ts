@@ -1,4 +1,4 @@
-import { App, isIos } from '@wm/core';
+import { App, isIos, setCSS } from '@wm/core';
 import { SwipeAnimation } from '@swipey';
 
 import { BaseComponent } from '../base/base.component';
@@ -6,20 +6,15 @@ import { BaseComponent } from '../base/base.component';
 declare const  $;
 
 export class PullToRefresh extends SwipeAnimation {
-    private $el: JQuery<HTMLElement>;
     private infoContainer: JQuery<HTMLElement>;
     private runAnimation: boolean;
     private count: number = 0;
     private spinner: Spinner;
 
-    constructor(private compRef: BaseComponent, private app: App) {
+    constructor(private $el: JQuery<HTMLElement>, private app: App, private onPullToRefresh: () => void) {
         super();
-        this.$el = $(this.compRef.getNativeElement());
-
-         const template = '<div class="refresh-container">' +
-                                    '</div>';
-
-         this.$el.prepend(template);
+        const template = '<div class="refresh-container"></div>';
+        this.$el.prepend(template);
         this.infoContainer = this.$el.find('.refresh-container');
 
         if (isIos()) {
@@ -98,7 +93,9 @@ export class PullToRefresh extends SwipeAnimation {
     // Start the spinner animation and invokes the pulltorefresh event. Stops the animation after the wait time.
     public onAnimation() {
         this.spinner.start();
-        this.compRef.invokeEventCallback('pulltorefresh');
+        if (this.onPullToRefresh) {
+            this.onPullToRefresh();
+        }
 
         setTimeout(() => {
             // if listenToAnimation is set, then wait for stopAnimation to be invoked. Otherwise call stopAnimation manually.
@@ -114,9 +111,10 @@ export class PullToRefresh extends SwipeAnimation {
             this.runAnimation = false;
             this.spinner.stop();
             this.infoContainer.hide();
-            this.infoContainer.css({
-                transform: 'none'
-            });
+            setCSS(this.infoContainer[0], 'transform', 'none');
+            if (!isIos()) {
+                setCSS(this.infoContainer[0], 'opacity', 0);
+            }
             this.infoContainer.removeClass('entry');
         }, 800);
     }
