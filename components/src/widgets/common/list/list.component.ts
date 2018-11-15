@@ -487,13 +487,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
             const item = $listItem.item;
-            if (!this.multiselect) {
-                this.clearSelectedItems();
-            }
             if ($listItem.isActive) {
                 this._items = _.pullAllWith(this._items, [item], _.isEqual);
                 $listItem.isActive = false;
             } else {
+                // if multiselect is false, clear the selectItem list before adding an item to the selectItem list.
+                if (!this.multiselect) {
+                    this.clearSelectedItems();
+                }
                 this._items.push(item);
                 $listItem.isActive = true;
             }
@@ -807,9 +808,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      */
     public selectItem(val) {
         const listItem = this.getItemRefByIndexOrModel(val);
-        if (listItem && !listItem.isActive) {
+        if (!listItem) {
+            return;
+        }
+        if (!listItem.isActive) {
             this.toggleListItemSelection(listItem);
         }
+        // focus the element.
+        listItem.nativeElement.focus();
     }
 
     private beforePaginationChange($event, $index) {
