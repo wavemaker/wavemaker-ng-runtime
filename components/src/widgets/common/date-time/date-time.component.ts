@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewChild, NgZone, Inject } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
-import { BsDatepickerDirective } from 'ngx-bootstrap';
+import { BsDatepickerDirective, TimepickerComponent } from 'ngx-bootstrap';
 
 import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, isMobileApp } from '@wm/core';
 
@@ -61,6 +61,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
+    @ViewChild(TimepickerComponent) bsTimePicker;
 
     /**
      * This property checks if the timePicker is Open
@@ -225,7 +226,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
         if (!newVal) {
-            this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
+            //Set timevalue as 00:00:00 if we remove any one from hours/minutes/seconds field in timepicker after selecting date
+            if(this.bsDateValue && this.bsTimePicker && (this.bsTimePicker.hours === "" || this.bsTimePicker.minutes === "" || this.bsTimePicker.seconds === "")) {
+                this.bsDateValue = this.bsTimeValue = this.proxyModel = moment(this.bsDateValue).startOf('day').toDate();
+            } else {
+                this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
+            }
+            this._debouncedOnChange(this.datavalue, {}, true);
             return;
         }
         if (type === 'date') {
