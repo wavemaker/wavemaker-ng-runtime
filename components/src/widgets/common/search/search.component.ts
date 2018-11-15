@@ -47,6 +47,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private result: Array<any>; // contains the search result i.e. matches
     private formattedDataset: any;
     private isformfield: boolean;
+    private $typeaheadEvent: Event;
 
     public tabindex: number;
     public startIndex: number;
@@ -634,6 +635,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.queryModel = item;
         item.selected = true;
         this._lastQuery = this.query = item.label;
+        $event = $event || this.$typeaheadEvent;
 
         // As item.key can vary from key in the datasetItems
         this._modelByKey = item.key;
