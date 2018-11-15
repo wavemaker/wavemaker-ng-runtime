@@ -59,7 +59,7 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
             scrollbars: true,
             preventDefault: false,
             momentum: true,
-            bounce: isIos(),
+            bounce: false,
             mouseWheel: true, // for preview in browser support
             disablePointer: true, // disable the pointer events as it causes lag in scrolling (jerky).
             disableTouch: false, // false to be usable with touch devices

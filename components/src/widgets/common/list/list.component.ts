@@ -15,6 +15,7 @@ import { ListAnimator } from './list.animator';
 import { configureDnD, getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 import { WidgetRef } from '../../framework/types';
 import { ButtonComponent } from '../button/button.component';
+import { PullToRefresh } from '../pull-to-refresh/pull-to-refresh';
 
 declare const _;
 declare const $;
@@ -105,6 +106,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public _leftPanelSwipeTarget: ButtonComponent;
     public _rightPanelSwipeTarget: ButtonComponent;
     private $btnSubscription: Subscription;
+    private pullToRefresh: PullToRefresh;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -173,7 +175,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.ngZone.run(() => {
-                this.variableInflight = data.active;
+                this.variableInflight = !this.pullToRefresh && data.active;
             });
         }
     }
@@ -881,6 +883,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 });
             });
             this._listAnimator = new ListAnimator(this);
+        }
+
+        if (this.nativeElement.getAttribute('pulltorefresh.event')) {
+            this.pullToRefresh = new PullToRefresh(this, this.app);
         }
     }
 
