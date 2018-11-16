@@ -9,7 +9,7 @@
     <ul #ulElement class="app-search dropdown-menu" scrollable>
         <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match)}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
-            (click)="typeaheadContainer.selectMatch(match, $event)">
+            (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event;">
             <!-- itemTemplate comes from the <input> -->
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
@@ -40,6 +40,7 @@
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange($event)"
            (keydown)="listenQuery = true"
+           (keydown.enter)="$typeaheadEvent = $event;"
            (keydown.arrowdown)="selectNext($event)"
            (blur)="invokeOnTouched($event)"
            (focus)="_unsubscribeDv = false; listenQuery = true; invokeOnFocus($event);"
@@ -73,6 +74,7 @@
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange($event)"
            (keydown)="listenQuery = true"
+           (keydown.enter)="$typeaheadEvent = $event;"
            (keydown.arrowdown)="selectNext($event)"
            (blur)="invokeOnTouched($event)"
            (focus)="_unsubscribeDv = false; listenQuery = true; invokeOnFocus($event)"
