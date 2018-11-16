@@ -9,6 +9,7 @@ import { IRedrawableComponent } from '../../framework/types';
 import { registerProps } from './calendar.props';
 import { getEvaluatedData, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { StylableComponent } from '../base/stylable.component';
+import { createArrayFrom } from '../../../utils/data-utils';
 
 declare const _, $, moment;
 registerProps();
@@ -461,25 +462,21 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 break;
             case 'dataset':
                 let dataSet;
-                const eventSet = [];
-                this.triggerMobileCalendarChange();
-                delete this.dataSetEvents.events;
                 this.dataset = nv;
-                dataSet = getClonedObject(nv);
-                dataSet = _.isArray(dataSet) ? dataSet : _.isObject(dataSet) ? [dataSet] : [];
+                dataSet = createArrayFrom(getClonedObject(nv));
                 dataSet = this.constructCalendarDataset(dataSet);
-                if (_.includes(_.keys(dataSet[0]), 'start')) {
-                    dataSet.forEach((event) => {
-                        event.start = event.start || event.end;
-                        if (event.start) {
-                            eventSet.push(event);
-                        }
-                    });
-                    this.dataSetEvents.events = eventSet;
-                }
-                if (this.$fullCalendar) {
+                this.dataSetEvents.events = dataSet.filter((event) => {
+                    event.start = event.start || event.end;
+                    if (event.start) {
+                        return true;
+                    }
+                });
+
+                if (this.mobileCalendar) {
+                    this.triggerMobileCalendarChange();
+                } else {
                     this.updateCalendarOptions('removeEvents');
-                    this.updateCalendarOptions('addEventSource', eventSet);
+                    this.updateCalendarOptions('addEventSource', this.dataSetEvents.events);
                     this.updateCalendarOptions('rerenderEvents');
                 }
                 break;
