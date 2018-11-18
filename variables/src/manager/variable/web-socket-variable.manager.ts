@@ -57,8 +57,9 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @returns {*}
      */
     private getURL(variable) {
-        const opInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo'),
-            inputFields = variable.dataBinding;
+        const prefabName = _.get(variable._context, 'prefabName');
+        const opInfo = prefabName? _.get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo'): _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+        const inputFields = variable.dataBinding;
         let config;
 
         // add sample values to the params (url and path)
