@@ -1,9 +1,9 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { AbstractNavigationService, addClass, App, isMobileApp, muteWatchers, noop, removeClass, unMuteWatchers } from '@wm/core';
 
-import { commonPageWidgets, getFragmentUrl, FragmentRenderer } from './fragment-renderer';
+import { commonPageWidgets, FragmentRenderer, getFragmentUrl } from './fragment-renderer';
 import { AppManagerService } from '../app.manager.service';
 
 @Injectable()
@@ -14,8 +14,15 @@ export class PageRenderer {
         private app: App,
         private route: ActivatedRoute,
         private appManager: AppManagerService,
-        private navigationService: AbstractNavigationService
-    ) {}
+        private navigationService: AbstractNavigationService,
+        private router: Router
+    ) {
+        this.router.events.subscribe(e => {
+            if (e instanceof NavigationEnd) {
+                addClass(document.querySelector('app-page-outlet'), 'page-load-in-progress');
+            }
+        });
+    }
 
     private registerWidgets(pageName: string, instance: any) {
 
@@ -65,6 +72,7 @@ export class PageRenderer {
     }
 
     private invokeOnReady(pageName: string, instance: any) {
+        setTimeout(() => removeClass(document.querySelector('app-page-outlet'), 'page-load-in-progress'));
         (instance.onReady || noop)();
         (this.app.onPageReady || noop)(pageName, instance);
         this.appManager.notify('pageReady', {'name' : pageName, instance});
