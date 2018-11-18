@@ -911,6 +911,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.$btnSubscription) {
             this.$btnSubscription.unsubscribe();
         }
+        if (this.pullToRefreshIns && this.pullToRefreshIns.cancelSubscription) {
+            this.pullToRefreshIns.cancelSubscription();
+        }
     }
 }
 
