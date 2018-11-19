@@ -1,8 +1,6 @@
 import { App, isIos, setCSS } from '@wm/core';
 import { SwipeAnimation } from '@swipey';
 
-import { BaseComponent } from '../base/base.component';
-
 declare const  $;
 
 export class PullToRefresh extends SwipeAnimation {
@@ -10,6 +8,7 @@ export class PullToRefresh extends SwipeAnimation {
     private runAnimation: boolean;
     private count: number = 0;
     private spinner: Spinner;
+    public cancelSubscription: Function;
 
     constructor(private $el: JQuery<HTMLElement>, private app: App, private onPullToRefresh: () => void) {
         super();
@@ -22,9 +21,19 @@ export class PullToRefresh extends SwipeAnimation {
         }
 
         this.init(this.$el);
+    }
 
+    public threshold() {
+        return 10;
+    }
+
+    public direction() {
+        return $.fn.swipey.DIRECTIONS.VERTICAL;
+    }
+
+    private subscribe() {
         // Subscribing for variable updates, wait till the response and stop the animation.
-        this.app.subscribe('toggle-variable-state', (data) => {
+        this.cancelSubscription = this.app.subscribe('toggle-variable-state', (data) => {
             // data.active is true means the variable update has just started whereas false means update has ended.
             if (data.active) {
                 this.count++;
@@ -38,17 +47,10 @@ export class PullToRefresh extends SwipeAnimation {
         });
     }
 
-    public threshold() {
-        return 10;
-    }
-
-    public direction() {
-        return $.fn.swipey.DIRECTIONS.VERTICAL;
-    }
-
     public bounds() {
         if (!this.spinner) {
             this.spinner = isIos() ? new IOSSpinner(this.infoContainer) : new AndroidSpinner(this.infoContainer);
+            this.subscribe();
         }
 
         return {
