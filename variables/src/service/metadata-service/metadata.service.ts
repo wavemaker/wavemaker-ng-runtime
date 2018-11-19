@@ -1,16 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { hasCordova } from '@wm/core';
+import { AbstractHttpService, hasCordova } from '@wm/core';
 
 @Injectable()
 export class MetadataService {
-    httpClient;
     metadataMap: Map<string, any>;
     CONTEXT_APP: string = 'app';
 
-    constructor(httpClient: HttpClient) {
-        this.httpClient = httpClient;
-    }
+    constructor(private $http: AbstractHttpService) {}
 
     isLoaded() {
         return this.metadataMap ? this.metadataMap.has(this.CONTEXT_APP) : false;
@@ -24,10 +20,10 @@ export class MetadataService {
             url = './services/' + (prefabName ? `prefabs/${prefabName}/` : '') + 'servicedefs';
         }
         return new Promise((resolve, reject) => {
-            this.httpClient.get(url).toPromise().then((response) => {
+            this.$http.send({'url' : url, 'method': 'GET'}).then((response) => {
                 this.metadataMap = this.metadataMap || new Map();
-                this.metadataMap.set(prefabName || this.CONTEXT_APP, response);
-                resolve(response);
+                this.metadataMap.set(prefabName || this.CONTEXT_APP, response.body);
+                resolve(response.body);
             }, reject);
         });
     }
