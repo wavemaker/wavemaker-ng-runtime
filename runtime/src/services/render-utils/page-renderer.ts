@@ -19,7 +19,10 @@ export class PageRenderer {
     ) {
         this.router.events.subscribe(e => {
             if (e instanceof NavigationEnd) {
-                addClass(document.querySelector('app-page-outlet'), 'page-load-in-progress');
+                const node = document.querySelector('app-page-outlet') as HTMLElement;
+                if (node) {
+                    addClass(node, 'page-load-in-progress');
+                }
             }
         });
     }
@@ -72,7 +75,12 @@ export class PageRenderer {
     }
 
     private invokeOnReady(pageName: string, instance: any) {
-        setTimeout(() => removeClass(document.querySelector('app-page-outlet'), 'page-load-in-progress'));
+        setTimeout(() => {
+            const node = document.querySelector('app-page-outlet') as HTMLElement;
+            if (node) {
+                removeClass(node, 'page-load-in-progress');
+            }
+        });
         (instance.onReady || noop)();
         (this.app.onPageReady || noop)(pageName, instance);
         this.appManager.notify('pageReady', {'name' : pageName, instance});
