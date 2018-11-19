@@ -15,7 +15,6 @@ import { ListAnimator } from './list.animator';
 import { configureDnD, getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 import { WidgetRef } from '../../framework/types';
 import { ButtonComponent } from '../button/button.component';
-import { PullToRefresh } from '../pull-to-refresh/pull-to-refresh';
 
 declare const _;
 declare const $;
@@ -106,8 +105,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public _leftPanelSwipeTarget: ButtonComponent;
     public _rightPanelSwipeTarget: ButtonComponent;
     private $btnSubscription: Subscription;
-    private pullToRefreshIns: PullToRefresh;
     private pulltorefresh: boolean;
+    private cancelSubscription: Function;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -176,7 +175,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.ngZone.run(() => {
-                this.variableInflight = !this.pulltorefresh && data.active;
+                this.variableInflight = data.active;
             });
         }
     }
@@ -720,7 +719,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         } else if (key === 'tabindex') {
             return;
         } else if (key === 'pulltorefresh' && nv) {
-            this.initPullToRefresh();
+            this.app.notify('pullToRefresh:enable');
+            this.subscribeToPullToRefresh();
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -848,13 +848,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
-    // appends pullToRefresh element on the list.
     // Invoke the datasource variable by default when pulltorefresh event is not specified.
-    private initPullToRefresh() {
-        this.pullToRefreshIns = new PullToRefresh($(this.nativeElement), this.app, () => {
-            if (this.hasEventCallback('pulltorefresh')) {
-                this.invokeEventCallback('pulltorefresh');
-            } else if (this.datasource) {
+    private subscribeToPullToRefresh() {
+        this.cancelSubscription = this.app.subscribe('pulltorefresh', () => {
+            if (this.datasource && this.datasource.listRecords) {
                 this.datasource.listRecords();
             }
         });
@@ -911,8 +908,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.$btnSubscription) {
             this.$btnSubscription.unsubscribe();
         }
-        if (this.pullToRefreshIns && this.pullToRefreshIns.cancelSubscription) {
-            this.pullToRefreshIns.cancelSubscription();
+        if (this.cancelSubscription) {
+            this.cancelSubscription();
         }
     }
 }

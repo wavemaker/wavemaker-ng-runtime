@@ -48,7 +48,7 @@
 
 <div class="no-data-msg" *ngIf="noDataFound && !variableInflight" [textContent]="nodatamessage"></div>
 
-<div class="loading-data-msg" *ngIf="variableInflight">
+<div class="loading-data-msg" *ngIf="variableInflight && !pulltorefresh">
     <span>
         <i class="app-icon panel-icon fa-spin" aria-hidden="true" [ngClass]="loadingicon"></i>
         <span class="sr-only">Loading</span>
