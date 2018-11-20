@@ -11,7 +11,7 @@ declare const _, cordova, Connection, navigator;
 
 const AUTO_CONNECT_KEY = 'WM.NetworkService._autoConnect',
     IS_CONNECTED_KEY = 'WM.NetworkService.isConnected',
-    excludedList = [new RegExp('wmProperties.js')],
+    excludedList = [new RegExp('/wmProperties.js')],
     originalXMLHttpRequestOpen = XMLHttpRequest.prototype.open,
     originalXMLHttpRequestSend = XMLHttpRequest.prototype.send,
     networkState = {
@@ -272,7 +272,7 @@ export class NetworkService implements IDeviceStartUpService {
                 }
             });
             oReq.addEventListener('error', () => resolve(false));
-            oReq.open('GET', baseURL + 'wmProperties.js?t=' + Date.now());
+            oReq.open('GET', baseURL + 'services/application/wmProperties.js?t=' + Date.now());
             oReq.send();
         });
     }
