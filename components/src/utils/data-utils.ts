@@ -490,7 +490,7 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
             return;
         }
         // For related fields, add lookupfield for query generation
-        if (filterDef && filterDef.isRelated) {
+        if (filterDef && filterDef['is-related']) {
             filterOn += '.' +  lookUpField;
         }
         if (isDefined(newVal)) {
