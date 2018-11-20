@@ -50,7 +50,7 @@ export class PullToRefresh extends SwipeAnimation {
     public bounds() {
         const pageIscroll = (this.$el[0] as any).iscroll;
         // If scroll position is not at the top of the page then do not trigger the animation.
-        if (pageIscroll && pageIscroll.y !== 0) {
+        if (pageIscroll && !isNaN(pageIscroll.y) && pageIscroll.y !== 0) {
             return {
                 lower: undefined,
                 upper: undefined
