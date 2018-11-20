@@ -1,4 +1,4 @@
-import { Component, Injector, OnDestroy } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 
 import { App, switchClass } from '@wm/core';
 
@@ -20,7 +20,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(PageContentComponent)
     ]
 })
-export class PageContentComponent extends StylableComponent implements OnDestroy {
+export class PageContentComponent extends StylableComponent {
     public pullToRefreshIns: PullToRefresh;
     private pulltorefresh: boolean;
     private childPullToRefresh: boolean;
@@ -40,7 +40,10 @@ export class PageContentComponent extends StylableComponent implements OnDestroy
         if (key === 'columnwidth') {
             switchClass(this.nativeElement, `col-md-${nv} col-sm-${nv}`, `col-md-${ov} col-sm-${ov}`);
         } else if (key === 'pulltorefresh' && nv) {
-            this.initPullToRefresh();
+            // creating instance after timeout as the smoothscroll styles where getting added on pull refresh-container
+            setTimeout(() => {
+                this.initPullToRefresh();
+            });
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -48,10 +51,14 @@ export class PageContentComponent extends StylableComponent implements OnDestroy
 
     // when list component is ready, pulltorefresh instance is created and this appends pullToRefresh element on the page content.
     private initPullToRefresh() {
-        if (!this.pullToRefreshIns && this.childPullToRefresh && this.pulltorefresh) {
+        const hasPullToRefreshEvent = this.hasEventCallback('pulltorefresh');
+        if (!this.pullToRefreshIns && (this.childPullToRefresh || hasPullToRefreshEvent) && this.pulltorefresh) {
             this.pullToRefreshIns = new PullToRefresh($(this.nativeElement), this.app, () => {
-                this.app.notify('pulltorefresh');
-                this.invokeEventCallback('pulltorefresh');
+                if (hasPullToRefreshEvent) {
+                    this.invokeEventCallback('pulltorefresh');
+                } else {
+                    this.app.notify('pulltorefresh');
+                }
             });
             this.registerDestroyListener(() => {
                 this.pullToRefreshIns.cancelSubscription();
