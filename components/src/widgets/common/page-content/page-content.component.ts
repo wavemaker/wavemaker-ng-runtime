@@ -61,7 +61,9 @@ export class PageContentComponent extends StylableComponent {
                 }
             });
             this.registerDestroyListener(() => {
-                this.pullToRefreshIns.cancelSubscription();
+                if (this.pullToRefreshIns.cancelSubscription) {
+                    this.pullToRefreshIns.cancelSubscription();
+                }
             });
         }
     }
