@@ -156,6 +156,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param timePeriod - String value decides to load other month days or other month or other year
      */
     private goToOtherMonthOryear(btnClass, timePeriod) {
+        if($(`.bs-datepicker-head .${btnClass}`).attr('disabled')) {
+            return;
+        }
         $(`.bs-datepicker-head .${btnClass}`).trigger( 'click' );
         if (timePeriod === 'days') {
             this.loadDays();
