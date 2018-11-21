@@ -7,6 +7,7 @@ import { WmComponentsModule } from '@wm/components';
 import { FileSelectorService } from './services/file-selector.service';
 import { ProcessManagementService } from './services/process-management.service';
 
+import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { AppUpdateComponent } from './widgets/app-update/app-update.component';
 import { BarcodeScannerComponent } from './widgets/barcode-scanner/barcode-scanner.component';
 import { CameraComponent } from './widgets/camera/camera.component';
@@ -31,6 +32,7 @@ import { MobileTabbarComponent } from './widgets/tabbar/tabbar.component';
 import { WidgetTemplateComponent } from './widgets/widget-template/widget-template.component';
 
 const wmMobileComponents = [
+    AnchorDirective,
     AppUpdateComponent,
     BarcodeScannerComponent,
     CameraComponent,

@@ -1,5 +1,6 @@
 export * from './src/components.module';
 export * from './src/utils/widget-utils';
+export * from './src/widgets/common/anchor/anchor.component';
 export * from './src/widgets/common/base/base.component';
 export * from './src/widgets/common/base/stylable.component';
 export * from './src/widgets/common/date/date.component';
