@@ -342,13 +342,16 @@ export const getDateObj = (value): Date => {
     return dateObj;
 };
 
-export const addEventListenerOnElement = (_element: Element, excludeElement: Element, nativeElement: Element, eventType, successCB, life: EVENT_LIFE, isCapture = false) => {
+export const addEventListenerOnElement = (_element: Element, excludeElement: Element, nativeElement: Element, eventType, isDropDownDisplayEnabledOnInput, successCB, life: EVENT_LIFE, isCapture = false) => {
     const element: Element = _element;
     const eventListener = (event) => {
         if (excludeElement && (excludeElement.contains(event.target) || excludeElement === event.target)) {
             return;
         }
         if (nativeElement.contains(event.target)) {
+            if($(event.target).is('input') && !isDropDownDisplayEnabledOnInput) {
+               return;
+            }
             element.removeEventListener(eventType, eventListener, isCapture);
             return;
         }
