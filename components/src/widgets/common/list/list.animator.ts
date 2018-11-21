@@ -111,6 +111,10 @@ export class ListAnimator extends SwipeAnimation {
             center: 0,
             upper: 0
         };
+        // apply swipe animation only on list items having "app-list-item" class.
+        if (!target.hasClass('app-list-item')) {
+            return bounds;
+        }
         if (!this.li || this.li[0] !== target[0]) {
             let selector =  $d > 0 ? '.app-list-item-left-action-panel' : '.app-list-item-right-action-panel';
             let actionTemplate = this.$el.find('>' + selector);
