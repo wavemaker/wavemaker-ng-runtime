@@ -266,6 +266,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             // Check for Shift+Tab key or Tab key or escape
             if (action === 'shift.tab' || action === 'escape' || (action === 'tab' && !isDateTime)) {
                 this.elementScope.hideDatepickerDropdown();
+                const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
+                setTimeout(() => displayInputElem.focus());
             }
             if (action === 'tab' && isDateTime) {
                 this.bsDatePickerDirective.hide();

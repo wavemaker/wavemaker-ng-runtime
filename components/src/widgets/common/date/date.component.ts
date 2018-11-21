@@ -140,9 +140,6 @@ export class DateComponent extends BaseDateTimeComponent {
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
-        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
-        setTimeout(() => displayInputElem.focus());
-
     }
 
     // change and blur events are added from the template
@@ -160,6 +157,7 @@ export class DateComponent extends BaseDateTimeComponent {
             this.invokeEventCallback('click', {$event: $event});
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
+            $event.stopPropagation();
             return;
         }
         this.bsDatePickerDirective.toggle();
@@ -173,7 +171,7 @@ export class DateComponent extends BaseDateTimeComponent {
         const bodyElement = document.querySelector('body');
         setTimeout(() => {
             const bsDateContainerElement = bodyElement.querySelector(`.${this.dateContainerCls}`);
-            this.deregisterEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', () => {
+            this.deregisterEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', this.isDropDownDisplayEnabledOnInput(this.showdropdownon), () => {
                 this.isOpen = false;
             }, EVENT_LIFE.ONCE, true);
         }, 350);
