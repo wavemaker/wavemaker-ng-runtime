@@ -102,9 +102,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private propsInitPromise: Promise<any>;
     private $ulEle: any;
     private _listAnimator: ListAnimator;
-    public _leftPanelSwipeTarget: ButtonComponent;
-    public _rightPanelSwipeTarget: ButtonComponent;
-    private $btnSubscription: Subscription;
     private pulltorefresh: boolean;
     private cancelSubscription: Function;
 
@@ -547,6 +544,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
+    public triggerListItemSelection($el: JQuery<HTMLElement>, $event: Event) {
+        if ($el && $el[0]) {
+            const listItemContext = $el.data('listItemContext');
+            // Trigger click event only if the list item is from the corresponding list.
+            if (listItemContext.listComponent === this) {
+                this.onItemClick($event, listItemContext);
+            }
+        }
+    }
+
     private setupHandlers() {
         this.listItems.changes.subscribe( listItems => {
             this.onListRender(listItems);
@@ -555,13 +562,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // handle click event in capturing phase.
         this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', ($event) => {
             const target = $($event.target).closest('.app-list-item');
-            if (target[0]) {
-                const listItemContext = target.data('listItemContext');
-                // Trigger click event only if the list item is from the corresponding list.
-                if (listItemContext.listComponent === this) {
-                    this.onItemClick($event, listItemContext);
-                }
-            }
+            this.triggerListItemSelection(target, $event);
         }, true);
     }
 
@@ -888,25 +889,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
 
         if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
-            // retrieves all the button components which are placed outside the listTemplate.
-            this.$btnSubscription = this.btnComponents.changes.subscribe((items) => {
-                items.forEach(item => {
-                    // assign the swipeTarget elements depending on swipe-target-position attribute.
-                    if (item.$attrs.get('swipe-target-position') === 'left') {
-                        this._leftPanelSwipeTarget = item;
-                    }
-                    if (item.$attrs.get('swipe-target-position') === 'right') {
-                        this._rightPanelSwipeTarget = item;
-                    }
-                });
-            });
             this._listAnimator = new ListAnimator(this);
         }
     }
 
     ngOnDestroy() {
-        if (this.$btnSubscription) {
-            this.$btnSubscription.unsubscribe();
+        if (this._listAnimator && this._listAnimator.$btnSubscription) {
+            this._listAnimator.$btnSubscription.unsubscribe();
         }
         if (this.cancelSubscription) {
             this.cancelSubscription();
