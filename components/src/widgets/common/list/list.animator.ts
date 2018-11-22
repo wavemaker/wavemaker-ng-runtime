@@ -1,6 +1,10 @@
+import { QueryList } from '@angular/core';
+import { Subscription } from 'rxjs';
+
 import { SwipeAnimation } from '@swipey';
 
 import { ListComponent } from './list.component';
+import { ButtonComponent } from '../button/button.component';
 
 declare  const _;
 
@@ -13,13 +17,15 @@ export class ListAnimator extends SwipeAnimation {
     private leftChildrenCount: number;
     private position: string;
     private actionPanel: JQuery<HTMLElement>;
+    private actionItems: QueryList<ButtonComponent>;
+    public $btnSubscription: Subscription;
 
     constructor(private list: ListComponent) {
         super();
         this.$el = $(this.list.getNativeElement()).find('ul.app-livelist-container:first');
 
-        this.leftChildrenCount = this.$el.find('>.app-list-item-left-action-panel').children().length;
-        this.rightChildrenCount = this.$el.find('>.app-list-item-right-action-panel').children().length;
+        this.leftChildrenCount = this.$el.find('>.app-list-item-left-action-panel > button:visible').length;
+        this.rightChildrenCount = this.$el.find('>.app-list-item-right-action-panel > button:visible').length;
 
         // when there are no children in both the templates then do not apply swipeAnimation;
         if (!this.leftChildrenCount && !this.rightChildrenCount) {
@@ -28,6 +34,9 @@ export class ListAnimator extends SwipeAnimation {
 
         // initialise swipe animation on the list component.
         this.init(this.$el);
+
+        // retrieves all the button components which are placed outside the listTemplate.
+        this.$btnSubscription = this.list.btnComponents.changes.subscribe(items => this.actionItems = items);
     }
 
     // This method sets the css for left or right action panels based on the template. Appends the actionTemplate before li.
@@ -121,7 +130,8 @@ export class ListAnimator extends SwipeAnimation {
                 actionTemplate = this.$el.find('>' + selector);
             }
 
-            if (!actionTemplate.length || !actionTemplate.children().length) {
+            // check for children visiblity. If children are visible then initiate the action panel.
+            if (!actionTemplate.length || !actionTemplate.find('button:visible').length) {
                 return bounds;
             }
 
@@ -196,8 +206,21 @@ export class ListAnimator extends SwipeAnimation {
 
     // Triggers full swipe event on the target element.
     public invokeFullSwipeEvt($event: Event): void {
-        const target = this.position === 'left' ? this.list._leftPanelSwipeTarget : this.list._rightPanelSwipeTarget;
-        if (target) {
+        let target, actions, index;
+        // Check if button are visible or not, invoke the tap event of the last button which is visible.
+        if (this.position === 'left') {
+            actions = this.actionItems.filter(btn => {
+                return btn.getAttr('swipe-position') === 'left' && btn.$element.is(':visible');
+            });
+            index = 0;
+        } else {
+            actions = this.actionItems.filter(btn => {
+                return btn.getAttr('swipe-position') === 'right' && btn.$element.is(':visible');
+            });
+            index = actions.length - 1;
+        }
+        target = actions[index];
+        if (target && target.hasEventCallback('tap')) {
             target.invokeEventCallback('tap', {$event});
         }
         this.resetState();
@@ -206,6 +229,8 @@ export class ListAnimator extends SwipeAnimation {
 
     // Called when swipeEnd is triggered. d contains the total distance covered by the element until touchEnd.
     public onAnimation($event: Event, d: number): void {
+        // set the selecteditem on the list component on swipe.
+        this.list.triggerListItemSelection(this.li, $event);
         if (this.actionPanel && this.actionPanel.attr('enablefullswipe') === 'true') {
             const sign = d > 0 ? 1 : -1;
             const $el = this.getChildActionElement(this.actionPanel);
