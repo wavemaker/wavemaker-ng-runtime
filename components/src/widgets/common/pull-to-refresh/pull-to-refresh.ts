@@ -9,6 +9,7 @@ export class PullToRefresh extends SwipeAnimation {
     private count: number = 0;
     private spinner: Spinner;
     public cancelSubscription: Function;
+    private animationInProgress: boolean;
 
     constructor(private $el: JQuery<HTMLElement>, private app: App, private onPullToRefresh: () => void) {
         super();
@@ -41,7 +42,8 @@ export class PullToRefresh extends SwipeAnimation {
             } else {
                 this.count--;
             }
-            if (!this.count) {
+            // call stop animation only when animation has started.
+            if (!this.count && this.animationInProgress) {
                 this.stopAnimation();
             }
         });
@@ -102,6 +104,7 @@ export class PullToRefresh extends SwipeAnimation {
 
     // Start the spinner animation and invokes the pulltorefresh event. Stops the animation after the wait time.
     public onAnimation() {
+        this.animationInProgress = true;
         this.spinner.start();
         if (this.onPullToRefresh) {
             this.onPullToRefresh();
@@ -119,6 +122,7 @@ export class PullToRefresh extends SwipeAnimation {
     public stopAnimation() {
         setTimeout(() => {
             this.runAnimation = false;
+            this.animationInProgress = false;
             this.spinner.stop();
             this.infoContainer.hide();
             setCSS(this.infoContainer[0], 'transform', 'none');
