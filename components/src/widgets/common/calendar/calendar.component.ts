@@ -26,6 +26,13 @@ const VIEW_TYPES = {
     AGENDA: 'agenda',
     LIST: 'list'
 };
+const BUTTON_TEXT = {
+    YEAR: 'Year',
+    MONTH: 'Month',
+    WEEK: 'Week',
+    DAY: 'Day',
+    TODAY: 'Today'
+};
 const SELECTION_MODES = {
     NONE: 'none',
     SINGLE: 'single',
@@ -200,7 +207,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
 
     // this function re-renders the events assigned to the calendar.
-    rerenderEvents() {
+    private rerenderEvents() {
         this.$fullCalendar.fullCalendar('rerenderEvents');
     }
 
@@ -400,6 +407,20 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         return eventSource;
     }
 
+    private setLocale() {
+        const year = _.get(this.appLocale, 'LABEL_CALENDAR_YEAR') || BUTTON_TEXT.YEAR;
+        const month = _.get(this.appLocale, 'LABEL_CALENDAR_MONTH') || BUTTON_TEXT.MONTH;
+        const week = _.get(this.appLocale, 'LABEL_CALENDAR_WEEK') || BUTTON_TEXT.WEEK;
+        const day = _.get(this.appLocale, 'LABEL_CALENDAR_DAY') || BUTTON_TEXT.DAY;
+        const today = _.get(this.appLocale, 'LABEL_CALENDAR_TODAY') || BUTTON_TEXT.TODAY;
+        this.calendarOptions.calendar.buttonText    = { year, month, week, day, today,
+            'listYear': year,
+            'listMonth': month,
+            'listWeek': week,
+            'listDay': day
+        };
+    }
+
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
@@ -416,6 +437,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 this.view = 'day';
             }
             this.triggerMobileCalendarChange();
+        } else {
+            this.setLocale();
         }
     }
 
