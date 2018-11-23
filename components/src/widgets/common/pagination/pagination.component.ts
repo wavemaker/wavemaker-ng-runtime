@@ -339,6 +339,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
      In case of invalid input, navigate to the appropriate page; also return false.
      In case of valid input, return true.*/
     validateCurrentPage(event, callback?) {
+        const targetEle = $(event.target).closest('a');
         /*If the value entered is not a valid number, then navigate to the first page.*/
         if (isNaN(this.dn.currentPage)) {
             this.goToFirstPage(undefined, event, callback);
@@ -350,8 +351,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             return false;
         }
         /*If the value entered is greater than the last page number, then navigate to the last page.*/
-        if (this.pageCount && (this.dn.currentPage > this.pageCount)) {
-            this.goToLastPage(undefined, event, callback);
+        if (this.pageCount && (this.dn.currentPage > this.pageCount || _.isNull(this.dn.currentPage))) {
+            targetEle.addClass('ng-invalid');
             return false;
         }
         return true;
@@ -362,6 +363,16 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             return;
         }
         this.goToPage(event);
+    }
+
+    onKeyDown(event) {
+        const targetEle = $(event.target).closest('a');
+        if (event.code == 'KeyE') {
+            targetEle.addClass('ng-invalid');
+            return false;
+        }
+        targetEle.removeClass('ng-invalid');
+        return true;
     }
 
     pageChanged(event: any) {
