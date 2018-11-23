@@ -2090,14 +2090,16 @@ $.widget('wm.datatable', {
                 if ($relatedTarget.attr('focus-target') === '' || isInvalidTarget()) {
                     return;
                 }
-                self.toggleEditRow(e, {
-                    'action': 'save',
-                    'noMsg': true,
-                    'success': function (skipFocus, error, isNewRow) {
-                        if (!isNewRow) {
-                            self.editSuccessHandler(skipFocus, error, e, $row);
+                self.options.timeoutCall(function () {
+                    self.toggleEditRow(e, {
+                        'action': 'save',
+                        'noMsg': true,
+                        'success': function (skipFocus, error, isNewRow) {
+                            if (!isNewRow) {
+                                self.editSuccessHandler(skipFocus, error, e, $row);
+                            }
                         }
-                    }
+                    });
                 });
             });
         }
