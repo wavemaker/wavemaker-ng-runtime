@@ -158,10 +158,10 @@ export const transformData = (context: any, dataSet: any, myDataField?: string, 
                     field: displayOptions.displayField,
                     expression: displayOptions.displayExpr,
                     bindExpression: displayOptions.bindDisplayExpr
-                }, context) || '';
+                }, context);
                 const dataSetItem = {
                     key: key,
-                    label: label.toString(),
+                    label:  isDefined(label) ? label.toString() : '',
                     value: myDataField === ALLFIELDS ? option : key,
                     dataObject: option, // represents the object when datafield is ALLFIELDS. This is used as innerItem while grouping the datasetItems.
                     index: startIndex + index

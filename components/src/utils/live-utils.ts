@@ -59,14 +59,14 @@ export const getRowOperationsColumn = (): any => {
 /**
  * Returns caption and widget bootstrap classes for the field
  */
-export const getFieldLayoutConfig = (captionWidth, captionPosition, viewPort): any => {
+export const getFieldLayoutConfig = (captionWidth, captionPosition, os): any => {
     let captionCls = '',
         widgetCls = '';
 
     captionPosition = captionPosition || 'top';
 
     if (captionPosition === 'top') {
-        if ((_.get(viewPort, 'os') === 'android') || !isMobileApp() || isAndroid()) { // Is android or not a mobile application
+        if ((os && os === 'android') || !isMobileApp() || isAndroid()) { // Is android or not a mobile application
             captionCls = widgetCls = 'col-xs-12';
         } else if (isMobileApp()) { // Is a mobile application and not android
             captionCls = 'col-xs-4';

@@ -124,7 +124,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.limit = this.limit;
 
         this.getTransformedData = (val) => {
-            return this.searchComponent.getTransformedData([val], this.nextItemIndex, _.get(val, 'iscustom'));
+            return this.searchComponent.getTransformedData([val], this.nextItemIndex++, _.get(val, 'iscustom'));
         };
     }
 
@@ -377,6 +377,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     // Makes call to searchComponent to filter the dataSource based on the query.
     protected getDefaultModel(query: Array<string> | string, index?: number) {
+        this.nextItemIndex++;
         return this.searchComponent.getDataSource(query, true, index);
     }
 

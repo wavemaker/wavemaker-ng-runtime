@@ -207,9 +207,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // highlight the characters in the dropdown matching the query.
     private highlight(match: TypeaheadMatch, query: String) {
-        // highlight of chars will work only when label are strings.
-        (match as any).value = match.item.label.toString();
-        return this.typeaheadContainer.highlight(match, query);
+        if (this.typeaheadContainer) {
+            // highlight of chars will work only when label are strings.
+            (match as any).value = match.item.label.toString();
+            return this.typeaheadContainer.highlight(match, query);
+        }
     }
 
     // inserts the element at the index position
@@ -251,18 +253,22 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // on focusout, subscribe to the datavalue changes again
     private onFocusOut() {
-        const fn = _.debounce(() => {
-            this._unsubscribeDv = false;
-            this._loadingItems = false;
-            // if domUpdated is true then do not hide the dropdown in the fullscreen
-            if (!this._domUpdated) {
-                this.listenQuery = false;
-                this.typeahead.hide();
-                this._unsubscribeDv = true;
-            }
-            this._domUpdated = false;
-        }, 100);
-        fn();
+        this._unsubscribeDv = false;
+        this._loadingItems = false;
+        // if domUpdated is true then do not hide the dropdown in the fullscreen
+        if (!this._domUpdated && this._isOpen) {
+            this.listenQuery = false;
+
+            // hide the typeahead only after the item is selected from dropdown.
+            setTimeout(() => {
+                if ((this.typeahead as any)._typeahead.isShown) {
+                    this.typeahead.hide();
+                }
+            }, 200);
+            this._unsubscribeDv = true;
+        }
+        this._domUpdated = false;
+        this._isOpen = false;
     }
 
     private onInputChange($event) {
@@ -294,6 +300,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         } else {
             this.queryModel = this.query;
             this._modelByValue = undefined;
+            this.invokeEventCallback('submit', {$event});
         }
     }
 
@@ -590,6 +597,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.minchars = 1;
             }
         }
+        this.listenQuery = true;
 
         // by default for autocomplete do not show the search icon
         // by default show the searchicon for type = search

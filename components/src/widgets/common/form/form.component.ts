@@ -387,7 +387,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     // Set the classes on the form based on the captionposition and captionwidth properties
     private setLayoutConfig() {
         let layoutConfig;
-        layoutConfig = getFieldLayoutConfig(this.captionwidth, this.captionposition, this.app.selectedViewPort);
+        layoutConfig = getFieldLayoutConfig(this.captionwidth, this.captionposition,  _.get(this.app.selectedViewPort, 'os'));
         this._widgetClass = layoutConfig.widgetCls;
         this._captionClass = layoutConfig.captionCls;
 
