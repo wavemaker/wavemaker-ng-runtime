@@ -9,6 +9,7 @@
         (change)="onSelectValueChange($event)"
         (blur)="invokeOnTouched($event)"
         [attr.name]="name"
+        [autofocus]="autofocus"
 >
   <option selected value="" [textContent]="placeholder" [hidden]="!placeholder" ></option>
   <option

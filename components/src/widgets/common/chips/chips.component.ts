@@ -671,6 +671,15 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 this.$element.append($inputEl);
             }
         }
+        if (key === 'autofocus' && nv) {
+            // setting the autofocus on the input once after dom is updated
+            setTimeout(() => {
+                const $chipsList = this.$element.find('.app-chip-input > input.app-textbox');
+                if ($chipsList && $chipsList.length) {
+                    this.focusSearchBox();
+                }
+            });
+        }
         super.onPropertyChange(key, nv, ov);
     }
 }
