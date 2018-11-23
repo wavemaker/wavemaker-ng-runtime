@@ -213,11 +213,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.isUpdateMode = true;
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});
-
-        if (this.parentForm && this.parentForm.ngform) {
-            // If parent form is present, add the current form as as formGroup for parent form
-            this.parentForm.ngform.addControl(key || name, this.ngform);
-        }
+        this.addInnerNgFormToForm(key || name);
 
         // On value change in form, update the dataoutput
         const onValueChangeSubscription =  this.ngform.valueChanges
@@ -241,6 +237,20 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     findOperationType() {}
+
+    private addInnerNgFormToForm(binding) {
+        if (this.parentForm && this.parentForm.ngform) {
+            let counter = 1;
+            let innerBinding = binding;
+            // Inner forms may have same names. If same name is present, append unqiue identifier
+            while (this.parentForm.ngform.controls.hasOwnProperty(innerBinding)) {
+                innerBinding = `${binding}_${counter}`;
+                counter++;
+            }
+            // If parent form is present, add the current form as as formGroup for parent form
+            this.parentForm.ngform.addControl(innerBinding, this.ngform);
+        }
+    }
 
     // Expose the events on context so that they can be accessed by form actions
     private addEventsToContext(context) {
