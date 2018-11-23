@@ -16,7 +16,7 @@
     </li>
     <li class="pagecount disabled">
         <a><input type="number" [disabled]="isDisableCurrent" [(ngModel)]="dn.currentPage"
-                  (change)="onModelChange($event)" class="form-control"/></a>
+                  (keydown)="onKeyDown($event)" (change)="onModelChange($event)" class="form-control"/></a>
     </li>
     <li class="disabled">
         <a [hidden]="isDisableCount"> / {{pageCount}}</a>
