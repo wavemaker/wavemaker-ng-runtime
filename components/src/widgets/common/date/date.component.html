@@ -9,7 +9,7 @@
            [value]="displayValue"
            (click)="toggleDpDropdown($event)"
            (focus)="invokeOnFocus($event)"
-           (blur)="invokeOnTouched($event)"
+           (blur)="onInputBlur($event)"
            [disabled]="disabled || readonly || isCurrentDate"
            [autofocus]="autofocus"
            [required]="required"
