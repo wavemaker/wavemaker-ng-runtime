@@ -126,7 +126,6 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     onDatePickerOpen() {
-        this.invokeOnTouched();
         this.isOpen = true;
         this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
         if (!this.bsDataValue) {
@@ -134,8 +133,14 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         this.addDatepickerKeyboardEvents(this, false);
     }
+    onInputBlur($event) {
+        if (!$($event.relatedTarget).hasClass('current-date')) {
+            this.invokeOnTouched();
+        }
+    }
 
     private hideDatepickerDropdown() {
+        this.invokeOnTouched();
         this.isOpen = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();

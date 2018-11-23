@@ -158,7 +158,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if ($event && $event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
         }
-        this.invokeOnTouched();
         this.addTimepickerClickListener(this.isTimeOpen);
     }
 
@@ -184,6 +183,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     private hideTimepickerDropdown() {
+        this.invokeOnTouched();
         this.toggleTimePicker(false);
         if (this.deregisterTimepickeEventListener) {
             this.deregisterTimepickeEventListener();
@@ -210,7 +210,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
         this.toggleTimePicker(false);
-        this.invokeOnTouched();
         this.bsDateValue ? this.activeDate = this.bsDateValue : this.activeDate = new Date();
         if (!this.bsDateValue) {
            this.hightlightToday();
@@ -283,6 +282,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     private hideDatepickerDropdown() {
+        this.invokeOnTouched();
         this.bsDatePickerDirective.hide();
         if (this.deregisterDatepickerEventListener) {
             this.deregisterDatepickerEventListener();
@@ -334,5 +334,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         super.onPropertyChange(key, nv, ov);
+    }
+
+    onInputBlur($event) {
+        if (!$($event.relatedTarget).hasClass('current-date')) {
+            this.invokeOnTouched();
+        }
     }
 }

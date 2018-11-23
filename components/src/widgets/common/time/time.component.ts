@@ -204,6 +204,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.onTimeChange(newVal);
     }
 
+    onInputBlur($event) {
+        if (!$($event.relatedTarget).hasClass('bs-timepicker-field')) {
+            this.invokeOnTouched();
+        }
+    }
+
     /**
      * This is an internal method used to execute the on time change functionality
      */
@@ -273,6 +279,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     private hideTimepickerDropdown() {
+        this.invokeOnTouched();
         this.status.isopen = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
