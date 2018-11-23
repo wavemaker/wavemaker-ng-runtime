@@ -306,9 +306,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // as we are using customOption template, liElements are not available on typeaheadContainer so append them explicitly.
         const fn = _.debounce(() => {
             this._isOpen = true;
-            if (!this.typeaheadContainer) {
-                this.typeaheadContainer = this.typeahead._container || (this.typeahead as any)._typeahead.instance;
-            }
+            this.typeaheadContainer = this.typeahead._container || (this.typeahead as any)._typeahead.instance;
             (this.typeaheadContainer as any).liElements = this.liElements;
             (this.typeaheadContainer as any).ulElement = this.ulElement;
 

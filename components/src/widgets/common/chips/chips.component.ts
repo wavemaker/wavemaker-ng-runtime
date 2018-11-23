@@ -516,7 +516,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             });
         });
 
-        this._unsubscribeDv = true;
+        this._unsubscribeDv = false;
 
         this.invokeOnChange(this._modelByValue, $event, true);
         this.invokeEventCallback('change', {$event, newVal: this.datavalue, oldVal: prevDatavalue});
