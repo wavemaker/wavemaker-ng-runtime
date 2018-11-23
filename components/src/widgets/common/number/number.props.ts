@@ -18,7 +18,7 @@ export const numberProps = new Map(
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
-        ['step', PROP_NUMBER],
+        ['step', {value: 1, ...PROP_NUMBER}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['updateon', PROP_STRING]
     ]

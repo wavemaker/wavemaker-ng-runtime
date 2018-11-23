@@ -188,10 +188,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     protected onArrowPress($event, key) {
         $event.preventDefault();
-        if (this.readonly || this.isInvalidNumber) {
+        if (this.readonly || this.isInvalidNumber || this.step === 0) {
             return;
         }
-        const step = (this.step && this.step > 0) ? this.step : 1;
         let proxyModel = this.proxyModel || 0;
         let value;
 
@@ -204,7 +203,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
                proxyModel = inputValue;
             }
         } else {
-            value = this.getValueInRange( proxyModel + (key === 'UP' ? step : -step));
+            value = this.getValueInRange( proxyModel + (key === 'UP' ? this.step : -this.step));
         }
         if ((key === 'UP' && proxyModel <= value) || (key === 'DOWN' && proxyModel >= value)) {
             const decimalRoundValue = Math.max(this.countDecimals(proxyModel), this.countDecimals(this.step));
