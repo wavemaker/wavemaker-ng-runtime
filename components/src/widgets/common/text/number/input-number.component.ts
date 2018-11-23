@@ -26,16 +26,7 @@ export class InputNumberComponent extends BaseInput {
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
-    public step;
-
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
     }
-
-    onArrowPress($event) {
-        if (this.step === 0) {
-           $event.preventDefault();
-        }
-    }
-
 }

@@ -1,5 +1,4 @@
 <input class="form-control app-textbox"
-       [ngClass]="{'step-hidden': step === 0}"
        focus-target
        role="input"
        type="number"
@@ -21,6 +20,4 @@
        (ngModelChange)="handleChange($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
        (keyup.enter)="flushViewChanges(input.value)"
-       (keydown.ArrowUp)="onArrowPress($event)"
-       (keydown.ArrowDown)="onArrowPress($event)"
        #input>

@@ -15,7 +15,7 @@ export const currencyProps = new Map(
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
-        ['step', {value: 1, ...PROP_NUMBER}],
+        ['step', PROP_NUMBER],
         ['tabindex', {value: 0, ...PROP_NUMBER}]
     ]
 );
