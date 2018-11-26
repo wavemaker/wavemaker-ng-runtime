@@ -29,7 +29,7 @@ const getSearchValue = (value, type) => {
 const getFilteredData = (data, searchObj) => {
     const searchVal = getSearchValue(searchObj.value, searchObj.type);
     let currentVal;
-    if (!isDefined(searchVal)) {
+    if (!isDefined(searchVal) && !_.includes(emptyMatchModes, searchObj.matchMode)) {
         return data;
     }
     data = data.filter((obj) => {
