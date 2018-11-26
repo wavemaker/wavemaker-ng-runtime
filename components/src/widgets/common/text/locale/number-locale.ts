@@ -52,14 +52,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // get a valid number form the text.
         const model = this.parseNumber(value.toString());
-        // if the number is valid update the model value.
+        // if the number is valid or if number is not in range update the model value.
         if (this.isValid(model)) {
             this.proxyModel = model;
             this.handleChange(model);
             // update the display value in the text box.
             this.updateDisplayText();
         } else {
-            this._onChange();
+            this.proxyModel = null;
+            this.handleChange(null);
         }
     }
 
@@ -80,13 +81,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private isValid(val: number): boolean {
-        if (_.isNaN(val)) {
+        // id number is infinite then consider it as invalid value
+        if (_.isNaN(val) || !_.isFinite(val)) {
             this.isInvalidNumber = true;
             return false;
         }
         if (val !== this.getValueInRange(val)) {
             this.numberNotInRange = true;
-            return false;
+            return true;
         }
         this.resetValidations();
         return true;
@@ -188,10 +190,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     protected onArrowPress($event, key) {
         $event.preventDefault();
-        if (this.readonly || this.isInvalidNumber || this.step === 0) {
+        if (this.readonly || this.step === 0) {
             return;
         }
-        let proxyModel = this.proxyModel || 0;
+        let proxyModel = this.proxyModel;
         let value;
 
         // if the number is not in range and when arrow buttons are pressed need to get appropriate number value.
@@ -201,9 +203,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             if (!_.isNaN(inputValue)) {
                value = this.getValueInRange(inputValue);
                proxyModel = inputValue;
+               this.resetValidations();
             }
         } else {
-            value = this.getValueInRange( proxyModel + (key === 'UP' ? this.step : -this.step));
+            if (_.isUndefined(proxyModel) || _.isNull(proxyModel)) {
+                proxyModel = value = this.getValueInRange( (this.minvalue || 0));
+                this.resetValidations();
+            } else {
+                value = this.getValueInRange( proxyModel + (key === 'UP' ? this.step : -this.step));
+            }
         }
         if ((key === 'UP' && proxyModel <= value) || (key === 'DOWN' && proxyModel >= value)) {
             const decimalRoundValue = Math.max(this.countDecimals(proxyModel), this.countDecimals(this.step));
@@ -211,7 +219,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             // update the modelProxy.
             this.proxyModel = _.round(value, decimalRoundValue);
             this.updateDisplayText();
-            this._onChange();
+            this.handleChange(this.proxyModel);
         }
     }
 
