@@ -233,6 +233,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         onDataRender: () => {
             this.ngZone.run(() => {
+                if (this.gridData.length) {
+                    this.invokeEventCallback('datarender', {$data: this.gridData, data: this.gridData});
+                }
                 // select rows selected in previous pages. (Not finding intersection of data and selecteditems as it will be heavy)
                 if (!this.multiselect) {
                     this.items.length = 0;
@@ -240,10 +243,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('selectRows', this.items);
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
-
-                if (this.gridData.length) {
-                    this.invokeEventCallback('datarender', {$data: this.gridData, data: this.gridData});
-                }
                 // On render, apply the filters set for query service variable
                 if (this._isPageSearch && this.filterInfo) {
                     this.searchSortHandler(this.filterInfo, undefined, 'search');

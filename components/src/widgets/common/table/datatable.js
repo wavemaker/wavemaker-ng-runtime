@@ -1813,6 +1813,10 @@ $.widget('wm.datatable', {
     /* Handles table sorting. */
     sortHandler: function (e) {
         e.stopImmediatePropagation();
+        // If header span is clicked and column selection is enabled, call header click
+        if ($(e.target).hasClass('header-data') && this.options.enableColumnSelection) {
+            this.headerClickHandler(e);
+        }
         var $e = $(e.target),
             $th = $e.closest('th.app-datagrid-header-cell'),
             id = $th.attr('data-col-id'),
