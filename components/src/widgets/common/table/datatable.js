@@ -1890,7 +1890,7 @@ $.widget('wm.datatable', {
         $row.find('[data-field-name]').each(function () {
             var $input = $(this),
                 fieldName = $input.attr('data-field-name') + '_new';
-            self.options.setFieldValue(fieldName, rowData[fieldName] || '')
+            self.options.setFieldValue(fieldName, rowData[$input.attr('data-field-name')] || '')
         });
         self.options.safeApply();
         self.setFocusOnElement(undefined, $row, true);
