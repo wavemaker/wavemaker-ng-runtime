@@ -10,7 +10,7 @@
            (click)="toggleDpDropdown($event)"
            (focus)="invokeOnFocus($event)"
            (blur)="onInputBlur($event)"
-           [disabled]="disabled || readonly || isCurrentDate"
+           [disabled]="disabled || readonly"
            [autofocus]="autofocus"
            [required]="required"
            [attr.placeholder]="placeholder"
@@ -25,14 +25,14 @@
                [isOpen]="isOpen"
                #datepicker="bsDatepicker"
                bsDatepicker
-               [isDisabled]="disabled || readonly || isCurrentDate"
+               [isDisabled]="disabled || readonly"
                [bsValue]="bsDataValue"
                (onShown)="onDatePickerOpen()"
                (onHidden)="hideDatepickerDropdown()"
                (bsValueChange)="onDateChange($event)">
     </div>
     <span class="input-group-btn">
-            <button type="button" class="btn btn-default btn-time" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate"
+            <button type="button" class="btn btn-default btn-time" [tabindex]="tabindex" [disabled]="disabled || readonly"
                     aria-label="Select date" aria-haspopup="true" aria-expanded="false"
                     (click)="toggleDpDropdown($event)">
                 <i aria-hidden="true" class="app-icon wi wi-calendar"></i>
@@ -45,7 +45,7 @@
            step="any"
            [value]="displayValue"
            [required]="required"
-           [disabled]="disabled || readonly || isCurrentDate"
+           [disabled]="disabled || readonly"
            (change)="onDisplayDateChange($event, true)"
            (focus)="invokeOnFocus($event)"
            (blur)="invokeOnTouched($event)">
