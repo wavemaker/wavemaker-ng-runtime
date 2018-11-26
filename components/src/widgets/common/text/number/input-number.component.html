@@ -23,4 +23,5 @@
        (keyup.enter)="flushViewChanges(input.value)"
        (keydown.ArrowUp)="onArrowPress($event)"
        (keydown.ArrowDown)="onArrowPress($event)"
+       (keypress)="validateInputEntry($event)"
        #input>

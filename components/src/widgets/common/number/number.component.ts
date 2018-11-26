@@ -32,5 +32,4 @@ export class NumberComponent extends NumberLocale {
     constructor(inj: Injector, i18nService: AbstractI18nService, decimalPipe: DecimalPipe) {
         super(inj, WIDGET_CONFIG, i18nService, decimalPipe);
     }
-
 }

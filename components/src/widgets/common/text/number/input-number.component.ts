@@ -38,4 +38,10 @@ export class InputNumberComponent extends BaseInput {
         }
     }
 
+    private validateInputEntry($event) {
+        if ($event.key === 'e' &&  $event.target.value.indexOf($event.key) !== -1) {
+            return false;
+        }
+    }
+
 }
