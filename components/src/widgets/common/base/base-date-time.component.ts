@@ -331,6 +331,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 }
                 $(document.activeElement).click();
                 this.elementScope.hideDatepickerDropdown();
+                const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
+                setTimeout(() => displayInputElem.focus());
             }
         });
     }
