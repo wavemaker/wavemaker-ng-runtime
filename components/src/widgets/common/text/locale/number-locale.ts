@@ -245,6 +245,26 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         return null;
     }
 
+    protected validateInputEntry($event) {
+        const validity = new RegExp(`^[\\d\\s,.e${this.GROUP}${this.DECIMAL}]$`, 'i');
+        const inputValue = $event.target.value;
+        // validates if user entered an invalid character.
+        if (!validity.test($event.key)) {
+            return false;
+        }
+        // a decimal value can be entered only once in the input.
+        if (_.includes(inputValue, this.DECIMAL) && $event.key === this.DECIMAL) {
+            return false;
+        }
+        // 'e' can be entered only once in the input.
+        if (_.intersection(_.toArray(inputValue), ['e', 'E']).length && _.includes('eE', $event.key)) {
+            return false;
+        }
+        if (_.includes(inputValue, '+') &&  $event.key === '+') {
+            return false;
+        }
+    }
+
     onEnter($event) {
         this.datavalue = $event.target.value;
     }
