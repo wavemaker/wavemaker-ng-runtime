@@ -17,7 +17,7 @@
                [required]="required"
                (click)="toggleDropdown($event)"
                (focus)="invokeOnFocus($event)"
-               (blur)="invokeOnTouched($event)"
+               (blur)="onInputBlur($event)"
                (change)="onDisplayTimeChange($event)"
                (keydown)="onDisplayKeydown($event)">
         <span class="input-group-btn dropdown-toggle">
