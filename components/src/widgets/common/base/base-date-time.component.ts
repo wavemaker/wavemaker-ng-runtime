@@ -57,6 +57,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
+    resetDisplayInput() {
+        $(this.nativeElement).find('.display-input').val('');
+    }
+
     public validate() {
         if(this.invalidDateTimeFormat) {
             return {
@@ -244,12 +248,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const activeMonthOrYear = $(`.bs-datepicker-head .current`).first().text();
         const datePickerBody = $('.bs-datepicker-body');
         if (datePickerBody.find('table.months').length > 0) {
-            this.loadMonths();
+            if (_.parseInt(activeMonthOrYear) !== this.activeDate.getFullYear()) {
+                this.loadMonths();
+            }
             const newDate = new Date(_.parseInt(activeMonthOrYear), this.activeDate.getMonth(), this.activeDate.getDate());
             this.setActiveMonthFocus(newDate, true);
         } else if (datePickerBody.find('table.days').length > 0) {
-            this.loadDays();
             const newMonth = months.indexOf(activeMonthOrYear);
+            if (newMonth !== this.activeDate.getMonth()) {
+                this.loadDays();
+            }
             const newDate = new Date(this.activeDate.getFullYear(), newMonth, 1);
             this.setActiveDateFocus(newDate, true);
         }
@@ -598,9 +606,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                         elementScope.bsTimeValue = elementScope.minTime;
                     }
                 }
-                if(action === 'arrowdown' ||  action === 'arrowup') {
+                if(action === 'tab'|| action === 'arrowdown' ||  action === 'arrowup') {
                     this.invalidDateTimeFormat = false;
                     this._onChange();
+                    if(action === 'tab' && (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, this.timepattern) === elementScope.displayValue)) {
+                        $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
+                    }
                 }
             } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {

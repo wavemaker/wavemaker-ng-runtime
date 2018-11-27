@@ -114,6 +114,7 @@ export class LiveFilterDirective {
     }
 
     clearFilter() {
+        this.form.resetFormState();
         this.form.formFields.forEach(filterField => {
             // Added check for range field
             if (!filterField.readonly && filterField.show) {
@@ -125,6 +126,7 @@ export class LiveFilterDirective {
                     filterField.maxValue = '';
                 } else {
                     filterField.value = '';
+                    filterField.resetDisplayInput();
                 }
             }
         });

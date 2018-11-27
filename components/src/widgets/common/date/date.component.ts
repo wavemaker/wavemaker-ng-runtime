@@ -145,6 +145,7 @@ export class DateComponent extends BaseDateTimeComponent {
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('current-date')) {
             this.invokeOnTouched();
+            this.invokeEventCallback('blur', {$event});
         }
     }
 

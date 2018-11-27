@@ -213,6 +213,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('bs-timepicker-field')) {
             this.invokeOnTouched();
+            this.invokeEventCallback('blur', {$event});
         }
     }
 
