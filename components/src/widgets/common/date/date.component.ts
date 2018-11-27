@@ -249,6 +249,8 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        setTimeout(() => displayInputElem.focus());
         this.setDataValue(newVal);
     }
 }
