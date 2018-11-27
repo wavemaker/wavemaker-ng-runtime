@@ -36,6 +36,7 @@
                         [secondsStep]="secondsstep"
                         [mousewheel]="true"
                         [arrowkeys]="true"
+                        (isValid)="isValid($event)"
                         [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
         </div>
     </div>
@@ -45,7 +46,7 @@
            role="input"
            [value]="displayValue"
            [required]="required"
-           [disabled]="disabled || readonly || isCurrentDate"
+           [disabled]="disabled || readonly || isCurrentTime"
            (change)="onTimeChange($event)"
            (focus)="invokeOnFocus($event)"
            (blur)="invokeOnTouched($event)">
