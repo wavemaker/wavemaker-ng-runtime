@@ -307,6 +307,7 @@ export class LiveFormDirective {
         })); // Convert of array of values to an object
         this.form.formFields.forEach(field => {
             field.value = prevDataValues[field.key] || '';
+            field.resetDisplayInput();
         });
         return prevDataValues;
     }

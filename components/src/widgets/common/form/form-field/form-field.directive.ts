@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { DataType, debounce, FormWidgetType, isMobile, removeClass } from '@wm/core';
+import { DataType, debounce, FormWidgetType, isDefined, isMobile, removeClass } from '@wm/core';
 
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
@@ -382,6 +382,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             readOnly = true;
         }
         this.setFormWidget('readonly', readOnly);
+    }
+
+    resetDisplayInput() {
+        if ((!isDefined(this.value) || this.value === '')) {
+            this.formWidget && this.formWidget.resetDisplayInput && this.formWidget.resetDisplayInput();
+        }
     }
 
     ngOnInit() {

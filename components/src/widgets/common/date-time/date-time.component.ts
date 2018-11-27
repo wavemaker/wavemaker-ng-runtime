@@ -226,7 +226,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
         if(getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
-            $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
+            $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
         if (!newVal) {
             //Set timevalue as 00:00:00 if we remove any one from hours/minutes/seconds field in timepicker after selecting date
@@ -312,6 +312,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
             return;
         }
+        this.invalidDateTimeFormat = false;
         this.onModelUpdate(newVal);
     }
 
@@ -370,6 +371,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('current-date')) {
             this.invokeOnTouched();
+            this.invokeEventCallback('blur', {$event});
         }
     }
 }
