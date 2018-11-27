@@ -1,6 +1,6 @@
 import { AfterViewInit, OnDestroy } from '@angular/core';
 import { Validator } from '@angular/forms';
-import { getDateObj, isString, setAttr } from '@wm/core';
+import { getDateObj, getFormattedDate, isString, setAttr } from '@wm/core';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 import { Subscription } from 'rxjs';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
@@ -29,6 +29,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
+    protected invalidDateTimeFormat: boolean;
 
     private dateOnShowSubscription: Subscription;
 
@@ -57,6 +58,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     public validate() {
+        if(this.invalidDateTimeFormat) {
+            return {
+                invalidDateTimeFormat: {
+                    valid: false
+                }
+            }
+        }
         if (!_.isUndefined(this.dateNotInRange) && this.dateNotInRange) {
             return {
                 dateNotInRange: {
@@ -75,6 +83,33 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     /**
+     * This method is used to validate date pattern and time pattern
+     * If user selects one pattern in design time and if he tries to enter the date in another pattern then the device is throwing an error
+     */
+    protected formatValidation(datePipe, newVal, inputVal) {
+        const pattern = this.datepattern || this.timepattern;
+        const formattedDate = getFormattedDate(datePipe, newVal, pattern);
+        inputVal = inputVal.trim();
+        if(inputVal) {
+            if(pattern === 'timestamp') {
+                if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    this.invalidDateTimeFormat = true;
+                    this._onChange();
+                    return false;
+                }
+            } else {
+                if(inputVal !== formattedDate ) {
+                    this.invalidDateTimeFormat = true;
+                    this._onChange();
+                    return false;
+                }
+            }
+
+        }
+        return true;
+    }
+
+    /**
      * This method is used to validate min date and max date
      * In mobile if invalid dates are entered, device is showing an alert.
      * In web if invalid dates are entered, device is showing validation message.
@@ -83,7 +118,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const dateFormat = 'YYYY-MM-DD';
         if (newVal) {
             newVal = moment(newVal).startOf('day').toDate();
-            if (this.mindate && newVal < moment(this.mindate, dateFormat).toDate()) {
+            const minDate = moment(this.mindate).startOf('day').toDate();
+            if (this.mindate && newVal < moment(minDate, dateFormat).toDate()) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
                 return this.showValidation($event, displayValue, isNativePicker, msg);
@@ -562,6 +598,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                         elementScope.bsTimeValue = elementScope.minTime;
                     }
                 }
+                if(action === 'arrowdown' ||  action === 'arrowup') {
+                    this.invalidDateTimeFormat = false;
+                    this._onChange();
+                }
             } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {
                     elementScope.setIsTimeOpen(false);
@@ -572,6 +612,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $el.find('a').on('click', evt => {
             const elementScope = this.elementScope;
             const $target = $(evt.target);
+            this.invalidDateTimeFormat = false;
+            this._onChange();
             if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
                 if ($target.find('span').hasClass('bs-chevron-down')) {
                     elementScope.bsTimeValue = elementScope.maxTime;

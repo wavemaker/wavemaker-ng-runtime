@@ -104,6 +104,11 @@ export class DateComponent extends BaseDateTimeComponent {
             return;
         }
         const newVal = getDateObj($event.target.value);
+        // date pattern validation
+        // if invalid pattern is entered, device is showing an error.
+        if(!this.formatValidation(this.datePipe, newVal, $event.target.value)) {
+           return;
+        }
         // min date and max date validation in mobile view.
         // if invalid dates are entered, device is showing an alert.
         if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
@@ -114,9 +119,13 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
+        this.invalidDateTimeFormat = false;
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
+        if(getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
+            $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
+        }
         if (newVal) {
             this.bsDataValue = newVal;
         } else {
@@ -142,6 +151,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private hideDatepickerDropdown() {
         this.invokeOnTouched();
         this.isOpen = false;
+        this.isEnterPressedOnDateInput = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
@@ -192,8 +202,21 @@ export class DateComponent extends BaseDateTimeComponent {
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
                 event.preventDefault();
-                this.isEnterPressedOnDateInput = true;
-                this.bsDatePickerDirective.bsValue =  newVal;
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
+                const inputVal = event.target.value.trim();
+                if (inputVal && this.datepattern === 'timestamp') {
+                    if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                        this.invalidDateTimeFormat = true;
+                        this._onChange();
+                    }
+                } else if(inputVal && inputVal !== formattedDate ) {
+                    this.invalidDateTimeFormat = true;
+                    this._onChange();
+                } else {
+                    this.invalidDateTimeFormat = false;
+                    this.isEnterPressedOnDateInput = true;
+                    this.bsDatePickerDirective.bsValue =  newVal;
+                }
                 this.toggleDpDropdown(event);
             }
         }

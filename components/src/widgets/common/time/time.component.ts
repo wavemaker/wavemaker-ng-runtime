@@ -201,6 +201,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     onDisplayTimeChange($event) {
         const newVal = getNativeDateObject($event.target.value);
+        // time pattern validation
+        // if invalid pattern is entered, device is showing an error.
+        if(!this.formatValidation(this.datePipe, newVal, $event.target.value)) {
+            return;
+        }
+        this.invalidDateTimeFormat = false;
         this.onTimeChange(newVal);
     }
 
@@ -286,6 +292,15 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
     }
 
+    private isValid(event) {
+        if(!event) {
+            const enteredDate = $(this.nativeElement).find('input').val();
+            const newVal = getNativeDateObject(enteredDate);
+            if(!this.formatValidation(this.datePipe, newVal, enteredDate)) {
+                return;
+            }
+        }
+    }
     /**
      * This is an internal method to add css class for dropdown while opening the time dropdown
      */

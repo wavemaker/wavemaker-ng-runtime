@@ -59,6 +59,7 @@
                         [secondsStep]="secondsstep"
                         [mousewheel]="true"
                         [arrowkeys]="true"
+                        (isValid)="isValid($event)"
                         [showSeconds]="showseconds" (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
         </div>
     </div>
