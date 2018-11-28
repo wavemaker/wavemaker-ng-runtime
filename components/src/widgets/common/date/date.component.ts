@@ -250,7 +250,9 @@ export class DateComponent extends BaseDateTimeComponent {
      */
     onDateChange(newVal): void {
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
-        setTimeout(() => displayInputElem.focus());
+        if (this.isOpen) {
+            setTimeout(() => displayInputElem.focus());
+        }
         this.setDataValue(newVal);
     }
 }
