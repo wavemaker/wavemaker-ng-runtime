@@ -98,13 +98,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if(pattern === 'timestamp') {
                 if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
                     this.invalidDateTimeFormat = true;
-                    this._onChange();
+                    this.invokeOnChange(this.datavalue, undefined, false);
                     return false;
                 }
             } else {
                 if(inputVal !== formattedDate ) {
                     this.invalidDateTimeFormat = true;
-                    this._onChange();
+                    this.invokeOnChange(this.datavalue, undefined, false);
                     return false;
                 }
             }
@@ -607,8 +607,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     }
                 }
                 if(action === 'tab'|| action === 'arrowdown' ||  action === 'arrowup') {
-                    this.invalidDateTimeFormat = false;
-                    this._onChange();
+                   this.invalidDateTimeFormat = false;
+                   this.invokeOnChange(this.datavalue, undefined, false);
                     if(action === 'tab' && (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, this.timepattern) === elementScope.displayValue)) {
                         $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
                     }
@@ -623,8 +623,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $el.find('a').on('click', evt => {
             const elementScope = this.elementScope;
             const $target = $(evt.target);
-            this.invalidDateTimeFormat = false;
-            this._onChange();
+            if(!$target.hasClass('disabled')) {
+               this.invalidDateTimeFormat = false;
+               this.invokeOnChange(this.datavalue, undefined, false);
+            }
             if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
                 if ($target.find('span').hasClass('bs-chevron-down')) {
                     elementScope.bsTimeValue = elementScope.maxTime;
