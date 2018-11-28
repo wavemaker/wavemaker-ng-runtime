@@ -27,7 +27,7 @@
                    [bsConfig]="_dateOptions"
                    [isOpen]="isDateOpen"
                    (onShown)="onDatePickerOpen()"
-                   (onHidden)="isDateOpen = !isDateOpen;"
+                   (onHidden)="hideDatepickerDropdown()"
                    #datepicker=bsDatepicker
                    bsDatepicker
                    [isDisabled]="disabled || readonly || isCurrentDate"
