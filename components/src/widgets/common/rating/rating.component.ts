@@ -88,7 +88,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
          * 3. If maxvalue / i value is more than datasetItems length, prepare default rating items for i values more than datasetItems.length
          */
         if (data.length && data.length > maxValue) {
-            data = _.slice(data, 0, data.length);
+            data = _.slice(data, 0, maxValue);
         }
 
         for (let i = maxValue; i > 0; i--) {
