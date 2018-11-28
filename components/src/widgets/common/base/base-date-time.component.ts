@@ -623,10 +623,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $el.find('a').on('click', evt => {
             const elementScope = this.elementScope;
             const $target = $(evt.target);
-            if(!$target.hasClass('disabled')) {
-               this.invalidDateTimeFormat = false;
-               this.invokeOnChange(this.datavalue, undefined, false);
-            }
+           this.invalidDateTimeFormat = false;
+           this.invokeOnChange(this.datavalue, undefined, false);
             if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
                 if ($target.find('span').hasClass('bs-chevron-down')) {
                     elementScope.bsTimeValue = elementScope.maxTime;
