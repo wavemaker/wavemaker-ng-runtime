@@ -333,11 +333,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
                 if (inputVal && this.datepattern === 'timestamp') {
                     if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
-                        this._onChange();
+                        this.invokeOnChange(this.datavalue, event, false);
                     }
                 } else if(inputVal && inputVal !== formattedDate ) {
                     this.invalidDateTimeFormat = true;
-                    this._onChange();
+                    this.invokeOnChange(this.datavalue, event, false);
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
