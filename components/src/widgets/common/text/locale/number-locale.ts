@@ -246,7 +246,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     protected validateInputEntry($event) {
-        const validity = new RegExp(`^[\\d\\s,.e${this.GROUP}${this.DECIMAL}]$`, 'i');
+
+        // allow actions if control key is pressed or if backspace is pressed. (for Mozilla).
+        if ($event.ctrlKey || _.includes(['Backspace', 'ArrowRight', 'ArrowLeft'], $event.key)) {
+            return;
+        }
+
+        const validity = new RegExp(`^[\\d\\s,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
         const inputValue = $event.target.value;
         // validates if user entered an invalid character.
         if (!validity.test($event.key)) {
