@@ -2063,7 +2063,7 @@ $.widget('wm.datatable', {
                 var $target = $(e.target),
                     $row = $target.closest('tr'),
                     $relatedTarget = $(e.relatedTarget),
-                    invalidTargets = '.row-editing:not(".always-new-row"), .row-action-button, .app-datagrid-cell, .caption';
+                    invalidTargets = '.row-editing:not(".always-new-row"), .row-action-button, .app-datagrid-cell, .caption, button.btn-time, button.btn-date';
 
                 //Check if the focus out element is outside the grid or some special elements
                 function isInvalidTarget() {
