@@ -1,6 +1,6 @@
 import { AfterViewInit, OnDestroy } from '@angular/core';
 import { Validator } from '@angular/forms';
-import { getDateObj, getFormattedDate, isString, setAttr } from '@wm/core';
+import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 import { Subscription } from 'rxjs';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
@@ -552,6 +552,20 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private isValidDate(date) {
         return date && date instanceof Date && !isNaN(date.getTime());
     }
+
+    /**
+     * This function checks whether the given time is valid or not
+     */
+    private timeFormatValidation(elementScope) {
+        const enteredDate = $(this.nativeElement).find('input').val();
+        const newVal = getNativeDateObject(enteredDate);
+        if(!this.formatValidation(elementScope.datePipe, newVal, enteredDate)) {
+            return;
+        }
+        this.invalidDateTimeFormat = false;
+        this.invokeOnChange(this.datavalue, undefined, false);
+    }
+
     /**
      * This function sets the events to given element
      * @param $el - element on which the event is added
@@ -606,14 +620,17 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                         elementScope.bsTimeValue = elementScope.minTime;
                     }
                 }
-                if(action === 'tab'|| action === 'arrowdown' ||  action === 'arrowup') {
+                if (action === 'tab') {
                    this.invalidDateTimeFormat = false;
                    this.invokeOnChange(this.datavalue, undefined, false);
-                    if(action === 'tab' && (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, this.timepattern) === elementScope.displayValue)) {
+                    if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, this.timepattern) === elementScope.displayValue) {
                         $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
                     }
                 }
-            } else if ($target.hasClass('btn-default')) {
+                if (action === 'arrowdown' ||  action === 'arrowup') {
+                    this.timeFormatValidation(elementScope);
+                }
+             } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {
                     elementScope.setIsTimeOpen(false);
                     this.focus();
@@ -623,8 +640,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $el.find('a').on('click', evt => {
             const elementScope = this.elementScope;
             const $target = $(evt.target);
-           this.invalidDateTimeFormat = false;
-           this.invokeOnChange(this.datavalue, undefined, false);
             if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
                 if ($target.find('span').hasClass('bs-chevron-down')) {
                     elementScope.bsTimeValue = elementScope.maxTime;
@@ -632,6 +647,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     elementScope.bsTimeValue = elementScope.minTime;
                 }
             }
+            this.timeFormatValidation(elementScope);
         });
     }
 
