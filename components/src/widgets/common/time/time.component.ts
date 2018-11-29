@@ -192,7 +192,11 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             if (action === 'enter' || action === 'arrowdown') {
                 event.preventDefault();
                 this.toggleDropdown(event);
+            } else {
+                this.hideTimepickerDropdown();
             }
+        } else {
+            this.hideTimepickerDropdown();
         }
     }
 
@@ -235,7 +239,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
                 maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
                 timeValue = this.bsTimePicker.hours + ":" + (this.bsTimePicker.minutes || 0) + ":" + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian): '');
-                timeInputValue =  new Date((moment().format('YYYY-MM-DD') + ' ' + moment(timeValue, this.timepattern).format('HH:mm')).valueOf());
+                timeInputValue =  getNativeDateObject(timeValue);
                 this.bsTimePicker.meridian = minTimeMeridian;
                 this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
             }
