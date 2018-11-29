@@ -142,10 +142,10 @@ bundleWeb() {
         ./dist/tmp/mobile/placeholder/components/components.umd.js \
         ./dist/tmp/mobile/placeholder/runtime/runtime.umd.js \
         ./dist/tmp/runtime/runtime.umd.js -o \
-        ./dist/bundles/wmapp/scripts/wm-loader.js -b
+        ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.js \
-        -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -b beautify=false,ascii_only=true
+    ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.min.js \
+        -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.compressed.js -b beautify=false,ascii_only=true
 
     if [ "$?" -eq "0" ]; then
         echo "uglify: web - success"
@@ -172,10 +172,10 @@ bundleMobile() {
         ./dist/tmp/mobile/variables/variables.umd.js \
         ./dist/tmp/mobile/runtime/runtime.umd.js \
         ./dist/tmp/runtime/runtime.umd.js -o \
-        ./dist/bundles/wmmobile/scripts/wm-mobileloader.js -b
+        ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.js \
-        -c -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b beautify=false,ascii_only=true
+    ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js \
+        -c -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.compressed.js -b beautify=false,ascii_only=true
 
     if [ "$?" -eq "0" ]; then
         echo "uglify: mobile - success"
@@ -332,10 +332,10 @@ bundleWebLibs() {
         ./dist/tmp/swipey/swipey.umd.js \
         ./swipey/src/swipey.jquery.plugin.js \
         ./components/src/widgets/common/table/datatable.js \
-        -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
+        -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-libs.js \
-        -c -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b beautify=false,ascii_only=true
+    ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-libs.min.js \
+        -c -o ./dist/bundles/wmapp/scripts/wm-libs.min.compressed.js -b beautify=false,ascii_only=true
 
 
     if [ "$?" -eq "0" ]; then
@@ -394,10 +394,10 @@ bundleMobileLibs() {
         ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
-        -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
+        -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-libs.js \
-        -c -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b beautify=false,ascii_only=true
+    ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-libs.min.js \
+        -c -o ./dist/bundles/wmmobile/scripts/wm-libs.min.compressed.js -b beautify=false,ascii_only=true
 
 
     if [ "$?" -eq "0" ]; then
