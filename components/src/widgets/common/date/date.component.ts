@@ -219,7 +219,11 @@ export class DateComponent extends BaseDateTimeComponent {
                     this.bsDatePickerDirective.bsValue =  newVal;
                 }
                 this.toggleDpDropdown(event);
+            } else {
+                this.hideDatepickerDropdown();
             }
+        } else {
+            this.hideDatepickerDropdown();
         }
     }
 
