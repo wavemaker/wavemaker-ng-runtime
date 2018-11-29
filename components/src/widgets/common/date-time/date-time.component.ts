@@ -346,9 +346,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
                 this.toggleDpDropdown(event);
             } else {
                 this.hideDatepickerDropdown();
+                this.hideTimepickerDropdown();
             }
         } else {
             this.hideDatepickerDropdown();
+            this.hideTimepickerDropdown();
         }
     }
 
