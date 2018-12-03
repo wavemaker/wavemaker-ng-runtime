@@ -1,9 +1,10 @@
-import { AfterViewInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
 import { Validator } from '@angular/forms';
 import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 import { Subscription } from 'rxjs';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
+import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 declare const moment, _, $;
 const CURRENT_DATE: string = 'CURRENT_DATE';
@@ -26,6 +27,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected timepattern: string;
     protected showseconds: boolean;
     protected ismeridian: boolean;
+    protected datePipe;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -38,6 +40,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
+    constructor(inj: Injector, WIDGET_CONFIG) {
+        super(inj, WIDGET_CONFIG);
+        this.datePipe = this.inj.get(ToDatePipe);
+    }
+
 
     /**
      * returns true if the input value is default (i.e open date picker on input click)
@@ -90,9 +97,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method is used to validate date pattern and time pattern
      * If user selects one pattern in design time and if he tries to enter the date in another pattern then the device is throwing an error
      */
-    protected formatValidation(datePipe, newVal, inputVal) {
+    protected formatValidation(newVal, inputVal) {
         const pattern = this.datepattern || this.timepattern;
-        const formattedDate = getFormattedDate(datePipe, newVal, pattern);
+        const formattedDate = getFormattedDate(this.datePipe, newVal, pattern);
         inputVal = inputVal.trim();
         if(inputVal) {
             if(pattern === 'timestamp') {
@@ -114,7 +121,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     /**
-     * This method is used to validate min date and max date
+     * This method is used to validate min date, max date, exclude dates and exclude days
      * In mobile if invalid dates are entered, device is showing an alert.
      * In web if invalid dates are entered, device is showing validation message.
      */
@@ -126,17 +133,42 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (this.mindate && newVal < moment(minDate, dateFormat).toDate()) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
+                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.maxdate && newVal > moment(this.maxdate, dateFormat).toDate()) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
                 this.dateNotInRange = true;
+                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
+            }
+            if (this.excludedates) {
+                let excludeDatesArray;
+                if (isString(this.excludedates)) {
+                    excludeDatesArray = _.split(this.excludedates, ',');
+                } else {
+                    excludeDatesArray = this.excludedates;
+                }
+                excludeDatesArray = excludeDatesArray.map(d => getFormattedDate(this.datePipe, d, this.datepattern));
+                if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, newVal, this.datepattern)) > -1) {
+                    this.dateNotInRange = true;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    return;
+                }
+            }
+            if (this.excludedays) {
+                const excludeDaysArray =  _.split(this.excludedays, ',');
+                if (excludeDaysArray.indexOf(newVal.getDay().toString()) > -1) {
+                    this.dateNotInRange = true;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    return;
+                }
             }
         }
 
         if (!isNativePicker) {
             this.dateNotInRange = false;
+            this.invokeOnChange(this.datavalue, undefined, false);
         }
     }
 
@@ -556,10 +588,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     /**
      * This function checks whether the given time is valid or not
      */
-    private timeFormatValidation(elementScope) {
+    private timeFormatValidation() {
         const enteredDate = $(this.nativeElement).find('input').val();
         const newVal = getNativeDateObject(enteredDate);
-        if(!this.formatValidation(elementScope.datePipe, newVal, enteredDate)) {
+        if(!this.formatValidation(newVal, enteredDate)) {
             return;
         }
         this.invalidDateTimeFormat = false;
@@ -623,12 +655,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 if (action === 'tab') {
                    this.invalidDateTimeFormat = false;
                    this.invokeOnChange(this.datavalue, undefined, false);
-                    if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, this.timepattern) === elementScope.displayValue) {
+                   const pattern = this.datepattern || this.timepattern;
+                    if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, pattern) === elementScope.displayValue) {
                         $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
                     }
                 }
                 if (action === 'arrowdown' ||  action === 'arrowup') {
-                    this.timeFormatValidation(elementScope);
+                    this.timeFormatValidation();
                 }
              } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {
@@ -647,7 +680,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     elementScope.bsTimeValue = elementScope.minTime;
                 }
             }
-            this.timeFormatValidation(elementScope);
+            this.timeFormatValidation();
         });
     }
 
@@ -677,6 +710,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'maxdate') {
            this._dateOptions.maxDate = (nv === CURRENT_DATE) ?  this.maxdate = new Date() : getDateObj(nv);
+            this.minDateMaxDateValidationOnInput(this.datavalue);
+        }  else if (key === 'excludedates' || key === 'excludedays') {
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);

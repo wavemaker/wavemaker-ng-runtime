@@ -109,7 +109,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     constructor(
         inj: Injector,
-        private datePipe: ToDatePipe,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
         @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
@@ -138,11 +137,21 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
         if (key === 'mintime') {
             this.minTime = getNativeDateObject(nv); // TODO it is supposed to be time conversion, not to the day
+            this.mintimeMaxtimeValidation();
         } else if (key === 'maxtime') {
             this.maxTime = getNativeDateObject(nv);
+            this.mintimeMaxtimeValidation();
         } else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    /**
+     * This is an internal method used to validate mintime and maxtime
+     */
+    private mintimeMaxtimeValidation() {
+        this.timeNotInRange = this.minTime && this.maxTime && (this.bsTimeValue < this.minTime || this.bsTimeValue > this.maxTime);
+        this.invokeOnChange(this.datavalue, undefined, false);
     }
 
     /**
@@ -207,7 +216,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         const newVal = getNativeDateObject($event.target.value);
         // time pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if(!this.formatValidation(this.datePipe, newVal, $event.target.value)) {
+        if(!this.formatValidation(newVal, $event.target.value)) {
             return;
         }
         this.invalidDateTimeFormat = false;
@@ -301,7 +310,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if(!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
             const newVal = getNativeDateObject(enteredDate);
-            if(!this.formatValidation(this.datePipe, newVal, enteredDate)) {
+            if(!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
         }
