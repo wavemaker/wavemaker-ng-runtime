@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 
-import { getSessionStorageItem, AbstractI18nService, replace, setCSS, setSessionStorageItem, _WM_APP_PROJECT, AppDefaults, isMobile, isMobileApp } from '@wm/core';
+import { getSessionStorageItem, AbstractI18nService, replace, setCSS, addClass, setSessionStorageItem, _WM_APP_PROJECT, AppDefaults, isMobile, isMobileApp } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
 
@@ -38,6 +38,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         let direction: 'ltr' | 'rtl' = 'ltr';
         if (RTL_LANGUAGE_CODES.includes(this.selectedLocale)) {
             direction = 'rtl';
+            addClass(document.body, 'rtl', true);
         }
 
         setCSS(document.body, 'direction', direction);
