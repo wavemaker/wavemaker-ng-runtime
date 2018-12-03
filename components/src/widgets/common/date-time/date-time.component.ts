@@ -109,7 +109,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     constructor(inj: Injector,
-                public datePipe: ToDatePipe,
                 private ngZone: NgZone,
                 private cdRef: ChangeDetectorRef,
                 private appDefaults: AppDefaults,
@@ -221,13 +220,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private onModelUpdate(newVal, type?) {
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
+            if(getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
+               $(this.nativeElement).find('.display-input').val(this.displayValue);
+            }
         }
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
-        if(getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
-            $(this.nativeElement).find('.display-input').val(this.displayValue);
-        }
         if (!newVal) {
             //Set timevalue as 00:00:00 if we remove any one from hours/minutes/seconds field in timepicker after selecting date
             if(this.bsDateValue && this.bsTimePicker && (this.bsTimePicker.hours === "" || this.bsTimePicker.minutes === "" || this.bsTimePicker.seconds === "")) {
@@ -305,7 +304,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if(!this.formatValidation(this.datePipe, newVal, $event.target.value)) {
+        if(!this.formatValidation(newVal, $event.target.value)) {
             return;
         }
         // min date and max date validation in mobile view.
@@ -358,7 +357,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if(!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
             const newVal = getNativeDateObject(enteredDate);
-            if(!this.formatValidation(this.datePipe, newVal, enteredDate)) {
+            if(!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
         }

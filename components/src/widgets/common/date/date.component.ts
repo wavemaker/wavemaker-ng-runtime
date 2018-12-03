@@ -78,7 +78,6 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
     constructor(inj: Injector,
-                public datePipe: ToDatePipe,
                 private cdRef: ChangeDetectorRef,
                 private appDefaults: AppDefaults,
                 @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
@@ -106,7 +105,7 @@ export class DateComponent extends BaseDateTimeComponent {
         const newVal = getDateObj($event.target.value);
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if(!this.formatValidation(this.datePipe, newVal, $event.target.value)) {
+        if(!this.formatValidation(newVal, $event.target.value)) {
            return;
         }
         // min date and max date validation in mobile view.
