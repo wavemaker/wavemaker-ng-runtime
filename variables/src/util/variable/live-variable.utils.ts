@@ -1,4 +1,4 @@
-import { getClonedObject, hasCordova, isDateTimeType, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
+import { $invokeWatchers, getClonedObject, hasCordova, isDateTimeType, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
 import { $rootScope, DB_CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { LVService } from './live-variable.http.utils';
 import { formatDate, getEvaluatedOrderBy, initiateCallback } from './variables.utils';
@@ -885,11 +885,17 @@ export class LiveVariableUtils {
                 }
                 variable.dataSet = response;
             }
-            // EVENT: ON_SUCCESS
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, advancedOptions);
-            // EVENT: ON_CAN_UPDATE
-            variable.canUpdate = true;
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
+
+            // watchers should get triggered before calling onSuccess event.
+            // so that any variable/widget depending on this variable's data is updated
+            $invokeWatchers(true);
+            setTimeout(() => {
+                // EVENT: ON_SUCCESS
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, advancedOptions);
+                // EVENT: ON_CAN_UPDATE
+                variable.canUpdate = true;
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
+            });
             triggerFn(success, response);
             return Promise.resolve(response);
         }, (response) => {
