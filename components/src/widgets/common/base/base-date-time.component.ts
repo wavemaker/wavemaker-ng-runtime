@@ -126,17 +126,17 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * In web if invalid dates are entered, device is showing validation message.
      */
     protected minDateMaxDateValidationOnInput(newVal, $event?: Event, displayValue?: string, isNativePicker?: boolean) {
-        const dateFormat = 'YYYY-MM-DD';
         if (newVal) {
             newVal = moment(newVal).startOf('day').toDate();
-            const minDate = moment(this.mindate).startOf('day').toDate();
-            if (this.mindate && newVal < moment(minDate, dateFormat).toDate()) {
+            const minDate = moment(getDateObj(this.mindate)).startOf('day').toDate();
+            const maxDate =  moment(getDateObj(this.maxdate)).startOf('day').toDate();
+            if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
                 this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
-            if (this.maxdate && newVal > moment(this.maxdate, dateFormat).toDate()) {
+            if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
                 this.dateNotInRange = true;
                 this.invokeOnChange(this.datavalue, undefined, false);
