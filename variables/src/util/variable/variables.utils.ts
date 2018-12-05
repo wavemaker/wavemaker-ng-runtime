@@ -362,11 +362,9 @@ const downloadThroughAnchor = (config, success, error) => {
         'target' : 'WebService',
         'action' : 'invokeRuntimeRestCall',
         'method' : method,
-        'config' : {
-            'url'    : url,
-            'method' : method,
-            'headers': headers
-        },
+        'url'    : url,
+        'method' : method,
+        'headers': headers,
         'data'   : data,
         'responseType': 'arraybuffer'
     }, function (response, httpconfig) {
