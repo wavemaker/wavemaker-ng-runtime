@@ -363,7 +363,6 @@ const downloadThroughAnchor = (config, success, error) => {
         'action' : 'invokeRuntimeRestCall',
         'method' : method,
         'url'    : url,
-        'method' : method,
         'headers': headers,
         'data'   : data,
         'responseType': 'arraybuffer'
