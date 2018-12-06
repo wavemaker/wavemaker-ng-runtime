@@ -685,8 +685,8 @@ $.widget('wm.datatable', {
         });
         // TODO: Variable loading status is getting updated before dataset update. This is resulting in loader going off before data is rendered.
         // Need to update code with suitable fix. For now 250ms is added as workaround
-        this._setStatus = _.debounce(function () {
-            this.__setStatus();
+        this._setStatus = _.debounce(function (isCreated) {
+            this.__setStatus(isCreated);
         }, 100);
         this._debounceOnEnter = _.debounce(function ($target, $row, quickEdit, event) {
             this._onEnter($target, $row, quickEdit, event);
@@ -2356,7 +2356,7 @@ $.widget('wm.datatable', {
         } else {
             this.dataStatus.state = this.dataStatus.state || 'loading';
             this.dataStatus.message = this.dataStatus.message || this.options.dataStates.loading;
-            this.setStatus(this.dataStatus.state, this.dataStatus.message);
+            this.setStatus(this.dataStatus.state, this.dataStatus.message, isCreated);
         }
         this.gridBody = this.gridElement.find('tbody');
         this._findAndReplaceCompiledTemplates();
@@ -2451,7 +2451,7 @@ $.widget('wm.datatable', {
         this.addOrRemoveScroll();
     },
     //This method is used to show or hide data loading/ no data found overlay
-    setStatus: function (state, message) {
+    setStatus: function (state, message, isCreated) {
         var $newRow;
         //If state is nodata and always new row is present, change state to ready
         if (state === 'nodata') {
@@ -2464,9 +2464,9 @@ $.widget('wm.datatable', {
         this.dataStatus.message = message || this.options.dataStates[state];
         //First time call the status function, afterwards use debounce with 100 ms wait
         if (this._setStatusCalled) {
-            this._setStatus();
+            this._setStatus(isCreated);
         } else {
-            this.__setStatus();
+            this.__setStatus(isCreated);
             this._setStatusCalled = true;
         }
     },
