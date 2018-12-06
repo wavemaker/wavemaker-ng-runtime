@@ -65,7 +65,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     resetDisplayInput() {
-        $(this.nativeElement).find('.display-input').val('');
+        const pattern = this.datepattern || this.timepattern;
+        $(this.nativeElement).find('.display-input').val(getFormattedDate(this.datePipe, this.datavalue, pattern));
+        this.invalidDateTimeFormat = false;
+        this.invokeOnChange(this.datavalue, undefined, false);
     }
 
     public validate() {

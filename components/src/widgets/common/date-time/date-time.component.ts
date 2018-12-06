@@ -8,7 +8,6 @@ import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidge
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 declare const moment;
@@ -88,6 +87,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private dateContainerCls: string;
 
     get datavalue(): any {
+        if (this.isCurrentDate && !this.proxyModel) {
+            return CURRENT_DATE;
+        }
         return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
     }
 
@@ -98,7 +100,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (newVal === CURRENT_DATE) {
             this.isCurrentDate = true;
             this.setTimeInterval();
-            this.proxyModel = new Date();
         } else {
             this.proxyModel = newVal ? getDateObj(newVal) : undefined;
             this.clearTimeInterval();

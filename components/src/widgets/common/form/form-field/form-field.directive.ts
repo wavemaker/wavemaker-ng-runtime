@@ -385,9 +385,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     resetDisplayInput() {
-        if ((!isDefined(this.value) || this.value === '')) {
-            this.formWidget && this.formWidget.resetDisplayInput && this.formWidget.resetDisplayInput();
-        }
+        this.formWidget && this.formWidget.resetDisplayInput && this.formWidget.resetDisplayInput();
     }
 
     ngOnInit() {

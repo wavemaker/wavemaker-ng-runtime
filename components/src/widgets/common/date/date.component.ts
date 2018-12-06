@@ -9,7 +9,6 @@ import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './date.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 registerProps();

@@ -7,7 +7,6 @@ import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIF
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef} from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 const CURRENT_TIME: string = 'CURRENT_TIME';
@@ -48,6 +47,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     get datavalue(): any {
+        if (this.isCurrentTime && !this.bsTimeValue) {
+            return CURRENT_TIME;
+        }
         return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat) || '';
     }
 
@@ -57,7 +59,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     set datavalue(newVal: any) {
         if (newVal) {
             if (newVal === CURRENT_TIME) {
-                this.bsTimeValue = getNativeDateObject(newVal);
                 this.isCurrentTime = true;
                 this.setTimeInterval();
             } else {
@@ -71,6 +72,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             this.isCurrentTime = false;
         }
         this.invokeOnChange(this.datavalue);
+        this.mintimeMaxtimeValidation();
         $appDigest();
     }
 
