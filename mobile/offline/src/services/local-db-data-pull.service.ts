@@ -214,7 +214,7 @@ export class LocalDBDataPullService {
     private evalIfBind(expression: string) {
         if (_.startsWith(expression, 'bind:')) {
             expression = expression.replace(/\[\$\i\]/g, '[0]');
-            return $parseExpr(expression.replace('bind:', ''));
+            return $parseExpr(expression.replace('bind:', ''))({});
         }
         return expression;
     }

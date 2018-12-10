@@ -960,10 +960,14 @@ export class LiveVariableUtils {
      * before generating where clause.
      */
     static getWhereClauseGenerator(variable, options) {
-        return modifier => {
+        return (modifier, skipEncode?: boolean) => {
             const clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(variable.filterExpressions));
             if (modifier) {
                 modifier(clonedFields);
+            }
+            // this flag skips the encoding of the query
+            if (isDefined(skipEncode)) {
+                options.skipEncode = skipEncode;
             }
             return LiveVariableUtils.prepareTableOptions(variable, options, clonedFields).query;
         };

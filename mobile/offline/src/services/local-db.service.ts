@@ -139,7 +139,7 @@ export class LocalDbService {
         this.getStore(params).then(store => {
             const filter = params.filter(filterGroup => {
                 this.convertFieldNameToColumnName(store, filterGroup);
-            });
+            }, true);
             return store.count(filter).then(totalElements => {
                 const sort = params.sort.split('=')[1];
                 return store.filter(filter, sort, {
