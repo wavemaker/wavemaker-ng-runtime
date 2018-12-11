@@ -141,7 +141,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         (promise as any).then((data) => {
             this.fileUploadCount++;
             this.successFileUploadCount++;
-            this.fileUploadResponse.push(data);
+            this.fileUploadResponse.push(data[0]);
             if (fileCount === this.fileUploadCount) {
                 if (this.failedFileUploadCount === 0) {
                     this.processSuccessResponse(this.fileUploadResponse, variable, options, success);
