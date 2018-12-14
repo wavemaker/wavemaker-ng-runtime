@@ -153,3 +153,27 @@ export const getNgModelAttr = attrs => {
     }
     return 'ngModel';
 };
+
+const rowActionAttrs = new Map(
+    [
+        ['display-name', 'caption'],
+        ['display-name.bind', 'caption.bind'],
+        ['title', 'hint'],
+        ['title.bind', 'hint.bind'],
+        ['show', 'show'],
+        ['show.bind', 'show.bind'],
+        ['disabled', 'disabled'],
+        ['disabled.bind', 'disabled.bind']
+    ]
+);
+
+export const getRowActionAttrs = attrs => {
+    let tmpl = '';
+    attrs.forEach((val, key) => {
+        const newAttr = rowActionAttrs.get(key);
+        if (newAttr) {
+            tmpl += `${newAttr}="${val}" `;
+        }
+    });
+    return tmpl;
+};

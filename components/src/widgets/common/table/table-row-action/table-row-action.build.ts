@@ -1,30 +1,7 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { getRowActionAttrs } from '@wm/core';
 
 const tagName = 'div';
-
-const rowActionAttrs = new Map(
-    [
-        ['display-name', 'caption'],
-        ['display-name.bind', 'caption.bind'],
-        ['title', 'hint'],
-        ['title.bind', 'hint.bind'],
-        ['show', 'show'],
-        ['show.bind', 'show.bind'],
-        ['disabled', 'disabled'],
-        ['disabled.bind', 'disabled.bind']
-    ]
-);
-
-const getRowActionAttrs = attrs => {
-    let tmpl = '';
-    attrs.forEach((val, key) => {
-       const newAttr = rowActionAttrs.get(key);
-       if (newAttr) {
-           tmpl += `${newAttr}="${val}" `;
-       }
-    });
-    return tmpl;
-};
 
 const getSaveCancelTemplate = () => {
     return `<button type="button" aria-label="Save edit icon" class="save row-action-button btn app-button btn-transparent save-edit-row-button hidden" title="Save">

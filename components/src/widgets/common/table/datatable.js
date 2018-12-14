@@ -39,7 +39,10 @@ $.widget('wm.datatable', {
             'deleteRow': 'danger',
             'ascIcon': 'wi wi-long-arrow-up',
             'descIcon': 'wi wi-long-arrow-down',
-            'selectedColumn': 'selected-column'
+            'selectedColumn': 'selected-column',
+            'rowExpandIcon': 'wi wi-minus-square',
+            'rowCollapseIcon': 'wi wi-plus-square',
+            'gridRowExpansionClass': 'table-row-expansion'
         },
         dataStates: {
             'loading': 'Loading...',
@@ -56,6 +59,12 @@ $.widget('wm.datatable', {
         actionsEnabled: {
             'edit': true,
             'new': true
+        },
+        rowExpansionEnabled: false,
+        rowDef: {
+            position: '0',
+            closeothers: false,
+            columnwidth: '30px'
         },
         searchHandler: function () {
         },
@@ -89,6 +98,20 @@ $.widget('wm.datatable', {
             'style': 'width: 50px; text-align: center;',
             'textAlignment': 'center',
             'show': true
+        },
+        '__expand': {
+            'field': '__expand',
+            'type': 'custom',
+            'displayName': '',
+            'sortable': false,
+            'searchable': false,
+            'resizable': false,
+            'selectable': false,
+            'readonly': true,
+            'style': 'text-align: center;',
+            'textAlignment': 'center',
+            'show': true,
+            'width': '30px'
         },
         'rowIndex': {
             'field': 'rowIndex',
@@ -378,6 +401,18 @@ $.widget('wm.datatable', {
             '</div></form>';
         return htm;
     },
+    _appendRowExpansionButtons: function ($htm) {
+        var self = this;
+        $htm.find("[data-identifier='rowExpansionButtons']").each(function (index) {
+            var _rowData, $row, rowId;
+            $row = $(this).closest('tr');
+            rowId = parseInt($row.attr('data-row-id'), 10);
+            _rowData = _.clone(self.options.data[rowId]);
+            _rowData.$index = index + 1;
+            self.options.generateRowExpansionCell(_rowData, index);
+            $(this).empty().append(self.options.getRowExpansionAction(index));
+        });
+    },
 
     /* Returns the tbody markup. */
     _getGridTemplate: function () {
@@ -385,6 +420,7 @@ $.widget('wm.datatable', {
             $tbody = $('<tbody class="' + this.options.cssClassNames.gridBody + '"></tbody>');
 
         this.options.clearCustomExpression();
+        this.options.clearRowDetailExpression();
 
         _.forEach(this.preparedData, function (row, index) {
             var _row = _.clone(row);
@@ -392,6 +428,12 @@ $.widget('wm.datatable', {
             self.options.generateCustomExpressions(_row, index);
             self.options.registerRowNgClassWatcher(_row, index);
             $tbody.append(self._getRowTemplate(row, index));
+            if (self.options.rowExpansionEnabled) {
+                var heightStyle = self.options.rowDef.height ? ' style="min-height:' + self.options.rowDef.height + '"' : '';
+                $tbody.append('<tr class="app-datagrid-detail-row" style="display: none;" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + (self.preparedHeaderData.length - 1) + '" class="app-datagrid-row-details-cell">' +
+                    '<div class="row-overlay" ' + heightStyle + '><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section" style="display: none;"></div>' +
+                    '</td></tr>');
+            }
         });
 
         return $tbody;
@@ -474,6 +516,9 @@ $.widget('wm.datatable', {
                     case 'checkbox':
                         innerTmpl = this._getCheckboxTemplate(row, colDef.isMultiSelectCol);
                         break;
+                    case '__expand':
+                        innerTmpl = '<span class="row-expansion-column" data-identifier="rowExpansionButtons"></span>';
+                        break;
                     case 'radio':
                         innerTmpl = this._getRadioTemplate(row);
                         break;
@@ -515,36 +560,71 @@ $.widget('wm.datatable', {
         });
         return template;
     },
-    setHeaderConfigForDefaultFields: function (name) {
+    _insertFieldInHeaderConfig: function (headerConfig, fieldName, position) {
+        var index = _.findIndex(headerConfig, {field: position}),
+            self = this;
+        if (index === -1) {
+            _.forEach(headerConfig, function (config) {
+                if (config.isGroup) {
+                    self._insertFieldInHeaderConfig(config.columns, fieldName, position);
+                }
+            });
+        } else {
+            headerConfig.splice(index + 1, 0, {'field': fieldName, 'isPredefined': true});
+        }
+    },
+    setHeaderConfigForDefaultFields: function (name, position) {
         if (_.isEmpty(this.options.headerConfig)) {
             return;
         }
         var fieldName = this.customColumnDefs[name].field;
         _.remove(this.options.headerConfig, {'field': fieldName});
-        this.options.headerConfig.unshift({'field': fieldName, 'isPredefined': true});
+        if (position === '0') {
+            this.options.headerConfig.unshift({'field': fieldName, 'isPredefined': true});
+        } else  if (position === '-1') {
+            this.options.headerConfig.push({'field': fieldName, 'isPredefined': true});
+        } else {
+            this._insertFieldInHeaderConfig(this.options.headerConfig, fieldName, position);
+        }
     },
     setDefaultColsData: function (header) {
+        var rowExpandPosition;
         //If columns are not present, do not add the default columns
         if (_.isEmpty(this.preparedHeaderData)) {
             return;
+        }
+        if (this.options.rowExpansionEnabled) {
+            rowExpandPosition = this.options.rowDef.position;
+            this.customColumnDefs.__expand.width = this.options.rowDef.columnwidth;
+            if (header) {
+                if (rowExpandPosition === '-1') {
+                    this.preparedHeaderData.push(this.customColumnDefs.__expand);
+                } else if (rowExpandPosition === '0') {
+                    this.preparedHeaderData.unshift(this.customColumnDefs.__expand);
+                } else {
+                    var index = _.findIndex(this.preparedHeaderData, {field: rowExpandPosition});
+                    this.preparedHeaderData.splice(index + 1, 0, this.customColumnDefs.__expand);
+                }
+            }
+            this.setHeaderConfigForDefaultFields('__expand', rowExpandPosition);
         }
         if (this.options.showRowIndex) {
             if (header) {
                 this.preparedHeaderData.unshift(this.customColumnDefs.rowIndex);
             }
-            this.setHeaderConfigForDefaultFields('rowIndex');
+            this.setHeaderConfigForDefaultFields('rowIndex', '0');
         }
         if (this.options.multiselect) {
             if (header) {
                 this.preparedHeaderData.unshift(this.customColumnDefs.checkbox);
             }
-            this.setHeaderConfigForDefaultFields('checkbox');
+            this.setHeaderConfigForDefaultFields('checkbox', '0');
         }
         if (!this.options.multiselect && this.options.showRadioColumn) {
             if (header) {
                 this.preparedHeaderData.unshift(this.customColumnDefs.radio);
             }
-            this.setHeaderConfigForDefaultFields('radio');
+            this.setHeaderConfigForDefaultFields('radio', '0');
         }
     },
     /* Prepares the grid header data by adding custom column definitions if needed. */
@@ -1014,6 +1094,9 @@ $.widget('wm.datatable', {
                 break;
             case 'cssClassNames':
                 var gridClass = this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid;
+                if (this.options.rowExpansionEnabled) {
+                    gridClass =  gridClass + ' ' + this.options.cssClassNames.gridRowExpansionClass;
+                }
                 // Set grid class on table.
                 this.gridElement.attr('class', gridClass);
                 this.gridHeaderElement.attr('class', gridClass);
@@ -2107,8 +2190,72 @@ $.widget('wm.datatable', {
                 });
             });
         }
-    },
 
+        // row selection
+        $htm.find('[data-identifier="rowExpansionButtons"]').on('click', function (e) {
+            var $row = $(e.target).closest('tr.app-datagrid-row');
+            if ($(this).find('.app-button').attr('disabled')) {
+                return;
+            }
+            self.toggleExpandRow(+$row.attr('data-row-id'), undefined, e);
+        });
+    },
+    expandRow: function(rowId) {
+        this.toggleExpandRow(rowId, true)
+    },
+    collapseRow: function(rowId) {
+        this.toggleExpandRow(rowId, false)
+    },
+    _collapseRow: function(e, rowData, rowId, $nextDetailRow, $icon) {
+        if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
+            return;
+        }
+        if ($icon.length && $icon.hasClass(this.options.cssClassNames.rowExpandIcon)) {
+            $icon.removeClass(this.options.cssClassNames.rowExpandIcon).addClass(this.options.cssClassNames.rowCollapseIcon);
+        }
+        $nextDetailRow.hide();
+        this.options.onRowCollapse(e, rowData)
+    },
+    toggleExpandRow: function(rowId, isExpand, e) {
+        var self = this,
+            $tbody = self.gridElement.find('> .app-datagrid-body'),
+            $row = $($tbody.find('> tr.app-datagrid-row')[rowId]),
+            rowData = self.options.data[rowId],
+            $nextDetailRow = $row.next('tr.app-datagrid-detail-row'),
+            isClosed = !$nextDetailRow.is(':visible'),
+            $icon = $row.find('[data-identifier="rowExpansionButtons"] i.app-icon');
+
+        if (isExpand && !isClosed) {
+            return;
+        }
+        if (isExpand === false && isClosed) {
+            return;
+        }
+        if (isClosed) {
+            if (e && self.preparedData[rowId].selected) {
+                e.stopPropagation();
+            }
+            if (self.options.rowDef.closeothers) {
+                $tbody.find('> tr.app-datagrid-detail-row:visible').each(function() {
+                    var $otherDetailRow = $(this),
+                        $otherIcon = $otherDetailRow.prev('tr.app-datagrid-row').find('[data-identifier="rowExpansionButtons"] i.app-icon'),
+                        otherRowId = +$otherDetailRow.attr('data-row-id'),
+                        otherRowData = self.options.data[otherRowId];
+                    $otherDetailRow.hide();
+                    self._collapseRow(e, otherRowData, otherRowId, $otherDetailRow, $otherIcon);
+                });
+            }
+            self.options.generateRowDetailView(e, rowData, rowId, $nextDetailRow.find('td.app-datagrid-row-details-cell .details-section'),
+                $nextDetailRow.find('td.app-datagrid-row-details-cell .row-overlay'), function () {
+                    if ($icon.length && $icon.hasClass(self.options.cssClassNames.rowCollapseIcon)) {
+                        $icon.removeClass(self.options.cssClassNames.rowCollapseIcon).addClass(self.options.cssClassNames.rowExpandIcon);
+                    }
+                    $nextDetailRow.show();
+                });
+        } else {
+            self._collapseRow(e, rowData, rowId, $nextDetailRow, $icon);
+        }
+    },
     /* Replaces all the templates needing angular compilation with the actual compiled templates. */
     _findAndReplaceCompiledTemplates: function () {
         if (!this.gridBody) {
@@ -2361,6 +2508,7 @@ $.widget('wm.datatable', {
         this.gridBody = this.gridElement.find('tbody');
         this._findAndReplaceCompiledTemplates();
         this.options.clearRowActions();
+        this._appendRowExpansionButtons($htm);
         this._appendRowActions($htm);
         this.attachEventHandlers($htm);
         this.__setStatus(isCreated);

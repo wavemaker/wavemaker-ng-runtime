@@ -48,7 +48,8 @@ export class ViewRenderer {
                 options.initFn,
                 options.vcRef,
                 options.$target,
-                options.context
+                options.context,
+                options.clearVCRef
             );
         });
     }
