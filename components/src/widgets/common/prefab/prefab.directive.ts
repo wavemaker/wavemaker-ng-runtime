@@ -38,6 +38,11 @@ export class PrefabDirective extends StylableComponent {
         this.name = elRef.nativeElement.getAttribute('name');
 
         styler(this.nativeElement, this);
+
+        // Call on property change on name to set name attribute on element.
+        this.registerReadyStateListener(() => {
+            super.onPropertyChange('name', this.name);
+        });
     }
 
     onStyleChange(key: string, nv: any, ov: any) {
