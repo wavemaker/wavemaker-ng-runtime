@@ -112,6 +112,7 @@ import { TableComponent } from './widgets/common/table/table.component';
 import { TableCUDDirective } from './widgets/common/table/table-cud.directive';
 import { TableFilterSortDirective } from './widgets/common/table/table-filter.directive';
 import { TableRowActionDirective } from './widgets/common/table/table-row-action/table-row-action.directive';
+import { TableRowDirective } from './widgets/common/table/table-row/table-row.directive';
 import { TextareaComponent } from './widgets/common/textarea/textarea.component';
 import { TextContentDirective } from './widgets/common/base/text-content.directive';
 import { TileDirective } from './widgets/common/tile/tile.directive';
@@ -234,6 +235,7 @@ const wmComponents = [
     TableComponent,
     TableCUDDirective,
     TableFilterSortDirective,
+    TableRowDirective,
     TableRowActionDirective,
     TextareaComponent,
     TextContentDirective,

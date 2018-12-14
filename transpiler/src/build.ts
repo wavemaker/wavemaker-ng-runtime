@@ -221,7 +221,7 @@ const processDimensionAttributes = attrMap => {
 // replace <:svg:svg> -> <svg>, <:svg:*> -> <svg:*>
 const getNodeName = name => name.replace(':svg:svg', 'svg').replace(':svg:', 'svg:');
 
-const processNode = (node, providers?: Array<IProviderInfo>) => {
+export const processNode = (node, providers?: Array<IProviderInfo>) => {
     const nodeDef = registry.get(node.name);
 
     let pre, post, template;

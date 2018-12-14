@@ -78,6 +78,7 @@ export * from './widgets/common/switch/switch.build';
 export * from './widgets/common/table/table-action/table-action.build';
 export * from './widgets/common/table/table-column-group/table-column-group.build';
 export * from './widgets/common/table/table-column/table-column.build';
+export * from './widgets/common/table/table-row/table-row.build';
 export * from './widgets/common/table/table-row-action/table-row-action.build';
 export * from './widgets/common/table/table.build';
 export * from './widgets/common/text/text.build';
