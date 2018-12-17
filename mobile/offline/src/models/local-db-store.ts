@@ -315,7 +315,7 @@ export class LocalDBStore {
             attributeName: this.primaryKeyName,
             filterCondition: '=',
             attributeValue: primaryKey,
-            attributeType: 'INTEGER' }];
+            attributeType: this.primaryKeyField.sqlType.toUpperCase() }];
         return this.filter(filterCriteria).then(function (obj) {
             return obj && obj.length === 1 ? obj[0] : undefined;
         });

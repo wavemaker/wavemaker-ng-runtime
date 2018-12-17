@@ -962,12 +962,17 @@ export class LiveVariableUtils {
     static getWhereClauseGenerator(variable, options) {
         return (modifier, skipEncode?: boolean) => {
             const clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(variable.filterExpressions));
-            if (modifier) {
-                modifier(clonedFields);
-            }
             // this flag skips the encoding of the query
             if (isDefined(skipEncode)) {
                 options.skipEncode = skipEncode;
+            }
+            if (modifier) {
+                // handling the scenario where variable can also have filterFields
+                if (options.filterFields) {
+                    modifier(clonedFields, options);
+                } else {
+                    modifier(clonedFields);
+                }
             }
             return LiveVariableUtils.prepareTableOptions(variable, options, clonedFields).query;
         };
