@@ -54,7 +54,7 @@
         "ngx-color-picker": "6.8.0",
         "ngx-mask": "6.5.18",
         "ngx-toastr": "9.1.1",
-        "nvd3": "1.8.6",
+        "wm-nvd3": "1.0.2",
         "rxjs": "6.3.3",
         "rxjs-compat": "6.3.3",
         "summernote": "0.8.10",
