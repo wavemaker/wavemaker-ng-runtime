@@ -137,9 +137,11 @@ export class LocalDbService {
      */
     public readTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
-            const filter = params.filter(filterGroup => {
-                this.convertFieldNameToColumnName(store, filterGroup);
+            let filter = params.filter((filterGroup, filterFields) => {
+                this.convertFieldNameToColumnName(store, filterGroup, filterFields);
             }, true);
+            // convert wm_bool function with boolean value to 0/1
+            filter = filter.replace(/wm_bool\('true'\)/g, 1).replace(/wm_bool\('false'\)/g, 0);
             return store.count(filter).then(totalElements => {
                 const sort = params.sort.split('=')[1];
                 return store.filter(filter, sort, {
@@ -174,16 +176,31 @@ export class LocalDbService {
         return name;
     }
 
-    private convertFieldNameToColumnName(store: LocalDBStore, filterGroup: any) {
+    // returns the columnName appending with the schema name.
+    private getColumnName(store, fieldName) {
+        if (store.fieldToColumnMapping[fieldName]) {
+            const columnName = this.escapeName(store.fieldToColumnMapping[fieldName]);
+            if (columnName.indexOf('.') < 0) {
+                return this.escapeName(store.entitySchema.name) + '.' + columnName;
+            }
+            return columnName;
+        }
+        return fieldName;
+    }
+
+    private convertFieldNameToColumnName(store: LocalDBStore, filterGroup: any, options?: any) {
         _.forEach(filterGroup.rules, rule => {
             if (rule.rules) {
                 this.convertFieldNameToColumnName(store, rule);
             } else {
-                rule.target = this.escapeName(store.fieldToColumnMapping[rule.target]);
-                if (rule.target.indexOf('.') < 0) {
-                    rule.target = this.escapeName(store.entitySchema.name) + '.' + rule.target;
-                }
+                rule.target = this.getColumnName(store, rule.target);
             }
         });
+        // handling the scenario where variable options can have filterField. For example: search filter query
+        if (options && options.filterFields) {
+            options.filterFields = _.mapKeys(options.filterFields, (v, k) => {
+                return this.getColumnName(store, k);
+            });
+        }
     }
 }

@@ -165,12 +165,12 @@ export class LiveVariableOfflineBehaviour {
                     childParams.data = v;
                     const childPromise = this.getStore(childParams).then(childStore => {
                         const parent = params.data;
-                        const parentFieldName = childStore.entitySchema.columns
-                            .find(c => c.name === foreignRelation.targetColumn)
-                            .foreignRelations.find( f => f.targetTable === store.entitySchema.name)
-                            .sourceFieldName;
+                        const targetColumns = childStore.entitySchema.columns.find(c => c.name === foreignRelation.targetColumn);
+                        if (targetColumns && targetColumns.foreignRelations) {
+                            const parentFieldName = targetColumns.foreignRelations.find( f => f.targetTable === store.entitySchema.name).sourceFieldName;
+                            childParams.data[parentFieldName] = parent;
+                        }
                         parent[k] = null;
-                        childParams.data[parentFieldName] = parent;
                         childParams.onlyOnline = false;
                         childParams.isCascadingStopped = true;
                         return () => {
