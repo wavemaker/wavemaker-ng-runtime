@@ -39,7 +39,7 @@ export class PullToRefresh extends SwipeAnimation {
             if (data.active) {
                 this.count++;
                 this.wait();
-            } else {
+            } else if (this.count > 0) {
                 this.count--;
             }
             // call stop animation only when animation has started.
