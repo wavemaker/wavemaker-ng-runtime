@@ -339,10 +339,9 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
      In case of invalid input, navigate to the appropriate page; also return false.
      In case of valid input, return true.*/
     validateCurrentPage(event, callback?) {
-        const targetEle = $(event.target).closest('a');
         /*If the value entered is greater than the last page number or invalid value, then highlighting the field showing error.*/
-        if (isNaN(this.dn.currentPage) || this.dn.currentPage <= 0 || (this.pageCount && (this.dn.currentPage > this.pageCount || _.isNull(this.dn.currentPage)))) {
-            targetEle.addClass('ng-invalid');
+        if ( event && (isNaN(this.dn.currentPage) || this.dn.currentPage <= 0 || (this.pageCount && (this.dn.currentPage > this.pageCount || _.isNull(this.dn.currentPage))))) {
+            $(event.target).closest('a').addClass('ng-invalid');
             return false;
         }
         return true;
