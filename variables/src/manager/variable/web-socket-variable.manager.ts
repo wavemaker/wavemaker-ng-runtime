@@ -10,7 +10,7 @@ declare const _;
 
 export class WebSocketVariableManager extends BaseVariableManager {
 
-    scope_var_socket_map = {};
+    scope_var_socket_map = new Map();
     PROPERTY = {
         'SERVICE': 'service',
         'DATA_UPDATE_STRATEGY': 'dataUpdateStrategy',
@@ -170,7 +170,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @param variable
      */
     private freeSocket(variable) {
-        _.set(this.scope_var_socket_map, [ variable.name], undefined);
+        this.scope_var_socket_map.set(variable, undefined);
     }
 
     /**
@@ -209,7 +209,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     private getSocket(variable) {
         const url     = this.getURL(variable);
-        let _socket = _.get(this.scope_var_socket_map, [ variable.name]);
+        let _socket = this.scope_var_socket_map.get(variable);
         if (_socket) {
             return _socket;
         }
@@ -225,7 +225,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
         _socket.onMessage(this._onSocketMessage.bind(this, variable));
         _socket.onClose(this._onSocketClose.bind(this, variable));
 
-        _.set(this.scope_var_socket_map, [variable.name], _socket);
+        this.scope_var_socket_map.set(variable, _socket);
         variable._socket = _socket;
         return _socket;
 }
