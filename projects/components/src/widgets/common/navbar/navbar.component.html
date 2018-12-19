@@ -1,0 +1,15 @@
+<div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="btn-transparent navbar-toggle collapsed" data-toggle="collapse" (click)="toggleCollapse()" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <i [ngClass]="menuiconclass"></i>
+        </button>
+        <a class="navbar-brand" [href]="(homelink | trustAs: 'resource') || '#/'" *ngIf="title || imgsrc">
+            <img data-identifier="img" class="brand-image" [alt]="Brand" height="20" *ngIf="imgsrc" [src]="imgsrc | image"/>
+            <span class="title" [textContent]="title"></span>
+        </a>
+    </div>
+    <div class="collapse navbar-collapse" #navContent>
+        <ng-content></ng-content>
+    </div>
+</div>

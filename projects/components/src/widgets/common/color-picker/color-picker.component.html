@@ -1,0 +1,20 @@
+<input class="form-control app-textbox" aria-label="Enter the color code" aria-haspopup="true" aria-expanded="false"
+       #input
+       focus-target
+       [attr.name]="name"
+       [(colorPicker)]="datavalue"
+       (colorPickerChange)="handleChange($event);"
+       (cpToggleChange)="colorPickerToggleChange($event)"
+       [cpPosition]="'bottom'"
+       [attr.placeholder]="placeholder"
+       [disabled]="readonly || disabled"
+       [required]="required"
+       [tabindex]="tabindex"
+       [(ngModel)]="datavalue"
+       (ngModelChange)="handleChange($event);"
+       [ngModelOptions]="{updateOn: 'change'}"
+       (blur)="invokeOnTouched($event)"
+       [attr.accesskey]="shortcutkey">
+<span class="input-group-addon colorpicker-container">
+    <i class="colored-box" [style.backgroundColor]="datavalue">&nbsp;</i>
+</span>

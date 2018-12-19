@@ -1,0 +1,51 @@
+<ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
+<ng-template #dataPickerTemplate>
+    <input class="form-control app-textbox app-dateinput display-input" aria-label="Select date"
+           focus-target
+           type="text"
+           [name]="name"
+           [tabindex]="tabindex"
+           [value]="displayValue"
+           (click)="toggleDpDropdown($event)"
+           (focus)="invokeOnFocus($event)"
+           (blur)="invokeOnTouched($event)"
+           [disabled]="disabled || readonly || isCurrentDate"
+           [autofocus]="autofocus"
+           [required]="required"
+           [attr.placeholder]="placeholder"
+           [attr.accesskey]="shortcutkey"
+           (change)="onDisplayDateChange($event)"
+           (keydown)="onDisplayKeydown($event)">
+    <div style="width: 0;display: inline-block;" aria-label="datepicker dropdownmenu" aria-controls="date">
+        <input class="model-holder"
+               container="body"
+               [bsConfig]="_dateOptions"
+               [title]="hint"
+               [isOpen]="isOpen"
+               #datepicker="bsDatepicker"
+               bsDatepicker
+               [isDisabled]="disabled || readonly || isCurrentDate"
+               [bsValue]="bsDataValue"
+               (onShown)="onDatePickerOpen()"
+               (onHidden)="hideDatepickerDropdown()"
+               (bsValueChange)="onDateChange($event)">
+    </div>
+    <span class="input-group-btn">
+            <button type="button" class="btn btn-default btn-time" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate"
+                    aria-label="Select date" aria-haspopup="true" aria-expanded="false"
+                    (click)="toggleDpDropdown($event)">
+                <i aria-hidden="true" class="app-icon wi wi-calendar"></i>
+            </button>
+    </span>
+</ng-template>
+<ng-template #nativeDateTemplate>
+    <input type="date" class="form-control app-textbox app-dateinput"
+           role="input"
+           step="any"
+           [value]="displayValue"
+           [required]="required"
+           [disabled]="disabled || readonly || isCurrentDate"
+           (change)="onDisplayDateChange($event, true)"
+           (focus)="invokeOnFocus($event)"
+           (blur)="invokeOnTouched($event)">
+</ng-template>

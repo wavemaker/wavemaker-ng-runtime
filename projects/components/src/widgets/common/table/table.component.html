@@ -1,0 +1,62 @@
+<div class="panel-heading" *ngIf="title || subheading || iconclass || exportOptions.length || _actions.header.length">
+    <h3 class="panel-title">
+        <div class="pull-left">
+            <i class="app-icon panel-icon {{iconclass}}" *ngIf="iconclass"></i>
+        </div>
+        <div class="pull-left">
+            <div class="heading" [textContent]="title"></div>
+            <div class="description" [textContent]="subheading"></div>
+        </div>
+        <div class="panel-actions app-datagrid-actions" *ngIf="exportOptions.length || _actions.header.length">
+            <ng-container *ngFor="let btn of _actions.header"
+                          [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef" [ngTemplateOutletContext]="{btn:btn}">
+            </ng-container>
+            <div wmMenu dropdown caption.bind="appLocale.LABEL_EXPORT" *ngIf="exportOptions.length"  autoclose="always" attr.name="{{name}}-export"
+                dataset.bind="exportOptions" select.event="export($item)" menuposition="down,left"></div>
+        </div>
+    </h3>
+</div>
+<div class="app-datagrid" #datagridElement></div>
+<div class="panel-footer clearfix" [hidden]="!_actions.footer.length && (!shownavigation || dataNavigator?.dataSize <= pagesize)">
+    <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation || dataNavigator?.dataSize <= pagesize">
+        <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign"
+             navigationsize.bind="navigationSize"
+             navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize"
+             boundarylinks.bind="boundarylinks"
+             forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></nav>
+    </div>
+    <div class="app-datagrid-actions" *ngIf="_actions.footer.length">
+        <ng-container *ngFor="let btn of _actions.footer"
+                      [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef" [ngTemplateOutletContext]="{btn:btn}">
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #buttonRef let-btn="btn">
+    <button wmButton caption.bind="btn.displayName" show.bind="btn.show" class.bind="btn.class"  iconclass.bind="btn.iconclass" (click)="invokeActionEvent($event, btn.action)"
+            [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
+            type="button" shortcutkey.bind="btn.shortcutkey" tabindex.bind="btn.tabindex" hint.bind="btn.title" disabled.bind="btn.disabled"></button>
+</ng-template>
+
+<ng-template #anchorRef let-btn="btn">
+    <a wmAnchor caption.bind="btn.displayName" show.bind="btn.show" class.bind="btn.class"  iconclass.bind="btn.iconclass" (click)="invokeActionEvent($event, btn.action)"
+            [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
+            shortcutkey.bind="btn.shortcutkey" tabindex.bind="btn.tabindex" hint.bind="btn.title"
+            hyperlink.bind="btn.hyperlink" target.bind="btn.target"></a>
+</ng-template>
+
+<div hidden>
+    <ng-container #multiColumnFilterView></ng-container>
+
+    <ng-container #inlineEditView></ng-container>
+
+    <ng-container #inlineEditNewView></ng-container>
+
+    <ng-container #rowActionsView></ng-container>
+
+    <ng-container #customExprView></ng-container>
+
+    <ng-container #dynamicTable></ng-container>
+
+    <div class="dynamic-table-container"></div>
+</div>

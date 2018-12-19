@@ -1,0 +1,9 @@
+<button *ngIf="isClosable" aria-label="Close" class="app-dialog-close close" (click)="closeDialog();" title="Close">
+    <span aria-hidden="true">&times;</span>
+</button>
+<h4 class="app-dialog-title modal-title">
+    <i [ngClass]="iconclass" [ngStyle]="{width: iconwidth, height: iconheight, margin: iconmargin}"  *ngIf="iconclass && !iconurl"></i>
+    <img data-identifier="img" [src]="iconurl | image" *ngIf="iconurl" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
+    <span class="dialog-heading" [textContent]="heading"></span>
+    <span class="dialog-sub-heading" *ngIf="subheading" [title]="subheading" [textContent]="subheading"></span>
+</h4>

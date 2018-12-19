@@ -1,0 +1,30 @@
+import { Directive, Injector } from '@angular/core';
+
+import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { IWidgetConfig } from '../../framework/types';
+import { StylableComponent } from '../base/stylable.component';
+import { registerProps } from './layout-grid.props';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
+
+registerProps();
+
+const DEFAULT_CLS = 'app-grid-layout clearfix';
+const WIDGET_CONFIG: IWidgetConfig = {
+    widgetType: 'wm-layoutgrid',
+    hostClass: DEFAULT_CLS
+};
+
+@Directive({
+    selector: '[wmLayoutGrid]',
+    providers: [
+        provideAsWidgetRef(LayoutgridDirective)
+    ]
+})
+export class LayoutgridDirective extends StylableComponent {
+
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+    }
+}

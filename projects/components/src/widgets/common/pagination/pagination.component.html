@@ -1,0 +1,67 @@
+
+<ul class="pagination advanced {{navigationClass}}" *ngIf="navcontrols === 'Classic'">
+    <li [ngClass]="{'disabled':isDisableFirst}">
+        <a [title]="appLocale.LABEL_FIRST" name="first" href="javascript:void(0);" aria-label="First"
+           (click)="navigatePage('first', $event)">
+            <span aria-hidden="true"><i class="wi wi-first-page"></i></span>
+            <span class="sr-only">{{appLocale.LABEL_FIRST}}</span>
+        </a>
+    </li>
+    <li [ngClass]="{'disabled':isDisablePrevious}">
+        <a [title]="appLocale.LABEL_PREVIOUS" name="prev" href="javascript:void(0);" aria-label="Previous"
+           (click)="navigatePage('prev', $event)">
+            <span aria-hidden="true"><i class="wi wi-chevron-left"></i></span>
+            <span class="sr-only">{{appLocale.LABEL_PREVIOUS}}</span>
+        </a>
+    </li>
+    <li class="pagecount disabled">
+        <a><input type="number" [disabled]="isDisableCurrent" [(ngModel)]="dn.currentPage"
+                  (change)="onModelChange($event)" class="form-control"/></a>
+    </li>
+    <li class="disabled">
+        <a [hidden]="isDisableCount"> / {{pageCount}}</a>
+    </li>
+    <li [ngClass]="{'disabled':isDisableNext}">
+        <a [title]="appLocale.LABEL_NEXT" name="next" href="javascript:void(0);" aria-label="Next"
+           (click)="navigatePage('next', $event)">
+            <span aria-hidden="true"><i class="wi wi-chevron-right"></i></span>
+            <span class="sr-only">{{appLocale.LABEL_NEXT}}</span>
+        </a>
+    </li>
+    <li [ngClass]="{'disabled':isDisableLast}">
+        <a [title]="appLocale.LABEL_LAST" name="last" href="javascript:void(0);" aria-label="Last"
+           (click)="navigatePage('last', $event)">
+            <span aria-hidden="true"><i class="wi wi-last-page"></i></span>
+            <span class="sr-only">{{appLocale.LABEL_LAST}}</span>
+        </a>
+    </li>
+    <li *ngIf="showrecordcount" class="totalcount disabled">
+        <a>{{appLocale.LABEL_TOTAL_RECORDS}}: {{dataSize}}</a>
+    </li>
+</ul>
+<ul class="pager {{navigationClass}}" *ngIf="navcontrols === 'Pager'">
+    <li class="previous" [ngClass]="{'disabled':isDisablePrevious}">
+        <a href="javascript:void(0);" (click)="navigatePage('prev', $event)" aria-label="Previous">
+            <span aria-hidden="true"><i class="wi wi-chevron-left"></i></span>
+            {{appLocale.LABEL_PREVIOUS}}
+            <span class="sr-only">{{appLocale.LABEL_PREVIOUS}}</span>
+        </a>
+    </li>
+    <li class="next" [ngClass]="{'disabled':isDisableNext}">
+        <a href="javascript:void(0);" (click)="navigatePage('next', $event)" aria-label="Next">
+            {{appLocale.LABEL_NEXT}}
+            <span aria-hidden="true"><i class="wi wi-chevron-right"></i></span>
+            <span class="sr-only">{{appLocale.LABEL_NEXT}}</span>
+        </a>
+    </li>
+</ul>
+
+<pagination class="pagination basic" [ngClass]="navigationClass" *ngIf="navcontrols === 'Basic'"
+            [itemsPerPage]="maxResults" [totalItems]="dataSize"
+            [ngModel]="dn.currentPage" (pageChanged)="pageChanged($event)"
+            [boundaryLinks]="boundarylinks" [maxSize]="maxsize"
+            [directionLinks]="directionlinks" previousText="." nextText="." firstText="." lastText="."></pagination>
+
+<ul *ngIf="navcontrols === 'Basic' && showrecordcount" class="pagination">
+    <li class="totalcount disabled basiccount"><a>{{appLocale.LABEL_TOTAL_RECORDS}}: {{dataSize}}</a></li>
+</ul>

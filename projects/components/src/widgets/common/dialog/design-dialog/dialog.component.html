@@ -1,0 +1,15 @@
+<ng-template #dialogTemplate>
+    <div wmDialogHeader [closable]="closable"
+         [iconclass]="iconclass"
+         [iconurl]="iconurl"
+         [iconwidth]="iconwidth"
+         [iconheight]="iconheight"
+         [iconmargin]="iconmargin"
+         [heading]="title"
+         *ngIf="showheader"
+    ></div>
+    <div wmDialogBody>
+        <ng-container *ngTemplateOutlet="dialogBody"></ng-container>
+    </div>
+    <ng-container *ngTemplateOutlet="dialogFooter"></ng-container>
+</ng-template>

@@ -1,0 +1,111 @@
+<div class="panel-heading" *ngIf="title || subheading || iconclass">
+    <h3 class="panel-title">
+        <div class="pull-left">
+            <i class="app-icon panel-icon {{iconclass}}" aria-hidden="true" [hidden]="!iconclass"></i>
+        </div>
+        <div class="pull-left">
+            <div class="heading" [textContent]="title"></div>
+            <div class="description" [textContent]="subheading"></div>
+        </div>
+    </h3>
+</div>
+
+<nav class="app-datanavigator" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
+    <ul class="pager">
+        <li class="previous" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisablePrevious : true)}">
+            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('prev', $event)">
+                <i class="wi wi-chevron-left" aria-hidden="true"></i>
+                <span class="sr-only">Previous</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<ul tabindex="0" class="app-livelist-container clearfix {{listclass}}"
+    (keydown.enter)="handleKeyDown($event, 'select')"
+
+    (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
+    (keydown.arrowdown)="handleKeyDown($event, 'focusNext')"
+    (keydown.arrowleft)="handleKeyDown($event, 'focusPrev')"
+    (keydown.arrowright)="handleKeyDown($event, 'focusNext')"
+
+    (keydown.shift.arrowup)="handleKeyDown($event, 'selectPrev')"
+    (keydown.shift.arrowdown)="handleKeyDown($event, 'selectNext')"
+    (keydown.shift.arrowleft)="handleKeyDown($event, 'selectPrev')"
+    (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
+>
+    <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
+        <li *ngFor="let item of fieldDefs; index as $index; first as $isFirst; last as $isLast;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
+            [wmListItem]="item"
+            #listItemRef="listItemRef"
+            tabindex="0">
+            <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index:$index, itemRef: listItemRef, $isFirst:$isFirst, $isLast:$isLast}"></ng-container>
+        </li>
+    </ng-template>
+    <ng-container [ngTemplateOutlet]="listLeftActionTemplate"></ng-container>
+    <ng-container [ngTemplateOutlet]="listRightActionTemplate"></ng-container>
+</ul>
+
+<div class="no-data-msg" *ngIf="noDataFound && !variableInflight" [textContent]="nodatamessage"></div>
+
+<div class="loading-data-msg" *ngIf="variableInflight">
+    <span>
+        <i class="app-icon panel-icon fa-spin" aria-hidden="true" [ngClass]="loadingicon"></i>
+        <span class="sr-only">Loading</span>
+        <span class="loading-text" [textContent]="loadingdatamsg"></span>
+    </span>
+</div>
+
+<nav class="app-datanavigator" *ngIf="navigation === 'Inline' && !noDataFound">
+    <ul class="pager">
+        <li class="next" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisableNext  : true)}">
+            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)">
+                <i class="wi wi-chevron-right" aria-hidden="true"></i>
+                <span class="sr-only">Next</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator.dataSize <= pagesize) || !dataNavigator.dataSize">
+    <nav wmPagination
+         navigationalign.bind="navigationalign"
+         navigationsize.bind="navigationSize"
+         navigation.bind="navControls"
+         showrecordcount.bind="showrecordcount"
+         maxsize.bind="maxsize"
+         boundarylinks.bind="boundarylinks"
+         forceellipses.bind="forceellipses"
+         directionlinks.bind="directionlinks"
+         show.bind="!onDemandLoad"
+         paginationchange.event="beforePaginationChange($event, $index)"
+    ></nav>
+    <a *ngIf="onDemandLoad" href="javascript:void(0);"
+       (click)="dataNavigator.navigatePage('next', $event)"
+       class="app-button btn btn-block"
+       [ngClass]="paginationclass"
+       [textContent]="ondemandmessage"
+    ></a>
+</div>
+
+<!--This template will be displayed when groupby is specified-->
+<ng-template #groupedListTemplate>
+    <li *ngFor="let groupObj of groupedData" class="app-list-item-group clearfix">
+        <ul class="list-group item-group" [ngClass]="listclass">
+            <li class="app-list-item-header list-item list-group-header" (click)="handleHeaderClick($event)" [ngClass]="{'collapsible-content': collapsible}">
+            <h4>{{groupObj.key}}
+                <div class="header-action">
+                    <i class="app-icon wi action wi-chevron-up" *ngIf="collapsible"></i>
+                    <span *ngIf="showcount" class="label label-default">{{groupObj.data.length}}</span>
+                    </div>
+                </h4>
+            </li>
+            <li *ngFor="let item of groupObj.data; index as $index; first as $isFirst; last as $isLast;" tabindex="0"
+                class="app-list-item group-list-item {{itemsPerRowClass}}"
+                [ngClass]="listItemRef.itemClass"
+                [wmListItem]="item" #listItemRef="listItemRef">
+                <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index:$index, itemRef: listItemRef, $isFirst:$isFirst, $isLast:$isLast}"></ng-container>
+            </li>
+        </ul>
+    </li>
+</ng-template>

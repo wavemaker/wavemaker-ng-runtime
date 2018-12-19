@@ -1,0 +1,18 @@
+<select role="input" aria-haspopup="true" aria-expanded="false" #select
+        focus-target
+        [ngClass]="['app-select form-control', class]"
+        [disabled]="disabled"
+        [required]="required"
+        [tabindex]="tabindex"
+        [(ngModel)]="modelByKey"
+        [multiple]="multiple"
+        (change)="onSelectValueChange($event)"
+        (blur)="invokeOnTouched($event)"
+        [attr.name]="name"
+        [autofocus]="autofocus"
+>
+  <option selected value="" [textContent]="placeholder" [hidden]="!placeholder" ></option>
+  <option
+          *ngFor="let item of datasetItems"
+          [value]="item.key" [selected]="item.selected" [textContent]="item.label"></option>
+</select>

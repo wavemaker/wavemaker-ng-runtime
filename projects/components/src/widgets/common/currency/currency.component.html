@@ -1,0 +1,24 @@
+<span class="input-group-addon" [textContent]="currencySymbol"></span>
+<input class="form-control app-textbox app-currency-input"
+       #input
+       role="input"
+       type="text"
+       focus-target
+       [autofocus]="autofocus"
+       [readonly]="readonly"
+       [disabled]="disabled"
+       [required]="required"
+       [pattern]="regexp"
+       [attr.name]="name"
+       [attr.aria-label]="name"
+       [attr.tabindex]="tabindex"
+       [attr.placeholder]="placeholder"
+       [attr.accesskey]="shortcutkey"
+       [ngModel]="displayValue"
+       [ngModelOptions]="ngModelOptions"
+
+       (blur)="handleBlur($event)"
+       (ngModelChange)="datavalue=$event"
+       (keydown.enter)="onEnter($event)"
+       (keydown.ArrowUp)="onArrowPress($event, 'UP')"
+       (keydown.ArrowDown)="onArrowPress($event, 'DOWN')">

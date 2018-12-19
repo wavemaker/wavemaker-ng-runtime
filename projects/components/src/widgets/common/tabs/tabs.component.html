@@ -1,0 +1,15 @@
+<ul class="nav nav-tabs" [ngClass]="{'nav-stacked': vertical, 'nav-justified': justified}" role="tablist">
+    <li class="tab-header" *ngFor="let pane of panes;" [attr.data-paneid]="pane.widgetId" [ngClass]="{'active': pane.isActive, 'disabled': pane.disabled}"
+        [hidden]="!pane.show" (click)="pane.select($event)" role="tab">
+        <a href="javascript:void(0);" role="button" [tabindex]="pane.tabindex">
+            <div class="tab-heading">
+                <i [ngClass]="['app-icon', pane.paneicon]" *ngIf="pane.paneicon"></i>
+                <span [textContent]="pane.title"></span>
+                <span *ngIf="pane.badgevalue" class="label label-{{pane.badgetype}}" [textContent]="pane.badgevalue"></span>
+            </div>
+        </a>
+    </li>
+</ul>
+<div class="tab-content" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
+    <ng-content select="div[wmTabPane]"></ng-content>
+</div>

@@ -1,0 +1,39 @@
+<li class="chip-item {{getChipClass($index, item)}}" role="option" *ngFor="let item of chipsList; let $index = index;"
+    [ngClass]="{'active': item.active, 'disabled': disabled}">
+    <a class="app-chip" href="javascript:void(0);" tabindex="-1"
+       (click)="handleChipClick($event, item)"
+       (keydown.delete)="onDelete($event, item, $index)"
+       (keydown.backspace)="onBackspace($event, item, $index)"
+       (keydown.arrowleft)="onArrowLeft(item, $index)"
+       (keydown.arrowright)="onArrowRight(item, $index)"
+       (focus)="handleChipFocus($event, item)"
+       (blur)="readonly ? 0 : item.active = false"
+       [ngClass]="{'chip-duplicate bg-danger': item.isDuplicate, 'chip-picture': item.imgSrc}">
+        <img data-identifier="img" alt="Chip Image" class="button-image-icon" [src]="item.imgSrc" *ngIf="item.imgSrc"/>
+        <span class="app-chip-title" [textContent]="item.label" [title]="item.label"></span>
+        <button type="button" tabindex="-1" arial-label="Clear Button" class="btn btn-transparent" (click)="removeItem($event, item, $index);" *ngIf="!readonly">
+            <i class="app-icon wi wi-close"></i>
+        </button>
+    </a>
+</li>
+<li class="app-chip-search" [ngClass]="{'full-width': inputwidth === 'full'}">
+    <div #search wmSearch class="app-chip-input"
+         name="app-chip-search"
+         select.event="addItem($event, widget, selectedValue)"
+         beforeservicecall.event="onBeforeservicecall(inputData)"
+         disabled.bind="disabled || readonly || saturate"
+         datafield.bind="datafield"
+         allowonlyselect.bind="allowonlyselect"
+         searchkey.bind="searchkey"
+         orderby.bind="orderby"
+         placeholder.bind="saturate ? maxSizeReached : placeholder"
+         showsearchicon.bind="showsearchicon"
+         tabindex.bind="tabindex"
+         minchars.bind="minchars"
+         (keydown.enter)="onSelect($event)"
+         (keydown.delete)="onTextDelete($event)"
+         (keydown.backspace)="onInputClear($event)"
+         (keydown.arrowleft)="onArrowLeft()"
+         (keydown.arrowright)="onArrowRight()">
+    </div>
+</li>

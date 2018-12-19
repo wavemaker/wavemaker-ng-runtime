@@ -1,0 +1,16 @@
+<ng-template #dialogTemplate>
+    <div wmDialogHeader [closable]="closable"
+         [iconclass]="iconclass"
+         [iconurl]="iconurl"
+         [iconwidth]="iconwidth"
+         [iconheight]="iconheight"
+         [iconmargin]="iconmargin"
+         [heading]="title"></div>
+    <div wmDialogBody>
+        <p class="app-dialog-message {{messageclass}}" [attr.aria-describedby]="message">{{message}}</p>
+    </div>
+    <div wmDialogFooter>
+        <button wmButton class="btn-default btn-secondary cancel-action" caption.bind="canceltext" aria-label="Cancel button" (click)="onCancel($event)"></button>
+        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
+    </div>
+</ng-template>

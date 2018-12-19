@@ -1,0 +1,45 @@
+<ng-template #menuTemplate>
+    <button wmButton
+            dropdownToggle
+            aria-haspopup="true"
+            aria-expanded="false"
+
+            class="btn app-button dropdown-toggle {{menuclass}}"
+            hint.bind="hint"
+            shortcutkey.bind="shortcutkey"
+            tabindex.bind="tabindex"
+            caption.bind="caption"
+            iconclass.bind="iconclass"
+            iconposition.bind="iconposition">
+        <span class="pull-right caret fa {{menuCaret}}"></span>
+    </button>
+</ng-template>
+
+<ng-template #innerTemplate>
+    <i class="app-icon {{iconclass}}"></i>
+    <span class="caption" [textContent]="caption"></span>
+    <span class="pull-right caret fa {{menuCaret}}"></span>
+</ng-template>
+
+<ng-container *ngIf="type === 'anchor'; else menuTemplate">
+    <a wmAnchor
+       dropdownToggle
+
+       href="javascript:void(0);"
+       role="button"
+       aria-haspopup="true"
+       aria-expanded="false"
+
+       hint.bind="hint"
+       class="dropdown-toggle {{menuclass}}"
+       shortcutkey.bind="shortcutkey"
+       tabindex.bind="tabindex"
+       caption.bind="caption"
+       iconclass.bind="iconclass"
+       iconposition.bind="iconposition"
+    >
+        <span class="pull-right caret fa {{menuCaret}}"></span>
+    </a>
+</ng-container>
+
+<ul wmMenuDropdown [items]="nodes" [ngClass]="menulayout" class="icon-position-{{iconposition}}" *dropdownMenu aria-labelledby="dropdownmenu"></ul>

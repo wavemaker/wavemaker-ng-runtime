@@ -1,0 +1,29 @@
+<ng-template #menuRef let-item="item" let-index="index">
+    <div wmMenu dropdown
+         type="anchor"
+         autoclose.bind="autoclose"
+         iconclass.bind="item.icon"
+         autoopen.bind="autoopen"
+         caption.bind="item.label"
+         dataset.bind="item.children"
+         iconposition.bind="iconposition"
+         select.event="onMenuItemSelect($event, widget, $item)"></div>
+</ng-template>
+
+<ng-template #anchorRef let-item="item" let-index="index" let-liRef="liRef">
+    <a wmAnchor
+       [disableMenuContext]="disableMenuContext || !!item.action"
+       [wmNavigationControl]="item.link"
+       caption.bind="item.label"
+       iconclass.bind="item.icon"
+       badgevalue.bind="item.badge"
+       iconposition.bind="iconposition"
+       click.event="onNavSelect($event, item, liRef)"></a>
+</ng-template>
+
+<li class="app-nav-item {{item.class}}" *ngFor="let item of nodes; let index = index;" #liRef [ngClass]="{active: item.link === '#/' + activePageName}">
+    <ng-container [ngTemplateOutlet]="anchorRef" [ngTemplateOutletContext]="{item: item, index:index, liRef: liRef}" *ngIf="!item.children.length"></ng-container>
+    <ng-container [ngTemplateOutlet]="menuRef" [ngTemplateOutletContext]="{item: item, index:index}"  *ngIf="item.children.length"></ng-container>
+</li>
+
+<ng-content *ngIf="!nodes.length" select="[wmNavItem]"></ng-content>

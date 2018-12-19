@@ -1,0 +1,44 @@
+import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
+
+import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { StylableComponent } from '../base/stylable.component';
+import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { registerProps } from './navbar.props';
+
+registerProps();
+
+const DEFAULT_CLS = 'navbar navbar-default app-navbar';
+const WIDGET_CONFIG = {widgetType: 'wm-navbar', hostClass: DEFAULT_CLS};
+
+declare const $;
+
+@Component({
+    selector: '[wmNavbar]',
+    templateUrl: './navbar.component.html',
+    providers: [
+        provideAsWidgetRef(NavbarComponent)
+    ]
+})
+export class NavbarComponent extends StylableComponent implements AfterViewInit {
+
+    @ViewChild('navContent') private navContent: ElementRef;
+
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+    }
+
+    public toggleCollapse() {
+        const $navContent = $(this.navContent.nativeElement);
+        $navContent.animate({ 'height': 'toggle'});
+        if ($navContent.hasClass('in')) {
+            setTimeout(() => this.toggleNavCollapse(), 500);
+        } else {
+            this.toggleNavCollapse();
+        }
+    }
+
+    private toggleNavCollapse() {
+        this.navContent.nativeElement.classList.toggle('in');
+    }
+}

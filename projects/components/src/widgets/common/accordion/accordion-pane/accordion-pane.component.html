@@ -1,0 +1,26 @@
+<div class="panel-heading clearfix" role="tab" (click)="toggle($event)" [ngClass]="{active: isActive}">
+    <h3 class="panel-title">
+        <a href="javascript:void(0);" role="button" class="accordion-toggle" [attr.aria-expanded]="isActive" [attr.aria-controls]="name">
+            <div class="pull-left">
+                <i class="app-icon panel-icon {{iconclass}}" [hidden]="!iconclass"></i>
+            </div>
+            <div class="pull-left">
+                <div class="heading" [innerHTML]="title | trustAs: 'html'"></div>
+                <div class="description" [innerHTML]="subheading | trustAs: 'html'"></div>
+            </div>
+        </a>
+    </h3>
+    <div class="panel-actions">
+        <span class="label label-{{badgetype}}">{{badgevalue}}</span>
+        <button type="button" aria-label="Collapse/Expand" [attr.aria-expanded]="isActive" [attr.aria-controls]="name"
+                class="app-icon panel-action wi"
+                title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}">
+            <i [ngClass]="isActive ? 'wi-minus' : 'wi-plus'"></i>
+        </button>
+    </div>
+</div>
+<div class="panel-collapse collapse" role="tabpanel" aria-labelledby="panel description" [ngClass]="isActive ? 'collapse in' : 'collapse'">
+    <div class="panel-body" [wmSmoothscroll]="smoothscroll" partial-container-target>
+        <ng-content></ng-content>
+    </div>
+</div>

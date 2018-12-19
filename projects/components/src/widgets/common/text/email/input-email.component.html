@@ -1,0 +1,22 @@
+<input class="form-control app-textbox"
+       focus-target
+       role="input"
+       type="email"
+       [attr.name]="name"
+       [(ngModel)]="datavalue"
+       [ngModelOptions]="ngModelOptions"
+       [readonly]="readonly"
+       [required]="required"
+       [disabled]="disabled"
+       [maxlength]="maxchars"
+       [pattern]="regexp"
+       [attr.tabindex]="tabindex"
+       [attr.placeholder]="placeholder"
+       [attr.accesskey]="shortcutkey"
+       [autofocus]="autofocus"
+       (blur)="handleBlur($event)"
+       (ngModelChange)="handleChange($event)"
+       [autocomplete]="autocomplete ? 'on' : 'off'"
+       (keyup.enter)="flushViewChanges(input.value)"
+       email
+       #input>

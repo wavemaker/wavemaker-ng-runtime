@@ -1,0 +1,52 @@
+<ng-container *ngIf="useDatapicker; then timePickerTemplate else nativeTimeTemplate">
+</ng-container>
+
+<ng-template #timePickerTemplate>
+    <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" container="body" style="display: inherit" [title]="hint">
+        <input class="form-control app-textbox display-input" aria-label="Set the time"
+               focus-target
+               [tabindex]="tabindex"
+               [name]="name"
+               type="text"
+               [value]="displayValue"
+               [disabled]="disabled || readonly || isCurrentTime"
+               [autofocus]="autofocus"
+               [required]="required"
+               [attr.placeholder]="placeholder"
+               [attr.accesskey]="shortcutkey"
+               [required]="required"
+               (click)="toggleDropdown($event)"
+               (focus)="invokeOnFocus($event)"
+               (blur)="invokeOnTouched($event)"
+               (change)="onDisplayTimeChange($event)"
+               (keydown)="onDisplayKeydown($event)">
+        <span class="input-group-btn dropdown-toggle">
+          <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
+        </span>
+        <div *dropdownMenu class="dropdown-menu" (click)="preventTpClose($event)">
+            <timepicker class="model-holder"
+                        [showMeridian]="ismeridian"
+                        [readonlyInput]="isDisabled"
+                        [(ngModel)]="bsTimeValue"
+                        [disabled]="disabled || readonly || isCurrentTime"
+                        [min]="minTime"
+                        [max]="maxTime"
+                        [hourStep]="hourstep"
+                        [minuteStep]="minutestep"
+                        [secondsStep]="secondsstep"
+                        [mousewheel]="true"
+                        [arrowkeys]="true"
+                        [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
+        </div>
+    </div>
+</ng-template>
+<ng-template #nativeTimeTemplate>
+    <input type="time" class="form-control app-textbox"
+           role="input"
+           [value]="displayValue"
+           [required]="required"
+           [disabled]="disabled || readonly || isCurrentDate"
+           (change)="onTimeChange($event)"
+           (focus)="invokeOnFocus($event)"
+           (blur)="invokeOnTouched($event)">
+</ng-template>

@@ -1,0 +1,4 @@
+<audio [src]="mp3format | trustAs: 'resource'" [muted]="muted" [controls]="controls" [loop]="loop" [preload]="audiopreload" role="application" aria-describedby="recorded audio">
+    <source type="audio/mp3" [src]="mp3format | trustAs: 'resource'">
+    {{audiosupportmessage}}
+</audio>

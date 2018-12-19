@@ -1,0 +1,101 @@
+import { ApplicationRef, Component, DoCheck, ElementRef, NgZone, ViewEncapsulation } from '@angular/core';
+import {
+    $invokeWatchers,
+    AbstractDialogService,
+    AbstractSpinnerService,
+    hasCordova,
+    setAppRef,
+    setNgZone,
+    setPipeProvider
+} from '@wm/core';
+import { PipeProvider } from '../framework/services/pipe-provider.service';
+import { OAuthService } from '@wm/oAuth';
+import { setTheme } from 'ngx-bootstrap';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+
+type SPINNER = {show: boolean, messages: Array<string>};
+
+@Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    encapsulation: ViewEncapsulation.None
+})
+export class AppComponent implements DoCheck {
+    private startApp = false;
+
+    spinner: SPINNER = {show: false, messages: []};
+    constructor(
+        _pipeProvider: PipeProvider,
+        _appRef: ApplicationRef,
+        private elRef: ElementRef,
+        private oAuthService: OAuthService,
+        private dialogService: AbstractDialogService,
+        private spinnerService: AbstractSpinnerService,
+        ngZone: NgZone,
+        private router: Router
+    ) {
+        setPipeProvider(_pipeProvider);
+        setNgZone(ngZone);
+        setAppRef(_appRef);
+        // subscribe to OAuth changes
+        oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
+            this.providersConfig = providers;
+            if (providers.length) {
+                this.showOAuthDialog();
+            } else {
+                this.closeOAuthDialog();
+            }
+        });
+
+        // Subscribe to the message source to show/hide app spinner
+        this.spinnerService.getMessageSource().asObservable().subscribe((data: any) => {
+            // setTimeout is to avoid 'ExpressionChangedAfterItHasBeenCheckedError'
+            setTimeout(() => {
+                this.spinner.show = data.show;
+                this.spinner.messages = data.messages;
+            });
+        });
+
+        // set theme to bs3 on ngx-bootstrap. This avoids runtime calculation to determine bs theme. Thus resolves performance.
+        setTheme('bs3');
+        if (hasCordova() && !window['wmDeviceReady']) {
+            document.addEventListener('wmDeviceReady' , () => this.startApp = true);
+        } else {
+            this.startApp = true;
+        }
+
+        let spinnerId;
+
+        this.router.events.subscribe(e => {
+            if (e instanceof NavigationStart) {
+                console.log('showing the global spinner');
+                spinnerId = this.spinnerService.show('', 'globalSpinner');
+            } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
+                console.log('hiding the global spinner');
+                this.spinnerService.hide(spinnerId);
+            }
+        });
+    }
+
+    providersConfig;
+    isOAuthDialogOpen = false;
+
+    showOAuthDialog() {
+        if (!this.isOAuthDialogOpen) {
+            this.isOAuthDialogOpen = true;
+            this.dialogService.open('oAuthLoginDialog');
+        }
+    }
+
+    closeOAuthDialog() {
+        if (this.isOAuthDialogOpen) {
+            this.isOAuthDialogOpen = false;
+            this.dialogService.close('oAuthLoginDialog');
+        }
+    }
+
+    ngDoCheck() {
+        $invokeWatchers();
+    }
+}
