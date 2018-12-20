@@ -87,7 +87,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
     }
 
     onItemClick ($event: Event, $item: any) {
-        const locals = {$item: _.omit($item, ['children', 'value']), $event};
+        const locals = {$item: $item.value, $event};
         const canNavigate = !(this.invokeEventCallback('beforenavigate', locals) === false);
         let itemLink = $item.link;
         if (itemLink && canNavigate) {
