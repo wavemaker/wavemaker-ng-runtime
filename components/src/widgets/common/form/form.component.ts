@@ -535,7 +535,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
         params = {$event, $formData: formData, $data: formData};
 
-        if (this.onBeforeSubmitEvt && this.invokeEventCallback('beforesubmit', params)) {
+        if (this.onBeforeSubmitEvt && (this.invokeEventCallback('beforesubmit', params) === false)) {
             return;
         }
 
