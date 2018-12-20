@@ -153,6 +153,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private _isLayoutDialog;
     private _dynamicContext;
     private _isGridLayoutPresent;
+    private validationMessages = [];
 
     private _debouncedSubmitForm = debounce(($event) => {
         this.submitForm($event);
@@ -266,6 +267,42 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         context.filter = () => this.filter();
         context.clearFilter = () => this.clearFilter();
         context.submit = evt => this.submit(evt);
+    }
+
+    // This will return a object containing the error details from the list of formFields that are invalid
+    private setValidationMsgs() {
+        if (!this.formFields.length) {
+            return;
+        }
+        _.forEach(this.ngform.controls, (v, k) => {
+            const field = this.formFields.find(e => e.name === k);
+            const index = this.validationMessages.findIndex(e => e.field === k);
+            if (v.invalid) {
+                if (index === -1) {
+                    /**
+                     * field contains the fieldName
+                     * value contains the field value
+                     * errorType contains the list of errors
+                     * msg contains the validation message
+                     * getElement returns the element having focus-target
+                     */
+                    this.validationMessages.push({
+                        field: k,
+                        value: field.value,
+                        errorType: _.keys(field.errors),
+                        msg: field.validationmessage || '',
+                        getElement: () => {
+                            return field.$element.find('[focus-target]');
+                        }
+                    });
+                } else {
+                    this.validationMessages[index].value = field.value;
+                    this.validationMessages[index].errorType = _.keys(v.errors);
+                }
+            } else if (v.valid && index > -1) {
+                this.validationMessages.splice(index, 1);
+            }
+        });
     }
 
     // change and blur events are added from the template
@@ -454,6 +491,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     updateDataOutput() {
         this.constructDataObject();
+        this.setValidationMsgs();
     }
 
     setFormData(data) {
