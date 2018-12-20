@@ -23,7 +23,7 @@
         </h3>
     </div>
     <div class="panel-body" [ngClass]="{'form-elements': isLayoutDialog, 'form-body': !isLayoutDialog}" [class.hidden]="!expanded">
-        <p wmMessage *ngIf="statusMessage.caption" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
+        <p wmMessage [hidden]="!statusMessage.caption.toString()" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
         <div [ngClass]="{'form-elements': !isLayoutDialog, 'form-content': isLayoutDialog}">
             <ng-container *ngTemplateOutlet="content"></ng-container>
         </div>
