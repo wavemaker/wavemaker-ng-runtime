@@ -1,12 +1,13 @@
-import { App, isIos, setCSS } from '@wm/core';
 import { SwipeAnimation } from '@swipey';
 
-declare const  $;
+import { App, isIos, setCSS } from '@wm/core';
+
+declare const $;
 
 export class PullToRefresh extends SwipeAnimation {
     private infoContainer: JQuery<HTMLElement>;
     private runAnimation: boolean;
-    private count: number = 0;
+    private count = 0;
     private spinner: Spinner;
     public cancelSubscription: Function;
     private animationInProgress: boolean;
@@ -211,12 +212,12 @@ class AndroidSpinner implements Spinner {
         this.init();
         const self = this,
             totalTime = (this.options as any).time || 1800,
-            degressToTraverse = 10;
+            degreesToTraverse = 10;
         let i = 0;
         this.container.addClass('spin');
         this.intervalId = setInterval(() => {
             let deg;
-            i = i + degressToTraverse;
+            i = i + degreesToTraverse;
             if (i > 720) {
                 deg = i = 0;
             } else if (i > 360) {
@@ -225,7 +226,7 @@ class AndroidSpinner implements Spinner {
                 deg = i;
             }
             self.path.attr('d', this.describeArc(self.cx, self.cy, self.r, 0, deg));
-        }, (totalTime * degressToTraverse / 360));
+        }, (totalTime * degreesToTraverse / 360));
     }
 
     // Removes the animation by clearing the intervals

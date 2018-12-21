@@ -1,7 +1,8 @@
+import { DataSource, IDataSource, isDefined } from '@wm/core';
+
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { DataSource, IDataSource, isDefined } from '@wm/core';
 import { LiveVariableManager } from '../../manager/variable/live-variable.manager';
 
 const getManager = (): LiveVariableManager => {

@@ -10,11 +10,11 @@ import { registerProps } from '../checkboxset/checkboxset.props';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 import { convertDataToObject, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 
+declare const _, $;
 
 registerProps();
 const DEFAULT_CLS = 'app-checkboxset list-group';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
-declare const _;
 
 @Component({
     selector: '[wmCheckboxset]',
@@ -37,10 +37,12 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
     public handleHeaderClick: ($event) => void;
     private toggleAllHeaders: void;
 
-    constructor(inj: Injector,
-                @Attribute('groupby') protected groupby: string,
-                private appDefaults: AppDefaults,
-                public datePipe: ToDatePipe) {
+    constructor(
+        inj: Injector,
+        @Attribute('groupby') protected groupby: string,
+        private appDefaults: AppDefaults,
+        public datePipe: ToDatePipe
+    ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this.multiple = true;

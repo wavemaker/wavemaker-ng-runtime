@@ -6,6 +6,8 @@ import { registerProps } from './nav-item.props';
 import { StylableComponent } from '../../base/stylable.component';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
+declare const $;
+
 registerProps();
 
 const DEFAULT_CLS = 'app-nav-item';

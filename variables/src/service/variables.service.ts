@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AbstractHttpService, AbstractDialogService, AbstractToasterService, AbstractNavigationService } from '@wm/core';
+import { AbstractDialogService, AbstractHttpService, AbstractNavigationService, AbstractToasterService } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
 

@@ -5,6 +5,8 @@ import { $appDigest, AbstractDialogService, DataSource, triggerFn } from '@wm/co
 import { TableComponent } from './table.component';
 import { refreshDataSource } from '../../../utils/data-utils';
 
+declare const $;
+
 const OPERATION = {
     'NEW': 'new',
     'EDIT': 'edit',
@@ -338,4 +340,3 @@ export class TableCUDDirective {
         }
     }
 }
-

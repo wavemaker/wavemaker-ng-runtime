@@ -1,6 +1,7 @@
 import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
+
 import { registerProps } from './iframe-dialog.props';
 import { BaseDialog } from '../base/base-dialog';
 import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';

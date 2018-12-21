@@ -1,5 +1,6 @@
+import { isMobileApp } from '@wm/core';
+
 import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
-import {isMobileApp} from '@wm/core';
 
 export const timeProps = new Map(
     [

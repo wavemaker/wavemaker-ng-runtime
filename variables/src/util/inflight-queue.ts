@@ -1,5 +1,3 @@
-declare const _;
-
 class InflightQueue {
     requestsQueue = new Map();
 
@@ -31,7 +29,7 @@ class InflightQueue {
      * clears the queue against a variable
      * @param variable
      */
-    private clear = (variable) => {
+    private clear(variable) {
         this.requestsQueue.delete(variable);
     }
 
@@ -84,7 +82,7 @@ class InflightQueue {
                 this.clear(variable);
                 break;
         }
-    };
+    }
 
     /**
      * initializes the queue against a variable and makes the first process call

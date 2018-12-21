@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+
 import { AbstractHttpService, hasCordova } from '@wm/core';
 
 @Injectable()
 export class MetadataService {
     metadataMap: Map<string, any>;
-    CONTEXT_APP: string = 'app';
+    CONTEXT_APP = 'app';
 
     constructor(private $http: AbstractHttpService) {}
 

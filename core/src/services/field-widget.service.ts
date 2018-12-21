@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 declare const _;
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class FieldWidgetService {
     constructor() {
         _.assign(this, {

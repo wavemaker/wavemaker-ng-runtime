@@ -1,4 +1,5 @@
 import { $invokeWatchers, getClonedObject, hasCordova, isDateTimeType, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
+
 import { $rootScope, DB_CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { LVService } from './live-variable.http.utils';
 import { formatDate, getEvaluatedOrderBy, initiateCallback } from './variables.utils';

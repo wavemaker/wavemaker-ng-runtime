@@ -43,5 +43,4 @@ export class LayoutGridColumnDirective extends StylableComponent {
             super.onPropertyChange(key, nv, ov);
         }
     }
-
 }

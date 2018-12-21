@@ -8,7 +8,7 @@ declare const _;
 
 export class LoginActionManager extends BaseActionManager {
 
-    private validate(params:any) {
+    private validate(params: any) {
         let err, paramKey, remembermeKey;
         const LOGIN_PARAM_REMEMBER_ME = 'j_rememberme';
         const LOGIN_PARAM_REMEMBER_ME_OLD = ['rememberme', 'remembermecheck'];
@@ -48,7 +48,7 @@ export class LoginActionManager extends BaseActionManager {
         };
 
         _.each(params, function(value, key) {
-            if(paramMigrationMap[key]) {
+            if (paramMigrationMap[key]) {
                 loginParams[paramMigrationMap[key]] = value;
             } else {
                 loginParams[key] = value;

@@ -43,5 +43,4 @@ export class InputNumberComponent extends BaseInput {
             return false;
         }
     }
-
 }

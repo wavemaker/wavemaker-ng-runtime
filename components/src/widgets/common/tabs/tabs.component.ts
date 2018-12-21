@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
-import { addClass, appendNode, noop, removeClass, setCSS, setCSSFromObj } from '@wm/core';
+import { addClass, appendNode, noop, removeClass } from '@wm/core';
 
 import { TabsAnimator } from './tabs.animator';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
@@ -12,7 +12,7 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
-declare const _;
+declare const _, $;
 
 const DEFAULT_CLS = 'app-tabs clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -260,5 +260,4 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         super.ngAfterViewInit();
         this.registerTabsScroll();
     }
-
 }

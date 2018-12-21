@@ -6,7 +6,7 @@ import {
     getHtmlTagDefinition
 } from '@angular/compiler';
 
-import { isString } from '@wm/core';
+const isString = v => typeof v === 'string';
 
 interface IProviderInfo {
     nodeName: string;
@@ -137,7 +137,7 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
 
 const getRequiredProviders = (nodeDef: IBuildTaskDef, providers: Array<IProviderInfo>) => {
     if (!nodeDef.requires) {
-        return;
+        return [];
     }
 
     let requires = nodeDef.requires as any;
@@ -147,7 +147,7 @@ const getRequiredProviders = (nodeDef: IBuildTaskDef, providers: Array<IProvider
     }
 
     if (!Array.isArray(requires)) {
-        return;
+        return [];
     }
 
     return requires.map(require => {

@@ -1,6 +1,5 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
-
 const tagName = 'div';
 register('wm-tabpane', (): IBuildTaskDef => {
     return {
@@ -10,5 +9,3 @@ register('wm-tabpane', (): IBuildTaskDef => {
 });
 
 export default () => {};
-
-

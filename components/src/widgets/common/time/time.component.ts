@@ -1,20 +1,20 @@
-import {Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
-import { TimepickerComponent} from 'ngx-bootstrap';
 
-import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, setAttr } from '@wm/core';
+import { TimepickerComponent } from 'ngx-bootstrap';
+
+import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
-import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef} from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
+import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
-const CURRENT_TIME: string = 'CURRENT_TIME';
+const CURRENT_TIME = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
 const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
 
-declare const _, moment;
+declare const _, moment, $;
 
 registerProps();
 
@@ -216,7 +216,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         const newVal = getNativeDateObject($event.target.value);
         // time pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if(!this.formatValidation(newVal, $event.target.value)) {
+        if (!this.formatValidation(newVal, $event.target.value)) {
             return;
         }
         this.invalidDateTimeFormat = false;
@@ -234,20 +234,20 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method used to execute the on time change functionality
      */
     private onTimeChange(newVal) {
-        var timeValue,
+        let timeValue,
             timeInputValue,
             minTimeMeridian,
             maxTimeMeridian;
         if (newVal) {
             this.bsTimeValue = newVal;
-            //if the newVal is valid but not in the given range then highlight the input field
+            // if the newVal is valid but not in the given range then highlight the input field
             this.timeNotInRange = this.minTime && this.maxTime && (newVal < this.minTime || newVal > this.maxTime);
         } else {
-            //sometimes library is not returning the correct value when the min and max time are given, displaying the datavalue based on the value given by the user
+            // sometimes library is not returning the correct value when the min and max time are given, displaying the datavalue based on the value given by the user
             if (this.bsTimePicker && this.bsTimePicker.min && this.bsTimePicker.max) {
                 minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
                 maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
-                timeValue = this.bsTimePicker.hours + ":" + (this.bsTimePicker.minutes || 0) + ":" + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian): '');
+                timeValue = this.bsTimePicker.hours + ':' + (this.bsTimePicker.minutes || 0) + ':' + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian) : '');
                 timeInputValue =  getNativeDateObject(timeValue);
                 this.bsTimePicker.meridian = minTimeMeridian;
                 this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
@@ -307,10 +307,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     private isValid(event) {
-        if(!event) {
+        if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
             const newVal = getNativeDateObject(enteredDate);
-            if(!this.formatValidation(newVal, enteredDate)) {
+            if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
         }

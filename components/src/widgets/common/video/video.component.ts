@@ -1,6 +1,7 @@
 import { Component, Injector, SecurityContext } from '@angular/core';
 
 import { appendNode, createElement, removeNode } from '@wm/core';
+
 import { styler } from '../../framework/styler';
 import { DISPLAY_TYPE } from '../../framework/constants';
 import { StylableComponent } from '../base/stylable.component';
@@ -29,7 +30,7 @@ export class VideoComponent extends StylableComponent {
     /**
      * subtitle language property eg: en
      */
-    public subtitlelang: string = 'en';
+    public subtitlelang = 'en';
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);

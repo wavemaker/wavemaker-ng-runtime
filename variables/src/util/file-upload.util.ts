@@ -1,4 +1,5 @@
 import { triggerFn } from '@wm/core';
+
 import { NotifyPromise } from './notify-promise';
 import { httpService } from './variable/variables.utils';
 
@@ -140,8 +141,8 @@ function uploadWithIframe(file, url, options) {}
 
 /* upload the next file depending on the status */
 function starNextFileTransfer(fts) {
-    const ft = _.find(fts, function (ft) {
-        return ft.status === UPLOAD_STATUS.QUEUED;
+    const ft = _.find(fts, function (f) {
+        return f.status === UPLOAD_STATUS.QUEUED;
     });
     if (ft) {
         ft.start();

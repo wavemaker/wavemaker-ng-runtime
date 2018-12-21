@@ -1,7 +1,8 @@
+import { DataSource, IDataSource, isDefined } from '@wm/core';
+
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 import { BaseAction } from '../base-action';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import {DataSource, IDataSource, isDefined} from '@wm/core';
 
 const getManager = () => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.NOTIFICATION);

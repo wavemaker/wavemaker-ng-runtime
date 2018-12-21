@@ -1,7 +1,7 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 
 import { from, Observable, of } from 'rxjs';
-import {mergeMap, debounceTime } from 'rxjs/operators';
+import { debounceTime, mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
@@ -33,7 +33,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public casesensitive: boolean;
     public searchkey: string;
     public queryModel: Array<DataSetItem> | string;
-    public query: string = '';
+    public query = '';
     public limit: any;
     public showsearchicon: boolean;
     public minchars: number;
@@ -654,7 +654,4 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
         super.onPropertyChange(key, nv, ov);
     }
-
 }
-
-

@@ -1,8 +1,8 @@
-// This function returns the maximum number of decimal digits allowed.
 import { isString } from '@wm/core';
 
 declare const _;
 
+// This function returns the maximum number of decimal digits allowed.
 export const getDecimalCount = (val: string) => {
     val = val || '9';
     val = val.replace(/\%$/, '');

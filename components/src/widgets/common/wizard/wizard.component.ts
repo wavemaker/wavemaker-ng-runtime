@@ -295,4 +295,3 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         );
     }
 }
-

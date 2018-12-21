@@ -28,14 +28,14 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     public iconurl: string;
     public iconclass: string;
     public collapsible: boolean;
-    public expanded: boolean = true;
+    public expanded = true;
     public enablefullscreen: boolean;
     public fullscreen: boolean;
     public title: string;
     public subheading: string;
     public actions: any;
 
-    private helpClass: string = '';
+    private helpClass = '';
     private fullScreenTitle: string;
     private expandCollapseTitle: string;
 

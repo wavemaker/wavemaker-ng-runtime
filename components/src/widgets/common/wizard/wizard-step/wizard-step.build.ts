@@ -1,5 +1,5 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { IDGenerator } from '@wm/core';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'form';
 const idGen = new IDGenerator('wizard_step_id_');

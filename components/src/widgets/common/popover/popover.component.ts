@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild, Inject } from '@angular/core';
+import { AfterViewInit, Component, ContentChild, ElementRef, Inject, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
+
 import { PopoverDirective } from 'ngx-bootstrap';
 
 import { addClass, setAttr, setCSSFromObj } from '@wm/core';
@@ -12,7 +13,7 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 registerProps();
 
-declare const _;
+declare const _, $;
 
 const DEFAULT_CLS = 'app-popover-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -38,11 +39,11 @@ let activePopover: PopoverComponent;
 
 export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
     private event: string;
-    private isOpen: boolean = false;
+    private isOpen = false;
     private closePopoverTimeout;
     private readonly popoverContainerCls;
     private keyEventPlugin;
-    private canPopoverOpen: boolean = true;
+    private canPopoverOpen = true;
 
     public interaction: string;
     public popoverarrow: boolean;
@@ -72,11 +73,11 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
 
     private adjustPopoverPosition(popoverElem, parentDimesion, popoverLeftShift) {
-        const arrowLeftShift = (parentDimesion.left + (parentDimesion.width/2)) - popoverLeftShift;
+        const arrowLeftShift = (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeftShift;
         this.bsPopoverDirective._popover._ngZone.onStable.subscribe(() => {
             popoverElem.css('left', popoverLeftShift + 'px');
             popoverElem.find('.popover-arrow').css('left', arrowLeftShift + 'px');
-        })
+        });
     }
 
     private calculatePopoverPostion(element) {
@@ -154,7 +155,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
         setTimeout( () => {
-            if(this.popoverplacement === 'bottom' || this.popoverplacement === 'top') {
+            if (this.popoverplacement === 'bottom' || this.popoverplacement === 'top') {
                 this.calculatePopoverPostion(popoverContainer);
             }
         });
@@ -170,7 +171,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
     private onPopoverAnchorKeydown($event) {
         // if there is no content available, the popover should not open through enter key. So checking whether the canPopoverOpen flag is true or not.
-        if(!this.canPopoverOpen) {
+        if (!this.canPopoverOpen) {
            return;
         }
         const action = this.keyEventPlugin.constructor.getEventFullKey(event);
@@ -184,13 +185,13 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (key === 'class' || key === 'tabindex') {
             return;
         }
-        if(key === 'contentsource') {
+        if (key === 'contentsource') {
             // if there is no partial content available, the popover should not open
             if (this.contentsource === 'partial' && !this.content) {
                 this.canPopoverOpen = false;
             }
         }
-        if(key === 'content' && nv) {
+        if (key === 'content' && nv) {
             this.canPopoverOpen = true;
         }
         super.onPropertyChange(key, nv, ov);

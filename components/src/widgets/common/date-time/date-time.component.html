@@ -1,5 +1,4 @@
-<ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate">
-</ng-container>
+<ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
 
 <ng-template #dataPickerTemplate>
     <div dropdown [isOpen]="isTimeOpen" autoClose="false" [container]="'body'" (onShown)="onTimepickerOpen()" [title]="hint"

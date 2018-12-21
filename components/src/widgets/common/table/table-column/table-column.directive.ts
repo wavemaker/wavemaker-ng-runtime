@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, ContentChildren, ContentChild, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';

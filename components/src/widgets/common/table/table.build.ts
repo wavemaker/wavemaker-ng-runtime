@@ -1,6 +1,7 @@
 import { Element } from '@angular/compiler';
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+
 import { IDGenerator } from '@wm/core';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
 const idGen = new IDGenerator('table_');

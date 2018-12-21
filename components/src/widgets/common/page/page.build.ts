@@ -1,6 +1,7 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { Attribute, Element, ParseSourceSpan, Text } from '@angular/compiler';
+
 import { isMobileApp } from '@wm/core';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
 

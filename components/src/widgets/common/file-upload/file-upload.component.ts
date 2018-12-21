@@ -9,7 +9,7 @@ import { StylableComponent } from '../base/stylable.component';
 import { styler } from '../../framework/styler';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-declare const _;
+declare const _, $;
 
 registerProps();
 const DEFAULT_CLS = 'app-fileupload';

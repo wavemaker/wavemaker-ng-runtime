@@ -123,13 +123,21 @@ export abstract class AbstractI18nService {
 }
 
 export abstract class AbstractToasterService {
-    public abstract success (title: string, desc: string);
-    public abstract error (title: string, desc: string);
-    public abstract info (title: string, desc: string);
-    public abstract warn (title: string, desc: string);
-    public abstract show (type: string, title: string, desc: string, timeout: number, bodyOutputType: string, onClickHandler: Function, onHideCallback: Function);
-    public abstract hide (toasterObj: any);
-    public abstract showCustom (pageName: string, options?: any);
+    public abstract success(title: string, desc: string);
+    public abstract error(title: string, desc: string);
+    public abstract info(title: string, desc: string);
+    public abstract warn(title: string, desc: string);
+    public abstract show(
+        type: string,
+        title: string,
+        desc: string,
+        timeout: number,
+        bodyOutputType: string,
+        onClickHandler: Function,
+        onHideCallback: Function
+    );
+    public abstract hide(toasterObj: any);
+    public abstract showCustom(pageName: string, options?: any);
 }
 
 export abstract class AbstractSpinnerService {

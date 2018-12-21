@@ -24,7 +24,7 @@ export class MessageComponent extends StylableComponent {
 
     messageClass = '';
     messageIconClass = '';
-    type: string = '';
+    type = '';
     caption: string;
 
     constructor(inj: Injector) {

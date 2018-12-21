@@ -10,7 +10,7 @@ declare const document;
 declare const resolveLocalFileSystemURL;
 declare const $;
 
-const userAgent = navigator.userAgent;
+const userAgent = window.navigator.userAgent;
 const REGEX = {
     SNAKE_CASE: /[A-Z]/g,
     ANDROID: /Android/i,
@@ -45,7 +45,7 @@ const REGEX = {
 
 const NUMBER_TYPES = ['int', DataType.INTEGER, DataType.FLOAT, DataType.DOUBLE, DataType.LONG, DataType.SHORT, DataType.BYTE, DataType.BIG_INTEGER, DataType.BIG_DECIMAL];
 const now: Date = new Date();
-const CURRENT_DATE: string = 'CURRENT_DATE';
+const CURRENT_DATE = 'CURRENT_DATE';
 
 export const enum EVENT_LIFE {ONCE, WINDOW}
 
@@ -56,11 +56,11 @@ export const isObject = v => null !== v && 'object' === typeof v;
 export const toBoolean = (val, identity?) => (val === true || val === 'true' || (identity ? val === identity : false));
 
 function isIE11 () {
-    return navigator.appVersion.indexOf('Trident/') > -1;
+    return window.navigator.appVersion.indexOf('Trident/') > -1;
 }
 
 export const isIE = () => {
-    return isIE11() || navigator.userAgent.indexOf('MSIE') > -1;
+    return isIE11() || window.navigator.userAgent.indexOf('MSIE') > -1;
 };
 
 
@@ -78,7 +78,7 @@ export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('
 export const isMobileApp = () => _WM_APP_PROPERTIES.platformType === 'MOBILE' && _WM_APP_PROPERTIES.type === 'APPLICATION';
 
 export const getAndroidVersion = () => {
-    const match = (navigator.userAgent.toLowerCase()).match(/android\s([0-9\.]*)/);
+    const match = (window.navigator.userAgent.toLowerCase()).match(/android\s([0-9\.]*)/);
     return match ? match[1] : '';
 };
 
@@ -186,18 +186,15 @@ export const deHyphenate = (name) => {
 };
 
 /*Accepts an array or a string separated with symbol and returns prettified result*/
-export const prettifyLabels = (names, separator?) => {
-    let modifiedNames,
-        namesArray = [];
-    const isArray    = _.isArray(names);
-    separator = separator || ',';
+export const prettifyLabels = (names, separator = ',') => {
+    let modifiedNames, namesArray = [];
 
-    if (!isArray) {
+    if (!_.isArray(names)) {
         namesArray = _.split(names, separator);
     }
 
     modifiedNames = _.map(namesArray, prettifyLabel);
-    if (isArray) {
+    if (_.isArray(names)) {
         return modifiedNames;
     }
     return modifiedNames.join(separator);
@@ -349,7 +346,7 @@ export const addEventListenerOnElement = (_element: Element, excludeElement: Ele
             return;
         }
         if (nativeElement.contains(event.target)) {
-            if($(event.target).is('input') && !isDropDownDisplayEnabledOnInput) {
+            if ($(event.target).is('input') && !isDropDownDisplayEnabledOnInput) {
                return;
             }
             element.removeEventListener(eventType, eventListener, isCapture);
@@ -874,23 +871,23 @@ export const retryIfFails = (fn: () => any, interval: number, maxRetries: number
  * @returns {*} angular defer object
  */
 export const getAbortableDefer = () => {
-    const defer: any = {
+    const _defer: any = {
         promise: null,
         reject: null,
         resolve: null,
         onAbort: () => {},
         isAborted: false
     };
-    defer.promise = new Promise((resolve, reject) => {
-        defer.resolve = resolve;
-        defer.reject = reject;
+    _defer.promise = new Promise((resolve, reject) => {
+        _defer.resolve = resolve;
+        _defer.reject = reject;
     });
-    defer.promise.abort = () => {
-        triggerFn(defer.onAbort);
-        defer.reject('aborted');
-        defer.isAborted = true;
+    _defer.promise.abort = () => {
+        triggerFn(_defer.onAbort);
+        _defer.reject('aborted');
+        _defer.isAborted = true;
     };
-    return defer;
+    return _defer;
 };
 
 export const createCSSRule = (ruleSelector: string, rules: string) => {
@@ -921,7 +918,7 @@ export const getRouteNameFromLink = (link) => {
     return link;
 };
 
-export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(window.navigator.platform);
 
 export const defer = () => {
     const d = {
@@ -1111,7 +1108,7 @@ $.cachedScript = (() => {
             url
         };
 
-        jQuery.ajax(options).done(() => onLoad(url));
+        $.ajax(options).done(() => onLoad(url));
 
         return inProgress.get(url);
     };

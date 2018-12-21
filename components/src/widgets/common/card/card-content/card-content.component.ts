@@ -33,5 +33,4 @@ export class CardContentComponent extends StylableComponent implements AfterView
         super.ngAfterViewInit();
         styler(this.cardContentContainerElRef.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
-
 }

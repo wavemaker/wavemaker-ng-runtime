@@ -1,12 +1,13 @@
 import { Component, Injector, OnInit } from '@angular/core';
 
+import { DataSource, validateDataSourceCtx } from '@wm/core';
+
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './spinner.props';
 import { StylableComponent } from '../base/stylable.component';
 import { ImagePipe } from '../../../pipes/image.pipe';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { DataSource, validateDataSourceCtx } from '@wm/core';
 
 declare const _;
 
@@ -22,7 +23,7 @@ registerProps();
         provideAsWidgetRef(SpinnerComponent)
     ]
 })
-export class SpinnerComponent extends StylableComponent implements OnInit{
+export class SpinnerComponent extends StylableComponent implements OnInit {
 
     public iconclass = '';
     public animation = '';

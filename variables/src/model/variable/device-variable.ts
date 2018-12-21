@@ -1,5 +1,5 @@
-import {VariableManagerFactory} from '../../factory/variable-manager.factory';
-import {VARIABLE_CONSTANTS} from '../../constants/variables.constants';
+import { VariableManagerFactory } from '../../factory/variable-manager.factory';
+import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { DeviceVariableManager } from '../../manager/variable/device-variable-manager';
 import { ApiAwareVariable } from './api-aware-variable';
 

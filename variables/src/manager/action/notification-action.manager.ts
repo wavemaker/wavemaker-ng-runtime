@@ -88,5 +88,4 @@ export class NotificationActionManager extends BaseActionManager {
         }
         return variable.dataBinding.text;
     }
-
 }

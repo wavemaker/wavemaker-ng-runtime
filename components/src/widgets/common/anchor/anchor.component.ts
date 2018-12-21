@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostBinding, Injector, Optional, Self } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, Injector, Optional } from '@angular/core';
 
 import { addClass, App, encodeUrl, getRouteNameFromLink, setAttr } from '@wm/core';
 

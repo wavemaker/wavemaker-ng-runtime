@@ -1,7 +1,7 @@
 import { Attribute, Element } from '@angular/compiler';
+
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { IDGenerator } from '@wm/core';
-
 
 const tagName = 'form';
 const idGen = new IDGenerator('form_');

@@ -47,5 +47,3 @@ register('wm-popover', (): IBuildTaskDef => {
 });
 
 export default () => {};
-
-

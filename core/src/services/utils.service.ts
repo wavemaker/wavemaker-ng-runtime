@@ -4,7 +4,7 @@ import * as Utils from '../utils/utils';
 
 declare const _;
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class UtilsService {
     constructor() {
         _.assign(this, Utils);

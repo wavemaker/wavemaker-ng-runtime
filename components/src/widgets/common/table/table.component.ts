@@ -14,8 +14,7 @@ import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
 import { getConditionalClasses, getOrderByExpr, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 
-declare const _;
-declare var $: any;
+declare const _, $;
 
 registerProps();
 

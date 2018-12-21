@@ -1,23 +1,21 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Injector, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate, getDisplayDateTimeFormat, FormWidgetType, AppDefaults } from '@wm/core';
+import { addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './date.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 registerProps();
 
-declare const _;
-declare const moment;
+declare const _, $;
 
-const CURRENT_DATE: string = 'CURRENT_DATE';
+const CURRENT_DATE = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-date',
@@ -77,10 +75,12 @@ export class DateComponent extends BaseDateTimeComponent {
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
-    constructor(inj: Injector,
-                private cdRef: ChangeDetectorRef,
-                private appDefaults: AppDefaults,
-                @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
+    constructor(
+        inj: Injector,
+        private cdRef: ChangeDetectorRef,
+        private appDefaults: AppDefaults,
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+    ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
@@ -105,7 +105,7 @@ export class DateComponent extends BaseDateTimeComponent {
         const newVal = getDateObj($event.target.value);
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if(!this.formatValidation(newVal, $event.target.value)) {
+        if (!this.formatValidation(newVal, $event.target.value)) {
            return;
         }
         // min date and max date validation in mobile view.
@@ -122,7 +122,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
-        if(getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
+        if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
             $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
         }
         if (newVal) {
@@ -205,11 +205,11 @@ export class DateComponent extends BaseDateTimeComponent {
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
-                    if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }
-                } else if(inputVal && inputVal !== formattedDate ) {
+                } else if (inputVal && inputVal !== formattedDate ) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, event, false);
                 } else {

@@ -7,6 +7,8 @@ import { registerProps } from './radioset.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
+declare const $;
+
 registerProps();
 
 const DEFAULT_CLS = 'app-radioset list-group';

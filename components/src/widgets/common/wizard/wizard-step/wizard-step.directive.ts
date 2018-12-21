@@ -123,4 +123,3 @@ export class WizardStepDirective extends BaseComponent {
         }, 100);
     }
 }
-

@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmProgressBar component defines the circle progress bar widget.
+ * The wmCircleProgressBar component defines the circle progress bar widget.
  */
 export class CircleProgressBar {
 
@@ -43,7 +43,7 @@ export class CircleProgressBar {
      * This property allows user to set an initial value to the widget
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() datavalue: number = 30;
+    @Input() datavalue: string|number = 30;
 
     /**
      * This property allows user to set a min value to the widget
@@ -111,5 +111,4 @@ export class CircleProgressBar {
      * @param widget  Instance of the widget
      */
     onDoubletap($event: TouchEvent, widget: any) {}
-
 }

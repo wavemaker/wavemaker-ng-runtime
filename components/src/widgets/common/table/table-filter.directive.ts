@@ -6,7 +6,7 @@ import { TableComponent } from './table.component';
 import { refreshDataSource } from '../../../utils/data-utils';
 import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget } from '../../../utils/widget-utils';
 
-declare const _;
+declare const _, $;
 declare const moment;
 
 const emptyMatchModes = ['null', 'empty', 'nullorempty', 'isnotnull', 'isnotempty'];
@@ -519,4 +519,3 @@ export class TableFilterSortDirective {
         });
     }
 }
-

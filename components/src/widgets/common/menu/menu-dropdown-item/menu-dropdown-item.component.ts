@@ -82,7 +82,8 @@ export class MenuDropdownItemComponent implements OnInit {
     @HostListener('keydown.arrowup', ['$event', '"UP-ARROW"'])
     @HostListener('keydown.arrowdown', ['$event', '"DOWN-ARROW"'])
     @HostListener('keydown.arrowright', ['$event', '"RIGHT-ARROW"'])
-    @HostListener('keydown.arrowleft', ['$event', '"LEFT-ARROW"']) onKeyDown($event, eventAction) {
+    @HostListener('keydown.arrowleft', ['$event', '"LEFT-ARROW"'])
+    onKeyDown($event, eventAction) {
         const $li = $(this.nativeElement);
         const $ul = $(this.nativeElement).closest('ul.dropdown-menu');
         const $parentUl = this.menuRef.$element.find('> ul.dropdown-menu');

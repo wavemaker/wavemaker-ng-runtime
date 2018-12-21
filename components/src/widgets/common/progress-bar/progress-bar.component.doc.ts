@@ -1,7 +1,7 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmCircleProgressBar component defines the progress bar widget.
+ * The wmProgressBar component defines the progress bar widget.
  */
 export class ProgressBar {
 
@@ -49,7 +49,7 @@ export class ProgressBar {
      * This property allows user to set an initial value to the progress bar widget
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() datavalue: number = 30;
+    @Input() datavalue: string | number = 30;
 
     /**
      * This property allows user to set a min value to the progress bar widget

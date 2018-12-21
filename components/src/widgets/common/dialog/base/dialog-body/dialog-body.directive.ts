@@ -6,6 +6,8 @@ import { addClass, setAttr, setCSS } from '@wm/core';
 
 import { DialogRef } from '../../../../framework/types';
 
+declare const $;
+
 const DEFAULT_CLS = 'app-dialog-body modal-body';
 
 @Directive({

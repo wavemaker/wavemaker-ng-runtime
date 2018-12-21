@@ -5,8 +5,7 @@ import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 import { ALLFIELDS } from './data-utils';
 import { ToDatePipe } from '../pipes/custom-pipes';
 
-declare const _;
-declare const moment;
+declare const _, $, moment;
 
 const momentLocale = moment.localeData();
 const momentCalendarOptions = getClonedObject(momentLocale._calendar);
@@ -482,5 +481,5 @@ export class DataSetItem {
     dataObject?: Object;
     index?: number;
     imgSrc?: string;
-    selected?: boolean = false;
+    selected?: boolean;
 }

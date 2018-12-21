@@ -1,13 +1,16 @@
 import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
 import { Validator } from '@angular/forms';
-import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
-import { BaseFormCustomComponent } from './base-form-custom.component';
 import { Subscription } from 'rxjs';
+
+import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
+
+import { BaseFormCustomComponent } from './base-form-custom.component';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 declare const moment, _, $;
-const CURRENT_DATE: string = 'CURRENT_DATE';
+
+const CURRENT_DATE = 'CURRENT_DATE';
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DATEPICKER_DROPDOWN_OPTIONS = {
     BUTTON: 'button',
@@ -40,6 +43,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
+
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
         this.datePipe = this.inj.get(ToDatePipe);
@@ -69,12 +73,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     public validate() {
-        if(this.invalidDateTimeFormat) {
+        if (this.invalidDateTimeFormat) {
             return {
                 invalidDateTimeFormat: {
                     valid: false
                 }
-            }
+            };
         }
         if (!_.isUndefined(this.dateNotInRange) && this.dateNotInRange) {
             return {
@@ -101,15 +105,15 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const pattern = this.datepattern || this.timepattern;
         const formattedDate = getFormattedDate(this.datePipe, newVal, pattern);
         inputVal = inputVal.trim();
-        if(inputVal) {
-            if(pattern === 'timestamp') {
-                if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+        if (inputVal) {
+            if (pattern === 'timestamp') {
+                if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return false;
                 }
             } else {
-                if(inputVal !== formattedDate ) {
+                if (inputVal !== formattedDate ) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return false;
@@ -228,10 +232,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param timePeriod - String value decides to load other month days or other month or other year
      */
     private goToOtherMonthOryear(btnClass, timePeriod) {
-        if($(`.bs-datepicker-head .${btnClass}`).attr('disabled')) {
+        const $node = $(`.bs-datepicker-head .${btnClass}`);
+        if ($node.attr('disabled')) {
             return;
         }
-        $(`.bs-datepicker-head .${btnClass}`).trigger( 'click' );
+        $node.trigger('click');
         if (timePeriod === 'days') {
             this.loadDays();
         } else if (timePeriod === 'month') {
@@ -591,7 +596,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private timeFormatValidation() {
         const enteredDate = $(this.nativeElement).find('input').val();
         const newVal = getNativeDateObject(enteredDate);
-        if(!this.formatValidation(newVal, enteredDate)) {
+        if (!this.formatValidation(newVal, enteredDate)) {
             return;
         }
         this.invalidDateTimeFormat = false;

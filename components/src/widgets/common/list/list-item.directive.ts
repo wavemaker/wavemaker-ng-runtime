@@ -8,6 +8,8 @@ import { $invokeWatchers, $watch, App } from '@wm/core';
 import { ListComponent } from './list.component';
 import { WidgetRef } from '../../framework/types';
 
+declare const $;
+
 @Directive({
     selector: '[wmListItem]',
     exportAs: 'listItemRef'
@@ -21,10 +23,10 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     public nativeElement: HTMLElement;
     public readonly listComponent: ListComponent;
 
-    private itemClass: string = '';
+    private itemClass = '';
 
-    @HostBinding('class.active') isActive: boolean = false;
-    @HostBinding('class.disable-item') disableItem: boolean = false;
+    @HostBinding('class.active') isActive = false;
+    @HostBinding('class.disable-item') disableItem = false;
 
     @HostListener('focus')
     onFocus() {
@@ -118,4 +120,3 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         this.setUpCUDHandlers();
     }
 }
-

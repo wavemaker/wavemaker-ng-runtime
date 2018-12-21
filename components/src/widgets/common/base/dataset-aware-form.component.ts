@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 
 import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean } from '@wm/core';
 
-import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, setItemByCompare, transformData, transformDataWithKeys } from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 import { ALLFIELDS } from '../../../utils/data-utils';
 

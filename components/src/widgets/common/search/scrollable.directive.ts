@@ -1,5 +1,8 @@
 import { AfterContentInit, AfterViewInit, Directive, ElementRef, Injector } from '@angular/core';
+
 import { SearchComponent } from './search.component';
+
+declare const $;
 
 @Directive({
     selector: '[scrollable]'

@@ -1,8 +1,10 @@
 import { SwipeAnimation } from '@swipey';
 
-import { $appDigest, addClass, isMobile, setCSS, setCSSFromObj } from '@wm/core';
+import { $appDigest, addClass, setCSS, setCSSFromObj } from '@wm/core';
 
 import { TabsComponent } from './tabs.component';
+
+declare const $;
 
 export class TabsAnimator extends SwipeAnimation {
 
@@ -69,5 +71,4 @@ export class TabsAnimator extends SwipeAnimation {
     public threshold() {
         return 5;
     }
-
 }

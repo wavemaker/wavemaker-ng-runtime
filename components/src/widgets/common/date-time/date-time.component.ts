@@ -1,24 +1,21 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnDestroy, ViewChild, NgZone, Inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective, TimepickerComponent } from 'ngx-bootstrap';
 
-import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, isMobileApp } from '@wm/core';
+import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
-declare const moment;
+declare const moment, $, _;
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
 
-const CURRENT_DATE: string = 'CURRENT_DATE';
-
-declare const _;
+const CURRENT_DATE = 'CURRENT_DATE';
 
 registerProps();
 @Component({
@@ -66,7 +63,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This property checks if the timePicker is Open
      */
-    private isTimeOpen: boolean = false;
+    private isTimeOpen = false;
 
     /**
      * This property checks if the datePicker is Open
@@ -81,7 +78,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This property is set to TRUE if the time component value is set to CURRENT_TIME; In this case the timer keeps changing the time value until the widget is available.
      */
-    private isCurrentDate: boolean = false;
+    private isCurrentDate = false;
 
     private _debouncedOnChange: Function =  _.debounce(this.invokeOnChange, 10);
 
@@ -108,11 +105,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.cdRef.detectChanges();
     }
 
-    constructor(inj: Injector,
-                private ngZone: NgZone,
-                private cdRef: ChangeDetectorRef,
-                private appDefaults: AppDefaults,
-                @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
+    constructor(
+        inj: Injector,
+        private ngZone: NgZone,
+        private cdRef: ChangeDetectorRef,
+        private appDefaults: AppDefaults,
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+    ) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
@@ -220,7 +219,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private onModelUpdate(newVal, type?) {
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
-            if(getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
+            if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
                $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
         }
@@ -228,8 +227,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
         if (!newVal) {
-            //Set timevalue as 00:00:00 if we remove any one from hours/minutes/seconds field in timepicker after selecting date
-            if(this.bsDateValue && this.bsTimePicker && (this.bsTimePicker.hours === "" || this.bsTimePicker.minutes === "" || this.bsTimePicker.seconds === "")) {
+            // Set timevalue as 00:00:00 if we remove any one from hours/minutes/seconds field in timepicker after selecting date
+            if (this.bsDateValue && this.bsTimePicker && (this.bsTimePicker.hours === '' || this.bsTimePicker.minutes === '' || this.bsTimePicker.seconds === '')) {
                 this.bsDateValue = this.bsTimeValue = this.proxyModel = moment(this.bsDateValue).startOf('day').toDate();
             } else {
                 this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
@@ -304,7 +303,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if(!this.formatValidation(newVal, $event.target.value)) {
+        if (!this.formatValidation(newVal, $event.target.value)) {
             return;
         }
         // min date and max date validation in mobile view.
@@ -330,11 +329,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
-                    if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }
-                } else if(inputVal && inputVal !== formattedDate ) {
+                } else if (inputVal && inputVal !== formattedDate ) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, event, false);
                 } else {
@@ -354,10 +353,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     private isValid(event) {
-        if(!event) {
+        if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
             const newVal = getNativeDateObject(enteredDate);
-            if(!this.formatValidation(newVal, enteredDate)) {
+            if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
         }

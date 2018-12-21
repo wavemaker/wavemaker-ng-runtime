@@ -1,5 +1,6 @@
-import DatasetUtil from '../util/dataset-util';
 import { DataSource } from '@wm/core';
+
+import DatasetUtil from '../util/dataset-util';
 
 export abstract class BaseVariable {
 
@@ -96,5 +97,4 @@ export abstract class BaseVariable {
     getPrefabName() {
         return this._context && this._context.prefabName;
     }
-
 }

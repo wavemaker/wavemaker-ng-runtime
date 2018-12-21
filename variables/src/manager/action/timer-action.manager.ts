@@ -1,7 +1,7 @@
 import { isDefined } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
-import { initiateCallback } from '../../../src/util/variable/variables.utils';
+import { initiateCallback } from '../../util/variable/variables.utils';
 import { CONSTANTS } from '../../constants/variables.constants';
 
 export class TimerActionManager extends BaseActionManager {

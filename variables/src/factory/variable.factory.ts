@@ -4,7 +4,7 @@ import { NavigationAction } from '../model/action/navigation-action';
 import { ModelVariable } from '../model/variable/model-variable';
 import { ServiceVariable } from '../model/variable/service-variable';
 import { NotificationAction } from '../model/action/notification-action';
-import {VARIABLE_CONSTANTS} from '../constants/variables.constants';
+import { VARIABLE_CONSTANTS } from '../constants/variables.constants';
 import { LoginAction } from '../model/action/login-action';
 import { LogoutAction } from '../model/action/logout-action';
 import { TimerAction } from '../model/action/timer-action';

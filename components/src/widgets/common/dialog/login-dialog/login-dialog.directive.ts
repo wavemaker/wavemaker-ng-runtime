@@ -1,4 +1,5 @@
 import { ContentChild, ContentChildren, Directive, Inject, QueryList, Self } from '@angular/core';
+
 import { Context, DialogRef } from '../../../framework/types';
 import { FormComponent } from '../../form/form.component';
 import { MessageComponent } from '../../message/message.component';
@@ -6,7 +7,6 @@ import { MessageComponent } from '../../message/message.component';
 @Directive({
     selector: '[wmDialog][wmLoginDialog]'
 })
-
 export class LoginDialogDirective {
     @ContentChildren(FormComponent) formCmp: QueryList<FormComponent>;
     @ContentChild(MessageComponent) msgCmp: MessageComponent;

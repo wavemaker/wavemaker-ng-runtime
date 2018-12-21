@@ -1,5 +1,6 @@
 import { Attribute, Directive, Inject, OnInit, Self, Optional } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
 import { FormComponent } from './form.component';
 import { WidgetRef } from '../../framework/types';
 import { TableComponent } from '../table/table.component';
@@ -58,4 +59,3 @@ export class FormWidgetDirective implements OnInit {
         }
     }
 }
-

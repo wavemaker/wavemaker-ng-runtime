@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ContentChildren, HostBinding, Injector } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
 
 import { noop, removeAttr } from '@wm/core';
 

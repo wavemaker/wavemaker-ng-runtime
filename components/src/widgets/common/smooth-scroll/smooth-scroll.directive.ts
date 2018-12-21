@@ -1,9 +1,9 @@
 import { Directive, DoCheck, ElementRef, Injector, Input, OnDestroy } from '@angular/core';
 
-import { debounce, isIos, isKitkatDevice, isMobileApp } from '@wm/core';
+import { debounce, isKitkatDevice, isMobileApp } from '@wm/core';
 
 declare const IScroll;
-declare const _;
+declare const _, $;
 
 @Directive({
     selector: '[wmSmoothscroll]'

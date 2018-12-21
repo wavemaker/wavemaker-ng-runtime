@@ -1,10 +1,9 @@
 import { Directive, Inject, Self } from '@angular/core';
-import { $appDigest, DataType, debounce, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
-import { DataSource } from '@wm/core';
+import { $appDigest, DataSource, DataType, debounce, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
 
 import { FormComponent } from '../form.component';
 import { registerLiveFilterProps } from '../form.props';
-import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode, LIVE_CONSTANTS } from '../../../../utils/data-utils';
+import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../../utils/data-utils';
 import { isDataSetWidget } from '../../../../utils/widget-utils';
 
 declare const _;
@@ -349,4 +348,3 @@ export class LiveFilterDirective {
         this.form.filterWidgets[name] = widget;
     }
 }
-

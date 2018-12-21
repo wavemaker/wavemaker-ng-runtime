@@ -23,5 +23,4 @@ export abstract class ApiAwareVariable extends BaseVariable {
     onError: string;
     onBeforeDatasetReady: string;
     onSuccess: string;
-
 }

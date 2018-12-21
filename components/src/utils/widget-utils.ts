@@ -182,29 +182,29 @@ export const getBackGroundImageUrl = (urlString) => {
     return 'url(' + getImageUrl(urlString) + ')';
 };
 
-export const provideAs = (reference: any, key: any, multi?: boolean): any => {
+export function provideAs(reference: any, key: any, multi?: boolean) {
     return {
         provide: key,
         useExisting: forwardRef(() => reference),
         multi: multi
     };
-};
+}
 
-export const provideAsNgValidators = (reference: any) => {
+export function provideAsNgValidators(reference: any) {
     return provideAs(reference, NG_VALIDATORS, true);
-};
+}
 
-export const provideAsNgValueAccessor = (reference: any) => {
+export function provideAsNgValueAccessor(reference: any) {
     return provideAs(reference, NG_VALUE_ACCESSOR, true);
-};
+}
 
-export const provideAsWidgetRef = (reference: any) => {
+export function provideAsWidgetRef(reference: any) {
     return provideAs(reference, WidgetRef);
-};
+}
 
-export const provideAsDialogRef = (reference: any) => {
+export function provideAsDialogRef(reference: any) {
     return provideAs(reference, DialogRef);
-};
+}
 
 export const NAVIGATION_TYPE = {
     ADVANCED: 'Advanced',

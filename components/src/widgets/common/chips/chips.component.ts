@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { $appDigest, debounce, $parseExpr, isAppleProduct, isDefined, toBoolean } from '@wm/core';
+import { $appDigest, $parseExpr, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
 
 import { registerProps } from './chips.props';
 import { styler } from '../../framework/styler';

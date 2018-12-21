@@ -1,7 +1,8 @@
 import { SwipeAnimation } from '@swipey';
 
-import { AnimationType, LeftPanelDirective } from './left-panel.directive';
 import { $appDigest } from '@wm/core';
+
+import { AnimationType, LeftPanelDirective } from './left-panel.directive';
 
 export class LeftPanelAnimator extends SwipeAnimation {
     private _$animatedElements;

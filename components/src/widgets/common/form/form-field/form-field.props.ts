@@ -44,7 +44,7 @@ mergeTextProps(inputEmailTypeProps);
 mergeTextProps(inputNumberTypeProps);
 
 const widgetPropsMap = new Map(
-[
+    [
         [FormWidgetType.AUTOCOMPLETE, searchProps],
         [FormWidgetType.CHECKBOX, checkboxProps],
         [FormWidgetType.CHECKBOXSET, checkboxsetProps],

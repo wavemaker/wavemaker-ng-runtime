@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+
 import { SecurityService } from './security.service';
 
 @NgModule({
@@ -6,5 +7,4 @@ import { SecurityService } from './security.service';
         SecurityService
     ]
 })
-
 export class SecurityModule {}

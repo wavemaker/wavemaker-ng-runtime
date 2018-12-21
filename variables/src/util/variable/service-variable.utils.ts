@@ -1,10 +1,11 @@
+import { extractType, getBlob, isDateTimeType, isDefined, replace } from '@wm/core';
+
 import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 import { isFileUploadSupported } from './variables.utils';
-import { extractType, getBlob, isDateTimeType, isDefined, replace } from '@wm/core';
 import { getAccessToken } from './../oAuth.utils';
-import { metadataService, formatDate } from '../../util/variable/variables.utils';
+import { formatDate } from '../../util/variable/variables.utils';
 
-declare const _, window;
+declare const _;
 
 /**
  * returns true if a Service variable is:

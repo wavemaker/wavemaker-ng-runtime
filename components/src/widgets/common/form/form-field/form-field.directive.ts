@@ -12,7 +12,7 @@ import { StylableComponent } from '../../base/stylable.component';
 import { FormComponent } from '../form.component';
 import { Context } from '../../../framework/types';
 
-declare const _;
+declare const _, $;
 
 // Custom validator to show validation error, if setValidationMessage method is used
 const customValidatorFn = () => {
@@ -444,4 +444,3 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         });
     }
 }
-

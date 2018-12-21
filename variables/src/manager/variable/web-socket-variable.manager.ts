@@ -1,9 +1,11 @@
+import { $WebSocket } from 'angular2-websocket/angular2-websocket';
+
+import { getValidJSON, isDefined, isInsecureContentRequest, isObject, triggerFn, xmlToJson } from '@wm/core';
+
 import { BaseVariableManager } from './base-variable.manager';
 import { WebSocketVariable } from '../../model/variable/web-socket-variable';
 import { initiateCallback, metadataService } from '../../util/variable/variables.utils';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { getClonedObject, getValidJSON, isDefined, isInsecureContentRequest, isObject, triggerFn, xmlToJson } from '@wm/core';
-import { $WebSocket } from 'angular2-websocket/angular2-websocket';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 
 declare const _;
@@ -58,7 +60,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     private getURL(variable) {
         const prefabName = _.get(variable._context, 'prefabName');
-        const opInfo = prefabName? _.get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo'): _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+        const opInfo = prefabName ? _.get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo') : _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
         const inputFields = variable.dataBinding;
         let config;
 

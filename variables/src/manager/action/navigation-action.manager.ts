@@ -6,5 +6,4 @@ export class NavigationActionManager extends BaseActionManager {
     invoke(variable, options) {
         NVUtils.navigate(variable, options);
     }
-
 }

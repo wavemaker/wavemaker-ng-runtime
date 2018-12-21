@@ -35,7 +35,7 @@ export class SecurityService {
 
     load() {
         return new Promise((resolve, reject) => {
-            this.$http.send({'url' : './services/security/info', 'method': 'GET'}).then((response) => {
+            this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
                 this.config = response.body;
                 this.lastLoggedInUser = getClonedObject(this.loggedInUser);
                 this.loggedInUser = this.config.userInfo;
@@ -195,7 +195,7 @@ export class SecurityService {
                         page = _WM_APP_PROPERTIES.homePage;
                     }
                     resolve(page);
-                }, function() {
+                }, function () {
                     resolve(_WM_APP_PROPERTIES.homePage);
                 });
             }
@@ -309,11 +309,11 @@ export class SecurityService {
      * @param {function} successCallback to be called on success
      * @param {function} failureCallback to be called on failure
      */
-    isAuthenticated (successCallback, failureCallback) {
-    this.getConfig(function (config) {
-        triggerFn(successCallback, config.authenticated);
-    }, failureCallback);
-}
+    isAuthenticated(successCallback, failureCallback) {
+        this.getConfig(function (config) {
+            triggerFn(successCallback, config.authenticated);
+        }, failureCallback);
+    }
 
     /**
      * The API is used to logout of the app.
@@ -322,22 +322,22 @@ export class SecurityService {
      * @param {function} failureCallback to be called on failure
      */
     appLogout(successCallback, failureCallback) {
-    return this.$http.send({
-        target: 'Security',
-        url: 'j_spring_security_logout',
-        method: 'POST',
-        responseType : 'text',
-        byPassResult: true
-    }).then((response) => {
-        _.set(this.get(), 'authenticated', false);
-        _.set(this.get(), 'userInfo', null);
-        /*if (CONSTANTS.hasCordova) {
-            localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, '');
-        }*/
-        this.injector.get(App).notify('userLoggedOut', {});
-        triggerFn(successCallback, response);
-    }, failureCallback);
-}
+        return this.$http.send({
+            target: 'Security',
+            url: 'j_spring_security_logout',
+            method: 'POST',
+            responseType: 'text',
+            byPassResult: true
+        }).then((response) => {
+            _.set(this.get(), 'authenticated', false);
+            _.set(this.get(), 'userInfo', null);
+            /*if (CONSTANTS.hasCordova) {
+                localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, '');
+            }*/
+            this.injector.get(App).notify('userLoggedOut', {});
+            triggerFn(successCallback, response);
+        }, failureCallback);
+    }
 
     /**
      * Checks and return the cookie

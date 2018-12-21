@@ -49,47 +49,47 @@ const detectChanges = (ov, nv) => {
             if (hasChange) {
                 break;
             }
-        case  9:
+        case 9:
             hasChange = !primitiveEquals(ov[8], nv[8]);
             if (hasChange) {
                 break;
             }
-        case  8:
+        case 8:
             hasChange = !primitiveEquals(ov[7], nv[7]);
             if (hasChange) {
                 break;
             }
-        case  7:
+        case 7:
             hasChange = !primitiveEquals(ov[6], nv[6]);
             if (hasChange) {
                 break;
             }
-        case  6:
+        case 6:
             hasChange = !primitiveEquals(ov[5], nv[5]);
             if (hasChange) {
                 break;
             }
-        case  5:
+        case 5:
             hasChange = !primitiveEquals(ov[4], nv[4]);
             if (hasChange) {
                 break;
             }
-        case  4:
+        case 4:
             hasChange = !primitiveEquals(ov[3], nv[3]);
             if (hasChange) {
                 break;
             }
-        case  3:
+        case 3:
             hasChange = !primitiveEquals(ov[2], nv[2]);
             if (hasChange) {
                 break;
             }
-        case  2:
+        case 2:
             hasChange = !primitiveEquals(ov[1], nv[1]);
             if (hasChange) {
                 break;
             }
-        case  1:
+        case 1:
             hasChange = !primitiveEquals(ov[0], nv[0]);
             if (hasChange) {
                 break;

@@ -1,5 +1,6 @@
-import DatasetUtil from '../util/dataset-util';
 import { DataSource } from '@wm/core';
+
+import DatasetUtil from '../util/dataset-util';
 
 export abstract class BaseAction {
 

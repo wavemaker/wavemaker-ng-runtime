@@ -4,6 +4,8 @@ import { SwipeAnimation } from '@swipey';
 
 import { CarouselDirective } from './carousel.directive';
 
+declare const $;
+
 export class CarouselAnimator extends SwipeAnimation {
 
     private _$el;
@@ -162,5 +164,4 @@ export class CarouselAnimator extends SwipeAnimation {
         items.eq((items.length + this._activeIndex) % items.length).removeClass('left-item right-item').addClass('active');
         items.eq((items.length + right) % items.length).addClass('right-item').removeClass('left-item');
     }
-
 }

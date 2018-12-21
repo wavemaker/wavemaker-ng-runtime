@@ -6,7 +6,7 @@ import { SwipeAnimation } from '@swipey';
 import { ListComponent } from './list.component';
 import { ButtonComponent } from '../button/button.component';
 
-declare  const _;
+declare  const _, $;
 
 export class ListAnimator extends SwipeAnimation {
     private $el: JQuery<HTMLElement>;

@@ -1,8 +1,9 @@
 import { Injector } from '@angular/core';
-import { Validator, AbstractControl } from '@angular/forms';
-import { getLocaleNumberSymbol, NumberSymbol, DecimalPipe } from '@angular/common';
+import { AbstractControl, Validator } from '@angular/forms';
+import { DecimalPipe, getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
+
 import { BaseInput } from '../base/base-input';
 import { IWidgetConfig } from '../../../framework/types';
 
@@ -224,7 +225,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     /**
-     * method is called fomr the from widget. to check whether the value entered is valid or not.
+     * method is called from the from widget. to check whether the value entered is valid or not.
      * @returns {object}
      */
     public validate(c: AbstractControl) {

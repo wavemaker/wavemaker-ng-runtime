@@ -1,4 +1,5 @@
 import { extractType, DataType, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
 declare const window, _, $, moment;
@@ -201,7 +202,7 @@ const downloadFilefromResponse = (response, headerFn, success, error) => {
             if (typeof a.download === 'undefined') {
                 reader = new FileReader();
                 reader.onloadend = function () {
-                    let url   = reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
+                    const url = reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
                     popup = window.open(url, '_blank');
                     if (!popup) {
                         window.location.href = url;

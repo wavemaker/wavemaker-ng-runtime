@@ -1,7 +1,5 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
-declare const _;
-
 const tagName = 'div';
 
 register('wm-circle-progress', (): IBuildTaskDef => {

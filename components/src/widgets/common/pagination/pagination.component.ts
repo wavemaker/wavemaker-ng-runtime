@@ -356,7 +356,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
 
     onKeyDown(event) {
         const targetEle = $(event.target).closest('a');
-        if (event.code == 'KeyE') {
+        if (event.code === 'KeyE') {
             targetEle.addClass('ng-invalid');
             return false;
         }

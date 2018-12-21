@@ -3,7 +3,7 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 
 import { Observable, Subject } from 'rxjs';
 
-import { AbstractHttpService, getClonedObject, getValidJSON, replace } from '@wm/core';
+import { AbstractHttpService, getValidJSON, replace } from '@wm/core';
 
 declare const _;
 
