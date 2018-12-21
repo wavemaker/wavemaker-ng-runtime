@@ -134,7 +134,6 @@ console.log(...getAllUserDefinedComponentRefs());
         AuthorizationResolve,
         I18nResolve,
         AppManagerService,
-        AppResourceManagerService,
         PrefabManagerService,
         DecimalPipe,
         DatePipe
