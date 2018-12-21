@@ -152,5 +152,4 @@ export class Card {
      * @param currentItemWidgets  Widgets inside the card on which double tap event is triggered
      */
     onDoubletap($event: TouchEvent, widget: any, item, currentItemWidgets) {}
-
 }

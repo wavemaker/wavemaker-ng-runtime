@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { SecurityService } from './security.service';
 
 @NgModule({
-    providers: [SecurityService]
+    providers: [
+        SecurityService
+    ]
 })
 export class SecurityModule {}

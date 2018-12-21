@@ -10,6 +10,7 @@ export class PullToRefresh extends SwipeAnimation {
     private count = 0;
     private spinner: Spinner;
     public cancelSubscription: Function;
+    private animationInProgress: boolean;
 
     constructor(private $el: JQuery<HTMLElement>, private app: App, private onPullToRefresh: () => void) {
         super();
@@ -39,16 +40,25 @@ export class PullToRefresh extends SwipeAnimation {
             if (data.active) {
                 this.count++;
                 this.wait();
-            } else {
+            } else if (this.count > 0) {
                 this.count--;
             }
-            if (!this.count) {
+            // call stop animation only when animation has started.
+            if (!this.count && this.animationInProgress) {
                 this.stopAnimation();
             }
         });
     }
 
     public bounds() {
+        const pageIscroll = (this.$el[0] as any).iscroll;
+        // If scroll position is not at the top of the page then do not trigger the animation.
+        if (pageIscroll && !isNaN(pageIscroll.y) && pageIscroll.y !== 0) {
+            return {
+                lower: undefined,
+                upper: undefined
+            };
+        }
         if (!this.spinner) {
             this.spinner = isIos() ? new IOSSpinner(this.infoContainer) : new AndroidSpinner(this.infoContainer);
             this.subscribe();
@@ -95,6 +105,7 @@ export class PullToRefresh extends SwipeAnimation {
 
     // Start the spinner animation and invokes the pulltorefresh event. Stops the animation after the wait time.
     public onAnimation() {
+        this.animationInProgress = true;
         this.spinner.start();
         if (this.onPullToRefresh) {
             this.onPullToRefresh();
@@ -112,6 +123,7 @@ export class PullToRefresh extends SwipeAnimation {
     public stopAnimation() {
         setTimeout(() => {
             this.runAnimation = false;
+            this.animationInProgress = false;
             this.spinner.stop();
             this.infoContainer.hide();
             setCSS(this.infoContainer[0], 'transform', 'none');
@@ -130,9 +142,7 @@ export class PullToRefresh extends SwipeAnimation {
 // Interface for Spinner
 interface Spinner {
     start();
-
     stop();
-
     setRotation(d: number);
 }
 
@@ -150,6 +160,7 @@ class AndroidSpinner implements Spinner {
     constructor(private $el: JQuery<HTMLElement>, options?: any) {
         this.options = options || {};
     }
+
 
     private polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number): any {
         const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
@@ -233,8 +244,7 @@ class IOSSpinner implements Spinner {
     private svg: any;
     private intervalId: any;
 
-    constructor(private $el) {
-    }
+    constructor(private $el) {}
 
     // create the iOS spinner using svg
     private init() {

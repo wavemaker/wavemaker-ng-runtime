@@ -176,20 +176,16 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // Close the full screen mode in mobile view of auto complete
     private closeSearch() {
-        const fn = _.debounce(() => {
-            this.page = 1;
-            if (!isDefined(this.datavalue)) {
-                this.queryModel = this.query = '';
-            }
-            // after closing the search, insert the element at its previous position (elIndex)
-            this.insertAtIndex(this.elIndex);
-            this.elIndex = undefined;
-            this.parentEl = undefined;
-            this.$element.removeClass('full-screen');
-            this.listenQuery = false;
-            this.typeahead.hide();
-        }, 100);
-        fn();
+        this._loadingItems = false;
+        this.page = 1;
+        // after closing the search, insert the element at its previous position (elIndex)
+        this.insertAtIndex(this.elIndex);
+        this.elIndex = undefined;
+        this.parentEl = undefined;
+        this.$element.removeClass('full-screen');
+        this.listenQuery = false;
+        this._unsubscribeDv = true;
+        this.typeahead.hide();
     }
 
     private getDataSourceAsObservable(query: string): Observable<any> {
@@ -287,7 +283,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.invokeOnChange(this._modelByValue, {}, true);
 
             // trigger onSubmit only when the search input is cleared off and do not trigger when tab is pressed.
-            if ($event.which !== 9) {
+            if ($event && $event.which !== 9) {
                 this.invokeEventCallback('submit', {$event});
             }
         }
@@ -442,6 +438,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // Avoid making default query if queryModel already exists.
             if (isDefined(this.queryModel) && !_.isEmpty(this.queryModel)) {
                 this._modelByValue = this.queryModel.length ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
+                this._modelByKey = this.queryModel.length ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
                 this.toBeProcessedDatavalue = undefined;
                 return;
             }
@@ -512,16 +509,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         return this.dataProvider.filter(dataConfig)
             .then((response: any) => {
-                    // on focusout i.e. on other widget focus, if n/w is pending loading icon is shown, when data is available then dropdown is shown again.
-                    if (this._unsubscribeDv) {
-                        response = {
-                            data: [],
-                            isLastPage: false
-                        };
-                        this.dataProvider.hasMoreData = false;
-                        this._loadingItems = false;
-                    }
-
                     // response from dataProvider returns always data object.
                     response = response.data || response;
 
@@ -566,6 +553,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 if (!result.length) {
                     this._modelByValue = undefined;
                     this.queryModel = (query as string);
+                }
+                // on focusout i.e. on other widget focus, if n/w is pending loading icon is shown, when data is available then dropdown is shown again.
+                // on unsubscribing do not show the results.
+                if (this._unsubscribeDv) {
+                    result = [];
                 }
                 this._loadingItems = false;
                 return result;
@@ -662,5 +654,4 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
         super.onPropertyChange(key, nv, ov);
     }
-
 }

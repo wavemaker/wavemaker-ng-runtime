@@ -1,9 +1,9 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmProgressBar component defines the progress bar widget.
+ * The wmCircleProgressBar component defines the circle progress bar widget.
  */
-export class ProgressBar {
+export class CircleProgressBar {
 
     /**
      * Class of the widget.
@@ -11,7 +11,7 @@ export class ProgressBar {
     @Input() class: string;
 
     /**
-     * Name of the progress bar widget.
+     * Name of the widget.
      */
     @Input() name: string;
 
@@ -23,42 +23,36 @@ export class ProgressBar {
     @Input() type: string = 'default';
 
     /**
-     * Hint text is shown for the progress bar widget on hover. <br>
+     * Hint text is shown for the circle progress bar widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
 
     /**
-     * This property specifies the tab order of the progress bar widget.
+     * This property specifies the tab order of the circle progress bar widget.
      */
     @Input() tabindex: number;
 
     /**
-     * This property will be used to show/hide the progress bar widget on the web page. <br>
+     * This property will be used to show/hide the circle progress bar widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
 
     /**
-     * This property allows user to bind a variable to populate the list of values to display.
+     * This property allows user to set an initial value to the widget
      * <p><em>Bindable: </em><code>true</code></p>
      */
-    @Input() dataset: any;
+    @Input() datavalue: string|number = 30;
 
     /**
-     * This property allows user to set an initial value to the progress bar widget
-     * <p><em>Bindable: </em><code>true</code></p>
-     */
-    @Input() datavalue: string | number = 30;
-
-    /**
-     * This property allows user to set a min value to the progress bar widget
+     * This property allows user to set a min value to the widget
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() minvalue: number = 0;
 
     /**
-     * This property allows user to set a max value to the progress bar widget
+     * This property allows user to set a max value to the widget
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() maxvalue: number = 100;
@@ -70,77 +64,51 @@ export class ProgressBar {
     @Input() displayformat: string = '';
 
     /**
-     * Placement of progress bar value.
+     * Placement of text in circle progress bar.
      * <p><em>Allowed Values: </em><code>hidden, inside</code></p>
      */
     @Input() captionplacement: string = 'hidden';
 
-    /**
-     * Time interval in milli seconds to poll the service.
-     */
-    @Input() pollinterval: number = 0;
 
     /**
      * Callback function which will be triggered when the widget is clicked.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
+     * @param widget  Instance of the widget
      */
     onClick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the widget is double clicked.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
+     * @param widget  Instance of the widget
      */
     onDblclick($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse enters the widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
+     * @param widget  Instance of the widget
      */
    onMouseenter($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the mouse leaves the widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
+     * @param widget  Instance of the widget
      */
     onMouseleave($event: MouseEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
+     * @param widget  Instance of the widget
      */
     onTap($event: TouchEvent, widget: any) {}
 
     /**
      * Callback function which will be triggered when the double tap event is triggered on a widget.
      * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
+     * @param widget  Instance of the widget
      */
     onDoubletap($event: TouchEvent, widget: any) {}
-
-    /**
-     * Callback function which will be triggered on start of the progress.
-     * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
-     */
-    onStart($event: MouseEvent, widget: any) {}
-
-    /**
-     * Callback function which will be triggered on complete of the progress.
-     * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
-     */
-    onComplete($event: MouseEvent, widget: any) {}
-
-    /**
-     * Callback function which will be triggered on before update of the progress.
-     * @param $event  DOM event on which call back is triggered
-     * @param widget  Instance of the progress bar widget
-     */
-    onBeforeupdate($event: MouseEvent, widget: any) {}
-
 }

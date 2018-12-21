@@ -84,7 +84,7 @@ export abstract class AbstractDialogService {
     public abstract open(name: string, initState?: any);
     public abstract close(name: string);
     public abstract showAppConfirmDialog(initState?: any);
-    public abstract closeAllDialogs();
+    public abstract closeAllDialogs: Function;
 }
 
 export abstract class AbstractHttpService {
@@ -128,13 +128,13 @@ export abstract class AbstractToasterService {
     public abstract info(title: string, desc: string);
     public abstract warn(title: string, desc: string);
     public abstract show(
-      type: string,
-      title: string,
-      desc: string,
-      timeout: number,
-      bodyOutputType: string,
-      onClickHandler: Function,
-      onHideCallback: Function
+        type: string,
+        title: string,
+        desc: string,
+        timeout: number,
+        bodyOutputType: string,
+        onClickHandler: Function,
+        onHideCallback: Function
     );
     public abstract hide(toasterObj: any);
     public abstract showCustom(pageName: string, options?: any);
@@ -147,6 +147,9 @@ export abstract class AbstractSpinnerService {
     public abstract hideContextSpinner(ctx: string, id: string);
     public abstract show(message: string, id?: string, spinnerClass?: string, spinnerContext?: string, variableScopeId?: string);
     public abstract hide(id: string);
+}
+export abstract class UserDefinedExecutionContext {
+
 }
 
 export interface NavigationOptions {

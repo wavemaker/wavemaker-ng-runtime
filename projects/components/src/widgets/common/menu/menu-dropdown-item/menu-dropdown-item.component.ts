@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
 
-import { $parseEvent, addClass, getRouteNameFromLink, getUrlParams, openLink } from '@wm/core';
+import { $parseEvent, addClass, getRouteNameFromLink, getUrlParams, openLink, UserDefinedExecutionContext } from '@wm/core';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
 import { isActiveNavItem } from '../../../../utils/widget-utils';
@@ -35,6 +35,7 @@ export class MenuDropdownItemComponent implements OnInit {
 
     constructor(
         private menuRef: MenuComponent,
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Optional() private parentNav: NavComponent,
         elRef: ElementRef,
     ) {
@@ -160,7 +161,7 @@ export class MenuDropdownItemComponent implements OnInit {
                 this.itemActionFn = $parseEvent(itemAction);
             }
 
-            // this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
+            this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
         }
         if (menuLink) {
             if (menuLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {

@@ -1,23 +1,13 @@
 import { Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
+
 import { TimepickerComponent } from 'ngx-bootstrap';
 
-import {
-    $appDigest,
-    addClass,
-    addEventListenerOnElement,
-    AppDefaults,
-    EVENT_LIFE,
-    FormWidgetType,
-    getDisplayDateTimeFormat,
-    getFormattedDate,
-    getNativeDateObject
-} from '@wm/core';
+import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 const CURRENT_TIME = 'CURRENT_TIME';
@@ -119,7 +109,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     constructor(
         inj: Injector,
-        private datePipe: ToDatePipe,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
         @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
@@ -148,11 +137,21 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
         if (key === 'mintime') {
             this.minTime = getNativeDateObject(nv); // TODO it is supposed to be time conversion, not to the day
+            this.mintimeMaxtimeValidation();
         } else if (key === 'maxtime') {
             this.maxTime = getNativeDateObject(nv);
+            this.mintimeMaxtimeValidation();
         } else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    /**
+     * This is an internal method used to validate mintime and maxtime
+     */
+    private mintimeMaxtimeValidation() {
+        this.timeNotInRange = this.minTime && this.maxTime && (this.bsTimeValue < this.minTime || this.bsTimeValue > this.maxTime);
+        this.invokeOnChange(this.datavalue, undefined, false);
     }
 
     /**
@@ -186,7 +185,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         const bodyElement = document.querySelector('body');
         setTimeout(() => {
             const dropdownElement = $(bodyElement).find('>bs-dropdown-container .dropdown-menu').get(0);
-            this.deregisterEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', () => {
+            this.deregisterEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', this.isDropDownDisplayEnabledOnInput(this.showdropdownon), () => {
                 this.status.isopen = false;
             }, EVENT_LIFE.ONCE, true);
         }, 350);
@@ -202,7 +201,11 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             if (action === 'enter' || action === 'arrowdown') {
                 event.preventDefault();
                 this.toggleDropdown(event);
+            } else {
+                this.hideTimepickerDropdown();
             }
+        } else {
+            this.hideTimepickerDropdown();
         }
     }
 
@@ -211,7 +214,20 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     onDisplayTimeChange($event) {
         const newVal = getNativeDateObject($event.target.value);
+        // time pattern validation
+        // if invalid pattern is entered, device is showing an error.
+        if (!this.formatValidation(newVal, $event.target.value)) {
+            return;
+        }
+        this.invalidDateTimeFormat = false;
         this.onTimeChange(newVal);
+    }
+
+    onInputBlur($event) {
+        if (!$($event.relatedTarget).hasClass('bs-timepicker-field')) {
+            this.invokeOnTouched();
+            this.invokeEventCallback('blur', {$event});
+        }
     }
 
     /**
@@ -231,8 +247,8 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             if (this.bsTimePicker && this.bsTimePicker.min && this.bsTimePicker.max) {
                 minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
                 maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
-                timeValue = this.bsTimePicker.hours + ":" + (this.bsTimePicker.minutes || 0) + ":" + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian): '');
-                timeInputValue =  new Date((moment().format('YYYY-MM-DD') + ' ' + moment(timeValue, this.timepattern).format('HH:mm')).valueOf());
+                timeValue = this.bsTimePicker.hours + ':' + (this.bsTimePicker.minutes || 0) + ':' + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian) : '');
+                timeInputValue =  getNativeDateObject(timeValue);
                 this.bsTimePicker.meridian = minTimeMeridian;
                 this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
             }
@@ -283,14 +299,22 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     private hideTimepickerDropdown() {
+        this.invokeOnTouched();
         this.status.isopen = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
-        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
-        setTimeout(() => displayInputElem.focus());
     }
 
+    private isValid(event) {
+        if (!event) {
+            const enteredDate = $(this.nativeElement).find('input').val();
+            const newVal = getNativeDateObject(enteredDate);
+            if (!this.formatValidation(newVal, enteredDate)) {
+                return;
+            }
+        }
+    }
     /**
      * This is an internal method to add css class for dropdown while opening the time dropdown
      */

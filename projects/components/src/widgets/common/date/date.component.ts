@@ -1,21 +1,19 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Injector, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap';
 
-import { EVENT_LIFE, addEventListenerOnElement, getDateObj, getFormattedDate, getDisplayDateTimeFormat, FormWidgetType, AppDefaults } from '@wm/core';
+import { addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './date.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 registerProps();
 
-declare const _;
-declare const $;
+declare const _, $;
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';
@@ -77,11 +75,12 @@ export class DateComponent extends BaseDateTimeComponent {
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
-    constructor(inj: Injector,
-                public datePipe: ToDatePipe,
-                private cdRef: ChangeDetectorRef,
-                private appDefaults: AppDefaults,
-                @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
+    constructor(
+        inj: Injector,
+        private cdRef: ChangeDetectorRef,
+        private appDefaults: AppDefaults,
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+    ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
@@ -104,6 +103,11 @@ export class DateComponent extends BaseDateTimeComponent {
             return;
         }
         const newVal = getDateObj($event.target.value);
+        // date pattern validation
+        // if invalid pattern is entered, device is showing an error.
+        if (!this.formatValidation(newVal, $event.target.value)) {
+           return;
+        }
         // min date and max date validation in mobile view.
         // if invalid dates are entered, device is showing an alert.
         if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
@@ -114,9 +118,13 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
+        this.invalidDateTimeFormat = false;
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
+        if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
+            $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
+        }
         if (newVal) {
             this.bsDataValue = newVal;
         } else {
@@ -126,7 +134,6 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     onDatePickerOpen() {
-        this.invokeOnTouched();
         this.isOpen = true;
         this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
         if (!this.bsDataValue) {
@@ -134,15 +141,20 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         this.addDatepickerKeyboardEvents(this, false);
     }
+    onInputBlur($event) {
+        if (!$($event.relatedTarget).hasClass('current-date')) {
+            this.invokeOnTouched();
+            this.invokeEventCallback('blur', {$event});
+        }
+    }
 
     private hideDatepickerDropdown() {
+        this.invokeOnTouched();
         this.isOpen = false;
+        this.isEnterPressedOnDateInput = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
-        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
-        setTimeout(() => displayInputElem.focus());
-
     }
 
     // change and blur events are added from the template
@@ -160,6 +172,7 @@ export class DateComponent extends BaseDateTimeComponent {
             this.invokeEventCallback('click', {$event: $event});
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
+            $event.stopPropagation();
             return;
         }
         this.bsDatePickerDirective.toggle();
@@ -173,7 +186,7 @@ export class DateComponent extends BaseDateTimeComponent {
         const bodyElement = document.querySelector('body');
         setTimeout(() => {
             const bsDateContainerElement = bodyElement.querySelector(`.${this.dateContainerCls}`);
-            this.deregisterEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', () => {
+            this.deregisterEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', this.isDropDownDisplayEnabledOnInput(this.showdropdownon), () => {
                 this.isOpen = false;
             }, EVENT_LIFE.ONCE, true);
         }, 350);
@@ -189,10 +202,27 @@ export class DateComponent extends BaseDateTimeComponent {
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
                 event.preventDefault();
-                this.isEnterPressedOnDateInput = true;
-                this.bsDatePickerDirective.bsValue =  newVal;
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
+                const inputVal = event.target.value.trim();
+                if (inputVal && this.datepattern === 'timestamp') {
+                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                        this.invalidDateTimeFormat = true;
+                        this.invokeOnChange(this.datavalue, event, false);
+                    }
+                } else if (inputVal && inputVal !== formattedDate ) {
+                    this.invalidDateTimeFormat = true;
+                    this.invokeOnChange(this.datavalue, event, false);
+                } else {
+                    this.invalidDateTimeFormat = false;
+                    this.isEnterPressedOnDateInput = true;
+                    this.bsDatePickerDirective.bsValue =  newVal;
+                }
                 this.toggleDpDropdown(event);
+            } else {
+                this.hideDatepickerDropdown();
             }
+        } else {
+            this.hideDatepickerDropdown();
         }
     }
 
@@ -222,6 +252,10 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        if (this.isOpen) {
+            setTimeout(() => displayInputElem.focus());
+        }
         this.setDataValue(newVal);
     }
 }

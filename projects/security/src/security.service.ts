@@ -1,6 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
 import { Location } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { AbstractHttpService, App, getClonedObject, hasCordova, triggerFn } from '@wm/core';
@@ -20,13 +19,11 @@ export class SecurityService {
 
     constructor(
         private injector: Injector,
-        private httpClient: HttpClient,
         private $http: AbstractHttpService,
         private routerService: Router,
         private activatedRoute: ActivatedRoute,
         private _location: Location
-    ) {
-    }
+    ) {}
 
     isLoaded() {
         return this.config;
@@ -38,11 +35,11 @@ export class SecurityService {
 
     load() {
         return new Promise((resolve, reject) => {
-            this.httpClient.get('./services/security/info').toPromise().then((response) => {
-                this.config = response;
+            this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
+                this.config = response.body;
                 this.lastLoggedInUser = getClonedObject(this.loggedInUser);
                 this.loggedInUser = this.config.userInfo;
-                resolve(response);
+                resolve(response.body);
             });
         });
     }

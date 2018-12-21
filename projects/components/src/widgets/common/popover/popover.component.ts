@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ContentChild, ElementRef, Injector, OnInit, TemplateRef, ViewChild, Inject } from '@angular/core';
+import { AfterViewInit, Component, ContentChild, ElementRef, Inject, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { PopoverDirective } from 'ngx-bootstrap';

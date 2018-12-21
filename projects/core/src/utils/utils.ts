@@ -339,13 +339,16 @@ export const getDateObj = (value): Date => {
     return dateObj;
 };
 
-export const addEventListenerOnElement = (_element: Element, excludeElement: Element, nativeElement: Element, eventType, successCB, life: EVENT_LIFE, isCapture = false) => {
+export const addEventListenerOnElement = (_element: Element, excludeElement: Element, nativeElement: Element, eventType, isDropDownDisplayEnabledOnInput, successCB, life: EVENT_LIFE, isCapture = false) => {
     const element: Element = _element;
     const eventListener = (event) => {
         if (excludeElement && (excludeElement.contains(event.target) || excludeElement === event.target)) {
             return;
         }
         if (nativeElement.contains(event.target)) {
+            if ($(event.target).is('input') && !isDropDownDisplayEnabledOnInput) {
+               return;
+            }
             element.removeEventListener(eventType, eventListener, isCapture);
             return;
         }
@@ -584,7 +587,8 @@ export const getValidDateObject = val => {
     } else {
         /*if the value is in HH:mm:ss format, it returns a wrong date. So append the date to the given value to get date*/
         if (!(new Date(val).getTime())) {
-            val = moment().format('YYYY-MM-DD') + ' ' + val;
+            val = moment((moment().format('YYYY-MM-DD') + ' ' + val), 'YYYY-MM-DD HH:mm:ss A');
+
         }
     }
     return new Date(moment(val).valueOf());

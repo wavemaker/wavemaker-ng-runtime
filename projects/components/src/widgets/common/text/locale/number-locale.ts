@@ -1,6 +1,6 @@
 import { Injector } from '@angular/core';
-import { Validator, AbstractControl } from '@angular/forms';
-import { getLocaleNumberSymbol, NumberSymbol, DecimalPipe } from '@angular/common';
+import { AbstractControl, Validator } from '@angular/forms';
+import { DecimalPipe, getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
 
@@ -53,14 +53,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // get a valid number form the text.
         const model = this.parseNumber(value.toString());
-        // if the number is valid update the model value.
+        // if the number is valid or if number is not in range update the model value.
         if (this.isValid(model)) {
             this.proxyModel = model;
             this.handleChange(model);
             // update the display value in the text box.
             this.updateDisplayText();
         } else {
-            this._onChange();
+            this.proxyModel = null;
+            this.handleChange(null);
         }
     }
 
@@ -81,13 +82,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private isValid(val: number): boolean {
-        if (_.isNaN(val)) {
+        // id number is infinite then consider it as invalid value
+        if (_.isNaN(val) || !_.isFinite(val)) {
             this.isInvalidNumber = true;
             return false;
         }
         if (val !== this.getValueInRange(val)) {
             this.numberNotInRange = true;
-            return false;
+            return true;
         }
         this.resetValidations();
         return true;
@@ -189,11 +191,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     protected onArrowPress($event, key) {
         $event.preventDefault();
-        if (this.readonly || this.isInvalidNumber) {
+        if (this.readonly || this.step === 0) {
             return;
         }
-        const step = (this.step && this.step > 0) ? this.step : 1;
-        let proxyModel = this.proxyModel || 0;
+        let proxyModel = this.proxyModel;
         let value;
 
         // if the number is not in range and when arrow buttons are pressed need to get appropriate number value.
@@ -203,9 +204,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             if (!_.isNaN(inputValue)) {
                value = this.getValueInRange(inputValue);
                proxyModel = inputValue;
+               this.resetValidations();
             }
         } else {
-            value = this.getValueInRange( proxyModel + (key === 'UP' ? step : -step));
+            if (_.isUndefined(proxyModel) || _.isNull(proxyModel)) {
+                proxyModel = value = this.getValueInRange( (this.minvalue || 0));
+                this.resetValidations();
+            } else {
+                value = this.getValueInRange( proxyModel + (key === 'UP' ? this.step : -this.step));
+            }
         }
         if ((key === 'UP' && proxyModel <= value) || (key === 'DOWN' && proxyModel >= value)) {
             const decimalRoundValue = Math.max(this.countDecimals(proxyModel), this.countDecimals(this.step));
@@ -213,12 +220,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             // update the modelProxy.
             this.proxyModel = _.round(value, decimalRoundValue);
             this.updateDisplayText();
-            this._onChange();
+            this.handleChange(this.proxyModel);
         }
     }
 
     /**
-     * method is called from the form widget. to check whether the value entered is valid or not.
+     * method is called from the from widget. to check whether the value entered is valid or not.
      * @returns {object}
      */
     public validate(c: AbstractControl) {
@@ -237,6 +244,32 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             };
         }
         return null;
+    }
+
+    protected validateInputEntry($event) {
+
+        // allow actions if control key is pressed or if backspace is pressed. (for Mozilla).
+        if ($event.ctrlKey || _.includes(['Backspace', 'ArrowRight', 'ArrowLeft', 'Tab'], $event.key)) {
+            return;
+        }
+
+        const validity = new RegExp(`^[\\d\\s,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
+        const inputValue = $event.target.value;
+        // validates if user entered an invalid character.
+        if (!validity.test($event.key)) {
+            return false;
+        }
+        // a decimal value can be entered only once in the input.
+        if (_.includes(inputValue, this.DECIMAL) && $event.key === this.DECIMAL) {
+            return false;
+        }
+        // 'e' can be entered only once in the input.
+        if (_.intersection(_.toArray(inputValue), ['e', 'E']).length && _.includes('eE', $event.key)) {
+            return false;
+        }
+        if (_.includes(inputValue, '+') &&  $event.key === '+') {
+            return false;
+        }
     }
 
     onEnter($event) {

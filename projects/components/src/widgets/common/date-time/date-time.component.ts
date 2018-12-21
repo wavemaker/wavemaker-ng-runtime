@@ -3,32 +3,19 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective, TimepickerComponent } from 'ngx-bootstrap';
 
-import {
-    addClass,
-    addEventListenerOnElement,
-    AppDefaults,
-    EVENT_LIFE,
-    FormWidgetType,
-    getDateObj,
-    getDisplayDateTimeFormat,
-    getFormattedDate,
-    getNativeDateObject
-} from '@wm/core';
+import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
-declare const moment, $;
+declare const moment, $, _;
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
 
 const CURRENT_DATE = 'CURRENT_DATE';
-
-declare const _;
 
 registerProps();
 @Component({
@@ -43,7 +30,7 @@ registerProps();
 export class DatetimeComponent extends BaseDateTimeComponent implements AfterViewInit, OnDestroy {
 
     /**
-     * The below properties prefixed with "bs" always holds the value that is selected from the datepicker.
+     * The below propeties prefixed with "bs" always holds the value that is selected from the datepicker.
      * The bsDateTimeValue = bsDateValue + bsTimeValue.
      */
     private bsDateTimeValue: any;
@@ -118,12 +105,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.cdRef.detectChanges();
     }
 
-    constructor(inj: Injector,
-                public datePipe: ToDatePipe,
-                private ngZone: NgZone,
-                private cdRef: ChangeDetectorRef,
-                private appDefaults: AppDefaults,
-                @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
+    constructor(
+        inj: Injector,
+        private ngZone: NgZone,
+        private cdRef: ChangeDetectorRef,
+        private appDefaults: AppDefaults,
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+    ) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
@@ -168,7 +156,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if ($event && $event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
         }
-        this.invokeOnTouched();
         this.addTimepickerClickListener(this.isTimeOpen);
     }
 
@@ -179,7 +166,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         const bodyElement = document.querySelector('body');
         setTimeout(() => {
             const dropdownElement = $(bodyElement).find('>bs-dropdown-container .dropdown-menu').get(0);
-            this.deregisterTimepickeEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', () => {
+            this.deregisterTimepickeEventListener = addEventListenerOnElement(bodyElement, dropdownElement, this.nativeElement, 'click', this.isDropDownDisplayEnabledOnInput(this.showdropdownon), () => {
                 this.toggleTimePicker(false);
             }, EVENT_LIFE.ONCE, true);
         }, 350);
@@ -194,12 +181,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     private hideTimepickerDropdown() {
+        this.invokeOnTouched();
         this.toggleTimePicker(false);
         if (this.deregisterTimepickeEventListener) {
             this.deregisterTimepickeEventListener();
         }
-        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
-        setTimeout(() => displayInputElem.focus());
     }
 
     /**
@@ -220,7 +206,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
         this.toggleTimePicker(false);
-        this.invokeOnTouched();
         this.bsDateValue ? this.activeDate = this.bsDateValue : this.activeDate = new Date();
         if (!this.bsDateValue) {
            this.hightlightToday();
@@ -232,6 +217,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to update the model
      */
     private onModelUpdate(newVal, type?) {
+        if (type === 'date') {
+            this.invalidDateTimeFormat = false;
+            if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
+               $(this.nativeElement).find('.display-input').val(this.displayValue);
+            }
+        }
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
@@ -273,6 +264,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.invokeEventCallback('click', {$event: $event});
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
+            $event.stopPropagation();
             return;
         }
         this.bsDatePickerDirective.toggle();
@@ -286,20 +278,20 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         const bodyElement = document.querySelector('body');
         setTimeout(() => {
             const bsDateContainerElement = bodyElement.querySelector(`.${this.dateContainerCls}`);
-            this.deregisterDatepickerEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', () => {
+            this.deregisterDatepickerEventListener = addEventListenerOnElement(bodyElement, bsDateContainerElement, this.nativeElement, 'click', this.isDropDownDisplayEnabledOnInput(this.showdropdownon), () => {
                 this.bsDatePickerDirective.hide();
             }, EVENT_LIFE.ONCE, true);
         }, 350);
     }
 
     private hideDatepickerDropdown() {
+        this.isDateOpen = false;
+        this.invokeOnTouched();
         this.bsDatePickerDirective.hide();
+        this.isEnterPressedOnDateInput = false;
         if (this.deregisterDatepickerEventListener) {
             this.deregisterDatepickerEventListener();
         }
-        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
-        setTimeout(() => displayInputElem.focus());
-
     }
 
     private onDateChange($event, isNativePicker) {
@@ -309,11 +301,17 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         let newVal = $event.target.value.trim();
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
+        // datetime pattern validation
+        // if invalid pattern is entered, device is showing an error.
+        if (!this.formatValidation(newVal, $event.target.value)) {
+            return;
+        }
         // min date and max date validation in mobile view.
         // if invalid dates are entered, device is showing an alert.
         if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
             return;
         }
+        this.invalidDateTimeFormat = false;
         this.onModelUpdate(newVal);
     }
 
@@ -328,9 +326,38 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
                 event.preventDefault();
-                this.isEnterPressedOnDateInput = true;
-                this.bsDatePickerDirective.bsValue = newVal;
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
+                const inputVal = event.target.value.trim();
+                if (inputVal && this.datepattern === 'timestamp') {
+                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                        this.invalidDateTimeFormat = true;
+                        this.invokeOnChange(this.datavalue, event, false);
+                    }
+                } else if (inputVal && inputVal !== formattedDate ) {
+                    this.invalidDateTimeFormat = true;
+                    this.invokeOnChange(this.datavalue, event, false);
+                } else {
+                    this.invalidDateTimeFormat = false;
+                    this.isEnterPressedOnDateInput = true;
+                    this.bsDatePickerDirective.bsValue =  newVal;
+                }
                 this.toggleDpDropdown(event);
+            } else {
+                this.hideDatepickerDropdown();
+                this.hideTimepickerDropdown();
+            }
+        } else {
+            this.hideDatepickerDropdown();
+            this.hideTimepickerDropdown();
+        }
+    }
+
+    private isValid(event) {
+        if (!event) {
+            const enteredDate = $(this.nativeElement).find('input').val();
+            const newVal = getNativeDateObject(enteredDate);
+            if (!this.formatValidation(newVal, enteredDate)) {
+                return;
             }
         }
     }
@@ -344,5 +371,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         super.onPropertyChange(key, nv, ov);
+    }
+
+    onInputBlur($event) {
+        if (!$($event.relatedTarget).hasClass('current-date')) {
+            this.invokeOnTouched();
+            this.invokeEventCallback('blur', {$event});
+        }
     }
 }

@@ -3,15 +3,7 @@ import { $appDigest, DataSource, DataType, debounce, FormWidgetType, getClonedOb
 
 import { FormComponent } from '../form.component';
 import { registerLiveFilterProps } from '../form.props';
-import {
-    applyFilterOnField,
-    fetchDistinctValues,
-    getDistinctValuesForField,
-    getEmptyMatchMode,
-    getEnableEmptyFilter,
-    getRangeFieldValue,
-    getRangeMatchMode
-} from '../../../../utils/data-utils';
+import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../../utils/data-utils';
 import { isDataSetWidget } from '../../../../utils/widget-utils';
 
 declare const _;
@@ -121,6 +113,7 @@ export class LiveFilterDirective {
     }
 
     clearFilter() {
+        this.form.resetFormState();
         this.form.formFields.forEach(filterField => {
             // Added check for range field
             if (!filterField.readonly && filterField.show) {
@@ -132,6 +125,7 @@ export class LiveFilterDirective {
                     filterField.maxValue = '';
                 } else {
                     filterField.value = '';
+                    filterField.resetDisplayInput();
                 }
             }
         });

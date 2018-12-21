@@ -26,19 +26,6 @@ const getValidLink = (link) => {
 
 export class DatasetAwareNavComponent extends StylableComponent {
 
-    constructor(inj: Injector, WIDGET_CONFIG) {
-        super(inj, WIDGET_CONFIG);
-        this.securityService = this.inj.get(SecurityService);
-        this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
-        this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');
-        this.binditemaction = this.nativeElement.getAttribute('itemaction.bind');
-        this.binditembadge = this.nativeElement.getAttribute('itembadge.bind');
-        this.binditemchildren = this.nativeElement.getAttribute('itemchildren.bind');
-        this.binditemid = this.nativeElement.getAttribute('itemid.bind');
-        this.binditemlink = this.nativeElement.getAttribute('itemlink.bind');
-        this.binduserrole = this.nativeElement.getAttribute('userrole.bind');
-    }
-
     public nodes: Array<NavNode> = [];
     public dataset: any;
     public itemicon: string;
@@ -66,8 +53,18 @@ export class DatasetAwareNavComponent extends StylableComponent {
 
     protected binditemid: string | null;
 
-    // debounce function for reset nodes functions.
-    private _resetNodes = _.debounce(this.resetNodes, 50);
+    constructor(inj: Injector, WIDGET_CONFIG) {
+        super(inj, WIDGET_CONFIG);
+        this.securityService = this.inj.get(SecurityService);
+        this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
+        this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');
+        this.binditemaction = this.nativeElement.getAttribute('itemaction.bind');
+        this.binditembadge = this.nativeElement.getAttribute('itembadge.bind');
+        this.binditemchildren = this.nativeElement.getAttribute('itemchildren.bind');
+        this.binditemid = this.nativeElement.getAttribute('itemid.bind');
+        this.binditemlink = this.nativeElement.getAttribute('itemlink.bind');
+        this.binduserrole = this.nativeElement.getAttribute('userrole.bind');
+    }
 
     /**
      * constructs individual node for the widget model.
@@ -160,6 +157,9 @@ export class DatasetAwareNavComponent extends StylableComponent {
         this.nodes = this.getNodes();
         $appDigest();
     }
+
+    // debounce function for reset nodes functions.
+    private _resetNodes = _.debounce(this.resetNodes, 50);
 
     onPropertyChange(key, nv, ov) {
         switch (key) {

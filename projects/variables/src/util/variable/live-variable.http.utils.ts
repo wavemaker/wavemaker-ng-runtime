@@ -4,6 +4,7 @@ import { VARIABLE_URLS } from '../../constants/variables.constants';
 import { httpService } from './variables.utils';
 
 declare const _;
+
 const isStudioMode = false;
 
 export const parseConfig = (serviceParams: any): any => {

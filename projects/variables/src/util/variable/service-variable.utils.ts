@@ -159,7 +159,8 @@ export class ServiceVariableUtils {
         paramValueInfo,
         params,
         securityDefnObj,
-        accessToken;
+        accessToken,
+        withCredentials;
 
         function getFormDataObj() {
             if (formData) {
@@ -216,6 +217,7 @@ export class ServiceVariableUtils {
             }
             return operationInfo.proxySettings.web;
         }());
+        withCredentials = operationInfo.proxySettings.withCredentials;
         url = isProxyCall ? relativePath : directPath;
 
         /* loop through all the parameters */
@@ -357,7 +359,8 @@ export class ServiceVariableUtils {
             'data': requestBody,
             'authDetails': authDetails,
             'isDirectCall': !isProxyCall,
-            'isExtURL': variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.REST
+            'isExtURL': variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.REST,
+            'withCredentials': withCredentials
         };
 
         return invokeParams;

@@ -6,7 +6,7 @@ import { AbstractI18nService } from '@wm/core';
 
 import { registerProps } from './number.props';
 import { IWidgetConfig } from '../../framework/types';
-import { provideAsNgValueAccessor, provideAsWidgetRef, provideAsNgValidators } from '../../../utils/widget-utils';
+import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { NumberLocale } from '../text/locale/number-locale';
 
 registerProps();

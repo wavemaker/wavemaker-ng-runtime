@@ -52,13 +52,10 @@ register('wm-list-action-template', (): IBuildTaskDef => {
             const btns = <Element[]> node.children
                 .filter(e => e instanceof Element && (<Element> e).name === 'wm-button');
 
-            // on leftactionpanel fullswipe i.e. towards right, first child action will be triggered similarly last child action for rightactionpanel.
-            // Hence get the first child for the left action template and last for right action template.
-            const template = btns.find((e, i) => (position === 'left' && i === 0) || (position === 'right' && i === btns.length - 1));
-            // assigning swipe-target-position on above buttons
-            if (template != null && template.attrs.find(attr => attr.name === 'on-tap')) {
-                copyAttribute(node, 'position', template, 'swipe-target-position');
-            }
+            // add swipe-position on button nodes to identify whether buttons are from left or right action templates
+            btns.forEach((btnNode) => {
+                copyAttribute(node, 'position', btnNode, 'swipe-position');
+            });
         },
         pre: (attrs, el) => {
             if (attrs.get('position') === 'left') {

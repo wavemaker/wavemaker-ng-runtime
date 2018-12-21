@@ -1,5 +1,4 @@
 import { getNgModelAttr } from '@wm/core';
-
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';

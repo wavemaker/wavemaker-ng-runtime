@@ -2,7 +2,7 @@
 </ng-container>
 
 <ng-template #timePickerTemplate>
-    <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" container="body" style="display: inherit" [title]="hint">
+    <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" container="body" style="display: inherit" [title]="hint">
         <input class="form-control app-textbox display-input" aria-label="Set the time"
                focus-target
                [tabindex]="tabindex"
@@ -17,7 +17,7 @@
                [required]="required"
                (click)="toggleDropdown($event)"
                (focus)="invokeOnFocus($event)"
-               (blur)="invokeOnTouched($event)"
+               (blur)="onInputBlur($event)"
                (change)="onDisplayTimeChange($event)"
                (keydown)="onDisplayKeydown($event)">
         <span class="input-group-btn dropdown-toggle">
@@ -36,6 +36,7 @@
                         [secondsStep]="secondsstep"
                         [mousewheel]="true"
                         [arrowkeys]="true"
+                        (isValid)="isValid($event)"
                         [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
         </div>
     </div>
@@ -45,7 +46,7 @@
            role="input"
            [value]="displayValue"
            [required]="required"
-           [disabled]="disabled || readonly || isCurrentDate"
+           [disabled]="disabled || readonly || isCurrentTime"
            (change)="onTimeChange($event)"
            (focus)="invokeOnFocus($event)"
            (blur)="invokeOnTouched($event)">

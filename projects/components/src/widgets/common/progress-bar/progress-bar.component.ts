@@ -7,6 +7,7 @@ import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './progress-bar.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { getDecimalCount, isPercentageValue, TYPE_CLASS_MAP } from './progress-utils';
 
 registerProps();
 
@@ -15,45 +16,12 @@ declare const _;
 const DEFAULT_CLS = 'progress app-progress';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progressbar', hostClass: DEFAULT_CLS};
 
-// This function returns the maximum number of decimal digits allowed.
-const getDecimalCount = val => {
-    val = val || '9';
-    val = val.replace(/\%$/, '');
-
-    const n = val.lastIndexOf('.');
-
-    return (n === -1) ? 0 : (val.length - n - 1);
-};
-
-// returns true if the given value contains '%'
-const isPercentageValue = (val): boolean => {
-    if (isString(val)) {
-        val = val.trim();
-        return val.charAt(val.length - 1) === '%';
-    }
-    return false;
-};
-
 // interface for the progress-bar info
 interface IProgressInfo {
     cls: string;
     progressBarWidth: string;
     displayValue: string;
 }
-
-// map of progress-bar type and classes
-const TYPE_CLASS_MAP = {
-    'default': '',
-    'default-striped': 'progress-bar-striped',
-    'success': 'progress-bar-success',
-    'success-striped': 'progress-bar-success progress-bar-striped',
-    'info': 'progress-bar-info',
-    'info-striped': 'progress-bar-info progress-bar-striped',
-    'warning': 'progress-bar-warning',
-    'warning-striped': 'progress-bar-warning progress-bar-striped',
-    'danger': 'progress-bar-danger',
-    'danger-striped': 'progress-bar-danger progress-bar-striped'
-};
 
 @Component({
     selector: '[wmProgressBar]',

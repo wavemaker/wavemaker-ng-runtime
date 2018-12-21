@@ -140,7 +140,7 @@ export class RemoteDataProvider implements IDataProvider {
             if (!_.isArray(data)) {
                 data = this.getTransformedData(config.datasource, data);
             }
-            // in case of no data received, nodeResolve the promise with empty array
+            // in case of no data received, resolve the promise with empty array
             if (!data.length) {
                 resolve({data: [], isLastPage: _isLastPage, hasMoreData: page > 1, isPaginatedData, page});
             } else {

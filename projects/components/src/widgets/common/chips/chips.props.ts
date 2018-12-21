@@ -44,3 +44,4 @@ export const registerProps = () => {
         chipsProps
     );
 };
+

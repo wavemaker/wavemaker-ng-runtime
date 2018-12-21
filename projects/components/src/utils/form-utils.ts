@@ -5,9 +5,7 @@ import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 import { ALLFIELDS } from './data-utils';
 import { ToDatePipe } from '../pipes/custom-pipes';
 
-declare const _;
-declare const $;
-declare const moment;
+declare const _, $, moment;
 
 const momentLocale = moment.localeData();
 const momentCalendarOptions = getClonedObject(momentLocale._calendar);

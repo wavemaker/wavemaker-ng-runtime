@@ -213,8 +213,9 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     }
 
     public onMenuItemSelect(args) {
-        args.$item = _.omit(args.$item, ['children', 'value']);
-        this.invokeEventCallback('select', args);
+        const {$event} = args;
+        const $item = args.$item.value;
+        this.invokeEventCallback('select', {$event, $item});
     }
 
     ngAfterViewInit() {

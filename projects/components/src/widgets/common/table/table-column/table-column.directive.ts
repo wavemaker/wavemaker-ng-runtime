@@ -1,37 +1,15 @@
 import { AfterContentInit, Attribute, ContentChild, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { Validators } from '@angular/forms';
 
-import {
-    $watch,
-    AppDefaults,
-    DataSource,
-    DataType,
-    debounce,
-    FormWidgetType,
-    getDisplayDateTimeFormat,
-    isDateTimeType,
-    isDefined
-} from '@wm/core';
+import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
 
 import { BaseComponent } from '../../base/base.component';
-import {
-    EDIT_MODE,
-    getDataTableFilterWidget,
-    getDefaultValue,
-    getEditModeWidget,
-    setHeaderConfigForTable
-} from '../../../../utils/live-utils';
+import { EDIT_MODE, getDataTableFilterWidget, getDefaultValue, getEditModeWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
 import { registerProps } from './table-column.props';
 import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
-import {
-    applyFilterOnField,
-    fetchRelatedFieldData,
-    getDistinctFieldProperties,
-    getDistinctValues,
-    getDistinctValuesForField
-} from '../../../../utils/data-utils';
+import { applyFilterOnField, fetchRelatedFieldData, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField } from '../../../../utils/data-utils';
 
 declare const _;
 
@@ -414,6 +392,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Set the props on the inline edit widget
     setInlineWidgetProp(widget, prop, nv) {
+        if (prop === 'datepattern' && this.editWidgetType === FormWidgetType.TIME) {
+            prop = 'timepattern';
+        }
         if (this[widget] && isDefined(nv)) {
             this[widget][prop] = nv;
         }

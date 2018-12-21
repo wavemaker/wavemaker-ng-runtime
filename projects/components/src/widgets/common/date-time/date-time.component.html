@@ -11,7 +11,7 @@
                [value]="displayValue"
                (click)="toggleDpDropdown($event)"
                (focus)="invokeOnFocus($event)"
-               (blur)="invokeOnTouched($event)"
+               (blur)="onInputBlur($event)"
                (change)="onDateChange($event)"
                [autofocus]="autofocus"
                [disabled]="disabled || readonly || isCurrentDate"
@@ -26,7 +26,7 @@
                    [bsConfig]="_dateOptions"
                    [isOpen]="isDateOpen"
                    (onShown)="onDatePickerOpen()"
-                   (onHidden)="isDateOpen = !isDateOpen;"
+                   (onHidden)="hideDatepickerDropdown()"
                    #datepicker=bsDatepicker
                    bsDatepicker
                    [isDisabled]="disabled || readonly || isCurrentDate"
@@ -58,6 +58,7 @@
                         [secondsStep]="secondsstep"
                         [mousewheel]="true"
                         [arrowkeys]="true"
+                        (isValid)="isValid($event)"
                         [showSeconds]="showseconds" (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
         </div>
     </div>

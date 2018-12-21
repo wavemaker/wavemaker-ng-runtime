@@ -60,6 +60,5 @@ export class MenuAdapterComponent extends StylableComponent implements AfterView
                 subscriber.unsubscribe();
             }
         });
-
     }
 }

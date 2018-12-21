@@ -6,6 +6,7 @@ import { BsDatepickerModule, DatepickerModule, BsDropdownModule, ModalModule, Pr
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxMaskModule } from 'ngx-mask';
+import { NgCircleProgressModule } from 'ng-circle-progress';
 
 import { SecurityModule } from '@wm/security';
 
@@ -30,6 +31,7 @@ import { ChartComponent } from './widgets/common/chart/chart.component';
 import { CheckboxComponent } from './widgets/common/checkbox/checkbox.component';
 import { CheckboxsetComponent } from './widgets/common/checkboxset/checkboxset.component';
 import { ChipsComponent } from './widgets/common/chips/chips.component';
+import { CircleProgressBarComponent } from './widgets/common/progress-bar/circle-progress-bar/circle-progress-bar.component';
 import { ColorPickerComponent } from './widgets/common/color-picker/color-picker.component';
 import { CompositeDirective } from './widgets/common/composite/composite.directive';
 import { ConfirmDialogComponent } from './widgets/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -148,6 +150,7 @@ const wmComponents = [
     CarouselTemplateDirective,
     ChartComponent,
     CheckboxComponent,
+    CircleProgressBarComponent,
     ColorPickerComponent,
     CompositeDirective,
     ConfirmDialogComponent,
@@ -276,6 +279,7 @@ export const modalModule: ModuleWithProviders = ModalModule.forRoot();
 export const ngxMaskModule: ModuleWithProviders = NgxMaskModule.forRoot();
 export const carouselModule: ModuleWithProviders = CarouselModule.forRoot();
 export const popoverModule: ModuleWithProviders = PopoverModule.forRoot();
+export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModule.forRoot({});
 
 @NgModule({
     imports: [
@@ -293,7 +297,8 @@ export const popoverModule: ModuleWithProviders = PopoverModule.forRoot();
         modalModule,
         ngxMaskModule,
         carouselModule,
-        popoverModule
+        popoverModule,
+        ngCircleProgressModule
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],

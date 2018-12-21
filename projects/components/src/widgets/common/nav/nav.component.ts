@@ -1,7 +1,7 @@
 import { Attribute, ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $parseEvent, addClass, App, getRouteNameFromLink, getUrlParams, openLink, removeClass } from '@wm/core';
+import { $parseEvent, addClass, App, getRouteNameFromLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
@@ -46,6 +46,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         inj: Injector,
         private cdRef: ChangeDetectorRef,
         private router: Router,
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
         private app: App,
         @Attribute('select.event') selectEventCB
     ) {
@@ -74,9 +75,9 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
 
         addClass(liRef, 'active');
 
-        this.selecteditem = _.omit(item, ['children', 'value']);
+        this.selecteditem = item;
 
-        this.invokeEventCallback('select', {$event, $item: this.selecteditem});
+        this.invokeEventCallback('select', {$event, $item: item.value});
 
         let itemLink = item.link;
         const itemAction = item.action;
@@ -85,7 +86,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
                 this.itemActionFn = $parseEvent(itemAction);
             }
 
-            // this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
+            this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
         }
         if (itemLink) {
             if (itemLink.startsWith('#/')) {

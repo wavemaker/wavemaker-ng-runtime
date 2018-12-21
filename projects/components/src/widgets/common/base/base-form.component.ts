@@ -23,5 +23,4 @@ export abstract class BaseFormComponent extends StylableComponent {
     protected updatePrevDatavalue(val: any) {
         this.prevDatavalue = val;
     }
-
 }

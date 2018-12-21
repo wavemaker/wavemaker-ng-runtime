@@ -1,7 +1,5 @@
 import { navigationService } from '../variable/variables.utils';
 
-declare const _;
-
 /**
  * Handles variable navigation operations
  * @param variable

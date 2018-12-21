@@ -5,7 +5,6 @@ import { AbstractDialogService, App, DataSource, triggerFn } from '@wm/core';
 import { ListComponent } from '../../list/list.component';
 import { Live_Operations, performDataOperation } from '../../../../utils/data-utils';
 
-
 @Directive({
     selector: '[wmLiveActions]'
 })

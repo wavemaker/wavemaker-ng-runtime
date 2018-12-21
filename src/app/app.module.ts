@@ -39,7 +39,6 @@ import { MetadataResolve } from '../framework/resolves/metadata.resolve';
 import { AppJSResolve } from '../framework/resolves/app-js.resolve';
 import { I18nResolve } from '../framework/resolves/i18n.resolve';
 import { AppManagerService } from '../framework/services/app.manager.service';
-import { AppResourceManagerService } from '../framework/services/app-resource-manager.service';
 import { PrefabManagerService } from '../framework/services/prefab-manager.service';
 import { CustomToasterComponent } from '../framework/components/custom-toaster.component';
 import { PartialContainerDirective } from '../framework/directives/partial-container.directive';

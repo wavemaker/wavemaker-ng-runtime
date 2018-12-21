@@ -685,8 +685,8 @@ $.widget('wm.datatable', {
         });
         // TODO: Variable loading status is getting updated before dataset update. This is resulting in loader going off before data is rendered.
         // Need to update code with suitable fix. For now 250ms is added as workaround
-        this._setStatus = _.debounce(function () {
-            this.__setStatus();
+        this._setStatus = _.debounce(function (isCreated) {
+            this.__setStatus(isCreated);
         }, 100);
         this._debounceOnEnter = _.debounce(function ($target, $row, quickEdit, event) {
             this._onEnter($target, $row, quickEdit, event);
@@ -1813,6 +1813,10 @@ $.widget('wm.datatable', {
     /* Handles table sorting. */
     sortHandler: function (e) {
         e.stopImmediatePropagation();
+        // If header span is clicked and column selection is enabled, call header click
+        if ($(e.target).hasClass('header-data') && this.options.enableColumnSelection) {
+            this.headerClickHandler(e);
+        }
         var $e = $(e.target),
             $th = $e.closest('th.app-datagrid-header-cell'),
             id = $th.attr('data-col-id'),
@@ -1886,7 +1890,7 @@ $.widget('wm.datatable', {
         $row.find('[data-field-name]').each(function () {
             var $input = $(this),
                 fieldName = $input.attr('data-field-name') + '_new';
-            self.options.setFieldValue(fieldName, rowData[fieldName] || '')
+            self.options.setFieldValue(fieldName, rowData[$input.attr('data-field-name')] || '')
         });
         self.options.safeApply();
         self.setFocusOnElement(undefined, $row, true);
@@ -2065,7 +2069,7 @@ $.widget('wm.datatable', {
                 var $target = $(e.target),
                     $row = $target.closest('tr'),
                     $relatedTarget = $(e.relatedTarget),
-                    invalidTargets = '.row-editing:not(".always-new-row"), .row-action-button, .app-datagrid-cell, .caption';
+                    invalidTargets = '.row-editing:not(".always-new-row"), .row-action-button, .app-datagrid-cell, .caption, button.btn-time, button.btn-date';
 
                 //Check if the focus out element is outside the grid or some special elements
                 function isInvalidTarget() {
@@ -2090,14 +2094,16 @@ $.widget('wm.datatable', {
                 if ($relatedTarget.attr('focus-target') === '' || isInvalidTarget()) {
                     return;
                 }
-                self.toggleEditRow(e, {
-                    'action': 'save',
-                    'noMsg': true,
-                    'success': function (skipFocus, error, isNewRow) {
-                        if (!isNewRow) {
-                            self.editSuccessHandler(skipFocus, error, e, $row);
+                self.options.timeoutCall(function () {
+                    self.toggleEditRow(e, {
+                        'action': 'save',
+                        'noMsg': true,
+                        'success': function (skipFocus, error, isNewRow) {
+                            if (!isNewRow) {
+                                self.editSuccessHandler(skipFocus, error, e, $row);
+                            }
                         }
-                    }
+                    });
                 });
             });
         }
@@ -2350,7 +2356,7 @@ $.widget('wm.datatable', {
         } else {
             this.dataStatus.state = this.dataStatus.state || 'loading';
             this.dataStatus.message = this.dataStatus.message || this.options.dataStates.loading;
-            this.setStatus(this.dataStatus.state, this.dataStatus.message);
+            this.setStatus(this.dataStatus.state, this.dataStatus.message, isCreated);
         }
         this.gridBody = this.gridElement.find('tbody');
         this._findAndReplaceCompiledTemplates();
@@ -2445,7 +2451,7 @@ $.widget('wm.datatable', {
         this.addOrRemoveScroll();
     },
     //This method is used to show or hide data loading/ no data found overlay
-    setStatus: function (state, message) {
+    setStatus: function (state, message, isCreated) {
         var $newRow;
         //If state is nodata and always new row is present, change state to ready
         if (state === 'nodata') {
@@ -2458,9 +2464,9 @@ $.widget('wm.datatable', {
         this.dataStatus.message = message || this.options.dataStates[state];
         //First time call the status function, afterwards use debounce with 100 ms wait
         if (this._setStatusCalled) {
-            this._setStatus();
+            this._setStatus(isCreated);
         } else {
-            this.__setStatus();
+            this.__setStatus(isCreated);
             this._setStatusCalled = true;
         }
     },

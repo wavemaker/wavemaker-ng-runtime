@@ -184,7 +184,7 @@ const downloadFilefromResponse = (response, headerFn, success, error) => {
     blob = new Blob([response], { type: type });
 
     if (typeof window.navigator.msSaveBlob !== 'undefined') {
-        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer nodeResolve as the data backing the URL has been freed."
+        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
         if (window.navigator.msSaveBlob(blob, filename)) {
             triggerOnTimeout(success);
         } else {
@@ -202,7 +202,7 @@ const downloadFilefromResponse = (response, headerFn, success, error) => {
             if (typeof a.download === 'undefined') {
                 reader = new FileReader();
                 reader.onloadend = function () {
-                    let url   = reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
+                    const url = reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
                     popup = window.open(url, '_blank');
                     if (!popup) {
                         window.location.href = url;
@@ -363,11 +363,8 @@ const downloadThroughAnchor = (config, success, error) => {
         'target' : 'WebService',
         'action' : 'invokeRuntimeRestCall',
         'method' : method,
-        'config' : {
-            'url'    : url,
-            'method' : method,
-            'headers': headers
-        },
+        'url'    : url,
+        'headers': headers,
         'data'   : data,
         'responseType': 'arraybuffer'
     }, function (response, httpconfig) {

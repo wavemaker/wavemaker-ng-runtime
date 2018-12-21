@@ -46,15 +46,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this.multiple = true;
-
-        // If groupby is set, get the groupedData from the datasetItems.
-        if (this.groupby) {
-            const datasetSubscription = this.dataset$.subscribe(() => {
-                this.groupedData = groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults);
-            });
-            this.registerDestroyListener(() => datasetSubscription.unsubscribe());
-
-        }
         this.handleHeaderClick = noop;
     }
 
@@ -96,6 +87,17 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         }
     }
 
+    private getGroupedData() {
+        return this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults) : [];
+    }
+
+    private datasetSubscription() {
+        const datasetSubscription = this.dataset$.subscribe(() => {
+            this.groupedData = this.getGroupedData();
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+    }
+
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
@@ -105,7 +107,9 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         if (key === 'layout') {
             switchClass(this.nativeElement, nv, ov);
         } else if (key === 'groupby' || key === 'match') {
-            this.groupedData = this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults) : [];
+            this.datasetSubscription();
+            // If groupby is set, get the groupedData from the datasetItems.
+            this.groupedData = this.getGroupedData();
         } else {
             super.onPropertyChange(key, nv, ov);
         }

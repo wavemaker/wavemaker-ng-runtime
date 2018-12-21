@@ -1,13 +1,11 @@
-declare const _;
-
 class InflightQueue {
     requestsQueue = new Map();
 
     /**
      * pushes the process against a variable in its queue
      * @param variable
-     * @param {{nodeResolve: (value?: any) => void; reject: (reason?: any) => void}} param2
-     * the nodeResolve callback will be called on
+     * @param {{resolve: (value?: any) => void; reject: (reason?: any) => void}} param2
+     * the resolve callback will be called on
      */
     private addToQueue(variable: any, param2: {resolve: (value?: (any)) => void; reject: (reason?: any) => void}) {
         if (this.requestsQueue.has(variable)) {
@@ -31,7 +29,7 @@ class InflightQueue {
      * clears the queue against a variable
      * @param variable
      */
-    private clear = (variable) => {
+    private clear(variable) {
         this.requestsQueue.delete(variable);
     }
 
@@ -84,7 +82,7 @@ class InflightQueue {
                 this.clear(variable);
                 break;
         }
-    };
+    }
 
     /**
      * initializes the queue against a variable and makes the first process call

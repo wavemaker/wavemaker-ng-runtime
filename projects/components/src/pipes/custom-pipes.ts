@@ -220,6 +220,7 @@ export class FileExtensionFromMimePipe implements PipeTransform {
         const typeMapping = {
             'audio/aac': '.aac',
             'application/x-abiword': '.abw',
+            'application/vnd.android.package-archive': '.apk',
             'video/x-msvideo': '.avi',
             'application/vnd.amazon.ebook': '.azw',
             'application/octet-stream': '.bin',

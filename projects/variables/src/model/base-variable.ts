@@ -97,5 +97,4 @@ export abstract class BaseVariable {
     getPrefabName() {
         return this._context && this._context.prefabName;
     }
-
 }

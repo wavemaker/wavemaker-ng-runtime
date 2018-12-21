@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { loadScripts, loadStyleSheets, stringStartsWith } from '@wm/core';
 import { MetadataService } from '@wm/variables';
 
-import { AppResourceManagerService } from './app-resource-manager.service';
 import { getPrefabConfig } from '../util/page-util';
 
 declare const _;
@@ -24,7 +23,6 @@ const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
 export class PrefabManagerService {
 
     constructor(
-        private resourceMngr: AppResourceManagerService,
         private $metadata: MetadataService
     ) {}
 

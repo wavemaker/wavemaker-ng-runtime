@@ -1,4 +1,4 @@
-import {isMobileApp} from '@wm/core';
+import { isMobileApp } from '@wm/core';
 
 import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 

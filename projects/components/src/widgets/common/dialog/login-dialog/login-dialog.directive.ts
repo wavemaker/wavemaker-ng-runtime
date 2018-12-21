@@ -7,7 +7,6 @@ import { MessageComponent } from '../../message/message.component';
 @Directive({
     selector: '[wmDialog][wmLoginDialog]'
 })
-
 export class LoginDialogDirective {
     @ContentChildren(FormComponent) formCmp: QueryList<FormComponent>;
     @ContentChild(MessageComponent) msgCmp: MessageComponent;

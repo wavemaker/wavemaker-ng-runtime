@@ -4,21 +4,44 @@ import { Subject } from 'rxjs';
 
 import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean } from '@wm/core';
 
-import {
-  convertDataToObject,
-  DataSetItem,
-  extractDataAsArray,
-  getOrderedDataset,
-  getUniqObjsByDataField,
-  transformData,
-  transformDataWithKeys
-} from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 import { ALLFIELDS } from '../../../utils/data-utils';
 
 declare const _;
 
 export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent {
+    public dataset: any;
+    public datafield: string;
+    public displayfield: string;
+    public displaylabel: string;
+    public displayimagesrc: string;
+    public displayexpression: string;
+    public usekeys: boolean;
+    public orderby: string;
+    public multiple: boolean;
+    public readonly: boolean;
+
+    public binddisplayexpression: string;
+    public binddisplayimagesrc: string;
+    public binddisplaylabel: string;
+
+    public displayValue: Array<string> | string;
+
+    protected datasetItems: DataSetItem[] = [];
+    public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
+    protected dataset$ = new Subject();
+    protected datavalue$ = new Subject();
+
+    protected _modelByKey: any;
+    public _modelByValue: any;
+    public _defaultQueryInvoked: boolean; // for search/chips if datavalue is obtained from the default n/w call then set to true and do not update the modelByKeys.
+
+    // this field contains the initial datavalue which needs to be processed once the dataset is available
+    public toBeProcessedDatavalue: any;
+    private readonly _debouncedInitDatasetItems: Function;
+    protected allowempty: boolean = true;
+    public compareby: any;
 
     protected get modelByKey() {
         return this._modelByKey;
@@ -64,54 +87,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             $appDigest();
         }, 150);
     }
-    public dataset: any;
-    public datafield: string;
-    public displayfield: string;
-    public displaylabel: string;
-    public displayimagesrc: string;
-    public displayexpression: string;
-    public usekeys: boolean;
-    public orderby: string;
-    public multiple: boolean;
-    public readonly: boolean;
-
-    public binddisplayexpression: string;
-    public binddisplayimagesrc: string;
-    public binddisplaylabel: string;
-
-    public displayValue: Array<string> | string;
-
-    protected datasetItems: DataSetItem[] = [];
-    public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
-    protected dataset$ = new Subject();
-    protected datavalue$ = new Subject();
-
-    protected _modelByKey: any;
-    public _modelByValue: any;
-    public _defaultQueryInvoked: boolean; // for search/chips if datavalue is obtained from the default n/w call then set to true and do not update the modelByKeys.
-
-    // this field contains the initial datavalue which needs to be processed once the dataset is available
-    public toBeProcessedDatavalue: any;
-    private readonly _debouncedInitDatasetItems: Function;
-    protected allowempty = true;
-    public compareby: any;
-
-    protected readonly _debounceDatavalueUpdation = _.debounce((values) => {
-        // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in toBeProcessedDatavalue.
-        if (!isDefined(this._modelByKey) || (_.isArray(this._modelByKey) && !this._modelByKey.length)) {
-            this.toBeProcessedDatavalue = values;
-            this._modelByValue = undefined;
-        } else if (isDefined(this.toBeProcessedDatavalue)) {
-            // obtain the first array value when multiple is set to false.
-            // set the modelByValue only when undefined.
-            if (!isDefined(this._modelByValue)) {
-                this._modelByValue = (!this.multiple && _.isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
-            }
-            this.toBeProcessedDatavalue = undefined;
-        }
-
-        this.initDisplayValues();
-    }, 150);
 
     /**
      * This function sets the _datavalue value from the model and sets the selected flag when item is found.
@@ -223,6 +198,23 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         // because datavalue is updated later when new dataset is available.
         this._debounceDatavalueUpdation(values);
     }
+
+    protected readonly _debounceDatavalueUpdation = _.debounce((values) => {
+        // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in toBeProcessedDatavalue.
+        if (!isDefined(this._modelByKey) || (_.isArray(this._modelByKey) && !this._modelByKey.length)) {
+            this.toBeProcessedDatavalue = values;
+            this._modelByValue = undefined;
+        } else if (isDefined(this.toBeProcessedDatavalue)) {
+            // obtain the first array value when multiple is set to false.
+            // set the modelByValue only when undefined.
+            if (!isDefined(this._modelByValue)) {
+                this._modelByValue = (!this.multiple && _.isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
+            }
+            this.toBeProcessedDatavalue = undefined;
+        }
+
+        this.initDisplayValues();
+    }, 150);
 
     // Updates the displayValue property.
     protected initDisplayValues() {

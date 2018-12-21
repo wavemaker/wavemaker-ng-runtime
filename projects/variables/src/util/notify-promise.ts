@@ -36,7 +36,7 @@ export class NotifyPromise {
     }
 }
 
-// let newPromise = new PromiseWithNotify((nodeResolve, reject, notify) => {
+// let newPromise = new PromiseWithNotify((resolve, reject, notify) => {
 //     setInterval(notify, 1000);
 // })
 // console.log(newPromise)

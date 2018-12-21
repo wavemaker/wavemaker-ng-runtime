@@ -24,6 +24,7 @@ export class PrefabDirective extends StylableComponent {
 
     widgetType: string;
     prefabName: string;
+    name: string;
     propsReady: Function;
 
     constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName) {
@@ -34,8 +35,14 @@ export class PrefabDirective extends StylableComponent {
 
         this.prefabName = prefabName;
         this.widgetType = widgetType;
+        this.name = elRef.nativeElement.getAttribute('name');
 
         styler(this.nativeElement, this);
+
+        // Call on property change on name to set name attribute on element.
+        this.registerReadyStateListener(() => {
+            super.onPropertyChange('name', this.name);
+        });
     }
 
     onStyleChange(key: string, nv: any, ov: any) {

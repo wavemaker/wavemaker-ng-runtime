@@ -5,5 +5,4 @@ import { OAuthService } from './oAuth.service';
 @NgModule({
     providers: [OAuthService]
 })
-export class OAuthModule {
-}
+export class OAuthModule {}

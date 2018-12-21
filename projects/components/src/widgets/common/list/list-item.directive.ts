@@ -3,7 +3,7 @@ import { NgForOfContext } from '@angular/common';
 
 import { Observable, Subject } from 'rxjs';
 
-import { $watch, App } from '@wm/core';
+import { $invokeWatchers, $watch, App } from '@wm/core';
 
 import { ListComponent } from './list.component';
 import { WidgetRef } from '../../framework/types';
@@ -79,9 +79,9 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     }
 
     private triggerWMEvent(eventName) {
+        $invokeWatchers(true);
         this.app.notify('wm-event', {eventName, widgetName: this.listComponent.name, row: this.listComponent.selecteditem});
     }
-
 
     private setUpCUDHandlers() {
         const $editItem = this.nativeElement.querySelector('.edit-list-item');

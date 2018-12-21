@@ -1,10 +1,12 @@
-import { AfterViewInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
 import { Validator } from '@angular/forms';
-import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
 import { Subscription } from 'rxjs';
 
-import { getDateObj, isString, setAttr } from '@wm/core';
+import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
+
 import { BaseFormCustomComponent } from './base-form-custom.component';
+import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
+import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 declare const moment, _, $;
 
@@ -28,9 +30,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected timepattern: string;
     protected showseconds: boolean;
     protected ismeridian: boolean;
+    protected datePipe;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
+    protected invalidDateTimeFormat: boolean;
 
     private dateOnShowSubscription: Subscription;
 
@@ -39,6 +43,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
+
+    constructor(inj: Injector, WIDGET_CONFIG) {
+        super(inj, WIDGET_CONFIG);
+        this.datePipe = this.inj.get(ToDatePipe);
+    }
+
 
     /**
      * returns true if the input value is default (i.e open date picker on input click)
@@ -58,7 +68,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
+    resetDisplayInput() {
+        $(this.nativeElement).find('.display-input').val('');
+    }
+
     public validate() {
+        if (this.invalidDateTimeFormat) {
+            return {
+                invalidDateTimeFormat: {
+                    valid: false
+                }
+            };
+        }
         if (!_.isUndefined(this.dateNotInRange) && this.dateNotInRange) {
             return {
                 dateNotInRange: {
@@ -77,28 +98,81 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     /**
-     * This method is used to validate min date and max date
+     * This method is used to validate date pattern and time pattern
+     * If user selects one pattern in design time and if he tries to enter the date in another pattern then the device is throwing an error
+     */
+    protected formatValidation(newVal, inputVal) {
+        const pattern = this.datepattern || this.timepattern;
+        const formattedDate = getFormattedDate(this.datePipe, newVal, pattern);
+        inputVal = inputVal.trim();
+        if (inputVal) {
+            if (pattern === 'timestamp') {
+                if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    this.invalidDateTimeFormat = true;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    return false;
+                }
+            } else {
+                if (inputVal !== formattedDate ) {
+                    this.invalidDateTimeFormat = true;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    return false;
+                }
+            }
+
+        }
+        return true;
+    }
+
+    /**
+     * This method is used to validate min date, max date, exclude dates and exclude days
      * In mobile if invalid dates are entered, device is showing an alert.
      * In web if invalid dates are entered, device is showing validation message.
      */
     protected minDateMaxDateValidationOnInput(newVal, $event?: Event, displayValue?: string, isNativePicker?: boolean) {
-        const dateFormat = 'YYYY-MM-DD';
         if (newVal) {
             newVal = moment(newVal).startOf('day').toDate();
-            if (this.mindate && newVal < moment(this.mindate, dateFormat).toDate()) {
+            const minDate = moment(getDateObj(this.mindate)).startOf('day').toDate();
+            const maxDate =  moment(getDateObj(this.maxdate)).startOf('day').toDate();
+            if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
+                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
-            if (this.maxdate && newVal > moment(this.maxdate, dateFormat).toDate()) {
+            if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
                 this.dateNotInRange = true;
+                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
+            }
+            if (this.excludedates) {
+                let excludeDatesArray;
+                if (isString(this.excludedates)) {
+                    excludeDatesArray = _.split(this.excludedates, ',');
+                } else {
+                    excludeDatesArray = this.excludedates;
+                }
+                excludeDatesArray = excludeDatesArray.map(d => getFormattedDate(this.datePipe, d, this.datepattern));
+                if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, newVal, this.datepattern)) > -1) {
+                    this.dateNotInRange = true;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    return;
+                }
+            }
+            if (this.excludedays) {
+                const excludeDaysArray =  _.split(this.excludedays, ',');
+                if (excludeDaysArray.indexOf(newVal.getDay().toString()) > -1) {
+                    this.dateNotInRange = true;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    return;
+                }
             }
         }
 
         if (!isNativePicker) {
             this.dateNotInRange = false;
+            this.invokeOnChange(this.datavalue, undefined, false);
         }
     }
 
@@ -158,7 +232,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param timePeriod - String value decides to load other month days or other month or other year
      */
     private goToOtherMonthOryear(btnClass, timePeriod) {
-        $(`.bs-datepicker-head .${btnClass}`).trigger( 'click' );
+        const $node = $(`.bs-datepicker-head .${btnClass}`);
+        if ($node.attr('disabled')) {
+            return;
+        }
+        $node.trigger('click');
         if (timePeriod === 'days') {
             this.loadDays();
         } else if (timePeriod === 'month') {
@@ -207,12 +285,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const activeMonthOrYear = $(`.bs-datepicker-head .current`).first().text();
         const datePickerBody = $('.bs-datepicker-body');
         if (datePickerBody.find('table.months').length > 0) {
-            this.loadMonths();
+            if (_.parseInt(activeMonthOrYear) !== this.activeDate.getFullYear()) {
+                this.loadMonths();
+            }
             const newDate = new Date(_.parseInt(activeMonthOrYear), this.activeDate.getMonth(), this.activeDate.getDate());
             this.setActiveMonthFocus(newDate, true);
         } else if (datePickerBody.find('table.days').length > 0) {
-            this.loadDays();
             const newMonth = months.indexOf(activeMonthOrYear);
+            if (newMonth !== this.activeDate.getMonth()) {
+                this.loadDays();
+            }
             const newDate = new Date(this.activeDate.getFullYear(), newMonth, 1);
             this.setActiveDateFocus(newDate, true);
         }
@@ -268,6 +350,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             // Check for Shift+Tab key or Tab key or escape
             if (action === 'shift.tab' || action === 'escape' || (action === 'tab' && !isDateTime)) {
                 this.elementScope.hideDatepickerDropdown();
+                const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
+                setTimeout(() => displayInputElem.focus());
             }
             if (action === 'tab' && isDateTime) {
                 this.bsDatePickerDirective.hide();
@@ -328,6 +412,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 }
                 $(document.activeElement).click();
                 this.elementScope.hideDatepickerDropdown();
+                const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
+                setTimeout(() => displayInputElem.focus());
             }
         });
     }
@@ -503,6 +589,20 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private isValidDate(date) {
         return date && date instanceof Date && !isNaN(date.getTime());
     }
+
+    /**
+     * This function checks whether the given time is valid or not
+     */
+    private timeFormatValidation() {
+        const enteredDate = $(this.nativeElement).find('input').val();
+        const newVal = getNativeDateObject(enteredDate);
+        if (!this.formatValidation(newVal, enteredDate)) {
+            return;
+        }
+        this.invalidDateTimeFormat = false;
+        this.invokeOnChange(this.datavalue, undefined, false);
+    }
+
     /**
      * This function sets the events to given element
      * @param $el - element on which the event is added
@@ -557,7 +657,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                         elementScope.bsTimeValue = elementScope.minTime;
                     }
                 }
-            } else if ($target.hasClass('btn-default')) {
+                if (action === 'tab') {
+                   this.invalidDateTimeFormat = false;
+                   this.invokeOnChange(this.datavalue, undefined, false);
+                   const pattern = this.datepattern || this.timepattern;
+                    if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, pattern) === elementScope.displayValue) {
+                        $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
+                    }
+                }
+                if (action === 'arrowdown' ||  action === 'arrowup') {
+                    this.timeFormatValidation();
+                }
+             } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {
                     elementScope.setIsTimeOpen(false);
                     this.focus();
@@ -574,6 +685,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     elementScope.bsTimeValue = elementScope.minTime;
                 }
             }
+            this.timeFormatValidation();
         });
     }
 
@@ -603,6 +715,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'maxdate') {
            this._dateOptions.maxDate = (nv === CURRENT_DATE) ?  this.maxdate = new Date() : getDateObj(nv);
+            this.minDateMaxDateValidationOnInput(this.datavalue);
+        }  else if (key === 'excludedates' || key === 'excludedays') {
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);

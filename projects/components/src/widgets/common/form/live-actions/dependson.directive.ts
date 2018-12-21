@@ -18,6 +18,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
     private form;
     private currentOp;
     private formSubscription;
+    private eventSubscription;
 
     constructor(
         @Attribute('dialogid') dialogId: string,
@@ -32,7 +33,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
         }
         this.dependson = dependson;
         // Listen to the wm-event called from subscribed widgets
-        this.app.subscribe('wm-event', this.handleEvent.bind(this));
+        this.eventSubscription = this.app.subscribe('wm-event', this.handleEvent.bind(this));
     }
 
     private openFormDialog() {
@@ -110,6 +111,9 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
     ngOnDestroy() {
         if (this.formSubscription) {
             this.formSubscription.unsubscribe();
+        }
+        if (this.eventSubscription) {
+            this.eventSubscription();
         }
     }
 }
