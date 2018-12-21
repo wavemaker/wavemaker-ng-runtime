@@ -61,6 +61,8 @@ export function performDataOperation(dataSource, requestData, options): Promise<
             dataSource.execute(DataSource.Operation.INVOKE, {
                 'skipNotification': true
             }).then(res, rej);
+        } else {
+            res(requestData);
         }
     });
 }
