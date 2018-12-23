@@ -52,6 +52,7 @@ import { AccessrolesDirective } from '../framework/directives/accessroles.direct
 import initAppMeta from './app-meta';
 import loadPrefabConfigs from './prefabs/prefab-config';
 import { appRoutes } from './app-routes';
+import { MobileAppModule } from '../mobile/mobile-app.module';
 
 initAppMeta();
 loadPrefabConfigs();
@@ -106,7 +107,9 @@ console.log(...getAllUserDefinedComponentRefs());
         SecurityModule,
         OAuthModule,
         VariablesModule,
-        HttpServiceModule
+        HttpServiceModule,
+
+        MobileAppModule
     ],
     providers: [
         {provide: App, useClass: AppRef},
@@ -143,5 +146,4 @@ console.log(...getAllUserDefinedComponentRefs());
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
-export class AppModule {
-}
+export class AppModule {}

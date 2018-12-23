@@ -9,6 +9,7 @@ tar -cf dist/app-skeleton.tar \
     ./libraries/swipey/ \
     ./libraries/transpiler/ \
     ./libraries/variables/ \
-    ./src angular.json \
+    ./src \
+    angular.json \
     package.json  \
     tsconfig.json
