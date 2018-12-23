@@ -47,6 +47,7 @@ import { PrefabDirective } from '../framework/directives/prefab.directive';
 import { AppVariablesResolve } from '../framework/resolves/app-variables.resolve';
 import { AppSpinnerComponent } from '../framework/components/app-spinner.component';
 import { AuthorizationResolve } from '../framework/resolves/authorization.resolve';
+import { AccessrolesDirective } from '../framework/directives/accessroles.directive';
 
 import initAppMeta from './app-meta';
 import loadPrefabConfigs from './prefabs/prefab-config';
@@ -69,12 +70,12 @@ export function setAngularLocale(I18nService) {
     return I18nService.isAngularLocaleLoaded() ? I18nService.getSelectedLocale() : I18nService.getDefaultSupportedLocale();
 }
 
-
 console.log(appRoutes);
 console.log(...getAllUserDefinedComponentRefs());
 
 @NgModule({
     declarations: [
+        AccessrolesDirective,
         AppComponent,
         CustomToasterComponent,
         PartialContainerDirective,
@@ -144,4 +145,3 @@ console.log(...getAllUserDefinedComponentRefs());
 })
 export class AppModule {
 }
-
