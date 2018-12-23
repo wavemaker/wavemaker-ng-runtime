@@ -1,0 +1,12 @@
+<div class="app-segments-container"> 
+    <ul class="list-inline">
+        <ng-content></ng-content>
+    </ul>
+    </div> 
+<div class="btn-group btn-group-justified"> 
+    <a class="btn btn-default" *ngFor="let content of contents; index as i"
+       [ngClass]="{'active btn-primary' : i == currentSelectedIndex}"
+       (click)="showContent(i, $event);">
+        <i class="app-icon" [ngClass]="content.iconclass"></i>{{content.caption}}
+    </a> 
+</div> 

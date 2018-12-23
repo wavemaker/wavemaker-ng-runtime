@@ -1,0 +1,14 @@
+<div class="modal-dialog">
+    <div class="modal-content"> 
+        <div class="modal-body"> 
+            <span [textContent]="message"></span>
+            <div class="progress" [hidden]="!downloading">
+                <div class="progress-bar" [style.width.%]="downloadProgress"></div>
+            </div>
+        </div>
+        <div class="modal-footer"> 
+            <button type="button" class="btn btn-default" data-dismiss="modal" (click)="cancel()">Skip update</button>
+            <button type="button" class="btn btn-primary" [hidden]="downloading" (click)="installLatestVersion()">Update</button>
+        </div>
+    </div>
+</div>

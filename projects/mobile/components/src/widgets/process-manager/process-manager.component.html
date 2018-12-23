@@ -1,0 +1,32 @@
+<ng-container *ngIf="instances.length > 0">
+   <div class="modal-dialog app-dialog">
+       <div class="modal-content">
+           <ul class="instance-list list-unstyled">
+               <li *ngFor="let instance of getVisibleInstances(instances); index as i" class="instance-list-item">
+                   <div class="row">
+                       <div class="col-xs-8">
+                           <label class="app-global-progress-bar-name h6">{{instance.name}}</label>
+                       </div>
+                       <div class="col-xs-4 app-global-progress-bar-progress-label-col">
+                           <label class="app-global-progress-bar-progress-label h6">
+                                   {{instance.progressLabel}}</label>
+                       </div>
+                   </div>
+                   <ng-template [ngTemplateOutlet]="progressTemplate" [ngTemplateOutletContext]="{instance: instance}"></ng-template>
+                   <button class="btn btn-secondary pull-right stop-btn" *ngIf="instance.onStop" (click)="instance.onStop();">
+                       {{instance.stopButtonLabel}}
+                   </button>
+                   <div style="clear: both;"></div>
+               </li>
+               <li class="instance-list-item" *ngIf="queue.length > 0">
+                   <label class="global-progress-bar-ui-primary-label h6">
+                       ({{queue.length}}) queued
+                   </label>
+               </li>
+           </ul>
+       </div>
+   </div>
+</ng-container>
+<ng-template #progressTemplate let-instance="instance">
+    <div wmProgressBar minvalue.bind="instance.min" maxvalue.bind="instance.max" datavalue.bind="instance.value"></div>
+</ng-template>

@@ -1,0 +1,68 @@
+<nav class="navbar" *ngIf="!showSearchbar">
+    <div class="mobile-navbar-left">
+        <ul class="nav navbar-nav navbar-left">
+            <li *ngIf="leftNavPanel" >
+                <a (click)="leftNavPanel.toggle();"  href="javascript: void(0);">
+                    <i [ngClass]="leftnavpaneliconclass"></i>
+                    </a>
+                </li>
+            <li *ngIf="backbutton">
+                <a class="btn-back" type="button" (click)="goBack($event)"  href="javascript: void(0);">
+                    <i [ngClass]="backbuttoniconclass"></i><span [innerText]="backbuttonlabel"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="mobile-navbar-center">
+        <div class="navbar-header">
+            <h1 class="navbar-brand">
+                <img data-identifier="img" class="brand-image" [alt]="title" width="32" height="32" *ngIf="imgsrc" [src]="imgsrc"/>
+                <span class="title" [innerText]="title || ''"></span>
+                </h1>
+            </div>
+        </div>
+    <div class="mobile-navbar-right">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <ng-content></ng-content>
+            </li>
+            <li *ngIf="searchbutton">
+                <a class="btn-search btn-transparent" type="button" (click)="showSearchbar = true"  href="javascript: void(0);">
+                    <i [ngClass]="searchbuttoniconclass"></i><span [innerText]="searchbuttonlabel"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<nav class="navbar searchbar" [hidden]="!showSearchbar">
+    <div class="mobile-navbar-left">
+        <ul class="nav navbar-nav navbar-left">
+            <li>
+                <a class="btn-back" type="button" (click)="goBacktoPreviousView($event)" href="javascript:void(0);">
+                    <i [ngClass]="backbuttoniconclass"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="mobile-navbar-center search-container">
+        <div wmSearch query.bind="query"
+             clearsearch.event="onClear();"
+             select.event="onSelect($event, widget, selectedValue)"
+             searchkey.bind="searchkey"
+             dataset.bind="dataset"
+             displayimagesrc.bind="displayimagesrc"
+             datavalue.bind="datavalue"
+             submit.event="onSubmission($event, widget, value)"
+             placeholder.bind="searchplaceholder"
+             navsearchbar="true"
+             readonly.bind="readonlySearchBar">
+        </div>
+    </div>
+    <div class="mobile-navbar-right">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a class="btn-cancel btn-transparent" type="button" (click)="showSearchbar = false;"  href="javascript: void(0);"> Cancel </a>
+            </li>
+        </ul>
+    </div>
+</nav>

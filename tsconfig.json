@@ -1,71 +1,95 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
-    "module": "es2015",
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
-    "paths": {
-      "@wm/core": [
-        "libraries/core"
-      ],
-      "@wm/core/*": [
-        "libraries/core/*"
-      ],
-      "@wm/components": [
-        "libraries/components"
-      ],
-      "@wm/components/*": [
-        "libraries/components/*"
-      ],
-      "@wm/transpiler": [
-        "libraries/transpiler"
-      ],
-      "@wm/transpiler/*": [
-        "libraries/transpiler/*"
-      ],
-      "@wm/security": [
-        "libraries/security"
-      ],
-      "@wm/security/*": [
-        "libraries/security/*"
-      ],
-      "@swipey": [
-        "libraries/swipey"
-      ],
-      "@swipey/*": [
-        "libraries/swipey/*"
-      ],
-      "@wm/http": [
-        "libraries/http-service"
-      ],
-      "@wm/http/*": [
-        "libraries/http-service/*"
-      ],
-      "@wm/oAuth": [
-        "libraries/oAuth"
-      ],
-      "@wm/oAuth/*": [
-        "libraries/oAuth/*"
-      ],
-      "@wm/variables": [
-        "libraries/variables"
-      ],
-      "@wm/variables/*": [
-        "libraries/variables/*"
-      ]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "./",
+        "outDir": "./dist/out-tsc",
+        "sourceMap": true,
+        "declaration": false,
+        "module": "es2015",
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es5",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "lib": [
+            "es2018",
+            "dom"
+        ],
+        "paths": {
+            "@wm/core": [
+                "libraries/core"
+            ],
+            "@wm/core/*": [
+                "libraries/core/*"
+            ],
+            "@wm/components": [
+                "libraries/components"
+            ],
+            "@wm/components/*": [
+                "libraries/components/*"
+            ],
+            "@wm/transpiler": [
+                "libraries/transpiler"
+            ],
+            "@wm/transpiler/*": [
+                "libraries/transpiler/*"
+            ],
+            "@wm/security": [
+                "libraries/security"
+            ],
+            "@wm/security/*": [
+                "libraries/security/*"
+            ],
+            "@swipey": [
+                "libraries/swipey"
+            ],
+            "@swipey/*": [
+                "libraries/swipey/*"
+            ],
+            "@wm/http": [
+                "libraries/http-service"
+            ],
+            "@wm/http/*": [
+                "libraries/http-service/*"
+            ],
+            "@wm/oAuth": [
+                "libraries/oAuth"
+            ],
+            "@wm/oAuth/*": [
+                "libraries/oAuth/*"
+            ],
+            "@wm/variables": [
+                "libraries/variables"
+            ],
+            "@wm/variables/*": [
+                "libraries/variables/*"
+            ],
+            "@wm/mobile/core": [
+                "libraries/mobile/core"
+            ],
+            "@wm/mobile/core/*": [
+                "libraries/mobile/core/*"
+            ],
+            "@wm/mobile/components": [
+                "libraries/mobile/components"
+            ],
+            "@wm/mobile/components/*": [
+                "libraries/mobile/components/*"
+            ],
+            "@wm/mobile/offline": [
+                "libraries/mobile/offline"
+            ],
+            "@wm/mobile/offline/*": [
+                "libraries/mobile/offline/*"
+            ],
+            "@wm/mobile/variables": [
+                "libraries/mobile/variables"
+            ],
+            "@wm/mobile/variables/*": [
+                "libraries/mobile/variables/*"
+            ]
+        }
     }
-  }
 }
