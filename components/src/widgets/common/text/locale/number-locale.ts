@@ -55,10 +55,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         // if the number is valid or if number is not in range update the model value.
         if (this.isValid(model)) {
             this.proxyModel = model;
-            this.handleChange(model);
             // update the display value in the text box.
             this.updateDisplayText();
+            this.handleChange(model);
         } else {
+            this.displayValue = value.toString();
             this.proxyModel = null;
             this.handleChange(null);
         }
