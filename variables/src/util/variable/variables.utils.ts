@@ -583,7 +583,7 @@ const processBindObject = (obj, scope, root, variable) => {
                         updateInternalNodes(target, root, variable);
                     }
                 }
-            })
+            }, undefined, false, true)
         );
     } else if (!_.isUndefined(obj.value)) {
         setValueToNode(target, obj, root, variable, obj.value, true);
