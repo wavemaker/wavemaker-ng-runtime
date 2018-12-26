@@ -48,7 +48,7 @@ export class CircleProgressBarComponent extends StylableComponent implements IRe
     public title: string;
     public subtitle: string;
     public captionplacement: string;
-    public percentageValue: number;
+    public percentagevalue: number;
     public redraw: Function;
     public options: CircleProgressOptionsInterface;
 
@@ -97,9 +97,9 @@ export class CircleProgressBarComponent extends StylableComponent implements IRe
             case 'maxvalue':
             case 'datavalue':
                 if (isPercentageValue(this.datavalue)) {
-                    this.percentageValue = parseFloat(this.datavalue);
+                    this.percentagevalue = parseFloat(this.datavalue);
                 } else {
-                    this.percentageValue = calculatePercent(parseFloat(this.datavalue), this.minvalue, this.maxvalue);
+                    this.percentagevalue = calculatePercent(parseFloat(this.datavalue), this.minvalue, this.maxvalue);
                 }
                 break;
             case 'displayformat':
