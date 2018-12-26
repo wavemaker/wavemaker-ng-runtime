@@ -40,6 +40,7 @@ export const rollupGlobals = {
     '@wm/oAuth': 'wm.oAuth',
     '@wm/security': 'wm.security',
     'ngx-bootstrap': 'ngxBootstrap',
+    'ng-circle-progress': 'ngCircleProgress',
     'ngx-bootstrap/pagination': 'ngxBootstrap',
     'ngx-color-picker': 'zef.ngxColorPicker',
     'ngx-mask': 'ngxMask',
