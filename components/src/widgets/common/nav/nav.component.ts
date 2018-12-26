@@ -75,9 +75,9 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
 
         addClass(liRef, 'active');
 
-        this.selecteditem = _.omit(item, ['children', 'value']);
+        this.selecteditem = item;
 
-        this.invokeEventCallback('select', {$event, $item: this.selecteditem});
+        this.invokeEventCallback('select', {$event, $item: item.value});
 
         let itemLink = item.link;
         const itemAction = item.action;
