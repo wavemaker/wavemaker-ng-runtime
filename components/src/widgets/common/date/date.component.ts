@@ -36,7 +36,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class DateComponent extends BaseDateTimeComponent {
     private bsDataValue;
     public showdropdownon: string;
-    public useDatapicker = true;
     private dateContainerCls: string;
     private isCurrentDate = false;
     private isOpen: boolean;
@@ -105,7 +104,7 @@ export class DateComponent extends BaseDateTimeComponent {
         const newVal = getDateObj($event.target.value);
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if(!this.formatValidation(newVal, $event.target.value)) {
+        if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
            return;
         }
         // min date and max date validation in mobile view.
@@ -205,11 +204,11 @@ export class DateComponent extends BaseDateTimeComponent {
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
-                    if(!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }
-                } else if(inputVal && inputVal !== formattedDate ) {
+                } else if (inputVal && inputVal !== formattedDate ) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, event, false);
                 } else {
