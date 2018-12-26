@@ -93,6 +93,14 @@ export class LiveVariableOfflineBehaviour {
         return this.localDBManagementService.getStore(params.dataModelName, params.entityName);
     }
 
+    // set hasBlob flag on params when blob field is present
+    private hasBlob(store) {
+        const blobColumns = _.filter(store.entitySchema.columns, {
+            'sqlType' : 'blob'
+        });
+        return !!blobColumns.length;
+    }
+
     /*
      * During offline, LocalDBService will answer to all the calls. All data modifications will be recorded
      * and will be reported to DatabaseService when device goes online.
@@ -173,17 +181,20 @@ export class LiveVariableOfflineBehaviour {
                         parent[k] = null;
                         childParams.onlyOnline = false;
                         childParams.isCascadingStopped = true;
+                        childParams.hasBlob = this.hasBlob(childStore);
                         return () => {
                             return Promise.resolve().then(() => {
                                     const primaryKeyValue = childStore.getValue(childParams.data, childStore.primaryKeyField.fieldName);
                                     return primaryKeyValue ? childStore.get(primaryKeyValue) : null;
                                 }).then(object => {
                                     return new Promise((resolve, reject) => {
+                                        let operation;
                                         if (object) {
-                                            this.onlineDBService.updateTableData(childParams, resolve, reject);
+                                            operation = childParams.hasBlob ? 'updateMultiPartTableData' : 'updateTableData';
                                         } else {
-                                            this.onlineDBService.insertTableData(childParams, resolve, reject);
+                                            operation = childParams.hasBlob ? 'insertMultiPartTableData' : 'insertTableData';
                                         }
+                                        this.onlineDBService[operation](childParams, resolve, reject);
                                     });
                                 });
                         };
