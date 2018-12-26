@@ -276,6 +276,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
         _.forEach(this.ngform.controls, (v, k) => {
             const field = this.formFields.find(e => e.name === k);
+            if (!field) {
+                return;
+            }
             const index = this.validationMessages.findIndex(e => e.field === k);
             if (v.invalid) {
                 if (index === -1) {
