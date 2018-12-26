@@ -432,6 +432,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (this.rowInstance.invokeEventCallback('beforerowexpand', {$event, $data: rowDef, row}) === false) {
                 return;
             }
+            if (!rowDef.content) {
+                return;
+            }
             // Expand the row detail
             callback();
             // Row is already rendered. Return here
@@ -463,6 +466,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }}},
                 clearVCRef: false
             });
+            $appDigest();
         },
         onBeforeRowCollapse: ($event, row, rowId) => {
             return this.rowInstance.invokeEventCallback('beforerowcollapse', {$event, row, $data: this.rowDefInstances[rowId]});
