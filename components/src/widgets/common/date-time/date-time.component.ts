@@ -39,7 +39,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private proxyModel;
 
     public showdropdownon: string;
-    public useDatapicker = true;
     private keyEventPlugin;
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
@@ -303,7 +302,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         newVal = newVal ? getNativeDateObject(newVal) : undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if (!this.formatValidation(newVal, $event.target.value)) {
+        if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
             return;
         }
         // min date and max date validation in mobile view.
@@ -367,10 +366,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
-    }
-
-    onPropertyChange(key: string, nv: any, ov?: any) {
-        super.onPropertyChange(key, nv, ov);
     }
 
     onInputBlur($event) {

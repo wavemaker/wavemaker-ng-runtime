@@ -23,11 +23,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public outputformat;
     public mindate;
     public maxdate;
+    public useDatapicker = true;
     protected activeDate;
     private keyEventPluginInstance;
     private elementScope;
-    protected datepattern: string;
-    protected timepattern: string;
+    public datepattern: string;
+    public timepattern: string;
     protected showseconds: boolean;
     protected ismeridian: boolean;
     protected datePipe;
@@ -101,7 +102,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method is used to validate date pattern and time pattern
      * If user selects one pattern in design time and if he tries to enter the date in another pattern then the device is throwing an error
      */
-    protected formatValidation(newVal, inputVal) {
+    protected formatValidation(newVal, inputVal, isNativePicker?: boolean) {
         const pattern = this.datepattern || this.timepattern;
         const formattedDate = getFormattedDate(this.datePipe, newVal, pattern);
         inputVal = inputVal.trim();
@@ -113,7 +114,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     return false;
                 }
             } else {
-                if (inputVal !== formattedDate ) {
+                if (isNativePicker) {
+                    // format the date value only when inputVal is obtained from $event.target.value, as the format doesnt match.
+                    inputVal = getFormattedDate(this.datePipe, inputVal, pattern);
+                }
+                if (inputVal !== formattedDate) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return false;
@@ -689,7 +694,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         });
     }
 
-    protected updateFormat(pattern) {
+    public updateFormat(pattern) {
         if (pattern === 'datepattern') {
             this._dateOptions.dateInputFormat = this.datepattern;
             this.showseconds = _.includes(this.datepattern, 's');
@@ -705,8 +710,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (key === 'tabindex') {
             return;
         }
-
-        if (key === 'datepattern') {
+        if (this.useDatapicker && key === 'datepattern') {
             this.updateFormat(key);
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
