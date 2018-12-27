@@ -960,9 +960,9 @@ export class LiveVariableUtils {
      * This return function can take a function as argument. This argument function can modify the filter fields
      * before generating where clause.
      */
-    static getWhereClauseGenerator(variable, options) {
+    static getWhereClauseGenerator(variable, options, updatedFilterFields?: any) {
         return (modifier, skipEncode?: boolean) => {
-            const clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(variable.filterExpressions));
+            const clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(updatedFilterFields || variable.filterExpressions));
             // this flag skips the encoding of the query
             if (isDefined(skipEncode)) {
                 options.skipEncode = skipEncode;

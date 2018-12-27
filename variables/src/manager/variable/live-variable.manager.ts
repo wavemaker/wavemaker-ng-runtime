@@ -141,6 +141,8 @@ export class LiveVariableManager extends BaseVariableManager {
         // clonedFields = getClonedObject(variable.filterFields);
         //  EVENT: ON_BEFORE_UPDATE
         output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, this.getDataFilterObj(clonedFields), options);
+        // if filterFields are updated or modified inside the onBeforeUpdate event then in device use these fields to filter.
+        const updateFilterFields = _.isObject(output) ? getClonedObject(output) : undefined;
         if (output === false) {
             $queue.process(variable);
             // $rootScope.$emit('toggle-variable-state', variable, false);
@@ -171,7 +173,7 @@ export class LiveVariableManager extends BaseVariableManager {
             'size': options.pagesize || (CONSTANTS.isRunMode ? (variable.maxResults || 20) : (variable.designMaxResults || 20)),
             'sort': tableOptions.sort,
             'data': requestData,
-            'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options),
+            'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options, updateFilterFields),
             // 'filterMeta': tableOptions.filter,
             'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
         }).then((response) => {
