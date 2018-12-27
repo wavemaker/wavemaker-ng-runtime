@@ -275,7 +275,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             return;
         }
         _.forEach(this.ngform.controls, (v, k) => {
-            const field = this.formFields.find(e => e.name === k);
+            const field = this.formFields.find(e => e.key === k);
             if (!field) {
                 return;
             }
@@ -419,7 +419,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             if (this.messagelayout === 'Inline') {
                 this.statusMessage = {'caption': template || '', type: type};
                 if (this.messageRef) {
-                    this.messageRef.showMessage();
+                    this.messageRef.showMessage(this.statusMessage.caption, this.statusMessage.type);
                 }
             } else {
                 this.app.notifyApp(template, type, header);
