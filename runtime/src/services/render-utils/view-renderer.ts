@@ -49,7 +49,8 @@ export class ViewRenderer {
                 options.vcRef,
                 options.$target,
                 options.context,
-                options.clearVCRef
+                options.clearVCRef,
+                options.noCache
             );
         });
     }
@@ -63,7 +64,8 @@ export class ViewRenderer {
         vcRef: ViewContainerRef,
         $target: HTMLElement,
         context?: any,
-        clearVCRef = true
+        clearVCRef = true,
+        noCache = false
     ): Promise<void> {
 
         let postInitResolveFn;
@@ -71,7 +73,7 @@ export class ViewRenderer {
 
         let componentRef = componentCache.get(selector);
 
-        if (!componentRef) {
+        if (!componentRef || noCache) {
             const componentDef = this.getDynamicComponent(
                 selector,
                 markup,
