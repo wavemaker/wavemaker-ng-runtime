@@ -20,14 +20,16 @@ const getRowActionTmpl = (attrs) => {
     const btnClass = action ? (action.includes('editRow(') ? 'edit edit-row-button' :
                         (action.includes('deleteRow(') ? 'delete delete-row-button' : '')) : '';
     const tabIndex = attrs.get('tabindex') ? `tabindex="${attrs.get('tabindex')}"` : '';
+    const tag = attrs.get('widget-type') === 'anchor' ? 'a' : 'button';
+    const directive = attrs.get('widget-type') === 'anchor' ? 'wmAnchor' : 'wmButton';
     return `<ng-template #rowActionTmpl let-row="row">
-               <button wmButton data-action-key="${attrs.get('key')}"
+               <${tag} ${directive} data-action-key="${attrs.get('key')}"
                     ${getRowActionAttrs(attrs)}
-                    class="row-action row-action-button app-button btn ${attrs.get('class')} ${btnClass}"
+                    class="row-action row-action-button ${attrs.get('class')} ${btnClass}"
                     iconclass="${attrs.get('iconclass')}"
                     ${actionTmpl}
                     ${tabIndex}
-                    type="button"></button>
+                    type="button"></${tag}>
                 ${saveCancelTmpl}
             </ng-template>`;
 };
