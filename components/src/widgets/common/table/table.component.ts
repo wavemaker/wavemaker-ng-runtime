@@ -94,8 +94,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private inlineCompliedTl: any = {};
     private inlineNewCompliedTl: any = {};
     private customExprCompiledTl: any = {};
-    private rowExprCompiledTl = {};
     private rowDefInstances = {};
+    private rowDefMap = {};
     private rowExpansionActionTl: any = {};
 
     columns = {};
@@ -379,7 +379,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         clearRowDetailExpression: () => {
             this.rowDetailViewRef.clear();
-            this.rowExprCompiledTl = {};
+            this.rowDefMap = {};
             this.rowDefInstances = {};
         },
         generateCustomExpressions: (rowData, index) => {
@@ -433,7 +433,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // Expand the row detail
             callback();
             // Row is already rendered. Return here
-            if (this.rowExprCompiledTl[rowId]) {
+            if (this.rowDefMap[rowId] && this.rowDefMap[rowId].content === rowDef.content && this.rowDefMap[rowId].paramExpression === rowDef.paramExpression) {
                 this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: this.rowDefInstances[rowId]});
                 return;
             }
@@ -442,7 +442,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             const markup = `<div wmContainer partialContainer content="${rowDef.content}" ${style} load.event="containerLoad(widget)">
                             ${rowDef.paramExpression}</div>`;
-            this.rowExprCompiledTl[rowId] = true;
+            this.rowDefMap[rowId] = rowDef;
+            $target.empty();
+            $target.hide();
+            $overlay.show();
             this.app.notify('render-resource', {
                 selector: `app-datatable-row-${this.widgetId}-${rowId}`,
                 markup,
@@ -453,13 +456,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 $target: $target[0],
                 context:  {...(<any>this), ...{row, containerLoad: (widget) => {
                     setTimeout(() => {
-                        $overlay.remove();
+                        $overlay.hide();
                         $target.show();
                         this.rowDefInstances[rowId] = widget;
                         this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: widget});
                     }, 500);
                 }}},
-                clearVCRef: false
+                clearVCRef: false,
+                noCache: true
             });
             $appDigest();
         },
