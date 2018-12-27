@@ -121,7 +121,7 @@ function uploadWithAjax(file, fd, url, options) {
     }
 
     const promise = new NotifyPromise((resolve, reject, notify) => {
-        httpService.upload(url, fd).subscribe(event => {
+        const request = httpService.upload(url, fd).subscribe(event => {
             if (event.type === HTTP_EVENT_TYPE.UploadProgress) {
                 const uploadProgress = Math.round(100 * event.loaded / event.total);
                 notify(uploadProgress);
@@ -131,6 +131,7 @@ function uploadWithAjax(file, fd, url, options) {
                 resolve(event.body);
             }
         });
+        file._uploadProgress = request;
     });
 
     return promise;
