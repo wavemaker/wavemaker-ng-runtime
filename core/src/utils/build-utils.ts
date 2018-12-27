@@ -163,7 +163,9 @@ const rowActionAttrs = new Map(
         ['show', 'show'],
         ['show.bind', 'show.bind'],
         ['disabled', 'disabled'],
-        ['disabled.bind', 'disabled.bind']
+        ['disabled.bind', 'disabled.bind'],
+        ['hyperlink', 'hyperlink'],
+        ['target', 'target']
     ]
 );
 
