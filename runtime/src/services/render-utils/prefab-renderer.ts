@@ -1,7 +1,7 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 
 import { transpile } from '@wm/transpiler';
-import { $watch, App, noop } from '@wm/core';
+import { $watch, AbstractI18nService, App, noop } from '@wm/core';
 import { BaseComponent } from '@wm/components';
 
 import { FragmentRenderer } from './fragment-renderer';
@@ -16,7 +16,8 @@ export class PrefabRenderer {
         private renderFragment: FragmentRenderer,
         private renderResource: ViewRenderer,
         private prefabMngr: PrefabManagerService,
-        private app: App
+        private app: App,
+        private i18nService: AbstractI18nService,
     ) {}
 
     public async renderForPreview(vcRef: ViewContainerRef, $target: HTMLElement) {
@@ -125,6 +126,10 @@ export class PrefabRenderer {
         this.invokeOnReady(instance, containerWidget);
     }
 
+    private defineI18nProps(prefabName: string, instance: any) {
+        instance.appLocale = this.i18nService.getPrefabLocaleBundle(prefabName);
+    }
+
     public async render(prefabName: string, vcRef: ViewContainerRef, $target: HTMLElement, containerWidget: BaseComponent) {
         const context = 'Prefab';
 
@@ -137,6 +142,7 @@ export class PrefabRenderer {
                     `app-prefab-${prefabName}`,
                     (instance: any) => {
                         this.componentInitFn(prefabName, instance, containerWidget);
+                        this.defineI18nProps(prefabName, instance);
                     },
                     vcRef,
                     $target,

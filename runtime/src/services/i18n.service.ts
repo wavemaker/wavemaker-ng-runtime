@@ -7,7 +7,7 @@ import { CONSTANTS } from '@wm/variables';
 import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
 
 
-declare const $, _, moment, _WM_APP_PROPERTIES, Cookies;
+declare const _, moment, _WM_APP_PROPERTIES, Cookies;
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -20,14 +20,18 @@ export class I18nServiceImpl extends AbstractI18nService {
     private selectedLocale: string;
     private defaultSupportedLocale: string = 'en';
     private readonly appLocale: any;
+    private readonly prefabLocale: Map<String, any>;
     private messages: any;
     private _isAngularLocaleLoaded = false;
 
-    constructor(private $http: HttpClient,
-                private bsLocaleService: BsLocaleService,
-                private appDefaults: AppDefaults) {
+    constructor(
+        private $http: HttpClient,
+        private bsLocaleService: BsLocaleService,
+        private appDefaults: AppDefaults
+    ) {
         super();
         this.appLocale = {};
+        this.prefabLocale = new Map();
     }
 
     private updateLocaleDirection() {
@@ -57,6 +61,28 @@ export class I18nServiceImpl extends AbstractI18nService {
         return this.appLocale;
     }
 
+    public getPrefabLocaleBundle(prefabName: string): any {
+        if (!this.prefabLocale.has(prefabName)) {
+            this.prefabLocale.set(prefabName, Object.create(this.appLocale));
+        }
+        return this.prefabLocale.get(prefabName);
+    }
+
+    private extendPrefabMessages(messages: any): void {
+        if (!messages.prefabMessages) {
+            return;
+        }
+
+        Object.keys(messages.prefabMessages).forEach((prefabName: string) => {
+            let bundle = this.prefabLocale.get(prefabName);
+            if (!bundle) {
+                bundle = Object.create(this.appLocale);
+                this.prefabLocale.set(prefabName, bundle);
+            }
+            Object.assign(bundle, messages.prefabMessages[prefabName]);
+        });
+    }
+
     private extendMessages(messages: any): void {
         Object.assign(this.messages, messages);
     }
@@ -74,17 +100,18 @@ export class I18nServiceImpl extends AbstractI18nService {
         this.loadResource(`${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
             .then(bundle => {
                 this.extendMessages(bundle.messages);
+                this.extendPrefabMessages(bundle);
                 this.appDefaults.setFormats(bundle.formats);
             });
     }
 
-    protected loadMomentLocaleBundle() {
+    protected loadMomentLocaleBundle(momentLocale) {
         const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
         if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
             moment.locale(this.defaultSupportedLocale);
             return;
         }
-        const path = _cdnUrl + `locales/moment/${this.selectedLocale}.js`;
+        const path = _cdnUrl + `locales/moment/${momentLocale}.js`;
         this.$http.get(path, {responseType: 'text'})
             .toPromise()
             .then((response: any) => {
@@ -102,14 +129,14 @@ export class I18nServiceImpl extends AbstractI18nService {
             });
     }
 
-    protected loadAngularLocaleBundle() {
+    protected loadAngularLocaleBundle(angLocale) {
         return new Promise(resolve => {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
             if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
                 return;
             }
-            const path = _cdnUrl + `locales/angular/${this.selectedLocale}.js`;
+            const path = _cdnUrl + `locales/angular/${angLocale}.js`;
 
             this.$http.get(path, {responseType: 'text'})
                 .toPromise()
@@ -125,9 +152,14 @@ export class I18nServiceImpl extends AbstractI18nService {
         });
     }
 
-    protected loadCalendarLocaleBundle() {
+    protected loadCalendarLocaleBundle(calendarLocale) {
         const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
-        const path = _cdnUrl + `locales/fullcalendar/${this.selectedLocale}.js`;
+        let path: string;
+        if (calendarLocale) {
+            path = _cdnUrl + `locales/fullcalendar/${calendarLocale}.js`;
+        } else {
+            return Promise.resolve();
+        }
 
         // return in case of mobile app or if selected locale is default supported locale.
         if (isMobile() || isMobileApp() || !_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
@@ -143,16 +175,16 @@ export class I18nServiceImpl extends AbstractI18nService {
             });
     }
 
-    protected loadLocaleBundles() {
-        this.loadMomentLocaleBundle();
+    protected loadLocaleBundles(libLocale) {
+        this.loadMomentLocaleBundle(libLocale.moment);
         this.loadAppLocaleBundle();
-        this.loadCalendarLocaleBundle();
-        return this.loadAngularLocaleBundle();
+        this.loadCalendarLocaleBundle(libLocale.fullCalendar);
+        return this.loadAngularLocaleBundle(libLocale.angular);
     }
 
-    public setSelectedLocale(locale) {
+    public setSelectedLocale(locale, libLocale) {
 
-        const supportedLocale = _.split(_WM_APP_PROPERTIES.supportedLanguages, ',');
+        const supportedLocale = Object.keys(_WM_APP_PROPERTIES.supportedLanguages);
 
         // check if the event is propagated from the select or any such widget
         if (_.isObject(locale)) {
@@ -175,14 +207,14 @@ export class I18nServiceImpl extends AbstractI18nService {
         this.init();
 
         // load the locale bundles of the selected locale
-        return this.loadLocaleBundles().then(() => this.updateLocaleDirection());
+        return this.loadLocaleBundles(libLocale).then(() => this.updateLocaleDirection());
     }
 
     public loadDefaultLocale() {
         const _acceptLang = this.getAcceptedLanguages();
         _acceptLang.push(_WM_APP_PROPERTIES.defaultLanguage);
 
-        let _supportedLang = _.split(_WM_APP_PROPERTIES.supportedLanguages, ',') || [this.defaultSupportedLocale];
+        let _supportedLang = Object.keys(_WM_APP_PROPERTIES.supportedLanguages) || [this.defaultSupportedLocale];
 
         // check for the session storage to load any pre-requested locale
         const _defaultLang = getSessionStorageItem('selectedLocale') || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
@@ -191,7 +223,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         _supportedLang = _supportedLang || [_defaultLang];
 
         const defaultLanguage = _defaultLang || _supportedLang[0];
-        return this.setSelectedLocale(defaultLanguage);
+        return this.setSelectedLocale(defaultLanguage, _WM_APP_PROPERTIES.supportedLanguages[defaultLanguage]);
     }
 
     public getLocalizedMessage(message, ...args) {
