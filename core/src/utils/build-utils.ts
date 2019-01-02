@@ -100,7 +100,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
 };
 
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
-export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '') => {
+export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '', referenceName: string = 'item') => {
 
     const regex = new RegExp('(' + parentDataSet + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
     let currentItemRegEx;
@@ -127,12 +127,12 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                     if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet) {
                         value = value.replace('bind:', '');
-                        value = value.replace(regex, 'item');
+                        value = value.replace(regex, referenceName);
                         value = 'bind:' + value;
                     }
                     // Replace item if widget property is bound to livelist currentItem
                     if (currentItemRegEx && currentItemRegEx.test(value)) {
-                        value = value.replace(currentItemRegEx, 'item');
+                        value = value.replace(currentItemRegEx, referenceName);
                     }
                     if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
                         value = value.replace(currentItemWidgetsRegEx, `${instance}currentItemWidgets`);
@@ -141,7 +141,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     attr.value = value;
                 }
             });
-            updateTemplateAttrs(childNode.children as Array<Element>, parentDataSet, widgetName, instance);
+            updateTemplateAttrs(childNode.children as Array<Element>, parentDataSet, widgetName, instance, referenceName);
         }
     });
 };

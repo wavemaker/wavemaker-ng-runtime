@@ -1,9 +1,10 @@
 import { Element } from '@angular/compiler';
 
-import { IDGenerator } from '@wm/core';
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { IDGenerator, updateTemplateAttrs } from '@wm/core';
+import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
+const dataSetKey = 'dataset';
 const idGen = new IDGenerator('table_');
 
 register('wm-table', (): IBuildTaskDef => {
@@ -18,6 +19,19 @@ register('wm-table', (): IBuildTaskDef => {
             } else {
                 shared.set('isdynamictable', 'true');
             }
+
+            const datasetAttr = node.attrs.find(attr => attr.name === dataSetKey);
+            const widgetNameAttr = node.attrs.find(attr => attr.name === 'name');
+
+            if (!datasetAttr) {
+                return;
+            }
+            const boundExpr = getBoundToExpr(datasetAttr.value);
+
+            if (!boundExpr) {
+                return;
+            }
+            updateTemplateAttrs(node, boundExpr, widgetNameAttr.value, '', 'row');
         },
         pre: (attrs, shared) => {
             const counter = idGen.nextUid();
