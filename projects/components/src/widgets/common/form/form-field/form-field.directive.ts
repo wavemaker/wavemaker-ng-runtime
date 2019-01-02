@@ -282,10 +282,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             case 'display-name':
                 this.displayname = nv;
                 break;
-            case 'class':
-                // Apply class on the inner widget only. Rremove from form filed element
-                removeClass(this.getNativeElement(), nv);
-                break;
             case 'readonly':
                this.setReadOnlyState();
                 break;

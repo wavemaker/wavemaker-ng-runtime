@@ -4,10 +4,10 @@ const tagName = 'wm-popover';
 
 register('wm-popover', (): IBuildTaskDef => {
     return {
-        pre: (attrs: Map<string, string>, shared: Map<string, any>) => {
+        requires: ['wm-table'],
+        pre: (attrs: Map<string, string>, shared: Map<string, any>, table) => {
             const contentSource = attrs.get('contentsource');
             let popoverTemplate;
-
             if (contentSource !== 'inline') {
                 const content = attrs.get('content');
                 const bindContent = attrs.get('content.bind');
@@ -25,8 +25,9 @@ register('wm-popover', (): IBuildTaskDef => {
             }
 
             let markup = `<${tagName} wmPopover ${getAttrMarkup(attrs)}>`;
+            const contextAttrs = table ? `let-row="row"` : ``;
 
-            markup += `<ng-template><button class="popover-start"></button>`;
+            markup += `<ng-template ${contextAttrs}><button class="popover-start"></button>`;
 
             // todo keyboard navigation - tab
             if (popoverTemplate) {
