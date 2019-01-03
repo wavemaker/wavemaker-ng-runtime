@@ -36,7 +36,7 @@ export class CustomToasterComponent extends Toast implements AfterViewInit {
         const $targetLayout = $('.parent-custom-toast');
         let markup = `<div wmContainer partialContainer content="${this.pagename}">`;
         _.forEach((<any>this.options).partialParams, (paramValue, paramName) => {
-            const val = paramValue.startsWith('bind:') ? `value.bind="${getBoundToExpr(paramValue)}"` : `value="${paramValue}"`;
+            const val = _.isString(paramValue) && paramValue.startsWith('bind:') ? `value.bind="${getBoundToExpr(paramValue)}"` : `value="${paramValue}"`;
             markup = markup + `<div wmParam name="${paramName}" ${val} hidden></div>`;
         });
         markup = markup + '</div>';
