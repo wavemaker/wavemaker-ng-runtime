@@ -431,7 +431,7 @@ $.widget('wm.datatable', {
             if (self.options.rowExpansionEnabled) {
                 var heightStyle = self.options.rowDef.height ? ' style="min-height:' + self.options.rowDef.height + '"' : '';
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
-                $tbody.append('<tr class="app-datagrid-detail-row" style="display: none;" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                $tbody.append('<tr class="app-datagrid-detail-row" style="display: none;" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
                     '<div class="row-overlay" ' + heightStyle + '><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section" style="display: none;"></div>' +
                     '</td></tr>');
             }
@@ -1962,6 +1962,9 @@ $.widget('wm.datatable', {
             });
         } else {
             $row = direction === 'down' ? $row.next() : $row.prev();
+            if (this.options.rowExpansionEnabled && !$row.is(':visible')) {
+                $row = direction === 'down' ? $row.next() : $row.prev();
+            }
             $row.focus();
         }
     },
@@ -2021,6 +2024,10 @@ $.widget('wm.datatable', {
             self = this,
             quickEdit = this.options.editmode === this.CONSTANTS.QUICK_EDIT,
             isNewRow;
+        if (this.options.rowExpansionEnabled && !$row.length) {
+            $row = $target.closest('tr.app-datagrid-detail-row')
+        }
+
         if (this.Utils.isDeleteKey(event)) { //Delete Key
             //For input elements, dont delete the row. If delete button is not present, dont allowe deleting by keyboard shortcut
             if (!this.options.actionsEnabled.delete || $target.is('input') || $target.hasClass('form-control')) {
