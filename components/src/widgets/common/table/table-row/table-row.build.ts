@@ -10,7 +10,7 @@ const getRowExpansionActionTmpl = (attrs) => {
     return `<ng-template #rowExpansionActionTmpl let-row="row">
                <${tag} ${directive}
                     ${getRowActionAttrs(attrs)}
-                    class="${attrs.get('class')}"
+                    class="${attrs.get('class')} row-expansion-button"
                     iconclass="${attrs.get('collapseicon')}"
                     type="button"></${tag}>
             </ng-template>`;
