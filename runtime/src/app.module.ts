@@ -3,7 +3,7 @@ import { ModuleWithProviders, NgModule, LOCALE_ID, APP_INITIALIZER } from '@angu
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
@@ -42,6 +42,7 @@ import { PageRenderer } from './services/render-utils/page-renderer';
 import { PartialRenderer } from './services/render-utils/partial-renderer';
 import { PrefabRenderer } from './services/render-utils/prefab-renderer';
 import { NavigationServiceImpl } from './services/navigation.service';
+import { HttpCallInterceptor } from './services/http-interceptor.services';
 
 declare const $;
 declare const _WM_APP_PROPERTIES;
@@ -136,6 +137,11 @@ export function setAngularLocale(I18nService) {
             provide: LOCALE_ID,
             useFactory: setAngularLocale,
             deps: [AbstractI18nService]
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpCallInterceptor,
+            multi: true
         },
         PipeProvider,
         ViewRenderer,

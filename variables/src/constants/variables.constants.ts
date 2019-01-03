@@ -47,6 +47,7 @@ export const VARIABLE_CONSTANTS = {
         'PREPARE_SETDATA': 'onBeforeDatasetReady',
         'RESULT': 'onResult',
         'ERROR': 'onError',
+        'ABORT': 'onAbort',
         'PROGRESS': 'onProgress',
         'CLICK': 'onClick',
         'HIDE': 'onHide',

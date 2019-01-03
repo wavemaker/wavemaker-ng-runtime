@@ -34,27 +34,29 @@
     </button>
     <!-- list of selectedfiles UI -->
     <ul class="list-group file-upload" [ngStyle]="{height: filelistheight, overflow: overflow}" *ngIf="selectedFiles.length > 0" >
-        <li class="list-group-item file-upload-status" *ngFor="let ft of selectedFiles" >
-            <div class="media upload-file-list">
-                <div class="media-left media-middle file-icon {{getFileExtension(ft.name) | fileIconClass}}" title="{{getFileExtension(ft.name)}}"></div>
-                <div class="media-body media-middle file-details">
-                    <p class="uploaddetails">
-                        <label class="upload-title">{{ft.name}}</label><br/>
-                        <span class="filesize" *ngIf="ft.fileLength  !== 0">{{ft.size | filesize:0}}</span>
-                    </p>
-                    <div class="progress" *ngIf="ft.status === 'onProgress'">
-                        <div class="progress-bar progress-bar-striped progress-bar-info" [ngStyle]="{width: (ft.progress +'%')}"></div>
+        <div *ngFor="let ft of selectedFiles">
+            <li class="list-group-item file-upload-status" *ngIf="ft.status !== 'abort'">
+                <div class="media upload-file-list">
+                    <div class="media-left media-middle file-icon {{getFileExtension(ft.name) | fileIconClass}}" title="{{getFileExtension(ft.name)}}"></div>
+                    <div class="media-body media-middle file-details">
+                        <p class="uploaddetails">
+                            <label class="upload-title">{{ft.name}}</label><br/>
+                            <span class="filesize" *ngIf="ft.fileLength  !== 0">{{ft.size | filesize:0}}</span>
+                        </p>
+                        <div class="progress" *ngIf="ft.status === 'onProgress'">
+                            <div class="progress-bar progress-bar-striped progress-bar-info" [ngStyle]="{width: (ft.progress +'%')}"></div>
+                        </div>
+                    </div>
+                    <div class="media-right media-middle" *ngIf="ft.status === 'onProgress' || ft.status === 'queued'">
+                        <a class="btn btn-transparent" type="button" (click)="abortFileUpload(ft)">
+                            <i class="wi wi-stop"></i>
+                        </a>
+                    </div>
+                    <div class="media-right media-middle"  *ngIf="ft.status === 'success'">
+                        <span class="status-icon {{ft.status | stateClass }}"></span>
                     </div>
                 </div>
-                <div class="media-right media-middle" *ngIf="ft.status === 'onProgress' || ft.status === 'queued'">
-                    <a class="btn btn-transparent" type="button" (click)="ft.abort()">
-                        <i class="wi wi-stop"></i>
-                    </a>
-                </div>
-                <div class="media-right media-middle"  *ngIf="ft.status === 'success'">
-                    <span class="status-icon {{ft.status | stateClass }}"></span>
-                </div>
-            </div>
-        </li>
+            </li>
+        </div>
     </ul>
 </div>
