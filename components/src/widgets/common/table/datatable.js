@@ -2052,8 +2052,9 @@ $.widget('wm.datatable', {
             return;
         }
         if (event.which === 13) { //Enter key
-          this._debounceOnEnter($target, $row, quickEdit, event);
-          return;
+            event.stopPropagation();
+            this._debounceOnEnter($target, $row, quickEdit, event);
+            return;
         }
         if (event.which === 38) { // up-arrow action
             this.processUpDownKeys(event, $row, 'up');
