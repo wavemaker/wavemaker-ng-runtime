@@ -7,7 +7,7 @@ import { CONSTANTS } from '@wm/variables';
 import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
 
 
-declare const _, moment, _WM_APP_PROPERTIES, Cookies;
+declare const _, moment, _WM_APP_PROPERTIES;
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -182,8 +182,9 @@ export class I18nServiceImpl extends AbstractI18nService {
         return this.loadAngularLocaleBundle(libLocale.angular);
     }
 
-    public setSelectedLocale(locale, libLocale) {
+    public setSelectedLocale(locale) {
 
+        const libLocale = _WM_APP_PROPERTIES.supportedLanguages[locale];
         const supportedLocale = Object.keys(_WM_APP_PROPERTIES.supportedLanguages);
 
         // check if the event is propagated from the select or any such widget
@@ -223,7 +224,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         _supportedLang = _supportedLang || [_defaultLang];
 
         const defaultLanguage = _defaultLang || _supportedLang[0];
-        return this.setSelectedLocale(defaultLanguage, _WM_APP_PROPERTIES.supportedLanguages[defaultLanguage]);
+        return this.setSelectedLocale(defaultLanguage);
     }
 
     public getLocalizedMessage(message, ...args) {
@@ -236,7 +237,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         if (CONSTANTS.hasCordova) {
             languages = navigator.languages || [navigator.language];
         } else {
-            languages = Cookies.get('X-Accept-Language') || '';
+            languages = _WM_APP_PROPERTIES.preferredLanguage || '';
             /**
              * Accept-Language Header will contain set of supported locale, so try splitting the string to proper locale set
              * Ex: en,en-US;q=0.9,de;q=0.6,ar;q=0.2,hi
