@@ -41,7 +41,8 @@ enum Operation {
     SET_ITEM = 'setItem',
     REMOVE_ITEM = 'removeItem',
     IS_BOUND_TO_LOCALE = 'isBoundToLocale',
-    GET_DEFAULT_LOCALE = 'getDefaultLocale'
+    GET_DEFAULT_LOCALE = 'getDefaultLocale',
+    CANCEL = 'cancel'
 }
 
 export const DataSource = {
