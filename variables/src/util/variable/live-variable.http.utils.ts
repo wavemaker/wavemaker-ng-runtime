@@ -178,12 +178,12 @@ const initiateAction = function (action, params, successCallback?, failureCallba
         connectionParams = parseConfig(connectionParams);
         // TODO: Remove after backend fix
         connectionParams.url = removeExtraSlashes(connectionParams.url);
-        return httpService.send({
+        return httpService.sendCallAsObservable({
             url: connectionParams.url,
             method: connectionParams.method,
             data: connectionParams.data,
             headers: connectionParams.headers
-        }, successCallback, failureCallback);
+        });
     }
 };
 
