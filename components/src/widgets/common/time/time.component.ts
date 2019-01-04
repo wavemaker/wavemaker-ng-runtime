@@ -232,11 +232,15 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method used to execute the on time change functionality
      */
-    private onTimeChange(newVal) {
+    private onTimeChange(newVal, isNativePicker?: boolean) {
         let timeValue,
             timeInputValue,
             minTimeMeridian,
             maxTimeMeridian;
+        // For nativePicker, newVal is event, get the dateobject from the event.
+        if (isNativePicker) {
+            newVal = getNativeDateObject(newVal.target.value);
+        }
         if (newVal) {
             this.bsTimeValue = newVal;
             // if the newVal is valid but not in the given range then highlight the input field
