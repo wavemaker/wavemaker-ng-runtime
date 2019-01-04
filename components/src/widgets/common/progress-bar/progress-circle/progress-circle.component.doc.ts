@@ -1,9 +1,21 @@
 import { Input } from '@angular/core';
 
 /**
- * The wmCircleProgressBar component defines the circle progress bar widget.
+ * The wmProgressCircle component defines the progress circle widget.
  */
 export class CircleProgressBar {
+
+    /**
+     * Title for the widget. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() title: string;
+
+    /**
+     * Subtitle for the widget. <br>
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() subtitle: string;
 
     /**
      * Class of the widget.
@@ -17,24 +29,24 @@ export class CircleProgressBar {
 
     /**
      * Type of the bar to be displayed. <br>
-     * <p><em>Allowed Values: </em><code>default, default-striped, success, success-striped, info, info-striped, warning, warning-striped, danger, danger-striped</code></p>
+     * <p><em>Allowed Values: </em><code>default, success, info, warning, danger</code></p>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() type: string = 'default';
 
     /**
-     * Hint text is shown for the circle progress bar widget on hover. <br>
+     * Hint text is shown for the progress circle widget on hover. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() hint: string;
 
     /**
-     * This property specifies the tab order of the circle progress bar widget.
+     * This property specifies the tab order of the progress circle widget.
      */
     @Input() tabindex: number;
 
     /**
-     * This property will be used to show/hide the circle progress bar widget on the web page. <br>
+     * This property will be used to show/hide the progress circle widget on the web page. <br>
      * <p><em>Bindable: </em><code>true</code></p>
      */
     @Input() show: boolean = true;
@@ -61,10 +73,10 @@ export class CircleProgressBar {
      * Format(Absolute/Percentage) in which the progress needs to be displayed.
      * <p><em>Allowed Values: </em><code>9, 9.9, 9.99, 9.999, 9%, 9.9%, 9.99%, 9.999%</code></p>
      */
-    @Input() displayformat: string = '';
+    @Input() displayformat: string = '9%';
 
     /**
-     * Placement of text in circle progress bar.
+     * Placement of text in the widget.
      * <p><em>Allowed Values: </em><code>hidden, inside</code></p>
      */
     @Input() captionplacement: string = 'hidden';

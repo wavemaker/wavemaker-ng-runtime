@@ -2,9 +2,9 @@ import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
 
-register('wm-circle-progress', (): IBuildTaskDef => {
+register('wm-progress-circle', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmCircleProgressBar ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmProgressCircle ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
