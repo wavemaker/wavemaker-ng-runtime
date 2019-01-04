@@ -13,7 +13,10 @@ const getManager = (): ServiceVariableManager => {
 
 export class ServiceVariable extends ApiAwareVariable implements IDataSource {
 
+    // Used to track progress of file upload
     _progressObservable;
+    // Used to track a variable http call, so that it can be cancelled at any point of time during its execution
+    _observable;
     pagination;
 
     constructor(variable: any) {
@@ -70,6 +73,9 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.IS_BOUND_TO_LOCALE:
                 returnVal = false;
                 break;
+            case DataSource.Operation.CANCEL:
+                returnVal = this.cancel(options);
+                break;
             default :
                 returnVal = {};
                 break;
@@ -115,8 +121,8 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
         return true;
     }
 
-    cancel() {
-        return getManager().cancel(this);
+    cancel(options?) {
+        return getManager().cancel(this, options);
     }
 
     init() {

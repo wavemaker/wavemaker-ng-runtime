@@ -848,31 +848,33 @@ export class LiveVariableUtils {
             action = 'period' + action.charAt(0).toUpperCase() + action.substr(1);
         }
 
-        promiseObj = LVService[action]({
-            'projectID': projectID,
-            'service': variable._prefabName ? '' : 'services',
-            'dataModelName': dbName,
-            'entityName': variable.type,
-            'id': !_.isUndefined(options.id) ? encodeURIComponent(options.id) : compositeId,
-            'data': rowObject,
-            'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
-        }).then((data) => {
-            let response = data.body;
-            const advancedOptions: AdvancedOptions  = {xhrObj: data};
+        return new Promise((resolve, reject) => {
+            variable._observable = LVService[action]({
+                'projectID': projectID,
+                'service': variable._prefabName ? '' : 'services',
+                'dataModelName': dbName,
+                'entityName': variable.type,
+                'id': !_.isUndefined(options.id) ? encodeURIComponent(options.id) : compositeId,
+                'data': rowObject,
+                'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
+            }).subscribe((data) => {
+                if (data && data.type) {
+                    let response = data.body;
+                    const advancedOptions: AdvancedOptions = {xhrObj: data};
 
-            $queue.process(variable);
-            /* if error received on making call, call error callback */
-            if (response && response.error) {
-                // EVENT: ON_RESULT
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
-                // EVENT: ON_ERROR
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
-                // EVENT: ON_CAN_UPDATE
-                variable.canUpdate = true;
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error, advancedOptions);
-                triggerFn(error, response.error);
-                return Promise.reject(response.error);
-            }
+                    $queue.process(variable);
+                    /* if error received on making call, call error callback */
+                    if (response && response.error) {
+                        // EVENT: ON_RESULT
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
+                        // EVENT: ON_ERROR
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
+                        // EVENT: ON_CAN_UPDATE
+                        variable.canUpdate = true;
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error, advancedOptions);
+                        triggerFn(error, response.error);
+                        return Promise.reject(response.error);
+                    }
 
             // EVENT: ON_RESULT
             _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
@@ -890,25 +892,25 @@ export class LiveVariableUtils {
             // EVENT: ON_CAN_UPDATE
             variable.canUpdate = true;
             _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
-            triggerFn(success, response);
-            return Promise.resolve(response);
-        }, (response) => {
-            const errMsg = response.error;
-            const advancedOptions = {xhrObj: response};
-            // EVENT: ON_RESULT
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
-            // EVENT: ON_ERROR
-            if (!options.skipNotification) {
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
-            }
-            // EVENT: ON_CAN_UPDATE
-            variable.canUpdate = true;
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, advancedOptions);
-            triggerFn(error, errMsg);
-            return Promise.reject(errMsg);
+                    triggerFn(success, response);
+                    resolve(response);
+                }
+            }, (response) => {
+                const errMsg = response.error;
+                const advancedOptions = {xhrObj: response};
+                // EVENT: ON_RESULT
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
+                // EVENT: ON_ERROR
+                if (!options.skipNotification) {
+                    _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
+                }
+                // EVENT: ON_CAN_UPDATE
+                variable.canUpdate = true;
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, advancedOptions);
+                triggerFn(error, errMsg);
+                reject(errMsg);
+            });
         });
-
-        return variable.promise = promiseObj;
     }
 
     static traverseFilterExpressions(filterExpressions, traverseCallbackFn) {

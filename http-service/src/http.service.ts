@@ -18,7 +18,27 @@ export class HttpServiceImpl extends AbstractHttpService {
         super();
     }
 
-    send(options: any) {
+    /**
+     * This method handles session timeout.
+     * @param options
+     * @param resolve
+     * @param reject
+     */
+    handleSessionTimeout(options, resolve?, reject?) {
+        this.sessionTimeoutQueue.push({
+            requestInfo: options,
+            resolve: resolve,
+            reject: reject
+        });
+        this.on401();
+    }
+
+    /**
+     * Generates a request with provided options
+     * @param options, request params/options
+     * @returns {HttpRequest}
+     */
+    private generateRequest(options: any) {
         let reqHeaders = new HttpHeaders(),
             reqParams = new HttpParams();
         const headers = options.headers;
@@ -53,38 +73,58 @@ export class HttpServiceImpl extends AbstractHttpService {
             third = options.data;
             fourth = reqOptions;
         }
+        return new HttpRequest(options.method, options.url, third, fourth);
+    }
 
-        const req = new HttpRequest(options.method, options.url, third, fourth);
+    /**
+     * This method filters and returns error message from the failed network call response.
+     * @param err, error form network call failure
+     */
+    public getErrMessage(err: any) {
+        let errMsg;
+        if (_.isString(err)) {
+            errMsg = err;
+        } else {
+            let errorDetails = err.error;
+            errorDetails = getValidJSON(errorDetails) || errorDetails;
+            if (errorDetails && errorDetails.errors) {
+                errMsg = this.parseErrors(errorDetails.errors);
+            } else {
+                errMsg = 'Service Call Failed';
+            }
+        }
+        return errMsg;
+    }
+
+    /**
+     * Make a http call and returns an observable that can be cancelled
+     * @param options, options using which the call needs to be made
+     */
+    sendCallAsObservable(options: any): any {
+        const req = this.generateRequest(options);
+        return this.httpClient.request(req);
+    }
+
+    /**
+     * Makes a http call and return a promise
+     * @param options, options using which the call needs to be made
+     */
+    send(options: any) {
+        const req = this.generateRequest(options);
 
         return new Promise((resolve, reject) => {
             this.httpClient.request(req).toPromise().then((response) => {
                 resolve(response);
-            } , (response) => {
+            } , (err) => {
                 // In case of 401, do not reject the promise.
                 // push it into the queue, which will be resolved post login
-                if (this.isPlatformSessionTimeout(response)) {
-                    this.sessionTimeoutQueue.push({
-                        requestInfo: options,
-                        resolve: resolve,
-                        reject: reject
-                    });
-                    this.on401();
+                if (this.isPlatformSessionTimeout(err)) {
+                    this.handleSessionTimeout(options, resolve, reject);
                 } else {
-                    let errMsg;
-                    if (_.isString(response)) {
-                        errMsg = response;
-                    } else {
-                        let errorDetails = response.error;
-                        errorDetails = getValidJSON(errorDetails) || errorDetails;
-                        if (errorDetails && errorDetails.errors) {
-                            errMsg = this.parseErrors(errorDetails.errors);
-                        } else {
-                            errMsg = 'Service Call Failed';
-                        }
-                    }
+                    const errMsg = this.getErrMessage(err);
                     reject({
                         error: errMsg,
-                        details: response
+                        details: err
                     });
                 }
             });

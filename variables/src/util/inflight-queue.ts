@@ -31,7 +31,7 @@ class InflightQueue {
      * clears the queue against a variable
      * @param variable
      */
-    private clear = (variable) => {
+    public clear(variable) {
         this.requestsQueue.delete(variable);
     }
 
