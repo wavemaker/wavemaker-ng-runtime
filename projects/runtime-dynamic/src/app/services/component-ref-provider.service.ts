@@ -1,0 +1,247 @@
+import {
+    Compiler,
+    Component,
+    CUSTOM_ELEMENTS_SCHEMA,
+    Injectable,
+    Injector,
+    NgModule,
+    NO_ERRORS_SCHEMA,
+    ViewEncapsulation
+} from '@angular/core';
+
+import { App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
+import { transpile } from '@wm/transpiler';
+import {
+    AppManagerService,
+    BasePageComponent,
+    BasePartialComponent,
+    BasePrefabComponent,
+    ComponentRefProvider,
+    ComponentType,
+    RuntimeBaseModule,
+    getPrefabMinJsonUrl
+} from '@wm/runtime/base';
+
+import { AppResourceManagerService } from './app-resource-manager.service';
+
+interface IPageMinJSON {
+    markup: string;
+    script: string;
+    styles: string;
+    variables: string;
+    config?: string;
+}
+
+declare const window: any;
+
+const fragmentCache = new Map<string, any>();
+
+window.resourceCache = fragmentCache;
+
+const componentFactoryRefCache = new Map<ComponentType, Map<string, any>>();
+
+componentFactoryRefCache.set(ComponentType.PAGE, new Map<string, any>());
+componentFactoryRefCache.set(ComponentType.PARTIAL, new Map<string, any>());
+componentFactoryRefCache.set(ComponentType.PREFAB, new Map<string, any>());
+
+const _decodeURIComponent = (str: string) => decodeURIComponent(str.replace(/\+/g, ' '));
+
+const getFragmentUrl = (fragmentName: string, type: ComponentType) => {
+    if (type === ComponentType.PAGE || type === ComponentType.PARTIAL) {
+        return `./pages/${fragmentName}/page.min.json`;
+    } else if (type === ComponentType.PREFAB) {
+        return getPrefabMinJsonUrl(fragmentName);
+    }
+};
+
+const scriptCache = new Map<string, Function>();
+const execScript = (
+    script: string,
+    identifier: string,
+    ctx: string,
+    instance: any,
+    app: any,
+    utils: any
+) => {
+    let fn = scriptCache.get(identifier);
+    if (!fn) {
+        fn = new Function(ctx, 'App', 'Utils', script);
+        scriptCache.set(identifier, fn);
+    }
+    try {
+        fn(instance, app, utils);
+    } catch (e) {
+        console.warn(`error executing script of ${identifier}`);
+    }
+};
+
+class BaseDynamicComponent {
+    init() {}
+}
+
+const getDynamicModule = (componentRef: any) => {
+    @NgModule({
+        declarations: [componentRef],
+        imports: [
+            RuntimeBaseModule
+        ],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+    })
+    class DynamicModule {}
+
+    return DynamicModule;
+};
+
+const getDynamicComponent = (
+    componentName,
+    type: ComponentType,
+    template: string,
+    css: string,
+    script: any,
+    variables: any,
+) => {
+
+    const componentDef = {
+        template,
+        styles: [css],
+        encapsulation: ViewEncapsulation.None
+    };
+
+    let BaseClass: any = BaseDynamicComponent;
+    let selector = '';
+    let context = '';
+
+    switch (type) {
+        case ComponentType.PAGE:
+            BaseClass = BasePageComponent;
+            selector = `app-page-${componentName}`;
+            context = 'Page';
+            break;
+        case ComponentType.PARTIAL:
+            BaseClass = BasePartialComponent;
+            selector = `app-partial-${componentName}`;
+            context = 'Partial';
+            break;
+        case ComponentType.PREFAB:
+            BaseClass = BasePrefabComponent;
+            selector = `app-prefab-${componentName}`;
+            context = 'Prefab';
+            break;
+    }
+
+    @Component({
+        ...componentDef,
+        selector,
+        providers: [
+            {
+                provide: UserDefinedExecutionContext,
+                useExisting: DynamicComponent
+            }
+        ]
+    })
+    class DynamicComponent extends BaseClass {
+        pageName;
+        partialName;
+        prefabName;
+
+        constructor(public injector: Injector) {
+            super();
+
+            switch (type) {
+                case ComponentType.PAGE:
+                    this.pageName = componentName;
+                    break;
+                case ComponentType.PARTIAL:
+                    this.partialName = componentName;
+                    break;
+                case ComponentType.PREFAB:
+                    this.prefabName = componentName;
+                    break;
+            }
+
+            super.init();
+        }
+
+        evalUserScript(instance: any, appContext: any, utils: any) {
+            execScript(script, selector, context, instance, appContext, utils);
+        }
+
+        getVariables() {
+            return variables;
+        }
+    }
+
+    return DynamicComponent;
+};
+
+@Injectable()
+export class ComponentRefProviderService extends ComponentRefProvider {
+
+    private loadResourcesOfFragment(url): Promise<IPageMinJSON> {
+
+        const resource = fragmentCache.get(url);
+
+        if (resource) {
+            return Promise.resolve(resource);
+        }
+
+        return this.resouceMngr.get(url, true)
+            .then(({markup, script, styles, variables}: IPageMinJSON) => {
+                const response = {
+                    markup: transpile(_decodeURIComponent(markup)),
+                    script: _decodeURIComponent(script),
+                    styles: _decodeURIComponent(styles),
+                    variables: getValidJSON(_decodeURIComponent(variables))
+                };
+                fragmentCache.set(url, response);
+
+                return response;
+            }, e => {
+                const status = e.details.status;
+                const errorMsgMap = {
+                    404 : this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available',
+                    403 : this.app.appLocale.LABEL_ACCESS_DENIED || 'Access Denied'
+                };
+                if (errorMsgMap[status]) {
+                    this.appManager.notifyApp(
+                        errorMsgMap[status],
+                        'error'
+                    );
+                }
+            });
+    }
+
+    constructor(
+        private resouceMngr: AppResourceManagerService,
+        private app: App,
+        private appManager: AppManagerService,
+        private compiler: Compiler
+    ) {
+        super();
+    }
+
+    public async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any> {
+        // check in the cache.
+        let componentFactoryRef = componentFactoryRefCache.get(componentType).get(componentName);
+
+        if (componentFactoryRef) {
+            return componentFactoryRef;
+        }
+
+        return this.loadResourcesOfFragment(getFragmentUrl(componentName, componentType))
+            .then(({markup, script, styles, variables})  => {
+
+                const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, variables);
+                const moduleDef = getDynamicModule(componentDef);
+
+                componentFactoryRef = this.compiler
+                    .compileModuleAndAllComponentsSync(moduleDef)
+                    .componentFactories
+                    .filter(factory => factory.componentType === componentDef)[0];
+
+                componentFactoryRefCache.get(componentType).set(componentName, componentFactoryRef);
+
+                return componentFactoryRef;
+        });
+    }
+}

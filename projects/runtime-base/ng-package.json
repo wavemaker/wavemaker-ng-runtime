@@ -1,0 +1,29 @@
+{
+    "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../libraries/runtime-base",
+    "lib": {
+        "entryFile": "src/public_api.ts",
+        "umdId": "wm.runtime.base",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+            "@angular/common/http": "ng.common.http",
+            "@angular/common": "ng.common",
+            "@angular/router": "ng.router",
+
+            "rxjs": "rxjs",
+            "rxjs/operators": "rxjs.operators",
+            "ngx-toastr":  "ngxToastr",
+            "ngx-bootstrap": "ngxBootstrap",
+
+            "@wm/core": "wm.core",
+            "@wm/variables": "wm.variables",
+            "@wm/transpiler": "wm.transpiler",
+            "@wm/components": "wm.components",
+            "@wm/security": "wm.security",
+            "@wm/oAuth": "wm.oAuth",
+            "@wm/http": "wm.http",
+            "@wm/mobile/runtime": "wm.mobile.runtime"
+        }
+    }
+}

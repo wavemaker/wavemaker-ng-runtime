@@ -1,7 +1,18 @@
 {
-  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../libraries/http-service",
-  "lib": {
-    "entryFile": "src/public_api.ts"
-  }
+    "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../libraries/http-service",
+    "lib": {
+        "entryFile": "src/public_api.ts",
+        "umdId": "wm.http",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+            "@angular/common": "ng.common",
+            "@angular/common/http": "ng.common.http",
+
+            "rxjs": "rxjs",
+
+            "@wm/core": "wm.core"
+        }
+    }
 }

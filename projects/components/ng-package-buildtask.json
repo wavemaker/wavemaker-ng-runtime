@@ -1,7 +1,16 @@
 {
-  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../libraries/build-task",
-  "lib": {
-    "entryFile": "src/public_api_buildtask.ts"
-  }
+    "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../libraries/build-task",
+    "lib": {
+        "entryFile": "src/public_api_buildtask.ts",
+        "umdId": "wm.components.buildTask",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+            "@angular/forms": "ng.forms",
+
+            "@wm/core": "wm.core",
+            "@wm/transpiler": "wm.transpiler"
+        }
+    }
 }

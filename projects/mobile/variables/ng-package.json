@@ -1,7 +1,32 @@
 {
-  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../libraries/mobile/variables",
-  "lib": {
-    "entryFile": "src/public_api.ts"
-  }
+    "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../libraries/mobile/variables",
+    "lib": {
+        "entryFile": "src/public_api.ts",
+        "umdId": "wm.mobile.variables",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+
+            "rxjs": "rxjs",
+            "rxjs/operators": "rxjs.operators",
+
+            "@ionic-native/app-version": "ionicNative.plugins",
+            "@ionic-native/barcode-scanner": "ionicNative.plugins",
+            "@ionic-native/calendar": "ionicNative.plugins",
+            "@ionic-native/camera": "ionicNative.plugins",
+            "@ionic-native/device": "ionicNative.plugins",
+            "@ionic-native/contacts": "ionicNative.plugins",
+            "@ionic-native/media-capture": "ionicNative.plugins",
+            "@ionic-native/geolocation": "ionicNative.plugins",
+            "@ionic-native/vibration": "ionicNative.plugins",
+
+            "@wm/mobile/core": "wm.mobile.core",
+            "@wm/mobile/offline": "wm.mobile.offline",
+            "@wm/security":  "wm.security",
+            "@wm/core":  "wm.core",
+            "@wm/variables":  "wm.variables",
+            "@wm/mobile/components": "wm.mobile.components"
+        }
+    }
 }

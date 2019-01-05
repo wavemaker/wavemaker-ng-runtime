@@ -1,10 +1,12 @@
 import { Subject } from 'rxjs';
 
+import { getWmProjectProperties } from './wm-project-properties';
+
 import { $watch } from './watcher';
 import { DataType } from '../enums/enums';
 import { DataSource } from '../types/types';
 
-declare const _, X2JS, _WM_APP_PROPERTIES;
+declare const _, X2JS;
 declare const moment;
 declare const document;
 declare const resolveLocalFileSystemURL;
@@ -75,7 +77,7 @@ export const isIos = () => isIphone() || isIpod() || isIpad();
 
 export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
 
-export const isMobileApp = () => _WM_APP_PROPERTIES.platformType === 'MOBILE' && _WM_APP_PROPERTIES.type === 'APPLICATION';
+export const isMobileApp = () => getWmProjectProperties().platformType === 'MOBILE' && getWmProjectProperties().type === 'APPLICATION';
 
 export const getAndroidVersion = () => {
     const match = (window.navigator.userAgent.toLowerCase()).match(/android\s([0-9\.]*)/);

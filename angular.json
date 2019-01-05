@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "wavemaker-ng-runtime-new": {
+        "runtime-app": {
             "root": "",
             "sourceRoot": "src",
             "projectType": "application",
@@ -13,7 +13,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/wavemaker-ng-runtime-new",
+                        "outputPath": "dist/runtime-app",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -26,10 +26,28 @@
                             "src/styles.css"
                         ],
                         "scripts": [
-                            "./node_modules/jquery/dist/jquery.min.js",
                             "./node_modules/lodash/lodash.min.js",
+                            "./node_modules/x2js/x2js.js",
+                            "./node_modules/d3/d3.min.js",
+                            "./node_modules/wm-nvd3/build/nv.d3.min.js",
+                            "./node_modules/jquery/dist/jquery.min.js",
+                            "./node_modules/jquery-ui/ui/disable-selection.js",
+                            "./node_modules/jquery-ui/ui/version.js",
+                            "./node_modules/jquery-ui/ui/widget.js",
+                            "./node_modules/jquery-ui/ui/scroll-parent.js",
+                            "./node_modules/jquery-ui/ui/plugin.js",
+                            "./node_modules/jquery-ui/ui/data.js",
+                            "./node_modules/jquery-ui/ui/widgets/mouse.js",
+                            "./node_modules/jquery-ui/ui/widgets/resizable.js",
+                            "./node_modules/jquery-ui/ui/widgets/sortable.js",
+                            "./node_modules/jquery-ui/ui/widgets/droppable.js",
+                            "./libraries/datatable/datatable.js",
                             "./node_modules/moment/min/moment-with-locales.min.js",
-                            "./node_modules/summernote/dist/summernote.min.js"
+                            "./node_modules/fullcalendar/dist/fullcalendar.min.js",
+                            "./node_modules/summernote/dist/summernote.min.js",
+                            "./node_modules/hammerjs/hammer.min.js",
+                            "./node_modules/iscroll/build/iscroll.js",
+                            "./node_modules/js-cookie/src/js.cookie.js"
                         ]
                     },
                     "configurations": {
@@ -62,18 +80,18 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "wavemaker-ng-runtime-new:build"
+                        "browserTarget": "runtime-app:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "wavemaker-ng-runtime-new:build:production"
+                            "browserTarget": "runtime-app:build:production"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "wavemaker-ng-runtime-new:build"
+                        "browserTarget": "runtime-app:build"
                     }
                 },
                 "lint": {
@@ -413,7 +431,115 @@
                     }
                 }
             }
+        },
+        "runtime-base": {
+            "root": "projects/runtime-base",
+            "sourceRoot": "projects/runtime-base/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/runtime-base/tsconfig.lib.json",
+                        "project": "projects/runtime-base/ng-package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/runtime-base/tsconfig.lib.json",
+                            "projects/runtime-base/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "runtime-dynamic": {
+            "root": "projects/runtime-dynamic",
+            "sourceRoot": "projects/runtime-dynamic/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/runtime-dynamic/tsconfig.lib.json",
+                        "project": "projects/runtime-dynamic/ng-package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/runtime-dynamic/tsconfig.lib.json",
+                            "projects/runtime-dynamic/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "mobile-runtime": {
+            "root": "projects/mobile/runtime",
+            "sourceRoot": "projects/mobile/runtime/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/runtime/tsconfig.lib.json",
+                        "project": "projects/mobile/runtime/ng-package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/runtime/tsconfig.lib.json",
+                            "projects/mobile/runtime/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "mobile-placeholder": {
+            "root": "projects/mobile/placeholder",
+            "sourceRoot": "projects/mobile/placeholder/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/placeholder/tsconfig.lib.json",
+                        "project": "projects/mobile/placeholder/ng-package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/placeholder/tsconfig.lib.json",
+                            "projects/mobile/placeholder/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
         }
     },
-    "defaultProject": "wavemaker-ng-runtime-new"
+    "defaultProject": "runtime-app"
 }

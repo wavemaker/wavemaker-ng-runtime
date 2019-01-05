@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
+import { AbstractHttpService } from '@wm/core';
+
 import { HttpServiceImpl } from './http.service';
 
 @NgModule({
@@ -10,7 +12,9 @@ import { HttpServiceImpl } from './http.service';
         HttpClientModule
     ],
     declarations: [],
-    providers: [HttpServiceImpl]
+    providers: [
+        {provide: AbstractHttpService, useClass: HttpServiceImpl}
+    ]
 })
 export class HttpServiceModule {
 }

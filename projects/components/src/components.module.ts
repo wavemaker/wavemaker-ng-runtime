@@ -1,13 +1,24 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
 
-import { BsDatepickerModule, DatepickerModule, BsDropdownModule, ModalModule, ProgressbarModule, TimepickerModule, TypeaheadModule, CarouselModule, PopoverModule  } from 'ngx-bootstrap';
+import {
+    BsDatepickerModule,
+    BsDropdownModule,
+    CarouselModule,
+    DatepickerModule,
+    ModalModule,
+    PopoverModule,
+    ProgressbarModule,
+    TimepickerModule,
+    TypeaheadModule
+} from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxMaskModule } from 'ngx-mask';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 
+import { AbstractDialogService } from '@wm/core';
 import { SecurityModule } from '@wm/security';
 
 import { AccordionDirective } from './widgets/common/accordion/accordion.directive';
@@ -89,7 +100,10 @@ import { PaginationComponent } from './widgets/common/pagination/pagination.comp
 import { PanelComponent } from './widgets/common/panel/panel.component';
 import { PartialDialogComponent } from './widgets/common/dialog/partial-dialog/partial-dialog.component';
 import { PartialDirective } from './widgets/common/partial/partial.directive';
-import { PartialParamDirective, PartialParamHandlerDirective } from './widgets/common/partial-param/partial-param.directive';
+import {
+    PartialParamDirective,
+    PartialParamHandlerDirective
+} from './widgets/common/partial-param/partial-param.directive';
 import { PrefabContainerDirective } from './widgets/common/prefab-container/prefab-container.directive';
 import { PictureDirective } from './widgets/common/picture/picture.directive';
 import { PopoverComponent } from './widgets/common/popover/popover.component';
@@ -122,13 +136,29 @@ import { TimeComponent } from './widgets/common/time/time.component';
 import { TopNavDirective } from './widgets/common/top-nav/top-nav.directive';
 import { TreeDirective } from './widgets/common/tree/tree.directive';
 import { VideoComponent } from './widgets/common/video/video.component';
-import { FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe } from './pipes/custom-pipes';
+import {
+    FileExtensionFromMimePipe,
+    FileIconClassPipe,
+    FileSizePipe,
+    FilterPipe,
+    NumberToStringPipe,
+    PrefixPipe,
+    StateClassPipe,
+    StringToNumberPipe,
+    SuffixPipe,
+    TimeFromNowPipe,
+    ToCurrencyPipe,
+    ToDatePipe,
+    ToNumberPipe
+} from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { WizardComponent } from './widgets/common/wizard/wizard.component';
 import { WizardStepDirective } from './widgets/common/wizard/wizard-step/wizard-step.directive';
 import { OnFileSelectDirective } from './widgets/common/file-upload/common.directive';
 import { FileUploadComponent } from './widgets/common/file-upload/file-upload.component';
 import { LoginDialogDirective } from './widgets/common/dialog/login-dialog/login-dialog.directive';
+import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
+
 
 const wmComponents = [
     AccordionDirective,
@@ -307,7 +337,8 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
         FilterPipe,
         TrustAsPipe,
         ImagePipe,
-        Location
+        Location,
+        {provide: AbstractDialogService, useClass: DialogServiceImpl}
     ],
     entryComponents: [
         MenuComponent,

@@ -1,7 +1,11 @@
 {
-  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../libraries/transpiler",
-  "lib": {
-    "entryFile": "src/public_api.ts"
-  }
+    "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../libraries/transpiler",
+    "lib": {
+        "entryFile": "src/public_api.ts",
+        "umdId": "wm.transpiler",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler"
+        }
+    }
 }

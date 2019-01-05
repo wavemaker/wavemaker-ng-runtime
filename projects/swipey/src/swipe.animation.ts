@@ -1,4 +1,8 @@
 
+import initSwipeyJqueryPlugin from './swipey.jquery.plugin';
+
+initSwipeyJqueryPlugin();
+
 declare const  $;
 
 export abstract class SwipeAnimation {

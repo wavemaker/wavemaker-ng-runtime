@@ -89,6 +89,30 @@
             ],
             "@wm/mobile/variables/*": [
                 "libraries/mobile/variables/*"
+            ],
+            "@wm/runtime/base": [
+                "libraries/runtime-base"
+            ],
+            "@wm/runtime/base/*": [
+                "libraries/runtime-base/*"
+            ],
+            "@wm/runtime/dynamic": [
+                "libraries/runtime-dynamic"
+            ],
+            "@wm/runtime/dynamic/*": [
+                "libraries/runtime-dynamic/*"
+            ],
+            "@wm/mobile/runtime": [
+                "libraries/mobile/runtime"
+            ],
+            "@wm/mobile/runtime/*": [
+                "libraries/mobile/runtime/*"
+            ],
+            "@wm/mobile/placeholder": [
+                "libraries/mobile/placeholder"
+            ],
+            "@wm/mobile/placeholder/*": [
+                "libraries/mobile/placeholder/*"
             ]
         }
     }

@@ -1,0 +1,25 @@
+{
+    "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../libraries/runtime-dynamic",
+    "lib": {
+        "entryFile": "src/public_api.ts",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+
+            "rxjs": "rxjs",
+            "rxjs/operators": "rxjs.operators",
+            "ngx-toastr": "ngxToastr",
+
+            "@wm/runtime/base": "wm.runtime.base",
+            "@wm/mobile/runtime": "wm.mobile.runtime",
+            "@wm/components": "wm.components",
+            "@wm/core": "wm.core",
+            "@wm/security": "wm.security",
+            "@wm/oAuth": "wm.oAuth",
+            "@wm/variables": "wm.variables",
+            "@wm/http": "wm.http",
+            "@wm/transpiler": "wm.transpiler"
+        }
+    }
+}

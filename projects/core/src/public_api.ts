@@ -16,3 +16,4 @@ export * from './services/utils.service';
 export * from './services/field-type.service';
 export * from './services/field-widget.service';
 export * from './core.module';
+export * from './utils/wm-project-properties';

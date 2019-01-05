@@ -1,7 +1,29 @@
 {
-  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../libraries/mobile/offline",
-  "lib": {
-    "entryFile": "src/public_api.ts"
-  }
+    "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../libraries/mobile/offline",
+    "lib": {
+        "entryFile": "src/public_api.ts",
+        "umdId": "wm.mobile.offline",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+            "@angular/common": "ng.common",
+            "@angular/common/http": "ng.common.http",
+            "@angular/platform-browser": "ng.platformBrowser",
+
+            "rxjs": "rxjs",
+            "@ionic-native/app-version": "ionicNative.plugins",
+            "@ionic-native/file": "ionicNative.plugins",
+            "@ionic-native/sqlite": "ionicNative.plugins",
+            "@ionic-native/camera": "ionicNative.plugins",
+            "@ionic-native/media-capture": "ionicNative.plugins",
+
+            "@wm/core": "wm.core",
+            "@wm/mobile/core": "wm.mobile.core",
+            "@wm/components": "wm.components",
+            "@wm/transpiler": "wm.transpiler",
+            "@wm/security": "wm.security",
+            "@wm/variables": "wm.variables"
+        }
+    }
 }
