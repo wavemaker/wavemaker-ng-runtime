@@ -618,7 +618,7 @@ export class LiveVariableManager extends BaseVariableManager {
                 'sort': sort,
                 'data': requestData,
                 'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
-            }).then((response: any) => {
+            }).subscribe((response: any) => {
                 if (response && response.type) {
                     if ((response && response.error) || !response) {
                         triggerFn(error, response.error);
@@ -632,7 +632,7 @@ export class LiveVariableManager extends BaseVariableManager {
                     triggerFn(success, result);
                     resolve(result);
                 }
-            }, (errorMsg: any)=> {
+            }, (errorMsg: any) => {
                 triggerFn(error, errorMsg);
                 reject(errorMsg);
             });
