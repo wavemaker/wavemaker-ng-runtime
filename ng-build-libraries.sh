@@ -12,8 +12,8 @@ ng build components
 
 ng build mobile-core
 ng build mobile-offline
-ng build mobile-variables
 ng build mobile-components
+ng build mobile-variables
 ng build mobile-runtime
 ng build mobile-placeholder
 

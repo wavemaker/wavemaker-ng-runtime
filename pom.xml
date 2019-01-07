@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.wavemaker.runtime</groupId>
+    <artifactId>wavemaker-ng-runtime</artifactId>
+    <version>9.9.9</version>
+    <name>wavemaker-ng-runtime</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <main.basedir>${basedir}</main.basedir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <distributionManagement>
+        <site>
+            <id>${project.artifactId}-site</id>
+            <url>./${project.artifactId}</url>
+        </site>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <topSiteURL>./</topSiteURL>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>Build ng-runtime</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>sh</executable>
+                            <arguments>
+                                <argument>${basedir}/build.sh</argument>
+                                <argument>${wm_ng_runtime_docs_command_input}</argument>
+                                <argument>--locale</argument>
+                            </arguments>                                
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>read environment properties</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.props.file}</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <profiles>
+        <profile>
+            <id>runtime</id>
+            <activation>
+                <property>
+                    <name>!project.props.file</name>
+                </property>
+            </activation>
+            <properties>
+                <project.props.file>${main.basedir}/build-helpers/filters/desktop-runtime-local.props
+                </project.props.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>Snapshot</id>
+            <activation>
+                <property>
+                    <name>Snapshot</name>
+                </property>
+            </activation>
+            <properties>
+                <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format>
+            </properties>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>mvn-snapshot-repo</id>
+                    <uniqueVersion>true</uniqueVersion>
+                    <name>maven snapshot repository</name>
+                    <url>file:/tmp/wm-repo</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <finalName>${project.artifactId}-${maven.build.timestamp}</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>2.4</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

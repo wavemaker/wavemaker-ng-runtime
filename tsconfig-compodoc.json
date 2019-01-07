@@ -1,0 +1,7 @@
+{
+    "extends": "tsconfig.json",
+    "include": [
+        "projects/components/src/**/**/**/*.doc.ts",
+        "projects/mobile/components/src/**/**/**/*.doc.ts"
+    ]
+}
