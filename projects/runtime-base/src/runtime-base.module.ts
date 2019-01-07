@@ -13,6 +13,7 @@ import {
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule, TooltipModule } from 'ngx-bootstrap';
 
@@ -41,6 +42,7 @@ import { RoleGuard } from './guards/role.guard';
 import { AppJSResolve } from './resolves/app-js.resolve';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { AppComponent } from './components/app-component/app.component';
+import { HttpCallInterceptor } from './services/http-interceptor.services';
 
 export function InitializeApp(I18nService) {
     return () => {
@@ -76,6 +78,7 @@ export const tooltipModule = TooltipModule.forRoot();
         FormsModule,
         RouterModule,
         ReactiveFormsModule,
+        HttpClientModule,
 
         modalModule,
         carouselModule,
@@ -108,6 +111,11 @@ export const tooltipModule = TooltipModule.forRoot();
             provide: LOCALE_ID,
             useFactory: setAngularLocale,
             deps: [AbstractI18nService]
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpCallInterceptor,
+            multi: true
         },
         DecimalPipe,
         DatePipe,

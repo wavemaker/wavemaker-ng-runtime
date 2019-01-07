@@ -31,6 +31,8 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     tabindex;
     title;
     buttonDef;
+    hyperlink;
+    target;
 
     constructor(
         inj: Injector,
@@ -58,7 +60,10 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
             action: this.action,
             accessroles: this.accessroles,
             disabled: this.disabled,
-            tabindex: this.tabindex ? +this.tabindex : undefined
+            tabindex: this.tabindex ? +this.tabindex : undefined,
+            widgetType: this['widget-type'] || 'button',
+            hyperlink: this.hyperlink,
+            target: this.target
         };
     }
 

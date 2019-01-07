@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 
 import { noop } from '@wm/core';
 
-import { Change, FlushContext, Worker } from '../change-log.service';
-import { LocalDBManagementService } from '../local-db-management.service';
-import { LocalDBStore } from '../../models/local-db-store';
+import { Change, FlushContext, Worker } from './../change-log.service';
+import { LocalDBManagementService } from './../local-db-management.service';
+import { LocalDBStore } from './../../models/local-db-store';
 
 const STORE_KEY  = 'idConflictResolution';
 

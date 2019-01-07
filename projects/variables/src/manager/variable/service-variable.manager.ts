@@ -17,6 +17,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
     fileUploadResponse: any = [];
     fileUploadCount = 0;
+    totalFilesCount = 0;
     successFileUploadCount = 0;
     failedFileUploadCount = 0;
 
@@ -133,7 +134,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         };
     }
 
-    private uploadFileInFormData(variable: ServiceVariable, options: any, success: Function, error: Function, file, requestParams, fileCount) {
+    private uploadFileInFormData(variable: ServiceVariable, options: any, success: Function, error: Function, file, requestParams) {
         const promise = upload(file, requestParams.data, {
             fileParamName: 'files',
             url: requestParams.url
@@ -142,7 +143,7 @@ export class ServiceVariableManager extends BaseVariableManager {
             this.fileUploadCount++;
             this.successFileUploadCount++;
             this.fileUploadResponse.push(data[0]);
-            if (fileCount === this.fileUploadCount) {
+            if (this.totalFilesCount === this.fileUploadCount) {
                 if (this.failedFileUploadCount === 0) {
                     this.processSuccessResponse(this.fileUploadResponse, variable, options, success);
                     this.fileUploadResponse = [];
@@ -154,22 +155,28 @@ export class ServiceVariableManager extends BaseVariableManager {
                 }
                 this.fileUploadCount = 0;
                 this.successFileUploadCount = 0;
+                this.totalFilesCount = 0;
             }
             return data;
         }, (e) => {
             this.fileUploadCount++;
             this.failedFileUploadCount++;
             this.fileUploadResponse.push(e);
-            if (fileCount === this.fileUploadCount) {
+            if (this.totalFilesCount === this.fileUploadCount) {
                 this.processErrorResponse(variable, this.fileUploadResponse, error, options.xhrObj, options.skipNotification);
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, this.fileUploadResponse);
                 this.fileUploadResponse = [];
                 this.fileUploadCount = 0;
                 this.failedFileUploadCount = 0;
+                this.totalFilesCount = 0;
             }
             return e;
         }, (data) => {
             if (variable._progressObservable) {
-                variable._progressObservable.next({'progress': data, 'status': VARIABLE_CONSTANTS.EVENT.PROGRESS, 'fileName': file.name});
+                variable._progressObservable.next({
+                    'progress': data,
+                    'status': VARIABLE_CONSTANTS.EVENT.PROGRESS,
+                    'fileName': file.name});
             }
             initiateCallback(VARIABLE_CONSTANTS.EVENT.PROGRESS, variable, data);
             return data;
@@ -308,7 +315,25 @@ export class ServiceVariableManager extends BaseVariableManager {
      */
     private makeCall(params) {
         params.responseType = 'text';
-        return httpService.send(params);
+        return httpService.sendCallAsObservable(params);
+    }
+
+    /**
+     * Returns true if any of the files are in onProgress state
+     */
+    private isFileUploadInProgress(dataBindings) {
+        let filesStatus = false;
+        _.forEach(dataBindings, (dataBinding) => {
+            if (_.isArray(dataBinding) && dataBinding[0] instanceof File) {
+                _.forEach(dataBinding, (file) => {
+                    if (file.status === 'onProgress') {
+                        filesStatus = true;
+                        return;
+                    }
+                });
+            }
+        });
+        return filesStatus;
     }
 
     // Makes the call for Uploading file/ files
@@ -323,12 +348,14 @@ export class ServiceVariableManager extends BaseVariableManager {
                 _.forEach(inputField, (input) => {
                     if (input instanceof File || _.find(_.values(input), o => o instanceof Blob)) {
                         fileArr.push(input);
+                        this.totalFilesCount++;
                         fileParamCount = fileParamCount || 1;
                     }
                 });
             } else {
                 if (inputField instanceof File) {
                     fileParamCount++;
+                    this.totalFilesCount++;
                     fileArr.push(inputField);
                 }
             }
@@ -336,11 +363,11 @@ export class ServiceVariableManager extends BaseVariableManager {
         if (fileParamCount === 1) {
             if (inputFields.files.length > 1) {
                 _.forEach(fileArr, (file) => {
-                    promArr.push(this.uploadFileInFormData(variable, options, success, error, file, requestParams, inputFields.files.length));
+                    promArr.push(this.uploadFileInFormData(variable, options, success, error, file, requestParams));
                 });
                 return Promise.all(promArr);
             } else {
-                return this.uploadFileInFormData(variable, options, success, error, fileArr[0], requestParams, 1);
+                return this.uploadFileInFormData(variable, options, success, error, fileArr[0], requestParams);
             }
         }
     }
@@ -403,17 +430,27 @@ export class ServiceVariableManager extends BaseVariableManager {
         // notify variable progress
         this.notifyInflight(variable, !options.skipToggleState);
 
-        // make the call
-        return this.makeCall(requestParams).then((response) => {
-            const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response }), success);
-            // notify variable success
-            this.notifyInflight(variable, false, data);
-            return Promise.resolve(data);
-        }, (e) => {
-            // notify variable error
-            this.notifyInflight(variable, false);
-            this.processErrorResponse(variable, e.error, error, e.details, options.skipNotification);
-            return Promise.reject(e);
+        // make the call and return a promise to the user to support script calls made by users
+        return new Promise((resolve, reject) => {
+            // the _observable property on variable is used store the observable using which the network call is made
+            // this can be used to cancel the variable calls.
+            variable._observable = this.makeCall(requestParams).subscribe((response: any) => {
+                if (response.type) {
+                    const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success);
+                    // notify variable success
+                    this.notifyInflight(variable, false, data);
+                    resolve(response);
+                }
+            }, (err: any) => {
+                const errMsg = httpService.getErrMessage(err);
+                // notify variable error
+                this.notifyInflight(variable, false);
+                this.processErrorResponse(variable, errMsg, error, err, options.skipNotification);
+                reject({
+                    error: errMsg,
+                    details: err
+                });
+            });
         });
     }
 
@@ -470,8 +507,30 @@ export class ServiceVariableManager extends BaseVariableManager {
         return setInput(variable.dataBinding, key, val, options);
     }
 
-    public cancel(variable) {
-        console.warn('Yet to be implemented!');
+    /**
+     * Cancels an on going service request
+     * @param variable
+     * @param $file
+     */
+    public cancel(variable, $file?) {
+        // CHecks if there is any pending requests in the queue
+        if ($queue.requestsQueue.has(variable)) {
+            // If the request is a File upload request then modify the elements associated with file upload
+            // else unsubscribe from the observable on the variable.
+            if (ServiceVariableUtils.isFileUploadRequest(variable)) {
+                $file._uploadProgress.unsubscribe();
+                this.totalFilesCount--;
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ABORT, variable, $file);
+                if (!this.isFileUploadInProgress(variable.dataBinding) || this.totalFilesCount === 1) {
+                    $queue.process(variable);
+                }
+            } else {
+                if (variable._observable) {
+                    variable._observable.unsubscribe();
+                    $queue.process(variable);
+                }
+            }
+        }
     }
 
     public defineFirstLastRecord(variable) {

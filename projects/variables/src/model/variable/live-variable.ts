@@ -17,6 +17,8 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     pagination;
     type;
     _options;
+    // Used to track a variable http call, so that it can be cancelled at any point of time during its execution
+    _observable;
 
     constructor(variable: any) {
         super();
@@ -112,6 +114,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = true;
                 break;
             case DataSource.Operation.IS_BOUND_TO_LOCALE:
+                returnVal = false;
+                break;
+            case DataSource.Operation.CANCEL:
                 returnVal = false;
                 break;
             default:
@@ -213,5 +218,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             getManager().initFilterExpressionBinding(this);
         }
         getManager().defineFirstLastRecord(this);
+    }
+
+    cancel(options?) {
+        return getManager().cancel(this, options);
     }
 }

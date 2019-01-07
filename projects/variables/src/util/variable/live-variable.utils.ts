@@ -849,73 +849,75 @@ export class LiveVariableUtils {
             action = 'period' + action.charAt(0).toUpperCase() + action.substr(1);
         }
 
-        promiseObj = LVService[action]({
-            'projectID': projectID,
-            'service': variable._prefabName ? '' : 'services',
-            'dataModelName': dbName,
-            'entityName': variable.type,
-            'id': !_.isUndefined(options.id) ? encodeURIComponent(options.id) : compositeId,
-            'data': rowObject,
-            'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
-        }).then((data) => {
-            let response = data.body;
-            const advancedOptions: AdvancedOptions  = {xhrObj: data};
+        return new Promise((resolve, reject) => {
+            variable._observable = LVService[action]({
+                'projectID': projectID,
+                'service': variable._prefabName ? '' : 'services',
+                'dataModelName': dbName,
+                'entityName': variable.type,
+                'id': !_.isUndefined(options.id) ? encodeURIComponent(options.id) : compositeId,
+                'data': rowObject,
+                'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
+            }).subscribe((data) => {
+                if (data && data.type) {
+                    let response = data.body;
+                    const advancedOptions: AdvancedOptions = {xhrObj: data};
 
-            $queue.process(variable);
-            /* if error received on making call, call error callback */
-            if (response && response.error) {
-                // EVENT: ON_RESULT
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
-                // EVENT: ON_ERROR
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
-                // EVENT: ON_CAN_UPDATE
-                variable.canUpdate = true;
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error, advancedOptions);
-                triggerFn(error, response.error);
-                return Promise.reject(response.error);
-            }
+                    $queue.process(variable);
+                    /* if error received on making call, call error callback */
+                    if (response && response.error) {
+                        // EVENT: ON_RESULT
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
+                        // EVENT: ON_ERROR
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
+                        // EVENT: ON_CAN_UPDATE
+                        variable.canUpdate = true;
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error, advancedOptions);
+                        triggerFn(error, response.error);
+                        return Promise.reject(response.error);
+                    }
 
-            // EVENT: ON_RESULT
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
-            if (variable.operation !== 'read') {
-                // EVENT: ON_PREPARESETDATA
-                const newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response, advancedOptions);
-                if (newDataSet) {
-                    // setting newDataSet as the response to service variable onPrepareSetData
-                    response = newDataSet;
+                    // EVENT: ON_RESULT
+                    _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
+                    if (variable.operation !== 'read') {
+                        // EVENT: ON_PREPARESETDATA
+                        const newDataSet = _initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response, advancedOptions);
+                        if (newDataSet) {
+                            // setting newDataSet as the response to service variable onPrepareSetData
+                            response = newDataSet;
+                        }
+                        variable.dataSet = response;
+                    }
+
+                    // watchers should get triggered before calling onSuccess event.
+                    // so that any variable/widget depending on this variable's data is updated
+                    $invokeWatchers(true);
+                    setTimeout(() => {
+                        // EVENT: ON_SUCCESS
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, advancedOptions);
+                        // EVENT: ON_CAN_UPDATE
+                        variable.canUpdate = true;
+                        _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
+                    });
+                    triggerFn(success, response);
+                    resolve(response);
                 }
-                variable.dataSet = response;
-            }
-
-            // watchers should get triggered before calling onSuccess event.
-            // so that any variable/widget depending on this variable's data is updated
-            $invokeWatchers(true);
-            setTimeout(() => {
-                // EVENT: ON_SUCCESS
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, advancedOptions);
+            }, (response) => {
+                const errMsg = response.error;
+                const advancedOptions = {xhrObj: response};
+                // EVENT: ON_RESULT
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
+                // EVENT: ON_ERROR
+                if (!options.skipNotification) {
+                    _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
+                }
                 // EVENT: ON_CAN_UPDATE
                 variable.canUpdate = true;
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
+                _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, advancedOptions);
+                triggerFn(error, errMsg);
+                reject(errMsg);
             });
-            triggerFn(success, response);
-            return Promise.resolve(response);
-        }, (response) => {
-            const errMsg = response.error;
-            const advancedOptions = {xhrObj: response};
-            // EVENT: ON_RESULT
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
-            // EVENT: ON_ERROR
-            if (!options.skipNotification) {
-                _initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
-            }
-            // EVENT: ON_CAN_UPDATE
-            variable.canUpdate = true;
-            _initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, advancedOptions);
-            triggerFn(error, errMsg);
-            return Promise.reject(errMsg);
         });
-
-        return variable.promise = promiseObj;
     }
 
     static traverseFilterExpressions(filterExpressions, traverseCallbackFn) {
@@ -960,9 +962,9 @@ export class LiveVariableUtils {
      * This return function can take a function as argument. This argument function can modify the filter fields
      * before generating where clause.
      */
-    static getWhereClauseGenerator(variable, options) {
+    static getWhereClauseGenerator(variable, options, updatedFilterFields?: any) {
         return (modifier, skipEncode?: boolean) => {
-            const clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(variable.filterExpressions));
+            const clonedFields = LiveVariableUtils.getFilterExprFields(getClonedObject(updatedFilterFields || variable.filterExpressions));
             // this flag skips the encoding of the query
             if (isDefined(skipEncode)) {
                 options.skipEncode = skipEncode;

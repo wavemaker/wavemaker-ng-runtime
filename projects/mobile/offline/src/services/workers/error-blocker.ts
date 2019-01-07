@@ -1,6 +1,6 @@
-import { Change, FlushContext, Worker } from './../change-log.service';
-import { LocalDBStore } from './../../models/local-db-store';
-import { LocalDBManagementService } from './../local-db-management.service';
+import { Change, FlushContext, Worker } from '../change-log.service';
+import { LocalDBStore } from '../../models/local-db-store';
+import { LocalDBManagementService } from '../local-db-management.service';
 
 declare const _;
 

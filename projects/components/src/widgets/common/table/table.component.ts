@@ -82,6 +82,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
     @ViewChild('customExprView', {read: ViewContainerRef}) customExprViewRef: ViewContainerRef;
 
+    @ContentChildren('rowExpansionActionTmpl') rowExpansionActionTmpl: QueryList<any>;
+    @ViewChild('rowDetailView', {read: ViewContainerRef}) rowDetailViewRef: ViewContainerRef;
+    @ViewChild('rowExpansionActionView', {read: ViewContainerRef}) rowExpansionActionViewRef: ViewContainerRef;
+
     @ViewChild('dynamicTable', {read: ViewContainerRef}) dynamicTableRef: ViewContainerRef;
 
     private rowActionsCompiledTl: any  = {};
@@ -89,6 +93,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private inlineCompliedTl: any = {};
     private inlineNewCompliedTl: any = {};
     private customExprCompiledTl: any = {};
+    private rowDefInstances = {};
+    private rowDefMap = {};
+    private rowExpansionActionTl: any = {};
 
     columns = {};
     formfields = {};
@@ -153,6 +160,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     documentClickBind = noop;
 
     fieldDefs = [];
+    rowDef: any = {};
+    rowInstance: any = {};
 
     private fullFieldDefs = [];
     private __fullData;
@@ -226,6 +235,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         editmode: '',
         formPosition: '',
         isMobile: false,
+        rowExpansionEnabled: false,
+        rowDef: {
+            position: '0'
+        },
         name: '',
         messages: {
             selectField: 'Select Field'
@@ -369,6 +382,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.customExprViewRef.clear();
             this.customExprCompiledTl = {};
         },
+        clearRowDetailExpression: () => {
+            this.rowDetailViewRef.clear();
+            this.rowDefMap = {};
+            this.rowDefInstances = {};
+        },
         generateCustomExpressions: (rowData, index) => {
             const row = this.getClonedRowObject(rowData);
             const compileTemplate = (tmpl) => {
@@ -396,12 +414,78 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // For all the columns inside the table, generate the custom expression
             this.customExprTmpl.forEach(compileTemplate.bind(this));
         },
+        generateRowExpansionCell: (rowData, index) => {
+            const row = this.getClonedRowObject(rowData);
+            // For all the columns inside the table, generate the inline widget
+            this.rowExpansionActionTmpl.forEach((tmpl) => {
+                this.rowExpansionActionTl[index] = this.rowExpansionActionViewRef.createEmbeddedView(tmpl, {row}).rootNodes;
+            });
+        },
+        getRowExpansionAction: (index) => {
+            return this.rowExpansionActionTl[index];
+        },
+        generateRowDetailView: ($event, rowData, rowId, $target, $overlay, callback) => {
+            const row = this.getClonedRowObject(rowData);
+            const rowDef = getClonedObject(this.rowDef);
+            let style = '';
+
+            if (this.rowInstance.invokeEventCallback('beforerowexpand', {$event, $data: rowDef, row}) === false) {
+                return;
+            }
+            if (!rowDef.content) {
+                return;
+            }
+            // Expand the row detail
+            callback();
+            // Row is already rendered. Return here
+            if (this.rowDefMap[rowId] && this.rowDefMap[rowId].content === rowDef.content && this.rowDefMap[rowId].paramExpression === rowDef.paramExpression) {
+                this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: this.rowDefInstances[rowId]});
+                return;
+            }
+            if (rowDef.height) {
+                style = `[ngStyle]="{'height': '${rowDef.height}', 'overflow-y': 'auto'}"`;
+            }
+            const markup = `<div wmContainer partialContainer content="${rowDef.content}" ${style} load.event="containerLoad(widget)">
+                            ${rowDef.paramExpression}</div>`;
+            this.rowDefMap[rowId] = rowDef;
+            $target.empty();
+            $target.hide();
+            $overlay.show();
+            this.app.notify('render-resource', {
+                selector: `app-datatable-row-${this.widgetId}-${rowId}`,
+                markup,
+                styles: '',
+                providers: undefined,
+                initFn: () => {},
+                vcRef: this.rowDetailViewRef,
+                $target: $target[0],
+                context:  {...(<any>this), ...{row, containerLoad: (widget) => {
+                    setTimeout(() => {
+                        $overlay.hide();
+                        $target.show();
+                        this.rowDefInstances[rowId] = widget;
+                        this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: widget});
+                    }, 500);
+                }}},
+                clearVCRef: false,
+                noCache: true
+            });
+            $appDigest();
+        },
+        onBeforeRowCollapse: ($event, row, rowId) => {
+            return this.rowInstance.invokeEventCallback('beforerowcollapse', {$event, row, $data: this.rowDefInstances[rowId]});
+        },
+        onRowCollapse: ($event, row) => {
+            this.rowInstance.invokeEventCallback('rowcollapse', {$event, row});
+        },
         getCustomExpression: (fieldName, index) => {
             return this.customExprCompiledTl[fieldName + index] || '';
         },
         clearRowActions: () => {
             this.rowActionsViewRef.clear();
             this.rowActionsCompiledTl = {};
+            this.rowExpansionActionViewRef.clear();
+            this.rowExpansionActionTl = {};
         },
         generateRowActions: (rowData, index) => {
             const row = this.getClonedRowObject(rowData);
@@ -599,7 +683,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     constructor(
-        inj: Injector,
+        public inj: Injector,
         public fb: FormBuilder,
         private app: App,
         @Attribute('dataset.bind') public binddataset,
@@ -1275,6 +1359,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.populateActions();
     }
 
+    registerRow(tableRow, rowInstance) {
+        this.rowDef = tableRow;
+        this.rowInstance = rowInstance;
+        this.callDataGridMethod('option', 'cssClassNames.rowExpandIcon', this.rowDef.expandicon);
+        this.callDataGridMethod('option', 'cssClassNames.rowCollapseIcon', this.rowDef.collapseicon);
+        this.gridOptions.rowExpansionEnabled = true;
+        this.gridOptions.rowDef = this.rowDef;
+    }
+
     registerRowActions(tableRowAction) {
         this.rowActions.push(tableRowAction);
     }
@@ -1357,6 +1450,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
         requestData.fields = _.values(requestData.columns);
         this.datasource.execute(DataSource.Operation.DOWNLOAD, {data: requestData});
+    }
+
+    expandRow(rowId) {
+        this.callDataGridMethod('expandRow', rowId);
+    }
+
+    collapseRow(rowId) {
+        this.callDataGridMethod('collapseRow', rowId);
     }
 
     private _documentClickBind(event) {

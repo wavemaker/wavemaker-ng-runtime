@@ -4,7 +4,7 @@ import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circ
 import { IRedrawableComponent, IWidgetConfig } from '../../../framework/types';
 import { styler } from '../../../framework/styler';
 import { StylableComponent } from '../../base/stylable.component';
-import { registerProps } from './circle-progress-bar.props';
+import { registerProps } from './progress-circle.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { calculatePercent, getDecimalCount, isPercentageValue, TYPE_CLASS_MAP } from '../progress-utils';
 
@@ -13,11 +13,12 @@ registerProps();
 declare const _;
 
 const DEFAULT_CLS = 'progress app-progress circle';
-const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-circle-progressbar', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-circle', hostClass: DEFAULT_CLS};
 const DEFAULT_OPTIONS: CircleProgressOptionsInterface  = {
     responsive: true,
     innerStrokeWidth: 10,
     outerStrokeWidth: 10,
+    unitsFontSize: '15',
     space: -10,
     toFixed: 0,
     maxPercent: 100,
@@ -31,13 +32,13 @@ const DEFAULT_OPTIONS: CircleProgressOptionsInterface  = {
 
 
 @Component({
-    selector: '[wmCircleProgressBar]',
-    templateUrl: './circle-progress-bar.component.html',
+    selector: '[wmProgressCircle]',
+    templateUrl: './progress-circle.component.html',
     providers: [
-        provideAsWidgetRef(CircleProgressBarComponent)
+        provideAsWidgetRef(ProgressCircleComponent)
     ]
 })
-export class CircleProgressBarComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
+export class ProgressCircleComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
 
     public displayformat: string;
     public datavalue: string;
@@ -47,7 +48,7 @@ export class CircleProgressBarComponent extends StylableComponent implements Aft
     public title: string;
     public subtitle: string;
     public captionplacement: string;
-    public percentageValue: number;
+    public percentagevalue: number;
     public redraw: Function;
     public options: CircleProgressOptionsInterface;
 
@@ -96,9 +97,9 @@ export class CircleProgressBarComponent extends StylableComponent implements Aft
             case 'maxvalue':
             case 'datavalue':
                 if (isPercentageValue(this.datavalue)) {
-                    this.percentageValue = parseFloat(this.datavalue);
+                    this.percentagevalue = parseFloat(this.datavalue);
                 } else {
-                    this.percentageValue = calculatePercent(parseFloat(this.datavalue), this.minvalue, this.maxvalue);
+                    this.percentagevalue = calculatePercent(parseFloat(this.datavalue), this.minvalue, this.maxvalue);
                 }
                 break;
             case 'displayformat':

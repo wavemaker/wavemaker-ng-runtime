@@ -42,7 +42,7 @@ import { ChartComponent } from './widgets/common/chart/chart.component';
 import { CheckboxComponent } from './widgets/common/checkbox/checkbox.component';
 import { CheckboxsetComponent } from './widgets/common/checkboxset/checkboxset.component';
 import { ChipsComponent } from './widgets/common/chips/chips.component';
-import { CircleProgressBarComponent } from './widgets/common/progress-bar/circle-progress-bar/circle-progress-bar.component';
+import { ProgressCircleComponent } from './widgets/common/progress-bar/progress-circle/progress-circle.component';
 import { ColorPickerComponent } from './widgets/common/color-picker/color-picker.component';
 import { CompositeDirective } from './widgets/common/composite/composite.directive';
 import { ConfirmDialogComponent } from './widgets/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -129,6 +129,7 @@ import { TableComponent } from './widgets/common/table/table.component';
 import { TableCUDDirective } from './widgets/common/table/table-cud.directive';
 import { TableFilterSortDirective } from './widgets/common/table/table-filter.directive';
 import { TableRowActionDirective } from './widgets/common/table/table-row-action/table-row-action.directive';
+import { TableRowDirective } from './widgets/common/table/table-row/table-row.directive';
 import { TextareaComponent } from './widgets/common/textarea/textarea.component';
 import { TextContentDirective } from './widgets/common/base/text-content.directive';
 import { TileDirective } from './widgets/common/tile/tile.directive';
@@ -180,7 +181,7 @@ const wmComponents = [
     CarouselTemplateDirective,
     ChartComponent,
     CheckboxComponent,
-    CircleProgressBarComponent,
+    ProgressCircleComponent,
     ColorPickerComponent,
     CompositeDirective,
     ConfirmDialogComponent,
@@ -268,6 +269,7 @@ const wmComponents = [
     TableComponent,
     TableCUDDirective,
     TableFilterSortDirective,
+    TableRowDirective,
     TableRowActionDirective,
     TextareaComponent,
     TextContentDirective,

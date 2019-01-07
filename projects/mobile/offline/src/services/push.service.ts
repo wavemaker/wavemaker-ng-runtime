@@ -29,18 +29,18 @@ export class PushServiceImpl implements PushService {
                     case 'deleteTableData':
                         return LVService.deleteTableData(change.params, null, null);
                 }
-                case 'OfflineFileUploadService':
-                    if (change.operation === 'uploadToServer') {
-                        return this.deviceFileUploadService['uploadToServer'].call(
-                            this.deviceFileUploadService,
-                            params.serverUrl,
-                            params.ftOptions.fileKey,
-                            params.file,
-                            params.ftOptions.fileName,
-                            params.params,
-                            params.headers);
-                    }
-            }
+            case 'OfflineFileUploadService':
+                if (change.operation === 'uploadToServer') {
+                    return this.deviceFileUploadService['uploadToServer'].call(
+                        this.deviceFileUploadService,
+                        params.serverUrl,
+                        params.ftOptions.fileKey,
+                        params.file,
+                        params.ftOptions.fileName,
+                        params.params,
+                        params.headers);
+                }
+        }
         return Promise.reject( `${change.service} service with operation ${change.operation} is not supported for push.`);
     }
 }

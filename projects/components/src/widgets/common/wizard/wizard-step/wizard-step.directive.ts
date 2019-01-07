@@ -30,6 +30,7 @@ const enum STEP_STATUS {
 })
 export class WizardStepDirective extends BaseComponent {
 
+
     public show: boolean;
     public name: string;
 

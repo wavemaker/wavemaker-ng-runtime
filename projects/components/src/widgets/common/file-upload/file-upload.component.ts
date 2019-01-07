@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/
 
 import { Subject } from 'rxjs';
 
-import { App, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
+import { App, DataSource, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
 
 import { registerProps } from './file-upload.props';
 import { StylableComponent } from '../base/stylable.component';
@@ -204,6 +204,15 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 this.onSelectEventCall($event, $files);
             }
         }
+    }
+
+    /**
+     * Aborts a file upload request
+     * @param $file, the file for which the request is to be aborted
+     */
+    abortFileUpload($file) {
+        $file.status = 'abort';
+        this.datasource.execute(DataSource.Operation.CANCEL, $file);
     }
 
     /* Define the property change handler. This function will be triggered when there is a change in the widget property */

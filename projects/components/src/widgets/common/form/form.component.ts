@@ -153,6 +153,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private _isLayoutDialog;
     private _dynamicContext;
     private _isGridLayoutPresent;
+    private validationMessages = [];
 
     private _debouncedSubmitForm = debounce(($event) => {
         this.submitForm($event);
@@ -268,6 +269,45 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         context.submit = evt => this.submit(evt);
     }
 
+    // This will return a object containing the error details from the list of formFields that are invalid
+    private setValidationMsgs() {
+        if (!this.formFields.length) {
+            return;
+        }
+        _.forEach(this.ngform.controls, (v, k) => {
+            const field = this.formFields.find(e => e.key === k);
+            if (!field) {
+                return;
+            }
+            const index = this.validationMessages.findIndex(e => e.field === k);
+            if (v.invalid) {
+                if (index === -1) {
+                    /**
+                     * field contains the fieldName
+                     * value contains the field value
+                     * errorType contains the list of errors
+                     * msg contains the validation message
+                     * getElement returns the element having focus-target
+                     */
+                    this.validationMessages.push({
+                        field: k,
+                        value: field.value,
+                        errorType: _.keys(field.errors),
+                        msg: field.validationmessage || '',
+                        getElement: () => {
+                            return field.$element.find('[focus-target]');
+                        }
+                    });
+                } else {
+                    this.validationMessages[index].value = field.value;
+                    this.validationMessages[index].errorType = _.keys(v.errors);
+                }
+            } else if (v.valid && index > -1) {
+                this.validationMessages.splice(index, 1);
+            }
+        });
+    }
+
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'submit') {
@@ -379,7 +419,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             if (this.messagelayout === 'Inline') {
                 this.statusMessage = {'caption': template || '', type: type};
                 if (this.messageRef) {
-                    this.messageRef.showMessage();
+                    this.messageRef.showMessage(this.statusMessage.caption, this.statusMessage.type);
                 }
             } else {
                 this.app.notifyApp(template, type, header);
@@ -454,6 +494,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     updateDataOutput() {
         this.constructDataObject();
+        this.setValidationMsgs();
     }
 
     setFormData(data) {
@@ -497,7 +538,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
         params = {$event, $formData: formData, $data: formData};
 
-        if (this.onBeforeSubmitEvt && this.invokeEventCallback('beforesubmit', params)) {
+        if (this.onBeforeSubmitEvt && (this.invokeEventCallback('beforesubmit', params) === false)) {
             return;
         }
 

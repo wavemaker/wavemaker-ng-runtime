@@ -17,7 +17,9 @@ const handleDialogOpen = ref => {
 const invokeOpenedCallback = () => {
     const ref = openedDialogs[openedDialogs.length - 1];
     if (ref) {
-        ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
+        setTimeout(() => {
+            ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
+        });
     }
 };
 

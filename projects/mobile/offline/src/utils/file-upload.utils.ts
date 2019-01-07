@@ -1,6 +1,6 @@
 import { File } from '@ionic-native/file';
 
-import { DeviceFileService, DeviceFileUploadService, IUploadResponse, NetworkService } from '@wm/mobile/core';
+import { DeviceFileService, DeviceFileUploadService, IUploadResponse, NetworkService, UploadRequest } from '@wm/mobile/core';
 
 import { ChangeLogService } from '../services/change-log.service';
 

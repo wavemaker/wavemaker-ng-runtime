@@ -47,7 +47,7 @@
            [value]="displayValue"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentTime"
-           (change)="onTimeChange($event)"
+           (change)="onTimeChange($event, true)"
            (focus)="invokeOnFocus($event)"
            (blur)="invokeOnTouched($event)">
 </ng-template>

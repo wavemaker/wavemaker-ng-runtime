@@ -1,30 +1,7 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { getRowActionAttrs } from '@wm/core';
 
 const tagName = 'div';
-
-const rowActionAttrs = new Map(
-    [
-        ['display-name', 'caption'],
-        ['display-name.bind', 'caption.bind'],
-        ['title', 'hint'],
-        ['title.bind', 'hint.bind'],
-        ['show', 'show'],
-        ['show.bind', 'show.bind'],
-        ['disabled', 'disabled'],
-        ['disabled.bind', 'disabled.bind']
-    ]
-);
-
-const getRowActionAttrs = attrs => {
-    let tmpl = '';
-    attrs.forEach((val, key) => {
-       const newAttr = rowActionAttrs.get(key);
-       if (newAttr) {
-           tmpl += `${newAttr}="${val}" `;
-       }
-    });
-    return tmpl;
-};
 
 const getSaveCancelTemplate = () => {
     return `<button type="button" aria-label="Save edit icon" class="save row-action-button btn app-button btn-transparent save-edit-row-button hidden" title="Save">
@@ -43,14 +20,16 @@ const getRowActionTmpl = (attrs) => {
     const btnClass = action ? (action.includes('editRow(') ? 'edit edit-row-button' :
                         (action.includes('deleteRow(') ? 'delete delete-row-button' : '')) : '';
     const tabIndex = attrs.get('tabindex') ? `tabindex="${attrs.get('tabindex')}"` : '';
+    const tag = attrs.get('widget-type') === 'anchor' ? 'a' : 'button';
+    const directive = attrs.get('widget-type') === 'anchor' ? 'wmAnchor' : 'wmButton';
     return `<ng-template #rowActionTmpl let-row="row">
-               <button wmButton data-action-key="${attrs.get('key')}"
+               <${tag} ${directive} data-action-key="${attrs.get('key')}"
                     ${getRowActionAttrs(attrs)}
-                    class="row-action row-action-button app-button btn ${attrs.get('class')} ${btnClass}"
+                    class="row-action row-action-button ${attrs.get('class')} ${btnClass}"
                     iconclass="${attrs.get('iconclass')}"
                     ${actionTmpl}
                     ${tabIndex}
-                    type="button"></button>
+                    type="button"></${tag}>
                 ${saveCancelTmpl}
             </ng-template>`;
 };

@@ -10,12 +10,15 @@ export const registerProps = () => {
                 ['caption', PROP_STRING],
                 ['class ', {value: 'btn-secondary', ...PROP_STRING}],
                 ['disabled', {value: false, ...PROP_BOOLEAN}],
-                ['displayName', PROP_STRING],
+                ['display-name', PROP_STRING],
+                ['hyperlink', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['key', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['title', PROP_STRING]
+                ['target', PROP_STRING],
+                ['title', PROP_STRING],
+                ['widget-type', {value: 'button', ...PROP_STRING}]
             ]
         )
     );
