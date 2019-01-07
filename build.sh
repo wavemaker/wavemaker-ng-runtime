@@ -31,6 +31,7 @@ RIMRAF=./node_modules/.bin/rimraf
 ROLLUP=./node_modules/.bin/rollup
 UGLIFYJS='./node_modules/.bin/uglifyjs -b ascii_only=true'
 NGC=./node_modules/.bin/ngc
+NG=./node_modules/.bin/ng
 TSC=./node_modules/.bin/tsc
 COMPODOC=./node_modules/.bin/compodoc
 
@@ -58,7 +59,10 @@ execCommand() {
     fi
 }
 
+#[Todo] -- Update this logic - this returns true all the time
 hasLibChanges() {
+    return 0
+
     if [ ${force} == true ]; then
         return 0
     fi
@@ -80,7 +84,10 @@ hasLibChanges() {
     return 0
 }
 
+#[Todo] -- Update this logic - this returns true all the time
 hasSourceChanges() {
+    return 0
+
     if [ ${force} == true ]; then
         return 0
     fi
@@ -108,41 +115,27 @@ rollup() {
     execCommand rollup ${bundle} "$ROLLUP -c $bundle/rollup.config.js --silent"
 }
 
-ngCompile() {
+ngBuild() {
     local bundle=$1
-    execCommand ngc ${bundle} "$NGC -p $bundle/tsconfig.build.json"
-}
-
-build() {
-    local bundle=$1
-    hasSourceChanges ${bundle}
-    if [ "$?" -eq "0" ]; then
-        ngCompile ${bundle}
-        isSourceModified=true
-        if [ "$?" -eq "0" ]; then
-            rollup ${bundle}
-            touch ./dist/tmp/${bundle}/${SUCCESS_FILE}
-        fi
-    else
-        echo "No changes in $bundle"
-    fi
+    execCommand ng-build ${bundle} "$NG build $bundle"
 }
 
 bundleWeb() {
     echo "uglify: web"
+
     ${UGLIFYJS} \
-        ./dist/tmp/core/core.umd.js \
-        ./dist/tmp/transpiler/transpiler.umd.js \
-        ./dist/tmp/http-service/http-service.umd.js \
-        ./dist/tmp/oAuth/oAuth.umd.js \
-        ./dist/tmp/security/security.umd.js \
-        ./dist/tmp/components/build-task.umd.js \
-        ./dist/tmp/components/components.umd.js \
-        ./dist/tmp/variables/variables.umd.js \
-        ./dist/tmp/mobile/placeholder/components/components.umd.js \
-        ./dist/tmp/mobile/placeholder/runtime/runtime.umd.js \
-        ./dist/tmp/runtime/runtime.umd.js -o \
-        ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
+        ./libraries/core/bundles/core.umd.js \
+        ./libraries/transpiler/bundles/transpiler.umd.js \
+        ./libraries/http-service/bundles/http-service.umd.js \
+        ./libraries/oAuth/bundles/oAuth.umd.js \
+        ./libraries/security/bundles/security.umd.js \
+        ./libraries/build-task/bundles/components.umd.js \
+        ./libraries/components/bundles/components.umd.js \
+        ./libraries/variables/bundles/variables.umd.js \
+        ./libraries/mobile/placeholder/bundles/mobile-placeholder.umd.js \
+        ./libraries/runtime-base/bundles/runtime-base.umd.js \
+        ./libraries/runtime-dynamic/bundles/runtime-dynamic.umd.js \
+        -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.min.js \
         -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.compressed.js -b beautify=false,ascii_only=true
@@ -157,22 +150,23 @@ bundleWeb() {
 bundleMobile() {
     echo "uglify: mobile"
     ${UGLIFYJS} \
-        ./dist/tmp/core/core.umd.js \
-        ./dist/tmp/transpiler/transpiler.umd.js \
-        ./dist/tmp/http-service/http-service.umd.js \
-        ./dist/tmp/oAuth/oAuth.umd.js \
-        ./dist/tmp/security/security.umd.js \
-        ./dist/tmp/components/build-task.umd.js \
-        ./dist/tmp/components/components.umd.js \
-        ./dist/tmp/mobile/core/core.umd.js \
-        ./dist/tmp/mobile/components/build-task.umd.js \
-        ./dist/tmp/mobile/components/components.umd.js \
-        ./dist/tmp/variables/variables.umd.js \
-        ./dist/tmp/mobile/offline/offline.umd.js \
-        ./dist/tmp/mobile/variables/variables.umd.js \
-        ./dist/tmp/mobile/runtime/runtime.umd.js \
-        ./dist/tmp/runtime/runtime.umd.js -o \
-        ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
+        ./libraries/core/bundles/core.umd.js \
+        ./libraries/transpiler/bundles/transpiler.umd.js \
+        ./libraries/http-service/bundles/http-service.umd.js \
+        ./libraries/oAuth/bundles/oAuth.umd.js \
+        ./libraries/security/bundles/security.umd.js \
+        ./libraries/build-task/bundles/components.umd.js \
+        ./libraries/components/bundles/components.umd.js \
+        ./libraries/mobile/core/bundles/mobile-core.umd.js \
+        ./libraries/mobile-build-task/bundles/mobile-components.umd.js \
+        ./libraries/mobile/components/bundles/mobile-components.umd.js \
+        ./libraries/variables/bundles/variables.umd.js \
+        ./libraries/mobile/offline/bundles/mobile-offline.umd.js \
+        ./libraries/mobile/variables/bundles/mobile-variables.umd.js \
+        ./libraries/mobile/runtime/bundles/mobile-runtime.umd.js \
+        ./libraries/runtime-base/bundles/runtime-base.umd.js \
+        ./libraries/runtime-dynamic/bundles/runtime-dynamic.umd.js \
+        -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js \
         -c -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.compressed.js -b beautify=false,ascii_only=true
@@ -185,26 +179,31 @@ bundleMobile() {
 }
 
 buildApp() {
-    build core
-    build transpiler
-    build security
-    build components
-    build http-service
-    build oAuth
-    build variables
-    build mobile/placeholder/components
-    build mobile/placeholder/runtime
-    build mobile/core
-    build mobile/components
-    build mobile/offline
-    build mobile/variables
-    build mobile/runtime
-    build runtime
+    ngBuild core
+    ngBuild transpiler
+    ngBuild swipey
+    ngBuild http-service
+    ngBuild oAuth
+    ngBuild security
+    ngBuild variables
+    ngBuild components
 
-    if [ "${isSourceModified}" == true ]; then
-        bundleWeb
-        bundleMobile
-    fi
+    ngBuild mobile-core
+    ngBuild mobile-offline
+    ngBuild mobile-components
+    ngBuild mobile-variables
+    ngBuild mobile-runtime
+    ngBuild mobile-placeholder
+
+    ngBuild runtime-base
+    ngBuild runtime-dynamic
+
+    ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
+
+    ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
+
+    bundleWeb
+    bundleMobile
 }
 
 buildDocs() {
@@ -335,9 +334,7 @@ bundleWebLibs() {
         ./node_modules/hammerjs/hammer.min.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
-        ./dist/tmp/swipey/swipey.umd.js \
-        ./swipey/src/swipey.jquery.plugin.js \
-        ./components/src/widgets/common/table/datatable.js \
+        ./projects/components/src/widgets/common/table/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-libs.min.js \
@@ -394,9 +391,7 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
-        ./dist/tmp/swipey/swipey.umd.js \
-        ./swipey/src/swipey.jquery.plugin.js \
-        ./components/src/widgets/common/table/datatable.js \
+        ./projects/components/src/widgets/common/table/datatable.js \
         ./dist/tmp/libs/ionic-native/ionic-native-core.umd.js \
         ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
@@ -415,7 +410,6 @@ bundleMobileLibs() {
 }
 
 buildWebLibs() {
-    build swipey
     buildCoreJs
     buildTsLib
     buildNgxBootstrap
@@ -428,7 +422,7 @@ buildWebLibs() {
 }
 
 buildIonicNative() {
-    execCommand "rollup" "ionic-native" "${ROLLUP} -c ./mobile/ionic-native/rollup.ionic-native.config.js --silent"
+    execCommand "rollup" "ionic-native" "${ROLLUP} -c ./projects/mobile/ionic-native/rollup.ionic-native.config.js --silent"
 }
 
 buildMobileLibs() {

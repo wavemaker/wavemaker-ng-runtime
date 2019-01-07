@@ -2,9 +2,9 @@ import { Injectable, Injector } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { AbstractHttpService, App, getClonedObject, hasCordova, triggerFn } from '@wm/core';
+import { AbstractHttpService, App, getClonedObject, getWmProjectProperties, hasCordova, triggerFn } from '@wm/core';
 
-declare const _WM_APP_PROPERTIES, _;
+declare const _;
 
 // Todo[Shubham]: Move below constants to a common file
 const XSRF_COOKIE_NAME = 'wm_xsrf_token',
@@ -76,7 +76,7 @@ export class SecurityService {
         }
 
         function onSuccess(config) {
-            config.homePage = _WM_APP_PROPERTIES.homePage;
+            config.homePage = getWmProjectProperties().homePage;
             if (config.userInfo) {
                 // Backend returns landingPage instead of homePage, hence this statement(for consistency)
                 // config.userInfo.homePage = config.userInfo.landingPage;
@@ -179,24 +179,24 @@ export class SecurityService {
             let page;
             if (!isApplicationType) {
                 if (that.isNoPageLoaded()) {
-                    page = _WM_APP_PROPERTIES.homePage;
+                    page = getWmProjectProperties().homePage;
                     resolve(page);
                 }
             } else {
                 that.getConfig((config) => {
                     if (config.securityEnabled && config.authenticated) {
-                        page = config.userInfo.landingPage || _WM_APP_PROPERTIES.homePage;
+                        page = config.userInfo.landingPage || getWmProjectProperties().homePage;
                         // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
                         if (that.isXsrfEnabled()) {
                             // this.$http.defaults.xsrfCookieName = XSRF_COOKIE;
                             // this.$http.defaults.xsrfHeaderName = config.csrfHeaderName;
                         }
                     } else {
-                        page = _WM_APP_PROPERTIES.homePage;
+                        page = getWmProjectProperties().homePage;
                     }
                     resolve(page);
                 }, function () {
-                    resolve(_WM_APP_PROPERTIES.homePage);
+                    resolve(getWmProjectProperties().homePage);
                 });
             }
         });
@@ -243,7 +243,7 @@ export class SecurityService {
      * @returns {any|string}
      */
     getRedirectPage(config, page?) {
-        const homePage = _WM_APP_PROPERTIES.homePage,
+        const homePage = getWmProjectProperties().homePage,
             loginPage = _.get(config, 'loginConfig.pageName');
         let prevRedirectPage,
             redirectPage = page || this.getCurrentRoutePage();

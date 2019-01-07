@@ -13,7 +13,6 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { Network } from '@ionic-native/network';
 import { Vibration } from '@ionic-native/vibration';
 
-
 import { hasCordova } from '@wm/core';
 import { FileExtensionFromMimePipe } from '@wm/components';
 
@@ -60,11 +59,13 @@ const ionicServices = [
 })
 export class MobileCoreModule {
 
-    constructor(deviceService: DeviceService,
-                deviceFileService: DeviceFileService,
-                fileCacheService: DeviceFileCacheService,
-                fileOpener: DeviceFileOpenerService,
-                networkService: NetworkService) {
+    constructor(
+        deviceService: DeviceService,
+        deviceFileService: DeviceFileService,
+        fileCacheService: DeviceFileCacheService,
+        fileOpener: DeviceFileOpenerService,
+        networkService: NetworkService
+    ) {
         if (hasCordova()) {
             deviceService.addStartUpService(deviceFileService);
             deviceService.addStartUpService(fileCacheService);

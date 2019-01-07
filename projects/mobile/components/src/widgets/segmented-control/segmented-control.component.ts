@@ -116,5 +116,4 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
         setCSS(this._$container[0], 'transform', `translate3d(${-1 *  index / this.contents.length * 100}%, 0, 0)`);
         this.invokeEventCallback('segmentchange', eventData);
     }
-
 }

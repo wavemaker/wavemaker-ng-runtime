@@ -40,7 +40,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     // this field contains the initial datavalue which needs to be processed once the dataset is available
     public toBeProcessedDatavalue: any;
     private readonly _debouncedInitDatasetItems: Function;
-    protected allowempty: boolean = true;
+    protected allowempty = true;
     public compareby: any;
 
     protected get modelByKey() {

@@ -1,7 +1,7 @@
 {
     "extends": "tsconfig.json",
     "include": [
-        "components/src/**/**/**/*.doc.ts",
-        "mobile/components/src/**/**/**/*.doc.ts"
+        "projects/components/src/**/**/**/*.doc.ts",
+        "projects/mobile/components/src/**/**/**/*.doc.ts"
     ]
 }

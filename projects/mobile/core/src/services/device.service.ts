@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
 
-import {hasCordova, noop} from '@wm/core';
+import { hasCordova, noop } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 

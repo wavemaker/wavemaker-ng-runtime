@@ -47,5 +47,4 @@ export class ImageCacheDirective implements DoCheck {
         }
         return Promise.resolve(val);
     }
-
 }

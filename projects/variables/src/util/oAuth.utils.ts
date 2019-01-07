@@ -1,5 +1,3 @@
-declare const _WM_APP_PROPERTIES, moment, _;
-
 import { oauthService } from './variable/variables.utils';
 
 export const performAuthorization = (url, providerId, onSuccess, onError) => {

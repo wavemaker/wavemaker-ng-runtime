@@ -12,7 +12,9 @@ interface CookieInfo {
     value: string;
 }
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class CookieService implements IDeviceStartUpService {
 
     private cookieInfo: Map<string, CookieInfo> = new Map<string, CookieInfo>();

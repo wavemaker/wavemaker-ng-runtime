@@ -1,5 +1,6 @@
-import { Directive, HostListener } from '@angular/core';
-import { AnchorComponent } from '@wm/components';
+import { Directive, HostListener, Inject } from '@angular/core';
+
+import { WidgetRef } from '@wm/components';
 
 declare const _;
 declare const cordova;
@@ -9,12 +10,11 @@ declare const cordova;
 })
 export class AnchorDirective {
 
-    constructor(private anchorComponent: AnchorComponent) {
-    }
+    constructor(@Inject(WidgetRef) private widget: any) { }
 
     @HostListener('click')
     onClick () {
-        let href = this.anchorComponent.hyperlink;
+        let href = this.widget.hyperlink;
         if (href) {
             if (href.indexOf(':') >= 0 && !(_.startsWith(href, 'http://') || _.startsWith(href, 'https://'))) {
                 return;
@@ -24,7 +24,7 @@ export class AnchorDirective {
             } else if (_.startsWith(href, '//')) {
                 href = 'https:' + href;
             }
-            cordova.InAppBrowser.open(href, this.anchorComponent.target);
+            cordova.InAppBrowser.open(href, this.widget.target);
         }
     }
 }

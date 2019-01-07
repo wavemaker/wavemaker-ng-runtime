@@ -21,7 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segment-content', hostClas
 })
 export class SegmentContentComponent extends StylableComponent implements AfterViewInit {
     private loadmode: string;
-    private compile: boolean = false;
+    private compile = false;
     private loaddelay: number;
 
     constructor(private segmentedControl: SegmentedControlComponent, inj: Injector) {

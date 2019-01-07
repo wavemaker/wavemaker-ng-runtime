@@ -164,5 +164,4 @@ export class FileBrowserComponent implements OnDestroy {
         this.selectedFiles.push(file);
         file.isSelected = true;
     }
-
 }

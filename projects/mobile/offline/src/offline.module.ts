@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { File } from '@ionic-native/file';
 import { SQLite } from '@ionic-native/sqlite';
 
-
 import { AbstractHttpService, App, hasCordova, noop } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';

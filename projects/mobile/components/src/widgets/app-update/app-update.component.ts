@@ -31,7 +31,8 @@ export class AppUpdateComponent {
         private elRef: ElementRef,
         private file: File,
         private fileOpener: FileOpener,
-        private http: HttpClient) {
+        private http: HttpClient
+    ) {
 
         addClass(this.elRef.nativeElement, DEFAULT_CLS);
         setCSS(this.elRef.nativeElement, 'display', 'block');

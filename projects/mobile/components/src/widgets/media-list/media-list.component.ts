@@ -1,7 +1,7 @@
 import { Component, ContentChild, ElementRef, Injector, TemplateRef } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 import { $appDigest, $parseExpr, addClass, isArray, isObject, isString, removeClass } from '@wm/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 
 import { registerProps } from './media-list.props';
 
@@ -138,5 +138,4 @@ export class MediaListComponent extends StylableComponent {
     private listTrackByFn(index: number): number {
         return index;
     }
-
 }

@@ -34,25 +34,27 @@ import { FileSelectorService, ProcessManagementService } from '@wm/mobile/compon
 })
 export class VariablesModule {
 
-    constructor(app: App,
-                appVersion: AppVersion,
-                barcodeScanner: BarcodeScanner,
-                changeLogService: ChangeLogService,
-                calendar: Calendar,
-                contacts: Contacts,
-                camera: Camera,
-                fileOpener: DeviceFileOpenerService,
-                fileSelectorService: FileSelectorService,
-                fileUploader: DeviceFileUploadService,
-                device: Device,
-                geoLocation: Geolocation,
-                localDBDataPullService: LocalDBDataPullService,
-                localDBManagementService: LocalDBManagementService,
-                mediaCapture: MediaCapture,
-                processManagementService: ProcessManagementService,
-                securityService: SecurityService,
-                networkService: NetworkService,
-                vibrateService: Vibration) {
+    constructor(
+        app: App,
+        appVersion: AppVersion,
+        barcodeScanner: BarcodeScanner,
+        changeLogService: ChangeLogService,
+        calendar: Calendar,
+        contacts: Contacts,
+        camera: Camera,
+        fileOpener: DeviceFileOpenerService,
+        fileSelectorService: FileSelectorService,
+        fileUploader: DeviceFileUploadService,
+        device: Device,
+        geoLocation: Geolocation,
+        localDBDataPullService: LocalDBDataPullService,
+        localDBManagementService: LocalDBManagementService,
+        mediaCapture: MediaCapture,
+        processManagementService: ProcessManagementService,
+        securityService: SecurityService,
+        networkService: NetworkService,
+        vibrateService: Vibration
+    ) {
         const deviceVariableManager = VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.DEVICE) as DeviceVariableManager;
         deviceVariableManager.registerService(new CameraService(camera, mediaCapture));
         deviceVariableManager.registerService(new CalendarService(calendar));

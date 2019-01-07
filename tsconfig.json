@@ -1,39 +1,119 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@swipey": ["swipey/"],
-            "@wm/core": ["core/" ],
-            "@wm/transpiler": ["transpiler/"],
-            "@wm/security": ["security/"],
-            "@wm/components": ["components/"],
-            "@wm/http": ["http-service/"],
-            "@wm/oAuth": ["oAuth/"],
-            "@wm/variables" : ["variables/"],
-            "@wm/runtime": ["runtime/"],
-            "@wm/mobile/core": ["mobile/core/"],
-            "@wm/mobile/components": ["mobile/components/"],
-            "@wm/mobile/offline": ["mobile/offline/"],
-            "@wm/mobile/variables": ["mobile/variables/"],
-            "@wm/mobile/runtime": ["mobile/runtime/"],
-            "@wm/mobile/placeholder/components": ["mobile/placeholder/components/"],
-            "@wm/mobile/runtime": ["mobile/placeholder/runtime/"]
-        },
+        "baseUrl": "./",
         "outDir": "./dist/out-tsc",
-        "sourceMap": false,
-        "declaration": true,
+        "sourceMap": true,
+        "declaration": false,
+        "module": "es2015",
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "target": "es5",
-        "module": "es2015",
         "typeRoots": [
             "node_modules/@types"
         ],
         "lib": [
-            "es2017",
+            "es2018",
             "dom"
-        ]
+        ],
+        "paths": {
+            "@wm/core": [
+                "libraries/core"
+            ],
+            "@wm/core/*": [
+                "libraries/core/*"
+            ],
+            "@wm/components": [
+                "libraries/components"
+            ],
+            "@wm/components/*": [
+                "libraries/components/*"
+            ],
+            "@wm/transpiler": [
+                "libraries/transpiler"
+            ],
+            "@wm/transpiler/*": [
+                "libraries/transpiler/*"
+            ],
+            "@wm/security": [
+                "libraries/security"
+            ],
+            "@wm/security/*": [
+                "libraries/security/*"
+            ],
+            "@swipey": [
+                "libraries/swipey"
+            ],
+            "@swipey/*": [
+                "libraries/swipey/*"
+            ],
+            "@wm/http": [
+                "libraries/http-service"
+            ],
+            "@wm/http/*": [
+                "libraries/http-service/*"
+            ],
+            "@wm/oAuth": [
+                "libraries/oAuth"
+            ],
+            "@wm/oAuth/*": [
+                "libraries/oAuth/*"
+            ],
+            "@wm/variables": [
+                "libraries/variables"
+            ],
+            "@wm/variables/*": [
+                "libraries/variables/*"
+            ],
+            "@wm/mobile/core": [
+                "libraries/mobile/core"
+            ],
+            "@wm/mobile/core/*": [
+                "libraries/mobile/core/*"
+            ],
+            "@wm/mobile/components": [
+                "libraries/mobile/components"
+            ],
+            "@wm/mobile/components/*": [
+                "libraries/mobile/components/*"
+            ],
+            "@wm/mobile/offline": [
+                "libraries/mobile/offline"
+            ],
+            "@wm/mobile/offline/*": [
+                "libraries/mobile/offline/*"
+            ],
+            "@wm/mobile/variables": [
+                "libraries/mobile/variables"
+            ],
+            "@wm/mobile/variables/*": [
+                "libraries/mobile/variables/*"
+            ],
+            "@wm/runtime/base": [
+                "libraries/runtime-base"
+            ],
+            "@wm/runtime/base/*": [
+                "libraries/runtime-base/*"
+            ],
+            "@wm/runtime/dynamic": [
+                "libraries/runtime-dynamic"
+            ],
+            "@wm/runtime/dynamic/*": [
+                "libraries/runtime-dynamic/*"
+            ],
+            "@wm/mobile/runtime": [
+                "libraries/mobile/runtime"
+            ],
+            "@wm/mobile/runtime/*": [
+                "libraries/mobile/runtime/*"
+            ],
+            "@wm/mobile/placeholder": [
+                "libraries/mobile/placeholder"
+            ],
+            "@wm/mobile/placeholder/*": [
+                "libraries/mobile/placeholder/*"
+            ]
+        }
     }
 }

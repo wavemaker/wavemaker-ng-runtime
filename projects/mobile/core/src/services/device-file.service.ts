@@ -178,7 +178,7 @@ export class DeviceFileService implements IDeviceStartUpService {
     /**
      * removes the directory at the specified location.
      *
-     * @param {string} dirPath absolute path of directory
+     * @param dirPath absolute path of directory
      */
     public removeDir(dirPath: string): Promise<any> {
         const i = dirPath.lastIndexOf('/'),
@@ -189,11 +189,11 @@ export class DeviceFileService implements IDeviceStartUpService {
             .then(() => {
                 /**
                  * If folder is remove directly without moving, then INVALID_MODIFICATION_ERR is thrown in android
-                 * when a copy opertion is done with the same directory name. To avoid this, directory will be moved
+                 * when a copy operation is done with the same directory name. To avoid this, directory will be moved
                  * first and removed.
                  */
                 return this.cordovaFile.moveDir(parentdir, dir, parentdir, movedDir)
-                    .then(() => this.cordovaFile.removeDir(parentdir, movedDir))
+                    .then(() => this.cordovaFile.removeDir(parentdir, movedDir));
             }).catch(noop);
     }
 
@@ -270,5 +270,4 @@ export class DeviceFileService implements IDeviceStartUpService {
                 () => this.cordovaFile.createDir(appDir, uploadsDirName, true)
                     .then(() => this._uploadDir = appDir + uploadsDirName));
     }
-
 }

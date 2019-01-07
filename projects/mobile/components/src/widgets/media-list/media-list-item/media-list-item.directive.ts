@@ -17,4 +17,3 @@ export class MediaListItemDirective {
         this.item = val;
     }
 }
-

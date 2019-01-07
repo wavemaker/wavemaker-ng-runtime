@@ -9,7 +9,6 @@ import { FileExtensionFromMimePipe } from '@wm/components';
 
 import { DeviceFileService } from './device-file.service';
 
-
 const MAX_CONCURRENT_DOWNLOADS = 2;
 declare const _;
 

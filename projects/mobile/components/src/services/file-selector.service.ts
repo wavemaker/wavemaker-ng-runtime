@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 
-
 import { Camera } from '@ionic-native/camera';
 
-import { convertToBlob, isAndroid, isIphone } from '@wm/core';
+import { convertToBlob, isIphone } from '@wm/core';
 import { FileBrowserComponent } from '../widgets/file-browser/file-browser.component';
 
 declare const _;
@@ -108,5 +107,4 @@ export class FileSelectorService {
                 });
             });
     }
-
 }

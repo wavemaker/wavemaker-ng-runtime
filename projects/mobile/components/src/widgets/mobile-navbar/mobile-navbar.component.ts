@@ -1,7 +1,7 @@
 import { AfterViewInit, Attribute, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
+import { AbstractNavigationService, App } from '@wm/core';
 import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef, SearchComponent } from '@wm/components';
-import { App, AbstractNavigationService } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 
 import { registerProps } from './mobile-navbar.props';
@@ -166,5 +166,4 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
         this.datavalue = '';
         this.query = '';
     }
-
 }

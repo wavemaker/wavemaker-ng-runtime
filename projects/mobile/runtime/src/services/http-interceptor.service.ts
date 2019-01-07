@@ -4,12 +4,11 @@ import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { Observable, Subject } from 'rxjs';
 
-import { App, executePromiseChain, hasCordova, noop, removeExtraSlashes } from '@wm/core';
+import { App, executePromiseChain, getWmProjectProperties, hasCordova, noop, removeExtraSlashes } from '@wm/core';
 import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS } from '@wm/variables';
 
-declare const _WM_APP_PROPERTIES;
 declare const cordova;
 declare const _;
 
@@ -216,7 +215,7 @@ class SecurityInterceptor implements RequestInterceptor {
         const token = localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
         if (token) {
             // Clone the request to add the new header
-            request = request.clone({ headers: request.headers.set(_WM_APP_PROPERTIES.xsrf_header_name, token) });
+            request = request.clone({ headers: request.headers.set(getWmProjectProperties().xsrf_header_name, token) });
         }
         return new Promise<HttpRequest<any>>((resolve, reject) => {
             if (SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {

@@ -10,7 +10,6 @@ import { DeviceFileDownloadService } from './device-file-download.service';
 import { DeviceFileService } from './device-file.service';
 import { IDeviceStartUpService } from './device-start-up-service';
 
-
 declare const cordova;
 declare const _;
 declare const resolveLocalFileSystemURL;

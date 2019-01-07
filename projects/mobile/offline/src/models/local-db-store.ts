@@ -447,5 +447,4 @@ export class LocalDBStore {
         }, false);
         return `CREATE TABLE IF NOT EXISTS ${escapeName(schema.name)} (${fieldStr})`;
     }
-
 }

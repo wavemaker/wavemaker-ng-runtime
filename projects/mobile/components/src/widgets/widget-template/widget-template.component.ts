@@ -30,5 +30,4 @@ export class WidgetTemplateComponent extends StylableComponent {
             super.onPropertyChange(key, nv, ov);
         }
     }
-
 }

@@ -1,7 +1,7 @@
 import { Directive, ElementRef } from '@angular/core';
 
-import { PageDirective } from '@wm/components';
 import { addClass } from '@wm/core';
+import { PageDirective } from '@wm/components';
 
 declare const $;
 
@@ -17,5 +17,4 @@ export class MobilePageDirective {
         this._$ele = $(elRef.nativeElement);
         page.subscribe('wmMobileTabbar:ready', () => this._$ele.addClass('has-tabbar'));
     }
-
 }

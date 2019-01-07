@@ -1,8 +1,7 @@
-
 import { File } from '@ionic-native/file';
 
-import { App, noop, triggerFn} from '@wm/core';
-import { NetworkService, DeviceService } from '@wm/mobile/core';
+import { App, noop, triggerFn } from '@wm/core';
+import { DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
 declare const _;

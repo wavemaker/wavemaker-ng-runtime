@@ -1,6 +1,6 @@
 export default [
     {
-        input: './mobile/ionic-native/ionic-native-core.js',
+        input: './projects/mobile/ionic-native/ionic-native-core.js',
         output: {
             file : './dist/tmp/libs/ionic-native/ionic-native-core.umd.js',
             format : 'umd',
@@ -14,7 +14,7 @@ export default [
         }
     },
     {
-        input: './mobile/ionic-native/ionic-native-plugins.js',
+        input: './projects/mobile/ionic-native/ionic-native-plugins.js',
         output: {
             file : './dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js',
             format : 'umd',

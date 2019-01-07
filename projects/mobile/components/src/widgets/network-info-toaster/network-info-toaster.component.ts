@@ -3,8 +3,8 @@ import { Component, Injector, OnDestroy } from '@angular/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
 
 import { registerProps } from './network-info-toaster.props';
-import { NetworkService } from '@wm/mobile/core';
 import { $appDigest, App } from '@wm/core';
+import { NetworkService } from '@wm/mobile/core';
 
 registerProps();
 

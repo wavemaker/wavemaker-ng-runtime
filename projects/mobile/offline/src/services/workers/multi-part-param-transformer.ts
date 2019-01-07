@@ -7,10 +7,10 @@ declare const _;
 
 export class MultiPartParamTransformer implements Worker {
 
-    constructor(private deviceFileService: DeviceFileService,
-                private localDBManagementService: LocalDBManagementService) {
-
-    }
+    constructor(
+        private deviceFileService: DeviceFileService,
+        private localDBManagementService: LocalDBManagementService
+    ) {}
 
     public postCallSuccess(change: Change) {
         if (change && change.service === 'DatabaseService') {

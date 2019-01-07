@@ -1,7 +1,7 @@
 import { Component, DoCheck, ElementRef } from '@angular/core';
 
-import { provideAsWidgetRef } from '@wm/components';
 import { addClass, removeAttr, setAttr } from '@wm/core';
+import { provideAsWidgetRef } from '@wm/components';
 
 declare const _;
 
@@ -124,5 +124,4 @@ export class ProcessManagerComponent implements DoCheck {
         }
         instance.show = instance.min !== instance.max;
     }
-
 }

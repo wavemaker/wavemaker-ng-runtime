@@ -1,0 +1,34 @@
+{
+    "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../libraries/mobile/core",
+    "lib": {
+        "entryFile": "src/public_api.ts",
+        "umdId": "wm.mobile.core",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+            "@angular/common": "ng.common",
+            "@angular/common/http": "ng.common.http",
+
+            "rxjs": "rxjs",
+            "rxjs/operators": "rxjs.operators",
+
+            "@ionic-native/barcode-scanner": "ionicNative.plugins",
+            "@ionic-native/camera": "ionicNative.plugins",
+            "@ionic-native/contacts": "ionicNative.plugins",
+            "@ionic-native/device": "ionicNative.plugins",
+            "@ionic-native/media-capture": "ionicNative.plugins",
+            "@ionic-native/geolocation": "ionicNative.plugins",
+            "@ionic-native/vibration": "ionicNative.plugins",
+            "@ionic-native/app-version": "ionicNative.plugins",
+            "@ionic-native/file-opener": "ionicNative.plugins",
+            "@ionic-native/file": "ionicNative.plugins",
+            "@ionic-native/network": "ionicNative.plugins",
+            "@ionic-native/calendar": "ionicNative.plugins",
+
+            "@wm/core": "wm.core",
+            "@wm/components": "wm.components"
+
+        }
+    }
+}

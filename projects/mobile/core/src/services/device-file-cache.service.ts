@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
 
-
 import { noop } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';

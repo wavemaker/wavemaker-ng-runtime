@@ -1,0 +1,20 @@
+<ng-container *ngIf="startApp">
+    <router-outlet></router-outlet>
+    <div wmContainer content="Common" hidden></div>
+    <app-spinner [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
+    <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'"
+         close.event="closeOAuthDialog()">
+        <ng-template #dialogBody>
+            <ul class="list-items">
+                <li class="list-item" *ngFor="let provider of providersConfig">
+                    <button class="btn" (click)="provider.invoke()">{{provider.name}}</button>
+                </li>
+            </ul>
+        </ng-template>
+    </div>
+    <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext"
+         canceltext.bind="canceltext"
+         iconclass.bind="iconclass" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()"></div>
+    <div wmAppExt></div>
+    <i id="wm-mobile-display"></i>
+</ng-container>

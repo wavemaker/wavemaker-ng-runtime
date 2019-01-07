@@ -36,7 +36,6 @@ export class HttpServiceImpl extends AbstractHttpService {
     /**
      * Generates a request with provided options
      * @param options, request params/options
-     * @returns {HttpRequest}
      */
     private generateRequest(options: any) {
         let reqHeaders = new HttpHeaders(),

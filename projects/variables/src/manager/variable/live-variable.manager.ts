@@ -632,7 +632,7 @@ export class LiveVariableManager extends BaseVariableManager {
                     triggerFn(success, result);
                     resolve(result);
                 }
-            }, (errorMsg: any)=> {
+            }, (errorMsg: any) => {
                 triggerFn(error, errorMsg);
                 reject(errorMsg);
             });

@@ -6,7 +6,6 @@ import { ChangeLogService } from '../services/change-log.service';
 
 let isOfflineBehaviourAdded = false;
 
-
 export class FileUploadOfflineBehaviour {
 
     constructor(
@@ -71,5 +70,4 @@ export class FileUploadOfflineBehaviour {
                 }];
             });
     }
-
 }
