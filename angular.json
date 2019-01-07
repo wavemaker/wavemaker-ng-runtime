@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "runtime-app": {
+        "angular-app": {
             "root": "",
             "sourceRoot": "src",
             "projectType": "application",
@@ -13,7 +13,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/runtime-app",
+                        "outputPath": "dist",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -80,18 +80,18 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "runtime-app:build"
+                        "browserTarget": "angular-app:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "runtime-app:build:production"
+                            "browserTarget": "angular-app:build:production"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "runtime-app:build"
+                        "browserTarget": "angular-app:build"
                     }
                 },
                 "lint": {
@@ -541,5 +541,5 @@
             }
         }
     },
-    "defaultProject": "runtime-app"
+    "defaultProject": "angular-app"
 }

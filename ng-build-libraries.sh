@@ -9,8 +9,6 @@ ng build oAuth
 ng build security
 ng build variables
 ng build components
-ng build runtime-base
-ng build runtime-dynamic
 
 ng build mobile-core
 ng build mobile-offline
@@ -19,6 +17,8 @@ ng build mobile-components
 ng build mobile-runtime
 ng build mobile-placeholder
 
+ng build runtime-base
+ng build runtime-dynamic
 
 #components build task(mobile, web) -- start
 ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
