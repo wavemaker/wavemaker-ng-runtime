@@ -2,7 +2,7 @@ import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '../../
 
 export const registerProps = () => {
     register(
-        'wm-progressbar',
+        'wm-progress-bar',
         new Map(
             [
                 ['captionplacement', {value: 'hidden', ...PROP_STRING}],
