@@ -522,11 +522,12 @@ export class ServiceVariableManager extends BaseVariableManager {
                 this.totalFilesCount--;
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.ABORT, variable, $file);
                 if (!this.isFileUploadInProgress(variable.dataBinding) || this.totalFilesCount === 1) {
-                    $queue.clear(variable);
+                    $queue.process(variable);
                 }
             } else {
                 if (variable._observable) {
                     variable._observable.unsubscribe();
+                    $queue.process(variable);
                 }
             }
         }
