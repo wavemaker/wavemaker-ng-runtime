@@ -198,6 +198,10 @@ buildApp() {
     ngBuild runtime-base
     ngBuild runtime-dynamic
 
+    ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
+
+    ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
+
     bundleWeb
     bundleMobile
 }
