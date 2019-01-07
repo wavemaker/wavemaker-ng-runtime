@@ -14,7 +14,7 @@ registerProps();
 declare const _;
 
 const DEFAULT_CLS = 'progress app-progress';
-const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progressbar', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-bar', hostClass: DEFAULT_CLS};
 
 // interface for the progress-bar info
 interface IProgressInfo {

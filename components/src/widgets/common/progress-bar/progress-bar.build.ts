@@ -17,7 +17,7 @@ const getAttrValue = (node: Element, attrName: string): string | undefined => {
 
 const getReplaceRegex = (v: string) => new RegExp(`bind:(${v}|${v}\\[\\$i])\\.`, 'g');
 
-register('wm-progress', (): IBuildTaskDef => {
+register('wm-progress-bar', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
             const dataset = getAttrValue(node, 'dataset');
