@@ -131,6 +131,7 @@ bundleWeb() {
 
     ${UGLIFYJS} \
         ./libraries/core/bundles/core.umd.js \
+        ./libraries/swipey/bundles/swipey.umd.js \
         ./libraries/transpiler/bundles/transpiler.umd.js \
         ./libraries/http-service/bundles/http-service.umd.js \
         ./libraries/oAuth/bundles/oAuth.umd.js \
@@ -157,6 +158,7 @@ bundleMobile() {
     echo "uglify: mobile"
     ${UGLIFYJS} \
         ./libraries/core/bundles/core.umd.js \
+        ./libraries/swipey/bundles/swipey.umd.js \
         ./libraries/transpiler/bundles/transpiler.umd.js \
         ./libraries/http-service/bundles/http-service.umd.js \
         ./libraries/oAuth/bundles/oAuth.umd.js \
