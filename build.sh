@@ -11,7 +11,7 @@ isSourceModified=false
 
 for arg in "$@"
 do
-    case $arg in
+    case ${arg} in
         -c | --copy)
             copy=true
             ;;
@@ -37,7 +37,7 @@ COMPODOC=./node_modules/.bin/compodoc
 
 SUCCESS_FILE="BUILD_SUCCESS"
 
-if [ ${force} == true ]; then
+if [[ ${force} == true ]]; then
     ${RIMRAF} ./dist/
 fi
 
@@ -51,7 +51,7 @@ execCommand() {
     local command=$3
     echo "$task: $desc"
     ${command} > /dev/null
-    if [ "$?" -ne "0" ]; then
+    if [[ "$?" -ne "0" ]]; then
         echo "$task: $desc - failure"
         exit 1
     else
@@ -59,24 +59,21 @@ execCommand() {
     fi
 }
 
-#[Todo] -- Update this logic - this returns true all the time
 hasLibChanges() {
-    return 0
-
-    if [ ${force} == true ]; then
+    if [[ ${force} == true ]]; then
         return 0
     fi
 
-    local successFile="./dist/${SUCCESS_FILE}"
+    local successFile="./dist/LIB_${SUCCESS_FILE}"
 
-    if ! [ -e ${successFile} ]; then
+    if ! [[ -e ${successFile} ]]; then
         return 0
     fi
 
     local updateTime=`date -r ./package.json +%s`
     local buildTime=`date -r ${successFile} +%s`
 
-	if [ ${updateTime} -le ${buildTime} ]; then
+	if [[ ${updateTime} -le ${buildTime} ]]; then
 		return 1
 	else
 		return 0
@@ -84,25 +81,24 @@ hasLibChanges() {
     return 0
 }
 
-#[Todo] -- Update this logic - this returns true all the time
 hasSourceChanges() {
-    return 0
 
-    if [ ${force} == true ]; then
+    if [[ ${force} == true ]]; then
         return 0
     fi
 
     local bundle=$1
-    local successFile="./dist/tmp/${bundle}/${SUCCESS_FILE}"
+    local sourceLocation=$2
+    local successFile="./dist/tmp/${bundle}_${SUCCESS_FILE}"
 
-    if ! [ -e ${successFile} ]; then
+    if ! [[ -e ${successFile} ]]; then
         return 0
     fi
 
-    local updateTime=`find ${bundle}/src -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
+    local updateTime=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
     local buildTime=`date -r ${successFile} +%s`
 
-	if [ ${updateTime} -le ${buildTime} ]; then
+	if [[ ${updateTime} -le ${buildTime} ]]; then
 		return 1
 	else
 		return 0
@@ -117,7 +113,17 @@ rollup() {
 
 ngBuild() {
     local bundle=$1
-    execCommand ng-build ${bundle} "$NG build $bundle"
+    local sourceLocation=$2
+    hasSourceChanges ${bundle} ${sourceLocation}
+    if [[ "$?" -eq "0" ]]; then
+        execCommand ng-build ${bundle} "$NG build $bundle"
+        isSourceModified=true
+        if [[ "$?" -eq "0" ]]; then
+            touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
+        fi
+    else
+        echo "No changes in $bundle"
+    fi
 }
 
 bundleWeb() {
@@ -140,7 +146,7 @@ bundleWeb() {
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.min.js \
         -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.compressed.js -b beautify=false,ascii_only=true
 
-    if [ "$?" -eq "0" ]; then
+    if [[ "$?" -eq "0" ]]; then
         echo "uglify: web - success"
     else
         echo -e "uglify: web - failure"
@@ -171,7 +177,7 @@ bundleMobile() {
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js \
         -c -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.compressed.js -b beautify=false,ascii_only=true
 
-    if [ "$?" -eq "0" ]; then
+    if [[ "$?" -eq "0" ]]; then
         echo "uglify: mobile - success"
     else
         echo -e "uglify: mobile - failure"
@@ -179,49 +185,57 @@ bundleMobile() {
 }
 
 buildApp() {
-    ngBuild core
-    ngBuild transpiler
-    ngBuild swipey
-    ngBuild http-service
-    ngBuild oAuth
-    ngBuild security
-    ngBuild variables
-    ngBuild components
+    ngBuild core projects/core
+    ngBuild transpiler projects/transpiler
+    ngBuild swipey projects/swipey
+    ngBuild http-service projects/http-service
+    ngBuild oAuth projects/oAuth
+    ngBuild security projects/security
+    ngBuild variables projects/variables
+    ngBuild components projects/components
 
-    ngBuild mobile-core
-    ngBuild mobile-offline
-    ngBuild mobile-components
-    ngBuild mobile-variables
-    ngBuild mobile-runtime
-    ngBuild mobile-placeholder
+    ngBuild mobile-core projects/mobile/core
+    ngBuild mobile-offline projects/mobile/offline
+    ngBuild mobile-components projects/mobile/components
+    ngBuild mobile-variables projects/mobile/variables
+    ngBuild mobile-runtime projects/mobile/runtime
+    ngBuild mobile-placeholder projects/mobile/placeholder
 
-    ngBuild runtime-base
-    ngBuild runtime-dynamic
+    ngBuild runtime-base projects/runtime-base
+    ngBuild runtime-dynamic projects/runtime-dynamic
 
-    ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
+    hasSourceChanges components projects/components
+    if [[ "$?" -eq "0" ]]; then
+        ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
+    fi
 
-    ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
+    hasSourceChanges mobile-components projects/mobile/components
+    if [[ "$?" -eq "0" ]]; then
+        ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
+    fi
 
-    bundleWeb
-    bundleMobile
+    if [[ "${isSourceModified}" == true ]]; then
+        bundleWeb
+        bundleMobile
+    fi
 }
 
 buildDocs() {
-    if [ "${docs}" == true ]; then
+    if [[ "${docs}" == true ]]; then
         ${RIMRAF} ./dist/docs/
         execCommand "compodoc" "docs" "${COMPODOC} --config documentation/compodocrc.json"
     fi
 }
 
 copyDist() {
-    if [ "${copy}" == true ]; then
+    if [[ "${copy}" == true ]]; then
         cp ./dist/bundles/wmapp/scripts/* ../wavemaker-studio-editor/src/main/webapp/wmapp/scripts/
         cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/remote-studio/ 2> /dev/null
         cp -r ./dist/bundles/* ../../wavemaker-studio-saas/wavemaker-saas-client/local/webapp/static-files/ 2> /dev/null
-        if [ "${docs}" == true ]; then
+        if [[ "${docs}" == true ]]; then
             cp -r ./dist/docs/* ../wavemaker-studio-editor/src/main/webapp/docs/
         fi
-        if [ "${locale}" == true ]; then
+        if [[ "${locale}" == true ]]; then
             cp -r ./dist/bundles/wmapp/locales/* ../wavemaker-studio-editor/src/main/webapp/wmapp/locales/
             cp -r ./dist/bundles/wmmobile/locales/* ../wavemaker-studio-editor/src/main/webapp/wmmobile/locales/
         fi
@@ -229,7 +243,7 @@ copyDist() {
 }
 
 copyLocale() {
-    if [ "${locale}" == true ]; then
+    if [[ "${locale}" == true ]]; then
 
         local appDest=./dist/bundles/wmapp/locales
         local mobileDest=./dist/bundles/wmmobile/locales
@@ -244,9 +258,9 @@ copyLocale() {
         mkdir -p ${appDest}/moment
         mkdir -p ${mobileDest}/moment
 
-        for file in $angularSrc/*.js; do
-            local fileName=`echo $(basename $file) | tr 'A-Z' 'a-z'`
-            cp $angularSrc/$fileName ${appDest}/angular/$fileName
+        for file in ${angularSrc}/*.js; do
+            local fileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`
+            cp ${angularSrc}/${fileName} ${appDest}/angular/${fileName}
         done
         cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
 
@@ -291,7 +305,7 @@ buildNgCircleProgressbar() {
 
 bundleWebLibs() {
     echo "uglify: web-libs"
-    $UGLIFYJS \
+    ${UGLIFYJS} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
@@ -341,7 +355,7 @@ bundleWebLibs() {
         -c -o ./dist/bundles/wmapp/scripts/wm-libs.min.compressed.js -b beautify=false,ascii_only=true
 
 
-    if [ "$?" -eq "0" ]; then
+    if [[ "$?" -eq "0" ]]; then
         echo "uglify: web-libs - success"
     else
         echo -e "uglify: web-libs - failure"
@@ -350,7 +364,7 @@ bundleWebLibs() {
 
 bundleMobileLibs() {
     echo "uglify: mobile-libs"
-    $UGLIFYJS \
+    ${UGLIFYJS} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
@@ -402,7 +416,7 @@ bundleMobileLibs() {
         -c -o ./dist/bundles/wmmobile/scripts/wm-libs.min.compressed.js -b beautify=false,ascii_only=true
 
 
-    if [ "$?" -eq "0" ]; then
+    if [[ "$?" -eq "0" ]]; then
         echo "uglify: mobile-libs - success"
     else
         echo -e "uglify: mobile-libs - failure"
@@ -434,13 +448,13 @@ buildMobileLibs() {
 buildLibs() {
     hasLibChanges
 
-    if [ "$?" -eq "0" ]; then
+    if [[ "$?" -eq "0" ]]; then
         npm install
         buildWebLibs
         buildMobileLibs
 
-        if [ "$?" -eq "0" ]; then
-            touch ./dist/${SUCCESS_FILE}
+        if [[ "$?" -eq "0" ]]; then
+            touch ./dist/LIB_${SUCCESS_FILE}
         fi
     else
         echo "No changes in package.json. use --force to re-build libs"
