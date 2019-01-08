@@ -185,6 +185,12 @@ bundleMobile() {
 }
 
 buildApp() {
+    hasSourceChanges components projects/components
+    local hasChangesInComponents=$?
+
+    hasSourceChanges mobile-components projects/mobile/components
+    local hasChangesInMobileComponents=$?
+
     ngBuild core projects/core
     ngBuild transpiler projects/transpiler
     ngBuild swipey projects/swipey
@@ -204,13 +210,11 @@ buildApp() {
     ngBuild runtime-base projects/runtime-base
     ngBuild runtime-dynamic projects/runtime-dynamic
 
-    hasSourceChanges components projects/components
-    if [[ "$?" -eq "0" ]]; then
+    if [[ ${hasChangesInComponents} -eq "0" ]]; then
         ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
     fi
 
-    hasSourceChanges mobile-components projects/mobile/components
-    if [[ "$?" -eq "0" ]]; then
+    if [[ ${hasChangesInMobileComponents} -eq "0" ]]; then
         ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
     fi
 
