@@ -62,7 +62,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private class: string;
 
     private lastSelectedIndex: number;
-    private dataoptions: Object;
+    private dataoptions: any;
     public dropdownEl: any;
     private _lastQuery: string;
     private _isOpen: boolean; // set to true when dropdown is open
@@ -204,7 +204,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // highlight the characters in the dropdown matching the query.
-    private highlight(match: TypeaheadMatch, query: String) {
+    private highlight(match: TypeaheadMatch, query: string) {
         if (this.typeaheadContainer) {
             // highlight of chars will work only when label are strings.
             (match as any).value = match.item.label.toString();
