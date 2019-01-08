@@ -68,11 +68,7 @@ const execScript = (
         fn = new Function(ctx, 'App', 'Utils', script);
         scriptCache.set(identifier, fn);
     }
-    try {
-        fn(instance, app, utils);
-    } catch (e) {
-        console.warn(`error executing script of ${identifier}`);
-    }
+    fn(instance, app, utils);
 };
 
 class BaseDynamicComponent {

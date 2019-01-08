@@ -89,7 +89,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         try {
             this.evalUserScript(this, this.App, this.injector.get(UtilsService));
         } catch (e) {
-            console.warn(`Error in evaluating page(${this.pageName}) script`, e);
+            console.error(`Error in evaluating page (${this.pageName}) script\n`, e);
         }
     }
 

@@ -51,7 +51,7 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
         try {
             this.evalUserScript(this, this.App, this.injector.get(UtilsService));
         } catch (e) {
-            console.warn(`Error in evaluating prefab(${this.prefabName}) script`, e);
+            console.error(`Error in evaluating prefab (${this.prefabName}) script\n`, e);
         }
     }
 

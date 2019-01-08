@@ -72,7 +72,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         try {
             this.evalUserScript(this, this.App, this.injector.get(UtilsService));
         } catch (e) {
-            console.warn(`Error in evaluating page(${this.partialName}) script`, e);
+            console.error(`Error in evaluating partial (${this.partialName}) script\n`, e);
         }
     }
 
