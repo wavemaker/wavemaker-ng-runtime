@@ -94,7 +94,7 @@ const getDynamicComponent = (
     template: string,
     css: string,
     script: any,
-    variables: any,
+    variables: string,
 ) => {
 
     const componentDef = {
@@ -163,7 +163,7 @@ const getDynamicComponent = (
         }
 
         getVariables() {
-            return variables;
+            return JSON.parse(variables);
         }
     }
 
@@ -227,7 +227,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         return this.loadResourcesOfFragment(getFragmentUrl(componentName, componentType))
             .then(({markup, script, styles, variables})  => {
 
-                const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, variables);
+                const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
                 const moduleDef = getDynamicModule(componentDef);
 
                 componentFactoryRef = this.compiler
