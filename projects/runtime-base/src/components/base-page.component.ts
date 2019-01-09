@@ -130,6 +130,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                 .catch(noop)
                 .then(() => {
                     this.appManager.notify('page-start-up-variables-loaded', {pageName: this.pageName});
+                    (this as any).compilePageContent = true;
                 });
             variableCollection.callback(variableCollection.Actions);
 

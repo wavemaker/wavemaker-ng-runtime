@@ -50,7 +50,7 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
         toastrModule,
         httpClientXsrfModule,
 
-        RuntimeBaseModule,
+        RuntimeBaseModule
     ],
     providers: [
         AppResourceManagerService,

@@ -40,7 +40,8 @@ const KEYBOARD_CLASS = 'keyboard';
         AppExtComponent
     ],
     exports: [
-        AppExtComponent
+        AppExtComponent,
+        WmMobileComponentsModule
     ],
     imports: [
         MobileCoreModule,
