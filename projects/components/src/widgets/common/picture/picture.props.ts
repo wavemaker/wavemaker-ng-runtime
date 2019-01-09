@@ -10,7 +10,7 @@ export const registerProps = () => {
             ['encodeurl', PROP_STRING],
             ['hint', PROP_STRING],
             ['name', PROP_STRING],
-            ['pictureaspect', PROP_STRING],
+            ['pictureaspect', {value: 'None', ...PROP_STRING}],
             ['pictureplaceholder', PROP_STRING],
             ['picturesource', PROP_STRING],
             ['shape', PROP_STRING],

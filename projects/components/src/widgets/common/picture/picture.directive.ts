@@ -63,8 +63,8 @@ export class PictureDirective extends StylableComponent implements OnInit {
                     height = '100%';
                     break;
             }
-            setCSS(this.nativeElement, 'width', width);
-            setCSS(this.nativeElement, 'height', height);
+            setCSS(this.nativeElement, 'width', width, true);
+            setCSS(this.nativeElement, 'height', height, true);
         } else if (key === 'encodeurl' || key === 'pictureplaceholder') {
             this.setImgSource();
         } else if (key === 'shape') {
