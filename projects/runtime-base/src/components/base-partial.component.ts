@@ -83,8 +83,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         const variableCollection = variablesService.register(this.partialName, this.getVariables(), this);
 
         // create namespace for Variables nad Actions on page/partial, which inherits the Variables and Actions from App instance
-        this.Variables = {};
-        this.Actions = {};
+        this.Variables = Object.create(this.App.Variables);
+        this.Actions = Object.create(this.App.Actions);
 
         this.containerWidget.Variables = this.Variables;
         this.containerWidget.Actions = this.Actions;
