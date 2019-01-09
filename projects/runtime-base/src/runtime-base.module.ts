@@ -43,6 +43,7 @@ import { AppJSResolve } from './resolves/app-js.resolve';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { AppComponent } from './components/app-component/app.component';
 import { HttpCallInterceptor } from './services/http-interceptor.services';
+import { PrefabPreviewComponent } from './components/prefab-preview.component';
 
 export function InitializeApp(I18nService) {
     return () => {
@@ -62,7 +63,8 @@ const definitions = [
     AppSpinnerComponent,
     CustomToasterComponent,
     PrefabDirective,
-    AppComponent
+    AppComponent,
+    PrefabPreviewComponent
 ];
 
 export const modalModule = ModalModule.forRoot();

@@ -8,7 +8,7 @@ import {
     OnInit,
     ViewContainerRef
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
@@ -37,7 +37,8 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         private ngZone: NgZone,
         private elRef: ElementRef,
         private spinnerService: AbstractSpinnerService,
-        private componentRefProvider: ComponentRefProvider
+        private componentRefProvider: ComponentRefProvider,
+        private router: Router
     ) {}
 
     getTargetNode() {
@@ -68,10 +69,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
     }
 
     renderPrefabPreviewPage() {
-        this.resetViewContainer();
-        const $target = this.getTargetNode();
-
-        // this.prefabRenderer.renderForPreview(this.vcRef, $target);
+        this.router.navigate(['prefab-preview']);
     }
 
     ngOnInit() {
@@ -83,11 +81,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
             this.subscription = this.route.params.subscribe(({pageName}: any) => {
                 this.ngZone.run(() => {
                     if (pageName) {
-                        if (pageName === 'prefab-preview') {
-                            this.renderPrefabPreviewPage();
-                        } else {
-                            this.renderPage(pageName);
-                        }
+                        this.renderPage(pageName);
                     }
                 });
             });

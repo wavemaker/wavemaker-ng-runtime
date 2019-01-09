@@ -9,6 +9,7 @@ export * from './util/utils';
 export * from './guards/auth.guard';
 export * from './guards/role.guard';
 export * from './components/app-component/app.component';
+export * from './components/prefab-preview.component';
 export * from './resolves/app-js.resolve';
 export * from './resolves/app-variables.resolve';
 export * from './resolves/i18n.resolve';
