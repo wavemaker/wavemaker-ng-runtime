@@ -4,7 +4,7 @@ import { CircleProgressComponent, CircleProgressOptionsInterface  } from 'ng-cir
 import { IWidgetConfig } from '../../../framework/types';
 import { styler } from '../../../framework/styler';
 import { StylableComponent } from '../../base/stylable.component';
-import { registerProps } from './circle-progress-bar.props';
+import { registerProps } from './progress-circle.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { IRedrawableComponent } from '../../../framework/types';
 import { calculatePercent, getDecimalCount, isPercentageValue, TYPE_CLASS_MAP } from '../progress-utils';
@@ -14,11 +14,12 @@ registerProps();
 declare const _;
 
 const DEFAULT_CLS = 'progress app-progress circle';
-const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-circle-progressbar', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-circle', hostClass: DEFAULT_CLS};
 const DEFAULT_OPTIONS: CircleProgressOptionsInterface  = {
     responsive: true,
     innerStrokeWidth: 10,
     outerStrokeWidth: 10,
+    unitsFontSize: '15',
     space: -10,
     toFixed: 0,
     maxPercent: 100,
@@ -32,13 +33,13 @@ const DEFAULT_OPTIONS: CircleProgressOptionsInterface  = {
 
 
 @Component({
-    selector: '[wmCircleProgressBar]',
-    templateUrl: './circle-progress-bar.component.html',
+    selector: '[wmProgressCircle]',
+    templateUrl: './progress-circle.component.html',
     providers: [
-        provideAsWidgetRef(CircleProgressBarComponent)
+        provideAsWidgetRef(ProgressCircleComponent)
     ]
 })
-export class CircleProgressBarComponent extends StylableComponent implements IRedrawableComponent, AfterViewInit {
+export class ProgressCircleComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
 
     public displayformat: string;
     public datavalue: string;

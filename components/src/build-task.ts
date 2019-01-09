@@ -66,7 +66,7 @@ export * from './widgets/common/popover/popover.build';
 export * from './widgets/common/prefab/prefab.build';
 export * from './widgets/common/prefab-container/prefab-container.build';
 export * from './widgets/common/progress-bar/progress-bar.build';
-export * from './widgets/common/progress-bar/circle-progress-bar/circle-progress-bar.build';
+export * from './widgets/common/progress-bar/progress-circle/progress-circle.build';
 export * from './widgets/common/radioset/radioset.build';
 export * from './widgets/common/rating/rating.build';
 export * from './widgets/common/rich-text-editor/rich-text-editor.build';
