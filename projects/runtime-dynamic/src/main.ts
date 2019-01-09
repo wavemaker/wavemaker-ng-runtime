@@ -3,6 +3,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 
+declare const _;
 const DEBUG_MODE = 'debugMode';
 
 if (sessionStorage.getItem(DEBUG_MODE) !== 'true') {
@@ -21,5 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
         .then(() => console.timeEnd('bootstrap'), err => console.log(err));
 });
+
+(window as any).debugMode = function(on) {
+    if (_.isEmpty(on)) {
+        on = true;
+    }
+    const value = on ? 'true' : 'false';
+    if (sessionStorage.getItem(DEBUG_MODE) !== value) {
+        sessionStorage.setItem(DEBUG_MODE, value);
+        window.location.reload();
+    }
+};
 
 export default () => {};
