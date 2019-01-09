@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import {
+    AbstractI18nService,
     AbstractNavigationService,
     addClass,
     App,
@@ -35,6 +36,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     router: Router;
     pageParams: any;
     showPageContent: boolean;
+    i18nService: AbstractI18nService;
+    appLocale: any;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -51,6 +54,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.route = this.injector.get(ActivatedRoute);
         this.appManager = this.injector.get(AppManagerService);
         this.navigationService = this.injector.get(AbstractNavigationService);
+        this.i18nService = this.injector.get(AbstractI18nService);
         this.router = this.injector.get(Router);
 
         this.initUserScript();
@@ -64,6 +68,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.activePageName = this.pageName; // Todo: remove this
 
         this.registerPageParams();
+
+        this.defineI18nProps();
 
         this.router.events.subscribe(e => {
             if (e instanceof NavigationEnd) {
@@ -100,6 +106,10 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     registerDestroyListener(fn: Function) {
         this.destroy$.subscribe(noop, noop, () => fn());
+    }
+
+    defineI18nProps() {
+        this.appLocale = this.i18nService.getAppLocale();
     }
 
     initVariables() {

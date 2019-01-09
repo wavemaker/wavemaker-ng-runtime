@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 
-import { AbstractNavigationService, App, noop, UtilsService } from '@wm/core';
+import { AbstractI18nService, AbstractNavigationService, App, noop, UtilsService } from '@wm/core';
 import { WidgetRef } from '@wm/components';
 import { VariablesService } from '@wm/variables';
 
@@ -26,6 +26,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     router: Router;
     pageParams: any;
     containerWidget: any;
+    i18nService: AbstractI18nService;
+    appLocale: any;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -43,6 +45,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
         this.App = this.injector.get(App);
         this.containerWidget = this.injector.get(WidgetRef);
+        this.i18nService = this.injector.get(AbstractI18nService);
         this.getContainerWidgetInjector().view.component.registerFragment();
 
         this.initUserScript();
@@ -52,6 +55,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
         this.activePageName = this.App.activePageName; // Todo: remove this
         this.registerPageParams();
+
+        this.defineI18nProps();
 
         this.viewInit$.subscribe(noop, noop, () => {
             this.pageParams = this.containerWidget.partialParams;
@@ -102,6 +107,10 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     registerPageParams() {
         this.pageParams = this.containerWidget.partialParams;
+    }
+
+    defineI18nProps() {
+        this.appLocale = this.i18nService.getAppLocale();
     }
 
     invokeOnReady() {
