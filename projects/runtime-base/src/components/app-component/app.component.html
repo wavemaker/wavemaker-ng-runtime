@@ -1,6 +1,6 @@
 <ng-container *ngIf="startApp">
     <router-outlet></router-outlet>
-    <div wmContainer content="Common" hidden></div>
+    <div wmContainer partialContainer content="Common" hidden></div>
     <app-spinner [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
     <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'"
          close.event="closeOAuthDialog()">
