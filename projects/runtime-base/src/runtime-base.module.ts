@@ -2,6 +2,7 @@ import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 
 import {
     _WM_APP_PROJECT,
+    $parseExpr,
     AbstractI18nService,
     AbstractNavigationService,
     AbstractSpinnerService,
@@ -72,6 +73,9 @@ export const carouselModule = CarouselModule.forRoot();
 export const bsDropDownModule = BsDropdownModule.forRoot();
 export const popoverModule = PopoverModule.forRoot();
 export const tooltipModule = TooltipModule.forRoot();
+
+// setting parseExpr as exprEvaluator for swipeAnimation
+($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
 
 @NgModule({
     declarations: definitions,

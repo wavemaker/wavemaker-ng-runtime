@@ -68,8 +68,11 @@ export class NavigationServiceImpl implements AbstractNavigationService {
      */
     public goToPage(pageName: string, options: NavigationOptions) {
         this.transition = options.transition || '';
+        // page is added to stack only when currentPage is available.
+        if (this.history.getCurrentPage()) {
+            this.isPageAddedToHistory = true;
+        }
         this.history.push( new PageInfo(pageName, options.urlParams, this.transition));
-        this.isPageAddedToHistory = true;
         if (CONSTANTS.isWaveLens) {
             const location = window['location'];
             let strQueryParams = _.map(options.urlParams || [], (value, key) => key + '=' + value);
