@@ -8,7 +8,7 @@ export default [
     {
         input: 'libraries/build-task/fesm2015/components.js',
         output: {
-            file: 'dist/build-task.cjs.js',
+            file: 'dist/codegen/build-task.cjs.js',
             format: 'cjs'
         },
         plugins: [
@@ -35,7 +35,7 @@ export default [
             'libraries/mobile-build-task/fesm2015/mobile-components.js'
         ],
         output: {
-            file: 'dist/mobile-build-task.cjs.js',
+            file: 'dist/codegen/mobile-build-task.cjs.js',
             format: 'cjs'
         },
         plugins: [
