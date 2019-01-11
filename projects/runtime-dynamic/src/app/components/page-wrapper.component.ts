@@ -54,14 +54,11 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
     renderPage(pageName) {
         const $target = this.getTargetNode();
 
-        const spinnerId = this.spinnerService.show('', 'globalSpinner');
-
         this.appManager.loadAppVariables()
             .then(async () => {
                 const pageComponentFactoryRef = await this.componentRefProvider.getComponentFactoryRef(pageName, ComponentType.PAGE);
                 const instance = this.vcRef.createComponent(pageComponentFactoryRef, 0, this.injector);
                 $target.appendChild(instance.location.nativeElement);
-                this.spinnerService.hide(spinnerId);
                 if (this.vcRef.length > 1) {
                     this.vcRef.remove(1);
                 }

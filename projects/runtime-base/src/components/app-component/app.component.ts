@@ -69,11 +69,9 @@ export class AppComponent implements DoCheck {
 
         this.router.events.subscribe(e => {
             if (e instanceof NavigationStart) {
-                console.log('showing the global spinner');
                 spinnerId = this.spinnerService.show('', 'globalSpinner');
             } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
-                console.log('hiding the global spinner');
-                this.spinnerService.hide(spinnerId);
+                setTimeout(() => this.spinnerService.hide(spinnerId), 1000);
             }
         });
     }
