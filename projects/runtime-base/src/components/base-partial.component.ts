@@ -71,6 +71,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         } else {
             this.Widgets = Object.create(commonPartialWidgets);
         }
+
+        this.containerWidget.Widgets = this.Widgets;
     }
 
     initUserScript() {
