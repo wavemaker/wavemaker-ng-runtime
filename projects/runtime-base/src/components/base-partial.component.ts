@@ -41,7 +41,6 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     }
 
     init() {
-        console.log('inside base partial', this.partialName);
 
         this.App = this.injector.get(App);
         this.containerWidget = this.injector.get(WidgetRef);

@@ -46,7 +46,6 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     abstract getVariables();
 
     init() {
-        console.log('inside base page component', this.pageName);
 
         muteWatchers();
 
