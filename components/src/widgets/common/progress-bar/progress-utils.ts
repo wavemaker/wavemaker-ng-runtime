@@ -30,17 +30,3 @@ export const calculatePercent = (value: number , min: number = 0, max: number = 
     }
     return Math.abs(percent);
 };
-
-// map of progress-bar type and classes
-export const TYPE_CLASS_MAP = {
-    'default': '',
-    'default-striped': 'progress-bar-striped',
-    'success': 'progress-bar-success',
-    'success-striped': 'progress-bar-success progress-bar-striped',
-    'info': 'progress-bar-info',
-    'info-striped': 'progress-bar-info progress-bar-striped',
-    'warning': 'progress-bar-warning',
-    'warning-striped': 'progress-bar-warning progress-bar-striped',
-    'danger': 'progress-bar-danger',
-    'danger-striped': 'progress-bar-danger progress-bar-striped'
-};

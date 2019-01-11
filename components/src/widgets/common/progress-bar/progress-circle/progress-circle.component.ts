@@ -1,13 +1,12 @@
 import { AfterViewInit, Component, Injector, ViewChild } from '@angular/core';
 import { CircleProgressComponent, CircleProgressOptionsInterface  } from 'ng-circle-progress';
 
-import { IWidgetConfig } from '../../../framework/types';
+import { IRedrawableComponent, IWidgetConfig } from '../../../framework/types';
 import { styler } from '../../../framework/styler';
 import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './progress-circle.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
-import { IRedrawableComponent } from '../../../framework/types';
-import { calculatePercent, getDecimalCount, isPercentageValue, TYPE_CLASS_MAP } from '../progress-utils';
+import { calculatePercent, getDecimalCount, isPercentageValue } from '../progress-utils';
 
 registerProps();
 
@@ -30,6 +29,16 @@ const DEFAULT_OPTIONS: CircleProgressOptionsInterface  = {
     innerStrokeColor: '',
     outerStrokeColor: ''
 };
+
+// map of progress-bar type and classes
+export const TYPE_CLASS_MAP = {
+    'default': '',
+    'success': 'progress-circle-success',
+    'info': 'progress-circle-info',
+    'warning': 'progress-circle-warning',
+    'danger': 'progress-circle-danger',
+};
+
 
 
 @Component({

@@ -7,7 +7,7 @@ import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './progress-bar.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { getDecimalCount, isPercentageValue, TYPE_CLASS_MAP } from './progress-utils';
+import { getDecimalCount, isPercentageValue } from './progress-utils';
 
 registerProps();
 
@@ -15,6 +15,21 @@ declare const _;
 
 const DEFAULT_CLS = 'progress app-progress';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-bar', hostClass: DEFAULT_CLS};
+
+// map of progress-bar type and classes
+export const TYPE_CLASS_MAP = {
+    'default': '',
+    'default-striped': 'progress-bar-striped',
+    'success': 'progress-bar-success',
+    'success-striped': 'progress-bar-success progress-bar-striped',
+    'info': 'progress-bar-info',
+    'info-striped': 'progress-bar-info progress-bar-striped',
+    'warning': 'progress-bar-warning',
+    'warning-striped': 'progress-bar-warning progress-bar-striped',
+    'danger': 'progress-bar-danger',
+    'danger-striped': 'progress-bar-danger progress-bar-striped'
+};
+
 
 // interface for the progress-bar info
 interface IProgressInfo {
@@ -86,7 +101,7 @@ export class ProgressBarComponent extends StylableComponent {
         // when the dataset is provided, iterate over the dataset to set the proper values in the data
         if (this.dataset && _.isArray(this.dataset) && this.type && this.datavalue) {
             this.data = this.dataset.map((datum): IProgressInfo => {
-                const val: string = findValueOf(datum, this.datavalue);
+                const val: string = findValueOf(datum, this.datavalue).toString();
                 let percentVal = val;
                 if (val && !val.includes('%')) {
                     percentVal = `${val}%`;
@@ -108,7 +123,7 @@ export class ProgressBarComponent extends StylableComponent {
                 } else {
                     if (isDefined(this.datavalue)) {
                         const denominator = (+this.maxvalue - +this.minvalue) || 1;
-                        const val = (+this.datavalue * 100) / denominator + '%';
+                        const val = ((+this.datavalue - +this.minvalue) * 100) / denominator + '%';
                         width = displayVal = val;
                     }
                 }
