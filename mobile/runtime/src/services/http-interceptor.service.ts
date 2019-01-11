@@ -2,7 +2,8 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } fr
 import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
-import { Observable, Subject } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { App, executePromiseChain, hasCordova, noop, removeExtraSlashes } from '@wm/core';
 import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mobile/core';
@@ -38,13 +39,13 @@ export class MobileHttpInterceptor implements HttpInterceptor {
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const subject = new Subject<HttpEvent<any>>();
         const data = {request: request};
-        this.deviceService.whenReady()
-            .then(() => executePromiseChain(this.getInterceptors(), [data]))
-            .then((url) => {
-                next.handle(data.request).subscribe(subject);
-                subject.subscribe({ error: value => this.onHttpError(value) });
-            }, error => subject.error(error));
-        return subject;
+
+        // invoke the request only when device is ready.
+        const obs = from(this.deviceService.whenReady()
+            .then(() => executePromiseChain(this.getInterceptors(), [data])));
+        return obs.pipe(mergeMap(() => {
+            return next.handle(data.request);
+        }));
     }
 
     private getInterceptors() {

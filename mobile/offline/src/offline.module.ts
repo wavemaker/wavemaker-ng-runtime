@@ -73,7 +73,7 @@ export class OfflineModule {
                         changeLogService.addWorker(new ErrorBlocker(localDBManagementService));
                         changeLogService.addWorker(new FileHandler());
                         changeLogService.addWorker(new MultiPartParamTransformer(deviceFileService, localDBManagementService));
-                        new LiveVariableOfflineBehaviour(changeLogService, localDBManagementService, networkService, localDbService).add();
+                        new LiveVariableOfflineBehaviour(changeLogService, httpService, localDBManagementService, networkService, localDbService).add();
                         new FileUploadOfflineBehaviour(changeLogService, deviceFileService, deviceFileUploadService, file, networkService, deviceFileService.getUploadDirectory()).add();
                         new NamedQueryExecutionOfflineBehaviour(changeLogService, httpService, localDBManagementService, networkService).add();
                         localDBManagementService.registerCallback(new UploadedFilesImportAndExportService(changeLogService, deviceFileService, localDBManagementService, file));

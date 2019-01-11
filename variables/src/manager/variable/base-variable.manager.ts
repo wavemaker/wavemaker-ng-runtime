@@ -22,9 +22,9 @@ export abstract class BaseVariableManager {
      * @param variable
      * @param dbOperation
      */
-    httpCall(requestParams, variable) {
+    httpCall(requestParams, variable, params?: any) {
         return new Promise((resolve, reject) => {
-            variable._observable = httpService.sendCallAsObservable(requestParams).subscribe((response: any) => {
+            variable._observable = httpService.sendCallAsObservable(requestParams, params).subscribe((response: any) => {
                 if (response && response.type) {
                     resolve(response);
                 }
