@@ -11,6 +11,7 @@ tar -cf dist/codegen/app-skeleton.tar \
     ./src \
     angular.json \
     package.json  \
+    package-lock.json \
     tsconfig.json \
     tsconfig.web-app.json
 
