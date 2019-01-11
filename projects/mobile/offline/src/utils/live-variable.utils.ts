@@ -1,3 +1,5 @@
+import { from } from 'rxjs';
+
 import { LVService } from '@wm/variables';
 
 import { NetworkService } from '@wm/mobile/core';
@@ -57,7 +59,8 @@ export class LiveVariableOfflineBehaviour {
                 const onlineHandler = LVService[operation.name];
                 if (onlineHandler) {
                     LVService[operation.name] = (params, successCallback, failureCallback) => {
-                        return this.localDBManagementService.isOperationAllowed(params.dataModelName, params.entityName, operation.type)
+                        // converting promise to observable as LVService returns a observable
+                        return from(this.localDBManagementService.isOperationAllowed(params.dataModelName, params.entityName, operation.type)
                             .then(isAllowedInOffline => {
                                 if (this.networkService.isConnected() || params.onlyOnline || !isAllowedInOffline) {
                                     return this.remoteDBcall(operation, onlineHandler, params, successCallback, failureCallback);
@@ -82,7 +85,7 @@ export class LiveVariableOfflineBehaviour {
                                             triggerFn(failureCallback, 'Service call failed');
                                     });
                                 }
-                            });
+                            }));
                     };
                 }
             });
@@ -129,23 +132,30 @@ export class LiveVariableOfflineBehaviour {
      * operations are synced with the offline database.
      */
     private remoteDBcall(operation, onlineHandler, params, successCallback, failureCallback): Promise<any> {
-        return onlineHandler(params, null, null).then(response => {
-            if (!params.skipLocalDB) {
-                this.offlineDBService.getStore(params).then((store) => {
-                    if (operation.type === 'READ') {
-                        store.saveAll(response.body.content);
-                    } else if (operation.type === 'INSERT') {
-                        params = _.clone(params);
-                        params.data = _.clone(response.body);
-                        this.offlineDBService[operation.name](params, noop, noop);
-                    } else {
-                        this.offlineDBService[operation.name](params, noop, noop);
+        return new Promise((resolve, reject) => {
+            onlineHandler(params, null, null).subscribe(response => {
+                if (response && response.type) {
+                    if (!params.skipLocalDB) {
+                        this.offlineDBService.getStore(params).then((store) => {
+                            if (operation.type === 'READ') {
+                                store.saveAll(response.body.content);
+                            } else if (operation.type === 'INSERT') {
+                                params = _.clone(params);
+                                params.data = _.clone(response.body);
+                                this.offlineDBService[operation.name](params, noop, noop);
+                            } else {
+                                this.offlineDBService[operation.name](params, noop, noop);
+                            }
+                        }).catch(noop);
                     }
-                }).catch(noop);
-            }
-            triggerFn(successCallback, response);
-            return response;
-        }, failureCallback);
+                    triggerFn(successCallback, response);
+                    resolve(response);
+                }
+            }, (err) => {
+                triggerFn(failureCallback, err);
+                reject(err);
+            });
+        });
     }
 
     /**

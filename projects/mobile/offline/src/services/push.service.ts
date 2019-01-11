@@ -13,21 +13,32 @@ export class PushServiceImpl implements PushService {
         private deviceFileUploadService: DeviceFileUploadService
     ) {}
 
+    // Returns a promise from the observable.
+    private getPromiseFromObs(cb) {
+        return new Promise((resolve, reject) => {
+            cb.subscribe(response => {
+                if (response && response.type) {
+                    resolve(response);
+                }
+            }, reject);
+        });
+    }
+
     public push(change: Change): Promise<any> {
         const params = change.params;
         switch (change.service) {
             case 'DatabaseService':
                 switch (change.operation) {
                     case 'insertTableData':
-                        return LVService.insertTableData(change.params, null, null);
+                        return this.getPromiseFromObs(LVService.insertTableData(change.params, null, null));
                     case 'insertMultiPartTableData':
-                        return LVService.insertMultiPartTableData(change.params, null, null);
+                        return this.getPromiseFromObs(LVService.insertMultiPartTableData(change.params, null, null));
                     case 'updateTableData':
-                        return LVService.updateTableData(change.params, null, null);
+                        return this.getPromiseFromObs(LVService.updateTableData(change.params, null, null));
                     case 'updateMultiPartTableData':
-                        return LVService.updateMultiPartTableData(change.params, null, null);
+                        return this.getPromiseFromObs(LVService.updateMultiPartTableData(change.params, null, null));
                     case 'deleteTableData':
-                        return LVService.deleteTableData(change.params, null, null);
+                        return this.getPromiseFromObs(LVService.deleteTableData(change.params, null, null));
                 }
             case 'OfflineFileUploadService':
                 if (change.operation === 'uploadToServer') {
