@@ -3,15 +3,7 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 
 import { setTheme } from 'ngx-bootstrap';
 
-import {
-    $invokeWatchers,
-    AbstractDialogService,
-    AbstractSpinnerService,
-    hasCordova,
-    setAppRef,
-    setNgZone,
-    setPipeProvider
-} from '@wm/core';
+import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { PipeProvider } from '../../services/pipe-provider.service';
 
@@ -27,6 +19,7 @@ interface SPINNER {
 })
 export class AppComponent implements DoCheck {
     private startApp = false;
+    public isApplicationType = false;
 
     spinner: SPINNER = {show: false, messages: []};
     constructor(
@@ -42,6 +35,9 @@ export class AppComponent implements DoCheck {
         setPipeProvider(_pipeProvider);
         setNgZone(ngZone);
         setAppRef(_appRef);
+
+        this.isApplicationType = getWmProjectProperties().type === 'APPLICATION';
+
         // subscribe to OAuth changes
         oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
             this.providersConfig = providers;
