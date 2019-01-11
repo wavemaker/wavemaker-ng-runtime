@@ -1,12 +1,12 @@
 import { $invokeWatchers, getClonedObject, processFilterExpBindNode, triggerFn } from '@wm/core';
 
 import { BaseVariableManager } from './base-variable.manager';
-import { debounceVariableCall, formatExportExpression, initiateCallback, setInput, appManager } from '../../util/variable/variables.utils';
+import { debounceVariableCall, formatExportExpression, initiateCallback, setInput, appManager, httpService } from '../../util/variable/variables.utils';
 import { LiveVariableUtils } from '../../util/variable/live-variable.utils';
 import { $queue } from '../../util/inflight-queue';
-import { LVService } from '../../util/variable/live-variable.http.utils';
 import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS, DB_CONSTANTS } from '../../constants/variables.constants';
 import { AdvancedOptions } from '../../advanced-options';
+import { generateConnectionParams } from '../../util/variable/live-variable.http.utils';
 
 declare const _;
 const emptyArr = [];
@@ -126,15 +126,48 @@ export class LiveVariableManager extends BaseVariableManager {
         }(clonedFilterFields));
     };
 
+    private makeCall(variable, dbOperation, params) {
+        const successHandler = (response, resolve) => {
+            if (response && response.type) {
+                resolve(response);
+            }
+        };
+        const errorHandler = (error, reject) => {
+            const errMsg = httpService.getErrMessage(error);
+            // notify variable error
+            this.notifyInflight(variable, false);
+            reject({
+                error: errMsg,
+                details: error
+            });
+        };
+        return new Promise((resolve, reject) => {
+            let reqParams = generateConnectionParams(params, dbOperation);
+            reqParams = {
+                url: reqParams.url,
+                method: reqParams.method,
+                data: reqParams.data,
+                headers: reqParams.headers
+            };
+            this.httpCall(reqParams, variable).then((response) => {
+                successHandler(response, resolve);
+            }, (e) => {
+                errorHandler(e, reject);
+            });
+        });
+    }
+
     private getEntityData(variable, options, success, error) {
         const dataObj: any = {};
         let tableOptions,
             dbOperation,
-            promiseObj,
             output,
             newDataSet,
             clonedFields,
-            requestData;
+            requestData,
+            dbOperationOptions,
+            getEntitySuccess,
+            getEntityError;
 
         // empty array kept (if variable is not of read type filterExpressions will be undefined)
         clonedFields = this.getFilterExprFields(getClonedObject(variable.filterExpressions || {}));
@@ -162,69 +195,76 @@ export class LiveVariableManager extends BaseVariableManager {
             dbOperation = (tableOptions.filter && tableOptions.filter.length) ? 'searchTableData' : 'readTableData';
             requestData = tableOptions.filter;
         }
+        dbOperationOptions = {
+            'projectID': $rootScope.project.id,
+            'service': variable.getPrefabName() ? '' : 'services',
+            'dataModelName': variable.liveSource,
+            'entityName': variable.type,
+            'page': options.page || 1,
+            'size': options.pagesize || (CONSTANTS.isRunMode ? (variable.maxResults || 20) : (variable.designMaxResults || 20)),
+            'sort': tableOptions.sort,
+            'data': requestData,
+            'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options, updateFilterFields),
+            // 'filterMeta': tableOptions.filter,
+            'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
+        };
+        getEntitySuccess = (response: any, resolve: any) => {
+            if (response && response.type) {
+                response = response.body;
+                dataObj.data = response.content;
+                dataObj.pagination = _.omit(response, 'content');
+                const advancedOptions: AdvancedOptions = {xhrObj: response, pagination: dataObj.pagination};
+
+                if ((response && response.error) || !response || !_.isArray(response.content)) {
+                    this.handleError(variable, error, response.error, options, advancedOptions);
+                    return Promise.reject(response.error);
+                }
+
+                LiveVariableUtils.processBlobColumns(response.content, variable);
+
+                if (!options.skipDataSetUpdate) {
+                    //  EVENT: ON_RESULT
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, dataObj.data, advancedOptions);
+                    //  EVENT: ON_PREPARESETDATA
+                    newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataObj.data, advancedOptions);
+                    if (newDataSet) {
+                        // setting newDataSet as the response to service variable onPrepareSetData
+                        dataObj.data = newDataSet;
+                    }
+                    /* update the dataSet against the variable */
+                    this.updateDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagination);
+                    this.setVariableOptions(variable, options);
+
+                    // watchers should get triggered before calling onSuccess event.
+                    // so that any variable/widget depending on this variable's data is updated
+                    $invokeWatchers(true);
+                    setTimeout(() => {
+                        // if callback function is provided, send the data to the callback
+                        triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagination);
+
+                        //  EVENT: ON_SUCCESS
+                        initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data, advancedOptions);
+                        //  EVENT: ON_CAN_UPDATE
+                        variable.canUpdate = true;
+                        initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data, advancedOptions);
+                    });
+                }
+                return resolve({data: dataObj.data, pagination: dataObj.pagination});
+            }
+        };
+        getEntityError = (e: any, reject: any) => {
+            this.setVariableOptions(variable, options);
+            this.handleError(variable, error, e.error, _.extend(options, {errorDetails: e.details}));
+
+            return reject(e.error);
+        };
         /* if it is a prefab variable (used in a normal project), modify the url */
         /*Fetch the table data*/
         return new Promise((resolve, reject) => {
-            variable._observable = LVService[dbOperation]({
-                'projectID': $rootScope.project.id,
-                'service': variable.getPrefabName() ? '' : 'services',
-                'dataModelName': variable.liveSource,
-                'entityName': variable.type,
-                'page': options.page || 1,
-                'size': options.pagesize || (CONSTANTS.isRunMode ? (variable.maxResults || 20) : (variable.designMaxResults || 20)),
-                'sort': tableOptions.sort,
-                'data': requestData,
-                'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options, updateFilterFields),
-                // 'filterMeta': tableOptions.filter,
-                'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
-            }).subscribe((response: any) => {
-                if (response && response.type) {
-                    response = response.body;
-                    dataObj.data = response.content;
-                    dataObj.pagination = _.omit(response, 'content');
-                    const advancedOptions: AdvancedOptions = {xhrObj: response, pagination: dataObj.pagination};
-
-                    if ((response && response.error) || !response || !_.isArray(response.content)) {
-                        this.handleError(variable, error, response.error, options, advancedOptions);
-                        return Promise.reject(response.error);
-                    }
-
-                    LiveVariableUtils.processBlobColumns(response.content, variable);
-
-                    if (!options.skipDataSetUpdate) {
-                        //  EVENT: ON_RESULT
-                        initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, dataObj.data, advancedOptions);
-                        //  EVENT: ON_PREPARESETDATA
-                        newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, dataObj.data, advancedOptions);
-                        if (newDataSet) {
-                            // setting newDataSet as the response to service variable onPrepareSetData
-                            dataObj.data = newDataSet;
-                        }
-                        /* update the dataSet against the variable */
-                        this.updateDataset(variable, dataObj.data, variable.propertiesMap, dataObj.pagination);
-                        this.setVariableOptions(variable, options);
-
-                        // watchers should get triggered before calling onSuccess event.
-                        // so that any variable/widget depending on this variable's data is updated
-                        $invokeWatchers(true);
-                        setTimeout(() => {
-                            // if callback function is provided, send the data to the callback
-                            triggerFn(success, dataObj.data, variable.propertiesMap, dataObj.pagination);
-
-                            //  EVENT: ON_SUCCESS
-                            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, dataObj.data, advancedOptions);
-                            //  EVENT: ON_CAN_UPDATE
-                            variable.canUpdate = true;
-                            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, dataObj.data, advancedOptions);
-                        });
-                    }
-                    resolve({data: dataObj.data, pagination: dataObj.pagination});
-                }
-            }, (e: any) => {
-                this.setVariableOptions(variable, options);
-                this.handleError(variable, error, e.error, _.extend(options, {errorDetails: e.details}));
-
-                reject(e.error);
+            this.makeCall(variable, dbOperation, dbOperationOptions).then((response)=> {
+                getEntitySuccess(response, resolve);
+            }, (error) => {
+                getEntityError(error, reject);
             });
         });
     }
@@ -248,7 +288,10 @@ export class LiveVariableManager extends BaseVariableManager {
     }
 
     private aggregateData(deployedUrl, variable, options, success, error) {
-        let tableOptions;
+        let tableOptions,
+            dbOperationOptions,
+            aggregateDataSuccess,
+            aggregateDataError;
         const dbOperation = 'executeAggregateQuery';
         options = options || {};
         options.skipEncode = true;
@@ -256,28 +299,35 @@ export class LiveVariableManager extends BaseVariableManager {
             tableOptions = LiveVariableUtils.prepareTableOptions(variable, options);
             options.aggregations.filter = tableOptions.query;
         }
+        dbOperationOptions = {
+            'dataModelName': variable.liveSource,
+            'entityName': variable.type,
+            'page': options.page || 1,
+            'size': options.size || variable.maxResults,
+            'sort': options.sort || '',
+            'url': deployedUrl,
+            'data': options.aggregations
+        };
+        aggregateDataSuccess = (response: any, resolve: any) => {
+            if (response && response.type) {
+                if ((response && response.error) || !response) {
+                    triggerFn(error, response.error);
+                    return;
+                }
+                triggerFn(success, response);
+                resolve(response);
+            }
+        };
+        aggregateDataError = (errorMsg: any, reject: any) => {
+            triggerFn(error, errorMsg);
+            reject(errorMsg);
+        };
 
         return new Promise((resolve, reject) => {
-            variable._observable = LVService[dbOperation]({
-                'dataModelName': variable.liveSource,
-                'entityName': variable.type,
-                'page': options.page || 1,
-                'size': options.size || variable.maxResults,
-                'sort': options.sort || '',
-                'url': deployedUrl,
-                'data': options.aggregations
-            }, null, null).subscribe((response: any) => {
-                if (response && response.type) {
-                    if ((response && response.error) || !response) {
-                        triggerFn(error, response.error);
-                        return;
-                    }
-                    triggerFn(success, response);
-                    resolve(response);
-                }
-            }, (errorMsg: any) => {
-                triggerFn(error, errorMsg);
-                reject(errorMsg);
+            this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
+                aggregateDataSuccess(response, resolve);
+            }, (error) => {
+                aggregateDataError(error, reject);
             });
         });
     }
@@ -435,7 +485,10 @@ export class LiveVariableManager extends BaseVariableManager {
      */
     public download(variable, options, successHandler, errorHandler) {
         options = options || {};
-        let tableOptions;
+        let tableOptions,
+            dbOperationOptions,
+            downloadSuccess,
+            downloadError;
         const data: any = {};
         const dbOperation = 'exportTableData';
         const projectID = $rootScope.project.id || $rootScope.projectName;
@@ -449,27 +502,34 @@ export class LiveVariableManager extends BaseVariableManager {
         if (options.data.fileName) {
             data.fileName = options.data.fileName;
         }
+        dbOperationOptions = {
+            'projectID': projectID,
+            'service': variable.getPrefabName() ? '' : 'services',
+            'dataModelName': variable.liveSource,
+            'entityName': variable.type,
+            'sort': tableOptions.sort,
+            'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl,
+            'data': data,
+            'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options)
+            // 'filterMeta'    : tableOptions.filter
+        };
+        downloadSuccess = (response: any, resolve: any) => {
+            if (response && response.type) {
+                window.location.href = response.body.result;
+                triggerFn(successHandler, response);
+                resolve(response);
+            }
+        };
+        downloadError = (err: any, reject: any) => {
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, err.error, err.details);
+            triggerFn(errorHandler, err.error);
+            reject(err);
+        };
         return new Promise((resolve, reject) => {
-            variable._observable = LVService[dbOperation]({
-                'projectID': projectID,
-                'service': variable.getPrefabName() ? '' : 'services',
-                'dataModelName': variable.liveSource,
-                'entityName': variable.type,
-                'sort': tableOptions.sort,
-                'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl,
-                'data': data,
-                'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options)
-                // 'filterMeta'    : tableOptions.filter
-            }).subscribe((response: any) => {
-                if (response && response.type) {
-                    window.location.href = response.body.result;
-                    triggerFn(successHandler, response);
-                    resolve(response);
-                }
-            }, (err) => {
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, err.error, err.details);
-                triggerFn(errorHandler, err.error);
-                reject(err);
+            this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
+                downloadSuccess(response, resolve);
+            }, (error) => {
+                downloadError(error, reject);
             });
         });
     }
@@ -518,7 +578,10 @@ export class LiveVariableManager extends BaseVariableManager {
         let orderBy,
             filterOptions,
             query,
-            action;
+            action,
+            dbOperationOptions,
+            getRelatedTableDataSuccess,
+            getRelatedTableDataError;
         _.forEach(options.filterFields, (value, key) => {
             value.fieldName = key;
             value.type = LiveVariableUtils.getFieldType(columnName, variable, key);
@@ -549,36 +612,43 @@ export class LiveVariableManager extends BaseVariableManager {
         query = query ? ('q=' + query) : '';
         action = 'searchTableDataWithQuery';
         orderBy = _.isEmpty(options.orderBy) ? '' : 'sort=' + options.orderBy;
+        dbOperationOptions = {
+            projectID: projectID,
+            service: variable.getPrefabName() ? '' : 'services',
+            dataModelName: variable.liveSource,
+            entityName: relatedTable.type,
+            page: options.page || 1,
+            size: options.pagesize || undefined,
+            url: variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl,
+            data: query || '',
+            filter: LiveVariableUtils.getWhereClauseGenerator(variable, options),
+            sort: orderBy
+        };
+        getRelatedTableDataSuccess = (res: any, resolve: any) => {
+            if (res && res.type) {
+                const response = res.body;
+                /*Remove the self related columns from the data. As backend is restricting the self related column to one level, In liveform select, dataset and datavalue object
+                 * equality does not work. So, removing the self related columns to acheive the quality*/
+                const data = _.map(response.content, o => _.omit(o, selfRelatedCols));
+
+                const pagination = Object.assign({}, response);
+                delete pagination.content;
+
+                const result = {data: data, pagination};
+                triggerFn(success, result);
+
+                resolve(result);
+            }
+        };
+        getRelatedTableDataError = (errMsg: any, reject: any) => {
+            triggerFn(error, errMsg);
+            reject(errMsg);
+        };
         return new Promise((resolve, reject) => {
-            variable._observable = LVService[action]({
-                projectID: projectID,
-                service: variable.getPrefabName() ? '' : 'services',
-                dataModelName: variable.liveSource,
-                entityName: relatedTable.type,
-                page: options.page || 1,
-                size: options.pagesize || undefined,
-                url: variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl,
-                data: query || '',
-                filter: LiveVariableUtils.getWhereClauseGenerator(variable, options),
-                sort: orderBy
-            }).subscribe((res: any) => {
-                if (res && res.type) {
-                    const response = res.body;
-                    /*Remove the self related columns from the data. As backend is restricting the self related column to one level, In liveform select, dataset and datavalue object
-                     * equality does not work. So, removing the self related columns to acheive the quality*/
-                    const data = _.map(response.content, o => _.omit(o, selfRelatedCols));
-
-                    const pagination = Object.assign({}, response);
-                    delete pagination.content;
-
-                    const result = {data: data, pagination};
-                    triggerFn(success, result);
-
-                    resolve(result);
-                }
-            }, (errMsg: any) => {
-                triggerFn(error, errMsg);
-                reject(errMsg);
+            this.makeCall(variable, action, dbOperationOptions).then((response) => {
+                getRelatedTableDataSuccess(response, resolve);
+            }, (error) => {
+                getRelatedTableDataError(error, reject);
             });
         });
     }
@@ -595,7 +665,10 @@ export class LiveVariableManager extends BaseVariableManager {
         const projectID = $rootScope.project.id || $rootScope.projectName;
         const requestData: any = {};
         let sort;
-        let tableOptions;
+        let tableOptions,
+            dbOperationOptions,
+            getDistinctDataByFieldsSuccess,
+            getDistinctDataByFieldsError;
         options.skipEncode = true;
         options.operation = 'read';
         options = options || {};
@@ -606,37 +679,44 @@ export class LiveVariableManager extends BaseVariableManager {
         requestData.groupByFields = _.isArray(options.fields) ? options.fields : [options.fields];
         sort = options.sort || requestData.groupByFields[0] + ' asc';
         sort = sort ? 'sort=' + sort : '';
-
-        return new Promise((resolve, reject) => {
-            variable._observable = LVService[dbOperation]({
-                'projectID': projectID,
-                'service': variable.getPrefabName() ? '' : 'services',
-                'dataModelName': variable.liveSource,
-                'entityName': options.entityName || variable.type,
-                'page': options.page || 1,
-                'size': options.pagesize,
-                'sort': sort,
-                'data': requestData,
-                'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
-            }).subscribe((response: any) => {
-                if (response && response.type) {
-                    if ((response && response.error) || !response) {
-                        triggerFn(error, response.error);
-                        return Promise.reject(response.error);
-                    }
-                    let result = response.body;
-                    const pagination = Object.assign({}, response.body);
-                    delete pagination.content;
-
-                    result = {data: result.content, pagination};
-                    triggerFn(success, result);
-                    resolve(result);
+        dbOperationOptions = {
+            'projectID': projectID,
+            'service': variable.getPrefabName() ? '' : 'services',
+            'dataModelName': variable.liveSource,
+            'entityName': options.entityName || variable.type,
+            'page': options.page || 1,
+            'size': options.pagesize,
+            'sort': sort,
+            'data': requestData,
+            'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
+        };
+        getDistinctDataByFieldsSuccess = (response: any, resolve: any) => {
+            if (response && response.type) {
+                if ((response && response.error) || !response) {
+                    triggerFn(error, response.error);
+                    return Promise.reject(response.error);
                 }
-            }, (errorMsg: any) => {
-                triggerFn(error, errorMsg);
-                reject(errorMsg);
+                let result = response.body;
+                const pagination = Object.assign({}, response.body);
+                delete pagination.content;
+
+                result = {data: result.content, pagination};
+                triggerFn(success, result);
+                resolve(result);
+            }
+        };
+        getDistinctDataByFieldsError = (errorMsg: any, reject: any) => {
+            triggerFn(error, errorMsg);
+            reject(errorMsg);
+        };
+
+            return new Promise((resolve, reject) => {
+                this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
+                    getDistinctDataByFieldsSuccess(response, resolve);
+                }, (reject)=> {
+                    getDistinctDataByFieldsError(error, reject);
+                });
             });
-        });
     }
 
     /*Function to get the aggregated data based on the fields chosen*/
@@ -784,6 +864,8 @@ export class LiveVariableManager extends BaseVariableManager {
         if ($queue.requestsQueue.has(variable) && variable._observable) {
             variable._observable.unsubscribe();
             $queue.process(variable);
+            // notify inflight variable
+            this.notifyInflight(variable, false);
         }
     }
 }

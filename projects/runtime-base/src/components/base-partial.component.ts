@@ -76,6 +76,10 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.containerWidget.Widgets = this.Widgets;
     }
 
+    registerDestroyListener(fn: Function) {
+        this.destroy$.subscribe(noop, noop, () => fn());
+    }
+
     initUserScript() {
         try {
             this.evalUserScript(this, this.App, this.injector.get(UtilsService));

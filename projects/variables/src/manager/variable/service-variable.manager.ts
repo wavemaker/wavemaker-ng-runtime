@@ -309,16 +309,6 @@ export class ServiceVariableManager extends BaseVariableManager {
     }
 
     /**
-     * makes the HTTP call with given params
-     * @param params
-     * @returns {any}
-     */
-    private makeCall(params) {
-        params.responseType = 'text';
-        return httpService.sendCallAsObservable(params);
-    }
-
-    /**
      * Returns true if any of the files are in onProgress state
      */
     private isFileUploadInProgress(dataBindings) {
@@ -388,6 +378,8 @@ export class ServiceVariableManager extends BaseVariableManager {
         let inputFields = getClonedObject(options.inputFields || variable.dataBinding);
         // EVENT: ON_BEFORE_UPDATE
         const output: any = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, inputFields, options);
+        let successHandler;
+        let errorHandler;
 
         if (output === false) {
             $queue.process(variable);
@@ -431,27 +423,35 @@ export class ServiceVariableManager extends BaseVariableManager {
         // notify variable progress
         this.notifyInflight(variable, !options.skipToggleState);
 
+        successHandler = (response, resolve) => {
+            if (response && response.type) {
+                const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success);
+                // notify variable success
+                this.notifyInflight(variable, false, data);
+                resolve(response);
+            }
+        };
+
+        errorHandler = (err, reject) => {
+            const errMsg = httpService.getErrMessage(err);
+            // notify variable error
+            this.notifyInflight(variable, false);
+            this.processErrorResponse(variable, errMsg, error, err, options.skipNotification);
+            reject({
+                error: errMsg,
+                details: err
+            });
+        };
+
         // make the call and return a promise to the user to support script calls made by users
         return new Promise((resolve, reject) => {
+            this.httpCall(requestParams, variable).then((response) => {
+                successHandler(response, resolve);
+            }, (error) => {
+                errorHandler(error, reject);
+            });
             // the _observable property on variable is used store the observable using which the network call is made
             // this can be used to cancel the variable calls.
-            variable._observable = this.makeCall(requestParams).subscribe((response: any) => {
-                if (response.type) {
-                    const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success);
-                    // notify variable success
-                    this.notifyInflight(variable, false, data);
-                    resolve(response);
-                }
-            }, (err: any) => {
-                const errMsg = httpService.getErrMessage(err);
-                // notify variable error
-                this.notifyInflight(variable, false);
-                this.processErrorResponse(variable, errMsg, error, err, options.skipNotification);
-                reject({
-                    error: errMsg,
-                    details: err
-                });
-            });
         });
     }
 
@@ -522,13 +522,17 @@ export class ServiceVariableManager extends BaseVariableManager {
                 $file._uploadProgress.unsubscribe();
                 this.totalFilesCount--;
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.ABORT, variable, $file);
-                if (!this.isFileUploadInProgress(variable.dataBinding) || this.totalFilesCount === 1) {
+                if (!this.isFileUploadInProgress(variable.dataBinding) && this.totalFilesCount === 0) {
                     $queue.process(variable);
+                    // notify inflight variable
+                    this.notifyInflight(variable, false);
                 }
             } else {
                 if (variable._observable) {
                     variable._observable.unsubscribe();
                     $queue.process(variable);
+                    // notify inflight variable
+                    this.notifyInflight(variable, false);
                 }
             }
         }

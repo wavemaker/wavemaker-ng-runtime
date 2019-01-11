@@ -70,18 +70,10 @@ export const parseConfig = (serviceParams: any): any => {
     return null;
 };
 
-const initiateAction = function (action, params, successCallback?, failureCallback?, noproxy?) {
+export const generateConnectionParams = (params, action) => {
     let connectionParams,
         urlParams,
-        requestData,
-        param,
-        val,
-        config,
-        headers,
-        httpDetails;
-
-    // config      = getClonedObject(config[action]);
-    // headers     = config && config.headers;
+        requestData;
     requestData = params.data;
 
     urlParams = {
@@ -99,6 +91,55 @@ const initiateAction = function (action, params, successCallback?, failureCallba
         size             : params.size,
         sort             : params.sort
     };
+    connectionParams = {
+        target    : 'DATABASE',
+        action    : action,
+        urlParams : urlParams,
+        data      : requestData || '',
+        config    : {
+            'url' : params.url
+        }
+    };
+
+    connectionParams = parseConfig(connectionParams);
+    // TODO: Remove after backend fix
+    connectionParams.url = removeExtraSlashes(connectionParams.url);
+
+    return connectionParams;
+};
+
+const initiateAction = (action, params, successCallback?, failureCallback?, noproxy?) => {
+    let connectionParams,
+        urlParams,
+        requestData,
+        param,
+        val,
+        config,
+        headers,
+        httpDetails;
+
+    /*
+    config      = getClonedObject(config[action]);
+    headers     = config && config.headers;
+
+    requestData = params.data;
+
+    urlParams = {
+        projectID        : params.projectID,
+        service          : !_.isUndefined(params.service) ? params.service : 'services',
+        dataModelName    : params.dataModelName,
+        entityName       : params.entityName,
+        queryName        : params.queryName,
+        queryParams      : params.queryParams,
+        procedureName    : params.procedureName,
+        procedureParams  : params.procedureParams,
+        id               : params.id,
+        relatedFieldName : params.relatedFieldName,
+        page             : params.page,
+        size             : params.size,
+        sort             : params.sort
+    };
+    */
     if (params.url && isStudioMode && !noproxy) {
 /*
         /!* Check for url parameters to replace the URL.
@@ -165,19 +206,7 @@ const initiateAction = function (action, params, successCallback?, failureCallba
             }
         }, failureCallback);*/
     } else {
-        connectionParams = {
-            target    : 'DATABASE',
-            action    : action,
-            urlParams : urlParams,
-            data      : requestData || '',
-            config    : {
-                'url' : params.url
-            }
-        };
-
-        connectionParams = parseConfig(connectionParams);
-        // TODO: Remove after backend fix
-        connectionParams.url = removeExtraSlashes(connectionParams.url);
+        connectionParams = generateConnectionParams(params, action);
         return httpService.sendCallAsObservable({
             url: connectionParams.url,
             method: connectionParams.method,
