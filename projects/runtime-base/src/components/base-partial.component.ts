@@ -45,7 +45,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.App = this.injector.get(App);
         this.containerWidget = this.injector.get(WidgetRef);
         this.i18nService = this.injector.get(AbstractI18nService);
-        this.getContainerWidgetInjector().view.component.registerFragment();
+        if (this.getContainerWidgetInjector().view.component.registerFragment) {
+            this.getContainerWidgetInjector().view.component.registerFragment();
+        }
 
         this.initUserScript();
 
@@ -116,7 +118,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     invokeOnReady() {
         this.onReady();
-        this.getContainerWidgetInjector().view.component.resolveFragment();
+        if (this.getContainerWidgetInjector().view.component.resolveFragment) {
+            this.getContainerWidgetInjector().view.component.resolveFragment();
+        }
     }
 
     ngAfterViewInit(): void {

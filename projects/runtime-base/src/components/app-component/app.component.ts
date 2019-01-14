@@ -96,8 +96,4 @@ export class AppComponent implements DoCheck {
     ngDoCheck() {
         $invokeWatchers();
     }
-
-    // dummy implementation
-    registerFragment() {}
-    resolveFragment() {}
 }

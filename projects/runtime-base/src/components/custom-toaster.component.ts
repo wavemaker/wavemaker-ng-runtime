@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef, Injector } from '@angular/core';
 
 import { Toast, ToastPackage, ToastrService } from 'ngx-toastr';
 
-import { App, IDGenerator } from '@wm/core';
+import { App, IDGenerator, DynamicComponentRefProvider } from '@wm/core';
 import { getBoundToExpr } from '@wm/transpiler';
 
 declare const _, $;
@@ -24,15 +24,17 @@ export class CustomToasterComponent extends Toast implements AfterViewInit {
 
     // constructor is only necessary when not using AoT
     constructor(
+        private inj: Injector,
         protected toastrService: ToastrService,
         public toastPackage: ToastPackage,
-        private app: App
+        private app: App,
+        private dynamicComponentProvider: DynamicComponentRefProvider
     ) {
         super(toastrService, toastPackage);
         this.pagename = this.message || '';
     }
 
-    ngAfterViewInit() {
+    async generateDynamicComponent() {
         const selector = 'app-custom-toaster-component';
         const $targetLayout = $('.parent-custom-toast');
         let markup = `<div wmContainer partialContainer content="${this.pagename}">`;
@@ -44,15 +46,15 @@ export class CustomToasterComponent extends Toast implements AfterViewInit {
 
         this.customToastRef.clear();
 
-        this.app.notify('render-resource', {
-            selector: selector + idGen.nextUid(),
-            markup: markup,
-            styles: '',
-            providers: undefined,
-            initFn: () => {},
-            vcRef: this.customToastRef,
-            $target: $targetLayout[0],
-            context: undefined
-        });
+        const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
+            selector + idGen.nextUid(),
+            markup
+        );
+        const instance = this.customToastRef.createComponent(componentFactoryRef, 0, this.inj);
+        $targetLayout[0].appendChild(instance.location.nativeElement);
+    }
+
+    ngAfterViewInit() {
+        this.generateDynamicComponent();
     }
 }

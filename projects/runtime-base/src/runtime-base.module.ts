@@ -1,4 +1,10 @@
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
+import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule, TooltipModule } from 'ngx-bootstrap';
 
 import {
     _WM_APP_PROJECT,
@@ -9,15 +15,9 @@ import {
     AbstractToasterService,
     App,
     AppDefaults,
-    CoreModule
+    CoreModule,
+    DynamicComponentRefProvider
 } from '@wm/core';
-import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-
-import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule, TooltipModule } from 'ngx-bootstrap';
-
 import { WmComponentsModule } from '@wm/components';
 import { MobileRuntimeModule } from '@wm/mobile/runtime';
 import { SecurityModule } from '@wm/security';
@@ -45,6 +45,7 @@ import { I18nResolve } from './resolves/i18n.resolve';
 import { AppComponent } from './components/app-component/app.component';
 import { HttpCallInterceptor } from './services/http-interceptor.services';
 import { PrefabPreviewComponent } from './components/prefab-preview.component';
+import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
 
 export function InitializeApp(I18nService) {
     return () => {
@@ -107,6 +108,7 @@ export const tooltipModule = TooltipModule.forRoot();
         {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
         {provide: AbstractNavigationService, useClass: NavigationServiceImpl},
         {provide: AppDefaults, useClass: AppDefaultsService},
+        {provide: DynamicComponentRefProvider, useClass: DynamicComponentRefProviderService},
         {
             provide: APP_INITIALIZER,
             useFactory: InitializeApp,
@@ -152,7 +154,8 @@ export const tooltipModule = TooltipModule.forRoot();
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
-    ]
+    ],
+    entryComponents: [CustomToasterComponent]
 })
 export class RuntimeBaseModule {
 }

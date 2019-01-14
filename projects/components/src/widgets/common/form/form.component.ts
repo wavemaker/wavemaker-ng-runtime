@@ -1,8 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, IDGenerator } from '@wm/core';
-import { transpile } from '@wm/transpiler';
+import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, IDGenerator, DynamicComponentRefProvider } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
@@ -196,6 +195,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         inj: Injector,
         private fb: FormBuilder,
         private app: App,
+        private dynamicComponentProvider: DynamicComponentRefProvider,
         @SkipSelf() @Optional() public parentForm: FormComponent,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
@@ -596,7 +596,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     // Function to generate and compile the form fields from the metadata
-    generateFormFields() {
+    async generateFormFields() {
         let noOfColumns;
         let $gridLayout;
         if (this._isGridLayoutPresent) {
@@ -655,17 +655,15 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this._dynamicContext = Object.create(this.viewParent);
             this._dynamicContext.form = this;
         }
-
-        this.app.notify('render-resource', {
-            selector: 'app-form-' + this.widgetId + idGen.nextUid(),
-            markup: transpile(fieldTemplate),
-            styles: '',
-            providers: undefined,
-            initFn: () => {},
-            vcRef: this.dynamicFormRef,
-            $target: $gridLayout[0],
-            context: this._dynamicContext
-        });
+        const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
+            'app-form-' + this.widgetId + idGen.nextUid(),
+            fieldTemplate,
+            {
+                context: this._dynamicContext,
+                transpile: true
+            });
+        const instance = this.dynamicFormRef.createComponent(componentFactoryRef, 0, this.inj);
+        $gridLayout[0].appendChild(instance.location.nativeElement);
         this.setFormData(this.formdata);
     }
 

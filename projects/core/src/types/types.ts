@@ -174,3 +174,7 @@ export abstract class AppDefaults {
     public dateTimeFormat;
     public abstract setFormats(formats: any);
 }
+
+export abstract class DynamicComponentRefProvider {
+    public abstract async getComponentFactoryRef(selector: string, markup: string, options?: any);
+}
