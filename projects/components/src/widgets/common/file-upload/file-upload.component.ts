@@ -170,6 +170,11 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         });
     }
 
+    onFileElemClick() {
+        const fileInputElem = $('.file-input')[0];
+        fileInputElem.value = null;
+    }
+
     /*this function to append upload status dom elements to widget */
     onFileSelect($event, $files) {
         let beforeSelectVal;
