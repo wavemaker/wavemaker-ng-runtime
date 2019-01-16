@@ -95,6 +95,7 @@ export abstract class BaseVariable {
      * @returns {string}
      */
     getPrefabName() {
-        return this._context && this._context.prefabName;
+        // __self__ is a prefab name given to a prefab which is run in preview mode
+        return this._context && (this._context.prefabName !== '__self__' && this._context.prefabName);
     }
 }
