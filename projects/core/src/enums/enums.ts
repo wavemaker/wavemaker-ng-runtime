@@ -56,3 +56,13 @@ export enum MatchMode {
     NULLOREMPTY = 'nullorempty',
     EQUALS = 'exact'
 }
+
+export enum DEFAULT_FORMATS {
+    DATE = 'yyyy-MM-dd',
+    TIME = 'HH:mm:ss',
+    TIMESTAMP = 'timestamp',
+    DATETIME = 'yyyy-MM-ddTHH:mm:ss',
+    LOCALDATETIME = 'yyyy-MM-ddTHH:mm:ss',
+    DATETIME_ORACLE = 'yyyy-MM-dd HH:mm:ss',
+    DATE_TIME = 'yyyy-MM-dd HH:mm:ss'
+}

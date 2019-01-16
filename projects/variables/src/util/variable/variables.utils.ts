@@ -1,4 +1,4 @@
-import { extractType, DataType, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
 
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
@@ -765,16 +765,6 @@ export const formatExportExpression = fieldDefs => {
 };
 
 export const debounceVariableCall = _invoke;
-
-const DEFAULT_FORMATS = {
-    'DATE'           : 'yyyy-MM-dd',
-    'TIME'           : 'HH:mm:ss',
-    'TIMESTAMP'      : 'timestamp',
-    'DATETIME'       : 'yyyy-MM-ddTHH:mm:ss',
-    'LOCALDATETIME'  : 'yyyy-MM-ddTHH:mm:ss',
-    'DATETIME_ORACLE': 'yyyy-MM-dd HH:mm:ss',
-    'DATE_TIME'      : 'yyyy-MM-dd HH:mm:ss'
-};
 
 const getDateTimeFormatForType = (type) => {
     return DEFAULT_FORMATS[_.toUpper(type)];

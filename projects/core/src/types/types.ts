@@ -108,6 +108,7 @@ export abstract class AbstractHttpService {
     public abstract on401();
     public abstract pushToSessionFailureQueue(callback);
     public abstract executeSessionFailureRequests();
+    public abstract sendCallAsObservable(options: any): any;
 }
 
 export abstract class AbstractI18nService {

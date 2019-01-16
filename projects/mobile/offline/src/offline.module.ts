@@ -67,6 +67,9 @@ export class OfflineModule {
                         localDBManagementService.setLogSQl(flag);
                         sessionStorage.setItem('wm.logSql', flag ? 'true' : 'false');
                     };
+                    (window as any).executeLocalSql = (dbName, query, params?) => {
+                        localDBManagementService.executeSQLQuery(dbName, query, params, true);
+                    };
                     return localDBManagementService.loadDatabases().then(() => {
                         changeLogService.addWorker(new IdResolver(localDBManagementService));
                         changeLogService.addWorker(new ErrorBlocker(localDBManagementService));

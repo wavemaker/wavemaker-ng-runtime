@@ -10,6 +10,7 @@ import { LocalDBStore } from '../models/local-db-store';
 import { ChangeLogService } from '../services/change-log.service';
 import { LocalDBManagementService } from '../services/local-db-management.service';
 import { LocalDbService } from '../services/local-db.service';
+import { WM_LOCAL_OFFLINE_CALL } from './utils';
 
 declare const _;
 
@@ -121,7 +122,7 @@ export class LiveVariableOfflineBehaviour {
                 }
             });
         }).then((response) => {
-            response = {body : response};
+            response = {body : response, type: WM_LOCAL_OFFLINE_CALL};
             triggerFn(successCallback, response);
             return response;
         }, failureCallback);

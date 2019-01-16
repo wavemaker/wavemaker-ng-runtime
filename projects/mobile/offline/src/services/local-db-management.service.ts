@@ -4,7 +4,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 
-import { executePromiseChain, isAndroid, isArray, isIos, noop, toPromise } from '@wm/core';
+import { DataType, DEFAULT_FORMATS, executePromiseChain, extractType, isAndroid, isArray, isIos, noop, toPromise } from '@wm/core';
 import { DeviceFileService, DeviceService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
@@ -157,7 +157,17 @@ export class LocalDBManagementService {
                 return toPromise(paramValue).then(v => params[p.name] = v);
             }).value();
         return Promise.all(paramPromises).then(() => {
-            params = _.map(queryData.params, p => params[p.name]);
+            params = _.map(queryData.params, p => {
+                // Sqlite will accept DateTime value as below format.
+                if (p.type === DataType.DATETIME || p.type === DataType.LOCALDATETIME) {
+                    return moment(params[p.name]).format(DEFAULT_FORMATS[_.toUpper(p.type)]);
+                }
+                // sqlite accepts the bool val as 1,0 hence convert the boolean value to number
+                if (p.type === DataType.BOOLEAN) {
+                    return this.convertBoolToInt(params[p.name]);
+                }
+                return params[p.name];
+            });
             return this.executeSQLQuery(dbName, queryData.query, params)
                 .then(result => {
                     let firstRow,
@@ -172,6 +182,22 @@ export class LocalDBManagementService {
                                 // This is to make search for data as case-insensitive
                                 _.forEach(row, (v, k) => rowWithUpperKeys[k.toUpperCase()] = v);
                                 _.forEach(queryData.response.properties, p => {
+                                    // format the value depending on the typeRef specified in properties.
+                                    const propType = extractType(p.fieldType.typeRef);
+                                    const formatValue = DEFAULT_FORMATS[_.toUpper(propType)];
+                                    const fieldVal = row[p.name];
+                                    if (propType === DataType.DATETIME || propType === DataType.LOCALDATETIME || propType === DataType.DATE) {
+                                        if (moment(fieldVal).isValid()) {
+                                            row[p.name] = moment(fieldVal).format(formatValue);
+                                        } else if (moment(fieldVal, 'HH:mm').isValid()) {
+                                            // if the value is in HH:mm:ss format, it returns a wrong date. So append the date to the given value to get date
+                                            row[p.name] = moment().format('YYYY-MM-DD') + 'T' + fieldVal;
+                                        }
+                                    }
+                                    if (propType === DataType.BOOLEAN) {
+                                        row[p.name] = this.convertIntToBool(fieldVal);
+                                    }
+                                    rowWithUpperKeys[p.nameInUpperCase] = row[p.name];
                                     transformedRow[p.name] = row[p.name];
                                     transformedRow[p.fieldName] = row[p.fieldName] || rowWithUpperKeys[p.nameInUpperCase];
                                 });
@@ -576,6 +602,14 @@ export class LocalDBManagementService {
         return dbInfo;
     }
 
+    private convertBoolToInt(bool: boolean) {
+        return _.toString(bool) === 'true' ? 1 : 0;
+    }
+
+    private convertIntToBool(int: number) {
+        return int ? true : false;
+    }
+
     /**
      * Turns off foreign keys
      * @returns {*}
@@ -594,10 +628,10 @@ export class LocalDBManagementService {
      * @param params
      * @returns {*}
      */
-    private executeSQLQuery(dbName, sql, params?: any[]) {
+    public executeSQLQuery(dbName, sql, params?: any[], logOutput?: boolean) {
         const db = this.databases[dbName];
         if (db) {
-            return db.sqliteObject.executeSql(sql, params)
+            return db.sqliteObject.executeSql(sql, params, logOutput)
                 .then(result => {
                     const data = [],
                         rows = result.rows;
@@ -749,10 +783,10 @@ export class LocalDBManagementService {
     private logSql(sqliteObject: SQLiteObject) {
         const logger = console,
             originalExecuteSql = sqliteObject.executeSql;
-        sqliteObject.executeSql = (sql, params) => {
+        sqliteObject.executeSql = (sql, params, logOutput?: boolean) => {
             const startTime = _.now();
             return originalExecuteSql.call(sqliteObject, sql, params).then(result => {
-                if (this._logSql) {
+                if (logOutput || this._logSql) {
                     const objArr = [],
                         rowCount = result.rows.length;
                     for (let i = 0; i < rowCount; i++) {

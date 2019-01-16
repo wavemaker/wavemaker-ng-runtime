@@ -1,8 +1,11 @@
+import { from, Observable } from 'rxjs';
+
 import { AbstractHttpService } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
 import { ChangeLogService } from '../services/change-log.service';
 import { LocalDBManagementService } from '../services/local-db-management.service';
+import { WM_LOCAL_OFFLINE_CALL } from './utils';
 
 declare const _;
 const NUMBER_REGEX = /^\d+(\.\d+)?$/;
@@ -23,10 +26,10 @@ export class NamedQueryExecutionOfflineBehaviour {
             return;
         }
         isOfflineBehaviourAdded = true;
-        const orig = this.httpService.send;
-        this.httpService.send = (params: any): Promise<any> => {
+        const orig = this.httpService.sendCallAsObservable;
+        this.httpService.sendCallAsObservable = (params: any): Observable<any> => {
             if (!this.networkService.isConnected() && params.url.indexOf('/queryExecutor/') > 0) {
-                return this.executeLocally(params);
+                return from(this.executeLocally(params));
             } else {
                 return orig.call(this.httpService, params);
             }
@@ -49,6 +52,7 @@ export class NamedQueryExecutionOfflineBehaviour {
                         .then(() => result.rowsAffected);
                 } else {
                     return {
+                        type: WM_LOCAL_OFFLINE_CALL,
                         body: {
                             totalPages: rows && rows.length > 0 ? 1 : 0,
                             totalElements: rows.length,
