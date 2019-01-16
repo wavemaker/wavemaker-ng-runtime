@@ -38,7 +38,7 @@ export class PartialContainerDirective {
         this.$target.appendChild(instanceRef.location.nativeElement);
 
         this.contentInitialized = true;
-        this.onLoadSuccess();
+        setTimeout(() => this.onLoadSuccess(), 200);
     }
 
     renderPartial = _.debounce(this._renderPartial, 200, {leading: true});

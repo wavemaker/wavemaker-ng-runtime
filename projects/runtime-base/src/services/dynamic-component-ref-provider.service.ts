@@ -68,7 +68,7 @@ export class DynamicComponentRefProviderService {
         private compiler: Compiler
     ) {}
 
-    public async getComponentFactoryRef(selector: string, markup: string, options:any = {}): Promise<any> {
+    public async getComponentFactoryRef(selector: string, markup: string, options: any = {}): Promise<any> {
         // check in the cache.
         let componentFactoryRef = componentFactoryRefCache.get(selector);
 
