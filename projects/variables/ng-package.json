@@ -2,6 +2,7 @@
     "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
     "dest": "../../libraries/variables",
     "lib": {
+        "flatModuleFile": "index",
         "entryFile": "src/public_api.ts",
         "umdId": "wm.variables",
         "umdModuleIds": {

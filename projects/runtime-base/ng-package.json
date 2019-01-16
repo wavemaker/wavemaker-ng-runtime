@@ -2,6 +2,7 @@
     "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
     "dest": "../../libraries/runtime-base",
     "lib": {
+        "flatModuleFile": "index",
         "entryFile": "src/public_api.ts",
         "umdId": "wm.runtime.base",
         "umdModuleIds": {
@@ -23,7 +24,8 @@
             "@wm/security": "wm.security",
             "@wm/oAuth": "wm.oAuth",
             "@wm/http": "wm.http",
-            "@wm/mobile/runtime": "wm.mobile.runtime"
+            "@wm/mobile/runtime": "wm.mobile.runtime",
+            "@wm/build-task": "wm.buildTask"
         }
     }
 }

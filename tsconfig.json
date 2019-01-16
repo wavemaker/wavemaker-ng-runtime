@@ -18,6 +18,18 @@
             "dom"
         ],
         "paths": {
+            "@wm/build-task": [
+                "libraries/build-task/"
+            ],
+            "@wm/build-task/*": [
+                "libraries/build-task/*"
+            ],
+            "@wm/mobile-build-task": [
+                "libraries/mobile-build-task"
+            ],
+            "@wm/mobile-build-task/*": [
+                "libraries/mobile-build-task/*"
+            ],
             "@wm/core": [
                 "libraries/core"
             ],

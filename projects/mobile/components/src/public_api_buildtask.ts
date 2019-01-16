@@ -10,3 +10,5 @@ export * from './widgets/segmented-control/segmented-control.build';
 export * from './widgets/widget-template/widget-template.build';
 
 export * from '@wm/transpiler';
+
+export default () => {};

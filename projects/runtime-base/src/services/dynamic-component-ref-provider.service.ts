@@ -3,7 +3,6 @@ import {
     Component,
     CUSTOM_ELEMENTS_SCHEMA,
     Injectable,
-    Injector,
     NgModule,
     NO_ERRORS_SCHEMA,
     ViewEncapsulation
@@ -11,10 +10,12 @@ import {
 
 import { App, extendProto } from '@wm/core';
 import { transpile } from '@wm/transpiler';
+import { initComponentsBuildTask } from '@wm/build-task';
 
 import { AppManagerService } from './app.manager.service';
 import { RuntimeBaseModule } from '../runtime-base.module';
 
+initComponentsBuildTask();
 
 const componentFactoryRefCache = new Map<string, any>();
 
@@ -34,8 +35,7 @@ const getDynamicModule = (componentRef: any) => {
 const getDynamicComponent = (
     selector,
     template: string,
-    css: string = '',
-    context: any) => {
+    css: string = '') => {
 
     const componentDef = {
         template,
@@ -48,12 +48,6 @@ const getDynamicComponent = (
         selector
     })
     class DynamicComponent {
-        constructor(public injector: Injector) {
-            if (context) {
-                // Get the inner prototype and set the context on the prototype
-                extendProto(this, context);
-            }
-        }
     }
 
     return DynamicComponent;
@@ -74,7 +68,7 @@ export class DynamicComponentRefProviderService {
 
         markup = options.transpile ? transpile(markup) : markup;
         if (!componentFactoryRef || options.noCache) {
-            const componentDef = getDynamicComponent(selector, markup, options.styles, options.context);
+            const componentDef = getDynamicComponent(selector, markup, options.styles);
             const moduleDef = getDynamicModule(componentDef);
 
             componentFactoryRef = this.compiler

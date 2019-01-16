@@ -94,3 +94,5 @@ export * from './widgets/common/wizard/wizard-step/wizard-step.build';
 export * from './widgets/common/file-upload/file-upload.build';
 
 export * from '@wm/transpiler';
+
+export const initComponentsBuildTask = () => {};
