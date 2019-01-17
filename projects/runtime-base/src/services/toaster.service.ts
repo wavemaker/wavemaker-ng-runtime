@@ -25,6 +25,7 @@ export class ToasterServiceImpl extends AbstractToasterService {
         options.timeOut = isDefined(options.timeOut) ? options.timeOut : 0;
         options.enableHtml = isDefined(options.enableHtml);
         options.positionClass = options.positionClass || 'toast-bottom-right';
+        options.toastClass = 'toast';
         // pop the toaster only if either title or description are defined
         if (title || desc) {
             // if the desc is an object, stringify it.
@@ -77,6 +78,7 @@ export class ToasterServiceImpl extends AbstractToasterService {
         options.timeOut = isDefined(options.timeOut) ? options.timeOut : 0;
         options.enableHtml = isDefined(options.enableHtml);
         options.positionClass = options.positionClass || 'toast-bottom-right';
+        options.toastClass = 'toast';
         return this.toaster.show(page, '', options);
     }
 }
