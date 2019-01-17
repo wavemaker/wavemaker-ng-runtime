@@ -1,7 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, IDGenerator, DynamicComponentRefProvider } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
@@ -20,7 +20,6 @@ const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-fo
 const LOGIN_FORM_CONFIG = {widgetType: 'wm-form', hostClass: 'app-form app-login-form'};
 const LIVE_FORM_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
 const LIVE_FILTER_CONFIG = {widgetType: 'wm-livefilter', hostClass: 'panel app-panel app-livefilter clearfix liveform-inline'};
-const idGen = new IDGenerator('-dynamic-');
 
 const getWidgetConfig = (isLiveForm, isLiveFilter, role) => {
     let config = WIDGET_CONFIG;
@@ -656,14 +655,15 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this._dynamicContext.form = this;
         }
         const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
-            'app-form-' + this.widgetId + idGen.nextUid(),
+            'app-form-dynamic-' + this.widgetId,
             fieldTemplate,
             {
-                context: this._dynamicContext,
+                noCache: true,
                 transpile: true
             });
-        const instance = this.dynamicFormRef.createComponent(componentFactoryRef, 0, this.inj);
-        $gridLayout[0].appendChild(instance.location.nativeElement);
+        const component = this.dynamicFormRef.createComponent(componentFactoryRef, 0, this.inj);
+        extendProto(component.instance, this._dynamicContext);
+        $gridLayout[0].appendChild(component.location.nativeElement);
         this.setFormData(this.formdata);
     }
 

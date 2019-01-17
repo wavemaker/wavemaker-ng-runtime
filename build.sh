@@ -130,18 +130,18 @@ bundleWeb() {
     echo "uglify: web"
 
     ${UGLIFYJS} \
-        ./libraries/core/bundles/core.umd.js \
-        ./libraries/swipey/bundles/swipey.umd.js \
-        ./libraries/transpiler/bundles/transpiler.umd.js \
-        ./libraries/http-service/bundles/http-service.umd.js \
-        ./libraries/oAuth/bundles/oAuth.umd.js \
-        ./libraries/security/bundles/security.umd.js \
-        ./libraries/build-task/bundles/components.umd.js \
-        ./libraries/components/bundles/components.umd.js \
-        ./libraries/variables/bundles/variables.umd.js \
-        ./libraries/mobile/placeholder/bundles/mobile-placeholder.umd.js \
-        ./libraries/runtime-base/bundles/runtime-base.umd.js \
-        ./libraries/runtime-dynamic/bundles/runtime-dynamic.umd.js \
+        ./libraries/core/bundles/index.umd.js \
+        ./libraries/swipey/bundles/index.umd.js \
+        ./libraries/transpiler/bundles/index.umd.js \
+        ./libraries/http-service/bundles/index.umd.js \
+        ./libraries/oAuth/bundles/index.umd.js \
+        ./libraries/security/bundles/index.umd.js \
+        ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/bundles/index.umd.js \
+        ./libraries/variables/bundles/index.umd.js \
+        ./libraries/mobile/placeholder/bundles/index.umd.js \
+        ./libraries/runtime-base/bundles/index.umd.js \
+        ./libraries/runtime-dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.min.js \
@@ -157,23 +157,23 @@ bundleWeb() {
 bundleMobile() {
     echo "uglify: mobile"
     ${UGLIFYJS} \
-        ./libraries/core/bundles/core.umd.js \
-        ./libraries/swipey/bundles/swipey.umd.js \
-        ./libraries/transpiler/bundles/transpiler.umd.js \
-        ./libraries/http-service/bundles/http-service.umd.js \
-        ./libraries/oAuth/bundles/oAuth.umd.js \
-        ./libraries/security/bundles/security.umd.js \
-        ./libraries/build-task/bundles/components.umd.js \
-        ./libraries/components/bundles/components.umd.js \
-        ./libraries/mobile/core/bundles/mobile-core.umd.js \
-        ./libraries/mobile-build-task/bundles/mobile-components.umd.js \
-        ./libraries/mobile/components/bundles/mobile-components.umd.js \
-        ./libraries/variables/bundles/variables.umd.js \
-        ./libraries/mobile/offline/bundles/mobile-offline.umd.js \
-        ./libraries/mobile/variables/bundles/mobile-variables.umd.js \
-        ./libraries/mobile/runtime/bundles/mobile-runtime.umd.js \
-        ./libraries/runtime-base/bundles/runtime-base.umd.js \
-        ./libraries/runtime-dynamic/bundles/runtime-dynamic.umd.js \
+        ./libraries/core/bundles/index.umd.js \
+        ./libraries/swipey/bundles/index.umd.js \
+        ./libraries/transpiler/bundles/index.umd.js \
+        ./libraries/http-service/bundles/index.umd.js \
+        ./libraries/oAuth/bundles/index.umd.js \
+        ./libraries/security/bundles/index.umd.js \
+        ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/bundles/index.umd.js \
+        ./libraries/mobile/core/bundles/index.umd.js \
+        ./libraries/mobile-build-task/bundles/index.umd.js \
+        ./libraries/mobile/components/bundles/index.umd.js \
+        ./libraries/variables/bundles/index.umd.js \
+        ./libraries/mobile/offline/bundles/index.umd.js \
+        ./libraries/mobile/variables/bundles/index.umd.js \
+        ./libraries/mobile/runtime/bundles/index.umd.js \
+        ./libraries/runtime-base/bundles/index.umd.js \
+        ./libraries/runtime-dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js \
@@ -209,8 +209,6 @@ buildApp() {
     ngBuild mobile-runtime projects/mobile/runtime
     ngBuild mobile-placeholder projects/mobile/placeholder
 
-    ngBuild runtime-base projects/runtime-base
-    ngBuild runtime-dynamic projects/runtime-dynamic
 
     if [[ ${hasChangesInComponents} -eq "0" ]]; then
         ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
@@ -219,6 +217,9 @@ buildApp() {
     if [[ ${hasChangesInMobileComponents} -eq "0" ]]; then
         ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
     fi
+
+    ngBuild runtime-base projects/runtime-base
+    ngBuild runtime-dynamic projects/runtime-dynamic
 
     if [[ "${isSourceModified}" == true ]]; then
         bundleWeb

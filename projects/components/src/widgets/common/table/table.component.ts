@@ -3,7 +3,7 @@ import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -26,8 +26,6 @@ const exportIconMapping = {
 };
 
 const ROW_OPS_FIELD = 'rowOperations';
-const idGen = new IDGenerator('app-table-dynamic-');
-const getSelector = id => `${id}-${idGen.nextUid()}`;
 
 const noop = () => {};
 
@@ -454,18 +452,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 `app-datatable-row-${this.widgetId}-${rowId}`,
                 markup,
                 {
-                    noCache: true,
-                    context: {...(<any>this), ...{row, containerLoad: (widget) => {
-                                setTimeout(() => {
-                                    $overlay.hide();
-                                    $target.show();
-                                    this.rowDefInstances[rowId] = widget;
-                                    this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: widget});
-                                }, 500);
-                            }}}
+                    noCache: true
                 });
-            const instance = this.rowDetailViewRef.createComponent(componentFactoryRef, 0, this.inj);
-            $target[0].appendChild(instance.location.nativeElement);
+            const component = this.rowDetailViewRef.createComponent(componentFactoryRef, 0, this.inj);
+            const context = {...(<any>this.viewParent), ...{row, containerLoad: (widget) => {
+                        setTimeout(() => {
+                            $overlay.hide();
+                            $target.show();
+                            this.rowDefInstances[rowId] = widget;
+                            this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: widget});
+                        }, 500);
+                    }}};
+            extendProto(component.instance, context);
+            $target[0].appendChild(component.location.nativeElement);
             $appDigest();
         },
         onBeforeRowCollapse: ($event, row, rowId) => {
@@ -1079,14 +1078,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
         this.noOfColumns = columns.length;
         const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
-            getSelector(this.widgetId),
+            'app-table-dynamic-' + this.widgetId,
             tmpl,
             {
-                context: this._dynamicContext,
+                noCache: true,
                 transpile: true
             });
-        const instance = this.dynamicTableRef.createComponent(componentFactoryRef, 0, this.inj);
-        this.$element.find('.dynamic-table-container')[0].appendChild(instance.location.nativeElement);
+        const component = this.dynamicTableRef.createComponent(componentFactoryRef, 0, this.inj);
+        extendProto(component.instance, this._dynamicContext);
+        this.$element.find('.dynamic-table-container')[0].appendChild(component.location.nativeElement);
     }
 
     prepareColDefs(data) {

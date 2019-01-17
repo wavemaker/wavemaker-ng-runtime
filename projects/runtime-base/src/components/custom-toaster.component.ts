@@ -50,8 +50,8 @@ export class CustomToasterComponent extends Toast implements AfterViewInit {
             selector + idGen.nextUid(),
             markup
         );
-        const instance = this.customToastRef.createComponent(componentFactoryRef, 0, this.inj);
-        $targetLayout[0].appendChild(instance.location.nativeElement);
+        const component = this.customToastRef.createComponent(componentFactoryRef, 0, this.inj);
+        $targetLayout[0].appendChild(component.location.nativeElement);
     }
 
     ngAfterViewInit() {

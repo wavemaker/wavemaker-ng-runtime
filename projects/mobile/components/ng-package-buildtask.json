@@ -2,8 +2,9 @@
     "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
     "dest": "../../../libraries/mobile-build-task",
     "lib": {
+        "flatModuleFile": "index",
         "entryFile": "src/public_api_buildtask.ts",
-        "umdId": "wm.components.mobile.buildTask",
+        "umdId": "wm.buildTask",
         "umdModuleIds": {
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
