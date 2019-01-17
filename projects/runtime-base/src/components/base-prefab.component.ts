@@ -143,16 +143,15 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         setTimeout(() => {
+            this.viewInit$.complete();
             this.onReady();
             this.containerWidget.invokeEventCallback('load');
-            this.viewInit$.next();
         }, 100);
     }
 
     ngOnDestroy(): void {
         this.containerWidget.invokeEventCallback('destroy');
         this.destroy$.complete();
-        this.viewInit$.complete();
     }
 
     // user overrides this
