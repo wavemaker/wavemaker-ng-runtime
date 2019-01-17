@@ -233,7 +233,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 }
             });
         }, 250);
-        this._isGridLayoutPresent = this.$element.find('.panel-body [wmlayoutgrid]').length > 0;
     }
 
     findOperationType() {}
@@ -598,6 +597,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     async generateFormFields() {
         let noOfColumns;
         let $gridLayout;
+        // Check if grid layout is present or not for first time
+        if (_.isUndefined(this._isGridLayoutPresent)) {
+            this._isGridLayoutPresent = this.$element.find('.panel-body [wmlayoutgrid]').length > 0;
+        }
         if (this._isGridLayoutPresent) {
             $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]:first');
             noOfColumns = Number($gridLayout.attr('columns')) || 1;

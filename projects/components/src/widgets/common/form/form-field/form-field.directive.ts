@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { DataType, debounce, FormWidgetType, isDefined, isMobile, removeClass } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile } from '@wm/core';
 
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
@@ -418,7 +418,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.viewmodewidget = this.viewmodewidget || getDefaultViewModeWidget(this.widgettype);
 
             // For upload widget, generate the permitted field
-            if (this.type === DataType.BLOB) {
+            if (this.widgettype === FormWidgetType.UPLOAD) {
                 let fileType;
                 // Create the accepts string from file type and extensions
                 fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
