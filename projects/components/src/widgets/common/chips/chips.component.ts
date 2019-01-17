@@ -142,7 +142,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     // This method updates the queryModel.
     // default call to get the default data can be done only when defaultQuery is true.
     private updateQueryModel(data: any) {
-        if (!data || !this.datasetItems.length) {
+        if (!data) {
             this.chipsList = [];
             return;
         }
