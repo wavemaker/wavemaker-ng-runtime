@@ -11,7 +11,7 @@ import { ComponentRefProvider, ComponentType } from '../types/types';
 declare const _;
 
 @Directive({
-    selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]'
+    selector: '[partialContainer]'
 })
 export class PartialContainerDirective {
 
