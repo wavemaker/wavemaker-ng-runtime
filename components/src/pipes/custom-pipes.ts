@@ -74,7 +74,7 @@ export class ToCurrencyPipe implements PipeTransform {
 })
 export class PrefixPipe implements PipeTransform {
     transform(data, padding) {
-        return data ? ((padding || '') + data) : padding;
+        return (_.isUndefined(data) || data === null || data === '') ? data : ((padding || '') + data);
     }
 }
 
@@ -83,7 +83,7 @@ export class PrefixPipe implements PipeTransform {
 })
 export class SuffixPipe implements PipeTransform {
     transform(data, padding) {
-        return data ? (data + (padding || '')) : padding;
+        return (_.isUndefined(data) || data === null || data === '') ? data : (data + (padding || ''));
     }
 }
 
