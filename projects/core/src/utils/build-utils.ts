@@ -165,6 +165,7 @@ const rowActionAttrs = new Map(
         ['disabled', 'disabled'],
         ['disabled.bind', 'disabled.bind'],
         ['hyperlink', 'hyperlink'],
+        ['hyperlink.bind', 'hyperlink.bind'],
         ['target', 'target']
     ]
 );
