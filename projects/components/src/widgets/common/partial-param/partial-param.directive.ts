@@ -9,7 +9,7 @@ import { WidgetRef } from '../../../widgets/framework/types';
 declare const _;
 
 @Directive({
-    selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]',
+    selector: '[partialContainer]',
 })
 export class PartialParamHandlerDirective {
     constructor (@Self() @Inject(WidgetRef) private widgetRef) {
