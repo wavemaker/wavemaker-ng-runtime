@@ -284,14 +284,14 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                      * field contains the fieldName
                      * value contains the field value
                      * errorType contains the list of errors
-                     * msg contains the validation message
+                     * message contains the validation message
                      * getElement returns the element having focus-target
                      */
                     this.validationMessages.push({
                         field: k,
                         value: field.value,
                         errorType: _.keys(v.errors),
-                        msg: field.validationmessage || '',
+                        message: field.validationmessage || '',
                         getElement: () => {
                             return field.$element.find('[focus-target]');
                         }
