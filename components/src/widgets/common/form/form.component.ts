@@ -270,13 +270,13 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     // This will return a object containing the error details from the list of formFields that are invalid
-    private setValidationMsgs() {
+    private setValidationMsgs(validateTouch?: boolean) {
         if (!this.formFields.length) {
             return;
         }
         _.forEach(this.ngform.controls, (v, k) => {
             const field = this.formFields.find(e => e.key === k);
-            if (!field) {
+            if (!field || (validateTouch && !v.touched)) {
                 return;
             }
             const index = this.validationMessages.findIndex(e => e.field === k);
@@ -286,14 +286,14 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                      * field contains the fieldName
                      * value contains the field value
                      * errorType contains the list of errors
-                     * msg contains the validation message
+                     * message contains the validation message
                      * getElement returns the element having focus-target
                      */
                     this.validationMessages.push({
                         field: k,
                         value: field.value,
-                        errorType: _.keys(field.errors),
-                        msg: field.validationmessage || '',
+                        errorType: _.keys(v.errors),
+                        message: field.validationmessage || '',
                         getElement: () => {
                             return field.$element.find('[focus-target]');
                         }
@@ -322,6 +322,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     // Disable the form submit if form is in invalid state. Highlight all the invalid fields if validation type is default
     validateFieldsOnSubmit() {
+        this.setValidationMsgs();
         // Disable the form submit if form is in invalid state. For delete operation, do not check the validation.
         if (this.operationType !== 'delete' && (this.validationtype === 'html' || this.validationtype === 'default')
                 && this.ngform && this.ngform.invalid) {
@@ -494,8 +495,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     updateDataOutput() {
         this.constructDataObject();
-        this.setValidationMsgs();
-    }
+        if (this.ngform.touched) {
+            this.setValidationMsgs(true);
+    }    }
 
     setFormData(data) {
         this.formFields.forEach(field => {
