@@ -171,7 +171,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     }
 
     onFileElemClick() {
-        const fileInputElem = $('.file-input')[0];
+        const fileInputElem: any = $('.file-input')[0];
         fileInputElem.value = null;
     }
 

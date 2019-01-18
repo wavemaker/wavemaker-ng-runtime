@@ -24,11 +24,10 @@ export class HttpServiceImpl extends AbstractHttpService {
      * @param resolve
      * @param reject
      */
-    handleSessionTimeout(options, resolve?, reject?) {
+    handleSessionTimeout(options, subscriber401?) {
         this.sessionTimeoutQueue.push({
             requestInfo: options,
-            resolve: resolve,
-            reject: reject
+            sub401: subscriber401
         });
         this.on401();
     }
@@ -116,10 +115,12 @@ export class HttpServiceImpl extends AbstractHttpService {
             this.httpClient.request(req).toPromise().then((response) => {
                 resolve(response);
             } , (err) => {
-                // In case of 401, do not reject the promise.
-                // push it into the queue, which will be resolved post login
                 if (this.isPlatformSessionTimeout(err)) {
-                    this.handleSessionTimeout(options, resolve, reject);
+                    err._401Subscriber.asObservable().subscribe((response) => {
+                        resolve(response);
+                    }, (err) => {
+                        reject(err);
+                    });
                 } else {
                     const errMsg = this.getErrMessage(err);
                     reject({
@@ -256,11 +257,16 @@ export class HttpServiceImpl extends AbstractHttpService {
             if (_.isFunction(data.callback)) {
                 data.callback();
             } else {
-                that.send(data.requestInfo)
-                    .then(
-                        response => data.resolve(response),
-                        reason =>  data.reject(reason)
-                    );
+                data.requestInfo.headers.headers.delete("x-wm-xsrf-token");
+                that.httpClient.request(data.requestInfo)
+                    .subscribe(
+                        response => {
+                            if (response && response.type && data.sub401) {
+                                data.sub401.next(response);
+                            }
+                        }, (reason) => {
+                            data.sub401.next(reason);
+                        });
             }
         });
     }

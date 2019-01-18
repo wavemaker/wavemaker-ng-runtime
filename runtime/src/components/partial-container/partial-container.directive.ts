@@ -22,6 +22,8 @@ export class PartialContainerDirective {
     }
 
     _renderPartial(nv) {
+        // destroy the existing partial
+        this.vcRef.clear();
         // when the container-target is inside the component template, it can be queried after viewInit of the component.
         setTimeout(() => {
             this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;

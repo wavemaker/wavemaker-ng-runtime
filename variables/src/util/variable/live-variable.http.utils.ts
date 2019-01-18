@@ -4,6 +4,7 @@ import { VARIABLE_URLS } from '../../constants/variables.constants';
 import { httpService } from './variables.utils';
 
 declare const _;
+
 const isStudioMode = false;
 
 export const parseConfig = (serviceParams: any): any => {
@@ -69,18 +70,10 @@ export const parseConfig = (serviceParams: any): any => {
     return null;
 };
 
-const initiateAction = function (action, params, successCallback?, failureCallback?, noproxy?) {
+export const generateConnectionParams = (params, action) => {
     let connectionParams,
         urlParams,
-        requestData,
-        param,
-        val,
-        config,
-        headers,
-        httpDetails;
-
-    // config      = getClonedObject(config[action]);
-    // headers     = config && config.headers;
+        requestData;
     requestData = params.data;
 
     urlParams = {
@@ -98,85 +91,122 @@ const initiateAction = function (action, params, successCallback?, failureCallba
         size             : params.size,
         sort             : params.sort
     };
+    connectionParams = {
+        target    : 'DATABASE',
+        action    : action,
+        urlParams : urlParams,
+        data      : requestData || '',
+        config    : {
+            'url' : params.url
+        }
+    };
+
+    connectionParams = parseConfig(connectionParams);
+    // TODO: Remove after backend fix
+    connectionParams.url = removeExtraSlashes(connectionParams.url);
+
+    return connectionParams;
+};
+
+const initiateAction = (action, params, successCallback?, failureCallback?, noproxy?) => {
+    let connectionParams,
+        urlParams,
+        requestData,
+        param,
+        val,
+        config,
+        headers,
+        httpDetails;
+
+    /*
+    config      = getClonedObject(config[action]);
+    headers     = config && config.headers;
+
+    requestData = params.data;
+
+    urlParams = {
+        projectID        : params.projectID,
+        service          : !_.isUndefined(params.service) ? params.service : 'services',
+        dataModelName    : params.dataModelName,
+        entityName       : params.entityName,
+        queryName        : params.queryName,
+        queryParams      : params.queryParams,
+        procedureName    : params.procedureName,
+        procedureParams  : params.procedureParams,
+        id               : params.id,
+        relatedFieldName : params.relatedFieldName,
+        page             : params.page,
+        size             : params.size,
+        sort             : params.sort
+    };
+    */
     if (params.url && isStudioMode && !noproxy) {
-/*
-        /!* Check for url parameters to replace the URL.
-         * So the variable parameters in the URL will be replaced by the actual parameter values.*!/
-        if (urlParams) {
-            for (param in urlParams) {
-                if (urlParams.hasOwnProperty(param)) {
-                    val = urlParams[param];
-                    if (!_.isUndefined(val) && val !== null) {
-                        config.url = config.url.replace(new RegExp(':' + param, 'g'), val);
+        /*
+                /!* Check for url parameters to replace the URL.
+                 * So the variable parameters in the URL will be replaced by the actual parameter values.*!/
+                if (urlParams) {
+                    for (param in urlParams) {
+                        if (urlParams.hasOwnProperty(param)) {
+                            val = urlParams[param];
+                            if (!_.isUndefined(val) && val !== null) {
+                                config.url = config.url.replace(new RegExp(':' + param, 'g'), val);
+                            }
+                        }
                     }
                 }
-            }
-        }
-        headers = headers || {};
-        headers.skipSecurity = 'true';
-        headers['Content-Type'] = headers['Content-Type'] || 'application/json';
-        /!*(!$rootScope.preferences.workspace.loadXDomainAppDataUsingProxy is added in endpointAddress to differentiate desktop from saas*!/
-        if (action === 'testRunQuery') {
-            headers['Content-Type'] = undefined;
-            httpDetails = {
-                'endpointAddress'   : $window.location.protocol + (!$rootScope.preferences.workspace.loadXDomainAppDataUsingProxy ? ('//' + $window.location.host) : '') + params.url + config.url,
-                'method'            : config.method,
-                'content-Type'      : 'multipart/form-data',
-                'headers'           : headers
-            };
-            requestData.append(SWAGGER_CONSTANTS.WM_HTTP_JSON, new Blob([JSON.stringify(httpDetails)], {
-                type: 'application/json'
-            }));
-            connectionParams = {
-                'data': requestData,
-                'headers': headers,
-                'urlParams'         : {
-                    projectID: $rootScope.project.id
+                headers = headers || {};
+                headers.skipSecurity = 'true';
+                headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+                /!*(!$rootScope.preferences.workspace.loadXDomainAppDataUsingProxy is added in endpointAddress to differentiate desktop from saas*!/
+                if (action === 'testRunQuery') {
+                    headers['Content-Type'] = undefined;
+                    httpDetails = {
+                        'endpointAddress'   : $window.location.protocol + (!$rootScope.preferences.workspace.loadXDomainAppDataUsingProxy ? ('//' + $window.location.host) : '') + params.url + config.url,
+                        'method'            : config.method,
+                        'content-Type'      : 'multipart/form-data',
+                        'headers'           : headers
+                    };
+                    requestData.append(SWAGGER_CONSTANTS.WM_HTTP_JSON, new Blob([JSON.stringify(httpDetails)], {
+                        type: 'application/json'
+                    }));
+                    connectionParams = {
+                        'data': requestData,
+                        'headers': headers,
+                        'urlParams'         : {
+                            projectID: $rootScope.project.id
+                        }
+                    };
+                } else {
+                    connectionParams = {
+                        'data': {
+                            'endpointAddress'   : $window.location.protocol + (!$rootScope.preferences.workspace.loadXDomainAppDataUsingProxy ? ('//' + $window.location.host) : '') + params.url + config.url,
+                            'method'            : config.method,
+                            'requestBody'       : JSON.stringify(requestData),
+                            'headers'           : headers
+                        },
+                        'urlParams'         : {
+                            projectID: $rootScope.project.id
+                        }
+                    };
                 }
-            };
-        } else {
-            connectionParams = {
-                'data': {
-                    'endpointAddress'   : $window.location.protocol + (!$rootScope.preferences.workspace.loadXDomainAppDataUsingProxy ? ('//' + $window.location.host) : '') + params.url + config.url,
-                    'method'            : config.method,
-                    'requestBody'       : JSON.stringify(requestData),
-                    'headers'           : headers
-                },
-                'urlParams'         : {
-                    projectID: $rootScope.project.id
-                }
-            };
-        }
-        WebService.testRestService(connectionParams, function (response) {
-            var parsedData = getValidJSON(response.responseBody),
-                errMsg,
-                localeObject;
-            if (parsedData.hasOwnProperty('result')) {
-                triggerFn(successCallback, parsedData.result);
-            } else if (parsedData.hasOwnProperty('error')) {
-                triggerFn(failureCallback, (parsedData.error && parsedData.error.message) || parsedData.error);
-            } else if (parsedData.hasOwnProperty('errorDetails')) {
-                localeObject = $rootScope.locale || $rootScope.appLocale;
-                errMsg = getClonedObject(localeObject[parsedData.errorDetails.code]);
-                triggerFn(failureCallback, replace(errMsg, parsedData.errorDetails.data) || parsedData.errorDetails);
-            } else {
-                triggerFn(successCallback, parsedData);
-            }
-        }, failureCallback);*/
+                WebService.testRestService(connectionParams, function (response) {
+                    var parsedData = getValidJSON(response.responseBody),
+                        errMsg,
+                        localeObject;
+                    if (parsedData.hasOwnProperty('result')) {
+                        triggerFn(successCallback, parsedData.result);
+                    } else if (parsedData.hasOwnProperty('error')) {
+                        triggerFn(failureCallback, (parsedData.error && parsedData.error.message) || parsedData.error);
+                    } else if (parsedData.hasOwnProperty('errorDetails')) {
+                        localeObject = $rootScope.locale || $rootScope.appLocale;
+                        errMsg = getClonedObject(localeObject[parsedData.errorDetails.code]);
+                        triggerFn(failureCallback, replace(errMsg, parsedData.errorDetails.data) || parsedData.errorDetails);
+                    } else {
+                        triggerFn(successCallback, parsedData);
+                    }
+                }, failureCallback);*/
     } else {
-        connectionParams = {
-            target    : 'DATABASE',
-            action    : action,
-            urlParams : urlParams,
-            data      : requestData || '',
-            config    : {
-                'url' : params.url
-            }
-        };
-
-        connectionParams = parseConfig(connectionParams);
-        // TODO: Remove after backend fix
-        connectionParams.url = removeExtraSlashes(connectionParams.url);
+        connectionParams = generateConnectionParams(params, action);
         return httpService.sendCallAsObservable({
             url: connectionParams.url,
             method: connectionParams.method,
@@ -205,4 +235,3 @@ export const LVService = {
     getDistinctDataByFields: params => initiateAction('getDistinctDataByFields', params),
     countTableDataWithQuery: (params, successCallback, failureCallback) => initiateAction('countTableDataWithQuery', params, successCallback, failureCallback)
 };
-
