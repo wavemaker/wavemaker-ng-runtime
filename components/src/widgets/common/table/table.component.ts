@@ -1487,6 +1487,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
+    triggerUploadEvent($event, eventName, fieldName, row) {
+        const params: any = {$event, row};
+        if (!this.columns[fieldName]) {
+            return;
+        }
+        if (eventName === 'change') {
+            params.newVal = $event.target.files;
+            params.oldVal = this.columns[fieldName]._oldUploadVal;
+            this.columns[fieldName]._oldUploadVal = params.newVal;
+        }
+        this.columns[fieldName].invokeEventCallback(eventName, params);
+    }
+
     registerFormWidget() {}
 
     // Form control accessor methods. This will be used for table inside form

@@ -4,6 +4,19 @@ import { FormWidgetType } from '../enums/enums';
 
 declare const _;
 
+// For html upload widget, add events on input tag
+const getUploadEventTmpl = (attrs, counter?, fieldName?) => {
+    let eventTmpl = '';
+    attrs.forEach((val, key) => {
+       if (key && key.endsWith('.event')) {
+           const eventName = key.split('.')[0];
+           const counterTl = counter ? `${counter}.` : '';
+           eventTmpl = ` ${eventTmpl} (${eventName})="${counterTl}triggerUploadEvent($event, '${eventName}', '${fieldName}', row)" `;
+       }
+    });
+    return eventTmpl;
+};
+
 // Method to get the form widget template
 export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, attrs?: Map<string, string>, options: any = {}) => {
     let tmpl;
@@ -78,16 +91,17 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             const counter = options.counter;
             const pCounter = options.pCounter;
             const uploadProps = options.uploadProps;
+            const eventTmpl = getUploadEventTmpl(attrs, counter, uploadProps && uploadProps.name);
             if (uploadProps) {
                 tmpl = `<form name="${uploadProps.formName}" ${innerTmpl}>
-                            <input focus-target class="file-upload" type="file" name="${uploadProps.name}"/>
+                            <input focus-target class="file-upload" type="file" name="${uploadProps.name}" ${eventTmpl}/>
                         </form>`;
             } else {
                 tmpl = `<a class="form-control-static" href="{{${counter}.href}}" target="_blank" *ngIf="${counter}.filetype === 'image' && ${counter}.href">
                         <img style="height:2em" class="wi wi-file" [src]="${counter}.href"/></a>
                         <a class="form-control-static" target="_blank" href="{{${counter}.href}}" *ngIf="${counter}.filetype !== 'image' && ${counter}.href">
                         <i class="wi wi-file"></i></a>
-                        <input ${innerTmpl} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}"
+                        <input ${innerTmpl} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}" ${eventTmpl}
                         [required]="${counter}.required" type="file" name="${attrs.get('key') || attrs.get('name')}_formWidget" [readonly]="${counter}.readonly"
                         [class.hidden]="!${pCounter}.isUpdateMode" [accept]="${counter}.permitted">`;
             }

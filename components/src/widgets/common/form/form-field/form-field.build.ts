@@ -119,7 +119,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
                                    class="help-block text-danger"
                                    [textContent]="${counter}.validationmessage"></p>` : '';
-            const eventsTmpl = getEventsTemplate(attrs);
+            const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             attrs.delete('widget');
             shared.set('counter', counter);
