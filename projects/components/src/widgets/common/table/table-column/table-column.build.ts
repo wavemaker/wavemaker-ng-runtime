@@ -92,7 +92,7 @@ const getInlineEditRowPropsTmpl = attrs => {
 };
 
 // get the inline widget template
-const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
+const getInlineEditWidgetTmpl = (attrs, isNewRow?, pCounter?) => {
     const options: any = {};
     const fieldName = attrs.get('binding');
     const widget = attrs.get('edit-widget-type') || getEditModeWidget({
@@ -108,13 +108,14 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?) => {
             formName: idGen.nextUid(),
             name: fieldName
         };
+        options.counter = pCounter;
     } else {
         widgetRef = isNewRow ? '#inlineWidgetNew' : '#inlineWidget';
         formControl = isNewRow ? `formControlName="${fieldName}_new"` : `formControlName="${fieldName}"`;
         wmFormWidget = 'wmFormWidget';
     }
     const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
-    const eventsTmpl = getEventsTmpl(attrs);
+    const eventsTmpl = widget === FormWidgetType.UPLOAD ? '' : getEventsTmpl(attrs);
     const rowPropsTl = getInlineEditRowPropsTmpl(attrs);
     const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl} ${rowPropsTl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
@@ -203,7 +204,7 @@ register('wm-table-column', (): IBuildTaskDef => {
                 rowFilterTmpl = (parentTable.get('filtermode') === 'multicolumn' && attrs.get('searchable') !== 'false') ? getFilterTemplate(attrs, pCounter) : '';
                 const editMode = parentTable.get('editmode');
                 const isInlineEdit = (editMode !== EDIT_MODE.DIALOG && editMode !== EDIT_MODE.FORM && attrs.get('readonly') !== 'true');
-                inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs) : '';
+                inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs, false, pCounter) : '';
                 inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
                 parentForm = ` [formGroup]="${pCounter}.ngform" `;
             }

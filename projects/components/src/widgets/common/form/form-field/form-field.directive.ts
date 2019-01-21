@@ -45,6 +45,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     // excludeProps is used to store the props that should not be applied on inner widget
     private excludeProps;
     private _validators;
+    private _oldUploadVal;
 
     ngform: FormGroup;
     defaultvalue;
@@ -384,6 +385,16 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if ((!isDefined(this.value) || this.value === '')) {
             this.formWidget && this.formWidget.resetDisplayInput && this.formWidget.resetDisplayInput();
         }
+    }
+
+    triggerUploadEvent($event, eventName) {
+        const params: any = {$event};
+        if (eventName === 'change') {
+            params.newVal = $event.target.files;
+            params.oldVal = this._oldUploadVal;
+            this._oldUploadVal = params.newVal;
+        }
+        this.invokeEventCallback(eventName, params);
     }
 
     ngOnInit() {
