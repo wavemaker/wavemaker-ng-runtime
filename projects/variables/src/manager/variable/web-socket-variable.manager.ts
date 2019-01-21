@@ -59,7 +59,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @returns {*}
      */
     private getURL(variable) {
-        const prefabName = _.get(variable._context, 'prefabName');
+        const prefabName = variable.getPrefabName();
         const opInfo = prefabName ? _.get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo') : _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
         const inputFields = variable.dataBinding;
         let config;
