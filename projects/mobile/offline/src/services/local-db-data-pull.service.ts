@@ -224,7 +224,9 @@ export class LocalDBDataPullService {
      * @returns Promise
      */
     private executeDatabaseCountQuery(params: Object): Promise<any> {
-        return LVService.countTableDataWithQuery(params, null, null).then(response => response.body);
+        return new Promise((resolve, reject) => {
+            LVService.countTableDataWithQuery(params, null, null).subscribe(response => resolve(response.body), reject);
+        });
     }
 
     /**
@@ -232,8 +234,10 @@ export class LocalDBDataPullService {
      * @param params
      * @returns Promise
      */
-    private executeDatabaseSearchQuery(params: Object) {
-        return LVService.searchTableDataWithQuery(params, null, null).then(response => response && response.body && response.body.content);
+    private executeDatabaseSearchQuery(params: Object): Promise<any> {
+        return new Promise((resolve, reject) => {
+            return LVService.searchTableDataWithQuery(params, null, null).subscribe(response => resolve(response && response.body && response.body.content), reject);
+        });
     }
 
     /**

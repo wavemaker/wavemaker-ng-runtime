@@ -149,7 +149,7 @@ export class LiveVariableManager extends BaseVariableManager {
                 data: reqParams.data,
                 headers: reqParams.headers
             };
-            this.httpCall(reqParams, variable).then((response) => {
+            this.httpCall(reqParams, variable, params).then((response) => {
                 successHandler(response, resolve);
             }, (e) => {
                 errorHandler(e, reject);

@@ -212,7 +212,7 @@ const initiateAction = (action, params, successCallback?, failureCallback?, nopr
             method: connectionParams.method,
             data: connectionParams.data,
             headers: connectionParams.headers
-        });
+        }, params);
     }
 };
 

@@ -3,7 +3,7 @@ import { from } from 'rxjs';
 import { LVService } from '@wm/variables';
 
 import { NetworkService } from '@wm/mobile/core';
-import { noop, triggerFn } from '@wm/core';
+import { AbstractHttpService, noop, triggerFn } from '@wm/core';
 
 import { ColumnInfo, ForeignRelationInfo } from '../models/config';
 import { LocalDBStore } from '../models/local-db-store';
@@ -48,6 +48,7 @@ export class LiveVariableOfflineBehaviour {
 
     constructor(
         private changeLogService: ChangeLogService,
+        private httpService: AbstractHttpService,
         private localDBManagementService: LocalDBManagementService,
         private networkService: NetworkService,
         private offlineDBService: LocalDbService
@@ -57,14 +58,15 @@ export class LiveVariableOfflineBehaviour {
         if (!isOfflineBehaviorAdded) {
             isOfflineBehaviorAdded = true;
             apiConfiguration.forEach(operation => {
-                const onlineHandler = LVService[operation.name];
+                const onlineHandler = this.httpService.sendCallAsObservable;
                 if (onlineHandler) {
-                    LVService[operation.name] = (params, successCallback, failureCallback) => {
+                    this.httpService.sendCallAsObservable = (reqParams, params) => {
+                        params = _.extend(params, reqParams);
                         // converting promise to observable as LVService returns a observable
                         return from(this.localDBManagementService.isOperationAllowed(params.dataModelName, params.entityName, operation.type)
                             .then(isAllowedInOffline => {
                                 if (this.networkService.isConnected() || params.onlyOnline || !isAllowedInOffline) {
-                                    return this.remoteDBcall(operation, onlineHandler, params, successCallback, failureCallback);
+                                    return this.remoteDBcall(operation, onlineHandler, params);
                                 } else {
                                     let cascader;
                                     return Promise.resolve().then(() => {
@@ -82,8 +84,6 @@ export class LiveVariableOfflineBehaviour {
                                             cascader.cascade().then(() => response);
                                         }
                                         return response;
-                                    }).then(successCallback,  () => {
-                                            triggerFn(failureCallback, 'Service call failed');
                                     });
                                 }
                             }));
@@ -132,9 +132,9 @@ export class LiveVariableOfflineBehaviour {
      * During online, all read operations data will be pushed to offline database. Similarly, Update and Delete
      * operations are synced with the offline database.
      */
-    private remoteDBcall(operation, onlineHandler, params, successCallback, failureCallback): Promise<any> {
+    private remoteDBcall(operation, onlineHandler, params): Promise<any> {
         return new Promise((resolve, reject) => {
-            onlineHandler(params, null, null).subscribe(response => {
+            onlineHandler.call(this.httpService, params).subscribe(response => {
                 if (response && response.type) {
                     if (!params.skipLocalDB) {
                         this.offlineDBService.getStore(params).then((store) => {
@@ -149,11 +149,9 @@ export class LiveVariableOfflineBehaviour {
                             }
                         }).catch(noop);
                     }
-                    triggerFn(successCallback, response);
                     resolve(response);
                 }
             }, (err) => {
-                triggerFn(failureCallback, err);
                 reject(err);
             });
         });
