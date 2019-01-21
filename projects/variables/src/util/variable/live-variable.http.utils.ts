@@ -207,6 +207,7 @@ const initiateAction = (action, params, successCallback?, failureCallback?, nopr
         }, failureCallback);*/
     } else {
         connectionParams = generateConnectionParams(params, action);
+        params.operation = action;
         return httpService.sendCallAsObservable({
             url: connectionParams.url,
             method: connectionParams.method,

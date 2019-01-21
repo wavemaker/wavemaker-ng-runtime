@@ -98,7 +98,7 @@ export class HttpServiceImpl extends AbstractHttpService {
      * Make a http call and returns an observable that can be cancelled
      * @param options, options using which the call needs to be made
      */
-    sendCallAsObservable(options: any, params?: any): any {
+    sendCallAsObservable(options: any): any {
         const req = this.generateRequest(options);
         return this.httpClient.request(req);
     }

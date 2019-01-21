@@ -57,39 +57,45 @@ export class LiveVariableOfflineBehaviour {
     public add () {
         if (!isOfflineBehaviorAdded) {
             isOfflineBehaviorAdded = true;
-            apiConfiguration.forEach(operation => {
-                const onlineHandler = this.httpService.sendCallAsObservable;
-                if (onlineHandler) {
-                    this.httpService.sendCallAsObservable = (reqParams, params) => {
-                        params = _.extend(params, reqParams);
-                        // converting promise to observable as LVService returns a observable
-                        return from(this.localDBManagementService.isOperationAllowed(params.dataModelName, params.entityName, operation.type)
-                            .then(isAllowedInOffline => {
-                                if (this.networkService.isConnected() || params.onlyOnline || !isAllowedInOffline) {
-                                    return this.remoteDBcall(operation, onlineHandler, params);
-                                } else {
-                                    let cascader;
-                                    return Promise.resolve().then(() => {
-                                        if (!params.isCascadingStopped &&
-                                            (operation.name === 'insertTableData'
-                                                || operation.name === 'updateTableData')) {
-                                            return this.prepareToCascade(params).then(c => cascader = c);
-                                        }
-                                    }).then(() => {
-                                        return new Promise((resolve, reject) => {
-                                            this.localDBcall(operation, params, resolve, reject);
-                                        });
-                                    }).then( response => {
-                                        if (cascader) {
-                                            cascader.cascade().then(() => response);
-                                        }
-                                        return response;
+            const onlineHandler = this.httpService.sendCallAsObservable;
+            if (onlineHandler) {
+                this.httpService.sendCallAsObservable = (reqParams, params): any => {
+                    // reqParams will contain the full path of insert/update call which will be processed again in parseConfig method
+                    // and will be appended again with '/services/./.' which will result in deployedUrl + '/service/./.' + '/service/./.' which is wrong.
+                    // Hence passing url in params
+                    const clonedParamsUrl = _.clone(params.url);
+                    params = _.extend(params, reqParams);
+                    const operation = _.find(apiConfiguration, {name: _.get(params, 'operation')});
+                    if (this.networkService.isConnected() || params.onlyOnline || !operation || !params.dataModelName) {
+                        return from(this.remoteDBcall(operation, onlineHandler, params));
+                    }
+                    // converting promise to observable as LVService returns a observable
+                    return from(this.localDBManagementService.isOperationAllowed(params.dataModelName, params.entityName, operation.type)
+                        .then(isAllowedInOffline => {
+                            if (!isAllowedInOffline) {
+                                return this.remoteDBcall(operation, onlineHandler, params);
+                            } else {
+                                let cascader;
+                                return Promise.resolve().then(() => {
+                                    if (!params.isCascadingStopped &&
+                                        (operation.name === 'insertTableData'
+                                            || operation.name === 'updateTableData')) {
+                                        return this.prepareToCascade(params).then(c => cascader = c);
+                                    }
+                                }).then(() => {
+                                    return new Promise((resolve, reject) => {
+                                        this.localDBcall(operation, params, resolve, reject, clonedParamsUrl);
                                     });
-                                }
-                            }));
-                    };
-                }
-            });
+                                }).then( response => {
+                                    if (cascader) {
+                                        cascader.cascade().then(() => response);
+                                    }
+                                    return response;
+                                });
+                            }
+                        }));
+                };
+            }
         }
     }
 
@@ -109,7 +115,7 @@ export class LiveVariableOfflineBehaviour {
      * During offline, LocalDBService will answer to all the calls. All data modifications will be recorded
      * and will be reported to DatabaseService when device goes online.
      */
-    private localDBcall(operation, params, successCallback, failureCallback): Promise<any> {
+    private localDBcall(operation, params, successCallback, failureCallback, clonedParamsUrl): Promise<any> {
         return new Promise((resolve, reject) => {
             this.offlineDBService[operation.name](params, response => {
                 if (operation.type === 'READ') {
@@ -117,6 +123,7 @@ export class LiveVariableOfflineBehaviour {
                 } else {
                     // add to change log
                     params.onlyOnline = true;
+                    params.url = clonedParamsUrl;
                     return this.changeLogService.add('DatabaseService', operation.name, params)
                         .then(() => resolve(response));
                 }

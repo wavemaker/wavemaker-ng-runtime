@@ -1,14 +1,14 @@
-import { $invokeWatchers, getClonedObject, processFilterExpBindNode, triggerFn } from '@wm/core';
+import { $invokeWatchers, getClonedObject, isDateTimeType, isDefined, processFilterExpBindNode, triggerFn } from '@wm/core';
 
 import { BaseVariableManager } from './base-variable.manager';
-import { debounceVariableCall, formatExportExpression, initiateCallback, setInput, appManager, httpService } from '../../util/variable/variables.utils';
+import {debounceVariableCall, formatExportExpression, initiateCallback, setInput, appManager, httpService, formatDate} from '../../util/variable/variables.utils';
 import { LiveVariableUtils } from '../../util/variable/live-variable.utils';
 import { $queue } from '../../util/inflight-queue';
 import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS, DB_CONSTANTS } from '../../constants/variables.constants';
 import { AdvancedOptions } from '../../advanced-options';
 import { generateConnectionParams } from '../../util/variable/live-variable.http.utils';
 
-declare const _;
+declare const _, window;
 const emptyArr = [];
 
 export class LiveVariableManager extends BaseVariableManager {
@@ -149,6 +149,7 @@ export class LiveVariableManager extends BaseVariableManager {
                 data: reqParams.data,
                 headers: reqParams.headers
             };
+            params.operation = dbOperation;
             this.httpCall(reqParams, variable, params).then((response) => {
                 successHandler(response, resolve);
             }, (e) => {
@@ -274,7 +275,7 @@ export class LiveVariableManager extends BaseVariableManager {
         options.inputFields = options.inputFields || getClonedObject(variable.inputFields);
         return $queue.submit(variable).then(() => {
             this.notifyInflight(variable, !options.skipToggleState);
-            return LiveVariableUtils.doCUD(operation, variable, options, success, error)
+            return this.doCUD(operation, variable, options, success, error)
                 .then((response) => {
                     $queue.process(variable);
                     this.notifyInflight(variable, false, response);
@@ -286,6 +287,278 @@ export class LiveVariableManager extends BaseVariableManager {
                 });
         }, error);
     }
+
+    private doCUD(action, variable, options, success, error) {
+        const projectID = $rootScope.project.id || $rootScope.projectName,
+            primaryKey = LiveVariableUtils.getPrimaryKey(variable),
+            isFormDataSupported = (window.File && window.FileReader && window.FileList && window.Blob);
+
+        let dbName,
+            compositeId = '',
+            rowObject = {},
+            prevData,
+            compositeKeysData = {},
+            prevCompositeKeysData = {},
+            id,
+            columnName,
+            clonedFields,
+            output,
+            onCUDerror,
+            onCUDsuccess,
+            inputFields = options.inputFields || variable.inputFields;
+
+        // EVENT: ON_BEFORE_UPDATE
+        clonedFields = getClonedObject(inputFields);
+        output = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, clonedFields, options);
+        if (output === false) {
+            // $rootScope.$emit('toggle-variable-state', variable, false);
+            triggerFn(error);
+            return Promise.reject('Call stopped from the event: ' + VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE);
+        }
+        inputFields = _.isObject(output) ? output : clonedFields;
+        variable.canUpdate = false;
+
+        if (options.row) {
+            rowObject = options.row;
+            // For datetime types, convert the value to the format accepted by backend
+            _.forEach(rowObject, (value, key) => {
+                const fieldType = LiveVariableUtils.getFieldType(key, variable);
+                let fieldValue;
+                if (isDateTimeType(fieldType)) {
+                    fieldValue = formatDate(value, fieldType);
+                    rowObject[key] = fieldValue;
+                } else if (_.isArray(value) && LiveVariableUtils.isStringType(fieldType)) {
+                    // Construct ',' separated string if param is not array type but value is an array
+                    fieldValue = _.join(value, ',');
+                    rowObject[key] = fieldValue;
+                }
+            });
+            // Merge inputFields along with dataObj while making Insert/Update/Delete
+            _.forEach(inputFields, (attrValue, attrName) => {
+                if ((isDefined(attrValue) && attrValue !== '') && (!isDefined(rowObject[attrName]) || rowObject[attrName] === '')) {
+                    rowObject[attrName] = attrValue;
+                }
+            });
+        } else {
+            _.forEach(inputFields, (fieldValue, fieldName) => {
+                let fieldType;
+                const primaryKeys = variable.propertiesMap.primaryFields || variable.propertiesMap.primaryKeys;
+                if (!_.isUndefined(fieldValue) && fieldValue !== '') {
+                    /*For delete action, the inputFields need to be set in the request URL. Hence compositeId is set.
+                     * For insert action inputFields need to be set in the request data. Hence rowObject is set.
+                     * For update action, both need to be set.*/
+                    if (action === 'deleteTableData') {
+                        compositeId = fieldValue;
+                    }
+                    if (action === 'updateTableData') {
+                        primaryKeys.forEach(key => {
+                            if (fieldName === key) {
+                                compositeId = fieldValue;
+                            }
+                        });
+                    }
+                    if (action !== 'deleteTableData' || LiveVariableUtils.isCompositeKey(primaryKey)) {
+                        fieldType = LiveVariableUtils.getFieldType(fieldName, variable);
+                        if (isDateTimeType(fieldType)) {
+                            fieldValue = formatDate(fieldValue, fieldType);
+                        } else if (_.isArray(fieldValue) && LiveVariableUtils.isStringType(fieldType)) {
+                            // Construct ',' separated string if param is not array type but value is an array
+                            fieldValue = _.join(fieldValue, ',');
+                        }
+                        rowObject[fieldName] = fieldValue;
+                    }
+                    // for related entities, clear the blob type fields
+                    if (_.isObject(fieldValue) && !_.isArray(fieldValue)) {
+                        _.forEach(fieldValue, (val, key) => {
+                            if (LiveVariableUtils.getFieldType(fieldName, variable, key) === 'blob') {
+                                fieldValue[key] = val === null ? val : '';
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        switch (action) {
+            case 'updateTableData':
+                prevData = options.prevData || {};
+                /*Construct the "requestData" based on whether the table associated with the live-variable has a composite key or not.*/
+                if (LiveVariableUtils.isCompositeKey(primaryKey)) {
+                    if (LiveVariableUtils.isNoPrimaryKey(primaryKey)) {
+                        prevCompositeKeysData = prevData || options.rowData || rowObject;
+                        compositeKeysData = rowObject;
+                    } else {
+                        primaryKey.forEach(key => {
+                            compositeKeysData[key] = rowObject[key];
+                            // In case of periodic update for Business temporal fields, passing updated field data.
+                            if (options.period) {
+                                prevCompositeKeysData[key] = rowObject[key];
+                            } else {
+                                prevCompositeKeysData[key] = prevData[key] || (options.rowData && options.rowData[key]) || rowObject[key];
+                            }
+                        });
+                    }
+                    options.row = compositeKeysData;
+                    options.compositeKeysData = prevCompositeKeysData;
+                } else {
+                    primaryKey.forEach((key) => {
+                        if (key.indexOf('.') === -1) {
+                            id = prevData[key] || (options.rowData && options.rowData[key]) || rowObject[key];
+                        } else {
+                            columnName = key.split('.');
+                            id = prevData[columnName[0]][columnName[1]];
+                        }
+                    });
+                    options.id = id;
+                    options.row = rowObject;
+                }
+
+                break;
+            case 'deleteTableData':
+                /*Construct the "requestData" based on whether the table associated with the live-variable has a composite key or not.*/
+                if (LiveVariableUtils.isCompositeKey(primaryKey)) {
+                    if (LiveVariableUtils.isNoPrimaryKey(primaryKey)) {
+                        compositeKeysData = rowObject;
+                    } else {
+                        primaryKey.forEach(key => {
+                            compositeKeysData[key] = rowObject[key];
+                        });
+                    }
+                    options.compositeKeysData = compositeKeysData;
+                } else if (!_.isEmpty(rowObject)) {
+                    primaryKey.forEach(key => {
+                        if (key.indexOf('.') === -1) {
+                            id = rowObject[key];
+                        } else {
+                            columnName = key.split('.');
+                            id = rowObject[columnName[0]][columnName[1]];
+                        }
+                    });
+                    options.id = id;
+                }
+                break;
+            default:
+                break;
+        }
+        // If table has blob column then send multipart data
+        if ((action === 'updateTableData' || action === 'insertTableData') && LiveVariableUtils.hasBlob(variable) && isFormDataSupported) {
+            if (action === 'updateTableData') {
+                action = 'updateMultiPartTableData';
+            } else {
+                action = 'insertMultiPartTableData';
+            }
+            rowObject = LiveVariableUtils.prepareFormData(variable, rowObject);
+        }
+        /*Check if "options" have the "compositeKeysData" property.*/
+        if (options.compositeKeysData) {
+            switch (action) {
+                case 'updateTableData':
+                    action = 'updateCompositeTableData';
+                    break;
+                case 'deleteTableData':
+                    action = 'deleteCompositeTableData';
+                    break;
+                case 'updateMultiPartTableData':
+                    action = 'updateMultiPartCompositeTableData';
+                    break;
+                default:
+                    break;
+            }
+            compositeId = LiveVariableUtils.getCompositeIDURL(options.compositeKeysData);
+        }
+        dbName = variable.liveSource;
+
+        /*Set the "data" in the request to "undefined" if there is no data.
+        * This handles cases such as "Delete" requests where data should not be passed.*/
+        if (_.isEmpty(rowObject) && action === 'deleteTableData') {
+            rowObject = undefined;
+        }
+
+        if ((action === 'updateCompositeTableData' || action === 'deleteCompositeTableData') && options.period) {
+            // capitalize first character
+            action = 'period' + action.charAt(0).toUpperCase() + action.substr(1);
+        }
+
+        const dbOperations = {
+            'projectID': projectID,
+            'service': variable._prefabName ? '' : 'services',
+            'dataModelName': dbName,
+            'entityName': variable.type,
+            'id': !_.isUndefined(options.id) ? encodeURIComponent(options.id) : compositeId,
+            'data': rowObject,
+            'url': variable._prefabName ? ($rootScope.project.deployedUrl + '/prefabs/' + variable._prefabName) : $rootScope.project.deployedUrl
+        };
+
+        onCUDerror = (response: any, reject: any) => {
+            const errMsg = response.error;
+            const advancedOptions = {xhrObj: response};
+            // EVENT: ON_RESULT
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
+            // EVENT: ON_ERROR
+            if (!options.skipNotification) {
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
+            }
+            // EVENT: ON_CAN_UPDATE
+            variable.canUpdate = true;
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, errMsg, advancedOptions);
+            triggerFn(error, errMsg);
+            reject(errMsg);
+        };
+
+        onCUDsuccess = (data: any, resolve: any) => {
+            let response = data.body;
+            const advancedOptions: AdvancedOptions = {xhrObj: data};
+
+            $queue.process(variable);
+            /* if error received on making call, call error callback */
+            if (response && response.error) {
+                // EVENT: ON_RESULT
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
+                // EVENT: ON_ERROR
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
+                // EVENT: ON_CAN_UPDATE
+                variable.canUpdate = true;
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error, advancedOptions);
+                triggerFn(error, response.error);
+                return Promise.reject(response.error);
+            }
+
+            // EVENT: ON_RESULT
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
+            if (variable.operation !== 'read') {
+                // EVENT: ON_PREPARESETDATA
+                const newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, response, advancedOptions);
+                if (newDataSet) {
+                    // setting newDataSet as the response to service variable onPrepareSetData
+                    response = newDataSet;
+                }
+                variable.dataSet = response;
+            }
+
+            // watchers should get triggered before calling onSuccess event.
+            // so that any variable/widget depending on this variable's data is updated
+            $invokeWatchers(true);
+            setTimeout(() => {
+                // EVENT: ON_SUCCESS
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, response, advancedOptions);
+                // EVENT: ON_CAN_UPDATE
+                variable.canUpdate = true;
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
+            });
+            triggerFn(success, response);
+            resolve(response);
+        };
+
+        return new Promise((resolve, reject) => {
+            this.makeCall(variable, action, dbOperations).then(data => {
+                onCUDsuccess(data, resolve);
+            }, response => {
+                onCUDerror(response, reject);
+            });
+        });
+    }
+
+
 
     private aggregateData(deployedUrl, variable, options, success, error) {
         let tableOptions,
