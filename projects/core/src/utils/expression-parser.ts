@@ -152,7 +152,7 @@ class ASTCompiler {
 
     processLiteralPrimitive() {
         const ast = this.cAst;
-        return isString(ast.value) ? `"${ast.value.replace(/"/g, '\\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
+        return isString(ast.value) ? `"${ast.value.replace(/"/g, '\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
     }
 
     processLiteralArray() {
