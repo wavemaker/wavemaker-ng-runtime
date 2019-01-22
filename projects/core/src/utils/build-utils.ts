@@ -76,7 +76,8 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmSwitch ${innerTmpl}></div>`;
             break;
         case FormWidgetType.TEXT:
-            tmpl = `<wm-input ${innerTmpl} type="${attrs.get('inputtype') || 'text'}" aria-describedby="Enter text" ${updateOnTmpl}></wm-input>`;
+            const inputType = options.inputType || 'inputtype';
+            tmpl = `<wm-input ${innerTmpl} type="${attrs.get(inputType) || 'text'}" aria-describedby="Enter text" ${updateOnTmpl}></wm-input>`;
             break;
         case FormWidgetType.TEXTAREA:
             tmpl = `<wm-textarea ${innerTmpl} role="textbox" aria-describedby="Place your text" ${updateOnTmpl}></wm-textarea>`;
