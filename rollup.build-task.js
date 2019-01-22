@@ -6,7 +6,7 @@ import compiler from '@ampproject/rollup-plugin-closure-compiler';
 
 export default [
     {
-        input: 'libraries/build-task/fesm2015/components.js',
+        input: 'libraries/build-task/fesm2015/index.js',
         output: {
             file: 'dist/codegen/build-task.cjs.js',
             format: 'cjs'
@@ -21,8 +21,8 @@ export default [
                 ignoreGlobal: true
             }),
             alias({
-                '@wm/core': 'libraries/core/fesm5/core.js',
-                '@wm/transpiler': 'libraries/transpiler/fesm5/transpiler.js'
+                '@wm/core': 'libraries/core/fesm5/index.js',
+                '@wm/transpiler': 'libraries/transpiler/fesm5/index.js'
             }),
             compiler({
                 formatting: 'PRETTY_PRINT'
@@ -31,8 +31,8 @@ export default [
     },
     {
         input: [
-            'libraries/build-task/fesm2015/components.js',
-            'libraries/mobile-build-task/fesm2015/mobile-components.js'
+            'libraries/build-task/fesm2015/index.js',
+            'libraries/mobile-build-task/fesm2015/index.js'
         ],
         output: {
             file: 'dist/codegen/mobile-build-task.cjs.js',
@@ -49,8 +49,8 @@ export default [
                 ignoreGlobal: true
             }),
             alias({
-                '@wm/core': 'libraries/core/fesm5/core.js',
-                '@wm/transpiler': 'libraries/transpiler/fesm5/transpiler.js'
+                '@wm/core': 'libraries/core/fesm5/index.js',
+                '@wm/transpiler': 'libraries/transpiler/fesm5/index.js'
             }),
             compiler({
                 formatting: 'PRETTY_PRINT'

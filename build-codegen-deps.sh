@@ -15,4 +15,3 @@ tar -cf dist/codegen/app-skeleton.tar \
     tsconfig.json \
     tsconfig.web-app.json
 
-tar -cf dist/codegen/node_modules.tar ./node_modules/
