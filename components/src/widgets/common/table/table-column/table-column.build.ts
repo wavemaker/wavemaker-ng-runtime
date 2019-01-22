@@ -44,7 +44,8 @@ const getFilterTemplate = (attrs, pCounter)  => {
     const type = attrs.get('type') || 'string';
     const innerTmpl = `#filterWidget formControlName="${fieldName + '_filter'}" change.event="changeFn('${fieldName}')"
                         disabled.bind="isDisabled('${fieldName}')"`;
-    const widgetTmpl = `${getFormWidgetTemplate(widget, innerTmpl, attrs)}`;
+    const options = {inputType: 'filterinputtype'} ;
+    const widgetTmpl = `${getFormWidgetTemplate(widget, innerTmpl, attrs, options)}`;
 
     return `<ng-template #filterTmpl let-changeFn="changeFn" let-isDisabled="isDisabled">
     <div class="input-group ${widget}" data-col-identifier="${fieldName}">
@@ -114,6 +115,7 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?, pCounter?) => {
         formControl = isNewRow ? `formControlName="${fieldName}_new"` : `formControlName="${fieldName}"`;
         wmFormWidget = 'wmFormWidget';
     }
+    options.inputType = 'editinputtype';
     const tmplRef = isNewRow ? '#inlineWidgetTmplNew' : '#inlineWidgetTmpl';
     const eventsTmpl = widget === FormWidgetType.UPLOAD ? '' : getEventsTmpl(attrs);
     const rowPropsTl = getInlineEditRowPropsTmpl(attrs);
