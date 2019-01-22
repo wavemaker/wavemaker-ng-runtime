@@ -5,6 +5,7 @@ import { getWmProjectProperties } from './wm-project-properties';
 import { $watch } from './watcher';
 import { DataType } from '../enums/enums';
 import { DataSource } from '../types/types';
+import { setAttr } from './dom';
 
 declare const _, X2JS;
 declare const moment;
@@ -1125,5 +1126,22 @@ const DEFAULT_DISPLAY_FORMATS = {
 // This method returns the display date format for given type
 export const getDisplayDateTimeFormat = type => {
     return DEFAULT_DISPLAY_FORMATS[_.toUpper(type)];
+};
+
+// Generate for attribute on label and ID on input element, so that label elements are associated to form controls
+export const addForIdAttributes = (element: HTMLElement) => {
+    const labelEl = element.querySelectorAll('label.control-label');
+    let inputEl = element.querySelectorAll('[focus-target]');
+    if (!inputEl.length) {
+        inputEl = element.querySelectorAll('input, select, textarea');
+    }
+    /*if there are only one input el and label El add id and for attribute*/
+    if (labelEl.length && inputEl.length) {
+        const widgetId = $(inputEl[0] as HTMLElement).closest('[widget-id]').attr('widget-id');
+        if (widgetId) {
+            setAttr(inputEl[0] as HTMLElement, 'id', widgetId);
+            setAttr(labelEl[0] as HTMLElement, 'for', widgetId);
+        }
+    }
 };
 

@@ -165,7 +165,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
 
         this.widgetId = this.generateWidgetId();
-        setAttr(this.nativeElement, 'widget-id', this.widgetId);
+        setAttr(this.nativeElement, 'widget-id', this.widgetId, true);
 
         // register default property change handler and style change handler
         this.registerStyleChangeListener(this.onStyleChange, this);

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes } from '@wm/core';
 
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
@@ -448,6 +448,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
             // Register the form field with parent form
             this.form.registerFormFields(this.widget);
+
+            addForIdAttributes(this.nativeElement);
         });
     }
 }

@@ -1,6 +1,6 @@
 import { AfterViewInit, ContentChildren, Directive, Injector } from '@angular/core';
 
-import { setAttr, switchClass } from '@wm/core';
+import { addForIdAttributes, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig, WidgetRef } from '../../framework/types';
@@ -72,16 +72,7 @@ export class CompositeDirective extends StylableComponent implements AfterViewIn
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        const labelEl = this.nativeElement.querySelectorAll('label.control-label'),
-            inputEl = this.nativeElement.querySelectorAll('input, select, textarea');
-        /*if there are only one input el and label El add id and for attribute*/
-        if (labelEl.length === 1 && inputEl.length === 1) {
-            const widgetId = $(inputEl[0] as HTMLElement).closest('[widget-id]').attr('widget-id');
-            if (widgetId) {
-                setAttr(inputEl[0] as HTMLElement, 'id', widgetId);
-                setAttr(labelEl[0] as HTMLElement, 'for', widgetId);
-            }
-        }
+        addForIdAttributes(this.nativeElement);
 
         this.assignRequiredToSubComponents();
     }
