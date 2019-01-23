@@ -445,6 +445,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         // make the call and return a promise to the user to support script calls made by users
         return new Promise((resolve, reject) => {
+            requestParams.responseType = 'text'; // this is to return text response. JSON & XML-to-JSON parsing is handled in success handler.
             this.httpCall(requestParams, variable).then((response) => {
                 successHandler(response, resolve);
             }, (error) => {
