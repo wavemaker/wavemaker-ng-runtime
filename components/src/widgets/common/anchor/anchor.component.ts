@@ -53,9 +53,9 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
         styler(this.nativeElement, this);
     }
 
-    protected processEventAttr(eventName: string, expr: string) {
+    protected processEventAttr(eventName: string, expr: string, meta?: string) {
 
-        super.processEventAttr(eventName, expr);
+        super.processEventAttr(eventName, expr, meta);
 
         if (!this.hasNavigationToCurrentPageExpr) {
             const app = this.inj.get(App);
