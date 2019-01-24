@@ -26,6 +26,15 @@ registerProps();
 })
 export class SliderComponent extends BaseFormCustomComponent {
 
+    public minvalue: number;
+    public maxvalue: number;
+    public disabled: boolean;
+    public step: number;
+    public shortcutkey: string;
+    public tabindex: any;
+    public name: string;
+    public readonly: boolean;
+
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {
@@ -40,7 +49,7 @@ export class SliderComponent extends BaseFormCustomComponent {
         }
     }
 
-    protected handleChange(newVal: boolean) {
+    public handleChange(newVal: boolean) {
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 

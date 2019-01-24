@@ -26,7 +26,13 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class NumberComponent extends NumberLocale {
-
+    public required: boolean;
+    public regexp: string;
+    public disabled: boolean;
+    public name: string;
+    public tabindex: any;
+    public shortcutkey: string;
+    public autofocus: boolean;
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 

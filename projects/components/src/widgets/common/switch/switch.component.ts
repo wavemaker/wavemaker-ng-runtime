@@ -29,8 +29,10 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     selectedItem: DataSetItem;
     iconclass;
     private btnwidth;
-    private disabled: boolean;
+    public disabled: boolean;
+    public required: boolean;
     private _debounceSetSelectedValue: Function;
+    public name: string;
 
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);

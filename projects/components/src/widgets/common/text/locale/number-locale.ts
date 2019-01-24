@@ -16,10 +16,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     private proxyModel: number;
     private numberNotInRange: boolean;
     private isInvalidNumber: boolean;
-    private displayValue: string;
+    public displayValue: string;
     private numberfilter: string;
     private localefilter: string;
-    private readonly: boolean;
+    public readonly: boolean;
 
     public placeholder: string;
     public minvalue: number;
@@ -190,7 +190,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @param $event keyboard event.
      * @param key identifier to increase or decrease the number.
      */
-    protected onArrowPress($event, key) {
+    public onArrowPress($event, key) {
         $event.preventDefault();
         if (this.readonly || this.step === 0) {
             return;
@@ -247,7 +247,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         return null;
     }
 
-    protected validateInputEntry($event) {
+    public validateInputEntry($event) {
 
         // allow actions if control key is pressed or if backspace is pressed. (for Mozilla).
         if ($event.ctrlKey || _.includes(['Backspace', 'ArrowRight', 'ArrowLeft', 'Tab'], $event.key)) {

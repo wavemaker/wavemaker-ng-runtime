@@ -25,7 +25,12 @@ registerProps();
     ]
 })
 export class AudioComponent extends StylableComponent {
-
+    public mp3format: string;
+    public muted: boolean;
+    public controls: boolean;
+    public loop: boolean;
+    public audiopreload: any;
+    public audiosupportmessage: any;
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

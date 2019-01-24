@@ -30,6 +30,13 @@ registerProps();
 export class CurrencyComponent extends NumberLocale {
     currency: string;
     currencySymbol: string;
+    public required: boolean;
+    public regexp: any;
+    public disabled: boolean;
+    public autofocus: boolean;
+    public name: string;
+    public tabindex: any;
+    public shortcutkey: string;
 
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: ElementRef}) inputEl: ElementRef;

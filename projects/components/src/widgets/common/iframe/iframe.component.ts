@@ -30,14 +30,16 @@ export class IframeComponent extends StylableComponent {
     public iframesrc: string;
     public encodeurl: boolean;
 
-    private _iframesrc: SafeResourceUrl;
+    public _iframesrc: SafeResourceUrl;
     private errorMsg: string;
     private hintMsg: string;
 
+    public caption: any;
+    public name: string;
     /**
      * this property member is set to true when the content request url doesn't match windows protocol
      */
-    private showContentLoadError = false;
+    public showContentLoadError = false;
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);

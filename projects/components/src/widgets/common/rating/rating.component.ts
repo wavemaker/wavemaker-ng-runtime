@@ -32,10 +32,13 @@ export class RatingComponent extends DatasetAwareFormComponent {
     public maxvalue;
 
     private _selectedRatingValue;
-    private ratingsWidth;
+    public ratingsWidth;
     private ratingItems;
     private _id;
 
+    public iconsize: string;
+    public iconcolor: string;
+    public onFocus: any;
     @ViewChild('ratingInput', {read: ElementRef}) ratingEl: ElementRef;
 
     get selectedRatingValue() {

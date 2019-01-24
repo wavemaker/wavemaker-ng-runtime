@@ -18,7 +18,7 @@ interface SPINNER {
     encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements DoCheck {
-    private startApp = false;
+    public startApp = false;
     public isApplicationType = false;
 
     spinner: SPINNER = {show: false, messages: []};

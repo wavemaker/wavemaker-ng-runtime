@@ -50,8 +50,14 @@ const unStringify = (val, defaultVal?) => {
 })
 export class CheckboxComponent extends BaseFormCustomComponent implements OnInit, AfterViewInit {
 
-    private proxyModel: boolean;
-    private _caption = '&nbsp';
+    public proxyModel: boolean;
+    public disabled: boolean;
+    public readonly: boolean;
+    public required: boolean;
+    public name: string;
+    public shortcutkey: string;
+    public tabindex: any;
+    public _caption = '&nbsp';
     private _checkedvalue;
     private _uncheckedvalue;
 

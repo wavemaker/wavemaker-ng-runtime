@@ -31,6 +31,16 @@ export class VideoComponent extends StylableComponent {
      * subtitle language property eg: en
      */
     public subtitlelang = 'en';
+    public videopreload: any;
+    public mp4format: string;
+    public muted: boolean;
+    public videoposter: any;
+    public controls: boolean;
+    public loop: boolean;
+    public autoplay: boolean;
+    public webmformat: string;
+    public oggformat: string;
+    public videosupportmessage: any;
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);

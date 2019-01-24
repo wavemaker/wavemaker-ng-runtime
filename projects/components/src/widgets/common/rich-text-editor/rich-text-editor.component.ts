@@ -60,6 +60,9 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
     _operationStack = [];
     isEditorLoaded = false;
 
+    public showpreview: any;
+    public disabled: boolean;
+
     EDITOR_DEFAULT_OPTIONS = {
         toolbar: [
             // [groupName, [list of button]]

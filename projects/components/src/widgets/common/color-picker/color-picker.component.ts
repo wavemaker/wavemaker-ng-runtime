@@ -29,6 +29,14 @@ registerProps();
 })
 export class ColorPickerComponent extends BaseFormCustomComponent {
 
+    public required: boolean;
+    public readonly: boolean;
+    public disabled: boolean;
+    public name: string;
+    public placeholder: any;
+    public tabindex: any;
+    public shortcutkey: string;
+
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: ElementRef}) inputEl: ElementRef;
 
@@ -38,7 +46,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     }
 
     // To remove space occupied by colorpicker when it is closed
-    private colorPickerToggleChange(isOpen: boolean) {
+    public colorPickerToggleChange(isOpen: boolean) {
         const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
         (!isOpen) ? addClass(colorPickerContainer, 'hidden') : removeClass(colorPickerContainer, 'hidden');
     }
@@ -50,7 +58,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
         }
     }
 
-    protected handleChange(newVal: boolean) {
+    public handleChange(newVal: boolean) {
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 

@@ -26,7 +26,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
         }
     }
 
-    protected invokeOnChange(value, $event?: Event | any, valid?: boolean) {
+    public invokeOnChange(value, $event?: Event | any, valid?: boolean) {
         // let the angular know about the change
         this._onChange(value);
 
@@ -35,7 +35,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
         }
     }
 
-    protected invokeOnTouched($event?: Event) {
+    public invokeOnTouched($event?: Event) {
         this._onTouched();
 
         if ($event) {

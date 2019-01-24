@@ -23,6 +23,18 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class InputEmailComponent extends BaseInput {
 
+    public required: boolean;
+    public maxchars: number;
+    public disabled: boolean;
+    public name: string;
+    public readonly: boolean;
+    public tabindex: any;
+    public shortcutkey: string;
+    public autofocus: boolean;
+    public autocomplete: any;
+    public regexp: string;
+    public placeholder: any;
+
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 

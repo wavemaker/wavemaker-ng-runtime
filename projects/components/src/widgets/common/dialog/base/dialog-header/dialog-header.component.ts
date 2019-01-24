@@ -23,7 +23,7 @@ export class DialogHeaderComponent {
     @Input() public heading: string;
     @Input() public subheading: string;
 
-    private get isClosable() {
+    public get isClosable() {
         return toBoolean(this.closable);
     }
 

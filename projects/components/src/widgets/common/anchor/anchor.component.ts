@@ -39,7 +39,10 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
     public hyperlink;
     public iconheight: string;
     public iconwidth: string;
-
+    public iconurl: string;
+    public iconclass: string;
+    public caption: any;
+    public badgevalue: string;
     @HostBinding('target') target: string;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;

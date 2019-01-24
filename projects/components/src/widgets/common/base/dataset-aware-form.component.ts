@@ -28,7 +28,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     public displayValue: Array<string> | string;
 
-    protected datasetItems: DataSetItem[] = [];
+    public datasetItems: DataSetItem[] = [];
     public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
     protected dataset$ = new Subject();
     protected datavalue$ = new Subject();
@@ -43,12 +43,12 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected allowempty = true;
     public compareby: any;
 
-    protected get modelByKey() {
+    public get modelByKey() {
         return this._modelByKey;
     }
 
     // triggers on ngModel change. This function extracts the datavalue value.
-    protected set modelByKey(val: any) {
+    public set modelByKey(val: any) {
         this.selectByKey(val);
 
         // invoke on datavalue change.

@@ -33,7 +33,8 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
     public show: boolean;
     private picture: string;
     private _spinnerMessages;
-    private showCaption = true;
+    public showCaption = true;
+    public type: any;
 
     public get spinnerMessages() {
         return this._spinnerMessages;

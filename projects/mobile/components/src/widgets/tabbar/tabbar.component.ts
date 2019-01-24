@@ -28,7 +28,12 @@ interface TabItem {
 export class MobileTabbarComponent extends StylableComponent implements AfterViewInit, OnDestroy {
 
     public tabItems = [];
-    public layout = {};
+    public layout: any = {};
+    public position: any;
+    public bottom: any;
+    public morebuttoniconclass: any;
+    public morebuttonlabel: any;
+    public showMoreMenu: any;
 
     private readonly _layouts = [
         {minwidth: 2048, max: 12},

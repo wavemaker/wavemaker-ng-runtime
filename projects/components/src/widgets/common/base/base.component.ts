@@ -77,7 +77,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     /**
      * App Locale
      */
-    protected readonly appLocale: any;
+    public readonly appLocale: any;
 
     /**
      * Style change subject and observable
@@ -108,7 +108,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * context of the widget
      * when the widget is preset inside a repeater this context will have the repeater related properties
      */
-    protected context: any;
+    public context: any;
 
     /**
      * Initial state of the widget.

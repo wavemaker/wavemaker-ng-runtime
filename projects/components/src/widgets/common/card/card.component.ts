@@ -22,7 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class CardComponent extends MenuAdapterComponent implements OnInit, AfterViewInit {
-    private showHeader: boolean;
+    public showHeader: boolean;
 
     public title: string;
     public subheading: string;

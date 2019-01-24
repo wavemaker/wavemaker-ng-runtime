@@ -25,6 +25,10 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class ButtonComponent extends StylableComponent {
 
+    public iconurl: string;
+    public iconclass: string;
+    public caption: string;
+    public badgevalue: string;
     @HostBinding('type') type: string;
     @HostBinding('tabIndex') tabindex: number;
     @HostBinding('disabled') disabled: boolean;

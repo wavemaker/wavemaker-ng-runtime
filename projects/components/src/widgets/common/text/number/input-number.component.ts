@@ -23,6 +23,19 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class InputNumberComponent extends BaseInput {
 
+    public required: boolean;
+    public maxchars: number;
+    public disabled: boolean;
+    public name: string;
+    public readonly: boolean;
+    public minvalue: number;
+    public maxvalue: number;
+    public tabindex: any;
+    public placeholder: any;
+    public shortcutkey: string;
+    public autofocus: boolean;
+    public autocomplete: any;
+
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
@@ -38,7 +51,7 @@ export class InputNumberComponent extends BaseInput {
         }
     }
 
-    private validateInputEntry($event) {
+    public validateInputEntry($event) {
         if ($event.key === 'e' &&  $event.target.value.indexOf($event.key) !== -1) {
             return false;
         }

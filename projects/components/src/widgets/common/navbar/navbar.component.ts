@@ -21,6 +21,9 @@ declare const $;
 })
 export class NavbarComponent extends StylableComponent implements AfterViewInit {
 
+    public menuiconclass: any;
+    public title: string;
+    public imgsrc: string;
     @ViewChild('navContent') private navContent: ElementRef;
 
     constructor(inj: Injector) {

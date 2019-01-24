@@ -26,6 +26,7 @@ export class MessageComponent extends StylableComponent {
     messageIconClass = '';
     type = '';
     caption: string;
+    public hideclose: any;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -46,7 +47,7 @@ export class MessageComponent extends StylableComponent {
         this.setWidgetProperty('show', false);
     }
 
-    private dismiss($event) {
+    public dismiss($event) {
         this.hideMessage();
         this.invokeEventCallback('close', {$event});
     }

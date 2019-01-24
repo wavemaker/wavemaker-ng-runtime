@@ -23,6 +23,20 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class InputTextComponent extends BaseInput {
 
+    public required: boolean;
+    public maxchars: number;
+    public regexp: string;
+    public displayformat: string;
+    public disabled: boolean;
+    public type: any;
+    public name: string;
+    public readonly: boolean;
+    public tabindex: any;
+    public placeholder: any;
+    public shortcutkey: string;
+    public autofocus: boolean;
+    public autocomplete: any;
+
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 

@@ -34,7 +34,7 @@ export class MenuDropdownItemComponent implements OnInit {
     private readonly nativeElement;
 
     constructor(
-        private menuRef: MenuComponent,
+        public menuRef: MenuComponent,
         private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Optional() private parentNav: NavComponent,
         elRef: ElementRef,

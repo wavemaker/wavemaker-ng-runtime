@@ -33,6 +33,7 @@ export class WizardStepDirective extends BaseComponent {
 
     public show: boolean;
     public name: string;
+    public enableskip: any;
 
     public disablenext: boolean;
     public disabledone: boolean;

@@ -52,7 +52,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private dataNavigatorWatched: boolean;
     private datasource: any;
     private showNavigation: boolean;
-    private noDataFound: boolean;
+    public noDataFound: boolean;
     private debouncedFetchNextDatasetOnScroll: Function;
     private reorderProps: any;
     private app: any;
@@ -102,8 +102,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private propsInitPromise: Promise<any>;
     private $ulEle: any;
     private _listAnimator: ListAnimator;
-    private pulltorefresh: boolean;
+    public pulltorefresh: boolean;
     private cancelSubscription: Function;
+
+    public title: string;
+    public subheading: string;
+    public iconclass: string;
+    public listclass: any;
 
     public get selecteditem() {
         if (this.multiselect) {

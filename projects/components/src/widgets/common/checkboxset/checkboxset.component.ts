@@ -37,9 +37,11 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
     public handleHeaderClick: ($event) => void;
     private toggleAllHeaders: void;
 
+    public disabled: boolean;
+
     constructor(
         inj: Injector,
-        @Attribute('groupby') protected groupby: string,
+        @Attribute('groupby') public groupby: string,
         private appDefaults: AppDefaults,
         public datePipe: ToDatePipe
     ) {

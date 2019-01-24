@@ -25,6 +25,13 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     public readonly: boolean;
     public placeholder: string;
+    public navsearchbar: any;
+    public class: any;
+    public required: boolean;
+    public disabled: boolean;
+    public tabindex: any;
+    public name: string;
+    public autofocus: boolean;
 
     @ViewChild('select', {read: ElementRef}) selectEl: ElementRef;
 

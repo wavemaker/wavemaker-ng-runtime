@@ -43,6 +43,8 @@ export class CameraComponent extends StylableComponent {
     public localFile: any;
     public localFilePath: string;
     public savetogallery: boolean;
+    public iconsize: any;
+    public iconclass: any;
 
     private _cameraOptions: any;
 

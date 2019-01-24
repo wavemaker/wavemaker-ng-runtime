@@ -23,6 +23,10 @@ export class BarcodeScannerComponent extends StylableComponent {
 
     public barcodeformat: string;
     public datavalue: string;
+    public iconclass: any;
+    public iconsize: any;
+    public caption: any;
+    
 
     constructor(private scanner: BarcodeScanner, inj: Injector) {
         super(inj, WIDGET_CONFIG);

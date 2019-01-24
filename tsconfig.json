@@ -115,15 +115,105 @@
                 "libraries/runtime-dynamic/*"
             ],
             "@wm/mobile/runtime": [
-                "libraries/mobile/runtime"
+                "libraries/mobile/placeholder"
             ],
             "@wm/mobile/runtime/*": [
-                "libraries/mobile/runtime/*"
+                "libraries/mobile/placeholder/*"
             ],
             "@wm/mobile/placeholder": [
                 "libraries/mobile/placeholder"
             ],
             "@wm/mobile/placeholder/*": [
+                "libraries/mobile/placeholder/*"
+            ],
+            "core": [
+                "libraries/core"
+            ],
+            "core/*": [
+                "libraries/core/*"
+            ],
+            "components": [
+                "libraries/components"
+            ],
+            "components/*": [
+                "libraries/components/*"
+            ],
+            "transpiler": [
+                "libraries/transpiler"
+            ],
+            "transpiler/*": [
+                "libraries/transpiler/*"
+            ],
+            "security": [
+                "libraries/security"
+            ],
+            "security/*": [
+                "libraries/security/*"
+            ],
+            "http-service": [
+                "libraries/http-service"
+            ],
+            "http-service": [
+                "libraries/http-service/*"
+            ],
+            "oAuth": [
+                "libraries/oAuth"
+            ],
+            "Auth/*": [
+                "libraries/oAuth/*"
+            ],
+            "variables": [
+                "libraries/variables"
+            ],
+            "variables/*": [
+                "libraries/variables/*"
+            ],
+            "mobile-core": [
+                "libraries/mobile/core"
+            ],
+            "mobile-core/*": [
+                "libraries/mobile/core/*"
+            ],
+            "mobile-components": [
+                "libraries/mobile/components"
+            ],
+            "mobile-components/*": [
+                "libraries/mobile/components/*"
+            ],
+            "mobile-offline": [
+                "libraries/mobile/offline"
+            ],
+            "mobile-offline/*": [
+                "libraries/mobile/offline/*"
+            ],
+            "mobile-variables": [
+                "libraries/mobile/variables"
+            ],
+            "mobile-variables/*": [
+                "libraries/mobile/variables/*"
+            ],
+            "runtime-base": [
+                "libraries/runtime-base"
+            ],
+            "runtime-base/*": [
+                "libraries/runtime-base/*"
+            ],
+            "runtime-dynamic": [
+                "libraries/runtime-dynamic"
+            ],
+            "runtime-dynamic/*": [
+                "libraries/runtime-dynamic/*"
+            ],
+            "mobile-runtime": [
+                "libraries/mobile/placeholder"
+            ],
+            "mobile-runtime/*": [
+                "libraries/mobile/placeholder/*"
+            ],
+            "mobile-placeholder": [
+                "libraries/mobile/placeholder"
+            ],
+            "mobile-placeholder/*": [
                 "libraries/mobile/placeholder/*"
             ]
         }

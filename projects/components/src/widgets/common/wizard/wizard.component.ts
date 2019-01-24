@@ -31,8 +31,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     public message: {caption: string, type: string};
     public currentStep: WizardStepDirective;
 
-    private stepClass: string;
+    public stepClass: string;
     private readonly promiseResolverFn: Function;
+    public actionsalignment: any;
+    public cancelable: any;
 
     get hasPrevStep(): boolean {
         return !this.isFirstStep(this.currentStep);

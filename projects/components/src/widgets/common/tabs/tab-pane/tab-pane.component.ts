@@ -30,6 +30,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     public $lazyLoad = noop;
     public name: string;
     public show: boolean;
+    public smoothscroll: any;
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disabled') disabled = false;

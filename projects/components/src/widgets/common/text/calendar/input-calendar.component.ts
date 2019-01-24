@@ -23,6 +23,20 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class InputCalendarComponent extends BaseInput {
 
+    public required: boolean;
+    public disabled: boolean;
+    public type: string;
+    public name: string;
+    public readonly: string;
+    public minvalue: any;
+    public maxvalue: any;
+    public step: number;
+    public tabindex: any;
+    public placeholder: any;
+    public shortcutkey: string;
+    public autofocus: boolean;
+    public autocomplete: any;
+    
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 

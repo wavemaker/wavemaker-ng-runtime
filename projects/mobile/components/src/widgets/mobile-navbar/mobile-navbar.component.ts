@@ -28,6 +28,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
     public leftNavPanel: LeftPanelDirective;
     public showLeftnavbtn: boolean;
     public showSearchbar: boolean;
+    public backbuttoniconclass: any;
 
     private _backBtnListenerDestroyer;
 
@@ -142,7 +143,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
     }
 
     // goto previous view or page
-    private goBacktoPreviousView($event) {
+    public goBacktoPreviousView($event) {
         if (this.defaultview === 'actionview') {
             // switches the view from search to action or action to search.
             this.switchView('actionview');

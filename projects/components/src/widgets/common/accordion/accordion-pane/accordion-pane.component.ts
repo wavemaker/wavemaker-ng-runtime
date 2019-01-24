@@ -23,7 +23,13 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass:
     ]
 })
 export class AccordionPaneComponent extends StylableComponent implements AfterViewInit {
-    private isActive = false;
+    public isActive = false;
+    public iconclass: string;
+    public title: any;
+    public subheading: string;
+    public badgetype: any;
+    public badgevalue: string;
+    public smoothscroll: any;
     private $lazyLoad = noop;
 
     public name: string;

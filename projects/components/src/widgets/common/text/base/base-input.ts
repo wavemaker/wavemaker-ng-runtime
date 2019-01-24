@@ -12,7 +12,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     // possible values for ngModelOptions are 'blur' and 'change'
     // default is 'blur'
-    protected ngModelOptions = {
+    public ngModelOptions = {
         updateOn: ''
     };
 
@@ -47,7 +47,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     }
 
     // invoke the change callback
-    protected handleChange(newValue: any) {
+    handleChange(newValue: any) {
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 
@@ -59,7 +59,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     }
 
     // invoke the blur callback
-    protected handleBlur($event) {
+    handleBlur($event) {
         this.invokeOnTouched($event);
     }
 

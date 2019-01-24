@@ -79,6 +79,8 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     private menuCaret = 'fa-caret-down';
     private _selectFirstItem = false;
 
+    public type: any;
+
     @HostListener('onShown') onShow() {
         if (this._selectFirstItem) {
             setTimeout(() => {

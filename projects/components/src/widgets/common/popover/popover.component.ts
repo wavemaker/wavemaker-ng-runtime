@@ -38,12 +38,12 @@ let activePopover: PopoverComponent;
 })
 
 export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
-    private event: string;
-    private isOpen = false;
+    public event: string;
+    public isOpen = false;
     private closePopoverTimeout;
-    private readonly popoverContainerCls;
+    public readonly popoverContainerCls;
     private keyEventPlugin;
-    private canPopoverOpen = true;
+    public canPopoverOpen = true;
 
     public interaction: string;
     public popoverarrow: boolean;
@@ -53,6 +53,11 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public contentsource: string;
     public content: string;
     public popoverplacement: string;
+
+    public class: string;
+    public title: string;
+    public tabindex: any;
+    public name: string;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor') anchorRef: ElementRef;
@@ -169,7 +174,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         this.bsPopoverDirective.show();
     }
 
-    private onPopoverAnchorKeydown($event) {
+    onPopoverAnchorKeydown($event) {
         // if there is no content available, the popover should not open through enter key. So checking whether the canPopoverOpen flag is true or not.
         if (!this.canPopoverOpen) {
            return;

@@ -28,7 +28,7 @@ const WIDGET_CONFIG = {
 
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit {
 
-    selectedFiles = {};
+    selectedFiles: any;
     progressObservable;
     name;
     multiple;

@@ -34,7 +34,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public transition: string;
     public tabsposition: string;
 
-    private vertical: boolean;
+    public vertical: boolean;
+    public justified: boolean;
     private activeTab: TabPaneComponent;
     private readonly promiseResolverFn: Function;
     private tabsAnimator: TabsAnimator;

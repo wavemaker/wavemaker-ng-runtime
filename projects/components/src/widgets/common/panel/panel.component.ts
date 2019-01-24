@@ -35,7 +35,8 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     public subheading: string;
     public actions: any;
 
-    private helpClass = '';
+    public helpClass = '';
+    public helptext = '';
     private fullScreenTitle: string;
     private expandCollapseTitle: string;
 
@@ -47,12 +48,12 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     private hasFooter: boolean;
 
     // conditions to show the footer
-    protected get hideFooter () {
+    public get hideFooter () {
         return !this.hasFooter || !this.expanded;
     }
 
     // conditions to show header
-    protected get showHeader() {
+    public get showHeader() {
         return this.iconurl || this.iconclass || this.collapsible || this.actions || this.title || this.subheading || this.enablefullscreen;
     }
 

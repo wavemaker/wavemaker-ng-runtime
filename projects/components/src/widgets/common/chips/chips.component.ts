@@ -33,8 +33,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     public allowonlyselect: boolean;
     public enablereorder: boolean;
     public maxsize: number;
+    public inputwidth: any;
 
-    private chipsList: Array<any> = [];
+    public chipsList: Array<any> = [];
     private readonly maxSizeReached = 'Max size reached';
     private saturate: boolean;
     private nextItemIndex: number;
@@ -261,7 +262,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // Triggerred when typeahead option is selected by enter keypress.
-    private onSelect($event: Event) {
+    public onSelect($event: Event) {
         // when matches are available, select the active match.
         if (this.searchComponent.typeaheadContainer && this.searchComponent.liElements.length) {
             this.searchComponent.typeaheadContainer.selectActiveMatch();
@@ -410,13 +411,13 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         $event.preventDefault();
     }
 
-    private onTextDelete($event: Event) {
+    public onTextDelete($event: Event) {
         if (isAppleProduct) {
             this.onInputClear($event);
         }
     }
 
-    private onInputClear($event: Event) {
+    public onInputClear($event: Event) {
         if (!this.chipsList || !this.chipsList.length || this.searchComponent.query) {
             return;
         }
@@ -438,7 +439,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.removeItem($event, $item, $index);
     }
 
-    private onArrowLeft($item?: DataSetItem, $index?: number) {
+    public onArrowLeft($item?: DataSetItem, $index?: number) {
         if (this.readonly) {
             return;
         }
@@ -456,7 +457,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
     }
 
-    private onArrowRight($item?: DataSetItem, $index?: number) {
+    public onArrowRight($item?: DataSetItem, $index?: number) {
         if (this.readonly) {
             return;
         }

@@ -89,6 +89,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     @ContentChildren(WidgetRef, {descendants: true}) componentRefs;
 
     autoupdate;
+    public formlayout: any;
     captionAlignClass: string;
     validationtype: string;
     captionalign: string;

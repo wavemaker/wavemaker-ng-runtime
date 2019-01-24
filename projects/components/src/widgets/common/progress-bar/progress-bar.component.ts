@@ -58,7 +58,7 @@ export class ProgressBarComponent extends StylableComponent {
     private readonly hasDataset: boolean;
 
     // progress-bar data, ngFor in the template iterates on this
-    private data: Array<IProgressInfo> = [{
+    public data: Array<IProgressInfo> = [{
         cls: TYPE_CLASS_MAP.default,
         progressBarWidth: '0%',
         displayValue: '0'

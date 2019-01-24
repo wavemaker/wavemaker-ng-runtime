@@ -146,7 +146,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             viewRender: this.viewRender.bind(this)
         }
     };
-    private mobileCalendar: boolean;
+    public mobileCalendar: boolean;
     private view: string;
     private dayClass: Array<any> = [];
 

@@ -131,7 +131,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     private _resizeFn: any;
     private chart: any;
     private clearCanvas: boolean;
-    private isLoadInProgress: boolean;
+    public isLoadInProgress: boolean;
     private filterFields: boolean | any;
     private dataset: any;
     private axisoptions: any;
@@ -142,7 +142,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     private xDataKeyArr: any = [];
     private xAxisDataType: string;
     private bubblesize: any;
-    private showNoDataMsg: any;
+    public showNoDataMsg: any;
     private sampleData: any[];
     private chartData: any[] = [];
 

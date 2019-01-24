@@ -23,6 +23,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class IconComponent extends StylableComponent {
 
+    public iconclass: any;
+    public caption: string;
     @HostBinding('attr.icon-position') iconposition: string;
     @HostBinding('style.fontSize') iconsize: string;
 

@@ -38,6 +38,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public showsearchicon: boolean;
     public minchars: number;
     public type: string;
+    public navsearchbar: any;
 
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
