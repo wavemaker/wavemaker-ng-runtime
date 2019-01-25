@@ -120,11 +120,13 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
     const regex = new RegExp('(' + parentDataSet + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
     let currentItemRegEx;
     let currentItemWidgetsRegEx;
+    let formWidgetsRegex;
     let nodes: Array<Element>;
 
     if (widgetName) {
         currentItemRegEx = new RegExp(`(Widgets.${widgetName}.currentItem)\\b`, 'g');
         currentItemWidgetsRegEx = new RegExp(`(Widgets.${widgetName}.currentItemWidgets)\\b`, 'g');
+        formWidgetsRegex = new RegExp(`(Widgets.(.*).(formWidgets|filterWidgets))\\b`, 'g');
     }
 
     if (!_.isArray(rootNode)) {
@@ -147,6 +149,10 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     }
                     // Replace item if widget property is bound to livelist currentItem
                     if (currentItemRegEx && currentItemRegEx.test(value)) {
+                        // Change value from 'bind:Widgets.formName.formWidgets.listName.currentItem' to 'bind:Widgets.listName.currentItem'
+                        if (value.includes('.formWidgets') || value.includes('.filterWidgets')) {
+                            value = value.replace(formWidgetsRegex, 'Widgets');
+                        }
                         value = value.replace(currentItemRegEx, referenceName);
                     }
                     if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
