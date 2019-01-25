@@ -43,7 +43,10 @@ export class HtmlDirective extends StylableComponent implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        if (!this.content && !this.boundContent && this.nativeElement.innerHTML) {
+        if (this.boundContent) {
+            this.nativeElement.innerHTML = '';
+        }
+        if (!this.content && this.nativeElement.innerHTML) {
             this.content = this.nativeElement.innerHTML;
         }
     }
