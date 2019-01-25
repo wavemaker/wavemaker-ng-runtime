@@ -25,8 +25,6 @@ const FILE_TYPES = {
     'audio' : 'audio/*'
 };
 
-registerProps();
-
 @Directive({
     selector: '[wmFormField]',
     exportAs: 'wmFormField',
@@ -37,6 +35,7 @@ registerProps();
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
+    static initializeProps = registerProps();
 
     @ContentChild('formWidget') formWidget;
     @ContentChild('formWidgetMax') formWidgetMax;

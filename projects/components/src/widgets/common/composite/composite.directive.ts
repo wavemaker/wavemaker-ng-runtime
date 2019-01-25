@@ -16,8 +16,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     hostClass: DEFAULT_CLS
 };
 
-registerProps();
-
 const CAPTION_POSITION = {
     left: 'caption-left',
     right: 'caption-right',
@@ -31,6 +29,7 @@ const CAPTION_POSITION = {
     ]
 })
 export class CompositeDirective extends StylableComponent implements AfterViewInit {
+    static initializeProps = registerProps();
 
     // this is the reference to the component refs inside the form-group
     @ContentChildren(WidgetRef, {descendants: true}) componentRefs;

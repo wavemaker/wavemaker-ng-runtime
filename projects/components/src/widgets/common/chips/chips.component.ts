@@ -18,8 +18,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     hostClass: 'app-chips nav nav-pills list-inline'
 };
 
-registerProps();
-
 @Component({
     selector: '[wmChips]',
     templateUrl: './chips.component.html',
@@ -29,7 +27,7 @@ registerProps();
     ]
 })
 export class ChipsComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
-
+    static initializeProps = registerProps();
     public allowonlyselect: boolean;
     public enablereorder: boolean;
     public maxsize: number;

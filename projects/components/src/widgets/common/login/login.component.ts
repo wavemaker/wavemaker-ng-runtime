@@ -9,8 +9,6 @@ import { FormComponent } from '../form/form.component';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
-registerProps();
-
 declare const _;
 
 @Component({
@@ -21,7 +19,7 @@ declare const _;
     ]
 })
 export class LoginComponent extends StylableComponent implements AfterViewInit {
-
+    static initializeProps = registerProps();
     loginBtnCmp: ButtonComponent;
 
     @ContentChild(FormComponent) formCmp: FormComponent;

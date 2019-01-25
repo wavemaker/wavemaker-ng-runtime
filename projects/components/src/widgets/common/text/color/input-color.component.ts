@@ -6,8 +6,6 @@ import { registerProps } from './input-color.props';
 import { BaseInput } from '../base/base-input';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-color',
     hostClass: 'app-input-wrapper'
@@ -22,6 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class InputColorComponent extends BaseInput {
+    static initializeProps = registerProps();
 
     public required: boolean;
     public maxchars: number;

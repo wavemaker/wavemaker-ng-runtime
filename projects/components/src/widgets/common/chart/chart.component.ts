@@ -9,8 +9,6 @@ import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 declare const $, _, d3, nv;
 
 const WIDGET_CONFIG = {widgetType: 'wm-chart', hostClass: 'app-chart'};
@@ -100,6 +98,8 @@ const angle = d => {
     ]
 })
 export class ChartComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
+    static initializeProps = registerProps();
+
     xaxisdatakey;
     yaxisdatakey;
     groupby;

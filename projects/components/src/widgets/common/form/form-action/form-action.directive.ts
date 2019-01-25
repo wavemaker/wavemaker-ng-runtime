@@ -7,8 +7,6 @@ import { FormComponent } from '../form.component';
 
 declare const _;
 
-registerProps();
-
 const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 
 @Directive({
@@ -18,6 +16,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
     ]
 })
 export class FormActionDirective extends BaseComponent implements OnInit {
+    static initializeProps = registerProps();
+
     accessroles;
     action;
     binding;

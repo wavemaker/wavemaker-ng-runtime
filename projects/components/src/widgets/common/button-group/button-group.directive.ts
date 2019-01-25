@@ -6,8 +6,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './button-group.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'btn-group app-button-group';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-buttongroup',
@@ -21,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class ButtonGroupDirective extends StylableComponent {
-
+    static initializeProps = registerProps();
     @HostBinding('class.btn-group-vertical') vertical: boolean;
 
     constructor(inj: Injector) {

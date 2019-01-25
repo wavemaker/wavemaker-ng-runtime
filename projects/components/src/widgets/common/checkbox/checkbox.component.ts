@@ -15,8 +15,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     hostClass: DEFAULT_CLS
 };
 
-registerProps();
-
 /*
  * try to convert the chekedvalue and unchecked values to boolean/number
  */
@@ -49,6 +47,7 @@ const unStringify = (val, defaultVal?) => {
     ]
 })
 export class CheckboxComponent extends BaseFormCustomComponent implements OnInit, AfterViewInit {
+    static initializeProps = registerProps();
 
     public proxyModel: boolean;
     public disabled: boolean;

@@ -6,8 +6,6 @@ import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './layout-grid-row.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-grid-row clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-layout-grid-row',
@@ -21,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class LayoutGridRowDirective extends StylableComponent {
-
+    static initializeProps = registerProps();
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

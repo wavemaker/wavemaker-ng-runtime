@@ -17,8 +17,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     displayType: 'inline-block'
 };
 
-registerProps();
-
 @Component({
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html',
@@ -28,6 +26,7 @@ registerProps();
     ]
 })
 export class ColorPickerComponent extends BaseFormCustomComponent {
+    static initializeProps = registerProps();
 
     public required: boolean;
     public readonly: boolean;

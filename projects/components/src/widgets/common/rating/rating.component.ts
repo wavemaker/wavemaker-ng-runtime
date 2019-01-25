@@ -10,8 +10,6 @@ import { getOrderedDataset } from '../../../utils/form-utils';
 
 declare const _;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-ratings';
 const WIDGET_CONFIG = {widgetType: 'wm-rating', hostClass: DEFAULT_CLS};
 
@@ -27,6 +25,8 @@ const DEFAULT_RATING = 5;
     ]
 })
 export class RatingComponent extends DatasetAwareFormComponent {
+    static initializeProps = registerProps();
+
     public caption: string;
     public showcaptions: boolean;
     public maxvalue;

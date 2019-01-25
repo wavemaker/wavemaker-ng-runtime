@@ -11,9 +11,6 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { NavItemDirective } from '../nav/nav-item/nav-item.directive';
 import { disableContextMenu } from '../nav/navigation-control.directive';
 
-
-registerProps();
-
 const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-anchor',
@@ -31,6 +28,7 @@ const regex = /Actions.goToPage_(\w+)\.invoke\(\)/g;
     ]
 })
 export class AnchorComponent extends StylableComponent implements AfterViewInit {
+    static initializeProps = registerProps();
 
     private hasNavigationToCurrentPageExpr: boolean;
     private hasGoToPageExpr: boolean;

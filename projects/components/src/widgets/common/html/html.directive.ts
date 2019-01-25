@@ -15,8 +15,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     hostClass: DEFAULT_CLS
 };
 
-registerProps();
-
 @Directive({
     selector: '[wmHtml]',
     providers: [
@@ -24,7 +22,7 @@ registerProps();
     ]
 })
 export class HtmlDirective extends StylableComponent implements OnInit {
-
+    static initializeProps = registerProps();
     public content: string;
 
     constructor(

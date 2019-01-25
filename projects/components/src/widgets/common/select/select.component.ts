@@ -7,8 +7,6 @@ import { registerProps } from './select.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
-registerProps();
-
 declare const _;
 
 const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'};
@@ -22,6 +20,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
     ]
 })
 export class SelectComponent extends DatasetAwareFormComponent implements AfterViewInit {
+    static initializeProps = registerProps();
 
     public readonly: boolean;
     public placeholder: string;

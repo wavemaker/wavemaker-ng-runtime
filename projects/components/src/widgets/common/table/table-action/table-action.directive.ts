@@ -7,8 +7,6 @@ import { TableComponent } from '../table.component';
 
 declare const _;
 
-registerProps();
-
 const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 
 @Directive({
@@ -18,6 +16,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
     ]
 })
 export class TableActionDirective extends BaseComponent implements OnInit {
+    static initializeProps = registerProps();
+
     accessroles;
     action;
     caption;

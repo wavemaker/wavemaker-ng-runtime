@@ -6,8 +6,6 @@ import { registerProps } from './network-info-toaster.props';
 import { $appDigest, App } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
-registerProps();
-
 const DEFAULT_CLS = 'network-info-toaster';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-network-info-toaster', hostClass: DEFAULT_CLS};
 
@@ -28,6 +26,7 @@ export enum NetworkState {
     ]
 })
 export class NetworkInfoToasterComponent extends StylableComponent implements OnDestroy {
+    static initializeProps = registerProps();
 
     public showMessage = false;
     public isServiceConnected = false;

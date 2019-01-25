@@ -10,8 +10,6 @@ const WIDGET_INFO: IWidgetConfig = {
     hostClass: 'app-dialog-footer modal-footer'
 };
 
-registerProps();
-
 @Directive({
     selector: 'div[wmDialogFooter]',
     providers: [
@@ -19,6 +17,7 @@ registerProps();
     ]
 })
 export class DialogFooterDirective extends BaseComponent {
+    static initializeProps = registerProps();
 
     constructor(inj: Injector) {
         super(inj, WIDGET_INFO);

@@ -6,8 +6,6 @@ import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './card-content.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-card-content card-body card-block';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-card-content',
@@ -22,6 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class CardContentComponent extends StylableComponent implements AfterViewInit {
+    static initializeProps = registerProps();
 
     @ViewChild('cardContentContainer') private cardContentContainerElRef: ElementRef;
 

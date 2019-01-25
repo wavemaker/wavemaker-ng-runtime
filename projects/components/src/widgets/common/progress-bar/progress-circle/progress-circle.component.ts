@@ -8,8 +8,6 @@ import { registerProps } from './progress-circle.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { calculatePercent, getDecimalCount, isPercentageValue } from '../progress-utils';
 
-registerProps();
-
 declare const _;
 
 const DEFAULT_CLS = 'progress app-progress circle';
@@ -49,6 +47,7 @@ export const TYPE_CLASS_MAP = {
     ]
 })
 export class ProgressCircleComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
+    static initializeProps = registerProps();
 
     public displayformat: string;
     public datavalue: string;

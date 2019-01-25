@@ -6,8 +6,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './marquee.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-marquee app-container';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-marquee',
@@ -21,6 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class MarqueeDirective extends StylableComponent {
+    static initializeProps = registerProps();
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

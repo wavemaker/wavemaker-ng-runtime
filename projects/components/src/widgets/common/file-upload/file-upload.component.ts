@@ -11,7 +11,6 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _, $;
 
-registerProps();
 const DEFAULT_CLS = 'app-fileupload';
 const WIDGET_CONFIG = {
     widgetType: 'wm-fileupload',
@@ -27,8 +26,8 @@ const WIDGET_CONFIG = {
 })
 
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit {
-
-    selectedFiles: any;
+    static initializeProps = registerProps();
+    selectedFiles: any = [];
     progressObservable;
     name;
     multiple;

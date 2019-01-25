@@ -9,8 +9,6 @@ import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component'
 
 declare const $;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-radioset list-group';
 const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 
@@ -24,6 +22,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
     ]
 })
 export class RadiosetComponent extends DatasetAwareFormComponent {
+    static initializeProps = registerProps();
 
     public layout = '';
     public disabled: boolean;

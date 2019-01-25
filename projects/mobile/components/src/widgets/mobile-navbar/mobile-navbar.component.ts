@@ -6,8 +6,6 @@ import { DeviceService } from '@wm/mobile/core';
 
 import { registerProps } from './mobile-navbar.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-mobile-header app-mobile-navbar';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass: DEFAULT_CLS};
 
@@ -19,9 +17,9 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass:
     ]
 })
 export class MobileNavbarComponent extends BaseComponent implements OnDestroy, AfterViewInit {
+    static initializeProps = registerProps();
 
     private _isReady = false;
-
     public datavalue: string;
     public imagesrc: string;
     public query: string;

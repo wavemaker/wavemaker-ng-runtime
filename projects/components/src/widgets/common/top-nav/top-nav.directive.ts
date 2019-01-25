@@ -5,8 +5,6 @@ import { registerProps } from './top-nav.props';
 import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-top-nav';
 const WIDGET_CONFIG = {widgetType: 'wm-top-nav', hostClass: DEFAULT_CLS};
 
@@ -17,6 +15,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-top-nav', hostClass: DEFAULT_CLS};
     ]
 })
 export class TopNavDirective extends StylableComponent {
+    static initializeProps = registerProps();
+
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

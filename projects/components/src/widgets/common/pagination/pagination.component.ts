@@ -10,8 +10,6 @@ import { WidgetRef } from '../../framework/types';
 
 declare const _;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-datanavigator clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-pagination', hostClass: DEFAULT_CLS};
 
@@ -38,7 +36,7 @@ const sizeClasses = {
     ]
 })
 export class PaginationComponent extends StylableComponent implements AfterViewInit {
-
+    static initializeProps = registerProps();
     @Output() resultEmitter: EventEmitter<any> = new EventEmitter();
     @Output() maxResultsEmitter: EventEmitter<any> = new EventEmitter();
 

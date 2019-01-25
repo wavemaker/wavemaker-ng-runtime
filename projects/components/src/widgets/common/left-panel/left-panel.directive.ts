@@ -10,8 +10,6 @@ import { LeftPanelAnimator } from './left-panel.animator';
 import { PageDirective } from '../page/page.directive';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-left-panel left-panel-collapsed';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-left-panel',
@@ -30,6 +28,7 @@ export enum AnimationType {
     ]
 })
 export class LeftPanelDirective extends StylableComponent {
+    static initializeProps = registerProps();
 
     public animation: AnimationType;
     public columnwidth: number;

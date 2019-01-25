@@ -15,8 +15,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     displayType: DISPLAY_TYPE.INLINE_BLOCK
 };
 
-registerProps();
-
 @Component({
     selector: '[wmAudio]',
     templateUrl: './audio.component.html',
@@ -25,6 +23,8 @@ registerProps();
     ]
 })
 export class AudioComponent extends StylableComponent {
+    static initializeProps = registerProps();
+
     public mp3format: string;
     public muted: boolean;
     public controls: boolean;

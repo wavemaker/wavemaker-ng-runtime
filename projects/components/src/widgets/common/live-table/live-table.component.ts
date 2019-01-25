@@ -13,8 +13,6 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 declare const _;
 declare var $: any;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-livegrid';
 const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 
@@ -26,7 +24,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
     ]
 })
 export class LiveTableComponent extends StylableComponent implements AfterContentInit {
-
+    static initializeProps = registerProps();
     @ContentChild(TableComponent) table: TableComponent;
 
     form;

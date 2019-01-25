@@ -9,8 +9,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-accordion panel-group';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-accordion',
@@ -24,6 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class AccordionDirective extends StylableComponent implements AfterContentInit {
+    static initializeProps = registerProps();
 
     public defaultpaneindex: number;
     public closeothers: boolean;

@@ -16,8 +16,6 @@ const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
 
 declare const _, moment, $;
 
-registerProps();
-
 @Component({
     selector: '[wmTime]',
     templateUrl: './time.component.html',
@@ -28,6 +26,7 @@ registerProps();
     ]
 })
 export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
+    static initializeProps = registerProps();
     /**
      * This property sets the display pattern of the time selected
      */

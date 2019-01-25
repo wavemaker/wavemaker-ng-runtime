@@ -10,8 +10,6 @@ import { DatasetAwareNavComponent } from '../base/dataset-aware-nav.component';
 
 declare const _;
 
-registerProps();
-
 const DEFAULT_CLS = 'nav app-nav';
 const WIDGET_CONFIG = {widgetType: 'wm-nav', hostClass: DEFAULT_CLS};
 
@@ -29,6 +27,7 @@ const NavClassMap = {
     ]
 })
 export class NavComponent extends DatasetAwareNavComponent implements OnInit {
+    static initializeProps = registerProps();
 
     public selecteditem;
     public type;

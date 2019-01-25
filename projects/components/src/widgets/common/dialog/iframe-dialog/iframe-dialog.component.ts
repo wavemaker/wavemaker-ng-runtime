@@ -9,8 +9,6 @@ import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget
 const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
 const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
 
-registerProps();
-
 @Component({
     selector: 'div[wmIframeDialog]',
     templateUrl: './iframe-dialog.component.html',
@@ -20,6 +18,7 @@ registerProps();
     ]
 })
 export class IframeDialogComponent extends BaseDialog implements OnInit {
+    static initializeProps = registerProps();
 
     @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
 

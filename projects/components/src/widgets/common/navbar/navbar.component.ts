@@ -5,8 +5,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './navbar.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'navbar navbar-default app-navbar';
 const WIDGET_CONFIG = {widgetType: 'wm-navbar', hostClass: DEFAULT_CLS};
 
@@ -20,6 +18,7 @@ declare const $;
     ]
 })
 export class NavbarComponent extends StylableComponent implements AfterViewInit {
+    static initializeProps = registerProps();
 
     public menuiconclass: any;
     public title: string;

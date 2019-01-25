@@ -8,7 +8,6 @@ import { getEvaluatedData, provideAsWidgetRef } from '../../../utils/widget-util
 import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from '../base/stylable.component';
 
-registerProps();
 declare const _, $;
 const defaultTreeIconClass = 'plus-minus';
 const ICON_CLASSES = {
@@ -51,6 +50,8 @@ const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
     ]
 })
 export class TreeDirective extends StylableComponent implements IRedrawableComponent {
+    static initializeProps = registerProps();
+
     private _selectNode: HTMLElement;
     private nodes: Array<any>;
 

@@ -10,8 +10,6 @@ import { DISPLAY_TYPE } from '../../framework/constants';
 import { ImagePipe } from '../../../pipes/image.pipe';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-picture';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-picture',
@@ -26,6 +24,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class PictureDirective extends StylableComponent implements OnInit {
+    static initializeProps = registerProps();
 
     encodeurl;
     picturesource;

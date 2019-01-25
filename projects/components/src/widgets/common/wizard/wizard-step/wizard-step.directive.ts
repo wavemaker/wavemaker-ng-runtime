@@ -7,8 +7,6 @@ import { BaseComponent } from '../../base/base.component';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-wizard-step-content';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-wizardstep',
@@ -29,12 +27,11 @@ const enum STEP_STATUS {
     exportAs: 'wmWizardStep'
 })
 export class WizardStepDirective extends BaseComponent {
-
+    static initializeProps = registerProps();
 
     public show: boolean;
     public name: string;
     public enableskip: any;
-
     public disablenext: boolean;
     public disabledone: boolean;
     public disableprevious: boolean;

@@ -5,8 +5,6 @@ import { styler } from '../../../framework/styler';
 import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './carousel-template.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-carousel-item';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-carousel-template',
@@ -17,6 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmCarouselTemplate]'
 })
 export class CarouselTemplateDirective extends StylableComponent {
+    static initializeProps = registerProps();
+
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);

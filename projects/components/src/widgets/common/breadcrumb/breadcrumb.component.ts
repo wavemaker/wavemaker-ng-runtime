@@ -9,8 +9,6 @@ import { registerProps } from './breadcrumb.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareNavComponent, NavNode } from '../base/dataset-aware-nav.component';
 
-registerProps();
-
 const DEFAULT_CLS = 'breadcrumb app-breadcrumb';
 const WIDGET_CONFIG = {widgetType: 'wm-breadcrumb', hostClass: DEFAULT_CLS};
 
@@ -24,7 +22,7 @@ declare const _;
     ]
 })
 export class BreadcrumbComponent extends DatasetAwareNavComponent {
-
+    static initializeProps = registerProps();
     private disableMenuContext: boolean;
 
     constructor(

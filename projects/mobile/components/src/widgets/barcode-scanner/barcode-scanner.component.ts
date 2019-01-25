@@ -7,8 +7,6 @@ import { hasCordova } from '@wm/core';
 
 import { registerProps } from './barcode-scanner.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'btn app-barcode';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-barcodescanner', hostClass: DEFAULT_CLS};
 
@@ -20,13 +18,14 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-barcodescanner', hostClass
     ]
 })
 export class BarcodeScannerComponent extends StylableComponent {
+    static initializeProps = registerProps();
 
     public barcodeformat: string;
     public datavalue: string;
     public iconclass: any;
     public iconsize: any;
     public caption: any;
-    
+
 
     constructor(private scanner: BarcodeScanner, inj: Injector) {
         super(inj, WIDGET_CONFIG);

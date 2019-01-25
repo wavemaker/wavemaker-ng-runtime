@@ -5,7 +5,6 @@ import { registerProps } from './table-row.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 
-registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};
 
 @Directive({
@@ -15,6 +14,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};
     ]
 })
 export class TableRowDirective extends BaseComponent implements OnInit {
+    static initializeProps = registerProps();
 
     config;
     columnwidth;

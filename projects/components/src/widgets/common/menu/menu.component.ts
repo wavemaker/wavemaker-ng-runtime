@@ -31,8 +31,6 @@ export const MENU_POSITION = {
     INLINE: 'inline'
 };
 
-registerProps();
-
 const POSITION = {
     DOWN_RIGHT: 'down,right',
     DOWN_LEFT: 'down,left',
@@ -64,6 +62,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-menu', hostClass: 'dropdown app-menu'};
     ]
 })
 export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy, AfterViewInit {
+    static initializeProps = registerProps();
 
     public menualign: string;
     public menuposition: string;

@@ -12,7 +12,6 @@ import { convertDataToObject, groupData, handleHeaderClick, toggleAllHeaders } f
 
 declare const _, $;
 
-registerProps();
 const DEFAULT_CLS = 'app-checkboxset list-group';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
 
@@ -27,6 +26,8 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: D
 })
 
 export class CheckboxsetComponent extends DatasetAwareFormComponent implements OnInit {
+    static initializeProps = registerProps();
+
     public layout = '';
     public collapsible: boolean;
 

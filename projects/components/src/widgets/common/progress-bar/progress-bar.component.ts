@@ -9,8 +9,6 @@ import { registerProps } from './progress-bar.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { getDecimalCount, isPercentageValue } from './progress-utils';
 
-registerProps();
-
 declare const _;
 
 const DEFAULT_CLS = 'progress app-progress';
@@ -46,6 +44,7 @@ interface IProgressInfo {
     ]
 })
 export class ProgressBarComponent extends StylableComponent {
+    static initializeProps = registerProps();
 
     public displayformat: string;
     public datavalue: string;

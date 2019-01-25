@@ -8,8 +8,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './right-panel.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-right-panel';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-right-panel',
@@ -23,7 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class RightPanelDirective extends StylableComponent {
-
+    static initializeProps = registerProps();
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

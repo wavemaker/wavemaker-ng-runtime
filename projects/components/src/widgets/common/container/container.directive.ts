@@ -8,8 +8,6 @@ import { registerProps } from './container.props';
 import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-container';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-container',
@@ -23,6 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class ContainerDirective extends StylableComponent {
+    static initializeProps = registerProps();
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

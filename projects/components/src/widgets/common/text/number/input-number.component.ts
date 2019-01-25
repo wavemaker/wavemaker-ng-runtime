@@ -6,8 +6,6 @@ import { registerProps } from './input-number.props';
 import { BaseInput } from '../base/base-input';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-number',
     hostClass: 'app-input-wrapper'
@@ -22,6 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class InputNumberComponent extends BaseInput {
+    static initializeProps = registerProps();
 
     public required: boolean;
     public maxchars: number;

@@ -8,7 +8,6 @@ import { Context } from '../../../framework/types';
 
 declare const _;
 
-registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
 
 @Directive({
@@ -19,6 +18,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
     ]
 })
 export class TableRowActionDirective extends BaseComponent implements OnInit {
+    static initializeProps = registerProps();
+
     accessroles;
     action;
     caption;

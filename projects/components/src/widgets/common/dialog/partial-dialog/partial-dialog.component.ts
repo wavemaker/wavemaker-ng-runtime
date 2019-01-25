@@ -9,8 +9,6 @@ import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget
 const DIALOG_CLS = 'app-dialog modal-dialog app-page-dialog';
 const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
 
-registerProps();
-
 @Component({
     selector: 'div[wmPartialDialog]',
     templateUrl: './partial-dialog.component.html',
@@ -20,7 +18,7 @@ registerProps();
     ]
 })
 export class PartialDialogComponent extends BaseDialog implements OnInit {
-
+    static initializeProps = registerProps();
     @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
     @ContentChild(TemplateRef) dialogContent: TemplateRef<any>;
 

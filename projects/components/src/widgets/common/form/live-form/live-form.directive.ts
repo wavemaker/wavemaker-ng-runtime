@@ -12,8 +12,6 @@ import { LiveTableComponent } from '../../live-table/live-table.component';
 
 declare const _;
 
-registerLiveFormProps();
-
 const isTimeType = field => field.widgettype === DataType.TIME || (field.type === DataType.TIME && !field.widgettype);
 const getValidTime = val => {
     if (val) {
@@ -27,7 +25,7 @@ const getValidTime = val => {
     selector: '[wmLiveForm]'
 })
 export class LiveFormDirective {
-
+    static  initializeProps = registerLiveFormProps();
     private _debouncedSavePrevDataValues = debounce(() => {
         this.savePrevDataValues();
     }, 250);

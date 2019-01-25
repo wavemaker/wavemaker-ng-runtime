@@ -10,8 +10,6 @@ import { TabsComponent } from '../tabs.component';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'tab-pane';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-tabpane',
@@ -26,6 +24,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class TabPaneComponent extends StylableComponent implements OnInit, AfterViewInit {
+    static initializeProps = registerProps();
 
     public $lazyLoad = noop;
     public name: string;

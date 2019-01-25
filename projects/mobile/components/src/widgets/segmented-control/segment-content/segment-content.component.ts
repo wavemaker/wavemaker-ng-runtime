@@ -5,8 +5,6 @@ import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent
 import { registerProps } from './segment-content.props';
 import { SegmentedControlComponent } from '../segmented-control.component';
 
-registerProps();
-
 declare const _;
 
 const DEFAULT_CLS = 'app-segment-content clearfix';
@@ -20,6 +18,8 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segment-content', hostClas
     ]
 })
 export class SegmentContentComponent extends StylableComponent implements AfterViewInit {
+    static initializeProps = registerProps();
+
     private loadmode: string;
     public compile = false;
     private loaddelay: number;

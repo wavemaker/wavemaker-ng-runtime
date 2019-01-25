@@ -13,8 +13,6 @@ declare const _, $;
 const DEFAULT_CLS = 'app-switch';
 const WIDGET_CONFIG = {widgetType: 'wm-switch', hostClass: DEFAULT_CLS};
 
-registerProps();
-
 @Component({
     selector: '[wmSwitch]',
     templateUrl: './switch.component.html',
@@ -24,6 +22,7 @@ registerProps();
     ]
 })
 export class SwitchComponent extends DatasetAwareFormComponent implements AfterViewInit {
+    static initializeProps = registerProps();
 
     options = [];
     selectedItem: DataSetItem;

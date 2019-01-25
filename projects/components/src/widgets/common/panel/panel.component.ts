@@ -9,8 +9,6 @@ import { RedrawableDirective } from '../redraw/redrawable.directive';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { MenuAdapterComponent } from '../base/menu-adapator.component';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-panel panel';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-panel', hostClass: DEFAULT_CLS};
 
@@ -23,6 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-panel', hostClass: DEFAULT
 })
 
 export class PanelComponent extends MenuAdapterComponent implements OnInit, AfterContentInit {
+    static initializeProps = registerProps();
 
     public $lazyLoad = noop;
     public iconurl: string;

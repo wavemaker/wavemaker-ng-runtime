@@ -9,8 +9,6 @@ import { IWidgetConfig } from '../../framework/types';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { NumberLocale } from '../text/locale/number-locale';
 
-registerProps();
-
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-number',
     hostClass: 'app-input-wrapper'
@@ -26,6 +24,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class NumberComponent extends NumberLocale {
+    static initializeProps = registerProps();
+
     public required: boolean;
     public regexp: string;
     public disabled: boolean;

@@ -11,8 +11,6 @@ const DIALOG_CLS = 'app-dialog modal-dialog';
 
 const WIDGET_INFO = {widgetType: 'wm-dialog'};
 
-registerProps();
-
 @Component({
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html',
@@ -23,6 +21,7 @@ registerProps();
     ]
 })
 export class DialogComponent extends BaseDialog implements OnInit {
+    static initializeProps = registerProps();
 
     @ViewChild('dialogTemplate', {read: TemplateRef}) dialogTemplate: TemplateRef<any>;
     @ContentChild('dialogBody', {read: TemplateRef}) dialogBody: TemplateRef<any>;

@@ -8,9 +8,6 @@ import { registerProps } from './page.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { updateDeviceView } from '../../framework/deviceview';
 
-
-registerProps();
-
 const DEFAULT_CLS = 'app-page container';
 const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
 
@@ -21,6 +18,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
     ]
 })
 export class PageDirective extends StylableComponent implements AfterViewInit, OnDestroy {
+    static initializeProps = registerProps();
 
     private _eventNotifier = new EventNotifier(false);
 

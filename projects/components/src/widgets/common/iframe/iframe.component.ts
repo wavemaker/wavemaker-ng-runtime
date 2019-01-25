@@ -16,8 +16,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     hostClass: DEFAULT_CLS
 };
 
-registerProps();
-
 @Component({
     selector: '[wmIframe]',
     templateUrl: './iframe.component.html',
@@ -26,6 +24,7 @@ registerProps();
     ]
 })
 export class IframeComponent extends StylableComponent {
+    static initializeProps = registerProps();
 
     public iframesrc: string;
     public encodeurl: boolean;

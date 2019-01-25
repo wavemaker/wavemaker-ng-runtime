@@ -16,8 +16,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     hostClass: DEFAULT_CLS
 };
 
-registerProps();
-
 @Component({
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html',
@@ -28,6 +26,8 @@ registerProps();
     ]
 })
 export class CurrencyComponent extends NumberLocale {
+    static initializeProps = registerProps();
+
     currency: string;
     currencySymbol: string;
     public required: boolean;

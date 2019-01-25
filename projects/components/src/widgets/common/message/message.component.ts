@@ -11,8 +11,6 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 const DEFAULT_CLS = 'alert app-message';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
 
-registerProps();
-
 @Component({
     selector: '[wmMessage]',
     templateUrl: './message.component.html',
@@ -21,7 +19,7 @@ registerProps();
     ]
 })
 export class MessageComponent extends StylableComponent {
-
+    static initializeProps = registerProps();
     messageClass = '';
     messageIconClass = '';
     type = '';

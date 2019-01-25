@@ -5,8 +5,6 @@ import { registerProps } from './textarea.props';
 import { BaseInput } from '../text/base/base-input';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const WIDGET_CONFIG = {
     widgetType: 'wm-textarea',
     hostClass: 'app-input-wrapper'
@@ -21,6 +19,7 @@ const WIDGET_CONFIG = {
     ]
 })
 export class TextareaComponent extends BaseInput {
+    static initializeProps = registerProps();
     public required: boolean;
     public maxchars: number;
     public disabled: boolean;

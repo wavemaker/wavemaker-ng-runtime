@@ -11,8 +11,6 @@ import { createArrayFrom } from '../../../utils/data-utils';
 
 declare const _;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-carousel carousel';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-carousel',
@@ -30,6 +28,8 @@ const navigationClassMap = {
     exportAs: 'wmCarousel'
 })
 export class CarouselDirective extends StylableComponent implements AfterContentInit, OnDestroy, OnInit {
+    static initializeProps = registerProps();
+
     private animator;
     private navigationClass;
     private fieldDefs;

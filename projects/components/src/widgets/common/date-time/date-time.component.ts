@@ -17,7 +17,6 @@ const WIDGET_CONFIG = {widgetType: 'wm-datetime', hostClass: DEFAULT_CLS};
 
 const CURRENT_DATE = 'CURRENT_DATE';
 
-registerProps();
 @Component({
     selector: '[wmDateTime]',
     templateUrl: './date-time.component.html',
@@ -28,7 +27,7 @@ registerProps();
     ]
 })
 export class DatetimeComponent extends BaseDateTimeComponent implements AfterViewInit, OnDestroy {
-
+    static initializeProps = registerProps();
     /**
      * The below propeties prefixed with "bs" always holds the value that is selected from the datepicker.
      * The bsDateTimeValue = bsDateValue + bsTimeValue.

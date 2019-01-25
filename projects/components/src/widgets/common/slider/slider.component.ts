@@ -14,8 +14,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
     hostClass: DEFAULT_CLS
 };
 
-registerProps();
-
 @Component({
     selector: '[wmSlider]',
     templateUrl: './slider.component.html',
@@ -25,6 +23,7 @@ registerProps();
     ]
 })
 export class SliderComponent extends BaseFormCustomComponent {
+    static initializeProps = registerProps();
 
     public minvalue: number;
     public maxvalue: number;

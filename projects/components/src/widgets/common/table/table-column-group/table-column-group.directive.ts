@@ -6,7 +6,6 @@ import { registerProps } from './table-column-group.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 
-registerProps();
 const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
 
 @Directive({
@@ -16,6 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
     ]
 })
 export class TableColumnGroupDirective extends BaseComponent implements OnInit {
+    static initializeProps = registerProps();
 
     accessroles;
     backgroundcolor;

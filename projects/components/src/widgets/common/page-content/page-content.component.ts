@@ -8,8 +8,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { PullToRefresh } from '../pull-to-refresh/pull-to-refresh';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-page-content app-content-column';
 const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 
@@ -21,6 +19,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
     ]
 })
 export class PageContentComponent extends StylableComponent {
+    static initializeProps = registerProps();
+
     public pullToRefreshIns: PullToRefresh;
     private pulltorefresh: boolean;
     private childPullToRefresh: boolean;

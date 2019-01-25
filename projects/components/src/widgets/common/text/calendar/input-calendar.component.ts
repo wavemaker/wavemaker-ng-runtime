@@ -6,8 +6,6 @@ import { registerProps } from './input-calendar.props';
 import { BaseInput } from '../base/base-input';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-calendar',
     hostClass: 'app-input-wrapper'
@@ -22,6 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class InputCalendarComponent extends BaseInput {
+    static initializeProps = registerProps();
 
     public required: boolean;
     public disabled: boolean;
@@ -36,7 +35,7 @@ export class InputCalendarComponent extends BaseInput {
     public shortcutkey: string;
     public autofocus: boolean;
     public autocomplete: any;
-    
+
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 

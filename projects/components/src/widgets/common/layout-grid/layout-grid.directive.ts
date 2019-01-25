@@ -6,8 +6,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './layout-grid.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-grid-layout clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-layoutgrid',
@@ -21,6 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class LayoutgridDirective extends StylableComponent {
+    static initializeProps = registerProps();
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

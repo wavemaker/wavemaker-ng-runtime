@@ -16,8 +16,6 @@ const WIDGET_CONFIG = {
     displayType: DISPLAY_TYPE.INLINE_BLOCK
 };
 
-registerProps();
-
 @Component({
     selector: '[wmVideo]',
     templateUrl: './video.component.html',
@@ -26,7 +24,7 @@ registerProps();
     ]
 })
 export class VideoComponent extends StylableComponent {
-
+    static initializeProps = registerProps();
     /**
      * subtitle language property eg: en
      */

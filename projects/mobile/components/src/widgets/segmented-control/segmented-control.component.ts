@@ -6,8 +6,6 @@ import { isNumber, setCSS, setCSSFromObj } from '@wm/core';
 import { registerProps } from './segmented-control.props';
 import { SegmentContentComponent } from './segment-content/segment-content.component';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-segmented-control';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segmented-control', hostClass: DEFAULT_CLS};
 
@@ -19,6 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segmented-control', hostCl
     ]
 })
 export class SegmentedControlComponent extends StylableComponent implements AfterViewInit {
+    static initializeProps = registerProps();
 
     private _$container;
 

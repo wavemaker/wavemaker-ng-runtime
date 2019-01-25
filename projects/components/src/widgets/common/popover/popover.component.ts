@@ -11,8 +11,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './popover.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 declare const _, $;
 
 const DEFAULT_CLS = 'app-popover-wrapper';
@@ -38,6 +36,8 @@ let activePopover: PopoverComponent;
 })
 
 export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
+    static initializeProps = registerProps();
+
     public event: string;
     public isOpen = false;
     private closePopoverTimeout;

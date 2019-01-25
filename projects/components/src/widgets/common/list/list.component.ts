@@ -19,8 +19,6 @@ import { ButtonComponent } from '../button/button.component';
 declare const _;
 declare const $;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-livelist app-panel';
 const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 
@@ -32,6 +30,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
     ]
 })
 export class ListComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
+    static initializeProps = registerProps();
 
     @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
 

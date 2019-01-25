@@ -11,8 +11,6 @@ import { registerProps } from './date.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
-registerProps();
-
 declare const _, $;
 
 const CURRENT_DATE = 'CURRENT_DATE';
@@ -32,6 +30,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class DateComponent extends BaseDateTimeComponent {
+    static initializeProps = registerProps();
+
     private bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;

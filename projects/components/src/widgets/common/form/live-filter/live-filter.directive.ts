@@ -8,8 +8,6 @@ import { isDataSetWidget } from '../../../../utils/widget-utils';
 
 declare const _;
 
-registerLiveFilterProps();
-
 const FILTER_CONSTANTS = {
     'EMPTY_KEY'   : 'EMPTY_NULL_FILTER'
 };
@@ -19,7 +17,7 @@ const noop = () => {};
     selector: '[wmLiveFilter]'
 })
 export class LiveFilterDirective {
-
+    static  initializeProps = registerLiveFilterProps();
     private _options;
 
     orderBy;

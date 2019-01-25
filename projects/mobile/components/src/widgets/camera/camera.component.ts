@@ -8,8 +8,6 @@ import { convertToBlob, hasCordova } from '@wm/core';
 
 import { registerProps } from './camera.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'btn app-camera';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-camera', hostClass: DEFAULT_CLS};
 
@@ -31,7 +29,7 @@ export enum ENCODING_TYPE {
     ]
 })
 export class CameraComponent extends StylableComponent {
-
+    static initializeProps = registerProps();
     public allowedit: boolean;
     public correctorientation: boolean;
     public capturetype: string;

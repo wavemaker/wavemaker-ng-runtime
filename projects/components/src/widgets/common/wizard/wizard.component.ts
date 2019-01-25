@@ -9,8 +9,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { WizardStepDirective } from './wizard-step/wizard-step.directive';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-wizard panel clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-wizard',
@@ -25,6 +23,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
+    static initializeProps = registerProps();
 
     @ContentChildren(WizardStepDirective) steps: QueryList<WizardStepDirective>;
 

@@ -5,8 +5,6 @@ import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent
 
 import { registerProps } from './media-list.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-medialist';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-media-list', hostClass: DEFAULT_CLS};
 
@@ -23,9 +21,9 @@ enum Layout {
     ]
 })
 export class MediaListComponent extends StylableComponent {
+    static initializeProps = registerProps();
 
     private $fullScreenEle;
-
     public binddataset;
     public fieldDefs: any[]  [];
     public mediaurl: string;

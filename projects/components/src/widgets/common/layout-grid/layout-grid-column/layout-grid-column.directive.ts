@@ -8,8 +8,6 @@ import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './layout-grid-column.props';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-grid-column';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-gridcolumn',
@@ -23,7 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class LayoutGridColumnDirective extends StylableComponent {
-
+    static initializeProps = registerProps();
     constructor(inj: Injector, @Attribute('height') height) {
         super(inj, WIDGET_CONFIG);
 

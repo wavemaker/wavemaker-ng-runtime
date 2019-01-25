@@ -4,8 +4,6 @@ import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent
 
 import { registerProps } from './widget-template.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-widget-template';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-widget-template', hostClass: DEFAULT_CLS};
 
@@ -17,6 +15,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-widget-template', hostClas
     ]
 })
 export class WidgetTemplateComponent extends StylableComponent {
+    static initializeProps = registerProps();
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

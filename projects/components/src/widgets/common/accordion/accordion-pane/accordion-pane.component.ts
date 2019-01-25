@@ -10,8 +10,6 @@ import { AccordionDirective } from '../accordion.directive';
 import { RedrawableDirective } from '../../redraw/redrawable.directive';
 import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-accordion-panel panel';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
 
@@ -23,6 +21,8 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass:
     ]
 })
 export class AccordionPaneComponent extends StylableComponent implements AfterViewInit {
+    static initializeProps = registerProps();
+
     public isActive = false;
     public iconclass: string;
     public title: any;

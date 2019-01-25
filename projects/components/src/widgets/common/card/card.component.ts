@@ -6,8 +6,6 @@ import { registerProps } from './card.props';
 import { MenuAdapterComponent } from '../base/menu-adapator.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-card card app-panel';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-card',
@@ -22,8 +20,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class CardComponent extends MenuAdapterComponent implements OnInit, AfterViewInit {
-    public showHeader: boolean;
+    static initializeProps = registerProps();
 
+    public showHeader: boolean;
     public title: string;
     public subheading: string;
     public iconclass: string;

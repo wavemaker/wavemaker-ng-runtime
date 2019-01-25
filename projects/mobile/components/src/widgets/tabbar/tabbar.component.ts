@@ -4,8 +4,6 @@ import { getEvaluatedData, IWidgetConfig, PageDirective, provideAsWidgetRef, Sty
 
 import { registerProps } from './tabbar.props';
 
-registerProps();
-
 declare const $;
 declare const _;
 const DEFAULT_CLS = 'app-tabbar app-top-nav';
@@ -26,6 +24,7 @@ interface TabItem {
     ]
 })
 export class MobileTabbarComponent extends StylableComponent implements AfterViewInit, OnDestroy {
+    static initializeProps = registerProps();
 
     public tabItems = [];
     public layout: any = {};

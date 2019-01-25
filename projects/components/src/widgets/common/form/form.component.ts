@@ -14,8 +14,6 @@ import { MessageComponent } from '../message/message.component';
 
 declare const _;
 
-registerFormProps();
-
 const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-form'};
 const LOGIN_FORM_CONFIG = {widgetType: 'wm-form', hostClass: 'app-form app-login-form'};
 const LIVE_FORM_CONFIG = {widgetType: 'wm-liveform', hostClass: 'panel app-panel app-liveform liveform-inline'};
@@ -82,7 +80,7 @@ const setTouchedState = ngForm => {
     ]
 })
 export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit {
-
+    static  initializeProps = registerFormProps();
     @ViewChild('dynamicForm', {read: ViewContainerRef}) dynamicFormRef: ViewContainerRef;
     @ViewChild(MessageComponent) messageRef;
     // this is the reference to the component refs inside the form-group

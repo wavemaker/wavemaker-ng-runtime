@@ -8,8 +8,6 @@ import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
-registerProps();
-
 const getChangeEvt = () => {
     let changeEvt;
     // for IE the event constructor doesn't work so use the createEvent proto
@@ -52,6 +50,7 @@ $.summernote.ui.button = (...args) => {
     ]
 })
 export class RichTextEditorComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
+    static initializeProps = registerProps();
 
     $richTextEditor;
     $hiddenInputEle;

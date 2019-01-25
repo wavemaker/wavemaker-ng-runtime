@@ -6,8 +6,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './icon.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-icon-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-icon',
@@ -22,6 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class IconComponent extends StylableComponent {
+    static initializeProps = registerProps();
 
     public iconclass: any;
     public caption: string;

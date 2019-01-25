@@ -8,8 +8,6 @@ import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 declare const $;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-nav-item';
 const WIDGET_CONFIG = {widgetType: 'wm-nav-item', hostClass: DEFAULT_CLS};
 
@@ -20,6 +18,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-nav-item', hostClass: DEFAULT_CLS};
     ]
 })
 export class NavItemDirective extends StylableComponent {
+    static initializeProps = registerProps();
 
     @HostListener('click')
     @HostListener('keydown.enter')

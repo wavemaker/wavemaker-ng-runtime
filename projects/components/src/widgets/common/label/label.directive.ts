@@ -12,8 +12,6 @@ import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 
 declare const _;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-label';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-label',
@@ -28,6 +26,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class LabelDirective extends StylableComponent {
+    static initializeProps = registerProps();
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);

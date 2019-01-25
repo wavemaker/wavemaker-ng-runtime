@@ -13,8 +13,6 @@ import { applyFilterOnField, fetchRelatedFieldData, getDistinctFieldProperties, 
 
 declare const _;
 
-registerProps();
-
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'displaylabel',
@@ -52,6 +50,7 @@ class FieldDef {
     ]
 })
 export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit {
+    static initializeProps = registerProps();
 
     @ContentChildren('filterWidget') _filterInstances;
     @ContentChildren('inlineWidget') _inlineInstances;

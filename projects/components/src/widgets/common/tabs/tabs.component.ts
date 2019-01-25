@@ -10,8 +10,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { TabPaneComponent } from './tab-pane/tab-pane.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 declare const _, $;
 
 const DEFAULT_CLS = 'app-tabs clearfix';
@@ -28,9 +26,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class TabsComponent extends StylableComponent implements AfterContentInit, OnInit, AfterViewInit {
+    static initializeProps = registerProps();
 
     public defaultpaneindex: number;
-
     public transition: string;
     public tabsposition: string;
 

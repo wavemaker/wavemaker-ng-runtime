@@ -5,8 +5,6 @@ import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
 import { StylableComponent } from '../../base/stylable.component';
 import { registerProps } from './card-footer.props';
 
-registerProps();
-
 const DEFAULT_CLS = 'app-card-footer text-muted card-footer';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-card-footer',
@@ -17,6 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmCardFooter]'
 })
 export class CardFooterDirective extends StylableComponent {
+    static initializeProps = registerProps();
+
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);

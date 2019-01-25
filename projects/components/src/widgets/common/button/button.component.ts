@@ -7,8 +7,6 @@ import { registerProps } from './button.props';
 import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
-registerProps();
-
 const DEFAULT_CLS = 'btn app-button';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-button',
@@ -24,6 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class ButtonComponent extends StylableComponent {
+    static initializeProps = registerProps();
 
     public iconurl: string;
     public iconclass: string;

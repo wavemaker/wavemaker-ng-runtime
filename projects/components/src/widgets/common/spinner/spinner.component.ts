@@ -14,8 +14,6 @@ declare const _;
 const DEFAULT_CLS = 'app-spinner';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};
 
-registerProps();
-
 @Component({
     selector: '[wmSpinner]',
     templateUrl: './spinner.component.html',
@@ -24,6 +22,7 @@ registerProps();
     ]
 })
 export class SpinnerComponent extends StylableComponent implements OnInit {
+    static initializeProps = registerProps();
 
     public iconclass = '';
     public animation = '';

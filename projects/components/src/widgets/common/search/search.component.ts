@@ -19,8 +19,6 @@ declare const _;
 
 const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'input-group'};
 
-registerProps();
-
 @Component({
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
@@ -30,6 +28,7 @@ registerProps();
     ]
 })
 export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
+    static initializeProps = registerProps();
     public casesensitive: boolean;
     public searchkey: string;
     public queryModel: Array<DataSetItem> | string;

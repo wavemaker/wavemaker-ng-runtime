@@ -15,8 +15,6 @@ import { getConditionalClasses, getOrderByExpr, prepareFieldDefs, provideAsNgVal
 
 declare const _, $;
 
-registerProps();
-
 const DEFAULT_CLS = 'app-grid app-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
 
@@ -59,7 +57,7 @@ const isInputBodyWrapper = target => {
     ]
 })
 export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy, ControlValueAccessor {
-
+    static initializeProps = registerProps();
     @ViewChild(PaginationComponent) dataNavigator;
 
     @ViewChild('datagridElement') private _tableElement: ElementRef;

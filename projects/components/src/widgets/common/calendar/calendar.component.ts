@@ -12,7 +12,6 @@ import { StylableComponent } from '../base/stylable.component';
 import { createArrayFrom } from '../../../utils/data-utils';
 
 declare const _, $, moment;
-registerProps();
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
@@ -86,6 +85,7 @@ const dateFormat = 'YYYY/MM/DD';
     ]
 })
 export class CalendarComponent extends StylableComponent implements AfterContentInit, AfterViewInit, OnInit, IRedrawableComponent {
+    static initializeProps = registerProps();
     // The calendar element reference
     @ViewChild('calendar') _calendar: ElementRef;
     @ViewChild('datepicker') _datepicker: ElementRef;

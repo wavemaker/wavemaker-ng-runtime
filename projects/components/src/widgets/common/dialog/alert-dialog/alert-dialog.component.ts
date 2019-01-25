@@ -11,8 +11,6 @@ const DIALOG_CLS = 'app-dialog modal-dialog app-alert-dialog';
 
 const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
 
-registerProps();
-
 @Component({
     selector: 'div[wmAlertDialog]',
     templateUrl: './alert-dialog.component.html',
@@ -22,6 +20,7 @@ registerProps();
     ]
 })
 export class AlertDialogComponent extends BaseDialog implements OnInit {
+    static initializeProps = registerProps();
 
     @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
 
