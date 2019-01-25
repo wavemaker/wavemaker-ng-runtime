@@ -814,7 +814,7 @@ $.widget('wm.datatable', {
     },
     /* Inserts a new blank row in the table. */
     addNewRow: function (skipFocus, alwaysNewRow) {
-        var rowId = this.gridBody.find('tr.app-datagrid-row:visible').length || 99999, //Dummy value if rows are not there
+        var rowId = this.gridBody.find('> tr.app-datagrid-row:visible').length || 99999, //Dummy value if rows are not there
             self = this,
             rowData = {},
             $row,
@@ -825,8 +825,8 @@ $.widget('wm.datatable', {
             this.options.beforeRowInsert();
         }
 
-        $gridBody = this.gridElement.find('tbody.app-datagrid-body');
-        $alwaysNewRow = $gridBody.find('tr.app-datagrid-row.always-new-row');
+        $gridBody = this.gridElement.find('> tbody.app-datagrid-body');
+        $alwaysNewRow = $gridBody.find('> tr.app-datagrid-row.always-new-row');
         //Focus the new row if already present
         if ($alwaysNewRow.length) {
             this.setFocusOnElement(undefined, $alwaysNewRow);
