@@ -9,5 +9,7 @@ export class DateTimeDirective {
 
     constructor(dateTimeComponent: DatetimeComponent) {
         dateTimeComponent.useDatapicker = false;
+        dateTimeComponent.datepattern = 'yyyy-MM-ddTHH:mm:ss';
+        dateTimeComponent.updateFormat('datepattern');
     }
 }
