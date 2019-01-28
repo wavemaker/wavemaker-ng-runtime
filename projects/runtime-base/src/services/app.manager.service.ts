@@ -337,13 +337,29 @@ export class AppManagerService {
     }
 
     /**
+     * Triggers the onBeforeService method defined in app.js of the app
+     * @param requestParams
+     */
+    appOnBeforeServiceCall(requestParams: any) {
+        return triggerFn(this.$app.onBeforeServiceCall, requestParams);
+    }
+
+    /**
+     * Triggers the onServiceSuccess method defined in app.js of the app
+     * @param data
+     * @param xhrObj
+     */
+    appOnServiceSuccess(data: any, xhrObj: any) {
+        return triggerFn(this.$app.onServiceSuccess, data, xhrObj);
+    }
+
+    /**
      * Triggers the onServiceError method defined in app.js of the app
-     * @param variable
      * @param data
      * @param xhrOb
      */
-    appOnServiceError(variable: any, data: any, xhrOb?: any) {
-        triggerFn(this.$app.onServiceError, variable, data, xhrOb);
+    appOnServiceError(data: any, xhrOb?: any) {
+        return triggerFn(this.$app.onServiceError, data, xhrOb);
     }
 
     /**

@@ -56,6 +56,8 @@ export abstract class App {
     onAppVariablesReady: Function;
     onSessionTimeout: Function;
     onPageReady: Function;
+    onBeforeServiceCall: Function;
+    onServiceSuccess: Function;
     onServiceError: Function;
     projectName: string;
     isPrefabType: boolean;
