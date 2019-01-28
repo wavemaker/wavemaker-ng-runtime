@@ -131,7 +131,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             if (!this.appManager.isAppVariablesFired()) {
                 variableCollection.callback(this.App.Variables);
                 variableCollection.callback(this.App.Actions);
-
+                this.appManager.appVariablesReady();
                 this.appManager.isAppVariablesFired(true);
             }
 
