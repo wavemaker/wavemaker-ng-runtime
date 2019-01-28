@@ -328,6 +328,13 @@ export class AppManagerService {
     }
 
     /**
+     * Triggers the appVariablesReady method defined in app.js of the app
+     */
+    appVariablesReady() {
+        triggerFn(this.$app.onAppVariablesReady);
+    }
+
+    /**
      * Returns the pipe based on the input
      */
     getPipe(pipe) {
