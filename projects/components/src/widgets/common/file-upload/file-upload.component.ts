@@ -234,6 +234,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 this.formName = this.name + (this.multiple ? '-multiple-fileupload' : '-single-fileupload');
                 this.caption = this.getCaption(this.caption, this.multiple, this._isMobileType);
                 break;
+            case 'fileuploadmessage':
+                this.fileUploadMessage = nv;
         }
 
         super.onPropertyChange(key, nv, ov);
