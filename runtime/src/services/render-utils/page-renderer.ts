@@ -53,6 +53,7 @@ export class PageRenderer {
         if (!this.appManager.isAppVariablesFired() && pageName !== 'Common') {
             variableCollection.callback(this.app.Variables);
             variableCollection.callback(this.app.Actions);
+            this.appManager.appVariablesReady();
             this.appManager.isAppVariablesFired(true);
         }
         variableCollection.callback(variableCollection.Variables)
