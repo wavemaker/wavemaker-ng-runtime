@@ -178,7 +178,7 @@ const refreshIscrolls = function(iScroll?: any) {
     // Fix for issue: keyboard hides the input on focus.
     // On input focus or window resize, keypad in device has to adjust.
     if (($(document.activeElement).offset().top + document.activeElement.clientHeight) > window.innerHeight * 0.9) {
-        document.activeElement.scrollIntoView({behavior: 'instant', block: 'end', inline: 'end'});
+        document.activeElement.scrollIntoView({behavior: 'auto', block: 'end', inline: 'end'});
     }
 
     if (iScroll) {
