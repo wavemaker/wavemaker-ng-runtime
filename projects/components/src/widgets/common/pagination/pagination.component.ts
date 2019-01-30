@@ -404,11 +404,16 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.goToPage(event, callback);
     }
 
-    setBindDataSet(binddataset, parent, dataSource) {
+    setBindDataSet(binddataset, parent, dataSource, dataset?, binddatasource?) {
         const parts = binddataset.split('.');
         let bindPagingOptions;
         if (parts[0] === 'Variables' || parts[0] === 'Widgets') {
             bindPagingOptions = `${parts[0]}.${parts[1]}.pagination`;
+        }
+        if (!binddatasource && dataset) {
+            this.dataset = dataset;
+            this._debouncedApplyDataset();
+            return;
         }
         this.binddataset = binddataset;
         setTimeout(() => {

@@ -681,6 +681,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('dataset.bind') public binddataset,
+        @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
         private ngZone: NgZone
     ) {
@@ -992,7 +993,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 maxResults: this.pagesize || 5
             };
             this.removePropertyBinding('dataset');
-            this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource);
+            this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource, this.dataset, this.binddatasource);
         }
     }
 
@@ -1221,7 +1222,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.onDataSourceChange();
                 break;
             case 'dataset':
-                if (!this.datasource) {
+                if (this.binddatasource && !this.datasource) {
                     return;
                 }
                 this.watchVariableDataSet(nv);
