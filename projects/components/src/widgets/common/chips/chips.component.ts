@@ -490,7 +490,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }, []);
 
         // prevent deletion if the before-remove event callback returns false
-        const allowRemove = this.invokeEventCallback('beforeremove', {$event, item: items.length === 1 ? items[0] : items});
+        const allowRemove = this.invokeEventCallback('beforeremove', {$event, $item: items.length === 1 ? items[0] : items});
         if (isDefined(allowRemove) && !toBoolean(allowRemove)) {
             return;
         }
@@ -530,7 +530,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         this.updateMaxSize();
 
-        this.invokeEventCallback('remove', {$event, item: items.length === 1 ? items[0] : items});
+        this.invokeEventCallback('remove', {$event, $item: items.length === 1 ? items[0] : items});
     }
 
     /**
