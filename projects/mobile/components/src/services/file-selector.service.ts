@@ -68,7 +68,15 @@ export class FileSelectorService {
                     maxImages: maxImg
                 }
             );
-        }).then(files => this.getFiles(files));
+        }).then(files => {
+            const selectedFiles = files.map(filepath => {
+                if (filepath.indexOf('://') < 0) {
+                    return 'file://' + filepath;
+                }
+                return filepath;
+            });
+            return this.getFiles(selectedFiles);
+        });
     }
 
     public selectVideos(multiple = false): Promise<FileContent[]> {
