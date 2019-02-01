@@ -1,3 +1,4 @@
+declare const window;
 // map of widgetSubType vs WidgetProps
 const widgetProps = new Map<string, Map<string, any>>();
 
@@ -5,7 +6,10 @@ const widgetProps = new Map<string, Map<string, any>>();
 export const getWidgetPropsByType = (identifier: string): Map<string, any> => widgetProps.get(identifier);
 
 // register the widgetProps with the given identifier
-export const register = (identifier: string, props: Map<string, any>) => widgetProps.set(identifier, props);
+export const register = (identifier: string, props: Map<string, any>) => {
+    widgetProps.set(identifier, props);
+    window.WM_LOADED_COMPONENTS = [...window.WM_LOADED_COMPONENTS || [], identifier ];
+};
 
 export enum PROP_TYPE {
     BOOLEAN = 1,
