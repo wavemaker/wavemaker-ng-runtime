@@ -160,9 +160,16 @@ export class RatingComponent extends DatasetAwareFormComponent {
         } else {
             this.selectedRatingValue = 0;
         }
+        if (this.readonly) {
+            // when dataset is not given but datavalue is provided which is integer
+            if (!this.selectedRatingValue && !isNaN(dataVal)) {
+                this.selectedRatingValue = (parseFloat(dataVal) <= this.maxvalue) ? dataVal : this.maxvalue;
+            }
+            this.ratingsWidth = this.calculateRatingsWidth(dataVal);
+        }
     }
 
-    calculateRatingsWidth() {
+    calculateRatingsWidth(dataVal?: any) {
         const selectedRating = parseFloat(this.selectedRatingValue),
             starWidth = 0.925,
             maxValue = parseInt(this.datasetItems.length || this.maxvalue, 10) || DEFAULT_RATING;
@@ -172,8 +179,8 @@ export class RatingComponent extends DatasetAwareFormComponent {
             'width',
             (starWidth * maxValue) + 'em'
         );
-
-        if (this.datavalue === undefined || this.datavalue === '' || this.datavalue === null) {
+        dataVal = dataVal || this.datavalue;
+        if (dataVal === undefined || dataVal === '' || dataVal === null) {
             this.caption = '';
             return 0;
         }
