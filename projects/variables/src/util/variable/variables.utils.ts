@@ -124,9 +124,7 @@ export const initiateCallback = (type: string, variable: any, data: any, options
      * trigger app level error handler.
      * if no event is assigned, trigger default appNotification variable.
      */
-    if (type === VARIABLE_CONSTANTS.EVENT.ERROR && !skipDefaultNotification) {
-        // trigger the common error handler present in app.js
-        appManager.appOnServiceError(variable, data, options);
+   if (type === VARIABLE_CONSTANTS.EVENT.ERROR && !skipDefaultNotification) {
         if (!eventValues) {
             /* in case of error, if no event assigned, handle through default notification variable */
             errorVariable = callBackScope.Actions[VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION];
