@@ -17,24 +17,42 @@ interface CookieInfo {
 })
 export class CookieService implements IDeviceStartUpService {
 
-    private cookieInfo: Map<string, CookieInfo> = new Map<string, CookieInfo>();
+    private cookieInfo = {};
 
     public serviceName = 'CookeService';
 
-    public persistCookie(hostname: string, cookieName: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            window['cookieEmperor'].getCookie(hostname, cookieName, data => {
-                if (data.cookieValue) {
-                    this.cookieInfo[hostname + '-' + cookieName] = {
-                        hostname: hostname,
-                        name: cookieName,
-                        value: this.rotateLTR(data.cookieValue)
-                    };
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.cookieInfo));
+    public persistCookie(hostname: string, cookieName: string, cookieValue?: string): Promise<void> {
+        return new Promise<string>(resolve => {
+                if (cookieValue) {
+                    resolve(cookieValue);
+                } else {
+                    this.getCookie(hostname, cookieName)
+                        .then(data => resolve(data.cookieValue));
                 }
-                resolve();
-            }, reject);
+            }).then(value => {
+                this.cookieInfo[hostname + '-' + cookieName] = {
+                    hostname: hostname.replace(/:[0-9]+/, ''),
+                    name: cookieName,
+                    value: this.rotateLTR(value)
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(this.cookieInfo));
+            });
+    }
+
+    public getCookie(hostname: string, cookieName: string): Promise<any> {
+        return new Promise<void>((resolve, reject) => {
+            window['cookieEmperor'].getCookie(hostname, cookieName, resolve, reject);
         });
+    }
+
+    public setCookie(hostname: string, cookieName: string, cookieValue: string): Promise<any> {
+        return new Promise<void>((resolve, reject) => {
+            window['cookieEmperor'].setCookie(hostname, cookieName, cookieValue, resolve, reject);
+        });
+    }
+
+    public clearAll(): Promise<any> {
+        return new Promise<any>((resolve, reject) => window['cookieEmperor'].clearAll(resolve, reject));
     }
 
     /**

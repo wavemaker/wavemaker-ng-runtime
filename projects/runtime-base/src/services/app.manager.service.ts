@@ -13,7 +13,7 @@ import {
     triggerFn
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
+import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
 
 declare const _;
 
@@ -183,24 +183,40 @@ export class AppManagerService {
         // do not provide redirectTo page if fetching HOME page resulted 401
         // on app load, by default Home page is loaded
         page = this.$security.getRedirectPage(config);
-        page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
-        // pageParams = that.getQueryString($location.search());
-        pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
-        // showing a redirecting message
-        document.body.textContent = _.get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
-        // appending redirect to page and page params
-        const ssoUrl = this.getDeployedURL() + SSO_URL + page + pageParams;
-        /*
-         * remove iFrame when redirected to IdP login page.
-         * this is being done as IDPs do not allow to get themselves loaded into iFrames.
-         * remove-toolbar has been assigned with a window name WM_PREVIEW_WINDOW, check if the iframe is our toolbar related and
-         * safely change the location of the parent toolbar with current url.
-         */
-        if (window.self !== window.top && window.parent.name === PREVIEW_WINDOW_NAME) {
-            window.parent.location.href = window.self.location.href;
-            window.parent.name = '';
+
+        if (CONSTANTS.hasCordova) {
+            // get previously loggedInUser name (if any)
+            const lastLoggedInUsername = _.get(this.$security.get(), 'userInfo.userName');
+            this.$security.authInBrowser()
+                .then(() => this.reloadAppData())
+                .then(() => {
+                    const presentLoggedInUsername = _.get(this.$security.get(), 'userInfo.userName');
+                    if (presentLoggedInUsername && presentLoggedInUsername === lastLoggedInUsername) {
+                        routerService.navigate([page]);
+                    } else {
+                        routerService.navigate([`/`]);
+                    }
+                });
         } else {
-            window.location.href = ssoUrl;
+            page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
+            // pageParams = that.getQueryString($location.search());
+            pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
+            // showing a redirecting message
+            document.body.textContent = _.get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
+            // appending redirect to page and page params
+            const ssoUrl = this.getDeployedURL() + SSO_URL + page + pageParams;
+            /*
+             * remove iFrame when redirected to IdP login page.
+             * this is being done as IDPs do not allow to get themselves loaded into iFrames.
+             * remove-toolbar has been assigned with a window name WM_PREVIEW_WINDOW, check if the iframe is our toolbar related and
+             * safely change the location of the parent toolbar with current url.
+             */
+            if (window.self !== window.top && window.parent.name === PREVIEW_WINDOW_NAME) {
+                window.parent.location.href = window.self.location.href;
+                window.parent.name = '';
+            } else {
+                window.location.href = ssoUrl;
+            }
         }
     }
 

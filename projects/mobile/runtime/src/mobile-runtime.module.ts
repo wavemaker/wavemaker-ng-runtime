@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import {
     App,
+    AbstractHttpService,
     fetchContent,
     getWmProjectProperties,
     hasCordova,
@@ -16,15 +17,17 @@ import {
     removeNode
 } from '@wm/core';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
-import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule } from '@wm/mobile/core';
+import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
+import { SecurityService } from '@wm/security';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope, CONSTANTS } from '@wm/variables';
 
+import { AppExtComponent } from './components/app-ext.component';
 import { CookieService } from './services/cookie.service';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
-import { AppExtComponent } from './components/app-ext.component';
+import { WebProcessService } from './services/webprocess.service';
 
-declare const $, navigator;
+declare const $, navigator, _;
 
 export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 
@@ -49,6 +52,7 @@ const KEYBOARD_CLASS = 'keyboard';
         WmMobileComponentsModule
     ],
     providers: [
+        WebProcessService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: MobileHttpInterceptor,
@@ -62,11 +66,15 @@ export class MobileRuntimeModule {
     private _$appEl;
 
     constructor(
-        app: App,
-        cookieService: CookieService,
-        deviceFileOpenerService: DeviceFileOpenerService,
-        deviceService: DeviceService,
-        private extAppMessageService: ExtAppMessageService
+        private app: App,
+        private cookieService: CookieService,
+        private deviceFileOpenerService: DeviceFileOpenerService,
+        private deviceService: DeviceService,
+        private securityService: SecurityService,
+        private httpService: AbstractHttpService,
+        private extAppMessageService: ExtAppMessageService,
+        private networkService: NetworkService,
+        private webProcessService: WebProcessService
     ) {
         this._$appEl = $('.wm-app:first');
         this._$appEl.addClass('wm-mobile-app');
@@ -85,7 +93,7 @@ export class MobileRuntimeModule {
                 if (url.endsWith('/')) {
                     url = url.substr(0, url.length - 1);
                 }
-                cookieService.persistCookie(url, 'JSESSIONID');
+                cookieService.persistCookie(url, 'JSESSIONID').catch(noop);
                 cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
             });
             app.subscribe('device-file-download', (data) => {
@@ -101,6 +109,7 @@ export class MobileRuntimeModule {
                     localStorage.setItem('remoteSync', flag ? 'true' : 'false');
                 };
             }
+            this.addAuthInBrowser();
         }
         deviceService.start();
         deviceService.whenReady().then(() => {
@@ -196,5 +205,32 @@ export class MobileRuntimeModule {
                 resolve(OS.ANDROID);
             }
         });
+    }
+
+    private addAuthInBrowser() {
+        this.securityService.authInBrowser = (): Promise<any> => {
+            if (!this.networkService.isConnected()) {
+                return Promise.reject('In offline, app cannot contact the server.');
+            }
+            return this.webProcessService.execute('LOGIN', '/')
+                .then(output => {
+                    let url = this.app.deployedUrl;
+                    if (url.endsWith('/')) {
+                        url = url.substr(0, url.length - 1);
+                    }
+                    output = JSON.parse(output);
+                    if (output[CONSTANTS.XSRF_COOKIE_NAME]) {
+                        localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, output[CONSTANTS.XSRF_COOKIE_NAME]);
+                    }
+                    return this.cookieService.clearAll()
+                        .then(() => {
+                            const  promises = _.keys(output).map(k => {
+                                return this.cookieService.setCookie(url, k, output[k]);
+                            });
+                            return Promise.all(promises);
+                        });
+                })
+                .then(() => this.app.notify('userLoggedIn', {}));
+        };
     }
 }
