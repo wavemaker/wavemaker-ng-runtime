@@ -1,10 +1,103 @@
-import { Compiler, Injectable, Injector } from '@angular/core';
+import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe } from '@angular/core';
+import {
+    AsyncPipe,
+    UpperCasePipe,
+    LowerCasePipe,
+    JsonPipe,
+    SlicePipe,
+    DecimalPipe,
+    PercentPipe,
+    TitleCasePipe,
+    CurrencyPipe,
+    DatePipe,
+    I18nPluralPipe,
+    I18nSelectPipe,
+    KeyValuePipe,
+    NgLocalization
+} from '@angular/common';
+import { MaskPipe } from 'ngx-mask';
+import {
+    SuffixPipe,
+    ToDatePipe,
+    FileIconClassPipe,
+    FileExtensionFromMimePipe,
+    FilterPipe,
+    FileSizePipe,
+    ToNumberPipe,
+    ToCurrencyPipe,
+    PrefixPipe,
+    TimeFromNowPipe,
+    NumberToStringPipe,
+    StateClassPipe,
+    StringToNumberPipe
+} from '@wm/components';
+import { getSessionStorageItem } from '@wm/core';
 
 @Injectable({
     providedIn: 'root'
 })
 export class PipeProvider {
     _pipeMeta;
+    _locale = getSessionStorageItem('selectedLocale') || 'en';
+    preparePipeMeta = (
+        reference: Pipe,
+        name: string,
+        pure: boolean,
+        diDeps = []
+    ) => ({
+        type: { reference, diDeps },
+        name,
+        pure
+    })
+    _pipeData = [
+        // TODO | NEED TO BE TESTED
+        this.preparePipeMeta(AsyncPipe, 'async', false, [ChangeDetectorRef]),
+        this.preparePipeMeta(SlicePipe, 'slice', false),
+        this.preparePipeMeta(PercentPipe, 'percent', true, [this._locale]),
+        this.preparePipeMeta(I18nPluralPipe, 'i18nPlural', true, [
+            NgLocalization
+        ]),
+        this.preparePipeMeta(I18nSelectPipe, 'i18nSelect', true),
+        this.preparePipeMeta(MaskPipe, 'mask', true, [
+            /*MaskApplierService*/
+        ]),
+        this.preparePipeMeta(KeyValuePipe, 'keyvalue', false, [
+            KeyValueDiffers
+        ]),
+        this.preparePipeMeta(FileIconClassPipe, 'fileIconClass', true),
+        this.preparePipeMeta(
+            FileExtensionFromMimePipe,
+            'fileExtensionFromMime',
+            true
+        ),
+        this.preparePipeMeta(StateClassPipe, 'stateClass', true),
+        this.preparePipeMeta(FileSizePipe, 'filesize', true),
+        // TESTED
+        this.preparePipeMeta(FilterPipe, 'filter', true),
+        this.preparePipeMeta(UpperCasePipe, 'uppercase', true),
+        this.preparePipeMeta(LowerCasePipe, 'lowercase', true),
+        this.preparePipeMeta(JsonPipe, 'json', false),
+        this.preparePipeMeta(DecimalPipe, 'number', true, [this._locale]),
+        this.preparePipeMeta(TitleCasePipe, 'titlecase', true),
+        this.preparePipeMeta(CurrencyPipe, 'currency', true, [this._locale]),
+        this.preparePipeMeta(DatePipe, 'date', true, [this._locale]),
+        this.preparePipeMeta(ToDatePipe, 'toDate', true, [
+            new DatePipe(this._locale)
+        ]),
+        this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
+            new DecimalPipe(this._locale)
+        ]),
+        this.preparePipeMeta(ToCurrencyPipe, 'toCurrency', true, [
+            new DecimalPipe(this._locale)
+        ]),
+        this.preparePipeMeta(PrefixPipe, 'prefix', true),
+        this.preparePipeMeta(SuffixPipe, 'suffix', true),
+        this.preparePipeMeta(TimeFromNowPipe, 'timeFromNow', true),
+        this.preparePipeMeta(NumberToStringPipe, 'numberToString', true, [
+            new DecimalPipe(this._locale)
+        ]),
+        this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true)
+    ];
 
     unknownPipe(name) {
         throw Error(`The pipe '${name}' could not be found`);
@@ -12,8 +105,7 @@ export class PipeProvider {
 
     constructor(private compiler: Compiler, private injector: Injector) {
         this._pipeMeta = new Map();
-
-        (<any>this.compiler)._metadataResolver._pipeCache.forEach(v => {
+        this._pipeData.forEach(v => {
             this._pipeMeta.set(v.name, v);
         });
     }
@@ -39,7 +131,9 @@ export class PipeProvider {
     }
 
     getInstance(name) {
-        const {type: {reference: ref, diDeps: deps}} = this.meta(name);
+        const {
+            type: { reference: ref, diDeps: deps }
+        } = this.meta(name);
         if (!ref) {
             this.unknownPipe(name);
         }
@@ -49,7 +143,7 @@ export class PipeProvider {
         } else {
             const args = [];
             for (const dep of deps) {
-                args.push(this.resolveDep(dep));
+                args.push(dep);
             }
             return new ref(...args);
         }
