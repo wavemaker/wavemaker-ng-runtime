@@ -11,7 +11,7 @@ export class TrustAsPipe implements PipeTransform {
     transform(content: string, as: string | SecurityContext) {
         if (as === 'resource' || as === SecurityContext.RESOURCE_URL) {
             if (!content) {
-                return;
+                return '';
             }
             return this.domSanitizer.bypassSecurityTrustResourceUrl(content);
         }
