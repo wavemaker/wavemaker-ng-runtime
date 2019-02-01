@@ -72,6 +72,7 @@ export class PartialRenderer {
             $target,
             true
         ).then(({instance, variableCollection}) => {
+            $invokeWatchers(true);
             this.postReady(instance, variableCollection, inj);
         }, () => {
             this.resolveFragment(inj);
