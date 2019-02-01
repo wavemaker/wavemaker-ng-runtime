@@ -169,6 +169,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataProvider.isLastPage = false;
         if (loadOnClear) {
             this.listenQuery = true;
+            this._unsubscribeDv = false;
             this.loadMoreData();
         }
         this.invokeEventCallback('clearsearch');
