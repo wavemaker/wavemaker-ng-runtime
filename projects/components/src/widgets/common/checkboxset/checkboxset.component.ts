@@ -120,6 +120,11 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
 
     ngOnInit() {
         super.ngOnInit();
+        if (this.groupby) {
+            this.datasetSubscription();
+            // If groupby is set, get the groupedData from the datasetItems.
+            this.groupedData = this.getGroupedData();
+        }
         // adding the handler for header click and toggle headers.
         if (this.groupby && this.collapsible) {
             this.handleHeaderClick = handleHeaderClick;
