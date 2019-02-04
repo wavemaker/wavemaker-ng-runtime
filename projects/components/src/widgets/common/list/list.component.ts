@@ -497,6 +497,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     this.clearSelectedItems();
                 }
                 this._items.push(item);
+                this.invokeEventCallback('select', {$data: item});
                 $listItem.isActive = true;
             }
             this.updateSelectedItemsWidgets();
