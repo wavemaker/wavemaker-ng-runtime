@@ -1,4 +1,7 @@
-import { ContentChild, ContentChildren, Directive, Inject, QueryList, Self } from '@angular/core';
+import { AfterViewInit, ContentChild, ContentChildren, Directive, Inject, OnDestroy, QueryList, Self } from '@angular/core';
+
+import { $appDigest } from '@wm/core';
+
 import { Context, DialogRef } from '../../../framework/types';
 import { FormComponent } from '../../form/form.component';
 import { MessageComponent } from '../../message/message.component';
@@ -7,9 +10,10 @@ import { MessageComponent } from '../../message/message.component';
     selector: '[wmDialog][wmLoginDialog]'
 })
 
-export class LoginDialogDirective {
+export class LoginDialogDirective implements AfterViewInit, OnDestroy {
     @ContentChildren(FormComponent) formCmp: QueryList<FormComponent>;
     @ContentChild(MessageComponent) msgCmp: MessageComponent;
+    dialogOpenSubscription;
 
     constructor(@Self() @Inject(Context) private contexts: Array<any>,
                 @Self() private dialogRef: DialogRef<any>) {
@@ -53,5 +57,30 @@ export class LoginDialogDirective {
             this.showLoading();
             ds.invoke({loginInfo: loginInfo}, this.onSuccess.bind(this), this.onError.bind(this));
         }
+    }
+
+    ngAfterViewInit() {
+        // On login dialog open we wait till the form loads and then assign the enter
+        // key event to the textbox in form.
+        this.dialogOpenSubscription = this.dialogRef.bsModal.onShown.subscribe(()=> {
+            setTimeout(()=> {
+                // On enter key press submit the login form in Login Dialog
+                $('.app-textbox').keypress((evt) => {
+                    if (evt.which === 13) {
+                        evt.stopPropagation();
+                        /**
+                         * As this function is getting executed outside of angular context,
+                         * trigger a digest cycle and then trigger doLogin method, So that the bindings in the loginVariable will be evaluated property
+                         */
+                        $appDigest();
+                        this.doLogin();
+                    }
+                });
+            });
+        });
+    }
+
+    ngOnDestroy() {
+        this.dialogOpenSubscription.unsubscribe();
     }
 }
