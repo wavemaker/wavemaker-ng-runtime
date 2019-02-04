@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, ContentChild, ContentChildren, Injector, QueryList } from '@angular/core';
 
+import { $appDigest } from '@wm/core';
+
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './login.props';
@@ -51,16 +53,20 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
         return this.formCmp.dataoutput;
     }
 
+    doLogin() {
+        if (this.eventsource) {
+            this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccess.bind(this), this.onError.bind(this));
+        } else {
+            console.warn('Default action "loginAction" does not exist. Either create the Action or assign an event to onSubmit of the login widget');
+        }
+    }
+
     initLoginButtonActions() {
         this.loginBtnCmp.getNativeElement().addEventListener('click', event => {
 
             // if no event is attached to the onSubmit of login widget or loginButton inside it, invoke default login action
             if (!this.nativeElement.hasAttribute('submit.event') && !this.loginBtnCmp.getNativeElement().hasAttribute('click.event')) {
-                if (this.eventsource) {
-                    this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccess.bind(this), this.onError.bind(this));
-                } else {
-                    console.warn('Default action "loginAction" does not exist. Either create the Action or assign an event to onSubmit of the login widget');
-                }
+                this.doLogin();
             }
         });
     }
@@ -70,6 +76,19 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
         // suppresses the default form submission (in browsers like Firefox)
         this.formCmp.getNativeElement().addEventListener('submit', e => e.preventDefault());
+
+        // On enter key press submit the login form on Login Page
+        $('.app-textbox').keypress((evt) => {
+            if (evt.which === 13) {
+                evt.stopPropagation();
+                /**
+                 * As this function is getting executed outside of angular context,
+                 * trigger a digest cycle and then trigger doLogin method, So that the bindings in the loginVariable will be evaluated property
+                 */
+                $appDigest();
+                this.doLogin();
+            }
+        });
 
         // get login button component
         this.buttonComponents.forEach(cmp => {
