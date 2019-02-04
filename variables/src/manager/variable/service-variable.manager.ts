@@ -363,6 +363,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         const output: any = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, inputFields, options);
 
         if (output === false) {
+            $queue.process(variable);
             triggerFn(error);
             return;
         }
