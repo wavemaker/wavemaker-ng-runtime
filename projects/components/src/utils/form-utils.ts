@@ -225,15 +225,15 @@ export const setItemByCompare = (datasetItems: Array<DataSetItem>, compareWithDa
  * @param groupBy, string groupby property
  * @returns {any[]}
  */
-const getSortedGroupedData = (groupedLiData: Object, groupBy: string) => {
+const getSortedGroupedData = (groupedLiData: Object, groupBy: string, orderby: string) => {
     const _groupedData = [];
     _.forEach(_.keys(groupedLiData), (groupkey, index) => {
-        const liData = groupedLiData[groupkey];
+        const liData = getOrderedDataset(groupedLiData[groupkey], orderby, 'dataObject');
         _groupedData.push({
             key: groupkey,
             data: _.sortBy(liData, data => {
                 data._groupIndex = index + 1;
-                return data[groupBy];
+                return data[groupBy] || data.dataObject[groupBy];
             })
         });
     });
@@ -263,7 +263,7 @@ export const groupData = (compRef: any, data: Array<Object | DataSetItem>, group
         groupedLiData = getGroupedData(data, groupby, match, orderby, dateformat, datePipe, innerItem, AppDefaults);
     }
 
-    return getSortedGroupedData(groupedLiData, groupby);
+    return getSortedGroupedData(groupedLiData, groupby, orderby);
 };
 
 /**
