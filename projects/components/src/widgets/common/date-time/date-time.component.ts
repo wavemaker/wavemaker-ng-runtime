@@ -44,7 +44,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private isEnterPressedOnDateInput = false;
 
     get timestamp() {
-        return this.bsDateTimeValue ? this.bsDateTimeValue.valueOf() : undefined;
+        return this.proxyModel ? this.proxyModel.valueOf() : undefined;
     }
 
     /**
