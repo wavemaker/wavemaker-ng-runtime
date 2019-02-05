@@ -44,7 +44,7 @@ export class HttpCallInterceptor implements HttpInterceptor {
         }
         return next.handle(request).pipe(
             tap((response: any) => {
-                    if (response && response.type && appManager &&  appManager.appOnServiceSuccess) {
+                    if (response && response.type === 4 && appManager &&  appManager.appOnServiceSuccess) {
                         // Convert the angular HttpResponse to wm HttpResponse
                         const resp = this.wmHttpResponse.angularToWmResponse(response);
                         // trigger the common success handler present in app.js
