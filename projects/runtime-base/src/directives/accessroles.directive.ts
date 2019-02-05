@@ -26,7 +26,7 @@ export class AccessrolesDirective {
         private securityService: SecurityService
     ) {
         const securityConfig = this.securityService.get();
-        this.securityEnabled = securityConfig.securityEnabled;
+        this.securityEnabled = _.get(securityConfig, 'securityEnabled');
         this.isUserAuthenticated = _.get(securityConfig, 'authenticated');
         this.userRoles = _.get(securityConfig, 'userInfo.userRoles');
     }

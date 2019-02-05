@@ -15,7 +15,7 @@ export class SecurityService {
     config;
     lastLoggedInUser;
     loggedInUser;
-    requestQueue;
+    requestQueue: any = {};
 
     constructor(
         private injector: Injector,
@@ -55,13 +55,10 @@ export class SecurityService {
             triggerFn(success, this.get());
             return;
         }
-        this.$http.send({
-            target: 'Security',
-            action: 'getConfig'
-        }).then(config => {
-            this.config = config;
-            triggerFn(success, this.config);
-        }, error);
+        this.load()
+            .then(config => {
+                triggerFn(success, config);
+            }, error);
     }
 
     /**
@@ -84,7 +81,7 @@ export class SecurityService {
             this.config = config;
             this.lastLoggedInUser = getClonedObject(this.loggedInUser);
             this.loggedInUser = config.userInfo;
-            invokeQueuedCallbacks('config', 'success', this.get());
+            invokeQueuedCallbacks.call(this, 'config', 'success', this.get());
         }
 
         function onError(error) {
@@ -98,7 +95,7 @@ export class SecurityService {
              };
              invokeQueuedCallbacks('config', 'success', this.get());
              } else {*/
-            invokeQueuedCallbacks('config', 'error', error);
+            invokeQueuedCallbacks.call(this, 'config', 'error', error);
             // }
         }
 
@@ -120,7 +117,7 @@ export class SecurityService {
 
         if (!hasCordova()) {
             // for web project, return config returned from backend API call.
-            this.getWebConfig(onSuccess, onError);
+            this.getWebConfig(onSuccess.bind(this), onError.bind(this));
         }
         /* else {
          /!*
