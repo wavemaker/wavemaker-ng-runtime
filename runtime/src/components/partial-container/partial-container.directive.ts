@@ -7,7 +7,7 @@ import { $invokeWatchers, noop } from '@wm/core';
 
 import { PartialRenderer } from '../../services/render-utils/partial-renderer';
 
-declare const _;
+declare const _, $;
 
 @Directive({
     selector: '[partialContainer][content]:not([content="inline"]), [partialContainer][content.bind]'
@@ -24,7 +24,12 @@ export class PartialContainerDirective {
     _renderPartial(nv) {
         // when the container-target is inside the component template, it can be queried after viewInit of the component.
         setTimeout(() => {
-            this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
+            // get the partial-target;
+            const target = this.elRef.nativeElement.querySelector('[partial-container-target]');
+
+            // set an appropriate target for the current partial.
+            this.$target = $(target).closest('[partialContainer]')[0] === this.elRef.nativeElement ? target : this.elRef.nativeElement;
+
             $invokeWatchers(true);
             return this.partialRenderer.render(
                 nv,
@@ -36,6 +41,7 @@ export class PartialContainerDirective {
                 this.contentInitialized = true;
                 this.onLoadSuccess();
             });
+
         });
     }
 
