@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 
 import { SecurityService } from '@wm/security';
 import { $rootScope, MetadataService, VariablesService } from '@wm/variables';
-import { AbstractDialogService, AbstractHttpService, AbstractI18nService, App, isDefined, triggerFn, AbstractSpinnerService, fetchContent } from '@wm/core';
+import { AbstractDialogService, AbstractHttpService, AbstractI18nService, App, isDefined, triggerFn, AbstractSpinnerService, fetchContent, $invokeWatchers } from '@wm/core';
 
 declare const _;
 
@@ -105,6 +105,8 @@ export class AppManagerService {
                 this.updateSupportedLocaleVariable();
                 this.appVariablesLoaded = true;
                 this.appVariablesFired = false;
+                // Temporary fix for login through dialog on slow networks.
+                $invokeWatchers();
             });
     }
 
