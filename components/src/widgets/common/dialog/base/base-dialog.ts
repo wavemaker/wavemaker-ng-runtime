@@ -14,8 +14,8 @@ const handleDialogOpen = ref => {
     openedDialogs.push(ref);
 };
 
-const invokeOpenedCallback = () => {
-    const ref = openedDialogs[openedDialogs.length - 1];
+const invokeOpenedCallback = (ref) => {
+    handleDialogOpen(ref);
     if (ref) {
         setTimeout(() => {
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
@@ -49,7 +49,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
         if (!eventsRegistered) {
             eventsRegistered = true;
-            this.bsModal.onShown.subscribe(() => invokeOpenedCallback());
+            this.bsModal.onShown.subscribe(() => invokeOpenedCallback(this));
 
             this.bsModal.onHidden.subscribe(() => invokeClosedCallback());
         }
@@ -60,9 +60,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      * Subscribe to the onShown event emitter of bsModal and trigger on-opened event callback
      */
     public open(initState?: any) {
-
-        handleDialogOpen(this);
-
         // extend the context with the initState
         Object.assign(this.context, initState);
 
