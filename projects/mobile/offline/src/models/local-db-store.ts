@@ -187,7 +187,7 @@ export class LocalDBStore {
 
     public readonly primaryKeyField: ColumnInfo;
     public readonly primaryKeyName: string;
-    public readonly fieldToColumnMapping = new Map<string, string>();
+    public readonly fieldToColumnMapping: object = {};
 
     private insertRecordSqlTemplate: string;
     private replaceRecordSqlTemplate: string;

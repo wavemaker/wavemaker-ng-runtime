@@ -506,7 +506,7 @@ export class LocalDBManagementService {
             let defaultValue = col.columnValue ? col.columnValue.defaultValue : '';
             const type = col.sqlType;
             if (type === 'number' && !col.primaryKey) {
-                defaultValue = _.isEmpty(defaultValue) ? 0 : _.parseInt(defaultValue);
+                defaultValue = _.isEmpty(defaultValue) ? null : _.parseInt(defaultValue);
             } else if (type === 'boolean') {
                 defaultValue = _.isEmpty(defaultValue) ? null : (defaultValue === 'true' ? 1 : 0);
             } else {
