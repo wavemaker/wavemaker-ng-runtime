@@ -107,9 +107,10 @@ export class SecurityOfflineBehaviour {
 
     private clearLastLoggedInUser() {
         return this.readLocalSecurityConfig().then(config => {
-            this.securityConfig = config || {};
-            if (this.securityConfig.loggedOutOffline && this.networkService.isConnected()) {
+            if (config && config.loggedOutOffline) {
                 this.securityService.appLogout(null, null);
+            } else if (!this.networkService.isConnected()) {
+                this.securityConfig = config || {};
             }
         });
     }

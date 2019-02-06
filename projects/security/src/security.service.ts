@@ -398,4 +398,13 @@ export class SecurityService {
             }, reject);
         });
     }
+
+    /**
+     * This is for mobile apps to authenticate via browser.
+     *
+     * @returns a promise that is resolved after login
+     */
+    authInBrowser(): Promise<any> {
+        return Promise.reject('This authInBrowser should not be called');
+    }
 }
