@@ -17,6 +17,7 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
     injector: Injector;
     containerWidget: any;
     prefabMngr: PrefabManagerService;
+    displayName: string;
     prefabName: string;
     i18nService: AbstractI18nService;
     appLocale: any;
@@ -73,6 +74,7 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
             .then(config => {
 
                 if (config) {
+                    this.displayName = config.displayName;
                     Object.entries((config.properties || {}))
                         .forEach(([key, prop]: [string, any]) => {
                             let expr;
