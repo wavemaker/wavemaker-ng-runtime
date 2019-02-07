@@ -11,7 +11,6 @@ export const registerProps = () => {
                 ['columnwidth', {value: '30px', ...PROP_STRING}],
                 ['collapseicon', PROP_STRING],
                 ['expandicon', PROP_STRING],
-                ['paramExpression', {value: '', ...PROP_STRING}],
                 ['height', PROP_STRING],
                 ['position', {value: '0', ...PROP_STRING}]
             ]

@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, Component, ContentChildren, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs';
@@ -78,6 +78,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ViewChild('customExprView', {read: ViewContainerRef}) customExprViewRef: ViewContainerRef;
 
     @ContentChildren('rowExpansionActionTmpl') rowExpansionActionTmpl: QueryList<any>;
+    @ContentChild('rowExpansionTmpl') rowExpansionTmpl: TemplateRef<any>;
     @ViewChild('rowDetailView', {read: ViewContainerRef}) rowDetailViewRef: ViewContainerRef;
     @ViewChild('rowExpansionActionView', {read: ViewContainerRef}) rowExpansionActionViewRef: ViewContainerRef;
 
@@ -419,11 +420,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         getRowExpansionAction: (index) => {
             return this.rowExpansionActionTl[index];
         },
-        generateRowDetailView: async ($event, rowData, rowId, $target, $overlay, callback) => {
+        generateRowDetailView: ($event, rowData, rowId, $target, $overlay, callback) => {
             const row = this.getClonedRowObject(rowData);
             const rowDef = getClonedObject(this.rowDef);
-            let style = '';
-
             if (this.rowInstance.invokeEventCallback('beforerowexpand', {$event, $data: rowDef, row}) === false) {
                 return;
             }
@@ -433,36 +432,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // Expand the row detail
             callback();
             // Row is already rendered. Return here
-            if (this.rowDefMap[rowId] && this.rowDefMap[rowId].content === rowDef.content && this.rowDefMap[rowId].paramExpression === rowDef.paramExpression) {
+            if (this.rowDefMap[rowId] && this.rowDefMap[rowId].content === rowDef.content) {
                 this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: this.rowDefInstances[rowId]});
                 return;
             }
-            if (rowDef.height) {
-                style = `[ngStyle]="{'height': '${rowDef.height}', 'overflow-y': 'auto'}"`;
-            }
-            const markup = `<div wmContainer partialContainer content="${rowDef.content}" ${style} load.event="containerLoad(widget)">
-                            ${rowDef.paramExpression}</div>`;
             this.rowDefMap[rowId] = rowDef;
             $target.empty();
             $target.hide();
             $overlay.show();
-            const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
-                `app-datatable-row-${this.widgetId}-${rowId}`,
-                markup,
-                {
-                    noCache: true
-                });
-            const component = this.rowDetailViewRef.createComponent(componentFactoryRef, 0, this.inj);
-            const context = {...(<any>this.viewParent), ...{row, containerLoad: (widget) => {
+            const context = {
+                    row,
+                    rowDef,
+                    containerLoad: (widget) => {
                         setTimeout(() => {
                             $overlay.hide();
                             $target.show();
                             this.rowDefInstances[rowId] = widget;
                             this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: widget});
                         }, 500);
-                    }}};
-            extendProto(component.instance, context);
-            $target[0].appendChild(component.location.nativeElement);
+                    }};
+            const rootNode = this.rowDetailViewRef.createEmbeddedView(this.rowExpansionTmpl, context).rootNodes[0];
+            $target[0].appendChild(rootNode);
             $appDigest();
         },
         onBeforeRowCollapse: ($event, row, rowId) => {

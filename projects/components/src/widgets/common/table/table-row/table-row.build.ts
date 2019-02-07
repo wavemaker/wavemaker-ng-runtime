@@ -1,5 +1,4 @@
-import { Element } from '@angular/compiler';
-import { getAttrMarkup, IBuildTaskDef, processNode, register } from '@wm/transpiler';
+import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 import { getRowActionAttrs } from '@wm/core';
 
 const tagName = 'div';
@@ -18,18 +17,14 @@ const getRowExpansionActionTmpl = (attrs) => {
 
 register('wm-table-row', (): IBuildTaskDef => {
     return {
-        template: (node: Element, shared) => {
-            let markup = '';
-            node.children.forEach(child => markup += processNode(child));
-            node.children = [];
-            shared.set('paramExpression', encodeURIComponent(markup));
-        },
-        pre: (attrs, shared) => {
-            attrs.set('paramExpression', shared.get('paramExpression'));
+        pre: (attrs) => {
             return `<${tagName} wmTableRow ${getAttrMarkup(attrs)}>
-                    ${getRowExpansionActionTmpl(attrs)}`;
+                    ${getRowExpansionActionTmpl(attrs)}
+                    <ng-template #rowExpansionTmpl let-row="row" let-rowDef="rowDef" let-containerLoad="containerLoad">
+                        <div wmContainer partialContainer content.bind="rowDef.content" load.event="containerLoad(widget)"
+                            [ngStyle]="{'height': rowDef.height, 'overflow-y': 'auto'}">`;
         },
-        post: () => `</${tagName}>`
+        post: () => `</div></ng-template></${tagName}>`
     };
 });
 
