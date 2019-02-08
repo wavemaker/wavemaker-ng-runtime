@@ -7,6 +7,7 @@ import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { WidgetRef } from '../../framework/types';
+import { DEBOUNCE_TIMES } from '../../framework/constants';
 
 declare const _;
 
@@ -75,7 +76,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     binddataset;
     pagination;
 
-    private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, 250);
+    private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
     private _debouncedPageChanged = debounce(event => {
         const currentPage = event && event.page;
         // Do not call goToPage if page has not changed
@@ -85,7 +86,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             inst.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
             this.goToPage();
         }
-    }, 250);
+    }, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
         super(inj, WIDGET_CONFIG);

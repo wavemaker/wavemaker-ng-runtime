@@ -37,3 +37,7 @@ const DIMENSION_PROPS = new Set([
 ]);
 
 export const isDimensionProp = (key: string): boolean => DIMENSION_PROPS.has(key);
+
+export const DEBOUNCE_TIMES = {
+    PAGINATION_DEBOUNCE_TIME : 250
+};
