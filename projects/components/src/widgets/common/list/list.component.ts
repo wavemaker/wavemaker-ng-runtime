@@ -108,6 +108,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public subheading: string;
     public iconclass: string;
     public listclass: any;
+    private isPaginationChanged: boolean;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -411,7 +412,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.navigatorResultWatch.unsubscribe();
         }
         /*Register a watch on the "result" property of the "dataNavigator" so that the paginated data is displayed in the live-list.*/
-        this.navigatorResultWatch = dataNavigator.resultEmitter.subscribe((newVal: any) => this.onDataChange(newVal), true);
+        this.navigatorResultWatch = dataNavigator.resultEmitter.subscribe((newVal: any) => {
+            this.isPaginationChanged = true;
+            this.onDataChange(newVal)
+        }, true);
         /*De-register the watch if it is exists */
         if (this.navigatorMaxResultWatch) {
             this.navigatorMaxResultWatch.unsubscribe();
@@ -484,7 +488,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * If the listItem is already a selected item then deselects the item.
      * @param {ListItemDirective} $listItem: Item to be selected of deselected.
      */
-    private toggleListItemSelection($listItem: ListItemDirective) {
+    private toggleListItemSelection($listItem: ListItemDirective, isPaginationChanged?: boolean) {
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
             const item = $listItem.item;
@@ -497,7 +501,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     this.clearSelectedItems();
                 }
                 this._items.push(item);
-                this.invokeEventCallback('select', {$data: item});
+                if (isPaginationChanged !== false) {
+                    this.invokeEventCallback('select', {$data: item});
+                }
                 $listItem.isActive = true;
             }
             this.updateSelectedItemsWidgets();
@@ -532,7 +538,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             if (!$firstItem.disableItem) {
                 this.clearSelectedItems();
                 this.firstSelectedItem = this.lastSelectedItem = $firstItem;
-                this.toggleListItemSelection($firstItem);
+                this.toggleListItemSelection($firstItem, this.isPaginationChanged);
             }
         } else {
             this.deselectListItems();
@@ -546,6 +552,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         if (this.fieldDefs.length && this.infScroll) {
             this.bindScrollEvt();
+        }
+        if(this.isPaginationChanged) {
+            this.isPaginationChanged = false;
         }
     }
 
