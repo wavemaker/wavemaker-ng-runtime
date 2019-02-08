@@ -15,6 +15,7 @@ import { ListAnimator } from './list.animator';
 import { configureDnD, getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 import { WidgetRef } from '../../framework/types';
 import { ButtonComponent } from '../button/button.component';
+import { DEBOUNCE_TIMES } from '../../framework/constants';
 
 declare const _;
 declare const $;
@@ -873,7 +874,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.handleHeaderClick = noop;
         this._items = [];
         this.fieldDefs = [];
-        this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, 50);
+        // When pagination is infinite scroll dataset is applying after debounce time(250ms) so making next call after previous data has rendered
+        this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
         this.reorderProps = {
             minIndex: null,
             maxIndex: null
