@@ -34,7 +34,8 @@ export const chipsProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showsearchicon', PROP_BOOLEAN],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['type', {value: 'search', ...PROP_STRING}]
+        ['type', {value: 'search', ...PROP_STRING}],
+        ['debouncetime', {value: 250, ...PROP_NUMBER}],
     ]
 );
 

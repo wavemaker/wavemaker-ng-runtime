@@ -43,11 +43,12 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
     private _datasource: any;
-    private _unsubscribeDv: boolean = false;
+    private _unsubscribeDv = false;
     private searchkey: string;
     private _debounceUpdateQueryModel: any;
     private limit: number;
     private _classExpr: any;
+    private minchars: number;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource () {
@@ -247,16 +248,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     private resetSearchModel(hasFocus?: boolean) {
-        this.searchComponent.query = '';
-        this.searchComponent.queryModel = '';
-        this.searchComponent._modelByValue = undefined;
-
+        this._unsubscribeDv = true;
+        // clear search will empty the query model and gets the data when minchars is 0 (i.e. autocomplete) on focus
+        (this.searchComponent as any).clearSearch(undefined, !this.minchars);
         this._unsubscribeDv = false;
-
-        // if hasFocus is false then focus the search input.
-        if (!hasFocus) {
-            this.focusSearchBox();
-        }
     }
 
     // Triggerred when typeahead option is selected by enter keypress.

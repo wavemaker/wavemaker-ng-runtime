@@ -34,6 +34,7 @@ export const searchProps = new Map(
         ['showsearchicon', PROP_BOOLEAN],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'search', ...PROP_STRING}],
+        ['debouncetime', {value: 250, ...PROP_NUMBER}],
         ['width', PROP_STRING]
     ]
 );
