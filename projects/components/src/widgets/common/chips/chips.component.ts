@@ -43,7 +43,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     @ViewChild(SearchComponent) searchComponent: SearchComponent;
     private _datasource: any;
-    private _unsubscribeDv: boolean = false;
+    private _unsubscribeDv = false;
     private searchkey: string;
     private _debounceUpdateQueryModel: any;
     private limit: number;
@@ -148,7 +148,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         // clone the data as the updations on data will change the datavalue.
         let dataValue = _.clone(data);
-
+        const prevChipsList = this.chipsList;
         this.chipsList = [];
 
         // update the model when model has items more than maxsize
@@ -185,6 +185,15 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                     if (dataObj) {
                         data.splice(i, 1, dataObj);
                     }
+                } else {
+                    // if custom chips is already generated, val will be object as {'dataField_val': 'entered_val'}
+                    // Hence check this val in previous chipList and assign the iscustom flag
+                    const prevChipObj = prevChipsList.find(obj => {
+                        return _.isEqual(obj.value, val);
+                    });
+                    if (prevChipObj) {
+                        isCustom = prevChipObj.iscustom;
+                    }
                 }
                 dataObj = dataObj || val;
 
@@ -206,7 +215,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 }
                 searchQuery.forEach(val => {
                     const transformedData = this.getTransformedData(val);
-                    this.chipsList.push(transformedData[0]);
+                    const chipObj = transformedData[0];
+                    (chipObj as any).iscustom = true;
+                    this.chipsList.push(chipObj);
                 });
             } else {
                 this.getDefaultModel(searchQuery, this.nextItemIndex)
@@ -226,7 +237,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                                     return;
                                 }
                                 const transformedData = this.getTransformedData(val);
-                                this.chipsList.push(transformedData[0]);
+                                const chipObj = transformedData[0];
+                                (chipObj as any).iscustom = true;
+                                this.chipsList.push(chipObj);
                             }
                         });
                         this._modelByValue = data;
@@ -295,11 +308,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             if (this.allowonlyselect) {
                 return;
             }
-            let dataObj, isCustom = false;
+            let dataObj;
             if (this.datafield === ALLFIELDS) {
                 if (!_.isObject(this.searchComponent.query) && _.trim(this.searchComponent.query)) {
                     dataObj = this.createCustomDataModel(this.searchComponent.query);
-                    isCustom = true;
                     // return if the custom chip is empty
                     if (!dataObj) {
                         this.resetSearchModel();
@@ -312,9 +324,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             if (data) {
                 const transformedData = this.getTransformedData(data);
                 chipObj = transformedData[0];
-                if (isCustom) {
-                    chipObj.iscustom = isCustom;
-                }
+                chipObj.iscustom = true;
             }
         }
 
