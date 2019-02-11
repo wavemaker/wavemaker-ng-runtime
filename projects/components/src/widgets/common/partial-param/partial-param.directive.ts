@@ -1,4 +1,4 @@
-import { Attribute, Directive, Inject, Self } from '@angular/core';
+import { Attribute, Directive, Inject, Self, Input, OnInit } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -38,15 +38,19 @@ export class PartialParamHandlerDirective {
 @Directive({
     selector: '[wmParam]',
 })
-export class PartialParamDirective {
+export class PartialParamDirective implements OnInit {
+
+    @Input() name: string;
+    @Input() value: any;
 
     constructor(
-        @Attribute('name') private name,
-        @Attribute('value') private value,
-        @Attribute('value.bind') private bindValue,
-        @Attribute('type') private type,
+        @Attribute('value.bind') public bindValue,
+        @Attribute('type') public type,
         private partialParamsProvider: PartialParamHandlerDirective
     ) {
-        partialParamsProvider.registerParams(name, value, bindValue, type);
+    }
+
+    ngOnInit() {
+        this.partialParamsProvider.registerParams(this.name, this.value, this.bindValue, this.type);
     }
 }

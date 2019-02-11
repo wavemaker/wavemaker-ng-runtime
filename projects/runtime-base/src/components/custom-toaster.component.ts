@@ -1,60 +1,74 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef, Injector } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef, TemplateRef, OnDestroy } from '@angular/core';
 
 import { Toast, ToastPackage, ToastrService } from 'ngx-toastr';
 
-import { App, IDGenerator, DynamicComponentRefProvider } from '@wm/core';
-import { getBoundToExpr } from '@wm/transpiler';
+import { $watch, $appDigest } from '@wm/core';
 
 declare const _, $;
-
-const idGen = new IDGenerator('-dynamic-');
 
 @Component({
     selector: '[custom-toaster-component]',
     template: `
         <div class="parent-custom-toast"></div>
         <ng-container #customToast></ng-container>
-  `,
+        <ng-template #customToastTmpl>
+            <div wmContainer partialContainer content.bind="pagename">
+                <div *ngFor="let param of params | keyvalue" wmParam hidden
+                    [name]="param.key" [value]="param.value"></div>
+            </div>
+        </ng-template>`,
     preserveWhitespaces: false
 })
-export class CustomToasterComponent extends Toast implements AfterViewInit {
+export class CustomToasterComponent extends Toast implements AfterViewInit, OnDestroy {
 
     @ViewChild('customToast', {read: ViewContainerRef}) customToastRef: ViewContainerRef;
+    @ViewChild('customToastTmpl') customToastTmpl: TemplateRef<any>;
     pagename: any;
+    watchers: any = [];
+    params: any = {};
 
     // constructor is only necessary when not using AoT
     constructor(
-        private inj: Injector,
         protected toastrService: ToastrService,
-        public toastPackage: ToastPackage,
-        private app: App,
-        private dynamicComponentProvider: DynamicComponentRefProvider
+        public toastPackage: ToastPackage
     ) {
         super(toastrService, toastPackage);
         this.pagename = this.message || '';
+        this.generateParams();
+    }
+
+    // Generate the params for partial page. If bound, watch the expression and set the value
+    generateParams() {
+        _.forEach((<any>this.options).partialParams, (param) => {
+            if (_.isString(param.value) && param.value.indexOf('bind:') === 0) {
+                this.watchers.push($watch(
+                    param.value.substr(5),
+                    (<any>this.options).context,
+                    {},
+                    nv => {
+                        this.params[param.name] = nv;
+                        $appDigest();
+                    }
+                ));
+            } else {
+                this.params[param.name] = param.value;
+            }
+        });
     }
 
     async generateDynamicComponent() {
-        const selector = 'app-custom-toaster-component';
         const $targetLayout = $('.parent-custom-toast');
-        let markup = `<div wmContainer partialContainer content="${this.pagename}">`;
-        _.forEach((<any>this.options).partialParams, (paramValue, paramName) => {
-            const val = paramValue.startsWith('bind:') ? `value.bind="${getBoundToExpr(paramValue)}"` : `value="${paramValue}"`;
-            markup = markup + `<div wmParam name="${paramName}" ${val} hidden></div>`;
-        });
-        markup = markup + '</div>';
 
         this.customToastRef.clear();
 
-        const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
-            selector + idGen.nextUid(),
-            markup
-        );
-        const component = this.customToastRef.createComponent(componentFactoryRef, 0, this.inj);
-        $targetLayout[0].appendChild(component.location.nativeElement);
+        $targetLayout[0].appendChild(this.customToastRef.createEmbeddedView(this.customToastTmpl).rootNodes[0]);
     }
 
     ngAfterViewInit() {
         this.generateDynamicComponent();
+    }
+
+    ngOnDestroy() {
+        _.forEach(this.watchers, watcher => watcher());
     }
 }
