@@ -9,6 +9,7 @@ import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
+import { $invokeWatchers } from '@wm/core';
 
 export const commonPartialWidgets = {};
 
@@ -107,6 +108,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
 
         this.viewInit$.subscribe(noop, noop, () => {
+            // TEMP: triggering watchers so variables watching over params are updated
+            $invokeWatchers(true, true);
             variableCollection.callback(variableCollection.Variables);
             variableCollection.callback(variableCollection.Actions);
         });

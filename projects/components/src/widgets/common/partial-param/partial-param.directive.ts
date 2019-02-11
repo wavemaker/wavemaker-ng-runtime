@@ -28,6 +28,8 @@ export class PartialParamHandlerDirective {
                     this.widgetRef.params$.next();
                 })
             );
+        } else {
+            this.widgetRef.params$.next();
         }
 
     }
