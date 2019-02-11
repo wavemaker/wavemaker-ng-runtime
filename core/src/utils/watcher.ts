@@ -58,9 +58,9 @@ const $RAF = window.requestAnimationFrame;
 
 let ngZone;
 
-const triggerWatchers = () => {
+const triggerWatchers = (ignoreMuted?: boolean) => {
 
-    if (muted) {
+    if (muted && !ignoreMuted) {
         return;
     }
 
@@ -139,9 +139,9 @@ const debouncedTriggerWatchers = debounce(() => {
     ngZone.run(() => triggerWatchers());
 }, 100);
 
-export const $invokeWatchers = (force?: boolean) => {
+export const $invokeWatchers = (force?: boolean, ignoreMuted?: boolean) => {
     if (force) {
-        triggerWatchers();
+        triggerWatchers(ignoreMuted);
     } else {
 
         if (skipWatchers) {
