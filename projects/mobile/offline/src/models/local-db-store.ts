@@ -348,6 +348,8 @@ export class LocalDBStore {
      * @returns {object} promise
      */
     public saveAll(entities: any[]) {
+        // filtering the null entities
+        entities = _.filter(entities, null);
         const queries = _.map(entities, entity => {
             const rowData = mapObjToRow(this, entity);
             const params = this.entitySchema.columns.map(f => rowData[f.name]);
