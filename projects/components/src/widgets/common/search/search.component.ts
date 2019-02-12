@@ -109,6 +109,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // Runs on every search
             if (this.listenQuery) {
                 this._defaultQueryInvoked = false;
+                this._loadingItems = true;
                 observer.next(this.query);
             }
             // on keydown, while scrolling the dropdown items, when last item is reached next call is triggered
@@ -118,8 +119,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             if (this.lastSelectedIndex) {
                 this.typeahead._container = undefined;
             }
-        }).pipe(debounceTime(500))
-            .pipe(
+        }).pipe(
             mergeMap((token: string) => this.getDataSourceAsObservable(token))
         );
 
@@ -167,6 +167,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.query = '';
         this.onInputChange($event);
         this.dataProvider.isLastPage = false;
+        this.listenQuery = false;
         if (loadOnClear) {
             this.listenQuery = true;
             this._unsubscribeDv = false;
@@ -192,6 +193,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private getDataSourceAsObservable(query: string): Observable<any> {
         // show dropdown only when there is change in query
         if (!isMobile() && query && (this._lastQuery === query)) {
+            this._loadingItems = false;
             return of([]);
         }
 
@@ -480,6 +482,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
         // For default query, searchOnDataField is set to true, then do not make a n/w call when datafield is ALLFIELDS
         if (searchOnDataField && this.datafield === ALLFIELDS) {
+            this._loadingItems = false;
             return Promise.resolve([]);
         }
 
