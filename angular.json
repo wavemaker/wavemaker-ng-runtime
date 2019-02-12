@@ -41,7 +41,7 @@
                             "./node_modules/jquery-ui/ui/widgets/resizable.js",
                             "./node_modules/jquery-ui/ui/widgets/sortable.js",
                             "./node_modules/jquery-ui/ui/widgets/droppable.js",
-                            "./libraries/datatable/datatable.js",
+                            "./node_modules/wm/scripts/datatable/datatable.js",
                             "./node_modules/moment/min/moment-with-locales.min.js",
                             "./node_modules/fullcalendar/dist/fullcalendar.min.js",
                             "./node_modules/summernote/dist/summernote.min.js",
@@ -108,7 +108,7 @@
                 }
             }
         },
-        "core": {
+        "@wm/core": {
             "root": "projects/core",
             "sourceRoot": "projects/core/src",
             "projectType": "library",
@@ -135,7 +135,7 @@
                 }
             }
         },
-        "components": {
+        "@wm/components": {
             "root": "projects/components",
             "sourceRoot": "projects/components/src",
             "projectType": "library",
@@ -162,7 +162,7 @@
                 }
             }
         },
-        "transpiler": {
+        "@wm/transpiler": {
             "root": "projects/transpiler",
             "sourceRoot": "projects/transpiler/src",
             "projectType": "library",
@@ -189,7 +189,7 @@
                 }
             }
         },
-        "security": {
+        "@wm/security": {
             "root": "projects/security",
             "sourceRoot": "projects/security/src",
             "projectType": "library",
@@ -216,7 +216,7 @@
                 }
             }
         },
-        "swipey": {
+        "@wm/swipey": {
             "root": "projects/swipey",
             "sourceRoot": "projects/swipey/src",
             "projectType": "library",
@@ -243,7 +243,7 @@
                 }
             }
         },
-        "http-service": {
+        "@wm/http": {
             "root": "projects/http-service",
             "sourceRoot": "projects/http-service/src",
             "projectType": "library",
@@ -270,7 +270,7 @@
                 }
             }
         },
-        "oAuth": {
+        "@wm/oAuth": {
             "root": "projects/oAuth",
             "sourceRoot": "projects/oAuth/src",
             "projectType": "library",
@@ -297,7 +297,7 @@
                 }
             }
         },
-        "variables": {
+        "@wm/variables": {
             "root": "projects/variables",
             "sourceRoot": "projects/variables/src",
             "projectType": "library",
@@ -324,7 +324,7 @@
                 }
             }
         },
-        "mobile-core": {
+        "@wm/mobile/core": {
             "root": "projects/mobile/core",
             "sourceRoot": "projects/mobile/core/src",
             "projectType": "library",
@@ -351,7 +351,7 @@
                 }
             }
         },
-        "mobile-components": {
+        "@wm/mobile/components": {
             "root": "projects/mobile/components",
             "sourceRoot": "projects/mobile/components/src",
             "projectType": "library",
@@ -378,7 +378,7 @@
                 }
             }
         },
-        "mobile-offline": {
+        "@wm/mobile/offline": {
             "root": "projects/mobile/offline",
             "sourceRoot": "projects/mobile/offline/src",
             "projectType": "library",
@@ -405,7 +405,7 @@
                 }
             }
         },
-        "mobile-variables": {
+        "@wm/mobile/variables": {
             "root": "projects/mobile/variables",
             "sourceRoot": "projects/mobile/variables/src",
             "projectType": "library",
@@ -432,7 +432,7 @@
                 }
             }
         },
-        "runtime-base": {
+        "@wm/runtime/base": {
             "root": "projects/runtime-base",
             "sourceRoot": "projects/runtime-base/src",
             "projectType": "library",
@@ -459,7 +459,7 @@
                 }
             }
         },
-        "runtime-dynamic": {
+        "@wm/runtime/dynamic": {
             "root": "projects/runtime-dynamic",
             "sourceRoot": "projects/runtime-dynamic/src",
             "projectType": "library",
@@ -486,7 +486,7 @@
                 }
             }
         },
-        "mobile-runtime": {
+        "@wm/mobile/runtime": {
             "root": "projects/mobile/runtime",
             "sourceRoot": "projects/mobile/runtime/src",
             "projectType": "library",
@@ -513,7 +513,7 @@
                 }
             }
         },
-        "mobile-placeholder": {
+        "@wm/mobile/placeholder": {
             "root": "projects/mobile/placeholder",
             "sourceRoot": "projects/mobile/placeholder/src",
             "projectType": "library",
