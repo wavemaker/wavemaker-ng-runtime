@@ -76,6 +76,7 @@ import { LabelDirective } from './widgets/common/label/label.directive';
 import { LayoutGridColumnDirective } from './widgets/common/layout-grid/layout-grid-column/layout-grid-column.directive';
 import { LayoutgridDirective } from './widgets/common/layout-grid/layout-grid.directive';
 import { LayoutGridRowDirective } from './widgets/common/layout-grid/layout-grid-row/layout-grid-row.directive';
+import { LazyLoadDirective } from './widgets/common/lazy-load/lazy-load.directive';
 import { LeftPanelDirective } from './widgets/common/left-panel/left-panel.directive';
 import { ListComponent } from './widgets/common/list/list.component';
 import { ListItemDirective } from './widgets/common/list/list-item.directive';
@@ -218,6 +219,7 @@ const wmComponents = [
     LayoutGridColumnDirective,
     LayoutgridDirective,
     LayoutGridRowDirective,
+    LazyLoadDirective,
     LeftPanelDirective,
     ListComponent,
     ListItemDirective,

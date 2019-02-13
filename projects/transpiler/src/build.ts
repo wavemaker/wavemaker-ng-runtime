@@ -128,6 +128,9 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
             if (k === '[ngClass]' && v.startsWith('{')) {
                 v = v.replace(/"/g, `'`);
             }
+            if (k === 'show.bind' && attrs.get('deferload') === 'true') {
+                v = v + `" *lazyLoad="'${v}'`;
+            }
             attrMarkup += `="${v}"`;
         }
     });
