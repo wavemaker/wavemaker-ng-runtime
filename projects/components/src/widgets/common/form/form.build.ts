@@ -1,6 +1,6 @@
 import { Attribute, Element } from '@angular/compiler';
 
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { getAttrMarkup, IBuildTaskDef, register, getDataSource } from '@wm/transpiler';
 import { IDGenerator } from '@wm/core';
 
 const tagName = 'form';
@@ -41,6 +41,15 @@ const addFormControlName = (children = []) => {
     });
 };
 
+const updateFormDataSource = (attrMap) => {
+    if (attrMap.get('formdata.bind')) {
+        const formDataSource = getDataSource(attrMap.get('formdata.bind'));
+        if (formDataSource) {
+            attrMap.set('formdatasource.bind', formDataSource);
+        }
+    }
+};
+
 const buildTask = (directiveAttr = ''): IBuildTaskDef => {
     return {
         requires: ['wm-livetable', 'wm-login'],
@@ -59,6 +68,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                     class="${classProp}" [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             shared.set('counter', counter);
+            updateFormDataSource(attrs);
             if (attrs.get('formlayout') === 'dialog') {
                 dialogId = parentLiveTable ? parentLiveTable.get('liveform_dialog_id') : `liveform_dialog_id_${counter}`;
                 attrs.set('dialogId', dialogId);
