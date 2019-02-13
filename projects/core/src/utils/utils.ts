@@ -56,7 +56,7 @@ export const isDefined = v => 'undefined' !== typeof v;
 
 export const isObject = v => null !== v && 'object' === typeof v;
 
-export const toBoolean = (val, identity?) => (val ? true : (identity ? val === identity : false));
+export const toBoolean = (val, identity?) => ((val && val !== 'false') ? true : (identity ? val === identity : false));
 
 function isIE11 () {
     return window.navigator.appVersion.indexOf('Trident/') > -1;
