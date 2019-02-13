@@ -39,8 +39,8 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
     }
 
     @Input()
-    set wmSmoothscroll(val: string) {
-        this._isEnabled = val === 'true';
+    set wmSmoothscroll(val: any) {
+        this._isEnabled = (val === true || val === 'true');
         if (this._isEnabled) {
             if (!this._smoothScrollInstance) {
                 this._smoothScrollInstance = this.applySmoothScroll();
