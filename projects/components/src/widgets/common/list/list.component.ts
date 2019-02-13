@@ -121,6 +121,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return getClonedObject(this._items[0]);
     }
 
+    public getWidgets(widgteName: string, index: number = 0) {
+        if (!widgteName) {
+            return;
+        }
+        return _.get(this.listItems.toArray(), index, widgteName);
+    }
+
     public set selecteditem(items) {
         this._items.length = 0;
         this.deselectListItems();
@@ -415,7 +422,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         /*Register a watch on the "result" property of the "dataNavigator" so that the paginated data is displayed in the live-list.*/
         this.navigatorResultWatch = dataNavigator.resultEmitter.subscribe((newVal: any) => {
             this.isPaginationChanged = true;
-            this.onDataChange(newVal)
+            this.onDataChange(newVal);
         }, true);
         /*De-register the watch if it is exists */
         if (this.navigatorMaxResultWatch) {
@@ -554,7 +561,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.fieldDefs.length && this.infScroll) {
             this.bindScrollEvt();
         }
-        if(this.isPaginationChanged) {
+        if (this.isPaginationChanged) {
             this.isPaginationChanged = false;
         }
     }
