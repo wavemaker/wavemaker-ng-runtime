@@ -60,6 +60,9 @@ export class LiveVariableOfflineBehaviour {
             const onlineHandler = this.httpService.sendCallAsObservable;
             if (onlineHandler) {
                 this.httpService.sendCallAsObservable = (reqParams, params): any => {
+                    if (!params && _.get(reqParams, 'url')) {
+                        params = {url: reqParams.url};
+                    }
                     // reqParams will contain the full path of insert/update call which will be processed again in parseConfig method
                     // and will be appended again with '/services/./.' which will result in deployedUrl + '/service/./.' + '/service/./.' which is wrong.
                     // Hence passing url in params

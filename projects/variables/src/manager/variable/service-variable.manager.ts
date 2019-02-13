@@ -448,8 +448,8 @@ export class ServiceVariableManager extends BaseVariableManager {
             requestParams.responseType = 'text'; // this is to return text response. JSON & XML-to-JSON parsing is handled in success handler.
             this.httpCall(requestParams, variable).then((response) => {
                 successHandler(response, resolve);
-            }, (error) => {
-                errorHandler(error, reject);
+            }, err => {
+                errorHandler(err, reject);
             });
             // the _observable property on variable is used store the observable using which the network call is made
             // this can be used to cancel the variable calls.

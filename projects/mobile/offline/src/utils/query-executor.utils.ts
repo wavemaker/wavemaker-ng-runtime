@@ -28,6 +28,9 @@ export class NamedQueryExecutionOfflineBehaviour {
         isOfflineBehaviourAdded = true;
         const orig = this.httpService.sendCallAsObservable;
         this.httpService.sendCallAsObservable = (reqParams: any, params?: any): Observable<any> => {
+            if (!params && _.get(reqParams, 'url')) {
+                params = {url: reqParams.url};
+            }
             if (!this.networkService.isConnected() && params.url.indexOf('/queryExecutor/') > 0) {
                 return from(this.executeLocally(params));
             } else {
