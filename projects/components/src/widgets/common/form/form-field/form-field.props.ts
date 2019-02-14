@@ -24,91 +24,90 @@ import { switchProps } from '../../switch/switch.props';
 import { textareaProps } from '../../textarea/textarea.props';
 import { timeProps } from '../../time/time.props';
 
-const uploadProps = new Map([
-    ['disabled', PROP_BOOLEAN],
-    ['extensions', PROP_STRING],
-    ['filetype', PROP_STRING],
-    ['multiple', PROP_BOOLEAN],
-    ['readonly', PROP_BOOLEAN],
-    ['required', PROP_BOOLEAN]
-]);
-
-const textProps = new Map(inputTextTypeProps);
-
-const mergeTextProps = (typeProps) => {
-    typeProps.forEach((v: any, k) => textProps.set(k, v));
-};
-mergeTextProps(inputCalendarTypeProps);
-mergeTextProps(inputColorTypeProps);
-mergeTextProps(inputEmailTypeProps);
-mergeTextProps(inputNumberTypeProps);
-
-const widgetPropsMap = new Map(
-    [
-        [FormWidgetType.AUTOCOMPLETE, searchProps],
-        [FormWidgetType.CHECKBOX, checkboxProps],
-        [FormWidgetType.CHECKBOXSET, checkboxsetProps],
-        [FormWidgetType.CHIPS, chipsProps],
-        [FormWidgetType.COLORPICKER, colorPickerProps],
-        [FormWidgetType.CURRENCY, currencyProps],
-        [FormWidgetType.DATE, dateProps],
-        [FormWidgetType.DATETIME, dateTimeProps],
-        [FormWidgetType.NUMBER, numberProps],
-        [FormWidgetType.PASSWORD, inputTextTypeProps],
-        [FormWidgetType.RADIOSET, radiosetProps],
-        [FormWidgetType.RATING, ratingProps],
-        [FormWidgetType.RICHTEXT, richTextProps],
-        [FormWidgetType.SELECT, selectProps],
-        [FormWidgetType.SLIDER, sliderProps],
-        [FormWidgetType.SWITCH, switchProps],
-        [FormWidgetType.TEXT, textProps],
-        [FormWidgetType.TEXTAREA, textareaProps],
-        [FormWidgetType.TIME, timeProps],
-        [FormWidgetType.TIMESTAMP, dateTimeProps],
-        [FormWidgetType.TOGGLE, checkboxProps],
-        [FormWidgetType.TYPEAHEAD, searchProps],
-        [FormWidgetType.UPLOAD, uploadProps]
-    ]
-);
-const formFieldMap = new Map(
-    [
-        ['defaultvalue', PROP_STRING],
-        ['displayname', PROP_STRING],
-        ['display-name', PROP_STRING],
-        ['field', PROP_STRING],
-        ['filterexpressions', PROP_STRING],
-        ['filter-on', PROP_STRING],
-        ['generator', PROP_STRING],
-        ['hint', PROP_STRING],
-        ['inputtype', PROP_STRING],
-        ['is-primary-key', PROP_BOOLEAN],
-        ['is-range', PROP_BOOLEAN],
-        ['is-related', PROP_BOOLEAN],
-        ['isformfield', {value: true}],
-        ['key', PROP_STRING],
-        ['limit', PROP_NUMBER],
-        ['lookup-type', PROP_STRING],
-        ['lookup-field', PROP_STRING],
-        ['name', PROP_STRING],
-        ['matchmode', PROP_STRING],
-        ['maxdefaultvalue', PROP_STRING],
-        ['maxplaceholder', PROP_STRING],
-        ['mobile-display', {value: true, ...PROP_BOOLEAN}],
-        ['period', PROP_BOOLEAN],
-        ['pc-display', {value: true, ...PROP_BOOLEAN}],
-        ['placeholder', PROP_STRING],
-        ['primary-key', PROP_BOOLEAN],
-        ['related-entity-name', PROP_STRING],
-        ['required', PROP_BOOLEAN],
-        ['show', {value: true, ...PROP_BOOLEAN}],
-        ['type', PROP_STRING],
-        ['validationmessage', PROP_STRING],
-        ['viewmodewidget', PROP_STRING],
-        ['widgettype', PROP_STRING]
-    ]
-);
-
 export const registerProps = () => {
+    const uploadProps = new Map([
+        ['disabled', PROP_BOOLEAN],
+        ['extensions', PROP_STRING],
+        ['filetype', PROP_STRING],
+        ['multiple', PROP_BOOLEAN],
+        ['readonly', PROP_BOOLEAN],
+        ['required', PROP_BOOLEAN]
+    ]);
+
+    const textProps = new Map(inputTextTypeProps);
+
+    const mergeTextProps = (typeProps) => {
+        typeProps.forEach((v: any, k) => textProps.set(k, v));
+    };
+    mergeTextProps(inputCalendarTypeProps);
+    mergeTextProps(inputColorTypeProps);
+    mergeTextProps(inputEmailTypeProps);
+    mergeTextProps(inputNumberTypeProps);
+
+    const widgetPropsMap = new Map(
+        [
+            [FormWidgetType.AUTOCOMPLETE, searchProps],
+            [FormWidgetType.CHECKBOX, checkboxProps],
+            [FormWidgetType.CHECKBOXSET, checkboxsetProps],
+            [FormWidgetType.CHIPS, chipsProps],
+            [FormWidgetType.COLORPICKER, colorPickerProps],
+            [FormWidgetType.CURRENCY, currencyProps],
+            [FormWidgetType.DATE, dateProps],
+            [FormWidgetType.DATETIME, dateTimeProps],
+            [FormWidgetType.NUMBER, numberProps],
+            [FormWidgetType.PASSWORD, inputTextTypeProps],
+            [FormWidgetType.RADIOSET, radiosetProps],
+            [FormWidgetType.RATING, ratingProps],
+            [FormWidgetType.RICHTEXT, richTextProps],
+            [FormWidgetType.SELECT, selectProps],
+            [FormWidgetType.SLIDER, sliderProps],
+            [FormWidgetType.SWITCH, switchProps],
+            [FormWidgetType.TEXT, textProps],
+            [FormWidgetType.TEXTAREA, textareaProps],
+            [FormWidgetType.TIME, timeProps],
+            [FormWidgetType.TIMESTAMP, dateTimeProps],
+            [FormWidgetType.TOGGLE, checkboxProps],
+            [FormWidgetType.TYPEAHEAD, searchProps],
+            [FormWidgetType.UPLOAD, uploadProps]
+        ]
+    );
+    const formFieldMap = new Map(
+        [
+            ['defaultvalue', PROP_STRING],
+            ['displayname', PROP_STRING],
+            ['display-name', PROP_STRING],
+            ['field', PROP_STRING],
+            ['filterexpressions', PROP_STRING],
+            ['filter-on', PROP_STRING],
+            ['generator', PROP_STRING],
+            ['hint', PROP_STRING],
+            ['inputtype', PROP_STRING],
+            ['is-primary-key', PROP_BOOLEAN],
+            ['is-range', PROP_BOOLEAN],
+            ['is-related', PROP_BOOLEAN],
+            ['isformfield', {value: true}],
+            ['key', PROP_STRING],
+            ['limit', PROP_NUMBER],
+            ['lookup-type', PROP_STRING],
+            ['lookup-field', PROP_STRING],
+            ['name', PROP_STRING],
+            ['matchmode', PROP_STRING],
+            ['maxdefaultvalue', PROP_STRING],
+            ['maxplaceholder', PROP_STRING],
+            ['mobile-display', {value: true, ...PROP_BOOLEAN}],
+            ['period', PROP_BOOLEAN],
+            ['pc-display', {value: true, ...PROP_BOOLEAN}],
+            ['placeholder', PROP_STRING],
+            ['primary-key', PROP_BOOLEAN],
+            ['related-entity-name', PROP_STRING],
+            ['required', PROP_BOOLEAN],
+            ['show', {value: true, ...PROP_BOOLEAN}],
+            ['type', PROP_STRING],
+            ['validationmessage', PROP_STRING],
+            ['viewmodewidget', PROP_STRING],
+            ['widgettype', PROP_STRING]
+        ]
+    );
     widgetPropsMap.forEach((val, key) => {
         const propsMap = new Map(formFieldMap);
         const widgetProps = widgetPropsMap.get(key);

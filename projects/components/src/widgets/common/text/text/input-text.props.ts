@@ -17,7 +17,6 @@ export const inputTextTypeProps = new Map(
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
-        ['step', PROP_NUMBER],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'text', ...PROP_STRING}],
         ['updateon', PROP_STRING]
