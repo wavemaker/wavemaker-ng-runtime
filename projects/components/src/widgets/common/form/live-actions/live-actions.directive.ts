@@ -110,7 +110,7 @@ export class LiveActionsDirective {
             onOk: () => {
                 this.performCUDOperation(requestData, operation, options);
             },
-            onClose: () => {
+            onCancel: () => {
                 triggerFn(options.cancelDeleteCallback);
             }
         });

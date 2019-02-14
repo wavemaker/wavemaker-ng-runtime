@@ -270,7 +270,7 @@ export class TableCUDDirective {
             onOk: () => {
                 this.deleteFn(options);
             },
-            onClose: () => {
+            onCancel: () => {
                 triggerFn(options.cancelRowDeleteCallback);
             }
         });
