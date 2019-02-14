@@ -23,7 +23,10 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.css"
+                            "src/styles.css",
+                            "src/assets/styles/css/wm-style.css",
+                            "src/assets/themes/style.css",
+                            "src/assets/app.css"
                         ],
                         "scripts": [
                             "./node_modules/lodash/lodash.min.js",
