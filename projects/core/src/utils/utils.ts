@@ -582,6 +582,11 @@ export const isDateTimeType = type => {
 /*  This function returns date object. If val is undefined it returns invalid date */
 export const getValidDateObject = val => {
     if (moment(val).isValid()) {
+        // date with +5 hours is returned in safari browser which is not a valid date.
+        // Hence converting the date to the supported format "YYYY/MM/DD HH:mm:ss" in IOS
+        if (isIos()) {
+            val = moment(moment(val).valueOf()).format('YYYY/MM/DD HH:mm:ss');
+        }
         return val;
     }
     /*if the value is a timestamp string, convert it to a number*/
