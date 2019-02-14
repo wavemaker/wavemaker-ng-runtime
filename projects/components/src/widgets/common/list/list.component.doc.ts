@@ -314,4 +314,11 @@ export class List {
      * @param index Can be an Index(integer) or Model (Object)
      */
     deselectItem(index: number | Object) {}
+
+    /**
+     * This method returns the widget at particular index in the list.
+     * @param widgetName Name of the widget.
+     * @param index The index of the item in the List.
+     */
+    getWidgets(widgetName: number, index: number) {}
 }
