@@ -54,6 +54,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const counter = idGen.nextUid();
             const dependsOn = attrs.get('dependson') ? `dependson="${attrs.get('dependson')}"` : '';
             const classProp = attrs.get('formlayout') === 'page' ? 'app-device-liveform panel liveform-inline' : '';
+            const dialogAttributes = ['title', 'title.bind', 'iconclass', 'iconclass.bind', 'width'];
             attrs.delete('dependson');
             const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                     class="${classProp}" [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
@@ -62,9 +63,11 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                 dialogId = parentLiveTable ? parentLiveTable.get('liveform_dialog_id') : `liveform_dialog_id_${counter}`;
                 attrs.set('dialogId', dialogId);
                 const dialogAttrsMap = new Map<string, string>();
-                dialogAttrsMap.set('title', attrs.get('title'));
-                dialogAttrsMap.set('iconclass', attrs.get('iconclass'));
-                dialogAttrsMap.set('width', attrs.get('width'));
+                dialogAttributes.forEach((attr) => {
+                   if (attrs.get(attr)) {
+                       dialogAttrsMap.set(attr, attrs.get(attr));
+                   }
+                });
                 attrs.set('width', '100%');
                 tmpl = getAttrMarkup(attrs);
                 return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog" ${dependsOn} dialogid="${dialogId}">
