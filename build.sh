@@ -114,10 +114,9 @@ rollup() {
 ngBuild() {
     local bundle=$1
     local sourceLocation=$2
-    local ngModuleName=$3;
     hasSourceChanges ${bundle} ${sourceLocation}
     if [[ "$?" -eq "0" ]]; then
-        execCommand ng-build ${ngModuleName} "$NG build $ngModuleName"
+        execCommand ng-build ${bundle} "$NG build $bundle"
         isSourceModified=true
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
@@ -131,18 +130,18 @@ bundleWeb() {
     echo "uglify: web"
 
     ${UGLIFYJS} \
-        ./dist/npm-packages/wm/core/bundles/index.umd.js \
-        ./dist/npm-packages/wm/swipey/bundles/index.umd.js \
-        ./dist/npm-packages/wm/transpiler/bundles/index.umd.js \
-        ./dist/npm-packages/wm/http/bundles/index.umd.js \
-        ./dist/npm-packages/wm/oAuth/bundles/index.umd.js \
-        ./dist/npm-packages/wm/security/bundles/index.umd.js \
-        ./dist/npm-packages/wm/build-task/bundles/index.umd.js \
-        ./dist/npm-packages/wm/components/bundles/index.umd.js \
-        ./dist/npm-packages/wm/variables/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/placeholder/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/base/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/dynamic/bundles/index.umd.js \
+        ./libraries/core/bundles/index.umd.js \
+        ./libraries/swipey/bundles/index.umd.js \
+        ./libraries/transpiler/bundles/index.umd.js \
+        ./libraries/http-service/bundles/index.umd.js \
+        ./libraries/oAuth/bundles/index.umd.js \
+        ./libraries/security/bundles/index.umd.js \
+        ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/bundles/index.umd.js \
+        ./libraries/variables/bundles/index.umd.js \
+        ./libraries/mobile/placeholder/bundles/index.umd.js \
+        ./libraries/runtime-base/bundles/index.umd.js \
+        ./libraries/runtime-dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.min.js \
@@ -158,23 +157,23 @@ bundleWeb() {
 bundleMobile() {
     echo "uglify: mobile"
     ${UGLIFYJS} \
-        ./dist/npm-packages/wm/core/bundles/index.umd.js \
-        ./dist/npm-packages/wm/swipey/bundles/index.umd.js \
-        ./dist/npm-packages/wm/transpiler/bundles/index.umd.js \
-        ./dist/npm-packages/wm/http/bundles/index.umd.js \
-        ./dist/npm-packages/wm/oAuth/bundles/index.umd.js \
-        ./dist/npm-packages/wm/security/bundles/index.umd.js \
-        ./dist/npm-packages/wm/build-task/bundles/index.umd.js \
-        ./dist/npm-packages/wm/components/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/core/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile-build-task/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/components/bundles/index.umd.js \
-        ./dist/npm-packages/wm/variables/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/offline/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/variables/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/runtime/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/base/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/dynamic/bundles/index.umd.js \
+        ./libraries/core/bundles/index.umd.js \
+        ./libraries/swipey/bundles/index.umd.js \
+        ./libraries/transpiler/bundles/index.umd.js \
+        ./libraries/http-service/bundles/index.umd.js \
+        ./libraries/oAuth/bundles/index.umd.js \
+        ./libraries/security/bundles/index.umd.js \
+        ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/bundles/index.umd.js \
+        ./libraries/mobile/core/bundles/index.umd.js \
+        ./libraries/mobile-build-task/bundles/index.umd.js \
+        ./libraries/mobile/components/bundles/index.umd.js \
+        ./libraries/variables/bundles/index.umd.js \
+        ./libraries/mobile/offline/bundles/index.umd.js \
+        ./libraries/mobile/variables/bundles/index.umd.js \
+        ./libraries/mobile/runtime/bundles/index.umd.js \
+        ./libraries/runtime-base/bundles/index.umd.js \
+        ./libraries/runtime-dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js \
@@ -194,21 +193,21 @@ buildApp() {
     hasSourceChanges mobile-components projects/mobile/components
     local hasChangesInMobileComponents=$?
 
-    ngBuild core projects/core '@wm/core'
-    ngBuild transpiler projects/transpiler '@wm/transpiler'
-    ngBuild swipey projects/swipey '@wm/swipey'
-    ngBuild http-service projects/http-service '@wm/http'
-    ngBuild oAuth projects/oAuth '@wm/oAuth'
-    ngBuild security projects/security '@wm/security'
-    ngBuild variables projects/variables '@wm/variables'
-    ngBuild components projects/components '@wm/components'
+    ngBuild core projects/core
+    ngBuild transpiler projects/transpiler
+    ngBuild swipey projects/swipey
+    ngBuild http-service projects/http-service
+    ngBuild oAuth projects/oAuth
+    ngBuild security projects/security
+    ngBuild variables projects/variables
+    ngBuild components projects/components
 
-    ngBuild mobile-core projects/mobile/core '@wm/mobile/core'
-    ngBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
-    ngBuild mobile-components projects/mobile/components '@wm/mobile/components'
-    ngBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
-    ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'
-    ngBuild mobile-placeholder projects/mobile/placeholder '@wm/mobile/placeholder'
+    ngBuild mobile-core projects/mobile/core
+    ngBuild mobile-offline projects/mobile/offline
+    ngBuild mobile-components projects/mobile/components
+    ngBuild mobile-variables projects/mobile/variables
+    ngBuild mobile-runtime projects/mobile/runtime
+    ngBuild mobile-placeholder projects/mobile/placeholder
 
 
     if [[ ${hasChangesInComponents} -eq "0" ]]; then
@@ -219,8 +218,8 @@ buildApp() {
         ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
     fi
 
-    ngBuild runtime-base projects/runtime-base '@wm/runtime/base'
-    ngBuild runtime-dynamic projects/runtime-dynamic '@wm/runtime/dynamic'
+    ngBuild runtime-base projects/runtime-base
+    ngBuild runtime-dynamic projects/runtime-dynamic
 
     if [[ "${isSourceModified}" == true ]]; then
         bundleWeb
