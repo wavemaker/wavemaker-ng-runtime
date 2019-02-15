@@ -19,202 +19,148 @@
         ],
         "paths": {
             "@wm/build-task": [
-                "libraries/build-task/"
+                "dist/npm-packages/wm/build-task/",
+                "node_modules/wm/build-task/"
             ],
             "@wm/build-task/*": [
-                "libraries/build-task/*"
+                "dist/npm-packages/wm/build-task/*",
+                "node_modules/wm/build-task/*"
             ],
             "@wm/mobile-build-task": [
-                "libraries/mobile-build-task"
+                "dist/npm-packages/wm/mobile-build-task",
+                "node_modules/wm/mobile-build-task"
             ],
             "@wm/mobile-build-task/*": [
-                "libraries/mobile-build-task/*"
+                "dist/npm-packages/wm/mobile-build-task/*",
+                "node_modules/wm/mobile-build-task/*"
             ],
             "@wm/core": [
-                "libraries/core"
+                "dist/npm-packages/wm/core",
+                "node_modules/wm/core"
             ],
             "@wm/core/*": [
-                "libraries/core/*"
+                "dist/npm-packages/wm/core/*",
+                "node_modules/wm/core/*"
             ],
             "@wm/components": [
-                "libraries/components"
+                "dist/npm-packages/wm/components",
+                "node_modules/wm/components"
             ],
             "@wm/components/*": [
-                "libraries/components/*"
+                "dist/npm-packages/wm/components/*",
+                "node_modules/wm/components/*"
             ],
             "@wm/transpiler": [
-                "libraries/transpiler"
+                "dist/npm-packages/wm/transpiler",
+                "node_modules/wm/transpiler"
             ],
             "@wm/transpiler/*": [
-                "libraries/transpiler/*"
+                "dist/npm-packages/wm/transpiler/*",
+                "node_modules/wm/transpiler/*"
             ],
             "@wm/security": [
-                "libraries/security"
+                "dist/npm-packages/wm/security",
+                "node_modules/wm/security"
             ],
             "@wm/security/*": [
-                "libraries/security/*"
+                "dist/npm-packages/wm/security/*",
+                "node_modules/wm/security/*"
             ],
             "@swipey": [
-                "libraries/swipey"
+                "dist/npm-packages/wm/swipey",
+                "node_modules/wm/swipey"
             ],
             "@swipey/*": [
-                "libraries/swipey/*"
+                "dist/npm-packages/wm/swipey/*",
+                "node_modules/wm/swipey/*"
             ],
             "@wm/http": [
-                "libraries/http-service"
+                "dist/npm-packages/wm/http",
+                "node_modules/wm/http"
             ],
             "@wm/http/*": [
-                "libraries/http-service/*"
+                "dist/npm-packages/wm/http/*",
+                "node_modules/wm/http/*"
             ],
             "@wm/oAuth": [
-                "libraries/oAuth"
+                "dist/npm-packages/wm/oAuth",
+                "node_modules/wm/oAuth"
             ],
             "@wm/oAuth/*": [
-                "libraries/oAuth/*"
+                "dist/npm-packages/wm/oAuth/*",
+                "node_modules/wm/oAuth/*"
             ],
             "@wm/variables": [
-                "libraries/variables"
+                "dist/npm-packages/wm/variables",
+                "node_modules/wm/variables"
             ],
             "@wm/variables/*": [
-                "libraries/variables/*"
+                "dist/npm-packages/wm/variables/*",
+                "node_modules/wm/variables/*"
             ],
             "@wm/mobile/core": [
-                "libraries/mobile/core"
+                "dist/npm-packages/wm/mobile/core",
+                "node_modules/wm/mobile/core"
             ],
             "@wm/mobile/core/*": [
-                "libraries/mobile/core/*"
+                "dist/npm-packages/wm/mobile/core/*",
+                "node_modules/wm/mobile/core/*"
             ],
             "@wm/mobile/components": [
-                "libraries/mobile/components"
+                "dist/npm-packages/wm/mobile/components",
+                "node_modules/wm/mobile/components"
             ],
             "@wm/mobile/components/*": [
-                "libraries/mobile/components/*"
+                "dist/npm-packages/wm/mobile/components/*",
+                "node_modules/wm/mobile/components/*"
             ],
             "@wm/mobile/offline": [
-                "libraries/mobile/offline"
+                "dist/npm-packages/wm/mobile/offline",
+                "node_modules/wm/mobile/offline"
             ],
             "@wm/mobile/offline/*": [
-                "libraries/mobile/offline/*"
+                "dist/npm-packages/wm/mobile/offline/*",
+                "node_modules/wm/mobile/offline/*"
             ],
             "@wm/mobile/variables": [
-                "libraries/mobile/variables"
+                "dist/npm-packages/wm/mobile/variables",
+                "node_modules/wm/mobile/variables"
             ],
             "@wm/mobile/variables/*": [
-                "libraries/mobile/variables/*"
+                "dist/npm-packages/wm/mobile/variables/*",
+                "node_modules/wm/mobile/variables/*"
             ],
             "@wm/runtime/base": [
-                "libraries/runtime-base"
+                "dist/npm-packages/wm/runtime/base",
+                "node_modules/wm/runtime/base"
             ],
             "@wm/runtime/base/*": [
-                "libraries/runtime-base/*"
+                "dist/npm-packages/wm/runtime/base/*",
+                "node_modules/wm/runtime/base/*"
             ],
             "@wm/runtime/dynamic": [
-                "libraries/runtime-dynamic"
+                "dist/npm-packages/wm/runtime/dynamic",
+                "node_modules/wm/runtime/dynamic"
             ],
             "@wm/runtime/dynamic/*": [
-                "libraries/runtime-dynamic/*"
+                "dist/npm-packages/wm/runtime/dynamic/*",
+                "node_modules/wm/runtime/dynamic/*"
             ],
             "@wm/mobile/runtime": [
-                "libraries/mobile/placeholder"
+                "dist/npm-packages/wm/mobile/placeholder",
+                "node_modules/wm/mobile/placeholder"
             ],
             "@wm/mobile/runtime/*": [
-                "libraries/mobile/placeholder/*"
+                "dist/npm-packages/wm/mobile/placeholder/*",
+                "node_modules/wm/mobile/placeholder/*"
             ],
             "@wm/mobile/placeholder": [
-                "libraries/mobile/placeholder"
+                "dist/npm-packages/wm/mobile/placeholder",
+                "node_modules/wm/mobile/placeholder"
             ],
             "@wm/mobile/placeholder/*": [
-                "libraries/mobile/placeholder/*"
-            ],
-            "core": [
-                "libraries/core"
-            ],
-            "core/*": [
-                "libraries/core/*"
-            ],
-            "components": [
-                "libraries/components"
-            ],
-            "components/*": [
-                "libraries/components/*"
-            ],
-            "transpiler": [
-                "libraries/transpiler"
-            ],
-            "transpiler/*": [
-                "libraries/transpiler/*"
-            ],
-            "security": [
-                "libraries/security"
-            ],
-            "security/*": [
-                "libraries/security/*"
-            ],
-            "http-service": [
-                "libraries/http-service"
-            ],
-            "http-service/*": [
-                "libraries/http-service/*"
-            ],
-            "oAuth": [
-                "libraries/oAuth"
-            ],
-            "Auth/*": [
-                "libraries/oAuth/*"
-            ],
-            "variables": [
-                "libraries/variables"
-            ],
-            "variables/*": [
-                "libraries/variables/*"
-            ],
-            "mobile-core": [
-                "libraries/mobile/core"
-            ],
-            "mobile-core/*": [
-                "libraries/mobile/core/*"
-            ],
-            "mobile-components": [
-                "libraries/mobile/components"
-            ],
-            "mobile-components/*": [
-                "libraries/mobile/components/*"
-            ],
-            "mobile-offline": [
-                "libraries/mobile/offline"
-            ],
-            "mobile-offline/*": [
-                "libraries/mobile/offline/*"
-            ],
-            "mobile-variables": [
-                "libraries/mobile/variables"
-            ],
-            "mobile-variables/*": [
-                "libraries/mobile/variables/*"
-            ],
-            "runtime-base": [
-                "libraries/runtime-base"
-            ],
-            "runtime-base/*": [
-                "libraries/runtime-base/*"
-            ],
-            "runtime-dynamic": [
-                "libraries/runtime-dynamic"
-            ],
-            "runtime-dynamic/*": [
-                "libraries/runtime-dynamic/*"
-            ],
-            "mobile-runtime": [
-                "libraries/mobile/runtime"
-            ],
-            "mobile-runtime/*": [
-                "libraries/mobile/runtime/*"
-            ],
-            "mobile-placeholder": [
-                "libraries/mobile/placeholder"
-            ],
-            "mobile-placeholder/*": [
-                "libraries/mobile/placeholder/*"
+                "dist/npm-packages/wm/mobile/placeholder/*",
+                "node_modules/wm/mobile/placeholder/*"
             ]
         }
     }
