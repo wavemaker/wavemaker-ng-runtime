@@ -307,6 +307,10 @@ export class TableFilterSortDirective {
     private handleServerSideSearch(searchObj) {
         this.table.filterInfo = searchObj;
 
+        if (!this.table.datasource) {
+            return;
+        }
+
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterFields = this.getFilterFields(searchObj);
@@ -508,6 +512,9 @@ export class TableFilterSortDirective {
     }
 
     refreshData(isSamePage) {
+        if (!this.table.datasource) {
+            return;
+        }
         const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';

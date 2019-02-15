@@ -71,6 +71,7 @@ export function refreshDataSource(dataSource, options): Promise<any> {
     return new Promise((res, rej) => {
         if (!dataSource) {
             rej();
+            return;
         }
         dataSource.execute(DataSource.Operation.LIST_RECORDS, {
             'filterFields' : options.filterFields || {},
