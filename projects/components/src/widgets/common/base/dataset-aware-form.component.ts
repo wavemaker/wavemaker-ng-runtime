@@ -148,11 +148,14 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         // if datavalue is not defined or empty then set the model as undefined.
         if (!isDefined(values) || values === '' || _.isNull(values) || (values instanceof Array && !values.length)) {
             this._modelByKey = undefined;
-            return;
+            // do not return when allowempty is set to true.
+            if (!this.allowempty || !isDefined(values)) {
+                return;
+            }
         }
 
         if (this.acceptsArray && !_.isArray(values)) {
-            values = extractDataAsArray(values);
+            values = this.allowempty ? [values] : extractDataAsArray(values);
         }
 
         // preserve the datavalue if datasetItems are empty.

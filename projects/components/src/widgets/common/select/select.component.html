@@ -11,7 +11,7 @@
         [attr.name]="name"
         [autofocus]="autofocus"
 >
-  <option selected value="" [textContent]="placeholder" [hidden]="!placeholder" ></option>
+  <option selected value="undefined" [textContent]="placeholder" [hidden]="!placeholder" ></option>
   <option
           *ngFor="let item of datasetItems"
           [value]="item.key" [selected]="item.selected" [textContent]="item.label"></option>
