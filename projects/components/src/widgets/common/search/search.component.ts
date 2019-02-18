@@ -185,6 +185,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.elIndex = undefined;
         this.parentEl = undefined;
         this.$element.removeClass('full-screen');
+        if (this._domUpdated) {
+            this._domUpdated = false;
+        }
         this.listenQuery = false;
         this._unsubscribeDv = true;
         this.typeahead.hide();
@@ -268,7 +271,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }, 200);
             this._unsubscribeDv = this.isUpdateOnKeyPress();
         }
-        this._domUpdated = false;
         this._isOpen = false;
     }
 
