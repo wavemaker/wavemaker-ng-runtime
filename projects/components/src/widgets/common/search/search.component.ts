@@ -65,6 +65,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private dataoptions: any;
     public dropdownEl: any;
     private _lastQuery: string;
+    private _lastResult: any = [];
     private _isOpen: boolean; // set to true when dropdown is open
     private showClosebtn: boolean;
     private _unsubscribeDv: boolean;
@@ -195,11 +196,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private getDataSourceAsObservable(query: string): Observable<any> {
         // show dropdown only when there is change in query
-        if (!isMobile() && query && (this._lastQuery === query)) {
+        if (this._lastQuery === query) {
             this._loadingItems = false;
-            return of([]);
+            return of(this._lastResult);
         }
-
+        this._lastQuery = this.query;
         return from(this.getDataSource(query));
     }
 
@@ -247,6 +248,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.isScrolled = true;
         this._loadingItems = true;
 
+        // when invoking new set of results, reset the lastQuery.
+        if (incrementPage) {
+            this._lastQuery = undefined;
+        }
+
         // trigger the typeahead change manually to fetch the next set of results.
         this.typeahead.onInput({
             target: {
@@ -278,7 +284,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // reset all the previous page details in order to fetch new set of result.
         this.result = [];
         this.page = 1;
-        this._lastQuery = undefined;
         this.listenQuery = this.isUpdateOnKeyPress();
 
         // when input is cleared, reset the datavalue
@@ -566,6 +571,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     result = [];
                 }
                 this._loadingItems = false;
+                this._lastResult = result;
                 return result;
             });
     }
@@ -632,7 +638,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         const item = match.item;
         this.queryModel = item;
         item.selected = true;
-        this._lastQuery = this.query = item.label;
+        this.query = item.label;
         $event = $event || this.$typeaheadEvent;
 
         // As item.key can vary from key in the datasetItems
