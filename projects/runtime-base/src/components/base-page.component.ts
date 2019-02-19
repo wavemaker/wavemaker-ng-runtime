@@ -188,9 +188,13 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             this.viewInit$.complete();
             if (isMobileApp()) {
                 this.onPageContentReady = () => {
-                    this.invokeOnReady();
+                    this.fragmentsLoaded$.subscribe(noop, noop, () => {
+                        setTimeout(() => {
+                            this.showPageContent = true;
+                            this.invokeOnReady();
+                        });
+                    });
                     this.onPageContentReady = noop;
-                    setTimeout(() => this.showPageContent = true);
                 };
             } else {
                 this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
