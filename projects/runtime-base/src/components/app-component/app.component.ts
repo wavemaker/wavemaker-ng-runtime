@@ -1,9 +1,9 @@
-import { ApplicationRef, Component, DoCheck, ElementRef, NgZone, ViewEncapsulation } from '@angular/core';
+import { ApplicationRef, Component, DoCheck, ElementRef, NgZone, ViewEncapsulation, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 
 import { setTheme } from 'ngx-bootstrap';
 
-import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider } from '@wm/core';
+import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { PipeProvider } from '../../services/pipe-provider.service';
 
@@ -17,9 +17,11 @@ interface SPINNER {
     templateUrl: './app.component.html',
     encapsulation: ViewEncapsulation.None
 })
-export class AppComponent implements DoCheck {
+export class AppComponent implements DoCheck, AfterViewInit {
     public startApp = false;
     public isApplicationType = false;
+
+    @ViewChild('dynamicComponent', {read: ViewContainerRef}) dynamicComponentContainerRef: ViewContainerRef;
 
     spinner: SPINNER = {show: false, messages: []};
     constructor(
@@ -30,7 +32,8 @@ export class AppComponent implements DoCheck {
         private dialogService: AbstractDialogService,
         private spinnerService: AbstractSpinnerService,
         ngZone: NgZone,
-        private router: Router
+        private router: Router,
+        private app: App
     ) {
         setPipeProvider(_pipeProvider);
         setNgZone(ngZone);
@@ -91,6 +94,10 @@ export class AppComponent implements DoCheck {
             this.isOAuthDialogOpen = false;
             this.dialogService.close('oAuthLoginDialog');
         }
+    }
+
+    ngAfterViewInit() {
+        this.app.dynamicComponentContainerRef = this.dynamicComponentContainerRef;
     }
 
     ngDoCheck() {

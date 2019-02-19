@@ -73,6 +73,7 @@ export abstract class App {
     deployedUrl: string;
     selectedViewPort: Object;
     subscribe: (eventName, callback: (data: any) => void) => () => void;
+    dynamicComponentContainerRef: any;
 
     activePageName: string;
     activePage: any;

@@ -8,7 +8,7 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 
-import { App, extendProto } from '@wm/core';
+import { App, extendProto, isDefined } from '@wm/core';
 import { transpile } from '@wm/transpiler';
 import { initComponentsBuildTask } from '@wm/build-task';
 
@@ -55,6 +55,7 @@ const getDynamicComponent = (
 
 @Injectable()
 export class DynamicComponentRefProviderService {
+    private counter = 1;
 
     constructor(
         private app: App,
@@ -79,5 +80,24 @@ export class DynamicComponentRefProviderService {
             componentFactoryRefCache.set(selector, componentFactoryRef);
         }
         return componentFactoryRef;
+    }
+
+    /**
+     * Creates the component dynamically and add it to the DOM
+     * @param target: HTML element where we need to append the created component
+     * @param markup: Template of the component
+     * @param context: Scope of the component
+     * @param options: We have options like
+                       selector: selector of the component
+                       transpile: flag for trnspiling HTML. By default it is true
+                       nocache: flag for render it from cache or not
+     */
+    public async createComponent(target: HTMLElement, markup: string, context = {}, options:any = {}) {
+        options.transpile = isDefined(options.transpile) ? options.transpile : true;
+        options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-'+ this.counter++;
+        const componentFactoryRef = await this.getComponentFactoryRef(options.selector, markup, options);
+        const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0);
+        extendProto(component.instance, context);
+        target.appendChild(component.location.nativeElement);
     }
 }
