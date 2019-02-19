@@ -129,7 +129,7 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
                 v = v.replace(/"/g, `'`);
             }
             if (k === 'show.bind' && attrs.get('deferload') === 'true') {
-                v = v + `" *lazyLoad="'${v}'`;
+                v = v + `" *lazyLoad="${v}`;
             }
             attrMarkup += `="${v}"`;
         }
