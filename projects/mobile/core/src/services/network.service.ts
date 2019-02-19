@@ -16,7 +16,7 @@ const AUTO_CONNECT_KEY = 'WM.NetworkService._autoConnect',
     originalXMLHttpRequestSend = XMLHttpRequest.prototype.send,
     networkState = {
         isConnecting : false,
-        isConnected : localStorage.getItem(IS_CONNECTED_KEY) !== 'false',
+        isConnected : localStorage.getItem(IS_CONNECTED_KEY) === 'true',
         isNetworkAvailable : true,
         isServiceAvailable : true
     };

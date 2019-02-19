@@ -7,6 +7,7 @@ import { SecurityService } from '@wm/security';
 declare const _;
 declare const cordova;
 const SECURITY_FILE = 'logged-in-user.info';
+declare const resolveLocalFileSystemURL;
 
 let isOfflineBehaviourAdded = false;
 
@@ -116,6 +117,20 @@ export class SecurityOfflineBehaviour {
     }
 
     private readLocalSecurityConfig(): Promise<any> {
-        return this.file.readAsText(cordova.file.dataDirectory, SECURITY_FILE).then(JSON.parse, noop);
+        // reading the security info from file in dataDirectory but when this file is not available then fetching the config from the app directory
+        return new Promise((resolve, reject) => {
+            const rootDir = cordova.file.dataDirectory;
+            this.file.checkFile(rootDir, SECURITY_FILE).then(() => {
+                return this.readFileAsTxt(rootDir, SECURITY_FILE).then(resolve, reject);
+            }, () => {
+                const folderPath = cordova.file.applicationDirectory + 'www/metadata/app',
+                    fileName = 'security-config.json';
+                return this.readFileAsTxt(folderPath, fileName).then(resolve, reject);
+            });
+        });
+    }
+
+    private readFileAsTxt(folderPath, fileName): Promise<any> {
+        return this.file.readAsText(folderPath, fileName).then(JSON.parse).catch(noop);
     }
 }

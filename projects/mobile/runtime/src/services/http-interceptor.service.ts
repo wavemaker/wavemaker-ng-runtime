@@ -252,10 +252,14 @@ class SecurityInterceptor implements RequestInterceptor {
     private init(): Promise<any> {
         const folderPath = cordova.file.applicationDirectory + 'www/metadata/app',
             fileName = 'public-pages.json';
-        this.initialized = true;
         return this.file.readAsText(folderPath, fileName).then(text => {
-            this.publicPages = {};
-            _.forEach(JSON.parse(text), pageName => this.publicPages[pageName] = true);
-        }).catch(noop);
+            if (!this.initialized) {
+                this.publicPages = {};
+                this.initialized = true;
+                _.forEach(JSON.parse(text), pageName => this.publicPages[pageName] = true);
+            }
+        }).catch(() => {
+            this.initialized = true;
+        });
     }
 }
