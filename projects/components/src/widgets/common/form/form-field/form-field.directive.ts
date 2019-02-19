@@ -449,6 +449,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.form.registerFormFields(this.widget);
 
             addForIdAttributes(this.nativeElement);
+
+            this.setReadOnlyState();
         });
     }
 }
