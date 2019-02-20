@@ -1,6 +1,6 @@
 {
     "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-    "dest": "../../libraries/build-task",
+    "dest": "../../dist/npm-packages/wm/build-task",
     "lib": {
         "flatModuleFile": "index",
         "entryFile": "src/public_api_buildtask.ts",

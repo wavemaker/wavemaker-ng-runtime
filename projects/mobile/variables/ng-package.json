@@ -1,6 +1,6 @@
 {
     "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-    "dest": "../../../libraries/mobile/variables",
+    "dest": "../../../dist/npm-packages/wm/mobile/variables",
     "lib": {
         "flatModuleFile": "index",
         "entryFile": "src/public_api.ts",

@@ -1,6 +1,6 @@
 {
     "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-    "dest": "../../libraries/oAuth",
+    "dest": "../../dist/npm-packages/wm/oAuth",
     "lib": {
         "flatModuleFile": "index",
         "entryFile": "src/public_api.ts",
