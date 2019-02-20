@@ -14,6 +14,7 @@ declare const _;
 export class PartialParamHandlerDirective {
     constructor (@Self() @Inject(WidgetRef) private widgetRef) {
         this.widgetRef.partialParams = {};
+        this.widgetRef.pageParams = this.widgetRef.partialParams;
         this.widgetRef.params$ = new Subject();
     }
 
