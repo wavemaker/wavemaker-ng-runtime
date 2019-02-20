@@ -38,7 +38,6 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
         this.initUserScript();
 
         this.registerWidgets();
-        this.registerChangeListeners();
         this.initVariables();
         this.registerProps();
         this.defineI18nProps();
@@ -147,6 +146,7 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.viewInit$.complete();
             this.onReady();
+            this.registerChangeListeners();
             this.containerWidget.invokeEventCallback('load');
         }, 100);
     }
