@@ -1,5 +1,5 @@
 {
-    "name": "security",
+    "name": "@wm/security",
     "version": "0.0.1",
     "peerDependencies": {
         "@angular/common": "^7.0.0",

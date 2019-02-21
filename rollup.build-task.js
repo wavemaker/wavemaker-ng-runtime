@@ -6,7 +6,7 @@ import compiler from '@ampproject/rollup-plugin-closure-compiler';
 
 export default [
     {
-        input: 'libraries/build-task/fesm2015/index.js',
+        input: 'dist/npm-packages/wm/build-task/fesm2015/index.js',
         output: {
             file: 'dist/transpilation/transpilation-web.cjs.js',
             format: 'cjs'
@@ -21,8 +21,8 @@ export default [
                 ignoreGlobal: true
             }),
             alias({
-                '@wm/core': 'libraries/core/fesm5/index.js',
-                '@wm/transpiler': 'libraries/transpiler/fesm5/index.js'
+                '@wm/core': 'dist/npm-packages/wm/core/fesm5/index.js',
+                '@wm/transpiler': 'dist/npm-packages/wm/transpiler/fesm5/index.js'
             }),
             compiler({
                 formatting: 'PRETTY_PRINT'
@@ -31,8 +31,8 @@ export default [
     },
     {
         input: [
-            'libraries/build-task/fesm2015/index.js',
-            'libraries/mobile-build-task/fesm2015/index.js'
+            'dist/npm-packages/wm/build-task/fesm2015/index.js',
+            'dist/npm-packages/wm/mobile-build-task/fesm2015/index.js'
         ],
         output: {
             file: 'dist/transpilation/transpilation-mobile.cjs.js',
@@ -49,8 +49,8 @@ export default [
                 ignoreGlobal: true
             }),
             alias({
-                '@wm/core': 'libraries/core/fesm5/index.js',
-                '@wm/transpiler': 'libraries/transpiler/fesm5/index.js'
+                '@wm/core': 'dist/npm-packages/wm/core/fesm5/index.js',
+                '@wm/transpiler': 'dist/npm-packages/wm/transpiler/fesm5/index.js'
             }),
             compiler({
                 formatting: 'PRETTY_PRINT'
