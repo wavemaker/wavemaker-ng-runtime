@@ -67,6 +67,14 @@ const processEvent = attr => {
     return [`${evtName}.event`, attr.value];
 };
 
+/**
+ * Wraps the string with single quotes.
+ * @param val
+ */
+const wrapWithApos = (val: string) => {
+    return `&apos;${val.replace(/&apos/g, '&quot').replace(/&quot/g, '\\&quot')}&apos;`;
+};
+
 const processAttr = attr => {
     const overridden = OVERRIDES[attr.name];
     const value = attr.valueSpan ? attr.value : undefined;
@@ -129,7 +137,7 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
                 v = v.replace(/"/g, `'`);
             }
             if (k === 'show.bind' && attrs.get('deferload') === 'true') {
-                v = v + `" *lazyLoad="'${v}'`;
+                v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
             attrMarkup += `="${v}"`;
         }
