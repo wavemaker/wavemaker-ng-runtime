@@ -169,7 +169,7 @@ export class NetworkService implements IDeviceStartUpService {
         if (cordova) {
             this.tryToConnect(true).catch(noop);
             // Connection constant will be available only when network plugin is included.
-            if (typeof Connection !== 'undefined' && navigator.connection) {
+            if (window['Connection'] && navigator.connection) {
                 networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
                 /*
                  * When the device comes online, check is the service is available. If the service is available and auto
