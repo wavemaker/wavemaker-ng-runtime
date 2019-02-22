@@ -166,36 +166,39 @@ export class NetworkService implements IDeviceStartUpService {
     }
 
     public start(): Promise<void> {
-        if (cordova && window['Connection']) {
-            networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
+        if (cordova) {
             this.tryToConnect(true).catch(noop);
-            /*
-             * When the device comes online, check is the service is available. If the service is available and auto
-             * connect flag is true, then app is automatically connected to remote server.
-             */
-            this.network.onConnect().subscribe(() => {
-                networkState.isNetworkAvailable = true;
-                this.tryToConnect().catch(noop);
-            });
-
-            /*
-             *When device goes offline, then change the network state and emit that notifies about network state change.
-             */
-            this.network.onDisconnect().subscribe(() => {
-                networkState.isNetworkAvailable = false;
-                networkState.isServiceAvailable = false;
-                this.tryToDisconnect();
-            });
-
-            this.app.subscribe('onNetworkStateChange', (data) => {
-                /**
-                 * If network is available and server is not available,then
-                 * try to connect when server is available.
+            // Connection constant will be available only when network plugin is included.
+            if (typeof Connection !== 'undefined' && navigator.connection) {
+                networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
+                /*
+                 * When the device comes online, check is the service is available. If the service is available and auto
+                 * connect flag is true, then app is automatically connected to remote server.
                  */
-                if (data.isNetworkAvailable && !data.isServiceAvailable) {
-                    this.checkForServiceAvailiblity().then(() => this.connect());
-                }
-            });
+                this.network.onConnect().subscribe(() => {
+                    networkState.isNetworkAvailable = true;
+                    this.tryToConnect().catch(noop);
+                });
+
+                /*
+                 *When device goes offline, then change the network state and emit that notifies about network state change.
+                 */
+                this.network.onDisconnect().subscribe(() => {
+                    networkState.isNetworkAvailable = false;
+                    networkState.isServiceAvailable = false;
+                    this.tryToDisconnect();
+                });
+
+                this.app.subscribe('onNetworkStateChange', (data) => {
+                    /**
+                     * If network is available and server is not available,then
+                     * try to connect when server is available.
+                     */
+                    if (data.isNetworkAvailable && !data.isServiceAvailable) {
+                        this.checkForServiceAvailiblity().then(() => this.connect());
+                    }
+                });
+            }
         }
         return Promise.resolve();
     }
