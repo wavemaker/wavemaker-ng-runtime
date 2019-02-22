@@ -44,7 +44,7 @@
                             "./node_modules/jquery-ui/ui/widgets/resizable.js",
                             "./node_modules/jquery-ui/ui/widgets/sortable.js",
                             "./node_modules/jquery-ui/ui/widgets/droppable.js",
-                            "./node_modules/wm/scripts/datatable/datatable.js",
+                            "./libraries/scripts/datatable/datatable.js",
                             "./node_modules/moment/min/moment-with-locales.min.js",
                             "./node_modules/fullcalendar/dist/fullcalendar.min.js",
                             "./node_modules/summernote/dist/summernote-lite.min.js",

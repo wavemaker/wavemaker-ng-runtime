@@ -35,7 +35,7 @@ const generateNpmVersion = (version) => {
 
 
 const updateWMVersion = () => {
-    const path = './dist/npm-packages/wm/package.json';
+    const path = './libraries/package.json';
     const wmPackageJSON = require(path);
     wmPackageJSON.version = generateNpmVersion(argv.version);
     fs.writeFileSync(path, JSON.stringify(wmPackageJSON, null, 4));

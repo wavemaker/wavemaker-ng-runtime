@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BrowserModule } from '@angular/platform-browser';
 
 import { WmComponentsModule } from '@wm/components';
 
@@ -61,7 +60,6 @@ const PIPES = [];
 
 @NgModule({
     imports: [
-        BrowserModule,
         CommonModule,
         WmComponentsModule
     ],

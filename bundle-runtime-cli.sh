@@ -2,6 +2,7 @@
 
 BASEDIR=$(dirname "$0")
 cd $BASEDIR
+dev=true
 publish=false
 useS3=false
 version='x.x.x'
@@ -10,11 +11,11 @@ while [ "$1" != "" ]; do
         --use-s3)
             shift
             useS3=$1
-            publish=true
         ;;
         --pom-version)
             shift
             version=$1
+            dev=false
             publish=true
         ;;
     esac
@@ -22,8 +23,8 @@ while [ "$1" != "" ]; do
 done
 
 #copy datatable to libraries
-mkdir -p dist/npm-packages/wm/scripts/datatable/
-cp projects/components/src/widgets/common/table/datatable.js dist/npm-packages/wm/scripts/datatable/
+mkdir -p libraries/scripts/datatable/
+cp projects/components/src/widgets/common/table/datatable.js libraries/scripts/datatable/
 
 node_modules/.bin/rollup -c rollup.build-task.js
 
@@ -36,15 +37,19 @@ mkdir -p dist/runtime-cli/dependencies
 
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
-
-#cp -r libraries/ dist/runtime-cli/angular-app
+if [[ "${dev}" == true ]]; then
+    cp -r libraries/ dist/runtime-cli/angular-app
+fi
 cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.json dist/runtime-cli/angular-app
-cp ./wm.package.json dist/npm-packages/wm/package.json
+cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then
     node bundle-runtime-cli.js -v "${version}" --useS3=${useS3} --updateWmVersion
 fi
+mkdir -p dist/npm-packages/wm
+cp -r libraries/. dist/npm-packages/wm
 tar -zcf dist/npm-packages/wm.tar.gz -C dist/npm-packages wm
+rm -r dist/npm-packages/wm
 
 cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/runtime-cli/dependencies
 cd -

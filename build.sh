@@ -131,18 +131,18 @@ bundleWeb() {
     echo "uglify: web"
 
     ${UGLIFYJS} \
-        ./dist/npm-packages/wm/core/bundles/index.umd.js \
-        ./dist/npm-packages/wm/swipey/bundles/index.umd.js \
-        ./dist/npm-packages/wm/transpiler/bundles/index.umd.js \
-        ./dist/npm-packages/wm/http/bundles/index.umd.js \
-        ./dist/npm-packages/wm/oAuth/bundles/index.umd.js \
-        ./dist/npm-packages/wm/security/bundles/index.umd.js \
-        ./dist/npm-packages/wm/build-task/bundles/index.umd.js \
-        ./dist/npm-packages/wm/components/bundles/index.umd.js \
-        ./dist/npm-packages/wm/variables/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/placeholder/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/base/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/dynamic/bundles/index.umd.js \
+        ./libraries/core/bundles/index.umd.js \
+        ./libraries/swipey/bundles/index.umd.js \
+        ./libraries/transpiler/bundles/index.umd.js \
+        ./libraries/http/bundles/index.umd.js \
+        ./libraries/oAuth/bundles/index.umd.js \
+        ./libraries/security/bundles/index.umd.js \
+        ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/bundles/index.umd.js \
+        ./libraries/variables/bundles/index.umd.js \
+        ./libraries/mobile/placeholder/bundles/index.umd.js \
+        ./libraries/runtime/base/bundles/index.umd.js \
+        ./libraries/runtime/dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.min.js \
@@ -158,23 +158,23 @@ bundleWeb() {
 bundleMobile() {
     echo "uglify: mobile"
     ${UGLIFYJS} \
-        ./dist/npm-packages/wm/core/bundles/index.umd.js \
-        ./dist/npm-packages/wm/swipey/bundles/index.umd.js \
-        ./dist/npm-packages/wm/transpiler/bundles/index.umd.js \
-        ./dist/npm-packages/wm/http/bundles/index.umd.js \
-        ./dist/npm-packages/wm/oAuth/bundles/index.umd.js \
-        ./dist/npm-packages/wm/security/bundles/index.umd.js \
-        ./dist/npm-packages/wm/build-task/bundles/index.umd.js \
-        ./dist/npm-packages/wm/components/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/core/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile-build-task/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/components/bundles/index.umd.js \
-        ./dist/npm-packages/wm/variables/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/offline/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/variables/bundles/index.umd.js \
-        ./dist/npm-packages/wm/mobile/runtime/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/base/bundles/index.umd.js \
-        ./dist/npm-packages/wm/runtime/dynamic/bundles/index.umd.js \
+        ./libraries/core/bundles/index.umd.js \
+        ./libraries/swipey/bundles/index.umd.js \
+        ./libraries/transpiler/bundles/index.umd.js \
+        ./libraries/http/bundles/index.umd.js \
+        ./libraries/oAuth/bundles/index.umd.js \
+        ./libraries/security/bundles/index.umd.js \
+        ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/bundles/index.umd.js \
+        ./libraries/mobile/core/bundles/index.umd.js \
+        ./libraries/mobile-build-task/bundles/index.umd.js \
+        ./libraries/mobile/components/bundles/index.umd.js \
+        ./libraries/variables/bundles/index.umd.js \
+        ./libraries/mobile/offline/bundles/index.umd.js \
+        ./libraries/mobile/variables/bundles/index.umd.js \
+        ./libraries/mobile/runtime/bundles/index.umd.js \
+        ./libraries/runtime/base/bundles/index.umd.js \
+        ./libraries/runtime/dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js \

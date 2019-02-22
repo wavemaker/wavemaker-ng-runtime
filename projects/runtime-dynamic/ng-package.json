@@ -1,6 +1,6 @@
 {
     "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-    "dest": "../../dist/npm-packages/wm/runtime/dynamic",
+    "dest": "../../libraries/runtime/dynamic",
     "lib": {
         "flatModuleFile": "index",
         "entryFile": "src/public_api.ts",
