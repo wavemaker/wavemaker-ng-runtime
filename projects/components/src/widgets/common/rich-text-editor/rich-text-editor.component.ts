@@ -1,4 +1,4 @@
-import { Component, Injector, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, NgZone, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -44,10 +44,14 @@ $.summernote.ui.button = (...args) => {
 @Component({
     selector: 'div[wmRichTextEditor]',
     templateUrl: './rich-text-editor.component.html',
+    styleUrls: [
+        '../../../../../../node_modules/summernote/dist/summernote-lite.css'
+    ],
     providers: [
         provideAsNgValueAccessor(RichTextEditorComponent),
         provideAsWidgetRef(RichTextEditorComponent)
-    ]
+    ],
+    encapsulation: ViewEncapsulation.None
 })
 export class RichTextEditorComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
     static initializeProps = registerProps();
