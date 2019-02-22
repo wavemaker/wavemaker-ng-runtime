@@ -8,7 +8,7 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "postbuild": "node -p \"const util = require(`util`);const fs = require(`fs`);const readFile = util.promisify(fs.readFile);const writeFile = util.promisify(fs.writeFile);const cheerio = require(`cheerio`);(async () => {try {const contents = await readFile(`./dist/index.html`, `utf8`);const $ = cheerio.load(contents);$('script').attr('defer','true');await writeFile(`./dist/index.html`,$.html())}catch (e) {console.error(`Error in Post ng build Script | ${e}`);}})();\" "
+        "postbuild": "node build-scripts/post-build.js"
     },
     "private": true,
     "dependencies": {
@@ -67,12 +67,14 @@
         "@compodoc/compodoc": "1.1.7",
         "@types/jquery": "3.3.22",
         "@types/node": "8.9.4",
+        "cheerio": "1.0.0-rc.2",
         "codelyzer": "4.5.0",
         "core-js-builder": "2.5.7",
-        "rimraf": "2.6.3",
-        "rollup": "0.65.2",
+        "fs": "0.0.1-security",
         "moment": "2.24.0",
         "ng-packagr": "4.7.0",
+        "rimraf": "2.6.3",
+        "rollup": "0.65.2",
         "rollup-plugin-alias": "1.4.0",
         "rollup-plugin-commonjs": "9.2.0",
         "rollup-plugin-includepaths": "0.2.3",
@@ -82,6 +84,7 @@
         "tsickle": ">=0.29.0",
         "tslib": "1.9.0",
         "tslint": "5.11.0",
-        "typescript": "3.2.2"
+        "typescript": "3.2.2",
+        "util": "0.11.1"
     }
 }
