@@ -47,7 +47,7 @@
                             "./node_modules/wm/scripts/datatable/datatable.js",
                             "./node_modules/moment/min/moment-with-locales.min.js",
                             "./node_modules/fullcalendar/dist/fullcalendar.min.js",
-                            "./node_modules/summernote/dist/summernote.min.js",
+                            "./node_modules/summernote/dist/summernote-lite.min.js",
                             "./node_modules/hammerjs/hammer.min.js",
                             "./node_modules/iscroll/build/iscroll.js",
                             "./node_modules/js-cookie/src/js.cookie.js"
