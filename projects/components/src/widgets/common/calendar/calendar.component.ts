@@ -1,6 +1,6 @@
 import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-inner.component';
 
-import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { $watch, getClonedObject, getSessionStorageItem, isMobile } from '@wm/core';
 
@@ -80,9 +80,11 @@ const dateFormat = 'YYYY/MM/DD';
 @Component({
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
+    styleUrls: ['../../../../../../node_modules/fullcalendar/dist/fullcalendar.css'],
     providers: [
         provideAsWidgetRef(CalendarComponent)
-    ]
+    ],
+    encapsulation: ViewEncapsulation.None
 })
 export class CalendarComponent extends StylableComponent implements AfterContentInit, AfterViewInit, OnInit, IRedrawableComponent {
     static initializeProps = registerProps();

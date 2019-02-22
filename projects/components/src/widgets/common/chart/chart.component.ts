@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostBinding, Injector } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
 
 import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
 
@@ -93,9 +93,11 @@ const angle = d => {
 @Component({
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
+    styleUrls: ['../../../../../../node_modules/wm-nvd3/build/nv.d3.css'],
     providers: [
         provideAsWidgetRef(ChartComponent)
-    ]
+    ],
+    encapsulation: ViewEncapsulation.None
 })
 export class ChartComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
     static initializeProps = registerProps();
