@@ -387,6 +387,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
             this.noDataFound = false;
 
+            if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+                // clone the the data in case of live and service variables to prevent the two-way binding for these variables.
+                newVal = _.cloneDeep(newVal);
+            }
+
             if (isObject(newVal) && !_.isArray(newVal)) {
                 newVal = _.isEmpty(newVal) ? [] : [newVal];
             }

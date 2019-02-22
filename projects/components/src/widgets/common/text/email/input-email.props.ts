@@ -1,10 +1,11 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
 
 export const inputEmailTypeProps = new Map(
     [
         ['autocomplete', {value: true, ...PROP_BOOLEAN}],
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
+        ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],

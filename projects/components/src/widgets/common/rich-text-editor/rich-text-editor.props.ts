@@ -1,8 +1,9 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 export const richTextProps = new Map(
     [
         ['class', PROP_STRING],
+        ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['height', PROP_STRING],
         ['name', PROP_STRING],

@@ -1,4 +1,4 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { getFormMarkupAttr, IBuildTaskDef, register } from '@wm/transpiler';
 import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp } from '@wm/core';
 
 import { ALLFIELDS } from '../../../../utils/data-utils';
@@ -26,7 +26,7 @@ const getEventsTemplate = (attrs) => {
            attrs.delete(key);
        }
     });
-    return getAttrMarkup(eventAttrs);
+    return getFormMarkupAttr(eventAttrs);
 };
 
 const DEFAULT_PLACEHOLDERS = new Map([
@@ -131,7 +131,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                 setDefaultPlaceholder(attrs, widgetType, 2);
             }
 
-            return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getAttrMarkup(attrs)}>
+            return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getFormMarkupAttr(attrs)}>
                         <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="${widgetType}">
                             <label [hidden]="!${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,

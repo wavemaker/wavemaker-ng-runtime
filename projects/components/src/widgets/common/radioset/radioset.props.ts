@@ -6,6 +6,7 @@ export const radiosetProps = new Map(
         ['compareby', PROP_STRING],
         ['datafield', PROP_STRING],
         ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_ANY}],
+        ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING],
