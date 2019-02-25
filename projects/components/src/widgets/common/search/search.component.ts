@@ -38,11 +38,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public minchars: number;
     public type: string;
     public navsearchbar: any;
+    public debouncetime: number;
 
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
     private page = 1;
-    private _loadingItems: boolean;
+    public _loadingItems: boolean;
     private dataProvider: IDataProvider;
     private result: Array<any>; // contains the search result i.e. matches
     private formattedDataset: any;

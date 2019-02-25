@@ -32,6 +32,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     public enablereorder: boolean;
     public maxsize: number;
     public inputwidth: any;
+    private debouncetime: number;
 
     public chipsList: Array<any> = [];
     private readonly maxSizeReached = 'Max size reached';
@@ -121,6 +122,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.dataset = this.dataset;
         this.searchComponent.searchkey = this.searchkey;
         this.searchComponent.limit = this.limit;
+        this.searchComponent.debouncetime = this.debouncetime;
 
         this.getTransformedData = (val) => {
             return this.searchComponent.getTransformedData([val], this.nextItemIndex++, _.get(val, 'iscustom'));
@@ -269,6 +271,17 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     // Triggerred when typeahead option is selected by enter keypress.
     public onSelect($event: Event) {
+        if (this.searchComponent._loadingItems) {
+            if (!this.allowonlyselect && (this.searchComponent.query !== '' && isDefined(this.searchComponent.query))) {
+                // Used by chips, if allowonlyselect is false, set the datavalue to query.
+                this.searchComponent.queryModel = this.searchComponent.query;
+                this.searchComponent._modelByValue = this.searchComponent.query;
+
+                // adds custom chip object to the chipsList.
+                this.addItem($event);
+            }
+            return;
+        }
         // when matches are available, select the active match.
         if (this.searchComponent.typeaheadContainer && this.searchComponent.liElements.length) {
             this.searchComponent.typeaheadContainer.selectActiveMatch();
