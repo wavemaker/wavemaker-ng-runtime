@@ -12,7 +12,8 @@ import {
     getWmProjectProperties,
     isDefined,
     isString,
-    UtilsService
+    UtilsService,
+    DynamicComponentRefProvider
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -25,7 +26,8 @@ const injectorMap = {
     ToasterService: AbstractToasterService,
     Utils: UtilsService,
     FIELD_TYPE: FieldTypeService,
-    FIELD_WIDGET: FieldWidgetService
+    FIELD_WIDGET: FieldWidgetService,
+    DynamicComponentService: DynamicComponentRefProvider
 };
 
 const enum PROJECT_TYPE {
@@ -60,6 +62,7 @@ export class AppRef {
     onBeforeServiceCall =  noop;
     onServiceSuccess =  noop;
     onServiceError =  noop;
+    dynamicComponentContainerRef = {};
 
     projectName: string;
     isPrefabType: boolean;
