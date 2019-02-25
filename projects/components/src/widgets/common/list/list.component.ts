@@ -501,7 +501,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * If the listItem is already a selected item then deselects the item.
      * @param {ListItemDirective} $listItem: Item to be selected of deselected.
      */
-    private toggleListItemSelection($listItem: ListItemDirective, isPaginationChanged?: boolean) {
+    private toggleListItemSelection($listItem: ListItemDirective) {
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
             const item = $listItem.item;
@@ -514,9 +514,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     this.clearSelectedItems();
                 }
                 this._items.push(item);
-                if (isPaginationChanged !== false) {
-                    this.invokeEventCallback('select', {$data: item});
-                }
+                this.invokeEventCallback('select', {$data: item});
                 $listItem.isActive = true;
             }
             this.updateSelectedItemsWidgets();
@@ -545,13 +543,22 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         this.firstSelectedItem = this.lastSelectedItem = null;
 
-        // selectfirst item when the pagination in the first page.
-        if (listItems.length && this.selectfirstitem && !(_.get(this, ['dataNavigator', 'dn', 'currentPage']) !== 1 && this.multiselect)) {
+        // don't select first item if multi-select is enabled and at least item is already selected in the list.
+        if (listItems.length && this.selectfirstitem && !( this._items.length && this.multiselect)) {
             const $firstItem: ListItemDirective = listItems.first;
-            if (!$firstItem.disableItem) {
+
+            if (
+                !$firstItem.disableItem &&
+                this.isPaginationChanged &&
+                // "infinite scroll" or "load on demand" is enabled and at least one item is selected then dont alter the selected list items.
+                !(
+                    (this.infScroll || this.onDemandLoad) &&
+                    this._items.length
+                )
+            ) {
                 this.clearSelectedItems();
                 this.firstSelectedItem = this.lastSelectedItem = $firstItem;
-                this.toggleListItemSelection($firstItem, this.isPaginationChanged);
+                this.toggleListItemSelection($firstItem);
             }
         } else {
             this.deselectListItems();
@@ -566,9 +573,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.fieldDefs.length && this.infScroll) {
             this.bindScrollEvt();
         }
-        if (this.isPaginationChanged) {
-            this.isPaginationChanged = false;
-        }
+        this.isPaginationChanged = false;
     }
 
     public triggerListItemSelection($el: JQuery<HTMLElement>, $event: Event) {
