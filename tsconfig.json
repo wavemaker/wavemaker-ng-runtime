@@ -19,148 +19,58 @@
         ],
         "paths": {
             "@wm/build-task": [
-                "libraries/build-task/",
-                "node_modules/wm/build-task/"
-            ],
-            "@wm/build-task/*": [
-                "libraries/build-task/*",
-                "node_modules/wm/build-task/*"
+                "libraries/build-task/"
             ],
             "@wm/mobile-build-task": [
-                "libraries/mobile-build-task",
-                "node_modules/wm/mobile-build-task"
-            ],
-            "@wm/mobile-build-task/*": [
-                "libraries/mobile-build-task/*",
-                "node_modules/wm/mobile-build-task/*"
+                "libraries/mobile-build-task"
             ],
             "@wm/core": [
-                "libraries/core",
-                "node_modules/wm/core"
-            ],
-            "@wm/core/*": [
-                "libraries/core/*",
-                "node_modules/wm/core/*"
+                "libraries/core"
             ],
             "@wm/components": [
-                "libraries/components",
-                "node_modules/wm/components"
-            ],
-            "@wm/components/*": [
-                "libraries/components/*",
-                "node_modules/wm/components/*"
+                "libraries/components"
             ],
             "@wm/transpiler": [
-                "libraries/transpiler",
-                "node_modules/wm/transpiler"
-            ],
-            "@wm/transpiler/*": [
-                "libraries/transpiler/*",
-                "node_modules/wm/transpiler/*"
+                "libraries/transpiler"
             ],
             "@wm/security": [
-                "libraries/security",
-                "node_modules/wm/security"
-            ],
-            "@wm/security/*": [
-                "libraries/security/*",
-                "node_modules/wm/security/*"
+                "libraries/security"
             ],
             "@swipey": [
-                "libraries/swipey",
-                "node_modules/wm/swipey"
-            ],
-            "@swipey/*": [
-                "libraries/swipey/*",
-                "node_modules/wm/swipey/*"
+                "libraries/swipey"
             ],
             "@wm/http": [
-                "libraries/http",
-                "node_modules/wm/http"
-            ],
-            "@wm/http/*": [
-                "libraries/http/*",
-                "node_modules/wm/http/*"
+                "libraries/http"
             ],
             "@wm/oAuth": [
-                "libraries/oAuth",
-                "node_modules/wm/oAuth"
-            ],
-            "@wm/oAuth/*": [
-                "libraries/oAuth/*",
-                "node_modules/wm/oAuth/*"
+                "libraries/oAuth"
             ],
             "@wm/variables": [
-                "libraries/variables",
-                "node_modules/wm/variables"
-            ],
-            "@wm/variables/*": [
-                "libraries/variables/*",
-                "node_modules/wm/variables/*"
+                "libraries/variables"
             ],
             "@wm/mobile/core": [
-                "libraries/mobile/core",
-                "node_modules/wm/mobile/core"
-            ],
-            "@wm/mobile/core/*": [
-                "libraries/mobile/core/*",
-                "node_modules/wm/mobile/core/*"
+                "libraries/mobile/core"
             ],
             "@wm/mobile/components": [
-                "libraries/mobile/components",
-                "node_modules/wm/mobile/components"
-            ],
-            "@wm/mobile/components/*": [
-                "libraries/mobile/components/*",
-                "node_modules/wm/mobile/components/*"
+                "libraries/mobile/components"
             ],
             "@wm/mobile/offline": [
-                "libraries/mobile/offline",
-                "node_modules/wm/mobile/offline"
-            ],
-            "@wm/mobile/offline/*": [
-                "libraries/mobile/offline/*",
-                "node_modules/wm/mobile/offline/*"
+                "libraries/mobile/offline"
             ],
             "@wm/mobile/variables": [
-                "libraries/mobile/variables",
-                "node_modules/wm/mobile/variables"
-            ],
-            "@wm/mobile/variables/*": [
-                "libraries/mobile/variables/*",
-                "node_modules/wm/mobile/variables/*"
+                "libraries/mobile/variables"
             ],
             "@wm/runtime/base": [
-                "libraries/runtime/base",
-                "node_modules/wm/runtime/base"
-            ],
-            "@wm/runtime/base/*": [
-                "libraries/runtime/base/*",
-                "node_modules/wm/runtime/base/*"
+                "libraries/runtime/base"
             ],
             "@wm/runtime/dynamic": [
-                "libraries/runtime/dynamic",
-                "node_modules/wm/runtime/dynamic"
-            ],
-            "@wm/runtime/dynamic/*": [
-                "libraries/runtime/dynamic/*",
-                "node_modules/wm/runtime/dynamic/*"
+                "libraries/runtime/dynamic"
             ],
             "@wm/mobile/runtime": [
-                "libraries/mobile/runtime",
-                "node_modules/wm/mobile/runtime"
-            ],
-            "@wm/mobile/runtime/*": [
-                "libraries/mobile/runtime/*",
-                "node_modules/wm/mobile/runtime/*"
+                "libraries/mobile/runtime"
             ],
             "@wm/mobile/placeholder": [
-                "libraries/mobile/placeholder",
-                "node_modules/wm/mobile/placeholder"
-            ],
-            "@wm/mobile/placeholder/*": [
-                "libraries/mobile/placeholder/*",
-                "node_modules/wm/mobile/placeholder/*"
+                "libraries/mobile/placeholder"
             ]
         }
     }

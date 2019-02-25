@@ -55,10 +55,39 @@ const addWMDependency = () => {
     fs.writeFileSync(path, JSON.stringify(packageJSON, null, 4));
 };
 
+const updateAngularJSON = () => {
+    const path = './dist/runtime-cli/angular-app/angular.json';
+    const json = require(path);
+    const scripts = json['projects']['angular-app']['architect']['build']['options']['scripts'];
+    scripts.forEach((v, i) => {
+        if (v.startsWith('./libraries/')) {
+            scripts[i] = v.replace('./libraries/', './node_modules/wm/');
+        }
+    });
+    fs.writeFileSync(path, JSON.stringify(json, null, 4));
+};
+
+const updateTSConfig = (path) => {
+    const json = require(path);
+    const paths = json['compilerOptions']['paths'];
+    for (let key in paths) {
+        const pathRefs = paths[key];
+        pathRefs.forEach((v, i) => {
+            if (v.startsWith('libraries/')) {
+                pathRefs[i] = v.replace('libraries/', 'node_modules/wm/');
+            }
+        });
+    }
+    fs.writeFileSync(path, JSON.stringify(json, null, 4));
+};
+
 const processRequest = () => {
     if (argv.updateWmVersion) {
         updateWMVersion();
         addWMDependency();
+        updateAngularJSON();
+        updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.json');
+        updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.web-app.json');
     } else {
         console.log('There is no task to execute for the given command.');
     }
