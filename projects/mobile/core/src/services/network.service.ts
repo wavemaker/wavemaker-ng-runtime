@@ -199,6 +199,8 @@ export class NetworkService implements IDeviceStartUpService {
                     }
                 });
             }
+        } else {
+            networkState.isConnected = true;
         }
         return Promise.resolve();
     }
