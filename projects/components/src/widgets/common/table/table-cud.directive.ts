@@ -79,8 +79,13 @@ export class TableCUDDirective {
         dataSource.execute(DataSource.Operation.FETCH_DISTINCT_VALUES);
 
         if (!this.table.isNavigationEnabled()) {
+            const sortInfo = this.table.sortInfo;
+            const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
             refreshDataSource(dataSource, {
-                page: 1
+                page: 1,
+                filterFields: this.table.getFilterFields(this.table.filterInfo),
+                orderBy: sortOptions,
+                matchMode: 'anywhereignorecase'
             }).then(() => {
                 $appDigest();
                 this.selectItemOnSuccess(row, true, callBack);
