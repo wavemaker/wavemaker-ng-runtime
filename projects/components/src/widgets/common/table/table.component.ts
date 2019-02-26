@@ -274,11 +274,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.items.length = 0;
                     this.items.push(row);
                 }
-                this.invokeEventCallback('rowselect', {$data: row, $event: e, row});
+                const rowData = this.addRowIndex(row);
+                this.invokeEventCallback('rowselect', {$data: rowData, $event: e, row: rowData});
             });
         },
         onRowDblClick: (row, e) => {
-            this.invokeEventCallback('rowdblclick', {$data: row, $event: e, row});
+            const rowData = this.addRowIndex(row);
+            this.invokeEventCallback('rowdblclick', {$data: rowData, $event: e, row: rowData});
         },
         onRowDeselect: (row, e) => {
             if (this.multiselect) {
@@ -295,7 +297,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         callOnRowClickEvent: (row, e) => {
             // Call row click only if click is triggered by user
             if (e && e.hasOwnProperty('originalEvent')) {
-                this.invokeEventCallback('rowclick', {$data: row, $event: e, row});
+                const rowData = this.addRowIndex(row);
+                this.invokeEventCallback('rowclick', {$data: rowData, $event: e, row: rowData});
             }
         },
         onColumnSelect: (col, e) => {
@@ -334,7 +337,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return this.invokeEventCallback('beforerowinsert', {$event: e, $data: row, row, options: options});
         },
         onBeforeRowDelete: (row, e, options) => {
-            return this.invokeEventCallback('beforerowdelete', {$event: e, row, options: options});
+            const rowData = this.addRowIndex(row);
+            return this.invokeEventCallback('beforerowdelete', {$event: e, row: rowData, options: options});
         },
         onFormRender: ($row, e, operation, alwaysNewRow) => {
             const widget = alwaysNewRow ? 'inlineInstanceNew' : 'inlineInstance';
@@ -769,6 +773,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.navigatorMaxResultWatch.unsubscribe();
         }
         super.ngOnDestroy();
+    }
+
+    addRowIndex(row) {
+        const rowData = getClonedObject(row);
+        const rowIndex = _.indexOf(this.gridOptions.data, row);
+        if (rowIndex < 0) {
+            return row;
+        }
+        rowData.$index = rowIndex + 1;
+        rowData.$isFirst= rowData.$index === 1;
+        rowData.$isLast = this.gridData.length === rowData.$index;
+        return rowData;
     }
 
     addEventsToContext(context) {
