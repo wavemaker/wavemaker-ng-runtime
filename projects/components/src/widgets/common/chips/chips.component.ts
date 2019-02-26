@@ -271,33 +271,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     // Triggerred when typeahead option is selected by enter keypress.
     public onSelect($event: Event) {
-        if (this.searchComponent._loadingItems) {
-            if (!this.allowonlyselect && (this.searchComponent.query !== '' && isDefined(this.searchComponent.query))) {
-                // Used by chips, if allowonlyselect is false, set the datavalue to query.
-                this.searchComponent.queryModel = this.searchComponent.query;
-                this.searchComponent._modelByValue = this.searchComponent.query;
-
-                // adds custom chip object to the chipsList.
-                this.addItem($event);
-            }
-            return;
-        }
-        // when matches are available, select the active match.
-        if (this.searchComponent.typeaheadContainer && this.searchComponent.liElements.length) {
-            this.searchComponent.typeaheadContainer.selectActiveMatch();
-        } else if (!isDefined(this.searchComponent._modelByValue)) {
-            if (this.allowonlyselect) {
-                // matches are empty set the datavalue to undefined and set the query.
-                this.searchComponent.queryModel = this.searchComponent.query = '';
-                this.searchComponent._modelByValue = undefined;
-            } else if (this.searchComponent.query !== '' && isDefined(this.searchComponent.query)) {
-                // Used by chips, if allowonlyselect is false, set the datavalue to query.
-                this.searchComponent.queryModel = this.searchComponent.query;
-                this.searchComponent._modelByValue = this.searchComponent.query;
-
-                // adds custom chip object to the chipsList.
-                this.addItem($event);
-            }
+        if (!this.searchComponent.liElements.length) {
+            this.addItem($event);
         }
     }
 
@@ -307,7 +282,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         let allowAdd;
         let chipObj;
 
-        if (searchComponent && isDefined(searchComponent.queryModel)) {
+        if (searchComponent && isDefined(searchComponent.queryModel) && searchComponent.queryModel !== '') {
             if (!searchComponent.query || !_.trim(searchComponent.query)) {
                 return;
             }
@@ -336,7 +311,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
         }
 
-        if (!isDefined(chipObj)) {
+        if (!isDefined(chipObj) || chipObj === '') {
             return;
         }
 
