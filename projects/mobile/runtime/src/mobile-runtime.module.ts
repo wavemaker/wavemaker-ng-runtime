@@ -142,9 +142,9 @@ export class MobileRuntimeModule {
     }
 
     private applyOSTheme(os) {
-        const themeUrl = `themes/${getWmProjectProperties().activeTheme}/${os.toLowerCase()}/style.css`,
-            newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
         let oldStyleSheet = $('link[theme="wmtheme"]:first');
+        const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
+            newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
         oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];
         if (newStyleSheet && oldStyleSheet) {
             insertAfter(newStyleSheet, oldStyleSheet);
