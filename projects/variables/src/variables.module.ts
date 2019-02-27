@@ -1,7 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 
@@ -21,8 +20,7 @@ export const toastrModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened
         HttpClientModule,
         HttpServiceModule,
         OAuthModule,
-        SecurityModule,
-        BrowserAnimationsModule
+        SecurityModule
     ],
     declarations: [],
     providers: [
