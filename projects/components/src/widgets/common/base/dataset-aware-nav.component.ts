@@ -31,6 +31,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
     public itemicon: string;
     public itemlabel: string;
     public itemlink: string;
+    public itemtarget: string;
     public itembadge: string;
     public itemchildren: string;
     public itemaction: string;
@@ -48,6 +49,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
     private binditembadge: string | null;
     private binditemchildren: string | null;
     private binditemlink: string | null;
+    private binditemtarget: string | null;
     private binduserrole: string | null;
     private securityService: any;
 
@@ -63,6 +65,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
         this.binditemchildren = this.nativeElement.getAttribute('itemchildren.bind');
         this.binditemid = this.nativeElement.getAttribute('itemid.bind');
         this.binditemlink = this.nativeElement.getAttribute('itemlink.bind');
+        this.binditemtarget = this.nativeElement.getAttribute('itemtarget.bind');
         this.binduserrole = this.nativeElement.getAttribute('userrole.bind');
     }
 
@@ -84,6 +87,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             id: getEvaluatedData(node, {expression: 'itemid', bindExpression: this.binditemid}, context) || _.get(node, fields.idField),
             label: getEvaluatedData(node, {expression: 'itemlabel', bindExpression: this.binditemlabel}, context) || _.get(node, fields.labelField),
             link: getValidLink(getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}, context) || _.get(node, fields.linkField)),
+            target: getValidLink(getEvaluatedData(node, {expression: 'itemtarget', bindExpression: this.binditemtarget}, context) || _.get(node, fields.targetField)),
             role: getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}, context),
             // older projects have display field & data field property for menu.
             value: this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
@@ -102,6 +106,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
                 iconField: this.itemicon || 'icon',
                 labelField: this.itemlabel || 'label',
                 linkField: this.itemlink || 'link',
+                targetField: this.itemtarget || 'target',
                 badgeField: this.itembadge || 'badge',
                 childrenField: this.itemchildren || 'children',
                 classField: this.itemclass || 'class',
@@ -167,6 +172,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             case 'itemicon':
             case 'itemlabel':
             case 'itemlink':
+            case 'itemtarget':
             case 'itemclass':
             case 'itemchildren':
             case 'orderby':

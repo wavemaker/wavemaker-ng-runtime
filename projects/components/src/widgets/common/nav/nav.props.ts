@@ -17,6 +17,7 @@ export const registerProps = () => {
                 ['itemchildren', PROP_STRING],
                 ['itemaction', PROP_STRING],
                 ['itembadge', PROP_STRING],
+                ['itemtarget', PROP_STRING],
                 ['layout', PROP_STRING],
                 ['name', PROP_STRING],
                 ['orderby', PROP_STRING],

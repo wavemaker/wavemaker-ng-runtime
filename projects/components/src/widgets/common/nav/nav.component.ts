@@ -65,6 +65,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     }
 
     public onNavSelect($event: Event, item: any, liRef: HTMLElement) {
+        $event.preventDefault();
 
         if (this.activeNavLINode) {
             removeClass(this.activeNavLINode, 'active');
@@ -80,6 +81,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
 
         let itemLink = item.link;
         const itemAction = item.action;
+        const linkTarget = item.target;
         if (itemAction) {
             if (!this.itemActionFn) {
                 this.itemActionFn = $parseEvent(itemAction);
@@ -88,12 +90,12 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
             this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
         }
         if (itemLink) {
-            if (itemLink.startsWith('#/')) {
+            if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
                 const queryParams = getUrlParams(itemLink);
                 itemLink = getRouteNameFromLink(itemLink);
                 this.router.navigate([itemLink], {queryParams});
             } else {
-                openLink(itemLink);
+                openLink(itemLink, linkTarget);
             }
         }
     }

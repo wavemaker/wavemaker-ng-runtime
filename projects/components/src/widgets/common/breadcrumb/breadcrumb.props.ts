@@ -13,6 +13,7 @@ export const registerProps = () => {
                 ['itemicon', PROP_STRING],
                 ['itemchildren', PROP_STRING],
                 ['itemclass', PROP_STRING],
+                ['itemtarget', PROP_STRING],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}]
             ]
