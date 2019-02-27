@@ -85,7 +85,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
                     return callback();
                 }
             );
-        } else {
+        } else if (!_.includes(['change'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }

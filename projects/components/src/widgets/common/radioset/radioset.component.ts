@@ -7,7 +7,7 @@ import { registerProps } from './radioset.props';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
-declare const $;
+declare const $, _;
 
 const DEFAULT_CLS = 'app-radioset list-group';
 const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
@@ -62,7 +62,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
                     return callback();
                 }
             );
-        } else {
+        } else if (!_.includes(['change'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }
