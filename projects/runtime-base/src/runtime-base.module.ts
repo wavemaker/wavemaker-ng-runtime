@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule, TooltipModule } from 'ngx-bootstrap';
 
@@ -87,7 +86,6 @@ export const tooltipModule = TooltipModule.forRoot();
         RouterModule,
         ReactiveFormsModule,
         HttpClientModule,
-        BrowserAnimationsModule,
 
         modalModule,
         carouselModule,
@@ -155,8 +153,7 @@ export const tooltipModule = TooltipModule.forRoot();
         SecurityModule,
         OAuthModule,
         VariablesModule,
-        HttpServiceModule,
-        BrowserAnimationsModule
+        HttpServiceModule
     ],
     entryComponents: [CustomToasterComponent]
 })
