@@ -278,6 +278,12 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         if (this._isRowFilter && isDataSetWidget(this.filterwidget) && !this.bindfilterdataset) {
             // For live variable, get the data using distinct API
             if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
+                //check for related entity columns
+                if (this.relatedEntityName) {
+                    this.widget['is-related']  = true;
+                    this.widget['lookup-type']  = this.relatedEntityName;
+                    this.widget['lookup-field'] = _.last(_.split(this.field, '.'));
+                }
                 if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
                     this.filterInstance.dataoptions = getDistinctFieldProperties(this.table.datasource, this);
                     this.filterInstance.datasource = this.table.datasource;
@@ -340,12 +346,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     setUpFilterWidget() {
         this.filterInstance.registerReadyStateListener(() => {
             if (isDataSetWidget(this.filterwidget)) {
+                // if binding is department.deptId then field will be deptId
+                const field = _.last(this.binding.split('.'));
                 this.filterInstance.dataset = this._filterDataSet;
-                this.filterInstance.datafield = this.filterdatafield || this.binding;
-                this.filterInstance.displayfield = this.filterdisplayfield || this.binding;
+                this.filterInstance.datafield = this.filterdatafield || field;
+                this.filterInstance.displayfield = this.filterdisplayfield || field;
                 if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
-                    this.filterInstance.displaylabel = this.filterdisplaylabel || this.binding;
-                    this.filterInstance.searchkey = this.filtersearchkey || this.binding;
+                    this.filterInstance.displaylabel = this.filterdisplaylabel || field;
+                    this.filterInstance.searchkey = this.filtersearchkey || field;
                 }
             }
             if (this.filterwidget === FormWidgetType.TIME) {
