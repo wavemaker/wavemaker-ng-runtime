@@ -148,7 +148,7 @@ export class MenuDropdownItemComponent implements OnInit {
 
         $event.preventDefault();
         const args = {$event, $item: item};
-        const linkTarget = this.menuRef.linktarget;
+        const linkTarget = item.target || this.menuRef.linktarget;
         const itemAction = item.action;
 
         let menuLink = item.link;
