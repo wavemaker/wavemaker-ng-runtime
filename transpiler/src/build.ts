@@ -102,6 +102,14 @@ export const getDataSource = (dataSetExpr: string): string => {
     }
 };
 
+export const getFormMarkupAttr = attrs => {
+    if (attrs.get('datavalue.bind')) {
+        const onDataValueBinding = getDataSource(attrs.get('datavalue.bind'));
+        attrs.set('datavaluesource.bind', onDataValueBinding);
+    }
+    return getAttrMarkup(attrs);
+};
+
 const getAttrMap = attrs => {
     const attrMap = new Map<string, string>();
     attrs.forEach(attr => {

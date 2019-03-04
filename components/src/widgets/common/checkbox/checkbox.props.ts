@@ -6,6 +6,7 @@ export const checkboxProps = new Map(
         ['class', PROP_STRING],
         ['conditionalclass', PROP_ANY],
         ['checkedvalue', {value: true, ...PROP_STRING}],
+        ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],

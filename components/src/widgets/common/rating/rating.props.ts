@@ -6,6 +6,7 @@ export const ratingProps = new Map(
         ['class', PROP_STRING],
         ['datafield', PROP_STRING],
         ['dataset', PROP_ANY],
+        ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],

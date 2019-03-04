@@ -1,5 +1,6 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 import { isMobileApp } from '@wm/core';
+
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
 
 const propsMap = new Map(
     [
@@ -13,6 +14,7 @@ const propsMap = new Map(
         ['dataset', PROP_ANY],
         ['datasource', PROP_STRING],
         ['expanded', {value: true, ...PROP_BOOLEAN}],
+        ['formdatasource', PROP_STRING],
         ['name', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],

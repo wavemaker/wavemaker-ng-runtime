@@ -6,6 +6,7 @@ export const switchProps = new Map(
         ['compareby', PROP_STRING],
         ['datafield', PROP_STRING],
         ['dataset', {value: 'yes, no, maybe', ...PROP_ANY}],
+        ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING],

@@ -1,11 +1,11 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { getFormMarkupAttr, IBuildTaskDef, register } from '@wm/transpiler';
 import { getNgModelAttr } from '@wm/core';
 
 const tagName = 'div';
 
 register('wm-checkbox', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmCheckbox role="input" ${getAttrMarkup(attrs)} ${getNgModelAttr(attrs)}>`,
+        pre: attrs => `<${tagName} wmCheckbox role="input" ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

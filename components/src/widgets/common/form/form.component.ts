@@ -1,7 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, IDGenerator } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, IDGenerator, DataSource } from '@wm/core';
 import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
@@ -110,6 +110,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     buttonArray = [];
     dataoutput = {};
     datasource;
+    formdatasource;
     formdata = {};
     isSelected;
     prevDataValues;
@@ -149,6 +150,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     filterOnDefault: Function;
     onMaxDefaultValueChange: Function;
 
+    private _debouncedUpdateFieldSource: Function = _.debounce(this.updateFieldSource, 350);
     private operationType;
     private _isLayoutDialog;
     private _dynamicContext;
@@ -201,6 +203,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         @Attribute('submit.event') public onSubmitEvt,
         @Attribute('beforerender.event') public onBeforeRenderEvt,
         @Attribute('dataset.bind') public binddataset,
+        @Attribute('formdata.bind') private bindformdata,
         @Attribute('wmLiveForm') isLiveForm,
         @Attribute('wmLiveFilter') isLiveFilter,
         @Attribute('role') role,
@@ -314,6 +317,16 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
+    private updateFieldSource() {
+        if (this.formdatasource && this.formdatasource.execute(DataSource.Operation.IS_API_AWARE)) {
+            return;
+        }
+        this.formFields.forEach(formField => {
+            formField.setFormWidget('datavaluesource', this.formdatasource);
+            formField.setFormWidget('binddatavalue', `${this.bindformdata}.${formField.key}`);
+        });
+    }
+
     // This method loops through the form fields and highlights the invalid fields by setting state to touched
     highlightInvalidFields() {
         setTouchedState(this.ngform);
@@ -389,6 +402,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             case 'datasource':
                 this.onDataSourceChange();
                 break;
+            case 'formdatasource':
+                this.onFormDataSourceChange();
+                break;
             case 'metadata':
                 this.generateFormFields();
                 break;
@@ -453,6 +469,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.formFields.push(formField);
         this.formfields[formField.key] = formField;
         this.registerFormWidget(formField);
+        this._debouncedUpdateFieldSource();
     }
 
     registerActions(formAction) {
@@ -585,6 +602,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     // On form data source change. This method is overridden by live form and live filter
     onDataSourceChange() {
+    }
+
+    // On form data source change. This method is overridden by live form and live filter
+    onFormDataSourceChange() {
+        this.updateFieldSource();
     }
 
     // On form field default value change. This method is overridden by live form and live filter
