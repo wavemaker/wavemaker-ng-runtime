@@ -91,4 +91,67 @@ export class NotificationActionManager extends BaseActionManager {
         }
         return variable.dataBinding.text;
     }
+
+    getOkButtonText(variable) {
+        return variable.dataBinding.okButtonText;
+    }
+    setOkButtonText(variable, text) {
+        if (_.isString(text)) {
+            variable.dataBinding.okButtonText = text;
+        }
+        return variable.dataBinding.okButtonText;
+    }
+
+    getToasterDuration(variable) {
+        return variable.dataBinding.duration;
+    }
+
+    setToasterDuration(variable, duration) {
+        variable.dataBinding.duration = duration;
+        return variable.dataBinding.duration;
+    }
+
+    getToasterClass(variable) {
+        return variable.dataBinding.class;
+    }
+
+    setToasterClass(variable, type) {
+        if (_.isString(type)) {
+            variable.dataBinding.class = type;
+        }
+        return variable.dataBinding.class;
+    }
+
+    getToasterPosition(variable) {
+        return variable.dataBinding.class;
+    }
+
+    setToasterPosition(variable, position) {
+        if (_.isString(position)) {
+            variable.dataBinding.position = position;
+        }
+        return variable.dataBinding.position;
+    }
+
+    getAlertType(variable) {
+        return variable.dataBinding.alerttype;
+    }
+
+    setAlertType(variable, alerttype) {
+        if (_.isString(alerttype)) {
+            variable.dataBinding.alerttype = alerttype;
+        }
+        return variable.dataBinding.alerttype;
+    }
+
+    getCancelButtonText(variable) {
+        return variable.dataBinding.cancelButtonText;
+    }
+
+    setCancelButtonText(variable, text) {
+        if (_.isString(text)) {
+            variable.dataBinding.cancelButtonText = text;
+        }
+        return variable.dataBinding.cancelButtonText;
+    }
 }

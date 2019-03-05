@@ -55,6 +55,55 @@ export class NotificationAction extends BaseAction implements IDataSource {
         return getManager().setMessage(this, text);
     }
 
+    getOkButtonText()
+    {
+        return getManager().getOkButtonText(this);
+    }
+
+    setOkButtonText(text) {
+        return getManager().setOkButtonText(this, text);
+    }
+
+    getToasterDuration() {
+        return getManager().getToasterDuration(this);
+    }
+
+    setToasterDuration(duration) {
+        return getManager().setToasterDuration(this, duration);
+    }
+
+    getToasterClass() {
+        return getManager().getToasterClass(this);
+    }
+
+    setToasterClass(classText) {
+        return getManager().setToasterClass(this, classText);
+    }
+
+    getToasterPosition() {
+        return getManager().getToasterPosition(this);
+    }
+
+    setToasterPosition(position) {
+        return getManager().setToasterPosition(this, position);
+    }
+
+    getAlertType() {
+        return getManager().getAlertType(this);
+    }
+
+    setAlertType(type) {
+        return getManager().setAlertType(this, type);
+    }
+
+    getCancelButtonText() {
+        return getManager().getCancelButtonText(this);
+    }
+
+    setCancelButtonText(text) {
+        return getManager().setCancelButtonText(this, text);
+    }
+
     init() {
         // static property bindings
         getManager().initBinding(this, 'dataBinding', 'dataBinding');
