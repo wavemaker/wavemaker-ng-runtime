@@ -297,9 +297,8 @@ buildNgxToastr() {
     execCommand "rollup" "ngx-toastr" "${ROLLUP} -c ./config/rollup.ngx-toastr.config.js --silent"
 }
 
-buildNgxMask() {
-    execCommand "tsc" "ngx-mask" "${TSC} --outDir dist/tmp/libs/ngx-mask --target es5 ./node_modules/ngx-mask/esm2015/ngx-mask.js --allowJs --skipLibCheck --module es2015"
-    execCommand "rollup" "ngx-mask" "${ROLLUP} -c ./config/rollup.ngx-mask.config.js --silent"
+buildAngularTextMask() {
+    execCommand "rollup" "angular2-text-mask" "${ROLLUP} -c ./config/rollup.angular2-text-mask.config.js --silent"
 }
 
 buildAngularWebSocket() {
@@ -332,7 +331,7 @@ bundleWebLibs() {
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
-        ./dist/tmp/libs/ngx-mask/ngx-mask.umd.js \
+        ./dist/tmp/libs/angular2-text-mask/angular2-text-mask.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
@@ -391,7 +390,7 @@ bundleMobileLibs() {
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
-        ./dist/tmp/libs/ngx-mask/ngx-mask.umd.js \
+        ./dist/tmp/libs/angular2-text-mask/angular2-text-mask.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
@@ -436,7 +435,7 @@ buildWebLibs() {
     buildTsLib
     buildNgxBootstrap
     buildNgxToastr
-    buildNgxMask
+    buildAngularTextMask
     buildAngularWebSocket
     buildNgCircleProgressbar
 

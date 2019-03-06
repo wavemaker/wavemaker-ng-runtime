@@ -4,6 +4,7 @@
        [type]="type"
        [attr.name]="name"
        [(ngModel)]="datavalue"
+       [textMask]="mask"
        [ngModelOptions]="ngModelOptions"
        [readonly]="readonly"
        [required]="required"
@@ -17,6 +18,5 @@
        (ngModelChange)="handleChange($event)"
        (blur)="handleBlur($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
-       [mask]="displayformat"
        (keyup.enter)="flushViewChanges(input.value)"
        #input>

@@ -6,6 +6,8 @@ import { registerProps } from './input-text.props';
 import { BaseInput } from '../base/base-input';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
+declare const _;
+
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-text',
     hostClass: 'app-input-wrapper'
@@ -35,11 +37,46 @@ export class InputTextComponent extends BaseInput {
     public shortcutkey: string;
     public autofocus: boolean;
     public autocomplete: any;
+    public maskVal: any;
 
     @ViewChild('input') inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
+    }
+
+    /* Define the property change handler. This function will be triggered when there is a change in the widget property */
+    onPropertyChange(key, nv, ov) {
+        /*Monitoring changes for styles or properties and accordingly handling respective changes.*/
+        switch (key) {
+            case 'displayformat':
+                this.maskVal = [];
+                _.forEach(this.displayformat, (dF) => {
+                    // This condition is used to support all numbers from 0-9
+                    if(dF === '9') {
+                        this.maskVal.push(/\d/);
+                    }
+                    // This condition is used to support all capital and small alphabets
+                    else if(dF === 'A') {
+                        this.maskVal.push(/[A-Z, a-z]/);
+                    }
+                    // This condition is used to support all small alphabets
+                    else if(dF === 'a') {
+                        this.maskVal.push(/[a-z]/);
+                    }
+                    // This condition is used to support all characters except new line
+                    else if(dF === '*') {
+                        this.maskVal.push(/\w/);
+                    }
+                    else {
+                        this.maskVal.push(dF);
+                    }
+                });
+        }
+    }
+
+    get mask() {
+        return {mask: this.maskVal}
     }
 }

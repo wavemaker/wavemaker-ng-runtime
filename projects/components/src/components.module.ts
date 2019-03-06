@@ -15,7 +15,7 @@ import {
 } from 'ngx-bootstrap';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { NgxMaskModule } from 'ngx-mask';
+import { TextMaskModule } from 'angular2-text-mask';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 
 import { AbstractDialogService } from '@wm/core';
@@ -310,7 +310,6 @@ export const paginationModule: ModuleWithProviders = PaginationModule.forRoot();
 export const typeaheadModule: ModuleWithProviders = TypeaheadModule.forRoot();
 export const progressbarModule: ModuleWithProviders = ProgressbarModule.forRoot();
 export const modalModule: ModuleWithProviders = ModalModule.forRoot();
-export const ngxMaskModule: ModuleWithProviders = NgxMaskModule.forRoot();
 export const carouselModule: ModuleWithProviders = CarouselModule.forRoot();
 export const popoverModule: ModuleWithProviders = PopoverModule.forRoot();
 export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModule.forRoot({});
@@ -321,6 +320,7 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
         CommonModule,
         FormsModule,
         SecurityModule,
+        TextMaskModule,
         bsDatePickerModule,
         datepickerModule,
         timepickerModule,
@@ -329,7 +329,6 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
         typeaheadModule,
         progressbarModule,
         modalModule,
-        ngxMaskModule,
         carouselModule,
         popoverModule,
         ngCircleProgressModule

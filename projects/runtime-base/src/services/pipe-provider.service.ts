@@ -14,8 +14,7 @@ import {
     I18nSelectPipe,
     KeyValuePipe,
     NgLocalization
-} from '@angular/common';
-import { MaskPipe } from 'ngx-mask';
+} from '@angular/common'
 import {
     SuffixPipe,
     ToDatePipe,
@@ -58,9 +57,6 @@ export class PipeProvider {
             NgLocalization
         ]),
         this.preparePipeMeta(I18nSelectPipe, 'i18nSelect', true),
-        this.preparePipeMeta(MaskPipe, 'mask', true, [
-            /*MaskApplierService*/
-        ]),
         this.preparePipeMeta(KeyValuePipe, 'keyvalue', false, [
             KeyValueDiffers
         ]),

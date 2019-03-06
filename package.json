@@ -48,7 +48,7 @@
         "ng-circle-progress": "1.4.0",
         "ngx-bootstrap": "3.0.1",
         "ngx-color-picker": "7.3.0",
-        "ngx-mask": "6.3.8",
+        "angular2-text-mask": "9.0.0",
         "ngx-toastr": "9.1.1",
         "wm-nvd3": "1.0.2",
         "rxjs": "6.4.0",

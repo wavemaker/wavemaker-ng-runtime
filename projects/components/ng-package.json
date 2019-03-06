@@ -18,7 +18,7 @@
 
             "ngx-bootstrap/pagination": "ngxBootstrap",
             "ngx-color-picker": "zef.ngxColorPicker",
-            "ngx-mask": "ngxMask",
+            "angular2-text-mask": "angular2TextMask",
             "ng-circle-progress": "ngCircleProgress",
             "ngx-bootstrap": "ngxBootstrap",
 
