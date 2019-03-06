@@ -261,19 +261,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.ngZone.run(() => {
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
-
-                /*
-                 * in case of single select, update the items with out changing the reference.
-                 * for multi select, keep old selected items in tact
-                 */
-                if (this.multiselect) {
-                    if (_.findIndex(this.items, row) === -1) {
-                        this.items.push(row);
-                    }
-                } else {
-                    this.items.length = 0;
-                    this.items.push(row);
-                }
                 const rowData = this.addRowIndex(row);
                 this.invokeEventCallback('rowselect', {$data: rowData, $event: e, row: rowData});
             });
@@ -295,6 +282,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
         },
         callOnRowClickEvent: (row, e) => {
+            /*
+             * in case of single select, update the items with out changing the reference.
+             * for multi select, keep old selected items in tact
+             */
+            if (this.multiselect) {
+                if (_.findIndex(this.items, row) === -1) {
+                    this.items.push(row);
+                }
+            } else {
+                this.items.length = 0;
+                this.items.push(row);
+            }
             // Call row click only if click is triggered by user
             if (e && e.hasOwnProperty('originalEvent')) {
                 const rowData = this.addRowIndex(row);
