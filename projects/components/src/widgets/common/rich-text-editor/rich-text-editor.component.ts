@@ -114,9 +114,11 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
     }
 
     set datavalue(nv) {
-        this.$hiddenInputEle.val(nv);
-        this.performEditorOperation('reset');
-        this.performEditorOperation('insertText', nv);
+        if (nv !== undefined && nv !== null) {
+            this.$hiddenInputEle.val(nv);
+            this.performEditorOperation('reset');
+            this.performEditorOperation('insertText', nv);
+        }
     }
 
     constructor(inj: Injector, private domSanitizer: DomSanitizer, private ngZone: NgZone) {
