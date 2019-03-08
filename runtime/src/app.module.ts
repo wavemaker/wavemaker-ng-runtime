@@ -43,6 +43,7 @@ import { PartialRenderer } from './services/render-utils/partial-renderer';
 import { PrefabRenderer } from './services/render-utils/prefab-renderer';
 import { NavigationServiceImpl } from './services/navigation.service';
 import { HttpCallInterceptor } from './services/http-interceptor.services';
+import { CanDeactivatePageGuard } from './guards/can-deactivate-page.guard';
 
 declare const $;
 declare const _WM_APP_PROPERTIES;
@@ -64,7 +65,8 @@ const routes = [
         path: ':pageName',
         pathMatch: 'full',
         resolve: appDependenciesResolve,
-        component: PageWrapperComponent
+        component: PageWrapperComponent,
+        canDeactivate: [CanDeactivatePageGuard]
     }
 ];
 
@@ -157,7 +159,8 @@ export function setAngularLocale(I18nService) {
         PrefabManagerService,
         SecurityConfigResolve,
         DecimalPipe,
-        DatePipe
+        DatePipe,
+        CanDeactivatePageGuard
     ],
     entryComponents: [CustomToasterComponent],
     bootstrap: [AppComponent]

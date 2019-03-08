@@ -71,6 +71,12 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.prefabRenderer.renderForPreview(this.vcRef, $target);
     }
 
+    canDeactivate() {
+        let retVal;
+        retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this);
+        return retVal === undefined ? true : retVal;
+    }
+
     ngOnInit() {
         if (this.app.isPrefabType) {
             // there is only one route
