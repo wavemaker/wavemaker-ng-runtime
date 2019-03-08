@@ -383,7 +383,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     private constructCalendarDataset(eventSource) {
         const properties = {
             title: this.eventtitle || 'title',
-            allday: this.eventallday || 'allday',
+            allDay: this.eventallday || 'allday',
             start: this.eventstart || 'start',
             end: this.eventend || 'end',
             className: this.eventclass || 'className'
@@ -394,6 +394,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 let objVal;
                 if (key === 'title') {
                     objVal = getEvaluatedData(obj, {expression: value}, this.viewParent);
+                } else if (key === 'allDay') {
+                    objVal = !!_.get(obj, value);
                 } else {
                     objVal = _.get(obj, value);
                 }
