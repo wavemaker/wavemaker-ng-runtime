@@ -66,7 +66,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const dialogAttributes = ['title', 'title.bind', 'iconclass', 'iconclass.bind', 'width'];
             attrs.delete('dependson');
             const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
-                    class="${classProp}" [ngClass]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
+                    class="${classProp}" [class]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             shared.set('counter', counter);
             updateFormDataSource(attrs);
             if (attrs.get('formlayout') === 'dialog') {
