@@ -38,7 +38,7 @@ mkdir -p dist/runtime-cli/dependencies
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
 if [[ "${dev}" == true ]]; then
-    cp -r libraries/ dist/runtime-cli/angular-app
+    cp -r libraries dist/runtime-cli/angular-app
 fi
 cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
