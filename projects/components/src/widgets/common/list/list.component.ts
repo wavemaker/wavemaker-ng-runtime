@@ -109,7 +109,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public subheading: string;
     public iconclass: string;
     public listclass: any;
-    private isPaginationChanged: boolean;
+    private isDataChanged: boolean;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -386,6 +386,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (newVal) {
 
             this.noDataFound = false;
+            this.isDataChanged = true;
 
             if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
                 // clone the the data in case of live and service variables to prevent the two-way binding for these variables.
@@ -426,7 +427,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
         /*Register a watch on the "result" property of the "dataNavigator" so that the paginated data is displayed in the live-list.*/
         this.navigatorResultWatch = dataNavigator.resultEmitter.subscribe((newVal: any) => {
-            this.isPaginationChanged = true;
             this.onDataChange(newVal);
         }, true);
         /*De-register the watch if it is exists */
@@ -536,7 +536,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
             if (
                 !$firstItem.disableItem &&
-                this.isPaginationChanged &&
+                this.isDataChanged &&
                 // "infinite scroll" or "load on demand" is enabled and at least one item is selected then dont alter the selected list items.
                 !(
                     (this.infScroll || this.onDemandLoad) &&
@@ -560,7 +560,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.fieldDefs.length && this.infScroll) {
             this.bindScrollEvt();
         }
-        this.isPaginationChanged = false;
+        this.isDataChanged = false;
     }
 
     public triggerListItemSelection($el: JQuery<HTMLElement>, $event: Event) {
