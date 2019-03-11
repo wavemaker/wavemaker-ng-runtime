@@ -133,9 +133,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.deselectListItems();
 
         if (_.isArray(items)) {
-            items.forEach(item => this.selectItemByModel(item));
+            items.forEach(item => this.selectItem(item));
         } else {
-            this.selectItemByModel(items);
+            this.selectItem(items);
         }
         $appDigest();
     }
@@ -522,19 +522,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     /**
-     * Select an ListItem whose model is matched.
-     * It also updates the selected item of the list
-     * @param listModel: Model to be searched over the ListItems.
-     */
-    private selectItemByModel(listModel) {
-        const $listItem = <ListItemDirective>this.getListItemByModel(listModel);
-        if ($listItem) {
-            $listItem.isActive = false;
-            this.toggleListItemSelection($listItem);
-        }
-    }
-
-    /**
      * Method is Invoked when the model for the List Widget is changed.
      * @param {QueryList<ListItemDirective>} listItems
      */
@@ -651,7 +638,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     // returns listitem reference by index value.
-    private getQueryListItemByIndex(index: number): ListItemDirective {
+    private getListItemByIndex(index: number): ListItemDirective {
         return this.listItems.toArray()[index];
     }
 
@@ -684,11 +671,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             if (action === 'selectPrev') {
                 if (presentIndex > 0) {
                     if ((presentIndex <= firstIndex) && this.checkSelectionLimit(selectCount)) {
-                        this.lastSelectedItem = this.getQueryListItemByIndex( presentIndex - 1);
+                        this.lastSelectedItem = this.getListItemByIndex( presentIndex - 1);
                         this.toggleListItemSelection(this.lastSelectedItem);
                     } else if (presentIndex > firstIndex) {
-                        this.toggleListItemSelection(this.getQueryListItemByIndex(presentIndex));
-                        this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex - 1);
+                        this.toggleListItemSelection(this.getListItemByIndex(presentIndex));
+                        this.lastSelectedItem = this.getListItemByIndex(presentIndex - 1);
                     } else {
                         this.invokeEventCallback('selectionlimitexceed', {$event});
                     }
@@ -696,11 +683,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             } else if (action === 'selectNext') {
                 if (presentIndex < listItems.length - 1) {
                     if ((presentIndex >= firstIndex) && this.checkSelectionLimit(selectCount)) {
-                        this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
+                        this.lastSelectedItem = this.getListItemByIndex(presentIndex + 1);
                         this.toggleListItemSelection(this.lastSelectedItem);
                     } else if (presentIndex < firstIndex) {
-                        this.toggleListItemSelection(this.getQueryListItemByIndex(presentIndex));
-                        this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex + 1);
+                        this.toggleListItemSelection(this.getListItemByIndex(presentIndex));
+                        this.lastSelectedItem = this.getListItemByIndex(presentIndex + 1);
                     } else {
                         this.invokeEventCallback('selectionlimitexceed', {$event});
                     }
@@ -709,11 +696,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
         if (action === 'focusPrev') {
             presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
-            this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex);
+            this.lastSelectedItem = this.getListItemByIndex(presentIndex);
             this.lastSelectedItem.nativeElement.focus();
         } else if (action === 'focusNext') {
             presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
-            this.lastSelectedItem = this.getQueryListItemByIndex(presentIndex);
+            this.lastSelectedItem = this.getListItemByIndex(presentIndex);
             this.lastSelectedItem.nativeElement.focus();
         } else if (action === 'select') {
             // if the enter click is pressed on the item which is not the last selected item, the find the item from which the event is originated.
@@ -722,7 +709,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 const $ul = $li.closest('ul.app-livelist-container');
                 presentIndex = $ul.find('li.app-list-item').index($li);
             }
-            this.onItemClick($event, this.getQueryListItemByIndex(presentIndex));
+            this.onItemClick($event, this.getListItemByIndex(presentIndex));
         }
     }
 
@@ -820,7 +807,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private getItemRefByIndexOrModel(val: any): ListItemDirective {
         let listItem: ListItemDirective;
         if (isNumber(val)) {
-            listItem = this.getQueryListItemByIndex(val);
+            listItem = this.getListItemByIndex(val);
         } else {
             listItem = this.getListItemByModel(val);
         }
