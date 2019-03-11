@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApplicationRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { ApplicationRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewContainerRef, HostListener } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -71,6 +71,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.prefabRenderer.renderForPreview(this.vcRef, $target);
     }
 
+    @HostListener('window:beforeunload')
     canDeactivate() {
         let retVal;
         retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this);
