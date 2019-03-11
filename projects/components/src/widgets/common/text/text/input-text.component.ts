@@ -54,25 +54,27 @@ export class InputTextComponent extends BaseInput {
                 this.maskVal = [];
                 _.forEach(this.displayformat, (dF) => {
                     // This condition is used to support all numbers from 0-9
-                    if(dF === '9') {
+                    if (dF === '9') {
                         this.maskVal.push(/\d/);
                     }
                     // This condition is used to support all capital and small alphabets
-                    else if(dF === 'A') {
+                    else if (dF === 'A') {
                         this.maskVal.push(/[A-Z, a-z]/);
                     }
                     // This condition is used to support all small alphabets
-                    else if(dF === 'a') {
+                    else if (dF === 'a') {
                         this.maskVal.push(/[a-z]/);
                     }
                     // This condition is used to support all characters except new line
-                    else if(dF === '*') {
+                    else if (dF === '*') {
                         this.maskVal.push(/\w/);
-                    }
-                    else {
+                    } else {
                         this.maskVal.push(dF);
                     }
                 });
+                break;
+            default:
+                super.onPropertyChange(key, nv, ov);
         }
     }
 
@@ -80,7 +82,7 @@ export class InputTextComponent extends BaseInput {
         if (this.displayformat) {
             return {mask: this.maskVal};
         } else {
-            return {mask: false}
+            return {mask: false};
         }
     }
 }
