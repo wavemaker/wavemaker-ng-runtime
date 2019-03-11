@@ -74,7 +74,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
     @HostListener('window:beforeunload')
     canDeactivate() {
         let retVal;
-        retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this);
+        retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this.app.activePage);
         return retVal === undefined ? true : retVal;
     }
 
