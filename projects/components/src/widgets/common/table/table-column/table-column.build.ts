@@ -60,9 +60,7 @@ const getFilterTemplate = (attrs, pCounter)  => {
             <ul class="matchmode-dropdown dropdown-menu" *dropdownMenu>
                    <li *ngFor="let matchMode of ${pCounter}.matchModeTypesMap['${type}']"
                         [ngClass]="{active: matchMode === (${pCounter}.rowFilter['${fieldName}'].matchMode || ${pCounter}.matchModeTypesMap['${type}'][0])}">
-                        <a href="javascript:void(0);" (click)="${pCounter}.onFilterConditionSelect('${fieldName}', matchMode)">
-                            {{${pCounter}.matchModeMsgs[matchMode]}}
-                        </a>
+                        <a href="javascript:void(0);" (click)="${pCounter}.onFilterConditionSelect('${fieldName}', matchMode)" [innerText]="${pCounter}.matchModeMsgs[matchMode]"></a>
                     </li>
              </ul>
         </span>
