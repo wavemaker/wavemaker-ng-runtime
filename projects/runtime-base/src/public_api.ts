@@ -8,6 +8,7 @@ export * from './runtime-base.module';
 export * from './util/utils';
 export * from './guards/auth.guard';
 export * from './guards/role.guard';
+export * from './guards/page-not-found.gaurd';
 export * from './components/app-component/app.component';
 export * from './components/empty-component/empty-page.component';
 export * from './components/prefab-preview.component';

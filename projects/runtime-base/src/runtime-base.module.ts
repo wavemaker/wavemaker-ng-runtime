@@ -41,6 +41,7 @@ import { AppManagerService } from './services/app.manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
+import { PageNotFoundGaurd } from './guards/page-not-found.gaurd';
 import { AppJSResolve } from './resolves/app-js.resolve';
 import { I18nResolve } from './resolves/i18n.resolve';
 import { AppComponent } from './components/app-component/app.component';
@@ -133,6 +134,7 @@ export const tooltipModule = TooltipModule.forRoot();
         PrefabManagerService,
         AuthGuard,
         RoleGuard,
+        PageNotFoundGaurd,
         AppJSResolve,
         I18nResolve
     ],
