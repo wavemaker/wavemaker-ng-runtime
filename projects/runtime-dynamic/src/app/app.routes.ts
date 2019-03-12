@@ -1,7 +1,6 @@
 import { AppJSResolve, MetadataResolve } from '@wm/runtime/base';
-import { SecurityConfigResolve, PrefabPreviewComponent } from '@wm/runtime/base';
+import { SecurityConfigResolve, PrefabPreviewComponent, EmptyPageComponent } from '@wm/runtime/base';
 
-import { EmptyPageComponent } from './components/empty-page.component';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 
 const appDependenciesResolve = {

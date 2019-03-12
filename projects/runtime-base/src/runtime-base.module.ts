@@ -29,6 +29,7 @@ import { AccessrolesDirective } from './directives/accessroles.directive';
 import { PartialContainerDirective } from './directives/partial-container.directive';
 import { AppSpinnerComponent } from './components/app-spinner.component';
 import { CustomToasterComponent } from './components/custom-toaster.component';
+import { EmptyPageComponent } from './components/empty-component/empty-page.component';
 import { PrefabDirective } from './directives/prefab.directive';
 import { AppRef } from './services/app.service';
 import { ToasterServiceImpl } from './services/toaster.service';
@@ -66,7 +67,8 @@ const definitions = [
     CustomToasterComponent,
     PrefabDirective,
     AppComponent,
-    PrefabPreviewComponent
+    PrefabPreviewComponent,
+    EmptyPageComponent
 ];
 
 export const modalModule = ModalModule.forRoot();
