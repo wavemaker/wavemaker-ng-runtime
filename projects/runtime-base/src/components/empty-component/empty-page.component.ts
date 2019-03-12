@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { App, getWmProjectProperties } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { AppManagerService } from '@wm/runtime/base';
+
+import { AppManagerService } from '../../services/app.manager.service';
 
 @Component({
     selector: 'app-empty-page',

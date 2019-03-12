@@ -19,7 +19,6 @@ import {
 } from '@wm/runtime/base';
 
 import { routes } from './app.routes';
-import { EmptyPageComponent } from './components/empty-page.component';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 import { AppJSProviderService } from './services/app-js-provider.service';
 import { AppVariablesProviderService } from './services/app-variables-provider.service';
@@ -36,7 +35,6 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
 
 @NgModule({
     declarations: [
-        EmptyPageComponent,
         PageWrapperComponent
     ],
     imports: [
