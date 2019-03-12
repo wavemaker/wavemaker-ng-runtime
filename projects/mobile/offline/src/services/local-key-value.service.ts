@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { LocalDBStore } from '../models/local-db-store';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LocalKeyValueService {
 
     private store: LocalDBStore;

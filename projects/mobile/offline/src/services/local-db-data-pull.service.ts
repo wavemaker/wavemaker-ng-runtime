@@ -61,7 +61,7 @@ const pullProcessManager = (() => {
 /**
  * LocalDBDataPullService has API to pull data from remote Server to local Database.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LocalDBDataPullService {
 
     constructor(

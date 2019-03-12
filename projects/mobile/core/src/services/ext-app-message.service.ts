@@ -14,7 +14,7 @@ interface Handler {
     callback: (msg: string) => any;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExtAppMessageService {
 
     private handlers = [];

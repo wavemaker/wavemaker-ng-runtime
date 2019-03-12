@@ -79,7 +79,7 @@ export interface CallBack {
     preExport?: (folderToExportFullPath: string, metaInfo: any) => any;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LocalDBManagementService {
 
     private callbacks: CallBack[] = [];

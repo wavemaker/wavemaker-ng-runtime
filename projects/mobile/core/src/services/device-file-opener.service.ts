@@ -14,7 +14,7 @@ declare const cordova;
 declare const _;
 declare const resolveLocalFileSystemURL;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DeviceFileOpenerService implements IDeviceStartUpService {
 
     public serviceName = DeviceFileOpenerService.name;

@@ -46,7 +46,7 @@ XMLHttpRequest.prototype.open = function (method: string, url: string, async: bo
     return originalXMLHttpRequestOpen.apply(this, [method, url, async, user, password]);
 };
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NetworkService implements IDeviceStartUpService {
 
     public serviceName = NetworkService.name;

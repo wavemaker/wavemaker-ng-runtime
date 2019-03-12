@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { File } from '@ionic-native/file';
-import { SQLite } from '@ionic-native/sqlite';
 
 import { AbstractHttpService, App, hasCordova, noop } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
@@ -10,8 +9,6 @@ import { SecurityService } from '@wm/security';
 
 import { ChangeLogService, PushService } from './services/change-log.service';
 import { LocalDBManagementService } from './services/local-db-management.service';
-import { LocalKeyValueService } from './services/local-key-value.service';
-import { LocalDBDataPullService } from './services/local-db-data-pull.service';
 import { LocalDbService } from './services/local-db.service';
 import { FileHandler, UploadedFilesImportAndExportService } from './services/workers/file-handler';
 import { ErrorBlocker } from './services/workers/error-blocker';
@@ -30,13 +27,7 @@ import { SecurityOfflineBehaviour } from './utils/security.utils';
     declarations: [],
     exports: [],
     providers: [
-        ChangeLogService,
-        LocalDBDataPullService,
-        LocalDBManagementService,
-        LocalDbService,
-        LocalKeyValueService,
-        {provide: PushService, useClass: PushServiceImpl},
-        SQLite
+        // add providers to mobile-runtime module.
     ],
     entryComponents: []
 })

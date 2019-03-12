@@ -14,7 +14,7 @@ export interface FileContent {
     blob: any;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FileSelectorService {
 
     private fileBrowserComponent: FileBrowserComponent;

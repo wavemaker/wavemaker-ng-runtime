@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
@@ -104,40 +104,6 @@ export const tooltipModule = TooltipModule.forRoot();
         VariablesModule,
         HttpServiceModule,
     ],
-    providers: [
-        {provide: App, useClass: AppRef},
-        {provide: AbstractToasterService, useClass: ToasterServiceImpl},
-        {provide: AbstractI18nService, useClass: I18nServiceImpl},
-        {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
-        {provide: AbstractNavigationService, useClass: NavigationServiceImpl},
-        {provide: AppDefaults, useClass: AppDefaultsService},
-        {provide: DynamicComponentRefProvider, useClass: DynamicComponentRefProviderService},
-        {
-            provide: APP_INITIALIZER,
-            useFactory: InitializeApp,
-            deps: [AbstractI18nService],
-            multi: true
-        },
-        {
-            provide: LOCALE_ID,
-            useFactory: setAngularLocale,
-            deps: [AbstractI18nService]
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: HttpCallInterceptor,
-            multi: true
-        },
-        DecimalPipe,
-        DatePipe,
-        AppManagerService,
-        PrefabManagerService,
-        AuthGuard,
-        RoleGuard,
-        PageNotFoundGaurd,
-        AppJSResolve,
-        I18nResolve
-    ],
     exports: [
         definitions,
 
@@ -162,4 +128,55 @@ export const tooltipModule = TooltipModule.forRoot();
     entryComponents: [CustomToasterComponent]
 })
 export class RuntimeBaseModule {
+
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: RuntimeBaseModule,
+            providers: [
+                {provide: App, useClass: AppRef},
+                {provide: AbstractToasterService, useClass: ToasterServiceImpl},
+                {provide: AbstractI18nService, useClass: I18nServiceImpl},
+                {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
+                {provide: AbstractNavigationService, useClass: NavigationServiceImpl},
+                {provide: AppDefaults, useClass: AppDefaultsService},
+                {provide: DynamicComponentRefProvider, useClass: DynamicComponentRefProviderService},
+                {
+                    provide: APP_INITIALIZER,
+                    useFactory: InitializeApp,
+                    deps: [AbstractI18nService],
+                    multi: true
+                },
+                {
+                    provide: LOCALE_ID,
+                    useFactory: setAngularLocale,
+                    deps: [AbstractI18nService]
+                },
+                {
+                    provide: HTTP_INTERCEPTORS,
+                    useClass: HttpCallInterceptor,
+                    multi: true
+                },
+                DecimalPipe,
+                DatePipe,
+                AppManagerService,
+                PrefabManagerService,
+                AuthGuard,
+                RoleGuard,
+                PageNotFoundGaurd,
+                AppJSResolve,
+                I18nResolve
+            ]
+        };
+    }
 }
+
+export const WM_MODULES_FOR_ROOT = [
+    WmComponentsModule.forRoot(),
+    MobileRuntimeModule.forRoot(),
+    CoreModule.forRoot(),
+    SecurityModule.forRoot(),
+    OAuthModule.forRoot(),
+    VariablesModule.forRoot(),
+    HttpServiceModule.forRoot(),
+    RuntimeBaseModule.forRoot()
+];

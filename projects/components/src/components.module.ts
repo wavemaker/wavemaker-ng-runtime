@@ -335,18 +335,24 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES],
-    providers: [
-        ToDatePipe,
-        FilterPipe,
-        TrustAsPipe,
-        ImagePipe,
-        Location,
-        {provide: AbstractDialogService, useClass: DialogServiceImpl}
-    ],
     entryComponents: [
         MenuComponent,
         MenuDropdownComponent
     ]
 })
 export class WmComponentsModule {
+
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: WmComponentsModule,
+            providers: [
+                ToDatePipe,
+                FilterPipe,
+                TrustAsPipe,
+                ImagePipe,
+                Location,
+                {provide: AbstractDialogService, useClass: DialogServiceImpl}
+            ]
+        };
+    }
 }

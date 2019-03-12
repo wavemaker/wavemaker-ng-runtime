@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { ProcessManagerComponent, ProcessApi } from '../widgets/process-manager/process-manager.component';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProcessManagementService {
 
     private processManagerComponent: ProcessManagerComponent;

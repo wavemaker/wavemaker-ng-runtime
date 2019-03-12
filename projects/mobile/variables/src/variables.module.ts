@@ -30,7 +30,9 @@ import { FileSelectorService, ProcessManagementService } from '@wm/mobile/compon
         OfflineModule
     ],
     declarations: [],
-    providers: []
+    providers: [
+        // add providers to mobile-runtime module.
+    ]
 })
 export class VariablesModule {
 

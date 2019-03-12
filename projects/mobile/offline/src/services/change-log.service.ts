@@ -62,7 +62,7 @@ export abstract class PushService {
 export const CONTEXT_KEY = 'changeLogService.flushContext';
 export const LAST_PUSH_INFO_KEY = 'changeLogService.lastPushInfo';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ChangeLogService {
 
     private workers: Worker[] = [];

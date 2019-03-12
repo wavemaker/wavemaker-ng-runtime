@@ -12,7 +12,7 @@ import { DeviceFileService } from './device-file.service';
 const MAX_CONCURRENT_DOWNLOADS = 2;
 declare const _;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DeviceFileDownloadService {
 
     private _downloadQueue = [];

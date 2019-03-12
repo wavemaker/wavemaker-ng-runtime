@@ -1,10 +1,13 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { SecurityService } from './security.service';
 
-@NgModule({
-    providers: [
-        SecurityService
-    ]
-})
-export class SecurityModule {}
+@NgModule({})
+export class SecurityModule {
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: SecurityModule,
+            providers: [SecurityService]
+        };
+    }
+}

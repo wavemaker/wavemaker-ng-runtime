@@ -5,7 +5,7 @@ import { LocalDBStore } from '../models/local-db-store';
 
 declare const _;
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LocalDbService {
 
     private searchTableData;

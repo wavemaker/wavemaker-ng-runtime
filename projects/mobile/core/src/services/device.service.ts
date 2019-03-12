@@ -10,7 +10,7 @@ declare const cordova, _;
 
 const REGISTRY_FILE_NAME = 'registry.info';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DeviceService {
 
     private _registry = {};

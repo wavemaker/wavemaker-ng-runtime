@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 @NgModule({
     declarations: [],
@@ -6,4 +6,13 @@ import { NgModule } from '@angular/core';
     providers: [],
     bootstrap: []
 })
-export class CoreModule {}
+export class CoreModule {
+
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: CoreModule,
+            providers: [
+            ]
+        };
+    }
+}

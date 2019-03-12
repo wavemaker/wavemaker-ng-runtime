@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components';
 
-import { FileSelectorService } from './services/file-selector.service';
-import { ProcessManagementService } from './services/process-management.service';
-
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { AppUpdateComponent } from './widgets/app-update/app-update.component';
 import { BarcodeScannerComponent } from './widgets/barcode-scanner/barcode-scanner.component';
@@ -65,7 +62,9 @@ const PIPES = [];
     ],
     declarations: [...wmMobileComponents, ...PIPES],
     exports: [...wmMobileComponents, ...PIPES],
-    providers: [FileSelectorService, ProcessManagementService],
+    providers: [
+        // add providers to mobile-runtime module.
+    ],
     entryComponents: []
 })
 export class WmMobileComponentsModule {

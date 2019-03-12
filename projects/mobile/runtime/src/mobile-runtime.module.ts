@@ -1,11 +1,25 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
+import { AppVersion } from '@ionic-native/app-version';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { Calendar } from '@ionic-native/calendar';
+import { Camera } from '@ionic-native/camera';
+import { Contacts } from '@ionic-native/contacts';
+import { File } from '@ionic-native/file';
+import { FileOpener } from '@ionic-native/file-opener';
+import { Device } from '@ionic-native/device';
+import { MediaCapture } from '@ionic-native/media-capture';
+import { Geolocation } from '@ionic-native/geolocation';
+import { Network } from '@ionic-native/network';
+import { SQLite } from '@ionic-native/sqlite';
+import { Vibration } from '@ionic-native/vibration';
+
 
 import {
     App,
     AbstractHttpService,
     fetchContent,
-    getWmProjectProperties,
     hasCordova,
     insertAfter,
     isIpad,
@@ -16,8 +30,10 @@ import {
     noop,
     removeNode
 } from '@wm/core';
+import { FileExtensionFromMimePipe } from '@wm/components';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
+import { PushService, PushServiceImpl } from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope, CONSTANTS } from '@wm/variables';
@@ -38,6 +54,22 @@ enum OS {
 
 const KEYBOARD_CLASS = 'keyboard';
 
+const ionicServices = [
+    AppVersion,
+    BarcodeScanner,
+    Calendar,
+    Camera,
+    Contacts,
+    File,
+    FileOpener,
+    Device,
+    Geolocation,
+    MediaCapture,
+    Network,
+    SQLite,
+    Vibration
+];
+
 @NgModule({
     declarations: [
         AppExtComponent
@@ -51,17 +83,27 @@ const KEYBOARD_CLASS = 'keyboard';
         VariablesModule,
         WmMobileComponentsModule
     ],
-    providers: [
-        WebProcessService,
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: MobileHttpInterceptor,
-            multi: true
-        }
-    ],
     bootstrap: []
 })
 export class MobileRuntimeModule {
+
+    static forRoot(): ModuleWithProviders {
+        /* add all providers that are required for mobile here. This is to simplify placeholder.*/
+        return {
+            ngModule: MobileRuntimeModule,
+            providers: [
+                WebProcessService,
+                {
+                    provide: HTTP_INTERCEPTORS,
+                    useClass: MobileHttpInterceptor,
+                    multi: true
+                },
+                ...ionicServices,
+                FileExtensionFromMimePipe,
+                {provide: PushService, useClass: PushServiceImpl}
+            ]
+        };
+    }
 
     private _$appEl;
 

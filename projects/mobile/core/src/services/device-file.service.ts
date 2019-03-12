@@ -48,7 +48,7 @@ const APP_FOLDER_STRUCTURE = [{
     }]
 }];
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DeviceFileService implements IDeviceStartUpService {
 
     public serviceName = DeviceFileService.name;

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -11,12 +11,18 @@ import { HttpServiceImpl } from './http.service';
         CommonModule,
         HttpClientModule
     ],
-    declarations: [],
-    providers: [
-        {provide: AbstractHttpService, useClass: HttpServiceImpl}
-    ]
+    declarations: []
 })
 export class HttpServiceModule {
+
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: CommonModule,
+            providers: [
+                {provide: AbstractHttpService, useClass: HttpServiceImpl}
+            ]
+        };
+    }
 }
 
 export * from './http.service';

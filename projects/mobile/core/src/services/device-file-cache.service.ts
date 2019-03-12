@@ -12,7 +12,7 @@ declare const cordova;
 
 const CACHE_FILE_INDEX_NAME = 'appCache.json';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DeviceFileCacheService implements IDeviceStartUpService {
 
     public serviceName = DeviceFileCacheService.name;

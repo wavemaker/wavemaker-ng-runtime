@@ -13,16 +13,26 @@
             "@angular/platform-browser": "ng.platformBrowser",
 
             "rxjs": "rxjs",
+
+            "@ionic-native/app-version": "ionicNative.plugins",
+            "@ionic-native/barcode-scanner": "ionicNative.plugins",
+            "@ionic-native/calendar": "ionicNative.plugins",
+            "@ionic-native/camera": "ionicNative.plugins",
+            "@ionic-native/contacts": "ionicNative.plugins",
+            "@ionic-native/device": "ionicNative.plugins",
             "@ionic-native/file": "ionicNative.plugins",
             "@ionic-native/file-opener": "ionicNative.plugins",
-            "@ionic-native/barcode-scanner": "ionicNative.plugins",
-            "@ionic-native/camera": "ionicNative.plugins",
+            "@ionic-native/geolocation": "ionicNative.plugins",
             "@ionic-native/media-capture": "ionicNative.plugins",
+            "@ionic-native/network": "ionicNative.plugins",
+            "@ionic-native/sqlite": "ionicNative.plugins",
+            "@ionic-native/vibration": "ionicNative.plugins",
 
             "@wm/core": "wm.core",
             "@wm/mobile/core": "wm.mobile.core",
             "@wm/mobile/variables": "wm.mobile.variables",
             "@wm/mobile/components": "wm.mobile.components",
+            "@wm/mobile/offline": "wm.mobile.offline",
             "@wm/components": "wm.components",
             "@wm/variables": "wm.variables",
             "@wm/security": "wm.security"

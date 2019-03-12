@@ -83,7 +83,7 @@ export class UploadRequest {
     }
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DeviceFileUploadService {
 
     constructor(private cordovaFile: File) {}

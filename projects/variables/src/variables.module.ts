@@ -1,5 +1,5 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { CommonModule, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import {CommonModule, HashLocationStrategy, Location, LocationStrategy} from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
 import { ToastrModule } from 'ngx-toastr';
@@ -22,12 +22,19 @@ export const toastrModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened
         OAuthModule,
         SecurityModule
     ],
-    declarations: [],
-    providers: [
-        VariablesService,
-        MetadataService,
-        Location,
-        {provide: LocationStrategy, useClass: PathLocationStrategy}
-    ]
+    declarations: []
 })
-export class VariablesModule {}
+export class VariablesModule {
+
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: VariablesModule,
+            providers: [
+                VariablesService,
+                MetadataService,
+                Location,
+                {provide: LocationStrategy, useClass: HashLocationStrategy}
+            ]
+        };
+    }
+}

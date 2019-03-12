@@ -15,7 +15,7 @@ import {
     AppVariablesProvider,
     ComponentRefProvider,
     PrefabConfigProvider,
-    RuntimeBaseModule
+    WM_MODULES_FOR_ROOT
 } from '@wm/runtime/base';
 
 import { routes } from './app.routes';
@@ -48,7 +48,7 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
         toastrModule,
         httpClientXsrfModule,
 
-        RuntimeBaseModule
+        WM_MODULES_FOR_ROOT
     ],
     providers: [
         AppResourceManagerService,

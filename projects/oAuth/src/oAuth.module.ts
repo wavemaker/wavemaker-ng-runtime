@@ -1,8 +1,14 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { OAuthService } from './oAuth.service';
 
-@NgModule({
-    providers: [OAuthService]
-})
-export class OAuthModule {}
+@NgModule({})
+export class OAuthModule {
+
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: OAuthModule,
+            providers: [OAuthService]
+        };
+    }
+}
