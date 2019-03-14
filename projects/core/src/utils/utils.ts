@@ -1055,6 +1055,10 @@ export const extendProto = (target, proto) => {
     let _proto = Object.getPrototypeOf(target);
     while (Object.getPrototypeOf(_proto).constructor !== Object) {
         _proto = Object.getPrototypeOf(_proto);
+        // return if the prototype of created component and prototype of context are same
+        if (proto === _proto) {
+            return;
+        }
     }
     Object.setPrototypeOf(_proto, proto);
 };
