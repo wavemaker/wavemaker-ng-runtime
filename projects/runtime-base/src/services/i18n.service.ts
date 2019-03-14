@@ -117,7 +117,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadMomentLocaleBundle(momentLocale) {
-        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || '';
+        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
         if (this.selectedLocale === this.defaultSupportedLocale) {
             moment.locale(this.defaultSupportedLocale);
             return;
@@ -142,7 +142,7 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     protected loadAngularLocaleBundle(angLocale) {
         return new Promise(resolve => {
-            const _cdnUrl = _WM_APP_PROJECT.cdnUrl || '';
+            const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             if (this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
                 return;
@@ -164,7 +164,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadCalendarLocaleBundle(calendarLocale) {
-        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || '';
+        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
         let path: string;
         if (calendarLocale) {
             path = _cdnUrl + `locales/fullcalendar/${calendarLocale}.js`;
