@@ -72,6 +72,7 @@
         "codelyzer": "4.5.0",
         "core-js-builder": "2.5.7",
         "fs": "0.0.1-security",
+        "fs-extra": "7.0.1",
         "moment": "2.24.0",
         "ng-packagr": "4.7.0",
         "rimraf": "2.6.3",

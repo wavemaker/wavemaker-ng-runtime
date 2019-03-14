@@ -37,6 +37,7 @@ mkdir -p dist/runtime-cli/dependencies
 
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
+cp -r dist/bundles/wmapp/locales libraries
 if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi

@@ -117,8 +117,8 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadMomentLocaleBundle(momentLocale) {
-        const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
-        if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
+        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || '';
+        if (this.selectedLocale === this.defaultSupportedLocale) {
             moment.locale(this.defaultSupportedLocale);
             return;
         }
@@ -142,8 +142,8 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     protected loadAngularLocaleBundle(angLocale) {
         return new Promise(resolve => {
-            const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
-            if (!_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
+            const _cdnUrl = _WM_APP_PROJECT.cdnUrl || '';
+            if (this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
                 return;
             }
@@ -164,7 +164,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadCalendarLocaleBundle(calendarLocale) {
-        const _cdnUrl = _WM_APP_PROJECT.cdnUrl;
+        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || '';
         let path: string;
         if (calendarLocale) {
             path = _cdnUrl + `locales/fullcalendar/${calendarLocale}.js`;
@@ -173,7 +173,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         }
 
         // return in case of mobile app or if selected locale is default supported locale.
-        if (isMobile() || isMobileApp() || !_cdnUrl || this.selectedLocale === this.defaultSupportedLocale) {
+        if (isMobile() || isMobileApp() || this.selectedLocale === this.defaultSupportedLocale) {
             return;
         }
 
