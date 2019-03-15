@@ -1,5 +1,5 @@
 import { AppJSResolve, MetadataResolve } from '@wm/runtime/base';
-import { SecurityConfigResolve, PrefabPreviewComponent, EmptyPageComponent } from '@wm/runtime/base';
+import { SecurityConfigResolve, PrefabPreviewComponent, CanDeactivatePageGuard, EmptyPageComponent } from '@wm/runtime/base';
 
 import { PageWrapperComponent } from './components/page-wrapper.component';
 
@@ -26,6 +26,7 @@ export const routes = [
         path: ':pageName',
         pathMatch: 'full',
         resolve: appDependenciesResolve,
-        component: PageWrapperComponent
+        component: PageWrapperComponent,
+        canDeactivate: [CanDeactivatePageGuard]
     }
 ];

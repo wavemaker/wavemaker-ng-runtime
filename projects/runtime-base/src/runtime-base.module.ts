@@ -48,6 +48,7 @@ import { AppComponent } from './components/app-component/app.component';
 import { HttpCallInterceptor } from './services/http-interceptor.services';
 import { PrefabPreviewComponent } from './components/prefab-preview.component';
 import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
+import {CanDeactivatePageGuard} from "./guards/can-deactivate-page.guard";
 
 export function InitializeApp(I18nService) {
     return () => {
@@ -164,6 +165,7 @@ export class RuntimeBaseModule {
                 AuthGuard,
                 RoleGuard,
                 PageNotFoundGaurd,
+                CanDeactivatePageGuard,
                 AppJSResolve,
                 I18nResolve
             ]

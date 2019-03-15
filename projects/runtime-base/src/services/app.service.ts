@@ -59,6 +59,7 @@ export class AppRef {
     onAppVariablesReady = noop;
     onSessionTimeout = noop;
     onPageReady = noop;
+    onBeforePageLeave = noop;
     onBeforeServiceCall =  noop;
     onServiceSuccess =  noop;
     onServiceError =  noop;

@@ -208,5 +208,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     onReady() {}
 
+    onBeforePageLeave() {}
+
     onPageContentReady() {}
 }

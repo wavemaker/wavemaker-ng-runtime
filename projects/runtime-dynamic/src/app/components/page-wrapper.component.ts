@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
-import { AbstractSpinnerService, App } from '@wm/core';
+import { AbstractSpinnerService, App, noop} from '@wm/core';
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
 import { AppManagerService, ComponentRefProvider, ComponentType } from '@wm/runtime/base';
@@ -67,6 +67,24 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
 
     renderPrefabPreviewPage() {
         this.router.navigate(['prefab-preview']);
+    }
+
+    /**
+     * canDeactivate is called before a route change.
+     * This will internally call onBeforePageLeave method present
+     * at page level and app level in the application and decide
+     * whether to change route or not based on return value.
+     */
+    canDeactivate() {
+        let retVal;
+        // Calling onBeforePageLeave method present at page level
+        retVal = this.app.activePage.onBeforePageLeave();
+        // Calling onBeforePageLeave method present at app level only if page level method return true
+        // or if there is no page level method
+        if (retVal !== false ) {
+            retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this);
+        }
+        return retVal === undefined ? true : retVal;
     }
 
     ngOnInit() {
