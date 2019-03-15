@@ -202,7 +202,7 @@ export class TableFilterSortDirective {
             return;
         }
         if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
-            if (_.isEmpty(this.table.datasource.execute(DataSource.Operation.GET_OPTIONS).filterFields)) {
+            if (_.isEmpty(this.table.datasource.execute(DataSource.Operation.GET_OPTIONS).filterFields) && _.isEmpty(this.table.filterInfo)) {
                 this.clearFilter(true);
             }
             this.resetSortStatus(variableSort);
