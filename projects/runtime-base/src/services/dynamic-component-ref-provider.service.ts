@@ -90,10 +90,11 @@ export class DynamicComponentRefProviderService {
      * @param options: We have options like
                        selector: selector of the component
                        transpile: flag for transpiling HTML. By default it is true
-                       nocache: flag for render it from cache or not
+                       nocache: flag for render it from cache or not. By default it is true
      */
     public async addComponent(target: HTMLElement, markup: string, context = {}, options: any = {}) {
         options.transpile = isDefined(options.transpile) ? options.transpile : true;
+        options.noCache = isDefined(options.noCache) ? options.noCache : true;
         options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-'+ this.counter++;
         const componentFactoryRef = await this.getComponentFactoryRef(options.selector, markup, options);
         const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0);
