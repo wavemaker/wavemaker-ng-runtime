@@ -14,8 +14,9 @@ const handleDialogOpen = ref => {
     openedDialogs.push(ref);
 };
 
-const invokeOpenedCallback = (ref) => {
-    handleDialogOpen(ref);
+const invokeOpenedCallback = () => {
+    // Always get the reference of last pushed dialog in the array for calling onOpen callback
+    const ref = openedDialogs[openedDialogs.length - 1];
     if (ref) {
         setTimeout(() => {
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
@@ -24,7 +25,8 @@ const invokeOpenedCallback = (ref) => {
 };
 
 const invokeClosedCallback = () => {
-    const ref = openedDialogs.pop();
+    // Close always the first opened dialog in the array as only one dialog will be opened at a time
+    const ref = openedDialogs.splice(0,1)[0];
     ref.invokeEventCallback('close');
     ref.dialogRef = undefined;
 };
@@ -47,9 +49,12 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
 
+        // Subscribe to onShown and onHidden events only once as we will not be
+        // unsubscribing to the,m ever and we will handle the logic of calling
+        // respective dialog callbacks.
         if (!eventsRegistered) {
             eventsRegistered = true;
-            this.bsModal.onShown.subscribe(() => invokeOpenedCallback(this));
+            this.bsModal.onShown.subscribe(() => invokeOpenedCallback());
 
             this.bsModal.onHidden.subscribe(() => invokeClosedCallback());
         }
@@ -60,6 +65,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      * Subscribe to the onShown event emitter of bsModal and trigger on-opened event callback
      */
     public open(initState?: any) {
+
+        handleDialogOpen(this);
+
         // extend the context with the initState
         Object.assign(this.context, initState);
 
