@@ -19,6 +19,7 @@ export const searchProps = new Map(
         ['imagewidth', {value: '16px', ...PROP_STRING}],
         ['limit', PROP_NUMBER],
         ['loadingdatamsg', {value: 'Loading items...', ...PROP_STRING}],
+        ['matchmode', PROP_STRING],
         ['minchars', PROP_NUMBER],
         ['name', PROP_STRING],
         ['navsearchbar', {value: false, ...PROP_BOOLEAN}],

@@ -15,6 +15,7 @@ export interface IDataProviderConfig {
     hasData: boolean;
     query: Array<string> | string;
     searchKey?: string;
+    matchMode?: string;
     casesensitive?: boolean;
     isformfield?: boolean;
     orderby?: string;

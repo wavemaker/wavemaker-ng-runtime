@@ -1027,12 +1027,14 @@ export class LiveVariableManager extends BaseVariableManager {
         let requestParams;
 
         const searchKeys = _.split(options.searchKey, ','),
+            matchModes = _.split(options.matchMode, ','),
             formFields = {};
 
-        _.forEach(searchKeys, (colName) => {
+        _.forEach(searchKeys, (colName, index) => {
             formFields[colName] = {
                 value: options.query,
-                logicalOp: 'AND'
+                logicalOp: 'AND',
+                matchMode: matchModes[index] || 'startignorecase'
             };
         });
 
