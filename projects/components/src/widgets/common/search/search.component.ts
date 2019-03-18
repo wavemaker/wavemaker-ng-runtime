@@ -78,6 +78,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private listenQuery: boolean;
     private _domUpdated: boolean;
     private searchon: string;
+    public matchmode: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -503,6 +504,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             hasData: this.formattedDataset && this.formattedDataset.length,
             query: query,
             searchKey: searchOnDataField ? this.datafield : this.searchkey,
+            matchMode: this.matchmode,
             casesensitive: this.casesensitive,
             isformfield: this.isformfield,
             orderby: this.orderby,
