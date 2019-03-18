@@ -1250,6 +1250,15 @@ $.widget('wm.datatable', {
             $headerCheckbox.prop('checked', false);
         }
     },
+    // triggered on capture phase of click listener.
+    // sets the selected rowdata on click.
+    rowClickHandlerOnCapture: function (e, $row, options) {
+        $row = $row || $(e.target).closest('tr.app-datagrid-row');
+        var rowId = $row.attr('data-row-id');
+        var rowData = this.preparedData[rowId];
+        data = this.options.data[rowId];
+        this.options.assignSelectedItems(data, e);
+    },
 
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
@@ -2135,6 +2144,9 @@ $.widget('wm.datatable', {
             self = this;
 
         if (this.options.enableRowSelection) {
+            // add js click handler for capture phase in order to first listen on grid and
+            // assign selectedItems so that any child actions can have access to the selectedItems. 
+            $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
             $htm.on('click', this.rowSelectionHandler.bind(this));
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
             $htm.on('keydown', this.onKeyDown.bind(this));

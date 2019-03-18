@@ -265,6 +265,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.invokeEventCallback('rowselect', {$data: rowData, $event: e, row: rowData});
             });
         },
+        // assigns the items on capture phase of the click handler.
+        assignSelectedItems: (row, e) => {
+            this.ngZone.run(() => {
+                /*
+                 * in case of single select, update the items with out changing the reference.
+                 * for multi select, keep old selected items in tact
+                 */
+                if (this.multiselect) {
+                    if (_.findIndex(this.items, row) === -1) {
+                        this.items.push(row);
+                    }
+                } else {
+                    this.items.length = 0;
+                    this.items.push(row);
+                }
+            });
+        },
         onRowDblClick: (row, e) => {
             const rowData = this.addRowIndex(row);
             this.invokeEventCallback('rowdblclick', {$data: rowData, $event: e, row: rowData});
@@ -282,18 +299,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
         },
         callOnRowClickEvent: (row, e) => {
-            /*
-             * in case of single select, update the items with out changing the reference.
-             * for multi select, keep old selected items in tact
-             */
-            if (this.multiselect) {
-                if (_.findIndex(this.items, row) === -1) {
-                    this.items.push(row);
-                }
-            } else {
-                this.items.length = 0;
-                this.items.push(row);
-            }
             // Call row click only if click is triggered by user
             if (e && e.hasOwnProperty('originalEvent')) {
                 const rowData = this.addRowIndex(row);
@@ -781,7 +786,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return row;
         }
         rowData.$index = rowIndex + 1;
-        rowData.$isFirst= rowData.$index === 1;
+        rowData.$isFirst = rowData.$index === 1;
         rowData.$isLast = this.gridData.length === rowData.$index;
         return rowData;
     }
