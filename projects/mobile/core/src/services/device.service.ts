@@ -60,8 +60,10 @@ export class DeviceService {
                     resolve();
                 }
             }).then(() => {
-                return this.file.readAsText(cordova.file.dataDirectory, REGISTRY_FILE_NAME)
-                    .then(content =>  this._registry = JSON.parse(content), noop);
+                if (window['cordova']) {
+                    return this.file.readAsText(cordova.file.dataDirectory, REGISTRY_FILE_NAME)
+                        .then(content =>  this._registry = JSON.parse(content), noop);
+                }
             }).then(() => {
                 return Promise.all(this._startUpServices.map(s => {
                     return s.start().catch((error) => {

@@ -55,8 +55,6 @@ export class NetworkService implements IDeviceStartUpService {
     private _lastKnownNetworkState: any;
 
     constructor(private httpClient: HttpClient, private app: App, private network: Network) {
-        // to set the default n/w connection values.
-        this.tryToConnect(true).catch(noop);
     }
 
     /**
@@ -167,7 +165,7 @@ export class NetworkService implements IDeviceStartUpService {
     }
 
     public start(): Promise<void> {
-        if (cordova) {
+        if (window['cordova']) {
             // Connection constant will be available only when network plugin is included.
             if (window['Connection'] && navigator.connection) {
                 networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
@@ -199,9 +197,9 @@ export class NetworkService implements IDeviceStartUpService {
                     }
                 });
             }
-        } else {
-            networkState.isConnected = true;
         }
+        // to set the default n/w connection values.
+        this.tryToConnect(true).catch(noop);
         return Promise.resolve();
     }
 

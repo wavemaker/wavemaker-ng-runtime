@@ -32,10 +32,12 @@ export class DeviceVariableService {
                     variable.dataSet = data;
                     $invokeWatchers(true);
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, data);
+                    return data;
                 }, function (reason) {
                     variable.dataSet = {};
                     $invokeWatchers(true);
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null);
+                    return reason;
                 });
         } else {
             return Promise.resolve()

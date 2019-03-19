@@ -25,11 +25,11 @@ export class MobileCoreModule {
         fileOpener: DeviceFileOpenerService,
         networkService: NetworkService
     ) {
+        deviceService.addStartUpService(networkService);
         if (hasCordova()) {
             deviceService.addStartUpService(deviceFileService);
             deviceService.addStartUpService(fileCacheService);
             deviceService.addStartUpService(fileOpener);
-            deviceService.addStartUpService(networkService);
         }
     }
 }
