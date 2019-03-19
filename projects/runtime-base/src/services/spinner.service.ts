@@ -75,7 +75,6 @@ export class SpinnerServiceImpl extends AbstractSpinnerService {
 
     /**
      * hides the spinner on a particular container(context)
-     * yet to implement
      * @param ctx
      * @param id
      */
@@ -128,10 +127,15 @@ export class SpinnerServiceImpl extends AbstractSpinnerService {
         if (id) {
             delete this.messagesByContext[ctx][id];
             const messages = _.values(this.messagesByContext[ctx]);
+            const pageSpinnerCount = Object.keys(this.messagesByContext[ctx]).length;
             this.messageSource.next({
                 show: messages.length ? true : false,
                 messages: _.values(this.messagesByContext[ctx])
             });
+            // If a page spinner has id and no messages left to display then remove that spinner.
+            if (pageSpinnerCount === 0) {
+                $('.app-spinner').remove();
+            }
         } else {
             this.messagesByContext[ctx] = {};
         }
