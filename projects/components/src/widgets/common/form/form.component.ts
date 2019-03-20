@@ -11,6 +11,7 @@ import { getFieldLayoutConfig, parseValueByType } from '../../../utils/live-util
 import { performDataOperation } from '../../../utils/data-utils';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { MessageComponent } from '../message/message.component';
+import { ListComponent } from '../list/list.component';
 
 declare const _;
 
@@ -196,6 +197,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         private fb: FormBuilder,
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
+        @Optional() public parentList: ListComponent,
         @SkipSelf() @Optional() public parentForm: FormComponent,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,

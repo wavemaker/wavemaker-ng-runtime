@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Self } from '@angular/core';
+import {AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { getDefaultViewModeWidget } from '../../../../utils/live-utils';
 import { StylableComponent } from '../../base/stylable.component';
 import { FormComponent } from '../form.component';
 import { Context } from '../../../framework/types';
+import { ListComponent } from '../../list/list.component';
 
 declare const _, $;
 
@@ -72,6 +73,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     permitted;
     period;
     isRange;
+    name;
 
     // Validation properties
     required;
@@ -81,14 +83,17 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     regexp;
     validationmessage;
 
+    public _fieldName;
+
     private _debounceSetUpValidators;
     private _initPropsRes;
-    private _fieldName;
+    private parentList;
 
     constructor(
         inj: Injector,
         form: FormComponent,
         fb: FormBuilder,
+        @Optional() parentList: ListComponent,
         @Attribute('dataset.bind') binddataset,
         @Attribute('displayexpression.bind') binddisplayexpression: string,
         @Attribute('displaylabel.bind') binddisplaylabel: string,
@@ -120,6 +125,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.isRange = isRange;
         this.excludeProps = new Set(['type', 'name']);
         this.widgettype = _widgetType;
+        this.parentList = parentList;
 
         if (this.binddataset || this.$element.attr('dataset')) {
             this.isDataSetBound = true;
@@ -396,20 +402,37 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.invokeEventCallback(eventName, params);
     }
 
-    ngOnInit() {
+    private registerFormField() {
+
         const fieldName = this._fieldName;
 
-        this.ngform = this.form.ngform;
-        this.ngform.addControl(fieldName, this.createControl());
+        if (this.parentList && !(this.form.parentList === this.parentList)) {
+            let counter = 1;
+            let _fieldName = fieldName;
+            while (this.ngform.controls.hasOwnProperty(_fieldName)) {
+                _fieldName = `${fieldName}_${counter}`;
+                counter++;
+            }
+            this.ngform.addControl(_fieldName, this.createControl());
+            this._fieldName = _fieldName;
+         } else {
+            this.ngform.addControl(fieldName, this.createControl());
+        }
         const onValueChangeSubscription = this._control.valueChanges
             .pipe(debounceTime(200))
             .subscribe(this.onValueChange.bind(this));
         this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
-        super.ngOnInit();
 
         if (this.isRange === 'true') {
             this.ngform.addControl(fieldName + '_max', this.createControl());
         }
+        this.value =  _.get(this.form.formdata, this._fieldName);
+    }
+
+    ngOnInit() {
+        this.ngform = this.form.ngform;
+        this.registerFormField();
+        super.ngOnInit();
     }
 
     ngAfterContentInit() {

@@ -60,7 +60,7 @@ const setDefaultPlaceholder = (attrs, widgetType, index) => {
 const getWidgetTemplate = (attrs, options) => {
     const name = attrs.get('name');
     const fieldName = (attrs.get('key') || name || '').trim();
-    const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : `formControlName="${fieldName}"`;
+    const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : (options.isInList ? `[formControlName]="${options.counter}._fieldName"` : `formControlName="${fieldName}"`);
     const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const widgetName = name ? (options.isMaxWidget ? `name="${name}_formWidgetMax"` : `name="${name}_formWidget"`) : '';
     const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef} ${widgetName}`;
@@ -68,10 +68,10 @@ const getWidgetTemplate = (attrs, options) => {
 };
 
 
-const getTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter) => {
+const getTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isInList) => {
     const isRange = attrs.get('is-range') === 'true';
     if (!isRange) {
-        return getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter});
+        return getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter, isInList});
     }
     const layoutClass = isMobileApp() ? 'col-xs-6' : 'col-sm-6';
     return `<div class="${layoutClass}">${getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter})}</div>
@@ -109,8 +109,8 @@ const getCaptionByWidget = (attrs, widgetType, counter) => {
 
 const registerFormField = (isFormField): IBuildTaskDef => {
     return {
-        requires: ['wm-form', 'wm-liveform', 'wm-livefilter'],
-        pre: (attrs, shared, parentForm, parentLiveForm, parentFilter) => {
+        requires: ['wm-form', 'wm-liveform', 'wm-livefilter', 'wm-list'],
+        pre: (attrs, shared, parentForm, parentLiveForm, parentFilter, parentList) => {
             const counter = idGen.nextUid();
             const parent = parentForm || parentLiveForm || parentFilter;
             const pCounter = (parent && parent.get('form_reference')) || 'form';
@@ -121,6 +121,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                    [textContent]="${counter}.validationmessage"></p>` : '';
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
+            const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));
             attrs.delete('widget');
             shared.set('counter', counter);
 
@@ -139,7 +140,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                             <div [ngClass]="${counter}.displayname ? ${pCounter}._widgetClass : '${controlLayout}'">
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
-                                ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter)}
+                                ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, isInList)}
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>
                                 ${validationMsg}
