@@ -9,6 +9,7 @@ const dataSetKey = 'dataset';
 
 register(wmListTag, (): IBuildTaskDef => {
     return {
+        requires: ['wm-form', 'wm-liveform'],
         template: (node: Element) => {
 
             const datasetAttr = node.attrs.find(attr => attr.name === dataSetKey);
@@ -24,8 +25,17 @@ register(wmListTag, (): IBuildTaskDef => {
             }
             updateTemplateAttrs(node, boundExpr, widgetNameAttr.value, 'itemRef.');
         },
-        pre: (attrs) => `<${listTagName} wmList wmLiveActions ${getAttrMarkup(attrs)}>`,
-        post: () => `</${listTagName}>`
+        pre: (attrs, shared, parentForm, parentLiveForm) => {
+            const parent = parentForm || parentLiveForm;
+            shared.set('form_reference', parent && parent.get('form_reference'));
+            return `<${listTagName} wmList wmLiveActions ${getAttrMarkup(attrs)}>`;
+        },
+        post: () => `</${listTagName}>`,
+        provide: (attrs, shared) => {
+            const provider = new Map();
+            provider.set('parent_form_reference', shared.get('form_reference'));
+            return provider;
+        }
     };
 });
 

@@ -1,11 +1,20 @@
-import { ControlValueAccessor } from '@angular/forms';
+import { ControlValueAccessor, FormControlName } from '@angular/forms';
+import { OnInit } from '@angular/core';
+
+import { noop } from '@wm/core';
 
 import { BaseFormComponent } from './base-form.component';
 
-export abstract class BaseFormCustomComponent extends BaseFormComponent implements ControlValueAccessor {
+export abstract class BaseFormCustomComponent extends BaseFormComponent implements ControlValueAccessor, OnInit {
 
+    private _formControl: FormControlName;
     protected _onChange: any = () => {};
     private _onTouched: any = () => {};
+
+    ngOnInit() {
+        super.ngOnInit();
+        this._formControl = this.inj.get(FormControlName, noop);
+    }
 
     public registerOnChange(fn) {
         this._onChange = fn;
@@ -19,7 +28,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
         if (this.isDestroyed) {
             return;
         }
-        if (this.getAttr('formControlName')) {
+        if (this._formControl) {
             this.datavalue = value;
             this.onPropertyChange('datavalue', value);
             this.updatePrevDatavalue(value);
