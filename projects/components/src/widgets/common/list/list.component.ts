@@ -580,7 +580,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         });
         // handle click event in capturing phase.
         this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', ($event) => {
-            const target = $($event.target).closest('.app-list-item');
+            let target = $($event.target).closest('.app-list-item');
+            // Recursively find the current list item
+            while (target.get(0) && (target.closest('ul.app-livelist-container').get(0) !== $event.currentTarget)) {
+                target = target.parent().closest('.app-list-item');
+            }
             this.triggerListItemSelection(target, $event);
         }, true);
     }
