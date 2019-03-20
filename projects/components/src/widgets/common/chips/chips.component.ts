@@ -124,8 +124,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.limit = this.limit;
         this.searchComponent.debouncetime = this.debouncetime;
 
-        this.getTransformedData = (val) => {
-            return this.searchComponent.getTransformedData([val], this.nextItemIndex++, _.get(val, 'iscustom'));
+        this.getTransformedData = (val, isCustom) => {
+            return this.searchComponent.getTransformedData([val], this.nextItemIndex++, isCustom);
         };
     }
 
@@ -200,7 +200,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 }
                 dataObj = dataObj || val;
 
-                const transformedData = this.getTransformedData(dataObj);
+                const transformedData = this.getTransformedData(dataObj, isCustom);
                 const chipObj = transformedData[0];
                 if (isCustom) {
                     (chipObj as any).iscustom = isCustom;
@@ -239,7 +239,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                                     }
                                     return;
                                 }
-                                const transformedData = this.getTransformedData(val);
+                                const transformedData = this.getTransformedData(val, true);
                                 const chipObj = transformedData[0];
                                 (chipObj as any).iscustom = true;
                                 this.chipsList.push(chipObj);
@@ -305,7 +305,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
             const data = dataObj || _.trim(this.searchComponent.query);
             if (data) {
-                const transformedData = this.getTransformedData(data);
+                const transformedData = this.getTransformedData(data, true);
                 chipObj = transformedData[0];
                 chipObj.iscustom = true;
             }
