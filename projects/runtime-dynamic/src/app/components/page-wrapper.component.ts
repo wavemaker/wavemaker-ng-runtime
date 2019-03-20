@@ -78,7 +78,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
     canDeactivate() {
         let retVal;
         // Calling onBeforePageLeave method present at page level
-        retVal = this.app.activePage.onBeforePageLeave();
+        retVal = this.app.activePage && this.app.activePage.onBeforePageLeave();
         // Calling onBeforePageLeave method present at app level only if page level method return true
         // or if there is no page level method
         if (retVal !== false ) {
