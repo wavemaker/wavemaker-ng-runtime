@@ -6,7 +6,8 @@ import {
     NgZone,
     OnDestroy,
     OnInit,
-    ViewContainerRef
+    ViewContainerRef,
+    HostListener
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -75,6 +76,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
      * at page level and app level in the application and decide
      * whether to change route or not based on return value.
      */
+    @HostListener('window:beforeunload')
     canDeactivate() {
         let retVal;
         // Calling onBeforePageLeave method present at page level
