@@ -356,6 +356,18 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             eventName,
             e => {
                 locals.$event = e;
+                // hammer tap event will enable the tap event even after the widget is disabled.
+                // disabled attribute can be set on input/ button elements. hence checking for target having disabled or closest button having disabled and returning without invoking callback
+                if (e.type === 'tap') {
+                    if (e.target.hasAttribute('disabled')) {
+                        return;
+                    } else {
+                        const btn = e.target.closest('button[disabled]');
+                        if (btn && btn.hasAttribute('tap.event')) {
+                            return;
+                        }
+                    }
+                }
                 if (meta === 'delayed') {
                    setTimeout(() => eventCallback(), 150);
                 } else {
