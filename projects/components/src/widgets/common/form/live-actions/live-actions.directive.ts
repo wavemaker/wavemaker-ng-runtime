@@ -86,6 +86,10 @@ export class LiveActionsDirective {
                 return;
             }
             this.getRecords(options, operation);
+            // show delete success toaster
+            if (operation === 'delete') {
+                this.app.notifyApp(this.app.appLocale.MESSAGE_DELETE_RECORD_SUCCESS, 'success');
+            }
         }, (error) => {
             this.errorHandler(options, error);
         });

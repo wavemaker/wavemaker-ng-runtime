@@ -525,6 +525,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     resetFormState() {
+        // clearing the validationMessages on reset.
+        if (this.validationMessages.length) {
+            this.validationMessages = [];
+        }
         if (!this.ngform) {
             return;
         }
