@@ -13,7 +13,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
 
     ngOnInit() {
         super.ngOnInit();
-        this._formControl = this.inj.get(FormControlName, noop);
+        this._formControl = this.inj.get(FormControlName, null);
     }
 
     public registerOnChange(fn) {
