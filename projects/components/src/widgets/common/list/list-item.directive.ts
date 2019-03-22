@@ -34,6 +34,26 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         this.listComponent.lastSelectedItem = this;
     }
 
+    get $index() {
+        return this.context.index;
+    }
+
+    get $even() {
+        return this.context.even;
+    }
+
+    get $odd() {
+        return this.context.odd;
+    }
+
+    get $first() {
+        return this.context.first;
+    }
+
+    get $last() {
+        return this.context.last;
+    }
+
     @ContentChildren(WidgetRef) _currentItemWidgets: QueryList<WidgetRef>;
 
     get currentItemWidgets () {
