@@ -267,8 +267,8 @@ copyLocale() {
         mkdir -p ${mobileDest}/moment
 
         for file in ${angularSrc}/*.js; do
-            local fileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`
-            cp ${angularSrc}/${fileName} ${appDest}/angular/${fileName}
+            local destFileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`;
+            cp ${file} ${appDest}/angular/${destFileName}
         done
         cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
 
