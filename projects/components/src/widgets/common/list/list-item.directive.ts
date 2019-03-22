@@ -24,6 +24,7 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     public readonly listComponent: ListComponent;
 
     private itemClass = '';
+    private _currentItemWidgets = {};
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disable-item') disableItem = false;
@@ -54,14 +55,12 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         return this.context.last;
     }
 
-    @ContentChildren(WidgetRef) _currentItemWidgets: QueryList<WidgetRef>;
-
     get currentItemWidgets () {
         const componentElements = Array.from(this.nativeElement.querySelectorAll('[widget-id]'));
-        return componentElements.reduce((result, comp: any) => {
+        return Object.assign(this._currentItemWidgets, componentElements.reduce((result, comp: any) => {
             result[comp.widget.name] = comp.widget;
             return result;
-        }, {});
+        }, {}));
     }
 
     @Input() set wmListItem(val) {
