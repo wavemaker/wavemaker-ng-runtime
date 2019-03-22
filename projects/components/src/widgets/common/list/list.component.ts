@@ -514,7 +514,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     this.clearSelectedItems();
                 }
                 this._items.push(item);
-                this.invokeEventCallback('select', {$data: item});
+                this.invokeEventCallback('select', {widget: $listItem, $data: item});
                 $listItem.isActive = true;
             }
             this.updateSelectedItemsWidgets();
@@ -864,7 +864,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     if (target.length) {
                         const listItemContext: ListItemDirective = target.data('listItemContext');
                         if (!listItemContext.disableItem) {
-                            this.invokeEventCallback(eventName, {$event: evt, item: listItemContext.item});
+                            this.invokeEventCallback(eventName, {widget: listItemContext, $event: evt, item: listItemContext.item});
                         }
                     }
                 }

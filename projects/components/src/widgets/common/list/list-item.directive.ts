@@ -126,12 +126,12 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     ngOnInit() {
         if (this.listComponent.mouseEnterCB) {
             this.nativeElement.addEventListener('mouseenter', ($event) => {
-                this.listComponent.invokeEventCallback('mouseenter', {$event});
+                this.listComponent.invokeEventCallback('mouseenter', {widget: this, $event});
             });
         }
         if (this.listComponent.mouseLeaveCB) {
             this.nativeElement.addEventListener('mouseleave', ($event) => {
-                this.listComponent.invokeEventCallback('mouseleave', {$event});
+                this.listComponent.invokeEventCallback('mouseleave', {widget: this, $event});
             });
         }
     }
