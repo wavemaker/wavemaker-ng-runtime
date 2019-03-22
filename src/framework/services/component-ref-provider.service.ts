@@ -11,8 +11,8 @@ componentRefCache.set(ComponentType.PREFAB, new Map<string, any>());
 @Injectable()
 export class ComponentRefProviderService extends ComponentRefProvider {
 
-    static registerComponentRef(name: string, type: ComponentType, ref: any) {
-        componentRefCache.get(type).set(name, ref);
+    static registerComponentRef(name: string, type: ComponentType, ref: any, componentFactory?: any) {
+        componentRefCache.get(type).set(name, {ref: ref, componentFactory: componentFactory});
     }
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver) {
@@ -20,7 +20,10 @@ export class ComponentRefProviderService extends ComponentRefProvider {
     }
 
     public async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any> {
-        const ref = componentRefCache.get(componentType).get(componentName);
-        return Promise.resolve(this.componentFactoryResolver.resolveComponentFactory(ref));
+        const value = componentRefCache.get(componentType).get(componentName);
+        if (!value.componentFactory) {
+            value.componentFactory = this.componentFactoryResolver.resolveComponentFactory(value.ref);
+        }
+        return Promise.resolve(value.componentFactory);
     }
 }
