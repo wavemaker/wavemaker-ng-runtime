@@ -1034,7 +1034,7 @@ export class LiveVariableManager extends BaseVariableManager {
             formFields[colName] = {
                 value: options.query,
                 logicalOp: 'AND',
-                matchMode: matchModes[index] || 'startignorecase'
+                matchMode: matchModes[index] || matchModes[0] || 'startignorecase'
             };
         });
 
