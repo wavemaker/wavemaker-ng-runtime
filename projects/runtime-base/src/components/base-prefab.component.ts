@@ -1,7 +1,7 @@
 import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { $watch, AbstractI18nService, App, noop, UtilsService } from '@wm/core';
+import { $watch, AbstractI18nService, App, isIE, noop, UtilsService } from '@wm/core';
 import { WidgetRef } from '@wm/components';
 import { VariablesService } from '@wm/variables';
 
@@ -117,6 +117,11 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
                         });
                 }
                 this.containerWidget.setProps(config);
+                // Reassigning the proxy handler for prefab inbound properties as we
+                // will get them only after the prefab config call.
+                if (isIE()) {
+                    this.containerWidget.widget = this.containerWidget.createProxy();
+                }
             });
     }
 
