@@ -1,7 +1,7 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 
 import { transpile } from '@wm/transpiler';
-import { $watch, AbstractI18nService, App, noop } from '@wm/core';
+import { $watch, AbstractI18nService, App, isIE, noop } from '@wm/core';
 import { BaseComponent } from '@wm/components';
 
 import { FragmentRenderer } from './fragment-renderer';
@@ -97,6 +97,11 @@ export class PrefabRenderer {
                         });
                 }
                 containerWidget.setProps(config);
+                // Reassigning the proxy handler for prefab inbound properties as we
+                // will get them only after the prefab config call.
+                if (isIE()) {
+                    containerWidget.widget = containerWidget.createProxy();
+                }
             });
     }
 
