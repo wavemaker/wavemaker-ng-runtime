@@ -485,6 +485,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 break;
             case 'calendartype':
                 this.calendartype = nv || 'basic';
+            case 'controls':
                 this.updateCalendarHeaderOptions();
                 break;
             case 'dataset':
