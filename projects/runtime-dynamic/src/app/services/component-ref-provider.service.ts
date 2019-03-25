@@ -198,12 +198,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     404 : this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available',
                     403 : this.app.appLocale.LABEL_ACCESS_DENIED || 'Access Denied'
                 };
-                if (errorMsgMap[status]) {
-                    this.appManager.notifyApp(
-                        errorMsgMap[status],
-                        'error'
-                    );
-                }
+                return Promise.reject(errorMsgMap[status]);
             });
     }
 
@@ -238,6 +233,13 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 componentFactoryRefCache.get(componentType).set(componentName, componentFactoryRef);
 
                 return componentFactoryRef;
-        });
+            }, (err) => {
+                if (err) {
+                    this.appManager.notifyApp(
+                        err,
+                        'error'
+                    );
+                }
+            });
     }
 }

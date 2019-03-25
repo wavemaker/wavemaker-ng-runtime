@@ -29,18 +29,18 @@ export class PartialContainerDirective {
         $invokeWatchers(true);
 
         const componentFactory = await this.componentRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL);
+        if (componentFactory) {
+            const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
 
-        const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
+            if (!this.$target) {
+                this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
+            }
 
-        if (!this.$target) {
-            this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
+            this.$target.innerHTML = '';
+            this.$target.appendChild(instanceRef.location.nativeElement);
+            this.contentInitialized = true;
+            setTimeout(() => this.onLoadSuccess(), 200);
         }
-
-        this.$target.innerHTML = '';
-        this.$target.appendChild(instanceRef.location.nativeElement);
-
-        this.contentInitialized = true;
-        setTimeout(() => this.onLoadSuccess(), 200);
     }
 
     renderPartial = _.debounce(this._renderPartial, 200, {leading: true});

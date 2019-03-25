@@ -58,8 +58,10 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.appManager.loadAppVariables()
             .then(async () => {
                 const pageComponentFactoryRef = await this.componentRefProvider.getComponentFactoryRef(pageName, ComponentType.PAGE);
-                const instance = this.vcRef.createComponent(pageComponentFactoryRef, 0, this.injector);
-                $target.appendChild(instance.location.nativeElement);
+                if (pageComponentFactoryRef) {
+                    const instance = this.vcRef.createComponent(pageComponentFactoryRef, 0, this.injector);
+                    $target.appendChild(instance.location.nativeElement);
+                }
                 if (this.vcRef.length > 1) {
                     this.vcRef.remove(1);
                 }
