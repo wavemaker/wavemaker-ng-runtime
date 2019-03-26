@@ -233,7 +233,7 @@ const getSortedGroupedData = (groupedLiData: Object, groupBy: string, orderby: s
             key: groupkey,
             data: _.sortBy(liData, data => {
                 data._groupIndex = index + 1;
-                return data[groupBy] || data.dataObject[groupBy];
+                return _.get(data, groupBy) || _.get(data.dataObject, groupBy);
             })
         });
     });
