@@ -46,6 +46,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     get datavalue(): any {
+        if (this.isCurrentTime && !this.bsTimeValue) {
+            return CURRENT_TIME;
+        }
         return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat) || '';
     }
 
@@ -55,7 +58,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     set datavalue(newVal: any) {
         if (newVal) {
             if (newVal === CURRENT_TIME) {
-                this.bsTimeValue = getNativeDateObject(newVal);
                 this.isCurrentTime = true;
                 this.setTimeInterval();
             } else {
