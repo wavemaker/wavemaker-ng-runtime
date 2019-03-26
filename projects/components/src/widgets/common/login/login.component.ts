@@ -77,19 +77,6 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
         // suppresses the default form submission (in browsers like Firefox)
         this.formCmp.getNativeElement().addEventListener('submit', e => e.preventDefault());
 
-        // On enter key press submit the login form on Login Page
-        $('.app-textbox').keypress((evt) => {
-            if (evt.which === 13) {
-                evt.stopPropagation();
-                /**
-                 * As this function is getting executed outside of angular context,
-                 * trigger a digest cycle and then trigger doLogin method, So that the bindings in the loginVariable will be evaluated property
-                 */
-                $appDigest();
-                this.doLogin();
-            }
-        });
-
         // get login button component
         this.buttonComponents.forEach(cmp => {
             if (cmp.getNativeElement().getAttribute('name') === 'loginButton' || _.includes(cmp.getNativeElement().classList, 'app-login-button')) {
