@@ -41,6 +41,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
     private displayimagesrc: string;
     private _datasource: any;
     private defaultview: string;
+    private matchmode: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource () {
@@ -86,6 +87,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
         this.searchComponent.dataset = this.dataset;
         this.searchComponent.searchkey = this.searchkey;
         this.searchComponent.datasource = this.datasource;
+        this.searchComponent.matchmode = this.matchmode;
     }
 
 

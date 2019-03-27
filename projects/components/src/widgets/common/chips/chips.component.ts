@@ -50,6 +50,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private limit: number;
     private _classExpr: any;
     private minchars: number;
+    private matchmode: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource () {
@@ -123,6 +124,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.searchComponent.searchkey = this.searchkey;
         this.searchComponent.limit = this.limit;
         this.searchComponent.debouncetime = this.debouncetime;
+        this.searchComponent.matchmode = this.matchmode;
 
         this.getTransformedData = (val, isCustom) => {
             return this.searchComponent.getTransformedData([val], this.nextItemIndex++, isCustom);

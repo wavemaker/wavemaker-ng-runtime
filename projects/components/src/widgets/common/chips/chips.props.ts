@@ -22,6 +22,7 @@ export const chipsProps = new Map(
         ['inputwidth', {value: 'default', ...PROP_STRING}],
         ['limit', PROP_NUMBER],
         ['loadingdatamsg', {value: 'Loading items...', ...PROP_STRING}],
+        ['matchmode', PROP_STRING],
         ['maxsize', PROP_NUMBER],
         ['minchars', {value: 1 , ...PROP_NUMBER}],
         ['name', PROP_STRING],
