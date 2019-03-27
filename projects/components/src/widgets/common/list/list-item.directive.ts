@@ -58,7 +58,10 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     get currentItemWidgets () {
         const componentElements = Array.from(this.nativeElement.querySelectorAll('[widget-id]'));
         return Object.assign(this._currentItemWidgets, componentElements.reduce((result, comp: any) => {
-            result[comp.widget.name] = comp.widget;
+            const widgetName = comp.widget.name;
+            if (widgetName) {
+                result[comp.widget.name] = comp.widget;
+            }
             return result;
         }, {}));
     }
