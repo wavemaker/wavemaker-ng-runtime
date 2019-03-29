@@ -42,6 +42,7 @@ export const registerProps = () => {
                 ['fractionsize', PROP_STRING],
                 ['generator', PROP_STRING],
                 ['limit', PROP_NUMBER],
+                ['matchmode', PROP_STRING],
                 ['maxchars', PROP_NUMBER],
                 ['maxvalue', PROP_NUMBER],
                 ['mobiledisplay', {value: true, ...PROP_BOOLEAN}],
