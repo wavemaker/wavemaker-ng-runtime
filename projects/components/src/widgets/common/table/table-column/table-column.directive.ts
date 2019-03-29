@@ -15,7 +15,7 @@ declare const _;
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
-let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'displaylabel',
+let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataset'];
 const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required'];
 inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
@@ -278,7 +278,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         if (this._isRowFilter && isDataSetWidget(this.filterwidget) && !this.bindfilterdataset) {
             // For live variable, get the data using distinct API
             if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
-                //check for related entity columns
+                // check for related entity columns
                 if (this.relatedEntityName) {
                     this.widget['is-related']  = true;
                     this.widget['lookup-type']  = this.relatedEntityName;
