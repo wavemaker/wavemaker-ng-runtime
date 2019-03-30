@@ -197,8 +197,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     private getDataSourceAsObservable(query: string): Observable<any> {
-        // show dropdown only when there is change in query
-        if (this._lastQuery === query) {
+        // show dropdown only when there is change in query. This should not apply when dataoptions with filterFields are updated.
+        if (this._lastQuery === query && !this.dataoptions) {
             this._loadingItems = false;
             return of(this._lastResult);
         }
