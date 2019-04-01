@@ -521,6 +521,7 @@ export class ServiceVariableManager extends BaseVariableManager {
             // else unsubscribe from the observable on the variable.
             if (ServiceVariableUtils.isFileUploadRequest(variable)) {
                 $file._uploadProgress.unsubscribe();
+                $file.status = 'abort';
                 this.totalFilesCount--;
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.ABORT, variable, $file);
                 if (!this.isFileUploadInProgress(variable.dataBinding) && this.totalFilesCount === 0) {
