@@ -85,8 +85,11 @@ export class HttpServiceImpl extends AbstractHttpService {
         } else {
             let errorDetails = err.error;
             errorDetails = getValidJSON(errorDetails) || errorDetails;
+            // WM services have the format of error response as errorDetails.error
             if (errorDetails && errorDetails.errors) {
                 errMsg = this.parseErrors(errorDetails.errors);
+            } else if (errorDetails) {
+                errMsg = errorDetails;
             } else {
                 errMsg = 'Service Call Failed';
             }
