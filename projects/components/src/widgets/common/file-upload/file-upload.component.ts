@@ -215,7 +215,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
      * @param $file, the file for which the request is to be aborted
      */
     abortFileUpload($file) {
-        $file.status = 'abort';
         this.datasource.execute(DataSource.Operation.CANCEL, $file);
     }
 
