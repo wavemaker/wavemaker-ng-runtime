@@ -154,6 +154,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
+    // returns listitem reference by index value. This refers to the same method getListItemByIndex.
+    public getItem(index: number) {
+        return this.getListItemByIndex(index)
+    }
+
+    // return index of listItem(listItemDirective). This refers to the same method getListItemIndex.
+    public getIndex(item: ListItemDirective) {
+        return this.getListItemIndex(item)
+    }
+
     public set selecteditem(items) {
         this._items.length = 0;
         this.deselectListItems();
