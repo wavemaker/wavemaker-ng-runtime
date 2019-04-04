@@ -121,11 +121,37 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return getClonedObject(this._items[0]);
     }
 
-    public getWidgets(widgteName: string, index: number = 0) {
+    /**
+     * Returns list of widgets present on list item by considering name and index of the widget.
+     * If we did'nt pass index, it returns array of all the widgets which are matching to widget name
+     * @param widgteName: Name of the widget
+     * @param index: Index of the widget
+     */
+    public getWidgets(widgteName: string, index: number) {
+        let $target;
+        let retVal = [];
+
         if (!widgteName) {
             return;
         }
-        return _.get(this.listItems.toArray(), index, widgteName);
+
+        if (!isDefined(index)) {
+            _.forEach(this.listItems.toArray(), (el) => {
+                $target = _.get(el.currentItemWidgets, widgteName);
+                if ($target) {
+                    retVal.push($target);
+                }
+            });
+
+            return retVal;
+        }
+        index = +index || 0;
+
+        $target = _.get(this.listItems.toArray(), index);
+
+        if ($target) {
+            return [_.get($target.currentItemWidgets, widgteName)];
+        }
     }
 
     public set selecteditem(items) {
