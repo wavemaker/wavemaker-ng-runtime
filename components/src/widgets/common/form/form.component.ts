@@ -273,17 +273,34 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         context.submit = evt => this.submit(evt);
     }
 
-    // This will return a object containing the error details from the list of formFields that are invalid
-    private setValidationMsgs(validateTouch?: boolean) {
-        if (!this.formFields.length) {
+    /**
+     * This method sets validation on formFields.
+     * Applies to form inside form or list of form fields.
+     * @param {Object} controls
+     * @param formFields
+     * @param validationObj
+     * @param prefix contains the form name, which also includes its parents form name
+     * @param {boolean} validateTouch
+     */
+    private setValidationOnFields(controls: Object, formFields: any, validationObj: any, prefix: string, validateTouch?: boolean) {
+        if (!formFields) {
             return;
         }
-        _.forEach(this.ngform.controls, (v, k) => {
-            const field = this.formFields.find(e => e.key === k);
+        _.forEach(controls, (v, k) => {
+            // setting validation messages for inner forms also.
+            if (_.get(v, 'controls')) {
+                // retrieving the formfields for the innerForm using the formName.
+                const formWidget = _.get(document.querySelector('[name = ' + k + ']'), 'widget');
+                const innerFormFields = _.get(formWidget, 'formFields');
+                this.setValidationOnFields(v.controls, innerFormFields, validationObj, prefix + '.' + formWidget.name, validateTouch);
+                return;
+            }
+            const field = formFields.find(e => e.key === k);
             if (!field || (validateTouch && !v.touched)) {
                 return;
             }
-            const index = this.validationMessages.findIndex(e => e.field === k);
+            const index = validationObj.findIndex(e => (e.field === k && e.fullyQualifiedFormName === prefix));
+
             if (v.invalid) {
                 if (index === -1) {
                     /**
@@ -292,24 +309,35 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                      * errorType contains the list of errors
                      * message contains the validation message
                      * getElement returns the element having focus-target
+                     * formName returns the name of the form
                      */
-                    this.validationMessages.push({
+                    validationObj.push({
                         field: k,
                         value: field.value,
                         errorType: _.keys(v.errors),
                         message: field.validationmessage || '',
                         getElement: () => {
                             return field.$element.find('[focus-target]');
-                        }
+                        },
+                        formName: _.last(prefix.split('.')),
+                        fullyQualifiedFormName: prefix
                     });
                 } else {
-                    this.validationMessages[index].value = field.value;
-                    this.validationMessages[index].errorType = _.keys(v.errors);
+                    validationObj[index].value = field.value;
+                    validationObj[index].errorType = _.keys(v.errors);
                 }
             } else if (v.valid && index > -1) {
-                this.validationMessages.splice(index, 1);
+                validationObj.splice(index, 1);
             }
         });
+    }
+
+    // This will return a object containing the error details from the list of formFields that are invalid
+    private setValidationMsgs(validateTouch?: boolean) {
+        if (!this.formFields.length) {
+            return;
+        }
+        this.setValidationOnFields(this.ngform.controls, this.formFields, this.validationMessages, this.name, validateTouch);
     }
 
     // change and blur events are added from the template
