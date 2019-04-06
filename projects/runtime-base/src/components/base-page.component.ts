@@ -22,6 +22,8 @@ import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
 
+declare const $;
+
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
@@ -38,6 +40,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     showPageContent: boolean;
     i18nService: AbstractI18nService;
     appLocale: any;
+    startupVariablesLoaded = false;
+    pageTransitionCompleted = false;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -139,7 +143,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                 .catch(noop)
                 .then(() => {
                     this.appManager.notify('page-start-up-variables-loaded', {pageName: this.pageName});
-                    (this as any).compilePageContent = true;
+                    this.startupVariablesLoaded = true;
+                    this._compilePageContent();
                 });
             variableCollection.callback(variableCollection.Actions);
 
@@ -147,21 +152,28 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         });
     }
 
-    runPageTransition($target: HTMLElement): Promise<void> {
+    private _compilePageContent() {
+        if (this.pageTransitionCompleted && this.startupVariablesLoaded) {
+            (this as any).compilePageContent = true;
+        }
+    }
+
+    runPageTransition(transition: string): Promise<void> {
         return new Promise(resolve => {
-            let transition = this.navigationService.getPageTransition();
+            const $target = $('app-page-outlet:first');
             if (transition) {
                 const onTransitionEnd = () => {
                     if (resolve) {
-                        $target.removeEventListener('animationend', onTransitionEnd);
-                        removeClass($target, transition);
+                        $target.off('animationend', onTransitionEnd);
+                        $target.removeClass(transition);
+                        $target.children().first().remove();
                         resolve();
                         resolve = null;
                     }
                 };
                 transition = 'page-transition page-transition-' + transition;
-                addClass($target, transition);
-                $target.addEventListener('animationend', onTransitionEnd);
+                $target.addClass(transition);
+                $target.on('animationend', onTransitionEnd);
                 // Wait for a maximum of 1 second for transition to end.
                 setTimeout(onTransitionEnd, 1000);
             } else {
@@ -183,6 +195,15 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngAfterViewInit(): void {
+        const transition = this.navigationService.getPageTransition();
+        if (transition) {
+            const pageOutlet = $('app-page-outlet:first');
+            pageOutlet.prepend(pageOutlet.children().first().clone());
+        }
+        this.runPageTransition(transition).then(() => {
+            this.pageTransitionCompleted = true;
+            this._compilePageContent();
+        });
         setTimeout(() => {
             unMuteWatchers();
             this.viewInit$.complete();
