@@ -295,12 +295,20 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     private onDateChange($event, isNativePicker) {
+        const datePattern = this.datepattern.split(/([ |T][h|H])/);
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
         }
         let newVal = $event.target.value.trim();
-        newVal = newVal ? getNativeDateObject(newVal) : undefined;
+        // add format as second parameter to support formats starting with dd
+        newVal = newVal ? // check if there is a value provided to the widget
+                 (datePattern ? // check if date pattern exists or not
+                 (datePattern.length === 3 ? // check if time format exists or not
+                 getNativeDateObject(newVal, datePattern[0].toUpperCase() + datePattern[1] + datePattern[2]) : //Convert date format to upper case as moment only understands upper case date formats
+                 getNativeDateObject(newVal, datePattern[0].toUpperCase())) :
+                 getNativeDateObject(newVal)) :
+                 undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -353,9 +361,15 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     private isValid(event) {
+        const datePattern = this.datepattern.split(/([ |T][h|H])/);
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate);
+            // add format as second parameter to support formats starting with dd
+            const newVal = datePattern ? // check if the date pattern exists
+                           (datePattern.length === 3 ? // check if time format exists or not
+                           getNativeDateObject(enteredDate, datePattern[0].toUpperCase() + datePattern[1] + datePattern[2]) :
+                           getNativeDateObject(enteredDate, datePattern[0].toUpperCase())) :
+                           getNativeDateObject(enteredDate);
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }

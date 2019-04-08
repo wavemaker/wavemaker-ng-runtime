@@ -320,7 +320,8 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
 /**
  * method to get the date object from the input received
  */
-export const getDateObj = (value): Date => {
+export const getDateObj = (value, format?): Date => {
+    let timestamp;
     /*if the value is a date object, no need to covert it*/
     if (_.isDate(value)) {
         return value;
@@ -331,8 +332,11 @@ export const getDateObj = (value): Date => {
         value = parseInt(value, 10);
     }
 
-    const dateObj = new Date(value);
-    if (!moment(value).isValid() || value === '' || value === null || value === undefined) {
+    timestamp = format ? moment(value, format).valueOf() : moment(value).valueOf();
+
+
+    const dateObj = new Date(timestamp);
+    if ((!format && !moment(value).isValid()) || (format && !moment(value, format).isValid())  || value === '' || value === null || value === undefined) {
         return undefined;
     }
 
@@ -580,14 +584,25 @@ export const isDateTimeType = type => {
 };
 
 /*  This function returns date object. If val is undefined it returns invalid date */
-export const getValidDateObject = val => {
-    if (moment(val).isValid()) {
-        // date with +5 hours is returned in safari browser which is not a valid date.
-        // Hence converting the date to the supported format "YYYY/MM/DD HH:mm:ss" in IOS
-        if (isIos()) {
-            val = moment(moment(val).valueOf()).format('YYYY/MM/DD HH:mm:ss');
+export const getValidDateObject = (val, format?) => {
+    if (format) {
+        if (moment(val, format).isValid()) {
+            // date with +5 hours is returned in safari browser which is not a valid date.
+            // Hence converting the date to the supported format "YYYY/MM/DD HH:mm:ss" in IOS
+            if (isIos()) {
+                val = moment(moment(val, format).valueOf()).format('YYYY/MM/DD HH:mm:ss');
+            }
+            return moment(val, format).valueOf();
         }
-        return val;
+    } else {
+        if (moment(val).isValid()) {
+            // date with +5 hours is returned in safari browser which is not a valid date.
+            // Hence converting the date to the supported format "YYYY/MM/DD HH:mm:ss" in IOS
+            if (isIos()) {
+                val = moment(moment(val).valueOf()).format('YYYY/MM/DD HH:mm:ss');
+            }
+            return val;
+        }
     }
     /*if the value is a timestamp string, convert it to a number*/
     if (!isNaN(val)) {
@@ -603,8 +618,8 @@ export const getValidDateObject = val => {
 };
 
 /*  This function returns javascript date object*/
-export const getNativeDateObject = val => {
-    val = getValidDateObject(val);
+export const getNativeDateObject = (val, format?) => {
+    val = getValidDateObject(val, format);
     return new Date(val);
 };
 

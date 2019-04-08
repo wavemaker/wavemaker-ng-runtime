@@ -101,7 +101,8 @@ export class DateComponent extends BaseDateTimeComponent {
             this.isEnterPressedOnDateInput = false;
             return;
         }
-        const newVal = getDateObj($event.target.value);
+        // add format as second parameter to support formats starting with dd
+        const newVal = getDateObj($event.target.value, this.datepattern && this.datepattern.toUpperCase()); //Convert date format to upper case as moment only understands upper case date formats
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
