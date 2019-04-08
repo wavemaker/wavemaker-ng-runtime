@@ -5,7 +5,7 @@ module.exports = {
                 vendor: {
                     minSize: 1000000,
                     maxSize: 1000000,
-                    test: /[\\/]node_modules[\\/]/
+                    test: /[\\/]node_modules(?![\\/wm])[\\/]/
                 }
             }
         }
