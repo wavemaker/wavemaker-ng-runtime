@@ -290,7 +290,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 // retrieving the formfields for the innerForm using the formName.
                 const formWidget = _.get(document.querySelector('[name = ' + k + ']'), 'widget');
                 const innerFormFields = _.get(formWidget, 'formFields');
-                this.setValidationOnFields(v.controls, innerFormFields, validationObj, prefix + '.' + formWidget.name, validateTouch);
+                // for forms which are inside the list, which is again inside the form has the unique formGroupName(formName_1, formName_2) for which formWidget will be undefined
+                const formName = formWidget ? formWidget.name : k;
+                this.setValidationOnFields(v.controls, innerFormFields, validationObj, prefix + '.' + formName, validateTouch);
                 return;
             }
             const field = formFields.find(e => e.key === k);
