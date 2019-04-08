@@ -56,12 +56,14 @@ export class AppManagerService {
                 active = data.active;
             if (!_.isEmpty(_.trim(variable.spinnerContext))) {
                 if (active) {
-                    variable._spinnerId = this.$spinner.show(variable.spinnerMessage,
+                    variable._spinnerId = variable._spinnerId || [];
+                    const spinnerId = this.$spinner.show(variable.spinnerMessage,
                         variable._id + '_' + Date.now(),
                         variable.spinnerclass,
                         variable.spinnerContext);
+                    variable._spinnerId.push(spinnerId);
                 } else {
-                    this.$spinner.hide(variable._spinnerId);
+                    this.$spinner.hide(variable._spinnerId.shift());
                 }
             }
         });
