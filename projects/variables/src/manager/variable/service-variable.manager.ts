@@ -292,13 +292,13 @@ export class ServiceVariableManager extends BaseVariableManager {
                 }
                 param.sampleValue = inputFields[param.name];
                 /* supporting pagination for query service variable */
-                if (VARIABLE_CONSTANTS.PAGINATION_PARAMS.indexOf(param.name) !== -1) {
+                if (variable.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY && variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.DATA && VARIABLE_CONSTANTS.PAGINATION_PARAMS.indexOf(param.name) !== -1) {
                     if (param.name === 'size') {
                         param.sampleValue = options.size || param.sampleValue || parseInt(variable.maxResults, 10);
                     } else if (param.name === 'page') {
-                        param.sampleValue = options.page || param.sampleValue;
+                        param.sampleValue = options.page || param.sampleValue || 1;
                     } else if (param.name === 'sort') {
-                        param.sampleValue = getEvaluatedOrderBy(variable.orderBy, options.orderBy) || param.sampleValue;
+                        param.sampleValue = getEvaluatedOrderBy(variable.orderBy, options.orderBy) || param.sampleValue || '';
                     }
                 } else if (param.name === 'access_token' && isOAuthTypeService) {
                     param.sampleValue = getAccessToken(securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], null);
