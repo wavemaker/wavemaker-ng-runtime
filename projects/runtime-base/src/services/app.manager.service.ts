@@ -10,7 +10,8 @@ import {
     App,
     fetchContent,
     isDefined,
-    triggerFn
+    triggerFn,
+    $appDigest
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
@@ -79,6 +80,9 @@ export class AppManagerService {
         this.$spinner.hide('globalSpinner');
         this.$dialog.closeAllDialogs();
         this.$dialog.open('CommonLoginDialog');
+        // Since the login dialog is closed and opened its updated property isn't read by angular.
+        // Hence we trigger the digest cycle
+        $appDigest();
     }
 
     loadAppJS() {
