@@ -48,7 +48,7 @@ import { AppComponent } from './components/app-component/app.component';
 import { HttpCallInterceptor } from './services/http-interceptor.services';
 import { PrefabPreviewComponent } from './components/prefab-preview.component';
 import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
-import {CanDeactivatePageGuard} from "./guards/can-deactivate-page.guard";
+import {CanDeactivatePageGuard} from './guards/can-deactivate-page.guard';
 
 export function InitializeApp(I18nService) {
     return () => {
@@ -131,6 +131,24 @@ export const tooltipModule = TooltipModule.forRoot();
 })
 export class RuntimeBaseModule {
 
+    // this polyfill is to add support for CustomEvent in IE11
+    static addCustomEventPolyfill() {
+            if ( typeof window['CustomEvent'] === 'function' ) {
+                return false;
+            }
+
+            const CustomEvent = (event, params) => {
+                params = params || { bubbles: false, cancelable: false, detail: null };
+                const evt = document.createEvent( 'CustomEvent' );
+                evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+                return evt;
+            };
+
+            CustomEvent.prototype = window['Event'].prototype;
+
+            window['CustomEvent'] = CustomEvent;
+    }
+
     static forRoot(): ModuleWithProviders {
         return {
             ngModule: RuntimeBaseModule,
@@ -170,6 +188,10 @@ export class RuntimeBaseModule {
                 I18nResolve
             ]
         };
+    }
+
+    constructor() {
+        RuntimeBaseModule.addCustomEventPolyfill();
     }
 }
 
