@@ -1,7 +1,7 @@
 import { Attribute, Element, Text } from '@angular/compiler';
 
 import { DataType, FormWidgetType, getFormWidgetTemplate, IDGenerator, isDateTimeType } from '@wm/core';
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import { getAttrMarkup, getDataSource, IBuildTaskDef, register } from '@wm/transpiler';
 
 import { EDIT_MODE, getDataTableFilterWidget, getEditModeWidget } from '../../../../utils/live-utils';
 
@@ -42,7 +42,14 @@ const getFilterTemplate = (attrs, pCounter)  => {
     const widget = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
     const fieldName = attrs.get('binding');
     const type = attrs.get('type') || 'string';
-    const innerTmpl = `#filterWidget formControlName="${fieldName + '_filter'}" change.event="changeFn('${fieldName}')"
+    let datasourceBinding;
+    const datasetAttr = attrs.get('filterdataset.bind');
+    // when multicolumn is selected and filterwidget as autocomplete is assigned to dataset.
+    if (attrs.get('filterwidget') === 'autocomplete' && datasetAttr) {
+        const binddatasource = getDataSource(datasetAttr);
+        datasourceBinding = `dataset.bind="${datasetAttr}" datasource.bind="${binddatasource}"`;
+    }
+    const innerTmpl = `#filterWidget formControlName="${fieldName + '_filter'}" ${datasourceBinding} change.event="changeFn('${fieldName}')"
                         disabled.bind="isDisabled('${fieldName}')"`;
     const options = {inputType: 'filterinputtype'} ;
     const widgetTmpl = `${getFormWidgetTemplate(widget, innerTmpl, attrs, options)}`;
