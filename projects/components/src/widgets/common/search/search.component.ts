@@ -589,7 +589,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             data,
             this.datafield,
             {
-                displayField: this.displayfield || this.displaylabel,
+                displayField: this.displaylabel || this.displayfield,
                 displayExpr: iscustom ? '' : this.displayexpression,
                 bindDisplayExpr: iscustom ? '' : this.binddisplaylabel,
                 bindDisplayImgSrc: this.binddisplayimagesrc,
