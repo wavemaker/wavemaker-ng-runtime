@@ -105,12 +105,12 @@ function appendFileToFormData(file, fd, options) {
 
 /* upload file with ajax calling */
 function uploadWithAjax(file, fd, url, options) {
+    const cloneFD = new FormData();
     const iterate = (value, key) => {
         const fileObject = (_.isArray(value) ? value[0] : value);
-        if (fileObject instanceof File || fileObject instanceof Blob) {
-            fd.delete(key);
+        if (!(fileObject instanceof File || fileObject instanceof Blob)) {
+            cloneFD.append(key, value);
         }
-        appendFileToFormData(file, fd, options);
     };
     // The foreeach method on form data doesn't exist in IE. Hence we check if it exists
     // or else use the lodash forEach
@@ -119,9 +119,10 @@ function uploadWithAjax(file, fd, url, options) {
     } else {
         _.forEach(fd, iterate);
     }
+    appendFileToFormData(file, cloneFD, options);
 
     const promise = new NotifyPromise((resolve, reject, notify) => {
-        const request = httpService.upload(url, fd).subscribe(event => {
+        const request = httpService.upload(url, cloneFD).subscribe(event => {
             if (event.type === HTTP_EVENT_TYPE.UploadProgress) {
                 const uploadProgress = Math.round(100 * event.loaded / event.total);
                 notify(uploadProgress);
