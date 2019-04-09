@@ -475,7 +475,7 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
     const fieldName      = filterDef.field || filterDef.key;
     const filterOnFields = _.filter(formFields, {'filter-on': fieldName});
 
-    newVal = isDefined(newVal) ? newVal : ((filterDef['is-range'] ? getRangeFieldValue(filterDef.minValue, filterDef.maxValue) : filterDef.value));
+    newVal = filterDef['is-range'] ? getRangeFieldValue(filterDef.minValue, filterDef.maxValue) : (isDefined(newVal) ? newVal : filterDef.value);
     if (!dataSource || (options.isFirst && (_.isUndefined(newVal) || newVal === ''))) {
         return;
     }
