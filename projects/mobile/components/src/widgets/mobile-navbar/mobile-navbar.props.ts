@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '@wm/components';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components';
 
 export const navbarProps = new Map(
     [
@@ -17,6 +17,7 @@ export const navbarProps = new Map(
         ['dataset', PROP_ANY],
         ['datasource', PROP_STRING],
         ['datavalue', PROP_STRING],
+        ['debouncetime', {value: 250, ...PROP_NUMBER}],
         ['defaultview', PROP_STRING],
         ['displayimagesrc', PROP_STRING],
         ['displaylabel', PROP_STRING],
