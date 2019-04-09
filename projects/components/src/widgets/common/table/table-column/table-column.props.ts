@@ -19,6 +19,7 @@ export const registerProps = () => {
                 ['dataset', PROP_ANY],
                 ['datasource', PROP_STRING],
                 ['datepattern', PROP_STRING],
+                ['debouncetime', {value: 250, ...PROP_NUMBER}],
                 ['defaultvalue', PROP_STRING],
                 ['disabled', PROP_BOOLEAN],
                 ['displayfield', PROP_STRING],

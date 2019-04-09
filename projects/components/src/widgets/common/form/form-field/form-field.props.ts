@@ -73,6 +73,7 @@ export const registerProps = () => {
     );
     const formFieldMap = new Map(
         [
+            ['debouncetime', {value: 250, ...PROP_NUMBER}],
             ['defaultvalue', PROP_STRING],
             ['displayname', PROP_STRING],
             ['display-name', PROP_STRING],
