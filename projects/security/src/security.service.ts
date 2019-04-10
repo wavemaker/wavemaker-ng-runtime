@@ -261,6 +261,19 @@ export class SecurityService {
         return redirectPage;
     }
 
+    /**
+     * Returns all the query params(including page params and redirect to params) associated with redirected page
+     */
+    getRedirectedRouteQueryParams() {
+        let queryParams = {};
+        this.activatedRoute.queryParams.subscribe((paramVal) => {
+            _.forEach(paramVal, (val, key) => {
+                queryParams[key] = val;
+            });
+        });
+        return queryParams;
+    }
+
     // accepts query object like {a:1, b:2} and returns a=1&b=2 string
     getQueryString(queryObject) {
         const params = [];

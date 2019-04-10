@@ -205,8 +205,8 @@ export class AppManagerService {
                 });
         } else {
             page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
-            // pageParams = that.getQueryString($location.search());
-            pageParams = pageParams ? '?' + encodeURIComponent(pageParams) : '';
+            pageParams = this.$security.getQueryString(this.$security.getRedirectedRouteQueryParams());
+            pageParams = pageParams ? '?' + pageParams : '';
             // showing a redirecting message
             document.body.textContent = _.get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
             // appending redirect to page and page params
@@ -240,14 +240,14 @@ export class AppManagerService {
             sessionTimeoutMethod,
             loginConfig,
             loginMethod;
-        const that = this,
-            LOGIN_METHOD = {
+        const LOGIN_METHOD = {
                 'DIALOG' : 'DIALOG',
                 'PAGE'   : 'PAGE',
                 'SSO'    : 'SSO'
             };
 
         const config = this.$security.get();
+        let queryParamsObj = {};
         loginConfig = config.loginConfig;
         // if user found, 401 was thrown after session time
         if (config.userInfo && config.userInfo.userName) {
@@ -256,15 +256,18 @@ export class AppManagerService {
             sessionTimeoutMethod = sessionTimeoutConfig.type.toUpperCase();
             switch (sessionTimeoutMethod) {
                 case LOGIN_METHOD.DIALOG:
-                    that.showLoginDialog();
+                    this.showLoginDialog();
                     break;
                 case LOGIN_METHOD.PAGE:
                     if (!page) {
-                        page = that.$security.getCurrentRoutePage();
+                        page = this.$security.getCurrentRoutePage();
                     }
+                    queryParamsObj['redirectTo'] = page;
+                    // Adding query params(page params of page being redirected to) to the URL.
+                    queryParamsObj = _.merge(queryParamsObj, this.$security.getRedirectedRouteQueryParams());
                     // the redirect page should not be same as session timeout login page
                     if ( page !== sessionTimeoutConfig.pageName) {
-                        that.$router.navigate([sessionTimeoutConfig.pageName], {queryParams: {redirectTo: page}});
+                        this.$router.navigate([sessionTimeoutConfig.pageName], {queryParams: queryParamsObj});
                     }
                     break;
                 case LOGIN_METHOD.SSO:
@@ -280,13 +283,15 @@ export class AppManagerService {
                     // Through loginDialog, user will remain in the current state and failed calls will be executed post login through LoginVariableService.
                     // NOTE: user will be redirected to respective landing page only if dialog is opened manually(not through a failed 401 call).
                     this.noRedirect(true);
-                    that.showLoginDialog();
+                    this.showLoginDialog();
                     break;
                 case LOGIN_METHOD.PAGE:
                     // do not provide redirectTo page if fetching HOME page resulted 401
                     // on app load, by default Home page is loaded
-                    page = that.$security.getRedirectPage(config);
-                    that.$router.navigate([loginConfig.pageName], {queryParams: {redirectTo: page}});
+                    page = this.$security.getRedirectPage(config);
+                    queryParamsObj['redirectTo'] = page;
+                    queryParamsObj = _.merge(queryParamsObj, this.$security.getRedirectedRouteQueryParams());
+                    this.$router.navigate([loginConfig.pageName], {queryParams: queryParamsObj});
                     this.$app.landingPageName = loginConfig.pageName;
                     break;
                 case LOGIN_METHOD.SSO:
