@@ -116,13 +116,18 @@ export class LoginActionManager extends BaseActionManager {
                     // get redirectTo page from URL and remove it from URL
                     const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo'),
                         noRedirect = appManager.noRedirect();
-
+                    // Get query params(page params of page being redirected to) and append to the URL after login.
+                    let queryParamsObj = securityService.getRedirectedRouteQueryParams();
+                    // The redirectTo param isn't required after login
+                    if (queryParamsObj.redirectTo) {
+                        delete queryParamsObj.redirectTo;
+                    }
                     appManager.noRedirect(false);
                     // first time login
                     if (!lastLoggedInUsername) {
                         // if redirect page found, navigate to it.
                         if (!_.isEmpty(redirectPage)) {
-                            routerService.navigate([`/${redirectPage}`]);
+                            routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
                         } else if (!noRedirect) {
                             // simply reset the URL, route handling will take care of page redirection
                             routerService.navigate([`/`]);
@@ -133,7 +138,7 @@ export class LoginActionManager extends BaseActionManager {
                         if (!_.isEmpty(redirectPage)) {
                             // same user logs in again, just redirect to the redirectPage
                             if (lastLoggedInUsername === params['j_username']) {
-                                routerService.navigate([`/${redirectPage}`]);
+                                routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
                             } else {
                                 // different user logs in, reload the app and discard the redirectPage
                                 routerService.navigate([`/`]);
