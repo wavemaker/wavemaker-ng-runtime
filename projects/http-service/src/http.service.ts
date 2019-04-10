@@ -267,7 +267,7 @@ export class HttpServiceImpl extends AbstractHttpService {
                                 data.sub401.next(response);
                             }
                         }, (reason) => {
-                            data.sub401.next(reason);
+                            data.sub401.error(reason);
                         });
             }
         });
