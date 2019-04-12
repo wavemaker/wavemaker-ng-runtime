@@ -24,7 +24,17 @@
                         "tsConfig": "src/tsconfig.app.json",
                         "assets": [
                             "src/favicon.ico",
-                            "src/assets"
+                            "src/assets",
+                            {
+                                "glob": "**/*",
+                                "input": "libraries/locales/",
+                                "output": "/locales/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "node_modules/wm/locales/",
+                                "output": "/locales/"
+                            }
                         ],
                         "styles": [
                             "src/styles.css",
