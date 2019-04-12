@@ -10,8 +10,6 @@ const cheerio = require(`cheerio`);
         const $ = cheerio.load(contents);
         $('script').attr('defer', 'true');
         await writeFile(`./dist/index.html`, $.html());
-        const localeFolder = fs.existsSync('./libraries') ? './libraries/locales' : './node_modules/wm/locales';
-        fs.copySync(localeFolder, './dist/ng-bundle/locales');
     } catch (e) {
         console.error(`Error in Post ng build Script | ${e}`);
     }
