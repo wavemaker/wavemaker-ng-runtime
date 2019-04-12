@@ -32,6 +32,8 @@ export abstract class BaseFormComponent extends StylableComponent {
         // return if the variable bound is not static.
         if (this.datavaluesource && this.datavaluesource.execute(DataSource.Operation.IS_API_AWARE)) {
             return;
+        } else if (this.datavaluesource && !this.datavaluesource.twoWayBinding) {
+                return;
         }
 
         // return if widget is bound.

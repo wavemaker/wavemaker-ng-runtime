@@ -350,6 +350,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private updateFieldSource() {
         if (this.formdatasource && this.formdatasource.execute(DataSource.Operation.IS_API_AWARE)) {
             return;
+        } else if (this.formdatasource && !this.formdatasource.twoWayBinding) {
+            return;
         }
         this.formFields.forEach(formField => {
             formField.setFormWidget('datavaluesource', this.formdatasource);
