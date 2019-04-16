@@ -180,7 +180,7 @@ export class LiveVariableOfflineBehaviour {
                 // NOTE: Save only one-to-one relations for cascade
                 if (_.isObject(v) && !_.isArray(v)) {
                     column = store.entitySchema.columns.find(c => {
-                        if (c.foreignRelations) {
+                        if (c.primaryKey && c.foreignRelations) {
                             foreignRelation = c.foreignRelations.find( f => f.sourceFieldName === k);
                         }
                         return !!foreignRelation;

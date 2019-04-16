@@ -7,6 +7,7 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { DataType, DEFAULT_FORMATS, executePromiseChain, extractType, isAndroid, isArray, isIos, noop, toPromise } from '@wm/core';
 import { DeviceFileService, DeviceService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
+import { formatDate } from '@wm/variables';
 
 import { LocalKeyValueService } from './local-key-value.service';
 import { LocalDBStore } from '../models/local-db-store';
@@ -159,8 +160,9 @@ export class LocalDBManagementService {
         return Promise.all(paramPromises).then(() => {
             params = _.map(queryData.params, p => {
                 // Sqlite will accept DateTime value as below format.
-                if (p.type === DataType.DATETIME || p.type === DataType.LOCALDATETIME) {
-                    return moment(params[p.name]).format(DEFAULT_FORMATS[_.toUpper(p.type)]);
+                if (typeof params[p.name] !== 'string'
+                    && (p.type === DataType.DATETIME || p.type === DataType.LOCALDATETIME)) {
+                    return formatDate(params[p.name], p.type);
                 }
                 // sqlite accepts the bool val as 1,0 hence convert the boolean value to number
                 if (p.type === DataType.BOOLEAN) {
@@ -186,9 +188,10 @@ export class LocalDBManagementService {
                                     const propType = extractType(p.fieldType.typeRef);
                                     const formatValue = DEFAULT_FORMATS[_.toUpper(propType)];
                                     const fieldVal = row[p.name];
-                                    if (propType === DataType.DATETIME || propType === DataType.LOCALDATETIME || propType === DataType.DATE) {
+                                    if (fieldVal && typeof fieldVal !== 'string'
+                                        && (propType === DataType.DATETIME || propType === DataType.LOCALDATETIME || propType === DataType.DATE)) {
                                         if (moment(fieldVal).isValid()) {
-                                            row[p.name] = moment(fieldVal).format(formatValue);
+                                            row[p.name] = formatDate(fieldVal, propType);
                                         } else if (moment(fieldVal, 'HH:mm').isValid()) {
                                             // if the value is in HH:mm:ss format, it returns a wrong date. So append the date to the given value to get date
                                             row[p.name] = moment().format('YYYY-MM-DD') + 'T' + fieldVal;
