@@ -65,6 +65,7 @@ export abstract class App {
     isApplicationType: boolean;
     isTemplateBundleType: boolean;
     changeLocale: Function;
+    getSelectedLocale: Function;
     reload: Function;
     on401: Function;
     notifyApp: Function;
