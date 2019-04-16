@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Observer } from 'rxjs/Observer';
 
-import { $parseExpr, defer, getAbortableDefer, noop } from '@wm/core';
+import { $parseExpr, App, defer, getAbortableDefer, noop } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
 import { LiveVariableUtils, LVService } from '@wm/variables';
@@ -65,6 +65,7 @@ const pullProcessManager = (() => {
 export class LocalDBDataPullService {
 
     constructor(
+        private app: App,
         private localDBManagementService: LocalDBManagementService,
         private localKeyValueService: LocalKeyValueService,
         private networkService: NetworkService
@@ -213,7 +214,7 @@ export class LocalDBDataPullService {
     private evalIfBind(expression: string) {
         if (_.startsWith(expression, 'bind:')) {
             expression = expression.replace(/\[\$\i\]/g, '[0]');
-            return $parseExpr(expression.replace('bind:', ''))({});
+            return $parseExpr(expression.replace('bind:', ''))(this.app);
         }
         return expression;
     }
