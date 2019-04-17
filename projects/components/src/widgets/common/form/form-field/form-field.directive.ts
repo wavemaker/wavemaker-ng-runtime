@@ -217,7 +217,14 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         if (this.ngform) {
             this._control.setValidators(this._validators);
-            this._control.updateValueAndValidity();
+            const opt = {};
+            // updating the value only when prevData is not equal to current value.
+            // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
+            if (this.value === this.formWidget.prevDatavalue) {
+                opt['emitEvent'] = false;
+            }
+            this._control.updateValueAndValidity(opt);
+
         }
     }
 
