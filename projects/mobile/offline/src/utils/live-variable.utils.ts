@@ -201,6 +201,7 @@ export class LiveVariableOfflineBehaviour {
                         childParams.onlyOnline = false;
                         childParams.isCascadingStopped = true;
                         childParams.hasBlob = this.hasBlob(childStore);
+                        childParams.url = '';
                         return () => {
                             return Promise.resolve().then(() => {
                                     const primaryKeyValue = childStore.getValue(childParams.data, childStore.primaryKeyField.fieldName);
