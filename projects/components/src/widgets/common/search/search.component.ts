@@ -111,6 +111,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             .create((observer: any) => {
             // Runs on every search
             if (this.listenQuery) {
+                if (this.isMobileAutoComplete() && !this.$element.hasClass('full-screen')) {
+                    this.renderMobileAutoComplete();
+                    return;
+                }
                 this._defaultQueryInvoked = false;
                 this._loadingItems = true;
                 observer.next(this.query);
@@ -196,9 +200,34 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.typeahead.hide();
     }
 
+    private renderMobileAutoComplete() {
+        // Get the parent element of the search element which can be next or prev element, if both are empty then get the parent of element.
+        if (!isDefined(this.elIndex)) {
+            this.parentEl = this.$element.parent();
+            this.elIndex = this.parentEl.children().index(this.$element);
+        }
+        if (!this.$element.hasClass('full-screen')) {
+            // this flag is set to notify that the typeahead-container dom has changed its position
+            this._domUpdated = true;
+            this.$element.appendTo('div[data-role="pageContainer"]');
+            // Add full screen class on focus of the input element.
+            this.$element.addClass('full-screen');
+
+            // Add position to set the height to auto
+            if (this.position === 'inline') {
+                this.$element.addClass(this.position);
+            }
+        }
+        // focus is lost when element is changed to full-screen, keydown to select next items will not work
+        // Hence explicitly focusing the input
+        if (this.$element.hasClass('full-screen')) {
+            this.$element.find('.app-search-input').focus();
+        }
+    }
+
     private getDataSourceAsObservable(query: string): Observable<any> {
         // show dropdown only when there is change in query. This should not apply when dataoptions with filterFields are updated.
-        if (this._lastQuery === query && !this.dataoptions) {
+        if (this._lastQuery === query && !this.dataoptions.filterFields) {
             this._loadingItems = false;
             return of(this._lastResult);
         }
@@ -337,37 +366,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.typeaheadContainer = this.typeahead._container || (this.typeahead as any)._typeahead.instance;
             (this.typeaheadContainer as any).liElements = this.liElements;
             (this.typeaheadContainer as any).ulElement = this.ulElement;
-
-            // focus is lost when element is changed to full-screen, keydown to select next items will not work
-            // Hence explicitly focusing the input
-            if (this.$element.hasClass('full-screen')) {
-                this.$element.find('.app-search-input').focus();
-            }
-
         });
 
         fn();
 
         // open full-screen search view
         if (this.isMobileAutoComplete()) {
-            // Get the parent element of the search element which can be next or prev element, if both are empty then get the parent of element.
-            if (!isDefined(this.elIndex)) {
-                this.parentEl = this.$element.parent();
-                this.elIndex = this.parentEl.children().index(this.$element);
-            }
-            if (!this.$element.hasClass('full-screen')) {
-                // this flag is set to notify that the typeahead-container dom has changed its position
-                this._domUpdated = true;
-                this.$element.appendTo('div[data-role="pageContainer"]');
-                // Add full screen class on focus of the input element.
-                this.$element.addClass('full-screen');
-
-                // Add position to set the height to auto
-                if (this.position === 'inline') {
-                    this.$element.addClass(this.position);
-                }
-            }
-
             const dropdownEl = this.dropdownEl.closest('typeahead-container');
 
             dropdownEl.insertAfter(this.$element.find('input:first'));
