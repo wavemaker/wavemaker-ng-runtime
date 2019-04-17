@@ -25,7 +25,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch type="autocomplete" [debouncetime]="${options.counter}.debouncetime" ${innerTmpl}></div>`;
+            tmpl = `<div wmSearch type="autocomplete" debouncetime="${attrs.get('debouncetime')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.CHECKBOX:
             tmpl = `<div wmCheckbox ${innerTmpl}></div>`;
@@ -34,7 +34,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<ul wmCheckboxset ${innerTmpl}></ul>`;
             break;
         case FormWidgetType.CHIPS:
-            tmpl = `<ul wmChips role="input" [debouncetime]="${options.counter}.debouncetime" ${innerTmpl}></ul>`;
+            tmpl = `<ul wmChips role="input" debouncetime="${attrs.get('debouncetime')}" ${innerTmpl}></ul>`;
             break;
         case FormWidgetType.COLORPICKER:
             tmpl = `<div wmColorPicker ${innerTmpl}></div>`;
