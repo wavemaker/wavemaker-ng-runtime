@@ -71,6 +71,16 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
 
+    // This mehtod is used to show/open the popover. This refers to the same method showPopover.
+    public open() {
+        this.showPopover();
+    }
+
+    // This mehtod is used to hide/close the popover.
+    public close() {
+        this.isOpen = false;
+    }
+
     // Trigger on hiding popover
     public onHidden() {
         this.invokeEventCallback('hide', {$event: {type: 'show'}});
