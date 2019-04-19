@@ -58,8 +58,12 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
         this.close();
+        // Todo[Shubham]: Find a better approach instead of setTimeout
+        // setTimeout is used to wait for the onHidden event to be emitted.
+        setTimeout(()=> {
+            this.invokeEventCallback('ok', {$event});
+        }, 500);
     }
 
     /**
@@ -68,8 +72,12 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onCancel($event: Event) {
-        this.invokeEventCallback('cancel', {$event});
         this.close();
+        // Todo[Shubham]: Find a better approach instead of setTimeout
+        // setTimeout is used to wait for the onHidden event to be emitted.
+        setTimeout(()=> {
+            this.invokeEventCallback('cancel', {$event});
+        }, 500);
     }
 
     ngOnInit() {
