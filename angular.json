@@ -39,6 +39,7 @@
                         "styles": [
                             "src/styles.css",
                             "src/assets/styles/css/wm-style.css",
+                            "src/assets/styles/css/wm-responsive.css",
                             "src/assets/themes/style.css",
                             "src/assets/app.css"
                         ],
