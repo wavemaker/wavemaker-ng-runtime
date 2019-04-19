@@ -60,8 +60,12 @@ export class IframeDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
-        this.close();
+        const onOkReturnVal = this.invokeEventCallback('ok', {$event});
+        // Partial dialogs will not be closed by default on click of ok, 
+        // if the user writes onOk callback
+        if (!this.getAttr("ok.event")) {
+            this.close()
+        }
     }
 
     ngOnInit() {
