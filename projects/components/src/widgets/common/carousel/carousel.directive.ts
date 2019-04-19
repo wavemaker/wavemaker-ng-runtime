@@ -11,10 +11,8 @@ import { createArrayFrom } from '../../../utils/data-utils';
 
 declare const _;
 
-const DEFAULT_CLS = 'app-carousel carousel';
 const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-carousel',
-    hostClass: DEFAULT_CLS
+    widgetType: 'wm-carousel'
 };
 
 const navigationClassMap = {
