@@ -26,7 +26,7 @@ const invokeOpenedCallback = () => {
 
 const invokeClosedCallback = () => {
     // Close always the first opened dialog in the array as only one dialog will be opened at a time
-    const ref = openedDialogs.splice(0,1)[0];
+    const ref = openedDialogs.pop();
     ref.invokeEventCallback('close');
     ref.dialogRef = undefined;
 };
