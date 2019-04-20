@@ -10,6 +10,7 @@ import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './date.props';
 import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { BaseDateTimeComponent } from '../base/base-date-time.component';
+import { DATES } from '../../framework/constants';
 
 declare const _, $;
 
@@ -61,7 +62,7 @@ export class DateComponent extends BaseDateTimeComponent {
         if (newVal === CURRENT_DATE) {
             this.isCurrentDate = true;
             this.setTimeInterval();
-            this.bsDataValue = new Date();
+            this.bsDataValue = DATES.CURRENT_DATE_TIME;
         } else {
             this.bsDataValue = newVal ? getDateObj(newVal) : undefined;
             this.clearTimeInterval();

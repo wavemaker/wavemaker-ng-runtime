@@ -84,16 +84,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private timeinterval: any;
 
     /**
-     * This is an internal property used to map it to the widget
-     */
-    private minTime: Date;
-
-    /**
-     * This is an internal property used to map it to the widget
-     */
-    private maxTime: Date;
-
-    /**
      * This is an internal property used to toggle the timepicker dropdown
      */
     private status = { isopen: false };
@@ -134,24 +124,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
         if (key === 'timepattern') {
            this.updateFormat('timepattern');
-        }
-        if (key === 'mintime') {
-            this.minTime = getNativeDateObject(nv); // TODO it is supposed to be time conversion, not to the day
-            this.mintimeMaxtimeValidation();
-        } else if (key === 'maxtime') {
-            this.maxTime = getNativeDateObject(nv);
-            this.mintimeMaxtimeValidation();
         } else {
             super.onPropertyChange(key, nv, ov);
         }
-    }
-
-    /**
-     * This is an internal method used to validate mintime and maxtime
-     */
-    private mintimeMaxtimeValidation() {
-        this.timeNotInRange = this.minTime && this.maxTime && (this.bsTimeValue < this.minTime || this.bsTimeValue > this.maxTime);
-        this.invokeOnChange(this.datavalue, undefined, false);
     }
 
     /**

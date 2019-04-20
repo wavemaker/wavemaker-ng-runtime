@@ -16,6 +16,8 @@ export const dateTimeProps = new Map(
         ['hourstep', {value: 1, ...PROP_NUMBER}],
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],
+        ['maxtime', PROP_STRING],
+        ['mintime', PROP_STRING],
         ['minutestep', {value: 15, ...PROP_NUMBER}],
         ['name', PROP_STRING],
         ['outputformat', {value: 'timestamp', ...PROP_STRING}],

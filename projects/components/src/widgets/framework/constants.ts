@@ -1,4 +1,4 @@
-
+declare const moment;
 export const EVENTS_MAP = new Map<string, string>([
     // ['enterkeypress', 'keypress.enter']
 ]);
@@ -40,4 +40,8 @@ export const isDimensionProp = (key: string): boolean => DIMENSION_PROPS.has(key
 
 export const DEBOUNCE_TIMES = {
     PAGINATION_DEBOUNCE_TIME : 250
+};
+
+export const DATES = {
+    CURRENT_DATE_TIME: new Date()
 };

@@ -222,6 +222,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
                $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
+            // When we select date firsttime, Datepicker is returing selected date with picker loaded time. If mindate is CURRENT_DATE and select today's date then it is showing invalid eventhough it is valid.
+            // So When the date is selected first time, preparing the model value as selected date with picker open time.
+            if (!this.datavalue) {
+                newVal = `${newVal.toDateString()} ${new Date().toLocaleTimeString()}`;
+            }
         }
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.

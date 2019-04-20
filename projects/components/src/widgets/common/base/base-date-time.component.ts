@@ -21,8 +21,19 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public excludedays: string;
     public excludedates;
     public outputformat;
+    /**
+     * This property is used to map it to the widget.
+     */
+    public minTime: Date;
+
+    /**
+     * This property is used to map it to the widget.
+     */
+    public maxTime: Date;
     public mindate;
     public maxdate;
+    public minDateTime;
+    public maxDateTime;
     public useDatapicker = true;
     protected activeDate;
     private keyEventPluginInstance;
@@ -130,22 +141,58 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     /**
+     * This method is used to get mindatetime
+     * If mindate is provided but not mintime then validate only date irrespective of time. So mindatetime becomes start of the day (i.e mentioned mindate with 00:00:00 time).
+     * If mintime is provided but not mindate then validate only time irrespective of date. So mindatetime becomes the day we have selected with mintime.
+     * if mindate and mintime are provided then validate both date and time. So mindatetime becomes mindate with mintime.
+     */
+    getMinDateTime(newVal) {
+        let minDateTime;
+        if (this._dateOptions.minDate && !this.minTime) {
+            minDateTime = getDateObj(moment(this._dateOptions.minDate).startOf('day').toDate());
+        } else if (!this._dateOptions.minDate && this.minTime) {
+            minDateTime = getDateObj(moment(`${newVal.toDateString()} ${this.minTime.toTimeString()}`).toDate());
+        } else if (this._dateOptions.minDate && this.minTime) {
+            minDateTime = getDateObj(moment(`${this._dateOptions.minDate.toDateString()} ${this.minTime.toTimeString()}`).toDate());
+        }
+        return minDateTime;
+    }
+
+    /**
+     * This method is used to get maxdatetime
+     * If maxdate is provided but not maxtime then validate only date irrespective of time. So maxdatetime becomes end of the day (i.e mentioned maxdate with 23:59:59 time).
+     * If maxtime is provided but not maxdate then validate only time irrespective of date. So maxdatetime becomes the day we have selected with mintime.
+     * if maxdate and maxtime are provided then validate both date and time. So maxdatetime becomes maxdate with maxtime.
+     */
+    getMaxDateTime(newVal) {
+        let maxDateTime;
+        if (this._dateOptions.maxDate && !this.maxTime) {
+            maxDateTime = getDateObj(moment(this._dateOptions.maxDate).endOf('day').toDate());
+        } else if (!this._dateOptions.maxDate && this.maxTime) {
+            maxDateTime = getDateObj(moment(`${newVal.toDateString()} ${this.maxTime.toTimeString()}`).toDate());
+        } else if (this._dateOptions.maxDate && this.maxTime) {
+            maxDateTime = getDateObj(moment(`${this._dateOptions.maxDate.toDateString()} ${this.maxTime.toTimeString()}`).toDate());
+        }
+        return maxDateTime;
+    }
+
+    /**
      * This method is used to validate min date, max date, exclude dates and exclude days
      * In mobile if invalid dates are entered, device is showing an alert.
      * In web if invalid dates are entered, device is showing validation message.
      */
     protected minDateMaxDateValidationOnInput(newVal, $event?: Event, displayValue?: string, isNativePicker?: boolean) {
         if (newVal) {
-            newVal = moment(newVal).startOf('day').toDate();
-            const minDate = moment(getDateObj(this.mindate)).startOf('day').toDate();
-            const maxDate =  moment(getDateObj(this.maxdate)).startOf('day').toDate();
-            if (this.mindate && newVal < minDate) {
+            newVal = moment(newVal).toDate();
+            this.minDateTime = this.getMinDateTime(newVal);
+            this.maxDateTime = this.getMaxDateTime(newVal);
+            if ((this.mindate || this.minTime) && newVal < this.minDateTime) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
                 this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
-            if (this.maxdate && newVal > maxDate) {
+            if ((this.maxdate || this.maxTime) && newVal > this.maxDateTime) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
                 this.dateNotInRange = true;
                 this.invokeOnChange(this.datavalue, undefined, false);
@@ -704,6 +751,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this.ismeridian = _.includes(this.timepattern, 'h');
         }
     }
+    /**
+     * This method is used to validate mintime and maxtime
+     */
+    public mintimeMaxtimeValidation(newVal) {
+        newVal = getNativeDateObject(newVal);
+        this.timeNotInRange = this.minTime && this.maxTime && (newVal < this.minTime || newVal > this.maxTime);
+        this.invokeOnChange(this.datavalue, undefined, false);
+    }
 
     onPropertyChange(key, nv, ov?) {
 
@@ -715,12 +770,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {
-            this._dateOptions.minDate = (nv === CURRENT_DATE) ?  this.mindate = new Date() : getDateObj(nv);
+            this._dateOptions.minDate = getDateObj(nv);
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'maxdate') {
-           this._dateOptions.maxDate = (nv === CURRENT_DATE) ?  this.maxdate = new Date() : getDateObj(nv);
+           this._dateOptions.maxDate = getDateObj(nv);
             this.minDateMaxDateValidationOnInput(this.datavalue);
-        }  else if (key === 'excludedates' || key === 'excludedays') {
+        } else if (key === 'mintime') {
+            this.minTime = getNativeDateObject(nv); // TODO it is supposed to be time conversion, not to the day
+            this.widgetType === 'wm-datetime' ?  this.minDateMaxDateValidationOnInput(this.datavalue) : this.mintimeMaxtimeValidation(this.datavalue);
+        } else if (key === 'maxtime') {
+            this.maxTime = getNativeDateObject(nv);
+            this.widgetType === 'wm-datetime' ?  this.minDateMaxDateValidationOnInput(this.datavalue) : this.mintimeMaxtimeValidation(this.datavalue);
+        } else if (key === 'excludedates' || key === 'excludedays') {
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);

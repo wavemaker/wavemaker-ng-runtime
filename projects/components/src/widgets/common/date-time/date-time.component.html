@@ -51,13 +51,13 @@
                         [showMeridian]="ismeridian"
                         [readonlyInput]="disabled || readonly || isCurrentDate"
                         [(ngModel)]="bsTimeValue"
-                        [min]="minTime"
-                        [max]="maxTime"
                         [hourStep]="hourstep"
                         [minuteStep]="minutestep"
                         [secondsStep]="secondsstep"
                         [mousewheel]="true"
                         [arrowkeys]="true"
+                        [min]="minDateTime"
+                        [max]="maxDateTime"
                         (isValid)="isValid($event)"
                         [showSeconds]="showseconds" (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
         </div>
