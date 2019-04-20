@@ -74,7 +74,7 @@ export class LiveFilterDirective {
         applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, nv, {
             EMPTY_VALUE: this.form.appLocale.LABEL_NO_VALUE
         });
-        if (this.form.autoupdate) {
+        if (this.form.autoupdate && isDefined(nv)) {
             this._filter();
         }
     }
@@ -130,7 +130,7 @@ export class LiveFilterDirective {
         // If variable has any bindings, wait for the bindings to be updated
         setTimeout(() => {
             // Setting result to the default data
-            this.filter();
+            this._filter();
         });
     }
 
