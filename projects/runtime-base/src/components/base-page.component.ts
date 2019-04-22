@@ -43,6 +43,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
 
+    CURRENT_DATE = new Date();
+
     destroy$ = new Subject();
     viewInit$ = new Subject();
 

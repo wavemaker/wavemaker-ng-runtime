@@ -22,6 +22,8 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
     i18nService: AbstractI18nService;
     appLocale: any;
 
+    CURRENT_DATE = new Date();
+
     destroy$ = new Subject();
     viewInit$ = new Subject();
 

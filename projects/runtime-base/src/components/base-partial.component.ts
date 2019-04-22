@@ -30,6 +30,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     i18nService: AbstractI18nService;
     appLocale: any;
 
+    CURRENT_DATE = new Date();
+
     destroy$ = new Subject();
     viewInit$ = new Subject();
 
