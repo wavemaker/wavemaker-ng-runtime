@@ -140,7 +140,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
             const query = (_.isArray(val) ? val[0] : val) as string;
 
-            if (!isDefined(query) || query === null || query === '') {
+            if (query === null || query === '') {
                 this._modelByValue = '';
                 // reset the query.
                 this.query = this.queryModel = '';
@@ -309,6 +309,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this._unsubscribeDv = this.isUpdateOnKeyPress();
         }
         this._isOpen = false;
+        // on outside click, typeahead is hidden. To avoid this, when fullscreen is set, overridding isFocused flag on the typeahead container
+        if (this._domUpdated && this.typeahead && (this.typeahead as any)._container) {
+            (this.typeahead as any)._container.isFocused = true;
+        }
     }
 
     private onInputChange($event) {
