@@ -66,7 +66,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private dataoptions: any;
     public dropdownEl: any;
     private _lastQuery: string;
-    private _lastResult: any = [];
+    private _lastResult: any;
     private _isOpen: boolean; // set to true when dropdown is open
     private showClosebtn: boolean;
     private _unsubscribeDv: boolean;
@@ -144,6 +144,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this._modelByValue = '';
                 // reset the query.
                 this.query = this.queryModel = '';
+                // on clear or reset filter, empty the lastResults to fetch new records.
+                this._lastResult = undefined;
                 return;
             }
 
@@ -227,7 +229,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     private getDataSourceAsObservable(query: string): Observable<any> {
         // show dropdown only when there is change in query. This should not apply when dataoptions with filterFields are updated.
-        if (this._lastQuery === query && !_.get(this.dataoptions, 'filterFields')) {
+        // when lastResult is not available i.e. still the first call is pending and second query is invoked then do not return.
+        if (this._lastQuery === query && !_.get(this.dataoptions, 'filterFields') && isDefined(this._lastResult)) {
             this._loadingItems = false;
             return of(this._lastResult);
         }
