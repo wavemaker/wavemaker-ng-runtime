@@ -53,7 +53,7 @@ export class AppUpdateComponent {
 
     public installLatestVersion() {
         const apkFile =  cordova.file.externalApplicationStorageDirectory + AUTO_UPDATE_FILENAME,
-            downloadLink = `${this._buildMeta.host}/appBuild/rest/mobileBuilds/android/download?token=${this._buildMeta.token}&buildNumber=${this._buildMeta.latestBuildNumber}&fileName=${AUTO_UPDATE_FILENAME}`,
+            downloadLink = `${this._buildMeta.host}/appBuild/rest/mobileBuilds/android/download?token=${this._buildMeta.token}&buildNumber=${this._buildMeta.latestBuildNumber}&fileName=${AUTO_UPDATE_FILENAME}&releaseVersion=${this._buildMeta.platformVersion}`,
             progressObserver = { next: e => { this.downloadProgress = (e.loaded / e.total) * 100; }, error: null, complete: null};
         this.fileDownloadService.download(
             downloadLink,
