@@ -299,6 +299,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private onFocusOut() {
         this._unsubscribeDv = false;
         this._loadingItems = false;
+        // reset the page value on focusout.
+        this.page = 1;
         // if domUpdated is true then do not hide the dropdown in the fullscreen
         if (!this._domUpdated && this._isOpen) {
             this.listenQuery = false;
