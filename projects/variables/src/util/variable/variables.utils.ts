@@ -159,7 +159,7 @@ const triggerOnTimeout = (success) => {
     setTimeout(() => { triggerFn(success); }, 500);
 };
 
-const downloadFilefromResponse = (response, headerFn, success, error) => {
+const downloadFilefromResponse = (response, headers, success, error) => {
     // check for a filename
     let filename = '',
         filenameRegex,
@@ -169,7 +169,7 @@ const downloadFilefromResponse = (response, headerFn, success, error) => {
         URL,
         downloadUrl,
         popup;
-    const disposition = headerFn('Content-Disposition');
+    const disposition = headers.get('Content-Disposition');
     if (disposition && disposition.indexOf('attachment') !== -1) {
         filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
         matches = filenameRegex.exec(disposition);
@@ -178,7 +178,7 @@ const downloadFilefromResponse = (response, headerFn, success, error) => {
         }
     }
 
-    type = headerFn('Content-Type');
+    type = headers.get('Content-Type');
     blob = new Blob([response], { type: type });
 
     if (typeof window.navigator.msSaveBlob !== 'undefined') {
@@ -365,13 +365,12 @@ const downloadThroughAnchor = (config, success, error) => {
         'headers': headers,
         'data'   : data,
         'responseType': 'arraybuffer'
-    }, function (response, httpconfig) {
+    }).then(function (response) {
         setTimeout(() => {
-            downloadFilefromResponse(response, httpconfig.headers, success, error);
+            downloadFilefromResponse(response.body, response.headers, success, error);
         }, 900);
     }, function (err) {
-        triggerFn(error);
-        console.log('error', err);
+        triggerFn(error, err);
     });
 };
 
