@@ -60,7 +60,7 @@ export class IframeDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        const onOkReturnVal = this.invokeEventCallback('ok', {$event});
+        this.invokeEventCallback('ok', {$event});
         this.close();
     }
 
