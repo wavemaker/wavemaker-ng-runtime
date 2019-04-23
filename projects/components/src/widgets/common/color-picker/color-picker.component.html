@@ -1,10 +1,12 @@
+<!--div tag and id attribute added to differentiate inner and outer click actions-->
+<div id="inside">
 <input class="form-control app-textbox" aria-label="Enter the color code" aria-haspopup="true" aria-expanded="false"
        #input
        focus-target
        [attr.name]="name"
        [(colorPicker)]="datavalue"
        (colorPickerChange)="handleChange($event);"
-       (cpToggleChange)="colorPickerToggleChange($event)"
+       (keydown.enter) = "handleClickAndEnterEvent($event)"
        [cpPosition]="'bottom'"
        [attr.placeholder]="placeholder"
        [disabled]="readonly || disabled"
@@ -18,3 +20,4 @@
 <span class="input-group-addon colorpicker-container">
     <i class="colored-box" [style.backgroundColor]="datavalue">&nbsp;</i>
 </span>
+</div>

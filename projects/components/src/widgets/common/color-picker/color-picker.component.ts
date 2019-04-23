@@ -23,7 +23,10 @@ const WIDGET_CONFIG: IWidgetConfig = {
     providers: [
         provideAsNgValueAccessor(ColorPickerComponent),
         provideAsWidgetRef(ColorPickerComponent)
-    ]
+    ],
+    host: {
+        '(document:click)': 'handleClickAndEnterEvent($event)',
+      },
 })
 export class ColorPickerComponent extends BaseFormCustomComponent {
     static initializeProps = registerProps();
@@ -35,6 +38,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     public placeholder: any;
     public tabindex: any;
     public shortcutkey: string;
+    private display_flag : Boolean = true;
 
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: ElementRef}) inputEl: ElementRef;
@@ -44,10 +48,28 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
         styler(this.nativeElement, this);
     }
 
-    // To remove space occupied by colorpicker when it is closed
-    public colorPickerToggleChange(isOpen: boolean) {
+    public colorPickerToggleChange(isOpen: any) {
+        console.log("Event : ",isOpen);
         const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
         (!isOpen) ? addClass(colorPickerContainer, 'hidden') : removeClass(colorPickerContainer, 'hidden');
+    }
+
+    //handles click and enter events and toggles display_flag 
+    private handleClickAndEnterEvent($event){
+        //outsideclick event when color picker not opened
+        if($event && $event.target && !$event.target.id && this.display_flag){
+            return; //just return don't do anything
+        }
+        const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
+        (!this.display_flag) ? addClass(colorPickerContainer, 'hidden') : removeClass(colorPickerContainer, 'hidden');
+        //handle the enter event and add cpVisible to override the style
+        if($event && $event.keyCode ==13 && this.display_flag){
+            addClass(colorPickerContainer,'cpVisible')
+        }
+        if(!this.display_flag){
+            removeClass(colorPickerContainer,'cpVisible')
+        }
+        (this.display_flag) ? this.display_flag = false : this.display_flag = true;
     }
 
     // change and blur events are added from the template
