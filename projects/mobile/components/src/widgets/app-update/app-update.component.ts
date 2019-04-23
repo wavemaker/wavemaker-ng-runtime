@@ -71,7 +71,7 @@ export class AppUpdateComponent {
 
     private checkForUpdate() {
         return new Promise((resolve, reject) => {
-            this.http.get(`${this._buildMeta.host}/appBuild/rest/mobileBuilds/latest_build?token=${this._buildMeta.token}`)
+            this.http.get(`${this._buildMeta.host}/appBuild/rest/mobileBuilds/latest_build?token=${this._buildMeta.token}&releaseVersion=${this._buildMeta.platformVersion}`)
                 .toPromise()
                 .then((response: any) => {
                     const latestBuildNumber = response.success.body.buildNumber,
