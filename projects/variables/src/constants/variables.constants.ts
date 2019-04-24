@@ -4,7 +4,8 @@ export const CONSTANTS = {
     isStudioMode: false,
     isRunMode: true,
     XSRF_COOKIE_NAME: 'wm_xsrf_token',
-    DEFAULT_TIMER_DELAY: 500
+    DEFAULT_TIMER_DELAY: 500,
+    WIDGET_DOESNT_EXIST : 'The widget you\'re trying to navigate to doesn\'t exist on this page'
 };
 export const VARIABLE_CONSTANTS = {
     CATEGORY: {
