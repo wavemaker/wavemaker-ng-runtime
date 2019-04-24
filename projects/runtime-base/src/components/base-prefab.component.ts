@@ -30,6 +30,7 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
 
     init() {
         this.App = this.injector.get(App);
+        this.App.activePrefab = this;
 
         this.containerWidget = this.injector.get(WidgetRef);
         this.prefabMngr = this.injector.get(PrefabManagerService);
