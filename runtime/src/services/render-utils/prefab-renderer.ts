@@ -142,6 +142,7 @@ export class PrefabRenderer {
             .then(() => {
                 return this.renderFragment.render(
                     prefabName,
+                    'PREFAB',
                     this.prefabMngr.getPrefabMinJsonUrl(prefabName),
                     context,
                     `app-prefab-${prefabName}`,

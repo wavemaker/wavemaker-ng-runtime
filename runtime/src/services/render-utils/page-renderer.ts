@@ -93,6 +93,7 @@ export class PageRenderer {
         muteWatchers();
         return this.renderFragment.render(
             pageName,
+            'PAGE',
             getFragmentUrl(pageName),
             context,
             `app-page-${pageName}`,

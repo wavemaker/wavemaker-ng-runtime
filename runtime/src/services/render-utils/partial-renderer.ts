@@ -62,6 +62,7 @@ export class PartialRenderer {
 
         return this.renderFragment.render(
             partialName,
+            'PARTIAL',
             getFragmentUrl(partialName),
             context,
             `app-partial-${partialName}`,

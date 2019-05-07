@@ -1,6 +1,6 @@
 import { Injectable, Injector, ViewContainerRef } from '@angular/core';
 
-import { transpile } from '@wm/transpiler';
+import { transpile, scopeComponentStyles } from '@wm/transpiler';
 import { AbstractI18nService, App, getValidJSON, noop, UtilsService } from '@wm/core';
 import { VariablesService } from '@wm/variables';
 
@@ -118,7 +118,7 @@ export class FragmentRenderer {
         return variableCollection;
     }
 
-    public loadResourcesOfFragment(url): Promise<IPageMinJSON> {
+    private loadResourcesOfFragment(componentName, componentType, url): Promise<IPageMinJSON> {
 
         const resource = fragmentCache.get(url);
 
@@ -131,7 +131,7 @@ export class FragmentRenderer {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)),
                     script: _decodeURIComponent(script),
-                    styles: _decodeURIComponent(styles),
+                    styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
                     variables: _decodeURIComponent(variables)
                 };
                 fragmentCache.set(url, response);
@@ -154,6 +154,7 @@ export class FragmentRenderer {
 
     public render(
         fragmentName: string,
+        fragmentType: string,
         url: string,
         context: string,
         selector: string,
@@ -163,7 +164,7 @@ export class FragmentRenderer {
         extendWithAppVariableContext: boolean,
         clearVCRef?
     ): Promise<any> {
-        return this.loadResourcesOfFragment(url)
+        return this.loadResourcesOfFragment(fragmentName, fragmentType, url)
             .then(({markup, script, styles, variables}) => {
                 let viewInitPromiseResolveFn;
                 const viewInitPromise: Promise<void> = new Promise(res => viewInitPromiseResolveFn = res);

@@ -13,6 +13,12 @@ interface IProviderInfo {
     provide: Map<string, any>;
 }
 
+const CSS_REGEX = {
+    COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
+    SELECTOR_FORMAT : /[^\{\}]*\{/gi,
+    SELECTOR_EXCLUDE_FORMAT : /\s*(@keyframes|@media|@comment|from|to|[0-9]+%)\s*/i
+};
+
 const OVERRIDES = {
     'accessroles': '*accessroles',
     'ng-if': '*ngIf',
@@ -328,3 +334,52 @@ export interface IBuildTaskDef {
     provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
     post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
 }
+
+export const scopeComponentStyles = (componentName, componentType, styles = '') => {
+    componentName = componentName.toLowerCase();
+    const comments = {};
+    let commentCount = 0;
+    if (styles.startsWith('/*DISABLE_SCOPING*/')) {
+        return styles;
+    }
+    styles = styles.replace(CSS_REGEX.COMMENTS_FORMAT, comment => {
+        const key = `@comment${commentCount++}{`;
+        comments[key] = comment;
+        return key;
+    });
+    styles = styles.replace(CSS_REGEX.SELECTOR_FORMAT, (selector) => {
+        if (!CSS_REGEX.SELECTOR_EXCLUDE_FORMAT.test(selector)) {
+            const firstNonSpaceCharIndex = selector.match(/\S/).index;
+            let prefixSpaceCharSeq = '';
+            if (firstNonSpaceCharIndex > 0) {
+                prefixSpaceCharSeq = selector.substring(0, firstNonSpaceCharIndex);
+                selector = selector.substring(firstNonSpaceCharIndex);
+            }
+            if (!selector.startsWith('/*') && selector.trim().length > 0) {
+                const spaceIndex = selector.indexOf(' ');
+                if (selector.startsWith('.wm-app')) {
+                    if (spaceIndex > 0) {
+                        selector = selector.substring(spaceIndex + 1);
+                    } else {
+                        return selector;
+                    }
+                }
+
+                if (componentType === 0 || componentType === 'PAGE') {
+                    selector = `.wm-app app-page-${componentName} ${selector}`;
+                } else if (componentType === 1 || componentType === 'PREFAB') {
+                    selector = `.wm-app .app-page app-prefab-${componentName} ${selector}`;
+                } else if (componentType === 2 || componentType === 'PARTIAL') {
+                    selector = `.wm-app .app-page app-partial-${componentName} ${selector}`;
+                }
+            }
+            selector = prefixSpaceCharSeq + selector;
+        }
+        return selector;
+    });
+    for (const key in comments) {
+        styles = styles.replace(key, comments[key]);
+    }
+    return styles;
+};
+
