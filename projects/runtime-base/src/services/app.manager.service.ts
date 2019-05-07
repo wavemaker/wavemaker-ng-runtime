@@ -78,7 +78,8 @@ export class AppManagerService {
      */
     private showLoginDialog() {
         this.$spinner.hide('globalSpinner');
-        this.$dialog.closeAllDialogs();
+        // Removing the close all dialogs call, so the existing dialogs remain open and
+        // the login dialog comes on top of it.
         this.$dialog.open('CommonLoginDialog');
         // Since the login dialog is closed and opened its updated property isn't read by angular.
         // Hence we trigger the digest cycle
