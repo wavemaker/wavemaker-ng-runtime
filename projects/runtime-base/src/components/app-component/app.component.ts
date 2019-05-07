@@ -85,14 +85,14 @@ export class AppComponent implements DoCheck, AfterViewInit {
     showOAuthDialog() {
         if (!this.isOAuthDialogOpen) {
             this.isOAuthDialogOpen = true;
-            this.dialogService.open('oAuthLoginDialog');
+            this.dialogService.open('oAuthLoginDialog', this);
         }
     }
 
     closeOAuthDialog() {
         if (this.isOAuthDialogOpen) {
             this.isOAuthDialogOpen = false;
-            this.dialogService.close('oAuthLoginDialog');
+            this.dialogService.close('oAuthLoginDialog', this);
         }
     }
 

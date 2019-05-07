@@ -86,9 +86,10 @@ export abstract class App {
 
 
 export abstract class AbstractDialogService {
-    public abstract register(name: string, dialogRef: any);
-    public abstract open(name: string, initState?: any);
-    public abstract close(name: string);
+    public abstract register(name: string, dialogRef: any, scope: any);
+    public abstract deRegister(name: string, scope: any);
+    public abstract open(name: string, initState?: any, scope?: any);
+    public abstract close(name: string, scope?: any);
     public abstract showAppConfirmDialog(initState?: any);
     public abstract closeAllDialogs: Function;
 }

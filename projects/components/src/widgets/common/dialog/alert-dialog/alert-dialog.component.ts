@@ -67,6 +67,6 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        this.register();
+        this.register(this.viewParent);
     }
 }
