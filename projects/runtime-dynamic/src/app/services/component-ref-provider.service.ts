@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
-import { transpile } from '@wm/transpiler';
+import { transpile, scopeComponentStyles } from '@wm/transpiler';
 import {
     AppManagerService,
     BasePageComponent,
@@ -173,7 +173,8 @@ const getDynamicComponent = (
 @Injectable()
 export class ComponentRefProviderService extends ComponentRefProvider {
 
-    private loadResourcesOfFragment(url): Promise<IPageMinJSON> {
+    private loadResourcesOfFragment(componentName, componentType): Promise<IPageMinJSON> {
+        const url = getFragmentUrl(componentName, componentType);
 
         const resource = fragmentCache.get(url);
 
@@ -186,7 +187,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)),
                     script: _decodeURIComponent(script),
-                    styles: _decodeURIComponent(styles),
+                    styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
                     variables: getValidJSON(_decodeURIComponent(variables))
                 };
                 fragmentCache.set(url, response);
@@ -219,7 +220,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
             return componentFactoryRef;
         }
 
-        return this.loadResourcesOfFragment(getFragmentUrl(componentName, componentType))
+        return this.loadResourcesOfFragment(componentName, componentType)
             .then(({markup, script, styles, variables})  => {
 
                 const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
