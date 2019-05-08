@@ -159,6 +159,10 @@ export class MobileRuntimeModule {
                 this._$appEl.addClass('cordova');
                 this.exposeOAuthService();
                 navigator.splashscreen.hide();
+                // Fix for issue: ios device is not considering the background style, eventhough value is set in config.xml.
+                if (window['StatusBar']) {
+                    window['StatusBar'].overlaysWebView(false);
+                }
             }
         });
     }
