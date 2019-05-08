@@ -16,7 +16,7 @@ interface IProviderInfo {
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
     SELECTOR_FORMAT : /[^\{\}]*\{/gi,
-    SELECTOR_EXCLUDE_FORMAT : /\s*(@keyframes|@media|@comment|from|to|[0-9]+%)\s*/i
+    SELECTOR_EXCLUDE_FORMAT : /(@keyframes|@media|@comment[0-9]+|from|to|[0-9]+%)\b/i
 };
 
 const OVERRIDES = {
