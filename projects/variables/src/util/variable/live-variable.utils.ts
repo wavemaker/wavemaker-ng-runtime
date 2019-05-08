@@ -232,7 +232,7 @@ export class LiveVariableUtils {
                     case 'text':
                     case 'string':
                         if (_.isArray(fieldValue)) {
-                            filterCondition = matchModes['exact'];
+                            filterCondition = _.includes([matchModes['in'], matchModes['notin']], filterCondition) ? filterCondition : matchModes['exact'];
                         } else {
                             filterCondition = filterCondition || matchModes['anywhereignorecase'];
                         }
@@ -342,6 +342,7 @@ export class LiveVariableUtils {
                 }), ' and ');
                 break;
             case dbModes.in:
+            case dbModes.notin:
                 param = _.join(_.map(value, val => {
                     return LiveVariableUtils.wrapInLowerCase(LiveVariableUtils.encodeAndAddQuotes(val, type, skipEncode), options, ignoreCase);
                 }), ', ');
@@ -377,7 +378,7 @@ export class LiveVariableUtils {
             }
             if (isValArray) {
                 // If array is value and mode is between, pass between. Else pass as in query
-                filterCondition = filterCondition === dbModes.between ? filterCondition : dbModes.in;
+                filterCondition = filterCondition === dbModes.between || filterCondition === dbModes.notin ? filterCondition : dbModes.in;
                 fieldValue.filterCondition = filterCondition;
             }
             matchModeExpr = DB_CONSTANTS.DATABASE_MATCH_MODES_WITH_QUERY[filterCondition];
@@ -408,7 +409,7 @@ export class LiveVariableUtils {
                     if (!_.isNull(rule.target)) {
                         const value = rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.between.toLowerCase()
                             ? (_.isArray(rule.value) ? rule.value : [rule.value, rule.secondvalue])
-                            : (rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.in.toLowerCase()
+                            : (rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.in.toLowerCase() || rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.notin.toLowerCase()
                                 ? (_.isArray(rule.value) ? rule.value : (rule.value ? rule.value.split(',') : ''))
                                 : rule.value);
                         rules[index] = LiveVariableUtils.getFilterOption(variable, {
@@ -441,7 +442,7 @@ export class LiveVariableUtils {
         }
         if (isValArray) {
             // If array is value and mode is between, pass between. Else pass as in query
-            filterCondition = filterCondition === dbModes.between ? filterCondition : dbModes.in;
+            filterCondition = filterCondition === dbModes.between || filterCondition === dbModes.notin ? filterCondition : dbModes.in;
             fieldValue.filterCondition = filterCondition;
         }
         matchModeExpr = DB_CONSTANTS.DATABASE_MATCH_MODES_WITH_QUERY[filterCondition];
