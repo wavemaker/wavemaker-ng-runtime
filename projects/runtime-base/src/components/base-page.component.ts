@@ -144,18 +144,15 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                 .then(() => {
                     this.appManager.notify('page-start-up-variables-loaded', {pageName: this.pageName});
                     this.startupVariablesLoaded = true;
-                    this._compilePageContent();
+                    // hide the loader only after the some setTimeout for smooth page load.
+                    setTimeout(() => {
+                        this.showPageContent = true;
+                    }, 100);
                 });
             variableCollection.callback(variableCollection.Actions);
 
             subscription.unsubscribe();
         });
-    }
-
-    private _compilePageContent() {
-        if (this.pageTransitionCompleted && this.startupVariablesLoaded) {
-            (this as any).compilePageContent = true;
-        }
     }
 
     runPageTransition(transition: string): Promise<void> {
@@ -202,7 +199,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         }
         this.runPageTransition(transition).then(() => {
             this.pageTransitionCompleted = true;
-            this._compilePageContent();
+            (this as any).compilePageContent = true;
         });
         setTimeout(() => {
             unMuteWatchers();
@@ -210,10 +207,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             if (isMobileApp()) {
                 this.onPageContentReady = () => {
                     this.fragmentsLoaded$.subscribe(noop, noop, () => {
-                        setTimeout(() => {
-                            this.showPageContent = true;
-                            this.invokeOnReady();
-                        });
+                        this.invokeOnReady();
                     });
                     this.onPageContentReady = noop;
                 };
