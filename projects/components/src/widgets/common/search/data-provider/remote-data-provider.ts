@@ -77,7 +77,7 @@ export class RemoteDataProvider implements IDataProvider {
             data = [tempObj]; // convert data into an array having tempObj
         } else {
             // in case data received is already an object then convert it into an array
-            data = convertDataToObject(data);
+            data = [data];
         }
 
         return data;
