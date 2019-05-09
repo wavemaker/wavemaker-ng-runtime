@@ -718,7 +718,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
         .color(colors.length ? colors : themes[propertyValueMap.theme].colors);
 
     chart.tooltip.enabled(propertyValueMap.tooltips);
-    widgetContext.message = propertyValueMap.nodatamessage || 'No data found';
+    widgetContext.message = widgetContext.showNoDataMsg ? propertyValueMap.nodatamessage || 'No data found' : '';
     // setting the no data message
     chart.noData(widgetContext.message);
 

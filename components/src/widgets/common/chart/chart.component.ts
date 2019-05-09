@@ -990,6 +990,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.variableInflight = data.active;
             this.isLoadInProgress = data.active;
+            this.showNoDataMsg = !data.active;
         }
     }
 
