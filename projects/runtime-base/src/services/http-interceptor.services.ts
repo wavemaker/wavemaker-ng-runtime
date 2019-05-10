@@ -65,7 +65,7 @@ export class HttpCallInterceptor implements HttpInterceptor {
                         // Convert the angular HttpResponse to wm HttpResponse
                         const err = this.wmHttpResponse.angularToWmResponse(error);
                         // trigger the common error handler present in app.js
-                        modifiedResp = appManager.appOnServiceError(err.meessage, err);
+                        modifiedResp = appManager.appOnServiceError(err.message, err);
                         if (modifiedResp) {
                             // Convert the wm HttpResponse to angular HttpResponse
                             modifiedResp = this.wmHttpResponse.wmToAngularResponse(modifiedResp);
