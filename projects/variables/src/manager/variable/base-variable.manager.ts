@@ -1,5 +1,8 @@
 import { httpService, processBinding } from '../../util/variable/variables.utils';
 import { appManager} from './../../util/variable/variables.utils';
+import { AdvancedOptions } from '../../advanced-options';
+
+declare const _;
 
 export abstract class BaseVariableManager {
 
@@ -38,5 +41,19 @@ export abstract class BaseVariableManager {
                 }
             });
         });
+    }
+
+    /**
+     * This method prepares the options parameter for variable callbacks.
+     * @param xhrObj, The xhrObj to be passed
+     * @param moreOptions, any other info to be passed in the options param
+     */
+    prepareCallbackOptions(xhrObj: any, moreOptions? : any): AdvancedOptions {
+        let options: AdvancedOptions = {};
+        options['xhrObj'] = xhrObj;
+        if (moreOptions) {
+            _.extend(options, moreOptions);
+        }
+        return options;
     }
 }

@@ -59,6 +59,7 @@ export class LiveVariableManager extends BaseVariableManager {
     }
 
     private handleError(variable, errorCB, response, options, advancedOptions?) {
+        let opt: AdvancedOptions;
         /* If callback function is provided, send the data to the callback.
          * The same callback if triggered in case of error also. The error-handling is done in grid.js*/
         triggerFn(errorCB, response);
@@ -72,7 +73,8 @@ export class LiveVariableManager extends BaseVariableManager {
         }
 
         //  EVENT: ON_ERROR
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, options.errorDetails);
+        opt = this.prepareCallbackOptions(options.errorDetails);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response, opt);
         //  EVENT: ON_CAN_UPDATE
         variable.canUpdate = true;
         initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response, advancedOptions);
@@ -214,7 +216,7 @@ export class LiveVariableManager extends BaseVariableManager {
                 response = response.body;
                 dataObj.data = response.content;
                 dataObj.pagination = _.omit(response, 'content');
-                const advancedOptions: AdvancedOptions = {xhrObj: response, pagination: dataObj.pagination};
+                const advancedOptions: AdvancedOptions = this.prepareCallbackOptions(response, {pagination: dataObj.pagination});
 
                 if ((response && response.error) || !response || !_.isArray(response.content)) {
                     this.handleError(variable, error, response.error, options, advancedOptions);
@@ -491,12 +493,12 @@ export class LiveVariableManager extends BaseVariableManager {
 
         onCUDerror = (response: any, reject: any) => {
             const errMsg = response.error;
-            const advancedOptions = {xhrObj: response};
+            const advancedOptions : AdvancedOptions = this.prepareCallbackOptions(response);
             // EVENT: ON_RESULT
             initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
             // EVENT: ON_ERROR
             if (!options.skipNotification) {
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, response.details);
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, advancedOptions);
             }
             // EVENT: ON_CAN_UPDATE
             variable.canUpdate = true;
@@ -507,7 +509,7 @@ export class LiveVariableManager extends BaseVariableManager {
 
         onCUDsuccess = (data: any, resolve: any) => {
             let response = data.body;
-            const advancedOptions: AdvancedOptions = {xhrObj: data};
+            const advancedOptions: AdvancedOptions = this.prepareCallbackOptions(data);
 
             $queue.process(variable);
             /* if error received on making call, call error callback */
@@ -515,7 +517,7 @@ export class LiveVariableManager extends BaseVariableManager {
                 // EVENT: ON_RESULT
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
                 // EVENT: ON_ERROR
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, data);
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, response.error, advancedOptions);
                 // EVENT: ON_CAN_UPDATE
                 variable.canUpdate = true;
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, response.error, advancedOptions);
@@ -794,7 +796,8 @@ export class LiveVariableManager extends BaseVariableManager {
             }
         };
         downloadError = (err: any, reject: any) => {
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, err.error, err.details);
+            let opt: AdvancedOptions = this.prepareCallbackOptions(err.details);
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, err.error, opt);
             triggerFn(errorHandler, err.error);
             reject(err);
         };

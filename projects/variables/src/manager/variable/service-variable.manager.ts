@@ -31,13 +31,13 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param {boolean} skipDefaultNotification
      */
     private processErrorResponse(variable: ServiceVariable, errMsg: string, errorCB: Function, xhrObj?: any, skipNotification?: boolean, skipDefaultNotification?: boolean) {
-        // EVENT: ON_ERROR
-        if (!skipNotification) {
-            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, xhrObj, skipDefaultNotification);
-        }
         const methodInfo = this.getMethodInfo(variable, {}, {});
         const securityDefnObj = _.get(methodInfo, 'securityDefinitions.0');
-        const advancedOptions: AdvancedOptions = {xhrObj: xhrObj};
+        const advancedOptions: AdvancedOptions = this.prepareCallbackOptions(xhrObj);
+        // EVENT: ON_ERROR
+        if (!skipNotification) {
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, errMsg, advancedOptions, skipDefaultNotification);
+        }
         if (_.get(securityDefnObj, 'type') === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2
             && _.includes([VARIABLE_CONSTANTS.HTTP_STATUS_CODE.UNAUTHORIZED, VARIABLE_CONSTANTS.HTTP_STATUS_CODE.FORBIDDEN], _.get(xhrObj, 'status'))) {
             removeAccessToken(securityDefnObj['x-WM-PROVIDER_ID']);
@@ -63,7 +63,10 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param success
      */
     private processSuccessResponse(response, variable, options, success) {
-        let dataSet, newDataSet, pagination = {}, advancedOptions: AdvancedOptions ;
+        let dataSet;
+        let newDataSet;
+        let pagination = {};
+        let advancedOptions: AdvancedOptions ;
 
         response = getValidJSON(response) || xmlToJson(response) || response;
 
@@ -71,10 +74,10 @@ export class ServiceVariableManager extends BaseVariableManager {
         if (isResponsePageable) {
             dataSet = response.content;
             pagination = _.omit(response, 'content');
-            advancedOptions = {xhrObj: options.xhrObj, pagination: pagination};
+            advancedOptions = this.prepareCallbackOptions(options.xhrObj, {pagination: pagination});
         } else {
             dataSet = response;
-            advancedOptions = {xhrObj: options.xhrObj};
+            advancedOptions = this.prepareCallbackOptions(options.xhrObj);
         }
 
         // EVENT: ON_RESULT
