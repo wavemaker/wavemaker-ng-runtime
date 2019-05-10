@@ -84,10 +84,9 @@ export class HttpServiceImpl extends AbstractHttpService {
             401: this.getLocale()['MESSAGE_401_ERROR'] || 'Requested resource requires authentication',
             403: this.getLocale()['LABEL_FORBIDDEN_MESSAGE'] || 'The requested resource access/action is forbidden.'
         };
-        let errMsg;
 
         // check if error message present for responded http status
-        errMsg = HTTP_STATUS_MSG[err.status] || errMsg;
+        let errMsg = HTTP_STATUS_MSG[err.status];
 
         if (!errMsg) {
             let errorDetails = err.error;
