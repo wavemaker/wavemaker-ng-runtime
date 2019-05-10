@@ -79,19 +79,24 @@ export class HttpServiceImpl extends AbstractHttpService {
      * @param err, error form network call failure
      */
     public getErrMessage(err: any) {
+        const HTTP_STATUS_MSG = {
+            404: this.getLocale()['MESSAGE_404_ERROR'] || 'Requested resource not found',
+            401: this.getLocale()['MESSAGE_401_ERROR'] || 'Requested resource requires authentication',
+            403: this.getLocale()['LABEL_FORBIDDEN_MESSAGE'] || 'The requested resource access/action is forbidden.'
+        };
         let errMsg;
-        if (_.isString(err)) {
-            errMsg = err;
-        } else {
+
+        // check if error message present for responded http status
+        errMsg = HTTP_STATUS_MSG[err.status] || errMsg;
+
+        if (!errMsg) {
             let errorDetails = err.error;
             errorDetails = getValidJSON(errorDetails) || errorDetails;
             // WM services have the format of error response as errorDetails.error
             if (errorDetails && errorDetails.errors) {
                 errMsg = this.parseErrors(errorDetails.errors);
-            } else if (errorDetails) {
-                errMsg = errorDetails;
             } else {
-                errMsg = 'Service Call Failed';
+                errMsg = errMsg || 'Service Call Failed';
             }
         }
         return errMsg;
