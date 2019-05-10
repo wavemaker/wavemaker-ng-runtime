@@ -2,8 +2,8 @@ import { Component, HostBinding, Injector } from '@angular/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './icon.props';
+import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-icon-wrapper';

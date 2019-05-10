@@ -9,6 +9,7 @@ export const registerProps = () => {
                 ['caption', {value: 'Link', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_ANY],
+                ['conditionalstyle', PROP_ANY],
                 ['encodeurl', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
                 ['hyperlink', {value: '', ...PROP_STRING}],

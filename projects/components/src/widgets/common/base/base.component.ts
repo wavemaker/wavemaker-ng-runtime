@@ -3,7 +3,7 @@ import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, App, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
+import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { isStyle } from '../../framework/styler';
@@ -24,6 +24,20 @@ const updateClasses = (toAdd, toRemove, el) => {
     if (toAdd && toAdd.length) {
         addClass(el, _.join(toAdd, ' '));
     }
+};
+
+// To add and remove styles on the $el
+const updateStyles = (nv, ov, el) => {
+    if (ov && _.isObject(ov)) {
+        const keys = Object.keys(ov || {});
+        keys.forEach(function(key) {
+            setCSS(el, key, '');
+        });
+    }
+    if (nv && _.isObject(nv)) {
+        setCSSFromObj(el, nv);
+    }
+
 };
 
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
@@ -328,6 +342,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             const tagName = this.widgetType === 'wm-audio' ? 'audio' : 'video';
             // Trigger media(audio/video) element load method after changing autoplay property
             this.nativeElement.querySelector(tagName).load();
+        }  else if (key === 'conditionalstyle') {
+            // update styles if old and nv value are different
+            updateStyles(nv, ov, this.nativeElement);
         }
     }
 

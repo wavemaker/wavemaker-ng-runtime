@@ -12,6 +12,7 @@ export const registerProps = () => {
                 ['closable', PROP_BOOLEAN],
                 ['collapsible', PROP_BOOLEAN],
                 ['conditionalclass', PROP_ANY],
+                ['conditionalstyle', PROP_ANY],
                 ['content', PROP_STRING],
                 ['datafield', PROP_STRING],
                 ['enablefullscreen', PROP_BOOLEAN],

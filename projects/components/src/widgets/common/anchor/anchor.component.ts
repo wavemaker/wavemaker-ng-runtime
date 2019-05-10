@@ -5,8 +5,8 @@ import { addClass, App, encodeUrl, getRouteNameFromLink, setAttr } from '@wm/cor
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { DISPLAY_TYPE } from '../../framework/constants';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './anchor.props';
+import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { NavItemDirective } from '../nav/nav-item/nav-item.directive';
 import { disableContextMenu } from '../nav/navigation-control.directive';

@@ -1,4 +1,4 @@
-import {PROP_ANY, PROP_BOOLEAN, PROP_STRING, register} from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '../../framework/widget-props';
 
 export const registerProps = () => {
     register(
@@ -8,6 +8,7 @@ export const registerProps = () => {
                 ['caption', PROP_STRING],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_ANY],
+                ['conditionalstyle', PROP_ANY],
                 ['hint', PROP_STRING],
                 ['iconclass', {value: 'wi wi-star-border', ...PROP_STRING}],
                 ['iconposition', {value: 'left', ...PROP_STRING}],

@@ -7,6 +7,7 @@ export const registerProps = () => {
         [
             ['class', PROP_STRING],
             ['conditionalclass', PROP_ANY],
+            ['conditionalstyle', PROP_ANY],
             ['encodeurl', PROP_STRING],
             ['hint', PROP_STRING],
             ['name', PROP_STRING],
