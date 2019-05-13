@@ -12,5 +12,13 @@ if (environment.production) {
     enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-    .catch(err => console.error(err));
+document.addEventListener('DOMContentLoaded', () => {
+    new Promise( resolve => {
+        if (window['cordova']) {
+            document.addEventListener('deviceready', resolve);
+        } else {
+            resolve();
+        }
+    }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
+        .then(() => console.timeEnd('bootstrap'), err => console.log(err));
+});
