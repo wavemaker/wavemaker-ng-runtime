@@ -1,6 +1,6 @@
 import { Directive, Inject, Self } from '@angular/core';
 
-import { $appDigest, AbstractDialogService, DataSource, triggerFn } from '@wm/core';
+import { $appDigest, AbstractDialogService, App, DataSource, triggerFn } from '@wm/core';
 
 import { TableComponent } from './table.component';
 import { refreshDataSource } from '../../../utils/data-utils';
@@ -20,7 +20,8 @@ export class TableCUDDirective {
 
     constructor(
         @Self() @Inject(TableComponent) private table,
-        private dialogService: AbstractDialogService
+        private dialogService: AbstractDialogService,
+        private  app: App
     ) {
         table.initiateSelectItem = this.initiateSelectItem.bind(this);
         table.updateVariable = this.updateVariable.bind(this);
@@ -267,7 +268,7 @@ export class TableCUDDirective {
             return;
         }
         this.dialogService.showAppConfirmDialog({
-            title: 'Delete Record',
+            title: this.app.appLocale.MESSAGE_DELETE_RECORD || 'Delete Record',
             iconclass: 'wi wi-delete fa-lg',
             message: this.table.confirmdelete,
             oktext: this.table.deleteoktext,
