@@ -3,7 +3,7 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 
 import { setTheme } from 'ngx-bootstrap';
 
-import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App } from '@wm/core';
+import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { PipeProvider } from '../../services/pipe-provider.service';
 
@@ -73,8 +73,18 @@ export class AppComponent implements DoCheck, AfterViewInit {
         this.router.events.subscribe(e => {
             if (e instanceof NavigationStart) {
                 spinnerId = this.spinnerService.show('', 'globalSpinner');
+                const node = document.querySelector('app-page-outlet') as HTMLElement;
+                if (node) {
+                    addClass(node, 'page-load-in-progress');
+                }
             } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
-                setTimeout(() => this.spinnerService.hide(spinnerId), 1000);
+                setTimeout(() => {
+                    this.spinnerService.hide(spinnerId);
+                    const node = document.querySelector('app-page-outlet') as HTMLElement;
+                    if (node) {
+                        removeClass(node, 'page-load-in-progress');
+                    }
+                }, 1000);
             }
         });
     }
