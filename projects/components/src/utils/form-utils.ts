@@ -376,7 +376,7 @@ const groupDataByField = (groupby: string, match: string, innerItem: string, dat
     let concatStr = _.get(innerItem ? liData[innerItem] : liData, groupby);
 
     // by default set the undefined groupKey as 'others'
-    if (_.isUndefined(concatStr) || _.isNull(concatStr)) {
+    if (_.isUndefined(concatStr) || _.isNull(concatStr) || concatStr.trim() === '') {
         return GROUP_BY_OPTIONS.OTHERS;
     }
 
