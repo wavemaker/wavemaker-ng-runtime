@@ -392,9 +392,17 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         const boundFn = fn.bind(undefined, this.viewParent, locals);
 
         const eventCallback = () => {
+            let boundFnVal;
             $invokeWatchers(true);
             try {
-                return boundFn();
+                // If the event is bound directly to the variable then we need to internally handle
+                // the promise returned by the variable call.
+                boundFnVal = boundFn();
+                if (boundFnVal instanceof Promise) {
+                    boundFnVal.then( response => response, err => err);
+                } else {
+                    return boundFnVal;
+                }
             } catch (e) {
                 console.error(e);
             }
