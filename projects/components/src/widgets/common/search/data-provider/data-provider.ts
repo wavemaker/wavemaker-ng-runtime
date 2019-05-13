@@ -14,6 +14,7 @@ export interface IDataProviderConfig {
     datasource?: any;
     hasData: boolean;
     query: Array<string> | string;
+    isLocalFilter: boolean;
     searchKey?: string;
     matchMode?: string;
     casesensitive?: boolean;
@@ -59,9 +60,9 @@ export class DataProvider implements IDataProvider {
          * when there is no dataset on the datasource when first time make a remote call to set the dataset for service variable.
          */
         const hasNoVariableDataset = config.datasource && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED, config.hasData);
-        if (config.dataoptions || ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
+        if (!config.isLocalFilter && (config.dataoptions || ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
             && config.searchKey
-            && hasNoVariableDataset)) {
+            && hasNoVariableDataset))) {
             promise = DataProvider.remoteDataProvider.filter(config);
         } else {
             promise = DataProvider.localDataProvider.filter(config);

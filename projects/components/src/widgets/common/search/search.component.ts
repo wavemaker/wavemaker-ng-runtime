@@ -462,9 +462,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (isDefined(data) && !_.isObject(data) && this.datasource && !isDefined(this._modelByKey) && this.datafield !== ALLFIELDS) {
             // Avoid making default query if queryModel already exists.
             if (isDefined(this.queryModel) && !_.isEmpty(this.queryModel)) {
-                this._modelByValue = this.queryModel.length ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
-                this._modelByKey = this.queryModel.length ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
-                this.toBeProcessedDatavalue = undefined;
+                this.updateDatavalueFromQueryModel();
                 return;
             }
 
@@ -475,9 +473,17 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
+    // updates the model value using queryModel
+    private updateDatavalueFromQueryModel() {
+        this._modelByValue = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
+        this._modelByKey = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
+        this.toBeProcessedDatavalue = undefined;
+    }
+
     private updateByDataset(data: any) {
         // default query is already invoked then do not make other default query call.
-        if (this._defaultQueryInvoked) {
+        // For local search i.e. searchkey is undefined, do not return, verify the datavalue against the datasetItems .
+        if (this._defaultQueryInvoked && this.searchkey) {
             return;
         }
         const selectedItem = _.find(this.datasetItems, (item) => {
@@ -492,8 +498,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         } else {
             this.queryModel = undefined;
             this.query = '';
+            this._modelByValue = undefined;
             return;
         }
+        this.updateDatavalueFromQueryModel();
 
         // Show the label value on input.
         this._lastQuery = this.query = this.queryModel.length ? this.queryModel[0].label : '';
@@ -516,6 +524,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             datafield: this.datafield,
             hasData: this.formattedDataset && this.formattedDataset.length,
             query: query,
+            isLocalFilter: !this.searchkey,
             searchKey: searchOnDataField ? this.datafield : this.searchkey,
             matchMode: this.matchmode,
             casesensitive: this.casesensitive,
