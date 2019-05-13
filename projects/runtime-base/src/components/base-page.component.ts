@@ -74,15 +74,6 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
         this.defineI18nProps();
 
-        this.router.events.subscribe(e => {
-            if (e instanceof NavigationEnd) {
-                const node = document.querySelector('app-page-outlet') as HTMLElement;
-                if (node) {
-                    addClass(node, 'page-load-in-progress');
-                }
-            }
-        });
-
         super.init();
     }
 
@@ -180,12 +171,6 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     invokeOnReady() {
-        setTimeout(() => {
-            const node = document.querySelector('app-page-outlet') as HTMLElement;
-            if (node) {
-                removeClass(node, 'page-load-in-progress');
-            }
-        });
         this.onReady();
         (this.App.onPageReady || noop)(this.pageName, this);
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
