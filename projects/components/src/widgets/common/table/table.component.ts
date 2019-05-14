@@ -740,6 +740,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
+        // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
+        // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
+        if (!_.isEmpty(this.gridData)) {
+            this.gridOptions.data = getClonedObject(this.gridData);
+        }
         this.gridOptions.messages = {
             'selectField': 'Select Field'
         };
