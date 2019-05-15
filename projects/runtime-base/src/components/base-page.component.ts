@@ -41,6 +41,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     i18nService: AbstractI18nService;
     appLocale: any;
     startupVariablesLoaded = false;
+    fragmentObservable;
     pageTransitionCompleted = false;
 
     destroy$ = new Subject();
@@ -171,6 +172,24 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     invokeOnReady() {
+        this.fragmentObservable = this.route.fragment.subscribe((fragmentVal) => {
+            if (fragmentVal) {
+                const view = fragmentVal.split('.');
+                if (view.length === 2) {
+                    const prefabName = view[0];
+                    this.appManager.$navigationService.goToView(view[view.length - 1], {
+                        'prefabName': prefabName,
+                        }, undefined);
+                } else {
+                    const pageName = view.length === 3 ? view[0] : this.activePageName;
+                    const containerName = view.length === 3 ? view[1] : undefined;
+                    this.appManager.$navigationService.goToView(view[view.length - 1], {
+                        'pageName': pageName,
+                        'containerName': containerName
+                    }, undefined);
+                }
+            }
+        });
         this.onReady();
         (this.App.onPageReady || noop)(this.pageName, this);
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
@@ -203,6 +222,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngOnDestroy(): void {
+        this.fragmentObservable.unsubscribe();
         this.destroy$.complete();
     }
 

@@ -281,6 +281,18 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     public getAttr(attrName: string): string {
         return this.$attrs.get(attrName);
     }
+    
+    public setURLPath($event) {
+        if ($event) {
+            const lastHashIndex = location.hash.lastIndexOf('#');
+            location.hash = lastHashIndex !== 0 ? location.hash.substring(0, lastHashIndex) : location.hash;
+            if (this.viewParent.containerWidget && this.viewParent.containerWidget.name) {
+                location.hash += this.viewParent.prefabName ? '#' + this.viewParent.prefabName +  '.' + (this as any).name : '#' + this.viewParent.partialName + '.' + this.viewParent.containerWidget.name + '.' + (this as any).name;
+            } else {
+                location.hash += '#' + (this as any).name;
+            }
+        }
+    }
 
     /**
      * returns app instance

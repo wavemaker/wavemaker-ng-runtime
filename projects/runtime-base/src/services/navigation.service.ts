@@ -103,7 +103,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
         }
     }
 
-    /** Todo[Shubham] Need to handle gotoElement in other pages{TBD}
+    /**
      * Navigates to particular view
      * @param viewName
      * @param options
@@ -115,7 +115,9 @@ export class NavigationServiceImpl implements AbstractNavigationService {
         const transition = options.transition || '';
         const $event = options.$event;
         const activePage = this.app.activePage;
-        const prefabName = variable && variable._context && variable._context.prefabName;
+        const prefabName = options.prefabName || variable && variable._context && variable._context.prefabName;
+        let containerName = options.containerName;
+        let partialSelector;
 
         // Check if app is Prefab
         if (this.app.isPrefabType) {
@@ -124,12 +126,14 @@ export class NavigationServiceImpl implements AbstractNavigationService {
             // checking if the element is present in the page or not, if no show an error toaster
             // if yes check if it is inside a partial/prefab in the page and then highlight the respective element
             // else goto the page in which the element exists and highlight the element
-            if (pageName !== activePage.activePageName && !this.isPartialWithNameExists(pageName) && !prefabName) {
+            if (!prefabName && pageName !== activePage.activePageName && !this.isPartialWithNameExists(pageName) || (prefabName && !this.isPrefabWithNameExists(prefabName))) {
                 this.app.notifyApp(CONSTANTS.WIDGET_DOESNT_EXIST, 'error');
             } else if (prefabName && this.isPrefabWithNameExists(prefabName)) {
                 this.goToElementView($('[prefabName="' + prefabName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);
             } else if (this.isPartialWithNameExists(pageName)) {
-                this.goToElementView($('[partialcontainer][content="' + pageName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);
+                containerName = containerName ? $(parentSelector).find('[content=  ' + pageName + ' ]').attr('name') : containerName;
+                partialSelector = $('[partialcontainer][name="' + containerName + '"][content="' + pageName + '"]');
+                this.goToElementView(partialSelector.find('[name="' + viewName + '"]'), viewName, pageName, variable);
             } else if (!pageName || pageName === activePage.activePageName) {
                 this.goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
             } else {
@@ -146,6 +150,16 @@ export class NavigationServiceImpl implements AbstractNavigationService {
                     pageReadySubscriber();
                 });
             }
+        }
+    }
+
+    public setPath(...params) {
+        const lastHashIndex = location.hash.lastIndexOf('#');
+        location.hash = lastHashIndex !== 0 ? location.hash.substring(0, lastHashIndex) : location.hash;
+        if (params.length > 1) {
+            location.hash += params.length === 2 ? '#' + params[0] +  '.' + params[1] : '#' + params[0] + '.' + params[1] + '.' + params[2];
+        } else {
+            location.hash += '#' + params[0];
         }
     }
 
@@ -210,14 +224,14 @@ export class NavigationServiceImpl implements AbstractNavigationService {
     /**
      * checks if the pagecontainer has the pageName.
      */
-    private isPartialWithNameExists(name: string) {
+    public isPartialWithNameExists(name: string) {
         return $('[partialcontainer][content="' + name + '"]').length;
     }
 
     /**
      * checks if the pagecontainer has the prefab.
      */
-    private isPrefabWithNameExists(prefabName: string) {
+    public isPrefabWithNameExists(prefabName: string) {
         return $('[prefabName="' + prefabName + '"]').length;
     }
 
@@ -253,7 +267,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
 
 
 
-    /* Todo[shubham]
+    /*
      * searches for a given view element inside the available dialogs in current page
      * if found, the dialog is displayed, the dialog id is returned.
      */

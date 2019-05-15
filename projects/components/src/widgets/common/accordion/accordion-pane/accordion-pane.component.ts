@@ -59,6 +59,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
         if (this.isActive) {
             return;
         }
+        this.setURLPath(evt);
         this.isActive = true;
         this.$lazyLoad();
         this.redrawChildren();

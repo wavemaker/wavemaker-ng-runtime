@@ -164,9 +164,11 @@ export abstract class UserDefinedExecutionContext {
 export interface NavigationOptions {
     $event?: any;
     pageName?: string;
+    prefabName?: string;
     transition?: string;
     urlParams?: any;
     viewName?: string;
+    containerName?: string;
 }
 
 export abstract class AbstractNavigationService {

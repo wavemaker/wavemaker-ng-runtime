@@ -7,6 +7,7 @@ import {
     AbstractHttpService,
     AbstractI18nService,
     AbstractSpinnerService,
+    AbstractNavigationService,
     App,
     fetchContent,
     isDefined,
@@ -45,7 +46,8 @@ export class AppManagerService {
         private $metadata: MetadataService,
         private $spinner: AbstractSpinnerService,
         private $i18n: AbstractI18nService,
-        private $datePipe: DatePipe
+        private $datePipe: DatePipe,
+        public $navigationService: AbstractNavigationService
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));

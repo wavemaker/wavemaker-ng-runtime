@@ -80,6 +80,7 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
 
     public expand($event) {
         if (!this.expanded) {
+            this.setURLPath($event);
             this.toggle($event);
         }
     }

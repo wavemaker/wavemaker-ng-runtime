@@ -61,6 +61,8 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         if (this.isActive || this.disabled) {
             return;
         }
+        
+        this.setURLPath($event);
 
         this.isActive = true;
         this.$lazyLoad();
