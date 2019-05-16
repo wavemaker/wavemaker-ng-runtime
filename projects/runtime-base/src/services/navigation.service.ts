@@ -75,14 +75,14 @@ export class NavigationServiceImpl implements AbstractNavigationService {
         this.history.push( new PageInfo(pageName, options.urlParams, this.transition));
         if (CONSTANTS.isWaveLens) {
             const location = window['location'];
-            let strQueryParams = _.map(options.urlParams || [], (value, key) => key + '=' + value);
-            if (strQueryParams.length > 0) {
-                strQueryParams = '?' + strQueryParams;
-            }
+            const strQueryParams = _.map(options.urlParams || [], (value, key) => key + '=' + value);
+
+            const strQuery = (strQueryParams.length > 0 ? '?' + strQueryParams.join('&') : '');
+
             location.href = location.origin
                 + location.pathname
                 + '#/' + pageName
-                + (strQueryParams.length > 0 ? '?' + strQueryParams.join('&') : '');
+                + strQuery;
             return;
         }
         return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
