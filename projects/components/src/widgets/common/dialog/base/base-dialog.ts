@@ -93,8 +93,17 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     /**
      * Register the dialog with the dialog service for programmatic access
      */
-    protected register() {
-        this.dialogService.register(this.name, this);
+    protected register(scope) {
+        // add scope along with name in the dialogRefsCollection Map while registering dialog
+        // So that 2 dialogs having same name on different pages won't be overridden.
+        this.dialogService.register(this.name, this, scope);
+    }
+
+    /**
+     * De Register the dialog with the dialog service after dialog destruction
+     */
+    protected deRegister(scope) {
+        this.dialogService.deRegister(this.name, scope);
     }
 
     /**
@@ -120,6 +129,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
     public ngOnDestroy() {
         this.close();
+        this.deRegister(this.viewParent);
         super.ngOnDestroy();
     }
 }
