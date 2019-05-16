@@ -59,7 +59,6 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
      */
     onOk($event: Event) {
         this.invokeEventCallback('ok', {$event});
-        this.close();
     }
 
     /**
@@ -69,7 +68,6 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
      */
     onCancel($event: Event) {
         this.invokeEventCallback('cancel', {$event});
-        this.close();
     }
 
     ngOnInit() {

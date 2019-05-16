@@ -61,7 +61,6 @@ export class IframeDialogComponent extends BaseDialog implements OnInit {
      */
     onOk($event: Event) {
         this.invokeEventCallback('ok', {$event});
-        this.close();
     }
 
     ngOnInit() {
