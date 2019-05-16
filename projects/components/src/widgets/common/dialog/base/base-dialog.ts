@@ -6,6 +6,8 @@ import { AbstractDialogService } from '@wm/core';
 import { IDialog, IWidgetConfig } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
 
+declare const _;
+
 const openedDialogs = [];
 const closeDialogsArray = [];
 
@@ -70,6 +72,15 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      */
     public open(initState?: any) {
 
+        // do not open the dialog again if it is already opened
+        const duplicateDialogCheck = (openedDialog) => {
+           return openedDialog === this;
+        };
+
+        if (openedDialogs.some(duplicateDialogCheck)) {
+            return;
+        }
+
         handleDialogOpen(this);
 
         // extend the context with the initState
@@ -86,6 +97,8 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         if (this.dialogRef) {
             // closeDialogsArray is used to keep the reference of the dialog which is to be closed
             closeDialogsArray.push(this);
+            //remove the dialog reference from opened dialogs
+            openedDialogs.splice(openedDialogs.indexOf(this), 1);
             this.dialogRef.hide();
         }
     }
