@@ -115,24 +115,37 @@ export class NavigationServiceImpl implements AbstractNavigationService {
         const transition = options.transition || '';
         const $event = options.$event;
         const activePage = this.app.activePage;
+        const prefabName = variable && variable._context && variable._context.prefabName;
 
-        // checking if the element is present in the same page if yes highlight the element
-        // else goto the page in which the element exists and highlight the element
-        if (!pageName || pageName === activePage.activePageName || this.isPartialWithNameExists(pageName)) {
+        // Check if app is Prefab
+        if (this.app.isPrefabType) {
             this.goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
         } else {
-            this.goToPage(pageName, {
-                viewName    : viewName,
-                $event      : $event,
-                transition  : transition,
-                urlParams   : options.urlParams
-            });
-            // subscribe to an event named pageReady which notifies this subscriber
-            // when all widgets in page are loaded i.e when page is ready
-            const pageReadySubscriber = this.app.subscribe('pageReady', (page) => {
+            // checking if the element is present in the page or not, if no show an error toaster
+            // if yes check if it is inside a partial/prefab in the page and then highlight the respective element
+            // else goto the page in which the element exists and highlight the element
+            if (pageName !== activePage.activePageName && !this.isPartialWithNameExists(pageName) && !prefabName) {
+                this.app.notifyApp(CONSTANTS.WIDGET_DOESNT_EXIST, 'error');
+            } else if (prefabName && this.isPrefabWithNameExists(prefabName)) {
+                this.goToElementView($('[prefabName="' + prefabName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);
+            } else if (this.isPartialWithNameExists(pageName)) {
+                this.goToElementView($('[partialcontainer][content="' + pageName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);
+            } else if (!pageName || pageName === activePage.activePageName) {
                 this.goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
-                pageReadySubscriber();
-            });
+            } else {
+                this.goToPage(pageName, {
+                    viewName: viewName,
+                    $event: $event,
+                    transition: transition,
+                    urlParams: options.urlParams
+                });
+                // subscribe to an event named pageReady which notifies this subscriber
+                // when all widgets in page are loaded i.e when page is ready
+                const pageReadySubscriber = this.app.subscribe('pageReady', (page) => {
+                    this.goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
+                    pageReadySubscriber();
+                });
+            }
         }
     }
 
@@ -143,13 +156,12 @@ export class NavigationServiceImpl implements AbstractNavigationService {
     private goToElementView(viewElement, viewName: string, pageName: string, variable: any) {
         let $el, parentDialog;
         const activePage = this.app.activePage;
-
         if (viewElement.length) {
-            if (pageName === activePage.activePageName) {
+            if (!this.app.isPrefabType && pageName === activePage.activePageName) {
                 viewElement = this.getViewElementInActivePage(viewElement);
             }
 
-            $el = activePage.Widgets[viewName];
+            $el = viewElement[0].widget;
             switch ($el.widgetType) {
                 case 'wm-accordionpane':
                     this.showAncestors(viewElement, variable);
@@ -184,7 +196,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
         let selector;
         if ($el.length > 1) {
             selector = _.filter($el, (childSelector) => {
-                if (_.isEmpty($(childSelector).closest('[data-role = "partial"]'))) {
+                if (_.isEmpty($(childSelector).closest('[data-role = "partial"]')) && _.isEmpty($(childSelector).closest('[wmprefabcontainer]'))) {
                     return childSelector;
                 }
             });
@@ -199,7 +211,14 @@ export class NavigationServiceImpl implements AbstractNavigationService {
      * checks if the pagecontainer has the pageName.
      */
     private isPartialWithNameExists(name: string) {
-        return $('[page-container][content="' + name + '"]').length;
+        return $('[partialcontainer][content="' + name + '"]').length;
+    }
+
+    /**
+     * checks if the pagecontainer has the prefab.
+     */
+    private isPrefabWithNameExists(prefabName: string) {
+        return $('[prefabName="' + prefabName + '"]').length;
     }
 
     /*
@@ -207,14 +226,13 @@ export class NavigationServiceImpl implements AbstractNavigationService {
      */
     private showAncestors(element, variable) {
         const ancestorSearchQuery = '[wm-navigable-element="true"]';
-        const activePage = this.app.activePage;
 
         element
             .parents(ancestorSearchQuery)
             .toArray()
             .reverse()
             .forEach((parent) => {
-                const $el = activePage.Widgets[parent.getAttribute('name')];
+                const $el = parent.widget;
                 switch ($el.widgetType) {
                     case 'wm-accordionpane':
                         $el.expand();
