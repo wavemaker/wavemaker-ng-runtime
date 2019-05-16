@@ -292,9 +292,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                     this.form.setPrimaryKey(this._fieldName);
                 }
                 break;
-            case 'display-name':
-                this.displayname = nv;
-                break;
             case 'readonly':
                this.setReadOnlyState();
                 break;

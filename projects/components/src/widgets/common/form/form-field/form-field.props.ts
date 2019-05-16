@@ -76,7 +76,6 @@ export const registerProps = () => {
             ['debouncetime', {value: 250, ...PROP_NUMBER}],
             ['defaultvalue', PROP_STRING],
             ['displayname', PROP_STRING],
-            ['display-name', PROP_STRING],
             ['field', PROP_STRING],
             ['filterexpressions', PROP_STRING],
             ['filter-on', PROP_STRING],
