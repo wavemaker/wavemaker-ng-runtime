@@ -65,7 +65,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
         this.loginBtnCmp.getNativeElement().addEventListener('click', event => {
 
             // if no event is attached to the onSubmit of login widget or loginButton inside it, invoke default login action
-            if (!this.nativeElement.hasAttribute('submit.event') && !this.loginBtnCmp.getNativeElement().hasAttribute('click.event')) {
+            if (!this.nativeElement.hasAttribute('submit.event') && !this.loginBtnCmp.getNativeElement().hasAttribute('click.event') && !this.loginBtnCmp.getNativeElement().hasAttribute('tap.event')) {
                 this.doLogin();
             }
         });
