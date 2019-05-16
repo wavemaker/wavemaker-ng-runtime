@@ -8,7 +8,7 @@
 
     <groupId>com.wavemaker.runtime</groupId>
     <artifactId>wavemaker-ng-runtime</artifactId>
-    <version>10.0.8</version>
+    <version>10.0.9</version>
     <name>wavemaker-ng-runtime</name>
     <packaging>pom</packaging>
 
