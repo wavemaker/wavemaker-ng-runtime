@@ -130,7 +130,8 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
     }
 
     if (!_.isArray(rootNode)) {
-        nodes = [rootNode as Element];
+        // [WMS-16712], the markup of root node(table, list, carousel) doesn't need to be updated.
+        nodes = ((rootNode as any).children || []) as Array<Element>;
     } else {
         nodes = rootNode as Array<Element>;
     }
