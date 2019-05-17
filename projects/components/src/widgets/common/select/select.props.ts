@@ -12,6 +12,7 @@ export const selectProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],
+        ['displayValue', PROP_STRING],
         ['hint', PROP_STRING],
         ['multiple', {value: false, ...PROP_BOOLEAN}],
         ['name', PROP_STRING],

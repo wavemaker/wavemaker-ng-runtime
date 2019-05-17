@@ -13,6 +13,7 @@ export const checkboxsetProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],
+        ['displayValue', PROP_STRING],
         ['groupby', PROP_STRING],
         ['itemclass', {value: '', ...PROP_STRING}],
         ['layout', {value: 'stacked', ...PROP_STRING}],
