@@ -1170,7 +1170,8 @@ $.widget('wm.datatable', {
         // Select the first row if it exists, i.e. it is not the first row being added.
         if ($row.length && this.preparedData.length) {
             this.preparedData[id].selected = !value;
-            $row.trigger('click');
+            // Triggering row click event using javascript click method because jquery trigger method is not triggering the events which are attached through javascript addEventListener method.
+            $row[0].click();
         }
     },
 
@@ -2145,7 +2146,7 @@ $.widget('wm.datatable', {
 
         if (this.options.enableRowSelection) {
             // add js click handler for capture phase in order to first listen on grid and
-            // assign selectedItems so that any child actions can have access to the selectedItems. 
+            // assign selectedItems so that any child actions can have access to the selectedItems.
             $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
             $htm.on('click', this.rowSelectionHandler.bind(this));
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
