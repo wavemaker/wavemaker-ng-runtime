@@ -1,4 +1,4 @@
-import { Component, Injector, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -90,7 +90,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
                 }
             },
             onChange: (contents, editable) => {
-                this.proxyModel = this.domSanitizer.bypassSecurityTrustHtml(contents.toString());
+                this.proxyModel = this.domSanitizer.sanitize(SecurityContext.HTML, contents.toString());
                 this.invokeOnChange(contents, getChangeEvt(), true);
                 this.invokeOnTouched();
             }

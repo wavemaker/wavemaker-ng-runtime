@@ -7,8 +7,8 @@
                      [ngStyle]="{width: iconwidth ,height: iconheight, margin: iconmargin}"/>
             </div>
             <div class="pull-left">
-                <div class="heading" [textContent]="title" [title]="title"></div>
-                <div class="description" [textContent]="subheading"></div>
+                <div class="heading" [innerHTML]="title | trustAs: 'html'" [title]="title"></div>
+                <div class="description" [innerHTML]="subheading | trustAs: 'html'"></div>
             </div>
         </a>
         <div class="panel-actions">
