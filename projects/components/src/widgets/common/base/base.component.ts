@@ -324,6 +324,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         } else if (key === 'conditionalclass') {
             // update classes if old and nv value are different
             updateClasses(nv.toAdd, nv.toRemove, this.nativeElement);
+        } else  if (key === 'autoplay') {
+            const tagName = this.widgetType === 'wm-audio' ? 'audio' : 'video';
+            // Trigger media(audio/video) element load method after changing autoplay property
+            this.nativeElement.querySelector(tagName).load();
         }
     }
 
