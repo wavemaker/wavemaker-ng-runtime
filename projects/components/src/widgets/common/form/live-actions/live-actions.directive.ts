@@ -113,9 +113,11 @@ export class LiveActionsDirective {
             canceltext: this.subscribedWidget.deletecanceltext || 'Cancel',
             onOk: () => {
                 this.performCUDOperation(requestData, operation, options);
+                this.dialogService.closeAppConfirmDialog();
             },
             onCancel: () => {
                 triggerFn(options.cancelDeleteCallback);
+                this.dialogService.closeAppConfirmDialog();
             }
         });
     }

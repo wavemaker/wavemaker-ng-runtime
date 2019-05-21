@@ -91,6 +91,9 @@ export abstract class AbstractDialogService {
     public abstract open(name: string, initState?: any, scope?: any);
     public abstract close(name: string, scope?: any);
     public abstract showAppConfirmDialog(initState?: any);
+    public abstract closeAppConfirmDialog();
+    public abstract getAppConfirmDialog();
+    public abstract setAppConfirmDialog(dialogName: string);
     public abstract closeAllDialogs: Function;
 }
 
