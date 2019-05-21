@@ -275,9 +275,11 @@ export class TableCUDDirective {
             canceltext: this.table.deletecanceltext,
             onOk: () => {
                 this.deleteFn(options);
+                this.dialogService.closeAppConfirmDialog();
             },
             onCancel: () => {
                 triggerFn(options.cancelRowDeleteCallback);
+                this.dialogService.closeAppConfirmDialog();
             }
         });
     }

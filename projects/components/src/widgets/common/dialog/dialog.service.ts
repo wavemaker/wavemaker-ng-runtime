@@ -11,6 +11,7 @@ export class DialogServiceImpl {
      * Ex Map[[dialogName, [[dialogScope, dialogRef]]]]
      */
     private dialogRefsCollection = new Map<any, any>();
+    private appConfirmDialog = '_app-confirm-dialog';
 
     constructor() {}
 
@@ -101,6 +102,18 @@ export class DialogServiceImpl {
     }
 
     public showAppConfirmDialog(initState?: any) {
-        this.open('_app-confirm-dialog', initState);
+        this.open(this.getAppConfirmDialog(), initState);
+    }
+
+    public closeAppConfirmDialog() {
+        this.close(this.getAppConfirmDialog());
+    }
+
+    public getAppConfirmDialog() {
+        return this.appConfirmDialog;
+    }
+
+    public setAppConfirmDialog(dialogName: string) {
+        this.appConfirmDialog = dialogName;
     }
 }
