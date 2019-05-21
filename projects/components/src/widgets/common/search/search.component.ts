@@ -342,6 +342,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.showClosebtn = (this.query !== '');
     }
 
+    // Triggered for enter event
+    private handleEnterEvent($event) {
+        // submit event triggered when there is no search results
+        if (!this.typeahead._container) {
+            this.onSelect($event);
+        }
+    }
     // Triggerred when typeahead option is selected.
     private onSelect($event: Event) {
         // searchOn is set as onBtnClick, then invoke the search api call manually.
