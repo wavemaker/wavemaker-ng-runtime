@@ -11,6 +11,7 @@ export const radiosetProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],
+        ['displayValue', PROP_STRING],
         ['itemclass', {value: '', ...PROP_STRING}],
         ['layout', {value: 'stacked', ...PROP_STRING}],
         ['listclass', {value: '', ...PROP_STRING}],
