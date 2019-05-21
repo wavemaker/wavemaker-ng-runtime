@@ -31,6 +31,7 @@ export class AudioComponent extends StylableComponent {
     public loop: boolean;
     public audiopreload: any;
     public audiosupportmessage: any;
+    public autoplay: boolean;
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
