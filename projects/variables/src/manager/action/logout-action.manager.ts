@@ -52,10 +52,13 @@ export class LogoutActionManager extends BaseActionManager {
                             redirectPage = '';
                         }
                         routerService.navigate([`/${redirectPage}`]);
-                        setTimeout(() => {
-                            // reloading in timeout as, firefox and safari are not updating the url before reload(WMS-7887)
-                            window.location.reload();
-                        });
+                        // do not reload the mobile app.
+                        if (!window['cordova']) {
+                            setTimeout(() => {
+                                // reloading in timeout as, firefox and safari are not updating the url before reload(WMS-7887)
+                                window.location.reload();
+                            });
+                        }
                     }
                     triggerFn(success);
                 }, handleError);
