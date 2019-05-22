@@ -69,7 +69,12 @@ export class AppManagerService {
             }
         });
         this.$app.subscribe('userLoggedIn', () => this.setLandingPage());
-        this.$app.subscribe('userLoggedOut', () => this.setLandingPage());
+        this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
+            // navigate to the landing page without reloading the window in device.
+            if (window['cordova']) {
+                this.$router.navigate([`/`]);
+            }
+        }));
         this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
     }
 
