@@ -57,15 +57,19 @@ export class NotificationActionManager extends BaseActionManager {
                 'alerttype' : options.alerttype || variable.dataBinding.alerttype || 'information',
                 onOk: () => {
                     initiateCallback('onOk', variable, options.data);
+                    // Close the action dialog after triggering onOk callback event
+                    dialogService.close(dialogId, variable._context);
                 },
                 onCancel: () => {
                     initiateCallback('onCancel', variable, options.data);
+                    // Close the action dialog after triggering onCancel callback event
+                    dialogService.close(dialogId, variable._context);
                 },
                 onClose: () => {
                     initiateCallback('onClose', variable, options.data);
                 }
             }
-        });
+        }, variable._context);
     }
 
 // *********************************************************** PUBLIC ***********************************************************//
