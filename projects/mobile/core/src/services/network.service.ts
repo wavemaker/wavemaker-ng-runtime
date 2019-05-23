@@ -225,9 +225,10 @@ export class NetworkService implements IDeviceStartUpService {
      * @returns {*}
      */
     private checkForServiceAvailiblity(): Promise<void> {
+        const maxTimeout = 4500;
         return new Promise<void>(resolve => {
             const intervalId = setInterval(() => {
-                this.isServiceAvailable().then(available => {
+                this.isServiceAvailable(maxTimeout).then(available => {
                     if (available) {
                         clearInterval(intervalId);
                         resolve();
@@ -242,8 +243,8 @@ export class NetworkService implements IDeviceStartUpService {
      * @returns {*} a promise that resolved with true, if server responds with valid status.
      * Otherwise, the promise is resolved with false.
      */
-    private isServiceAvailable(): Promise<boolean> {
-        return this.pingServer().then(response => {
+    private isServiceAvailable(maxTimeout?: number): Promise<boolean> {
+        return this.pingServer(maxTimeout).then(response => {
             networkState.isServiceAvailable = response;
             if (!networkState.isServiceAvailable) {
                 networkState.isConnecting = false;
@@ -257,8 +258,9 @@ export class NetworkService implements IDeviceStartUpService {
      * Pings server
      * @returns {*} a promise that resolved with true, if server responds with valid status.
      * Otherwise, the promise is resolved with false.
+     * default timeout value is 1min.
      */
-    private pingServer(): Promise<boolean> {
+    private pingServer(maxTimeout = 60000): Promise<boolean> {
         return new Promise<boolean>(resolve => {
             const oReq = new XMLHttpRequest();
             let baseURL = this.app.deployedUrl;
@@ -267,13 +269,22 @@ export class NetworkService implements IDeviceStartUpService {
             } else {
                 baseURL = baseURL || '';
             }
+
+            const timer = setTimeout(() => {
+                oReq.abort(); // abort request
+            }, maxTimeout);
+
             oReq.addEventListener('load', () => {
                 if (oReq.status === 200) {
                     resolve(true);
                 } else {
                     resolve(false);
                 }
+                if (timer) {
+                    clearTimeout(timer);
+                }
             });
+
             oReq.addEventListener('error', () => resolve(false));
             oReq.open('GET', baseURL + 'services/application/wmProperties.js?t=' + Date.now());
             oReq.send();
