@@ -124,27 +124,32 @@ export class NavigationServiceImpl implements AbstractNavigationService {
             // checking if the element is present in the page or not, if no show an error toaster
             // if yes check if it is inside a partial/prefab in the page and then highlight the respective element
             // else goto the page in which the element exists and highlight the element
-            if (pageName !== activePage.activePageName && !this.isPartialWithNameExists(pageName) && !prefabName) {
-                this.app.notifyApp(CONSTANTS.WIDGET_DOESNT_EXIST, 'error');
+            if (pageName !== activePage.activePageName && !prefabName) {
+                if (this.isPartialWithNameExists(pageName)) {
+                    this.goToElementView($('[partialcontainer][content="' + pageName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);      
+                } else {
+                    // Todo[Shubham]: Make an API call to get all pages and check if the page name
+                    //  is a page and then do this call else show an error as:
+                    //  this.app.notifyApp(CONSTANTS.WIDGET_DOESNT_EXIST, 'error');
+                    this.goToPage(pageName, {
+                        viewName: viewName,
+                        $event: $event,
+                        transition: transition,
+                        urlParams: options.urlParams
+                    });
+                    // subscribe to an event named pageReady which notifies this subscriber
+                    // when all widgets in page are loaded i.e when page is ready
+                    const pageReadySubscriber = this.app.subscribe('pageReady', (page) => {
+                        this.goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
+                        pageReadySubscriber();
+                    });
+                }
             } else if (prefabName && this.isPrefabWithNameExists(prefabName)) {
                 this.goToElementView($('[prefabName="' + prefabName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);
-            } else if (this.isPartialWithNameExists(pageName)) {
-                this.goToElementView($('[partialcontainer][content="' + pageName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);
             } else if (!pageName || pageName === activePage.activePageName) {
                 this.goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
             } else {
-                this.goToPage(pageName, {
-                    viewName: viewName,
-                    $event: $event,
-                    transition: transition,
-                    urlParams: options.urlParams
-                });
-                // subscribe to an event named pageReady which notifies this subscriber
-                // when all widgets in page are loaded i.e when page is ready
-                const pageReadySubscriber = this.app.subscribe('pageReady', (page) => {
-                    this.goToElementView($(parentSelector).find('[name="' + viewName + '"]'), viewName, pageName, variable);
-                    pageReadySubscriber();
-                });
+                this.app.notifyApp(CONSTANTS.WIDGET_DOESNT_EXIST, 'error');
             }
         }
     }
