@@ -48,7 +48,7 @@ export class NotificationActionManager extends BaseActionManager {
         const commonPageDialogId = 'Common' + _.capitalize(variable.operation) + 'Dialog',
             variableOwner = variable.owner,
             dialogId = (variableOwner === VARIABLE_CONSTANTS.OWNER.APP ) ? commonPageDialogId : 'notification' + variable.operation + 'dialog';
-        dialogService.open(dialogId, {
+        dialogService.open(dialogId,  variable._context, {
             notification: {
                 'title' : options.title || variable.dataBinding.title,
                 'text' : options.message || variable.dataBinding.text,
@@ -69,7 +69,7 @@ export class NotificationActionManager extends BaseActionManager {
                     initiateCallback('onClose', variable, options.data);
                 }
             }
-        }, variable._context);
+        });
     }
 
 // *********************************************************** PUBLIC ***********************************************************//
