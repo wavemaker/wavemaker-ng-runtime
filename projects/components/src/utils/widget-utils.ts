@@ -228,8 +228,8 @@ const typesMap = {
 };
 const modes = {
     number: ['exact', 'notequals', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'isnotnull'],
-    string: ['anywhereignorecase', 'anywhere', 'startignorecase', 'start', 'endignorecase', 'end', 'exactignorecase', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
-    character: ['exactignorecase', 'exact', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
+    string: ['anywhereignorecase', 'anywhere', 'startignorecase', 'start', 'endignorecase', 'end', 'exactignorecase', 'exact', 'notequalsignorecase', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
+    character: ['exactignorecase', 'exact', 'notequalsignorecase', 'notequals', 'null', 'isnotnull', 'empty', 'isnotempty', 'nullorempty'],
     date: ['exact', 'lessthan', 'lessthanequal', 'greaterthan', 'greaterthanequal', 'null', 'notequals', 'isnotnull']
 };
 const matchModeTypesMap = {
@@ -239,10 +239,10 @@ const matchModeTypesMap = {
 };
 export const getMatchModeTypesMap = (multiMode?) => {
     if (multiMode) {
-        modes.number.push('in', 'between');
+        modes.number.push('in', 'notin', 'between');
         modes.date.push('between');
-        modes.string.push('in');
-        modes.character.push('in');
+        modes.string.push('in', 'notin');
+        modes.character.push('in', 'notin');
     }
 
     _.forEach(typesMap, (types, primType) => {
@@ -266,6 +266,7 @@ export const getMatchModeMsgs = (appLocale) => {
         exact            : appLocale.LABEL_IS_EQUAL_TO,
         exactignorecase  : appLocale.LABEL_IS_EQUAL_TO_IGNORECASE,
         notequals        : appLocale.LABEL_IS_NOT_EQUAL_TO,
+        notequalsignorecase: appLocale.LABEL_IS_NOT_EQUAL_TO_IGNORECASE,
         lessthan         : appLocale.LABEL_LESS_THAN,
         lessthanequal    : appLocale.LABEL_LESS_THAN_OR_EQUALS_TO,
         greaterthan      : appLocale.LABEL_GREATER_THAN,
@@ -276,6 +277,7 @@ export const getMatchModeMsgs = (appLocale) => {
         isnotempty       : appLocale.LABEL_IS_NOT_EMPTY,
         nullorempty      : appLocale.LABEL_IS_NULL_OR_EMPTY,
         in               : appLocale.LABEL_IN,
+        notin            : appLocale.LABEL_NOT_IN,
         between          : appLocale.LABEL_BETWEEN
     };
 };
