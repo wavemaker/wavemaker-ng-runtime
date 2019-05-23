@@ -67,7 +67,7 @@ export class DialogServiceImpl {
      * Opens the dialog with the given name
      * @param {string} name
      */
-    public open(name: string, initState?: any, scope?: any) {
+    public open(name: string, scope?: any, initState?: any) {
         let dialogRef = this.getDialogRef(name, scope);
 
         if (!dialogRef) {
@@ -102,7 +102,7 @@ export class DialogServiceImpl {
     }
 
     public showAppConfirmDialog(initState?: any) {
-        this.open(this.getAppConfirmDialog(), initState);
+        this.open(this.getAppConfirmDialog(), undefined, initState);
     }
 
     public closeAppConfirmDialog() {
