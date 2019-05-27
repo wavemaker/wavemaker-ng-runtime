@@ -33,6 +33,9 @@ export abstract class BaseVariableManager {
                 }
             }, (err: any) => {
                 if (httpService.isPlatformSessionTimeout(err)) {
+                    // send the notification manually to hide any context spinners on page.
+                    // [TODO]: any spinners on widget listening on this variable will also go off. Need to see an approach to sovle that.
+                    this.notifyInflight(variable, false, err);
                     err._401Subscriber.asObservable().subscribe(
                         response => resolve(response),
                         err => reject(err));
