@@ -1054,7 +1054,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.serverData = serviceData;
         }
         // If fielddefs are not present, generate fielddefs from data
-        if (this.isdynamictable || !this.fieldDefs.length) {
+        // Removing fielddefs check because When loadondemand property is enabled(deferload="true"), the dataset propertychangehanlder is triggered first before the dom is getting rendered.
+        // So at that time fielddefs length is zero, due to this the columns are created dynamically.
+        if (this.isdynamictable) {
             this.createGridColumns(this.serverData);
         } else {
             this.setGridData(this.serverData);
