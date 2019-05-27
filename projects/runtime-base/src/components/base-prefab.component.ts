@@ -142,7 +142,7 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
 
         this.viewInit$.subscribe(noop, noop, () => {
 
-            variableCollection.callback(variableCollection.Variables);
+            variableCollection.callback(variableCollection.Variables).catch(noop);
             variableCollection.callback(variableCollection.Actions);
         });
     }

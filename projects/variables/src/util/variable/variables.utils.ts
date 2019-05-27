@@ -22,13 +22,18 @@ const DOT_EXPR_REX = /^\[("|')[\w\W]*(\1)\]$/,
 
 const _invoke = (variable, op) => {
     let debouncedFn,
-        cancelFn = _.noop;
+        cancelFn = _.noop,
+        retVal;
     if (timers.has(variable)) {
         cancelFn = timers.get(variable).cancel;
     }
     cancelFn();
     debouncedFn = _.debounce(function () {
-        variable[op]();
+        retVal = variable[op]();
+        // handle promises to avoid uncaught promise errors in console
+        if (retVal instanceof Promise) {
+            retVal.catch(_.noop);
+        }
     }, 100);
     timers.set(variable, debouncedFn);
     debouncedFn();
