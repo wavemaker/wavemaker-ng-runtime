@@ -59,7 +59,7 @@ export class VariablesService {
             Object.keys(collection)
                 .map(name => collection[name])
                 .filter( variable => variable.startUpdate && variable.invoke)
-                .map(variable => new Promise((resolve, reject) => variable.invoke(null, resolve, reject)))
+                .map(variable => variable.invoke())
             );
     }
 
