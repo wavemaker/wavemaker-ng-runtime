@@ -110,7 +110,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.viewInit$.subscribe(noop, noop, () => {
             // TEMP: triggering watchers so variables watching over params are updated
             $invokeWatchers(true, true);
-            variableCollection.callback(variableCollection.Variables);
+            variableCollection.callback(variableCollection.Variables).catch(noop);
             variableCollection.callback(variableCollection.Actions);
         });
     }

@@ -124,7 +124,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         const subscription = this.viewInit$.subscribe(noop, noop, () => {
 
             if (!this.appManager.isAppVariablesFired()) {
-                variableCollection.callback(this.App.Variables);
+                variableCollection.callback(this.App.Variables).catch(noop);
                 variableCollection.callback(this.App.Actions);
                 this.appManager.appVariablesReady();
                 this.appManager.isAppVariablesFired(true);

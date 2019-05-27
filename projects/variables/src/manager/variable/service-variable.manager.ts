@@ -400,6 +400,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         if (requestParams.error) {
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
             const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
+            triggerFn(error);
             return Promise.reject(reason);
         }
 
