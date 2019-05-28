@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
+import { $appDigest, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
@@ -129,7 +129,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      */
     public getWidgets(widgteName: string, index: number) {
         let $target;
-        let retVal = [];
+        const retVal = [];
 
         if (!widgteName) {
             return;
@@ -156,12 +156,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     // returns listitem reference by index value. This refers to the same method getListItemByIndex.
     public getItem(index: number) {
-        return this.getListItemByIndex(index)
+        return this.getListItemByIndex(index);
     }
 
     // return index of listItem(listItemDirective). This refers to the same method getListItemIndex.
     public getIndex(item: ListItemDirective) {
-        return this.getListItemIndex(item)
+        return this.getListItemIndex(item);
     }
 
     public set selecteditem(items) {
@@ -324,6 +324,47 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     private fetchNextDatasetOnScroll() {
         this.dataNavigator.navigatePage('next');
+    }
+
+    private setIscrollHandlers(el) {
+        let lastScrollTop = 0;
+        const wrapper = _.get(el.iscroll, 'wrapper');
+        const self = el.iscroll;
+
+        el.iscroll.on('scrollEnd', () => {
+            const clientHeight = wrapper.clientHeight,
+                totalHeight = wrapper.scrollHeight,
+                scrollTop = Math.abs(el.iscroll.y);
+
+            if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
+                this.debouncedFetchNextDatasetOnScroll();
+                if (self.indicatorRefresh) {
+                    self.indicatorRefresh();
+                }
+            }
+
+            lastScrollTop = scrollTop;
+        });
+    }
+
+    // Applying iscroll event to invoke the next calls for infinte scroll.
+    private bindIScrollEvt() {
+        const $scrollParent = this.$element.closest('[wmsmoothscroll="true"]');
+
+        const iScroll = _.get($scrollParent[0], 'iscroll');
+
+        // when iscroll is not initialised the notify the smoothscroll and subscribe to the iscroll update
+        if (!iScroll) {
+            const iScrollSubscription = this.app.subscribe('iscroll-update', (_el) => {
+                if (_el.isSameNode($scrollParent[0])) {
+                    this.setIscrollHandlers($scrollParent[0]);
+                    iScrollSubscription();
+                }
+            });
+            this.app.notify('no-iscroll', $scrollParent[0]);
+            return;
+        }
+        this.setIscrollHandlers($scrollParent[0]);
     }
 
     private bindScrollEvt() {
@@ -594,7 +635,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
 
         if (this.fieldDefs.length && this.infScroll) {
-            this.bindScrollEvt();
+            if (isMobileApp()) {
+                this.bindIScrollEvt();
+            } else {
+                this.bindScrollEvt();
+            }
         }
         this.isDataChanged = false;
     }

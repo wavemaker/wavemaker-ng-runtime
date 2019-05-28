@@ -1,6 +1,7 @@
-import { Directive, DoCheck, ElementRef, Injector, Input, OnDestroy } from '@angular/core';
+import {Directive, DoCheck, ElementRef, Injector, Input, OnDestroy, OnInit} from '@angular/core';
 
-import { debounce, isKitkatDevice, isMobileApp } from '@wm/core';
+import { App, debounce, isKitkatDevice, isMobileApp } from '@wm/core';
+import {Subscription} from 'rxjs';
 
 declare const IScroll;
 declare const _, $;
@@ -8,16 +9,26 @@ declare const _, $;
 @Directive({
     selector: '[wmSmoothscroll]'
 })
-export class SmoothScrollDirective implements DoCheck, OnDestroy {
+export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {
 
     private readonly _$el;
     private _isEnabled = false;
     private _smoothScrollInstance;
     private _lastScrollY = -1;
     private _waitRefreshTill = -1;
+    private app: App;
+    private pendingIscrolls: any = [];
+    private cancelSubscription: any;
 
-    constructor(inj: Injector, elRef: ElementRef) {
+    constructor(inj: Injector, elRef: ElementRef, app: App) {
         this._$el = $(elRef.nativeElement);
+        this.app = app;
+    }
+
+    public ngOnInit() {
+        this.cancelSubscription = this.app.subscribe('no-iscroll', el => {
+            this.pendingIscrolls.push(el);
+        });
     }
 
     public ngDoCheck() {
@@ -35,6 +46,9 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
     public ngOnDestroy() {
         if (this._smoothScrollInstance && this._smoothScrollInstance.destroy) {
             this._smoothScrollInstance.destroy();
+        }
+        if (this.cancelSubscription) {
+            this.cancelSubscription();
         }
     }
 
@@ -112,6 +126,14 @@ export class SmoothScrollDirective implements DoCheck, OnDestroy {
         };
 
         this._$el[0].iscroll = iScroll;
+        _.forEach(this.pendingIscrolls, (_el, index) => {
+            if (_el.isSameNode(this._$el[0])) {
+                this.app.notify('iscroll-update', {el: _el});
+                this.pendingIscrolls.splice(index, 1);
+                return;
+            }
+        });
+        this.app.notify('iscroll-update', {});
 
         return {
             iScroll: iScroll,
