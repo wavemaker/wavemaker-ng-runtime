@@ -74,7 +74,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         if (isResponsePageable) {
             dataSet = response.content;
             pagination = _.omit(response, 'content');
-            advancedOptions = this.prepareCallbackOptions(options.xhrObj, {pagination: pagination});
+            advancedOptions = this.prepareCallbackOptions(options.xhrObj, {pagination: pagination, rawData: dataSet});
         } else {
             dataSet = response;
             advancedOptions = this.prepareCallbackOptions(options.xhrObj, {rawData: dataSet});
