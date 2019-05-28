@@ -88,7 +88,9 @@ export class HttpServiceImpl extends AbstractHttpService {
         // check if error message present for responded http status
         let errMsg = HTTP_STATUS_MSG[err.status];
 
-        if (!errMsg) {
+        // Check if err.error.errors exist, If it does then parse the error message
+        // from error resonse and return that.
+        if (_.get(err, 'error.errors')) {
             let errorDetails = err.error;
             errorDetails = getValidJSON(errorDetails) || errorDetails;
             // WM services have the format of error response as errorDetails.error
