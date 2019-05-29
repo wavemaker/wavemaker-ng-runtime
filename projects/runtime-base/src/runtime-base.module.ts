@@ -74,7 +74,6 @@ const definitions = [
     EmptyPageComponent
 ];
 
-export const modalModule = ModalModule.forRoot();
 export const carouselModule = CarouselModule.forRoot();
 export const bsDropDownModule = BsDropdownModule.forRoot();
 export const popoverModule = PopoverModule.forRoot();
@@ -92,12 +91,12 @@ export const tooltipModule = TooltipModule.forRoot();
         ReactiveFormsModule,
         HttpClientModule,
 
-        modalModule,
         carouselModule,
         bsDropDownModule,
         popoverModule,
         tooltipModule,
 
+        ModalModule,
         WmComponentsModule,
         MobileRuntimeModule,
         CoreModule,
@@ -198,6 +197,7 @@ export class RuntimeBaseModule {
 export const WM_MODULES_FOR_ROOT = [
     WmComponentsModule.forRoot(),
     MobileRuntimeModule.forRoot(),
+    ModalModule.forRoot(),
     CoreModule.forRoot(),
     SecurityModule.forRoot(),
     OAuthModule.forRoot(),

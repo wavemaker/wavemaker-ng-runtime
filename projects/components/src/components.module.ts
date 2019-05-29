@@ -309,7 +309,6 @@ export const bsDropdownModule: ModuleWithProviders = BsDropdownModule.forRoot();
 export const paginationModule: ModuleWithProviders = PaginationModule.forRoot();
 export const typeaheadModule: ModuleWithProviders = TypeaheadModule.forRoot();
 export const progressbarModule: ModuleWithProviders = ProgressbarModule.forRoot();
-export const modalModule: ModuleWithProviders = ModalModule.forRoot();
 export const carouselModule: ModuleWithProviders = CarouselModule.forRoot();
 export const popoverModule: ModuleWithProviders = PopoverModule.forRoot();
 export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModule.forRoot({});
@@ -319,6 +318,7 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
         ColorPickerModule,
         CommonModule,
         FormsModule,
+        ModalModule,
         SecurityModule,
         TextMaskModule,
         bsDatePickerModule,
@@ -328,7 +328,6 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
         paginationModule,
         typeaheadModule,
         progressbarModule,
-        modalModule,
         carouselModule,
         popoverModule,
         ngCircleProgressModule
