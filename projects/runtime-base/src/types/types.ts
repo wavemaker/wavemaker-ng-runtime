@@ -19,3 +19,7 @@ export abstract class AppJSProvider {
 export abstract class AppVariablesProvider {
     abstract async getAppVariables(): Promise<any>;
 }
+
+export abstract class PartialRefProvider {
+    abstract async getPartialComponentFactoryRef(partialName:string): Promise<any>;
+}
