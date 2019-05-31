@@ -31,6 +31,8 @@ const invokeClosedCallback = () => {
     // Close always the first dialog in the closeDialogsArray
     // as that will be the last opened dialog
     const ref = closeDialogsArray.splice(0, 1)[0];
+    // remove the dialog reference from opened dialogs
+    openedDialogs.splice(openedDialogs.indexOf(ref), 1);
     if (ref) {
         ref.invokeEventCallback('close');
         ref.dialogRef = undefined;
@@ -97,8 +99,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         if (this.dialogRef) {
             // closeDialogsArray is used to keep the reference of the dialog which is to be closed
             closeDialogsArray.push(this);
-            //remove the dialog reference from opened dialogs
-            openedDialogs.splice(openedDialogs.indexOf(this), 1);
             this.dialogRef.hide();
         }
     }

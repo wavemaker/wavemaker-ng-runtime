@@ -57,7 +57,7 @@ export class DialogServiceImpl {
             if (dialofRefMap.size === 1) {
                 dialogRef = dialofRefMap.entries().next().value[1];
             } else {
-                console.error("There are multiple instances of this dialog name. Please provide the Page/Partial/App instance in which the dialog exists.")
+                console.error('There are multiple instances of this dialog name. Please provide the Page/Partial/App instance in which the dialog exists.');
             }
         }
         return dialogRef;
@@ -68,7 +68,7 @@ export class DialogServiceImpl {
      * @param {string} name
      */
     public open(name: string, scope?: any, initState?: any) {
-        let dialogRef = this.getDialogRef(name, scope);
+        const dialogRef = this.getDialogRef(name, scope);
 
         if (!dialogRef) {
             return;
@@ -82,7 +82,7 @@ export class DialogServiceImpl {
      * @param {string} name
      */
     public close(name: string, scope?: any) {
-        let dialogRef = this.getDialogRef(name, scope);
+        const dialogRef = this.getDialogRef(name, scope);
 
         if (!dialogRef) {
             return;
