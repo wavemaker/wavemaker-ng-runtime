@@ -15,7 +15,8 @@ import {
     AppVariablesProvider,
     ComponentRefProvider,
     PrefabConfigProvider,
-    WM_MODULES_FOR_ROOT
+    WM_MODULES_FOR_ROOT,
+    PartialRefProvider
 } from '@wm/runtime/base';
 
 import { routes } from './app.routes';
@@ -55,6 +56,7 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
         {provide: AppJSProvider, useClass: AppJSProviderService},
         {provide: AppVariablesProvider, useClass: AppVariablesProviderService},
         {provide: ComponentRefProvider, useClass: ComponentRefProviderService},
+        {provide: PartialRefProvider, useClass: ComponentRefProviderService},
         {provide: PrefabConfigProvider, useClass: PrefabConfigProviderService}
     ],
     bootstrap: [AppComponent]

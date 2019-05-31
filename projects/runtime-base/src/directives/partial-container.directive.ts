@@ -28,8 +28,7 @@ export class PartialContainerDirective {
         // when the container-target is inside the component template, it can be queried after viewInit of the component.
         $invokeWatchers(true);
 
-        const componentFactory = await this.partialRefProvider.getPartialComponentFactoryRef(nv);
-        // const componentFactory = await this.componentRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL);
+        const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL);
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
 

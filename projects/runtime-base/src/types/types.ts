@@ -21,5 +21,5 @@ export abstract class AppVariablesProvider {
 }
 
 export abstract class PartialRefProvider {
-    abstract async getPartialComponentFactoryRef(partialName:string): Promise<any>;
+    abstract async getComponentFactoryRef(partialName:string,componentType: ComponentType): Promise<any>;
 }
