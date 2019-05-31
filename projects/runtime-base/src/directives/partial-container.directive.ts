@@ -6,7 +6,7 @@ import { $invokeWatchers, noop } from '@wm/core';
 
 import { WidgetRef } from '@wm/components';
 
-import { ComponentRefProvider, ComponentType } from '../types/types';
+import { ComponentRefProvider, ComponentType, PartialRefProvider } from '../types/types';
 
 declare const _;
 
@@ -28,7 +28,8 @@ export class PartialContainerDirective {
         // when the container-target is inside the component template, it can be queried after viewInit of the component.
         $invokeWatchers(true);
 
-        const componentFactory = await this.componentRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL);
+        const componentFactory = await this.partialRefProvider.getPartialComponentFactoryRef(nv);
+        // const componentFactory = await this.componentRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL);
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
 
@@ -56,7 +57,8 @@ export class PartialContainerDirective {
         public inj: Injector,
         @Attribute('content') _content: string,
         private resolver: ComponentFactoryResolver,
-        private componentRefProvider: ComponentRefProvider
+        private componentRefProvider: ComponentRefProvider,
+        private partialRefProvider: PartialRefProvider
     ) {
 
         componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
