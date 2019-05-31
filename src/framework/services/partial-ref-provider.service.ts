@@ -9,7 +9,7 @@ import {
     ReflectiveInjector,
     NgModuleFactory
 } from "@angular/core";
-import { PartialRefProvider } from "@wm/runtime/base";
+import { PartialRefProvider, ComponentType } from "@wm/runtime/base";
 
 
 type ModuleWithRoot = Type<any> & { rootComponent: Type<any> };
@@ -31,9 +31,7 @@ export class PartialRefProviderService extends PartialRefProvider {
         }
         return null;
     }
-    public async getPartialComponentFactoryRef(
-        partialName: string
-    ): Promise<any> {
+    public async getComponentFactoryRef(partialName:string,componentType: ComponentType) {
         let moduleFactory: NgModuleFactory<any>;
         try {
             moduleFactory = await this.loader.load(
