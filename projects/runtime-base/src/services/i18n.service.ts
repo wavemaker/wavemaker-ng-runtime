@@ -187,9 +187,15 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadLocaleBundles(libLocale) {
-        this.loadMomentLocaleBundle(libLocale.moment);
-        this.loadAppLocaleBundle();
-        this.loadCalendarLocaleBundle(libLocale.fullCalendar);
+        if (libLocale.moment) {
+            this.loadMomentLocaleBundle(libLocale.moment);
+        }
+        if (libLocale.fullCalendar) {
+            this.loadCalendarLocaleBundle(libLocale.fullCalendar);
+        }
+        if (libLocale.angular) {
+            this.loadAppLocaleBundle();
+        }
         return this.loadAngularLocaleBundle(libLocale.angular);
     }
 
