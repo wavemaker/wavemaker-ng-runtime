@@ -93,7 +93,7 @@ export class LiveVariableUtils {
         });
     }
 
-    static getHibernateOrSqlType(variable, fieldName, type) {
+    static getHibernateOrSqlType(variable, fieldName, type, entityName?: string) {
         const columns = variable.propertiesMap.columns;
         let column,
             relatedCols,
@@ -111,12 +111,18 @@ export class LiveVariableUtils {
         column = _.find(columns, col => {
             return col.fieldName === fieldName || col.relatedColumnName === fieldName;
         });
+        if (!column && entityName) {
+            const entity = _.find(columns, col => col.relatedEntityName === entityName);
+            column = _.find(entity.columns, col => {
+                return col.fieldName === fieldName || col.relatedColumnName === fieldName;
+            });
+        }
         return column && column[type];
     }
 
     /*Function to get the sqlType of the specified field.*/
-    static getSqlType(variable, fieldName) {
-        return LiveVariableUtils.getHibernateOrSqlType(variable, fieldName, 'type');
+    static getSqlType(variable, fieldName, entityName?: string) {
+        return LiveVariableUtils.getHibernateOrSqlType(variable, fieldName, 'type', entityName);
     }
 
     /*Function to check if the specified field has a one-to-many relation or not.*/
@@ -437,7 +443,7 @@ export class LiveVariableUtils {
 
         // If value is an empty array, do not generate the query
         // If values is NaN and number type, do not generate query for this field
-        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => { return (_.isNull(val) || _.isNaN(val) || val === ''); })) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
+        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => (_.isNull(val) || _.isNaN(val) || val === ''))) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
             return;
         }
         if (isValArray) {
@@ -516,7 +522,7 @@ export class LiveVariableUtils {
                 const filterCondition = matchModes[filterObj.matchMode] || matchModes[filterObj.filterCondition] || filterObj.filterCondition;
                 if (_.includes(DB_CONSTANTS.DATABASE_EMPTY_MATCH_MODES, filterCondition) ||
                     (!_.isNil(filterObj.value) && filterObj.value !== '')) {
-                    const type = filterObj.type || LiveVariableUtils.getSqlType(variable, filterName);
+                    const type = filterObj.type || LiveVariableUtils.getSqlType(variable, filterName, options.entityName);
                     const ruleObj = {
                         'target': filterName,
                         'type': type,
