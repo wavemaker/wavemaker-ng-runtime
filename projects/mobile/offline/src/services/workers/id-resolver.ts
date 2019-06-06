@@ -37,16 +37,19 @@ export class IdResolver implements Worker {
                 case 'insertTableData':
                 case 'insertMultiPartTableData':
                     change.params.skipLocalDB = true ;
-                    return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
-                        this.exchangeIds(store, dataModelName, entityName, change.params.data);
-                        if (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity') {
-                            const primaryKeyName = store.primaryKeyName;
-                            this.transactionLocalId = change['localId'] || change.params.data[primaryKeyName];
-                            change['dataLocalId'] = this.transactionLocalId;
-                            delete change.params.data[primaryKeyName];
-                        } else {
-                            this.transactionLocalId = null;
-                        }
+                    return this.localDBManagementService.getStore(dataModelName, entityName)
+                        .then(store => {
+                            return this.exchangeIds(store, dataModelName, entityName, change.params.data)
+                                .then(() => {
+                                    if (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity') {
+                                        const primaryKeyName = store.primaryKeyName;
+                                        this.transactionLocalId = change['localId'] || change.params.data[primaryKeyName];
+                                        change['dataLocalId'] = this.transactionLocalId;
+                                        delete change.params.data[primaryKeyName];
+                                    } else {
+                                        this.transactionLocalId = null;
+                                    }
+                                });
                     });
                 case 'updateTableData':
                 case 'updateMultiPartTableData':
@@ -54,7 +57,7 @@ export class IdResolver implements Worker {
                     return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
                         this.exchangeId(store, dataModelName, entityName, change.params);
                         if (change.params.data) {
-                            this.exchangeIds(store, dataModelName, entityName, change.params.data);
+                            return this.exchangeIds(store, dataModelName, entityName, change.params.data);
                         }
                     });
             }
@@ -126,18 +129,23 @@ export class IdResolver implements Worker {
     }
 
     // Looks primary key changes in the given entity or in the relations
-    private exchangeIds(store: LocalDBStore, dataModelName: string, entityName: string, data: any) {
+    private exchangeIds(store: LocalDBStore, dataModelName: string, entityName: string, data: any): Promise<any> {
         this.exchangeId(store, dataModelName, entityName, data);
+        const exchangeIdPromises = [];
         store.entitySchema.columns.forEach(col => {
             if (col.foreignRelations) {
                 col.foreignRelations.forEach( foreignRelation => {
                     if (data[foreignRelation.sourceFieldName]) {// if object reference
-                        this.exchangeIds(store, dataModelName, foreignRelation.targetEntity, data[foreignRelation.sourceFieldName]);
+                        exchangeIdPromises.push(this.localDBManagementService.getStore(dataModelName, foreignRelation.targetEntity)
+                            .then(refStore => {
+                                return this.exchangeIds(refStore, dataModelName, foreignRelation.targetEntity, data[foreignRelation.sourceFieldName]);
+                            }));
                     } else if (data[col.fieldName]) {// if id value
                         this.exchangeId(store, dataModelName, foreignRelation.targetEntity, data, col.fieldName);
                     }
                 });
             }
         });
+        return Promise.all(exchangeIdPromises);
     }
 }
