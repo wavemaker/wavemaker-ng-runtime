@@ -830,6 +830,15 @@ $.widget('wm.datatable', {
         //Focus the new row if already present
         if ($alwaysNewRow.length) {
             this.setFocusOnElement(undefined, $alwaysNewRow);
+            // QUICK EDIT MODE | On Add Click on new row, trigger save action
+            if(this.options.editmode===this.CONSTANTS.QUICK_EDIT){
+                var $qTarget = $alwaysNewRow.find("input").length>0?$($alwaysNewRow.find("input")[0]):null;
+                if($qTarget!==null){
+                    var event = $.Event("keydown");
+                    event.which = 13;
+                    $qTarget.trigger(event);
+                }
+            } 
             return;
         }
 
@@ -1421,6 +1430,9 @@ $.widget('wm.datatable', {
     //Focus the active row
     focusActiveRow: function () {
         this.gridBody.find('tr.app-datagrid-row.active').focus();
+    },
+    focusNewRow: function () {
+        this.gridBody.find('tr.always-new-row').find("input")[0].focus();
     },
     disableActions: function (val) {
         var $deleteBtns = this.gridBody.find('.delete-row-button'),
@@ -2020,7 +2032,7 @@ $.widget('wm.datatable', {
                 if (error) {
                   $target.focus();
                 } else {
-                  self.focusActiveRow();
+                  self.focusNewRow();
                 }
               }
             });
@@ -2184,6 +2196,11 @@ $.widget('wm.datatable', {
                 var $target = $(e.target),
                     $row = $target.closest('tr.app-datagrid-row'),
                     $relatedTarget = $(e.relatedTarget),
+                    isLastColumn = self.isLastColumn($target, $relatedTarget),
+                    isTargetRowAction = $target.closest('span.actions-column').length>0,
+                    isRelatedTargetRowAction = $relatedTarget.closest('span.actions-column').length>0,
+                    isTargetGridAction = $relatedTarget.closest('div.app-datagrid-actions').length>0,
+                    isRelatedTargetGridAction = $relatedTarget.closest('div.app-datagrid-actions').length>0,
                     invalidTargets = '.row-editing:not(".always-new-row"), .row-action-button, .app-datagrid-cell, .caption, button.btn-time, button.btn-date';
 
                 //Check if the focus out element is outside the grid or some special elements
@@ -2193,21 +2210,27 @@ $.widget('wm.datatable', {
                     }
                     return $relatedTarget.is(invalidTargets);
                 }
-
+               
                 //If focus is on the same row, return here
                 if ($relatedTarget.is('tr.app-datagrid-row')) {
                     if ($relatedTarget.attr('data-row-id') === $row.attr('data-row-id')) {
                         return;
                     }
                 }
-
-                //Save the row on last column of the data table. If class has danger, confirm dialog is opened, so dont save the row. Do not save the row if focus is out of input file.
-                if (!self.isLastColumn($target, $relatedTarget) || $row.hasClass('danger') || e.relatedTarget === null || $target.hasClass('file-upload')) {
+                if (isRelatedTargetRowAction || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null)) {
                     return;
                 }
-                //If focusout is because of input element or row action or current row, dont save the row
-                if ($relatedTarget.attr('focus-target') === '' || isInvalidTarget()) {
-                    return;
+                // Save the Row if any button from Grid action is clicked / AddRow action is 
+                // triggered from the Row Actions
+                if (!isTargetGridAction && !isTargetRowAction) {
+                    //Save the row on last column of the data table. If class has danger, confirm dialog is opened, so dont save the row. Do not save the row if focus is out of input file.
+                    if (!isLastColumn || $row.hasClass("danger") || (!isLastColumn && e.relatedTarget === null) || $target.hasClass("file-upload")) {
+                        return;
+                    }
+                    //If focusout is because of input element or row action or current row, dont save the row
+                    if ($relatedTarget.attr("focus-target") === "" || !isLastColumn && isInvalidTarget()) {
+                        return;
+                    }
                 }
                 self.options.timeoutCall(function () {
                     self.toggleEditRow(e, {
