@@ -10,8 +10,8 @@
                 <i class="app-icon panel-icon" aria-hidden="true" [ngClass]="iconclass" *ngIf="iconclass"></i>
             </div>
             <div class="pull-left">
-                <div class="heading" [textContent]="title"></div>
-                <div class="description" [textContent]="subheading"></div>
+                <div class="heading" [innerHTML]="title | trustAs: 'html'"></div>
+                <div class="description" [innerHTML]="subheading | trustAs: 'html'"></div>
             </div>
             <div class="form-action panel-actions basic-btn-grp">
                 <ng-container *ngFor="let btn of buttonArray | filter : 'position' : 'header'"

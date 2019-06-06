@@ -4,8 +4,8 @@
             <i class="app-icon panel-icon {{iconclass}}" aria-hidden="true" [hidden]="!iconclass"></i>
         </div>
         <div class="pull-left">
-            <div class="heading" [textContent]="title"></div>
-            <div class="description" [textContent]="subheading"></div>
+            <div class="heading" [innerHTML]="title | trustAs: 'html'"></div>
+            <div class="description" [innerHTML]="subheading | trustAs: 'html'"></div>
         </div>
     </h3>
 </div>
