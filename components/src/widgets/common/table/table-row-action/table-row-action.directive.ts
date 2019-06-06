@@ -43,6 +43,7 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
 
         contexts[0].editRow = (evt) => this.table.editRow(evt);
         contexts[0].deleteRow = (evt) => this.table.deleteRow(evt);
+        contexts[0].addNewRow = (evt) => this.table.addNewRow(evt);
     }
 
     getTitle() {
