@@ -31,13 +31,20 @@ const apiConfiguration = [{
         'type' : 'DELETE'
     }, {
         'name' : 'readTableData',
-        'type' : 'READ'
+        'type' : 'READ',
+        'saveResponse': true
     }, {
         'name' : 'searchTableData',
-        'type' : 'READ'
+        'type' : 'READ',
+        'saveResponse': true
     }, {
         'name' : 'searchTableDataWithQuery',
-        'type' : 'READ'
+        'type' : 'READ',
+        'saveResponse': true
+    }, {
+        'name' : 'getDistinctDataByFields',
+        'type' : 'READ',
+        'saveResponse': false
     }];
 
 let isOfflineBehaviorAdded = false;
@@ -148,7 +155,7 @@ export class LiveVariableOfflineBehaviour {
                 if (response && response.type) {
                     if (!params.skipLocalDB) {
                         this.offlineDBService.getStore(params).then((store) => {
-                            if (operation.type === 'READ') {
+                            if (operation.type === 'READ' && operation.saveResponse) {
                                 store.saveAll(response.body.content);
                             } else if (operation.type === 'INSERT') {
                                 params = _.clone(params);

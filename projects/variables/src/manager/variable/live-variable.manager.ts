@@ -264,10 +264,10 @@ export class LiveVariableManager extends BaseVariableManager {
         /* if it is a prefab variable (used in a normal project), modify the url */
         /*Fetch the table data*/
         return new Promise((resolve, reject) => {
-            this.makeCall(variable, dbOperation, dbOperationOptions).then((response)=> {
+            this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
                 getEntitySuccess(response, resolve);
-            }, (error) => {
-                getEntityError(error, reject);
+            }, err => {
+                getEntityError(err, reject);
             });
         });
     }
@@ -493,7 +493,7 @@ export class LiveVariableManager extends BaseVariableManager {
 
         onCUDerror = (response: any, reject: any) => {
             const errMsg = response.error;
-            const advancedOptions : AdvancedOptions = this.prepareCallbackOptions(response);
+            const advancedOptions: AdvancedOptions = this.prepareCallbackOptions(response);
             // EVENT: ON_RESULT
             initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, errMsg, advancedOptions);
             // EVENT: ON_ERROR
@@ -601,8 +601,8 @@ export class LiveVariableManager extends BaseVariableManager {
         return new Promise((resolve, reject) => {
             this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
                 aggregateDataSuccess(response, resolve);
-            }, (error) => {
-                aggregateDataError(error, reject);
+            }, err => {
+                aggregateDataError(err, reject);
             });
         });
     }
@@ -796,7 +796,7 @@ export class LiveVariableManager extends BaseVariableManager {
             }
         };
         downloadError = (err: any, reject: any) => {
-            let opt: AdvancedOptions = this.prepareCallbackOptions(err.details);
+            const opt: AdvancedOptions = this.prepareCallbackOptions(err.details);
             initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, err.error, opt);
             triggerFn(errorHandler, err.error);
             reject(err);
@@ -923,8 +923,8 @@ export class LiveVariableManager extends BaseVariableManager {
         return new Promise((resolve, reject) => {
             this.makeCall(variable, action, dbOperationOptions).then((response) => {
                 getRelatedTableDataSuccess(response, resolve);
-            }, (error) => {
-                getRelatedTableDataError(error, reject);
+            }, err => {
+                getRelatedTableDataError(err, reject);
             });
         });
     }
@@ -964,6 +964,7 @@ export class LiveVariableManager extends BaseVariableManager {
             'size': options.pagesize,
             'sort': sort,
             'data': requestData,
+            'filter': LiveVariableUtils.getWhereClauseGenerator(variable, options),
             'url': variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl
         };
         getDistinctDataByFieldsSuccess = (response: any, resolve: any) => {
@@ -989,7 +990,7 @@ export class LiveVariableManager extends BaseVariableManager {
             return new Promise((resolve, reject) => {
                 this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
                     getDistinctDataByFieldsSuccess(response, resolve);
-                }, (reject)=> {
+                }, () => {
                     getDistinctDataByFieldsError(error, reject);
                 });
             });
