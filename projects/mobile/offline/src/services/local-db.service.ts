@@ -10,10 +10,12 @@ export class LocalDbService {
 
     private searchTableData;
     private searchTableDataWithQuery;
+    private getDistinctDataByFields;
 
     constructor(private localDBManagementService: LocalDBManagementService) {
         this.searchTableData = this.readTableData.bind(this);
         this.searchTableDataWithQuery = this.readTableData.bind(this);
+        this.getDistinctDataByFields = this.readTableData.bind(this);
     }
 
     public getStore(params: any): Promise<LocalDBStore> {
