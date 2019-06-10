@@ -305,12 +305,15 @@ const getClassesArray = classVal => {
 export const getConditionalClasses = (nv, ov?) => {
     let toAdd;
     let toRemove;
+    // if the conditional class property has already toAdd and toRemove arrays then take that otherwise build those arrays
+    const classToAdd = nv.toAdd || nv;
+    const classToRemove = nv.toRemove || ov;
     if (_.isObject(nv)) {
-        toAdd = _.isArray(nv) ? nv : getClassesArray(nv || []);
-        toRemove = ov ? (_.isArray(ov) ? ov : getClassesArray(ov)) : [];
+        toAdd = _.isArray(classToAdd) ? classToAdd : getClassesArray(classToAdd || []);
+        toRemove = classToRemove ? (_.isArray(classToRemove) ? classToRemove : getClassesArray(classToRemove)) : [];
     } else {
-        toAdd = nv ? [nv] : [];
-        toRemove = ov ? [ov] : [];
+        toAdd = classToAdd ? [classToAdd] : [];
+        toRemove = classToRemove ? [classToRemove] : [];
     }
     return {toAdd, toRemove};
 };

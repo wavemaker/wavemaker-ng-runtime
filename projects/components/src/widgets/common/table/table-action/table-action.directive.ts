@@ -35,6 +35,8 @@ export class TableActionDirective extends BaseComponent implements OnInit {
     hyperlink;
     target;
     buttonDef;
+    conditionalclass;
+    conditionalstyle;
 
     private _propsInitialized: boolean;
 
@@ -59,7 +61,9 @@ export class TableActionDirective extends BaseComponent implements OnInit {
             position: this.position,
             widgetType: this['widget-type'],
             hyperlink: this.hyperlink,
-            target: this.target
+            target: this.target,
+            conditionalclass: this.conditionalclass || '',
+            conditionalstyle: this.conditionalstyle || {}
         };
         this._propsInitialized = true;
     }
