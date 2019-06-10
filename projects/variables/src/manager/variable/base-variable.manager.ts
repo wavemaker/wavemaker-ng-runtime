@@ -38,7 +38,7 @@ export abstract class BaseVariableManager {
                     this.notifyInflight(variable, false, err);
                     err._401Subscriber.asObservable().subscribe(
                         response => resolve(response),
-                        err => reject(err));
+                        e => reject(e));
                 } else {
                     reject(err);
                 }

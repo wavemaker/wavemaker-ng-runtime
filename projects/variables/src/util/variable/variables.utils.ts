@@ -135,12 +135,8 @@ export const initiateCallback = (type: string, variable: any, data: any, options
             errorVariable = callBackScope.Actions[VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION];
             if (errorVariable) {
                 data = errorVariable.getMessage() || data;
-                if (_.isString(data)) {
-                    errorVariable.setMessage(data);
-                } else {
-                    errorVariable.setMessage('An error has occured. Please check the app logs.');
-                }
-                errorVariable.invoke({}, undefined, undefined);
+                data = _.isString(data) ? data : 'An error has occured. Please check the app logs.';
+                errorVariable.invoke({ 'message' : data}, undefined, undefined);
                  // $rootScope.$evalAsync(function () {
                     // $rootScope.$emit("invoke-service", VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION, {scope: callBackScope, message: response});
                 // });
