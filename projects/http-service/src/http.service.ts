@@ -87,18 +87,14 @@ export class HttpServiceImpl extends AbstractHttpService {
 
         // check if error message present for responded http status
         let errMsg = HTTP_STATUS_MSG[err.status];
+        let errorDetails = err.error;
+        errorDetails = getValidJSON(errorDetails) || errorDetails;
 
-        // Check if err.error.errors exist, If it does then parse the error message
-        // from error resonse and return that.
-        if (_.get(err, 'error.errors')) {
-            let errorDetails = err.error;
-            errorDetails = getValidJSON(errorDetails) || errorDetails;
-            // WM services have the format of error response as errorDetails.error
-            if (errorDetails && errorDetails.errors) {
-                errMsg = this.parseErrors(errorDetails.errors);
-            } else {
-                errMsg = errMsg || 'Service Call Failed';
-            }
+        // WM services have the format of error response as errorDetails.error
+        if (errorDetails && errorDetails.errors) {
+            errMsg = this.parseErrors(errorDetails.errors);
+        } else {
+            errMsg = errMsg || 'Service Call Failed';
         }
         return errMsg;
     }
@@ -126,8 +122,8 @@ export class HttpServiceImpl extends AbstractHttpService {
                 if (this.isPlatformSessionTimeout(err)) {
                     err._401Subscriber.asObservable().subscribe((response) => {
                         resolve(response);
-                    }, (err) => {
-                        reject(err);
+                    }, (e) => {
+                        reject(e);
                     });
                 } else {
                     const errMsg = this.getErrMessage(err);
@@ -265,7 +261,7 @@ export class HttpServiceImpl extends AbstractHttpService {
             if (_.isFunction(data.callback)) {
                 data.callback();
             } else {
-                data.requestInfo.headers.headers.delete("x-wm-xsrf-token");
+                data.requestInfo.headers.headers.delete('x-wm-xsrf-token');
                 that.httpClient.request(data.requestInfo)
                     .subscribe(
                         response => {

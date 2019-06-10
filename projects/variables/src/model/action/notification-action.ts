@@ -55,8 +55,11 @@ export class NotificationAction extends BaseAction implements IDataSource {
         return getManager().setMessage(this, text);
     }
 
-    getOkButtonText()
-    {
+    clearMessage() {
+        return getManager().setMessage(this, '');
+    }
+
+    getOkButtonText() {
         return getManager().getOkButtonText(this);
     }
 
