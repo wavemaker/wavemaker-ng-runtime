@@ -103,7 +103,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
         }
     }
 
-    /** Todo[Shubham] Need to handle gotoElement in other pages{TBD}
+    /** Todo[Shubham] Need to handle gotoElement in other partials
      * Navigates to particular view
      * @param viewName
      * @param options
@@ -126,7 +126,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
             // else goto the page in which the element exists and highlight the element
             if (pageName !== activePage.activePageName && !prefabName) {
                 if (this.isPartialWithNameExists(pageName)) {
-                    this.goToElementView($('[partialcontainer][content="' + pageName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);      
+                    this.goToElementView($('[partialcontainer][content="' + pageName + '"]').find('[name="' + viewName + '"]'), viewName, pageName, variable);
                 } else {
                     // Todo[Shubham]: Make an API call to get all pages and check if the page name
                     //  is a page and then do this call else show an error as:
@@ -258,7 +258,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
 
 
 
-    /* Todo[shubham]
+    /*
      * searches for a given view element inside the available dialogs in current page
      * if found, the dialog is displayed, the dialog id is returned.
      */
