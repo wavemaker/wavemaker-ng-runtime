@@ -117,7 +117,7 @@ export class LoginActionManager extends BaseActionManager {
                     const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo'),
                         noRedirect = appManager.noRedirect();
                     // Get query params(page params of page being redirected to) and append to the URL after login.
-                    let queryParamsObj = securityService.getRedirectedRouteQueryParams();
+                    const queryParamsObj = securityService.getRedirectedRouteQueryParams();
                     // The redirectTo param isn't required after login
                     if (queryParamsObj.redirectTo) {
                         delete queryParamsObj.redirectTo;
@@ -163,7 +163,7 @@ export class LoginActionManager extends BaseActionManager {
             const xhrObj = e.details;
             /* if in RUN mode, trigger error events associated with the variable */
             if (CONSTANTS.isRunMode) {
-                initiateCallback('onError', variable, errorMsg, xhrObj);
+                initiateCallback('onError', variable, errorMsg, xhrObj, true);
             }
             triggerFn(error, errorMsg, xhrObj);
         });
