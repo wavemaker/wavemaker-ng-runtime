@@ -61,8 +61,8 @@ export class LoginDialogDirective implements AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         // On login dialog open we wait till the form loads and then assign the enter
         // key event to the textbox in form.
-        this.dialogOpenSubscription = this.dialogRef.bsModal.onShown.subscribe(()=> {
-            setTimeout(()=> {
+        this.dialogOpenSubscription = this.dialogRef.bsModal.onShown.subscribe(() => {
+            setTimeout(() => {
                 // On enter key press submit the login form in Login Dialog
                 $('.app-textbox').keypress((evt) => {
                     if (evt.which === 13) {
