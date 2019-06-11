@@ -54,11 +54,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                 invokeOpenedCallback(this.dialogService.getLastOpenedDialog());
             });
 
-            this.bsModal.onHidden.subscribe(() => {
-                // Close always the first dialog in the closeDialogsArray
-                // as that will be the last opened dialog if there are no multiple Dialogs opened
-                const ref = this.dialogService.getDialogRefFromClosedDialogs();
-                // remove the dialog reference from opened dialogs
+            this.bsModal.onHidden.subscribe((closeReason) => {
+                const ref = closeReason === 'esc' || closeReason === 'backdrop-click' ? this.dialogService.getLastOpenedDialog() : this.dialogService.getDialogRefFromClosedDialogs();
+                // remove the dialog reference from opened dialogs and closed dialogs
                 this.dialogService.removeFromOpenedDialogs(ref);
                 this.dialogService.removeFromClosedDialogs(ref);
                 invokeClosedCallback(ref);
