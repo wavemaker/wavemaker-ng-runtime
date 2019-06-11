@@ -96,6 +96,13 @@ export abstract class AbstractDialogService {
     public abstract getAppConfirmDialog();
     public abstract setAppConfirmDialog(dialogName: string);
     public abstract closeAllDialogs: Function;
+    public abstract addToOpenedDialogs(ref: any);
+    public abstract getLastOpenedDialog();
+    public abstract removeFromOpenedDialogs(ref: any);
+    public abstract getOpenedDialogs();
+    public abstract addToClosedDialogs(ref: any);
+    public abstract removeFromClosedDialogs(ref: any);
+    public abstract getDialogRefFromClosedDialogs();
 }
 
 export abstract class AbstractHttpService {

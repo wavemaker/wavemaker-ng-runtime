@@ -2,6 +2,14 @@ import { Injectable } from '@angular/core';
 
 import { BaseDialog } from './base/base-dialog';
 
+const openedDialogs = [];
+/*We need closedDialogs array because onHidden event is asynchronous,
+and if the user uses script and calls dialog1.close() and then dialog2.close() then
+we cannot be sure if both the dialogs onClose callback will be called or not.*/
+const closeDialogsArray = [];
+
+declare const _;
+
 @Injectable()
 export class DialogServiceImpl {
 
@@ -30,6 +38,10 @@ export class DialogServiceImpl {
         } else {
             this.dialogRefsCollection.set(name, new Map([[scope, dialogRef]]));
         }
+    }
+
+    public getDialogRefsCollection() {
+        return this.dialogRefsCollection;
     }
 
     /**
@@ -112,9 +124,8 @@ export class DialogServiceImpl {
      * closes all the opened dialogs
      */
     closeAllDialogs() {
-        // close all the open dialogs
-        this.dialogRefsCollection.forEach(dialogMap => {
-           dialogMap.forEach(dialogRef => dialogRef.close());
+        _.forEach(openedDialogs.reverse(), (dialog) => {
+            dialog.close();
         });
     }
 
@@ -132,5 +143,37 @@ export class DialogServiceImpl {
 
     public setAppConfirmDialog(dialogName: string) {
         this.appConfirmDialog = dialogName;
+    }
+
+    public addToOpenedDialogs(ref) {
+        openedDialogs.push(ref);
+    }
+
+    public getLastOpenedDialog() {
+        return openedDialogs[openedDialogs.length - 1];
+    }
+
+    public removeFromOpenedDialogs(ref) {
+        if (openedDialogs.indexOf(ref) !== -1) {
+            openedDialogs.splice(openedDialogs.indexOf(ref), 1);
+        }
+    }
+
+    public getOpenedDialogs() {
+        return openedDialogs;
+    }
+
+    public addToClosedDialogs(ref) {
+        closeDialogsArray.push(ref);
+    }
+
+    public removeFromClosedDialogs(ref) {
+        if (closeDialogsArray.indexOf(ref) !== -1) {
+            closeDialogsArray.splice(closeDialogsArray.indexOf(ref), 1);
+        }
+    }
+
+    public getDialogRefFromClosedDialogs() {
+        return closeDialogsArray.splice(0, 1)[0];
     }
 }

@@ -8,18 +8,10 @@ import { BaseComponent } from '../../base/base.component';
 
 declare const _;
 
-const openedDialogs = [];
-const closeDialogsArray = [];
-
 let eventsRegistered = false;
 
-const handleDialogOpen = ref => {
-    openedDialogs.push(ref);
-};
 
-const invokeOpenedCallback = () => {
-    // Always get the reference of last pushed dialog in the array for calling onOpen callback
-    const ref = openedDialogs[openedDialogs.length - 1];
+const invokeOpenedCallback = (ref) => {
     if (ref) {
         setTimeout(() => {
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
@@ -27,12 +19,7 @@ const invokeOpenedCallback = () => {
     }
 };
 
-const invokeClosedCallback = () => {
-    // Close always the first dialog in the closeDialogsArray
-    // as that will be the last opened dialog
-    const ref = closeDialogsArray.splice(0, 1)[0];
-    // remove the dialog reference from opened dialogs
-    openedDialogs.splice(openedDialogs.indexOf(ref), 1);
+const invokeClosedCallback = (ref) => {
     if (ref) {
         ref.invokeEventCallback('close');
         ref.dialogRef = undefined;
@@ -62,9 +49,20 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         // respective dialog callbacks.
         if (!eventsRegistered) {
             eventsRegistered = true;
-            this.bsModal.onShown.subscribe(() => invokeOpenedCallback());
+            this.bsModal.onShown.subscribe(() => {
+                // Always get the reference of last pushed dialog in the array for calling onOpen callback
+                invokeOpenedCallback(this.dialogService.getLastOpenedDialog());
+            });
 
-            this.bsModal.onHidden.subscribe(() => invokeClosedCallback());
+            this.bsModal.onHidden.subscribe(() => {
+                // Close always the first dialog in the closeDialogsArray
+                // as that will be the last opened dialog if there are no multiple Dialogs opened
+                const ref = this.dialogService.getDialogRefFromClosedDialogs();
+                // remove the dialog reference from opened dialogs
+                this.dialogService.removeFromOpenedDialogs(ref);
+                this.dialogService.removeFromClosedDialogs(ref);
+                invokeClosedCallback(ref);
+            });
         }
     }
 
@@ -79,15 +77,14 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
            return openedDialog === this;
         };
 
-        if (openedDialogs.some(duplicateDialogCheck)) {
+        if (this.dialogService.getOpenedDialogs().some(duplicateDialogCheck)) {
             return;
         }
 
-        handleDialogOpen(this);
+        this.dialogService.addToOpenedDialogs(this);
 
         // extend the context with the initState
         Object.assign(this.context, initState);
-
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
     }
 
@@ -97,8 +94,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      */
     public close() {
         if (this.dialogRef) {
-            // closeDialogsArray is used to keep the reference of the dialog which is to be closed
-            closeDialogsArray.push(this);
+            this.dialogService.addToClosedDialogs(this);
             this.dialogRef.hide();
         }
     }
