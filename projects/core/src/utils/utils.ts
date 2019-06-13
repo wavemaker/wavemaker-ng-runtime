@@ -1154,3 +1154,28 @@ export const addForIdAttributes = (element: HTMLElement) => {
     }
 };
 
+/**
+ * This method is used to adjust the container position depending on the viewport and scroll height.
+ * For example: 1. if the widget is at bottom of the page depending on the available bottom space, the picker will open at bottom or top automatically.
+ * 2. When we have dataTable with form as a dialog, If widget(ex: search/date/time/datetime) is at bottom of the dialog, the picker is not visible completely. So open the picker at top of the widget.
+ * @param containerElem - picker/dropdown container element(jquery)
+ * @param parentElem - widget native element
+ * @param ref - scope of particular library directive
+ * @param ele - Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
+ */
+export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) => {
+    const containerHeight = ele ? _.parseInt(ele.css('height')) : _.parseInt(containerElem.css('height'));
+    const viewPortHeight = $(window).height() + window.scrollY;
+    const parentDimesion = parentElem.getBoundingClientRect();
+    const parentTop = parentDimesion.top + window.scrollY;
+
+    // Adjusting container position if is not visible at bottom
+    if (viewPortHeight - (parentTop + parentDimesion.height) < containerHeight) {
+        const newTop = parentTop - containerHeight;
+        ref._ngZone.onStable.subscribe(() => {
+            containerElem.css('top',  newTop + 'px');
+        });
+    }
+
+};
+

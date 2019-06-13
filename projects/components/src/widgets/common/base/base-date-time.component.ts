@@ -1,6 +1,7 @@
-import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { Validator } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { BsDropdownDirective } from 'ngx-bootstrap';
 
 import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
 
@@ -44,6 +45,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
+
+    @ViewChild(BsDropdownDirective) protected bsDropdown;
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
