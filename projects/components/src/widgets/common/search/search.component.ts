@@ -534,7 +534,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             query: query,
             isLocalFilter: !this.searchkey,
             searchKey: searchOnDataField ? this.datafield : this.searchkey,
-            matchMode: this.matchmode,
+            //default search call match mode should be startignorecase
+            matchMode: searchOnDataField ? 'startignorecase' : this.matchmode,
             casesensitive: this.casesensitive,
             isformfield: this.isformfield,
             orderby: this.orderby,
