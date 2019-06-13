@@ -17,6 +17,24 @@ import { NetworkService } from './services/network.service';
     bootstrap: []
 })
 export class MobileCoreModule {
+    static initialized = false;
+    // Startup services have to be added only once in the app life-cycle.
+    static addStartupServices(deviceService: DeviceService,
+                      deviceFileService: DeviceFileService,
+                      fileCacheService: DeviceFileCacheService,
+                      fileOpener: DeviceFileOpenerService,
+                      networkService: NetworkService) {
+        if (this.initialized) {
+            return;
+        }
+        deviceService.addStartUpService(networkService);
+        if (hasCordova()) {
+            deviceService.addStartUpService(deviceFileService);
+            deviceService.addStartUpService(fileCacheService);
+            deviceService.addStartUpService(fileOpener);
+        }
+        this.initialized = true;
+    }
 
     constructor(
         deviceService: DeviceService,
@@ -25,11 +43,6 @@ export class MobileCoreModule {
         fileOpener: DeviceFileOpenerService,
         networkService: NetworkService
     ) {
-        deviceService.addStartUpService(networkService);
-        if (hasCordova()) {
-            deviceService.addStartUpService(deviceFileService);
-            deviceService.addStartUpService(fileCacheService);
-            deviceService.addStartUpService(fileOpener);
-        }
+        MobileCoreModule.addStartupServices(deviceService, deviceFileService,  fileCacheService, fileOpener, networkService);
     }
 }

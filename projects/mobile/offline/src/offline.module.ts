@@ -7,14 +7,13 @@ import { AbstractHttpService, App, hasCordova, noop } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
-import { ChangeLogService, PushService } from './services/change-log.service';
+import { ChangeLogService } from './services/change-log.service';
 import { LocalDBManagementService } from './services/local-db-management.service';
 import { LocalDbService } from './services/local-db.service';
 import { FileHandler, UploadedFilesImportAndExportService } from './services/workers/file-handler';
 import { ErrorBlocker } from './services/workers/error-blocker';
 import { IdResolver } from './services/workers/id-resolver';
 import { MultiPartParamTransformer } from './services/workers/multi-part-param-transformer';
-import { PushServiceImpl } from './services/push.service';
 import { LiveVariableOfflineBehaviour } from './utils/live-variable.utils';
 import { FileUploadOfflineBehaviour } from './utils/file-upload.utils';
 import { NamedQueryExecutionOfflineBehaviour } from './utils/query-executor.utils';
@@ -32,23 +31,23 @@ import { SecurityOfflineBehaviour } from './utils/security.utils';
     entryComponents: []
 })
 export class OfflineModule {
-
-    constructor(
-        app: App,
-        changeLogService: ChangeLogService,
-        deviceService: DeviceService,
-        deviceFileService: DeviceFileService,
-        deviceFileUploadService: DeviceFileUploadService,
-        file: File,
-        httpService: AbstractHttpService,
-        localDBManagementService: LocalDBManagementService,
-        localDbService: LocalDbService,
-        networkService: NetworkService,
-        securityService: SecurityService
-    ) {
-        if (!hasCordova()) {
+    static initialized = false;
+    // Startup services have to be added only once in the app life-cycle.
+    static initialize(app: App,
+                      changeLogService: ChangeLogService,
+                      deviceService: DeviceService,
+                      deviceFileService: DeviceFileService,
+                      deviceFileUploadService: DeviceFileUploadService,
+                      file: File,
+                      httpService: AbstractHttpService,
+                      localDBManagementService: LocalDBManagementService,
+                      localDbService: LocalDbService,
+                      networkService: NetworkService,
+                      securityService: SecurityService) {
+        if (this.initialized) {
             return;
         }
+
         deviceService.addStartUpService({
             serviceName: 'OfflineStartupService',
             start: () => {
@@ -92,5 +91,34 @@ export class OfflineModule {
             }
         });
         new SecurityOfflineBehaviour(app, file, deviceService, networkService, securityService).add();
+    }
+
+
+    constructor(
+        app: App,
+        changeLogService: ChangeLogService,
+        deviceService: DeviceService,
+        deviceFileService: DeviceFileService,
+        deviceFileUploadService: DeviceFileUploadService,
+        file: File,
+        httpService: AbstractHttpService,
+        localDBManagementService: LocalDBManagementService,
+        localDbService: LocalDbService,
+        networkService: NetworkService,
+        securityService: SecurityService
+    ) {
+        if (hasCordova()) {
+            OfflineModule.initialize(app,
+                changeLogService,
+                deviceService,
+                deviceFileService,
+                deviceFileUploadService,
+                file,
+                httpService,
+                localDBManagementService,
+                localDbService,
+                networkService,
+                securityService);
+        }
     }
 }
