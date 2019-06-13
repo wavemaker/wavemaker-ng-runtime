@@ -892,7 +892,7 @@ export class LiveVariableManager extends BaseVariableManager {
             projectID: projectID,
             service: variable.getPrefabName() ? '' : 'services',
             dataModelName: variable.liveSource,
-            entityName: relatedTable.type,
+            entityName: relatedTable ? relatedTable.type : '',
             page: options.page || 1,
             size: options.pagesize || undefined,
             url: variable.getPrefabName() ? ($rootScope.project.deployedUrl + '/prefabs/' + variable.getPrefabName()) : $rootScope.project.deployedUrl,

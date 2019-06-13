@@ -356,7 +356,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // when iscroll is not initialised the notify the smoothscroll and subscribe to the iscroll update
         if (!iScroll) {
             const iScrollSubscription = this.app.subscribe('iscroll-update', (_el) => {
-                if (_el.isSameNode($scrollParent[0])) {
+                if (!_.isEmpty(_el) && _el.isSameNode($scrollParent[0])) {
                     this.setIscrollHandlers($scrollParent[0]);
                     iScrollSubscription();
                 }
