@@ -38,13 +38,8 @@ export class LocalDbService {
             if (isPKAutoIncremented && params.data[store.primaryKeyName]) {
                 delete params.data[store.primaryKeyName];
             }
-            return store.add(params.data).then(localId => {
-                if (isPKAutoIncremented) {
-                    params.data[store.primaryKeyName] = localId;
-                }
-                if (successCallback) {
-                    successCallback(params.data);
-                }
+            return store.add(params.data).then(() => {
+                store.refresh(params.data).then(successCallback);
             });
         }).catch(failureCallback);
     }
@@ -80,11 +75,10 @@ export class LocalDbService {
      */
     public updateTableData(params: any, successCallback?: any, failureCallback?: any) {
         this.getStore(params).then(store => {
-            return store.save(params.data);
-        }).then(() => {
-            if (successCallback) {
-                successCallback(params.data);
-            }
+            return store.save(params.data)
+                .then(() => {
+                    store.refresh(params.data).then(successCallback);
+                });
         }).catch(failureCallback);
     }
 

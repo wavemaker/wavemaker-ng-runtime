@@ -96,9 +96,19 @@ export class LiveVariableOfflineBehaviour {
                                     return new Promise((resolve, reject) => {
                                         this.localDBcall(operation, params, resolve, reject, clonedParamsUrl);
                                     });
-                                }).then( response => {
+                                }).then( (response: any) => {
                                     if (cascader) {
-                                        cascader.cascade().then(() => response);
+                                        return cascader.cascade().then(() => {
+                                            return this.getStore(params).then(store => {
+                                                return store.refresh(response.body);
+                                            }).then(data => {
+                                                // data includes parent and child data.
+                                                if (response && response.body) {
+                                                    response.body = data;
+                                                }
+                                                return response;
+                                            });
+                                        });
                                     }
                                     return response;
                                 });
@@ -214,15 +224,13 @@ export class LiveVariableOfflineBehaviour {
                                     const primaryKeyValue = childStore.getValue(childParams.data, childStore.primaryKeyField.fieldName);
                                     return primaryKeyValue ? childStore.get(primaryKeyValue) : null;
                                 }).then(object => {
-                                    return new Promise((resolve, reject) => {
-                                        let operation;
-                                        if (object) {
-                                            operation = childParams.hasBlob ? 'updateMultiPartTableData' : 'updateTableData';
-                                        } else {
-                                            operation = childParams.hasBlob ? 'insertMultiPartTableData' : 'insertTableData';
-                                        }
-                                        this.onlineDBService[operation](childParams, resolve, reject);
-                                    });
+                                    let operation;
+                                    if (object) {
+                                        operation = childParams.hasBlob ? 'updateMultiPartTableData' : 'updateTableData';
+                                    } else {
+                                        operation = childParams.hasBlob ? 'insertMultiPartTableData' : 'insertTableData';
+                                    }
+                                    return this.onlineDBService[operation](childParams).toPromise();
                                 });
                         };
                     });

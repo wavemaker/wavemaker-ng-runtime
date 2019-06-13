@@ -19,6 +19,7 @@ declare const cordova;
 declare const moment;
 declare const Zeep;
 
+const  NEXT_ID_COUNT = 'localDBStore.nextIdCount';
 const META_LOCATION = 'www/metadata/app';
 const OFFLINE_WAVEMAKER_DATABASE_SCHEMA = {
     name: 'wavemaker',
@@ -31,7 +32,7 @@ const OFFLINE_WAVEMAKER_DATABASE_SCHEMA = {
             columns: [{
                 fieldName: 'id',
                 name: 'id',
-                generatorType : 'identity',
+                generatorType : 'databaseIdentity',
                 sqlType : 'number',
                 primaryKey: true
             }, {
@@ -48,7 +49,7 @@ const OFFLINE_WAVEMAKER_DATABASE_SCHEMA = {
             columns: [{
                 fieldName: 'id',
                 name: 'id',
-                generatorType: 'identity',
+                generatorType: 'databaseIdentity',
                 sqlType: 'number',
                 primaryKey: true
             }, {
@@ -89,6 +90,7 @@ export class LocalDBManagementService {
     private dbInstallParentDirectory: string;
     private databases: Map<string, DBInfo>;
     private _logSql = false;
+    public nextId = 100000000000;
     private readonly systemProperties = {
         'USER_ID' : {
             'name' : 'USER_ID',
@@ -135,6 +137,12 @@ export class LocalDBManagementService {
                 Promise.all(closePromises).then(resolve, reject);
             }, 1000);
         });
+    }
+
+    public nextIdCount() {
+        this.nextId = this.nextId + 1;
+        this.localKeyValueService.put(NEXT_ID_COUNT, this.nextId);
+        return this.nextId;
     }
 
     /**
@@ -435,7 +443,13 @@ export class LocalDBManagementService {
                             });
                     }));
                 }).then(() => {
-                    this.getStore('wavemaker', 'key-value').then( store => this.localKeyValueService.init(store));
+                    return this.getStore('wavemaker', 'key-value').then( store => {
+                        this.localKeyValueService.init(store);
+                        return this.localKeyValueService.get(NEXT_ID_COUNT).then(val => {
+                           this.nextId = val || this.nextId;
+                        });
+                    });
+                }).then(() => {
                     if (newDatabasesCreated) {
                         return this.normalizeData()
                             .then(() => this.disableForeignKeys())
@@ -848,7 +862,9 @@ export class LocalDBManagementService {
                 const store = new LocalDBStore(this.deviceFileService,
                     entitySchema,
                     this.file,
-                    sqliteObject);
+                    this,
+                    sqliteObject
+                    );
                 return store.create();
             });
             return Promise.all(storePromises).then(stores => {

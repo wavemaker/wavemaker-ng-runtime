@@ -7,6 +7,7 @@ import { SWAGGER_CONSTANTS } from '@wm/variables';
 
 import { ColumnInfo, EntityInfo } from './config';
 import { escapeName } from '../utils/utils';
+import { LocalDBManagementService } from '../services/local-db-management.service';
 
 declare const _;
 
@@ -199,6 +200,7 @@ export class LocalDBStore {
         private deviceFileService: DeviceFileService,
         public readonly entitySchema: EntityInfo,
         private file: File,
+        private localDbManagementService: LocalDBManagementService,
         private sqliteObject: SQLiteObject
     ) {
         this.primaryKeyField = _.find(this.entitySchema.columns, 'primaryKey');
@@ -222,7 +224,7 @@ export class LocalDBStore {
         this.countQuery = countQueryTemplate(this.entitySchema);
     }
 
-    public add(entity: any): Promise<number | string> {
+    public add(entity: any): Promise<any> {
         if (this.primaryKeyName) {
             const idValue = entity[this.primaryKeyName];
             if (this.primaryKeyField.sqlType === 'number'
@@ -230,6 +232,10 @@ export class LocalDBStore {
                 && _.isEmpty(_.trim(idValue))) {
                 entity[this.primaryKeyName] = undefined;
             }
+        }
+        // updating the id with the latest id obtained from nextId.
+        if (this.primaryKeyField.sqlType === 'number' && this.primaryKeyField.generatorType === 'identity') {
+            entity[this.primaryKeyName] = this.localDbManagementService.nextIdCount();
         }
         const rowData = mapObjToRow(this, entity);
         const params = this.entitySchema.columns.map(f => rowData[f.name]);
@@ -294,6 +300,16 @@ export class LocalDBStore {
             }
             return objArr;
         });
+    }
+
+    // fetches all the data related to the primaryKey
+    public refresh(data) {
+        const primaryKeyName = this.primaryKeyName;
+        const primaryKey = this.getValue(data, primaryKeyName);
+        if (!primaryKey) {
+            return Promise.resolve(data);
+        }
+        return this.get(primaryKey);
     }
 
     /**
@@ -439,7 +455,7 @@ export class LocalDBStore {
         const fieldStr = _.reduce(schema.columns, (result, f) => {
             let str = escapeName(f.name);
             if (f.primaryKey) {
-                if (f.sqlType === 'number' && f.generatorType === 'identity') {
+                if (f.sqlType === 'number' && f.generatorType === 'databaseIdentity') {
                     str += ' INTEGER PRIMARY KEY AUTOINCREMENT';
                 } else {
                     str += ' PRIMARY KEY';
