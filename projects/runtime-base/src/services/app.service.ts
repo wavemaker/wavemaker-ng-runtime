@@ -112,7 +112,15 @@ export class AppRef {
             if (injToken === 'HttpService') {
                 return getHttpDependency.call(this);
             }
-            return injectorMap[injToken] && this.inj.get(injectorMap[injToken]);
+            let providerInstance = injectorMap[injToken] && this.inj.get(injectorMap[injToken]);
+            if (!providerInstance && this.inj['_providers']) {
+                this.inj['_providers'].forEach( e => {
+                    if (e && e.__proto__.constructor.toString().indexOf('function ' + injToken + '(') === 0) {
+                        providerInstance = this.inj.get(e.__proto__.constructor);
+                    }
+                });
+            }
+            return providerInstance;
         }
         return this.inj.get(injToken);
     }
