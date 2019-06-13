@@ -147,6 +147,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     public showNoDataMsg: any;
     private sampleData: any[];
     private chartData: any[] = [];
+    private _processedData: any[] = [];
 
     @HostBinding('class.panel') title;
 
@@ -290,7 +291,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    getChartData() {
+    processChartData() {
         this.sampleData = getSampleData(this);
         // scope variables used to keep the actual key values for x-axis
         this.xDataKeyArr = [];
@@ -340,6 +341,16 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             }
         }
         return datum;
+    }
+
+    setChartData(data) {
+        if (data) {
+            this._processedData = data;
+        }
+    }
+
+    getChartData() {
+        return this._processedData;
     }
 
     // constructing the grouped data based on the selection of orderby, x & y axis
@@ -727,36 +738,40 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     }
 
     // prepares and configures the chart properties
-    configureChart(datum) {
+    configureChart() {
         // Copy the data only in case of pie chart with default data
         // Reason : when multiple pie charts are bound to same data, first chart theme will be applied to all charts
-        let chartData = datum,
-            xDomainValues,
-            yDomainValues,
-            chart;
+        let xDomainValues;
+        let yDomainValues;
+        let chart;
+        let beforeRenderVal;
         const yformatOptions: any = {};
 
-        if (datum.length > 0) {
+        if (this._processedData.length > 0) {
             if (isAxisDomainValid(this, 'x')) {
-                xDomainValues = this.binddataset ? this.getXMinMaxValues(datum[0]) : { 'min' : {'x': 1},  'max' : {'x' : 5}};
+                xDomainValues = this.binddataset ? this.getXMinMaxValues(this._processedData[0]) : { 'min' : {'x': 1},  'max' : {'x' : 5}};
             }
             if (isAxisDomainValid(this, 'y')) {
-                yDomainValues = this.binddataset ? this.getYMinMaxValues(datum) : { 'min' : {'y' : 1}, 'max' : {'y' : 5}};
+                yDomainValues = this.binddataset ? this.getYMinMaxValues(this._processedData) : { 'min' : {'y' : 1}, 'max' : {'y' : 5}};
             }
         }
 
         if (isPieType(this.type) && (!this.binddataset || !this.scopedataset)) {
-            chartData = getClonedObject(this.scopedataset || datum);
+            this._processedData = getClonedObject(this.scopedataset || this._processedData);
         }
 
         // get the chart object
         chart = initChart(this, xDomainValues, yDomainValues, null, !this.binddataset);
 
-        if (_.isArray(chartData)) {
+        if (_.isArray(this._processedData)) {
+            beforeRenderVal = this.invokeEventCallback('beforerender', { 'chartInstance' : chart});
+            if (beforeRenderVal) {
+                chart = beforeRenderVal;
+            }
             this.chart = chart;
             // changing the default no data message
             d3.select('#wmChart' + this.$id + ' svg')
-                .datum(chartData)
+                .datum(this._processedData)
                 .call(this.chart);
             this.postPlotProcess(chart);
             return chart;
@@ -765,16 +780,15 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // Plotting the chart with set of the properties set to it
     plotChart() {
-        let datum = [];
         const element = this.$element;
         // call user-transformed function
         this.chartData = (this.invokeEventCallback('transform')) || this.chartData;
 
         // Getting the order by data only in run mode. The order by applies for all the charts other than pie and donut charts
         if (this.isVisuallyGrouped && !isPieType(this.type)) {
-            datum = this.chartData;
+            this._processedData = this.chartData;
         } else {
-            datum = this.getChartData();
+            this._processedData = this.processChartData();
         }
         // checking the parent container before plotting the chart
         if (!element[0].getBoundingClientRect().height) {
@@ -788,9 +802,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
         // In case of invalid axis show no data available message
         if (!this.isValidAxis()) {
-            datum = [];
+            this._processedData = [];
         }
-        nv.addGraph(() => this.configureChart(datum),  () => {
+        nv.addGraph(() => this.configureChart(),  () => {
             /*Bubble chart has an time out delay of 300ms in their implementation due to which we
             * won't be getting required data points on attaching events
             * hence delaying it 600ms*/
