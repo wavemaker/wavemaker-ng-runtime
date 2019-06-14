@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective, TimepickerComponent } from 'ngx-bootstrap';
 
-import { addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
+import { addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
@@ -195,12 +195,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // adding class for time widget dropdown menu
         const tpElements  = document.querySelectorAll('timepicker');
         _.forEach(tpElements, (element) => {
-            addClass(element.parentElement as HTMLElement, 'app-datetime');
+            addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
 
         this.bsDatePickerDirective.hide();
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
+        adjustContainerPosition($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
     }
 
     private onDatePickerOpen() {
@@ -211,6 +212,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
            this.hightlightToday();
         }
         this.addDatepickerKeyboardEvents(this, true);
+        adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
     }
 
     /**

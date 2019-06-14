@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { TimepickerComponent } from 'ngx-bootstrap';
 
-import { $appDigest, addClass, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
+import { $appDigest, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
@@ -325,9 +325,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public onShown() {
         const tpElements  = document.querySelectorAll('timepicker');
         _.forEach(tpElements, element => {
-            addClass(element.parentElement as HTMLElement, 'app-datetime');
+            addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
+        adjustContainerPosition($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
     }
 }

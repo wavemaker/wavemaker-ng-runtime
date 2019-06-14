@@ -5,7 +5,7 @@ import { debounceTime, mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
 
-import { addClass, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
 
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, transformData } from '../../../utils/form-utils';
@@ -383,6 +383,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.typeaheadContainer = this.typeahead._container || (this.typeahead as any)._typeahead.instance;
             (this.typeaheadContainer as any).liElements = this.liElements;
             (this.typeaheadContainer as any).ulElement = this.ulElement;
+            adjustContainerPosition($('typeahead-container'), this.nativeElement, (this.typeahead as any)._typeahead, $('typeahead-container .dropdown-menu'));
+
         });
 
         fn();
