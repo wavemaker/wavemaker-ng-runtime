@@ -16,6 +16,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     private proxyModel: number;
     private numberNotInRange: boolean;
     private isInvalidNumber: boolean;
+    private isDefaultQuery: boolean = true;
     public displayValue: string;
     private numberfilter: string;
     private localefilter: string;
@@ -51,6 +52,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             this._onChange();
             return;
         }
+        // if the widget has default value and if we change the locale, the value should be in selected locale format.
+        if (this.isDefaultQuery) {
+            (value as any)  = this.transformNumber(value);
+        }
+
         // get a valid number form the text.
         const model = this.parseNumber(value.toString());
         // if the number is valid or if number is not in range update the model value.
@@ -248,6 +254,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     public validateInputEntry($event) {
+
+        this.isDefaultQuery = false;
 
         // allow actions if control key is pressed or if backspace is pressed. (for Mozilla).
         if ($event.ctrlKey || _.includes(['Backspace', 'ArrowRight', 'ArrowLeft', 'Tab', 'Enter'], $event.key)) {
