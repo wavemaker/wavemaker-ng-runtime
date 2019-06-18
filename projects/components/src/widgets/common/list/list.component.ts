@@ -552,7 +552,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      */
     private getListItemByModel(listModel): ListItemDirective {
         return this.listItems.find((listItem) => {
-            if (_.isEqual(listItem.item, listModel)) {
+            let itemObj = listItem.item;
+            if (this.groupby) {
+                // If groupby is enabled, item contains _groupIndex property which should be excluded while comparing model.
+                itemObj = _.clone(itemObj);
+                delete itemObj._groupIndex;
+            }
+            if (_.isEqual(itemObj, listModel)) {
                 return true;
             }
         }) || null;
