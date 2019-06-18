@@ -280,6 +280,10 @@ export class TableCUDDirective {
             onCancel: () => {
                 triggerFn(options.cancelRowDeleteCallback);
                 this.dialogService.closeAppConfirmDialog();
+            },
+            onOpen: () => {
+                // Focus the cancel button on open
+                $('.cancel-action').focus();
             }
         });
     }
