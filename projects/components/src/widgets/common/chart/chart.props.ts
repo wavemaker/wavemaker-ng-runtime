@@ -11,6 +11,7 @@ export const registerProps = () => {
                 ['barspacing', {value: 'medium', ...PROP_STRING}],
                 ['bubblesize', PROP_STRING],
                 ['centerlabel', PROP_STRING],
+                ['class', PROP_STRING],
                 ['customcolors', PROP_STRING],
                 ['dataset', PROP_ANY],
                 ['datasource', PROP_STRING],
