@@ -641,6 +641,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.bindScrollEvt();
             }
         }
+
+        // Added render callback event. This method(onListRender) is calling multiple times so checking isDatachanged flag because this falg is changed whenever new data is rendered.
+        if (this.isDataChanged) {
+            this.invokeEventCallback('render', {$data: this.fieldDefs});
+        }
+
         this.isDataChanged = false;
     }
 
