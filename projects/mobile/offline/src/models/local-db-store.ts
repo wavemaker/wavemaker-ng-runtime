@@ -1,7 +1,7 @@
 import { File } from '@ionic-native/file';
 import { SQLiteObject } from '@ionic-native/sqlite';
 
-import { convertToBlob } from '@wm/core';
+import { convertToBlob, isDefined } from '@wm/core';
 import { DeviceFileService } from '@wm/mobile/core';
 import { SWAGGER_CONSTANTS } from '@wm/variables';
 
