@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['animation', {value: 'slide-in', ...PROP_STRING}],
                 ['class', PROP_STRING],
-                ['columnwidth', PROP_NUMBER],
+                ['columnwidth', { value: 2, ...PROP_NUMBER}],
                 ['content', PROP_STRING],
                 ['gestures', {value: 'on', ... PROP_STRING}],
                 ['name', PROP_STRING],

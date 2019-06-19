@@ -68,6 +68,7 @@ export class AppRef {
     projectName: string;
     isPrefabType: boolean;
     isApplicationType: boolean;
+    isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
 
     appLocale: any;

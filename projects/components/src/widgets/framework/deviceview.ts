@@ -49,9 +49,11 @@ const hidePageContainers = (leftNavEle: HTMLElement, searchEle?: HTMLElement) =>
 /**
  * binds the touch event for content
  */
-const bindContentEvents = (leftNavEle: HTMLElement, pageContainer: HTMLElement, searchContainer: any) => {
-    // touch content to hide nav pane and left panel
-    bindTapEvtHandler(pageContainer, hidePageContainers.bind(this, leftNavEle, searchContainer));
+const bindContentEvents = (leftNavEle: HTMLElement, pageContainer: HTMLElement, searchContainer: any, isTablet = false) => {
+    if (!isTablet) {
+        // touch content to hide nav pane and left panel
+        bindTapEvtHandler(pageContainer, hidePageContainers.bind(this, leftNavEle, searchContainer));
+    }
 };
 
 const bindLeftPanelEvents = (leftNavEle: HTMLElement, searchEle: HTMLElement) => {
@@ -104,7 +106,7 @@ const bindSearchIconEvent = (searchElements, leftNavEle: HTMLElement) => {
 
 };
 
-export const updateDeviceView  = (element: HTMLElement) => {
+export const updateDeviceView  = (element: HTMLElement, isTablet = false) => {
 
     const leftNavEle = element.querySelector(roleSelector(CLASS_NAME.LEFT_PANEL)) as HTMLElement;
     const rightNavEle = element.querySelector(roleSelector(CLASS_NAME.RIGHT_PANEL)) as HTMLElement;
@@ -112,7 +114,7 @@ export const updateDeviceView  = (element: HTMLElement) => {
     const searchEle =  headerEle && headerEle.querySelector(`.${CLASS_NAME.SEARCH}`) as HTMLElement;
     const pageEle = element.querySelector(`.${CLASS_NAME.CONTENT}`) as HTMLElement;
 
-    bindContentEvents(leftNavEle, pageEle, searchEle);
+    bindContentEvents(leftNavEle, pageEle, searchEle, isTablet);
 
     if (leftNavEle) {
         bindLeftPanelEvents(leftNavEle, searchEle);
