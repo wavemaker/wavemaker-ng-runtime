@@ -55,7 +55,8 @@ export class IdResolver implements Worker {
                 case 'updateMultiPartTableData':
                 case 'deleteTableData':
                     return this.localDBManagementService.getStore(dataModelName, entityName).then(store => {
-                        this.exchangeId(store, dataModelName, entityName, change.params);
+                        // on update call, passing id to exchangeId as change.params id(local value 10000000+) is not updated with the latest id from db
+                        this.exchangeId(store, dataModelName, entityName, change.params, 'id');
                         if (change.params.data) {
                             return this.exchangeIds(store, dataModelName, entityName, change.params.data);
                         }

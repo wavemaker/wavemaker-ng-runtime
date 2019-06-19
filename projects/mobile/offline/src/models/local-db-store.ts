@@ -228,14 +228,14 @@ export class LocalDBStore {
         if (this.primaryKeyName) {
             const idValue = entity[this.primaryKeyName];
             if (this.primaryKeyField.sqlType === 'number'
-                && _.isString(idValue)
-                && _.isEmpty(_.trim(idValue))) {
-                entity[this.primaryKeyName] = undefined;
+                && (!isDefined(idValue) || (_.isString(idValue) && _.isEmpty(_.trim(idValue))))) {
+                if (this.primaryKeyField.generatorType === 'identity') {
+                    // updating the id with the latest id obtained from nextId.
+                    entity[this.primaryKeyName] = this.localDbManagementService.nextIdCount();
+                } else {
+                    entity[this.primaryKeyName] = undefined;
+                }
             }
-        }
-        // updating the id with the latest id obtained from nextId.
-        if (this.primaryKeyField.sqlType === 'number' && this.primaryKeyField.generatorType === 'identity') {
-            entity[this.primaryKeyName] = this.localDbManagementService.nextIdCount();
         }
         const rowData = mapObjToRow(this, entity);
         const params = this.entitySchema.columns.map(f => rowData[f.name]);
