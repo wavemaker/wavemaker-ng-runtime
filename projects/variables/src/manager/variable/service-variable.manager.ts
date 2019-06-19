@@ -74,11 +74,15 @@ export class ServiceVariableManager extends BaseVariableManager {
         if (isResponsePageable) {
             dataSet = response.content;
             pagination = _.omit(response, 'content');
-            advancedOptions = this.prepareCallbackOptions(options.xhrObj, {pagination: pagination, rawData: dataSet});
         } else {
             dataSet = response;
-            advancedOptions = this.prepareCallbackOptions(options.xhrObj, {rawData: dataSet});
         }
+        /**
+         * send pagination object with advancedOptions all the time.
+         * With this, user can provide pagination option, even if it is not there.
+         * applicable to 3rd party services that do not support pagination out of the box.
+         */
+        advancedOptions = this.prepareCallbackOptions(options.xhrObj, {pagination: pagination, rawData: dataSet});
 
         // EVENT: ON_RESULT
         initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, response, advancedOptions);
