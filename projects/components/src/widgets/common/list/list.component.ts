@@ -838,6 +838,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         } else if (key === 'pulltorefresh' && nv) {
             this.app.notify('pullToRefresh:enable');
             this.subscribeToPullToRefresh();
+        } else if (key === 'paginationclass') {
+            if (this.dataNavigator) {
+                // Adding setTimeout because in pagination component updateNavSize method is overriding navigationclass
+                setTimeout( () => this.dataNavigator.navigationClass = nv);
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
