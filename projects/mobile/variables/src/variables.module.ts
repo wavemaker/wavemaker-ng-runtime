@@ -36,6 +36,41 @@ import { FileSelectorService, ProcessManagementService } from '@wm/mobile/compon
 })
 export class VariablesModule {
 
+    private static initialized = false;
+    // Device variable services have to be added only once in the app life-cycle.
+    private static initialize(app: App,
+                              appVersion: AppVersion,
+                              barcodeScanner: BarcodeScanner,
+                              changeLogService: ChangeLogService,
+                              calendar: Calendar,
+                              contacts: Contacts,
+                              camera: Camera,
+                              fileOpener: DeviceFileOpenerService,
+                              fileSelectorService: FileSelectorService,
+                              fileUploader: DeviceFileUploadService,
+                              device: Device,
+                              geoLocation: Geolocation,
+                              localDBDataPullService: LocalDBDataPullService,
+                              localDBManagementService: LocalDBManagementService,
+                              mediaCapture: MediaCapture,
+                              processManagementService: ProcessManagementService,
+                              securityService: SecurityService,
+                              networkService: NetworkService,
+                              vibrateService: Vibration) {
+        if (this.initialized) {
+            return;
+        }
+        this.initialized = true;
+        const deviceVariableManager = VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.DEVICE) as DeviceVariableManager;
+        deviceVariableManager.registerService(new CameraService(camera, mediaCapture));
+        deviceVariableManager.registerService(new CalendarService(calendar));
+        deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
+        deviceVariableManager.registerService(new ContactsService(contacts));
+        deviceVariableManager.registerService(new DatasyncService(app, changeLogService, fileSelectorService, localDBManagementService, localDBDataPullService, processManagementService, securityService, networkService));
+        deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
+        deviceVariableManager.registerService(new ScanService(barcodeScanner));
+    }
+
     constructor(
         app: App,
         appVersion: AppVersion,
@@ -57,13 +92,24 @@ export class VariablesModule {
         networkService: NetworkService,
         vibrateService: Vibration
     ) {
-        const deviceVariableManager = VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.DEVICE) as DeviceVariableManager;
-        deviceVariableManager.registerService(new CameraService(camera, mediaCapture));
-        deviceVariableManager.registerService(new CalendarService(calendar));
-        deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
-        deviceVariableManager.registerService(new ContactsService(contacts));
-        deviceVariableManager.registerService(new DatasyncService(app, changeLogService, fileSelectorService, localDBManagementService, localDBDataPullService, processManagementService, securityService, networkService));
-        deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
-        deviceVariableManager.registerService(new ScanService(barcodeScanner));
+        VariablesModule.initialize(app,
+                                    appVersion,
+                                    barcodeScanner,
+                                    changeLogService,
+                                    calendar,
+                                    contacts,
+                                    camera,
+                                    fileOpener,
+                                    fileSelectorService,
+                                    fileUploader,
+                                    device,
+                                    geoLocation,
+                                    localDBDataPullService,
+                                    localDBManagementService,
+                                    mediaCapture,
+                                    processManagementService,
+                                    securityService,
+                                    networkService,
+                                    vibrateService);
     }
 }

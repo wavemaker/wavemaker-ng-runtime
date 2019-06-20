@@ -105,30 +105,26 @@ export class MobileRuntimeModule {
         };
     }
 
-    private _$appEl;
-
-    constructor(
-        private app: App,
-        private cookieService: CookieService,
-        private deviceFileOpenerService: DeviceFileOpenerService,
-        private deviceService: DeviceService,
-        private securityService: SecurityService,
-        private httpService: AbstractHttpService,
-        private extAppMessageService: ExtAppMessageService,
-        private networkService: NetworkService,
-        private webProcessService: WebProcessService
-    ) {
-        this._$appEl = $('.wm-app:first');
-        this._$appEl.addClass('wm-mobile-app');
-        app.deployedUrl = this.getDeployedUrl();
-        this.getDeviceOS().then(os => {
+    private static initialized = false;
+    // Startup services have to be added only once in the app life-cycle.
+    private static initializeRuntime(runtimeModule: MobileRuntimeModule,
+                      app: App,
+                      cookieService: CookieService,
+                      deviceFileOpenerService: DeviceFileOpenerService,
+                      deviceService: DeviceService) {
+        if (this.initialized) {
+            return;
+        }
+        this.initialized = true;
+        app.deployedUrl = runtimeModule.getDeployedUrl();
+        runtimeModule.getDeviceOS().then(os => {
             app.selectedViewPort = {
                 os: os
             };
-            this.applyOSTheme(os);
+            runtimeModule.applyOSTheme(os);
         });
         if (hasCordova()) {
-            this.handleKeyBoardClass();
+            runtimeModule.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
             app.subscribe('userLoggedIn', () => {
                 let url = $rootScope.project.deployedUrl;
@@ -151,16 +147,34 @@ export class MobileRuntimeModule {
                     localStorage.setItem('remoteSync', flag ? 'true' : 'false');
                 };
             }
-            this.addAuthInBrowser();
+            runtimeModule.addAuthInBrowser();
         }
         deviceService.start();
         deviceService.whenReady().then(() => {
             if (hasCordova()) {
-                this._$appEl.addClass('cordova');
-                this.exposeOAuthService();
+                runtimeModule._$appEl.addClass('cordova');
+                runtimeModule.exposeOAuthService();
                 navigator.splashscreen.hide();
             }
         });
+    }
+
+    private _$appEl;
+
+    constructor(
+        private app: App,
+        private cookieService: CookieService,
+        private deviceFileOpenerService: DeviceFileOpenerService,
+        private deviceService: DeviceService,
+        private securityService: SecurityService,
+        private httpService: AbstractHttpService,
+        private extAppMessageService: ExtAppMessageService,
+        private networkService: NetworkService,
+        private webProcessService: WebProcessService
+    ) {
+        this._$appEl = $('.wm-app:first');
+        this._$appEl.addClass('wm-mobile-app');
+        MobileRuntimeModule.initializeRuntime(this, this.app, this.cookieService, this.deviceFileOpenerService, this.deviceService);
     }
 
     private exposeOAuthService() {
