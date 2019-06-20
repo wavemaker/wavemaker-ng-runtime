@@ -7,7 +7,7 @@ import { $appDigest, App } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback } from '@wm/variables';
 
-declare const navigator;
+declare const navigator, $;
 /**
  * this file contains all device operations under 'device' service.
  */
@@ -97,31 +97,55 @@ class CurrentGeoPositionOperation implements IDeviceVariableOperation {
     ];
     public readonly requiredCordovaPlugins = ['GEOLOCATION'];
 
-    constructor (private geoLocation: Geolocation) {
+    private lastKnownPosition;
+    private waitingQueue = [];
+    private watchId;
 
+    constructor (private geoLocation: Geolocation) {}
+
+    private watchPosition() {
+        if (this.watchId) {
+            navigator.geolocation.clearWatch(this.watchId);
+        }
+        this.watchId = this.geoLocation.watchPosition().subscribe(position => {
+            this.lastKnownPosition = {
+                coords: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    altitude: position.coords.altitude,
+                    accuracy: position.coords.accuracy,
+                    altitudeAccuracy: position.coords.altitudeAccuracy,
+                    heading: position.coords.heading,
+                    speed: position.coords.speed
+                },
+                timestamp: position.timestamp
+            };
+            if (this.waitingQueue.length > 0) {
+                this.waitingQueue.forEach(fn => fn(this.lastKnownPosition));
+                this.waitingQueue.length = 0;
+            }
+            $(document).off('touchend.usergesture');
+        });
     }
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
+        if (!this.watchId) {
+            this.watchPosition();
+            $(document).on('touchend.usergesture', () => this.watchPosition());
+        }
         const geoLocationOptions: GeolocationOptions = {
             maximumAge: dataBindings.get('geolocationMaximumAge') * 1000,
             timeout: dataBindings.get('geolocationTimeout') * 1000,
             enableHighAccuracy: dataBindings.get('geolocationHighAccuracy')
         };
-        return this.geoLocation.getCurrentPosition(geoLocationOptions)
-            .then(position => {
-                return {
-                    coords: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        altitude: position.coords.altitude,
-                        accuracy: position.coords.accuracy,
-                        altitudeAccuracy: position.coords.altitudeAccuracy,
-                        heading: position.coords.heading,
-                        speed: position.coords.speed
-                    },
-                    timestamp: position.timestamp
-                };
+        if (this.lastKnownPosition) {
+            return Promise.resolve(this.lastKnownPosition);
+        }
+        return new Promise(resolve => {
+            this.waitingQueue.push(position => {
+                resolve(position);
             });
+        });
     }
 }
 
