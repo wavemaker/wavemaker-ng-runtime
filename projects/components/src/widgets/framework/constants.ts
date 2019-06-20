@@ -1,6 +1,7 @@
 
 export const EVENTS_MAP = new Map<string, string>([
     // ['enterkeypress', 'keypress.enter']
+   ['tap', 'click']
 ]);
 
 
