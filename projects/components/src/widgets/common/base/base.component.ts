@@ -413,6 +413,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         };
 
         this.eventHandlers.set(eventName, {callback: eventCallback, locals});
+        // prepend eventName with on and convert it to camelcase.
+        // eg, "click" ---> onClick
+        const onEventName =  _.camelCase(`on-${eventName}`);
+        // save the eventCallback in widgetScope.
+        this[onEventName] = eventCallback;
 
         // events needs to be setup after viewInit
         this.toBeSetupEventsQueue.push(() => {
