@@ -432,6 +432,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         if (this.isRange === 'true') {
             this.ngform.addControl(fieldName + '_max', this.createControl());
+            // registering for valueChanges on MaxformWidget
+            const onMaxValueChangeSubscription = this._maxControl.valueChanges
+                .pipe(debounceTime(200))
+                .subscribe(this.onValueChange.bind(this));
+            this.registerDestroyListener(() => onMaxValueChangeSubscription.unsubscribe());
         }
         this.value =  _.get(this.form.formdata, this._fieldName);
     }
