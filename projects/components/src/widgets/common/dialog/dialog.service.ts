@@ -48,14 +48,31 @@ export class DialogServiceImpl {
     }
 
     private getDialogRef(name: string, scope?: any) {
-        const dialofRefMap = this.dialogRefsCollection.get(name);
+        const dialogRefMap = this.dialogRefsCollection.get(name);
         let dialogRef;
 
         if (scope) {
-            dialogRef = dialofRefMap.get(scope);
+            dialogRef = dialogRefMap.get(scope);
+            if (!dialogRef) {
+                // Check if the scope is App level scope
+                // else throw a console error
+                if (!scope.pageName && !scope.partialName && !scope.prefabName) {
+                    dialogRefMap.forEach((dRef, dialogScope) => {
+                        // Check if the collection of dialogs have a "common" partial scope
+                        // If yes use that else through a console error
+                        if (dialogScope && dialogScope.partialName === 'Common') {
+                            dialogRef = dRef;
+                        } else {
+                            console.error('No dialog with the name "' + name + '" found in the App scope.');
+                        }
+                    });
+                } else {
+                    console.error('No dialog with the name "' + name + '" found in the given scope.');
+                }
+            }
         } else {
-            if (dialofRefMap.size === 1) {
-                dialogRef = dialofRefMap.entries().next().value[1];
+            if (dialogRefMap.size === 1) {
+                dialogRef = dialogRefMap.entries().next().value[1];
             } else {
                 console.error('There are multiple instances of this dialog name. Please provide the Page/Partial/App instance in which the dialog exists.');
             }
