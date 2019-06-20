@@ -60,7 +60,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     public ngAfterViewInit() {
         setTimeout(() => {
             this._eventNotifier.start();
-            updateDeviceView(this.nativeElement);
+            updateDeviceView(this.nativeElement, this.getAppInstance().isTabletApplicationType);
         }, 1);
     }
 

@@ -1,6 +1,6 @@
 import { Directive, Injector } from '@angular/core';
 
-import { addClass, removeClass, switchClass, toggleClass } from '@wm/core';
+import { App, addClass, removeClass, switchClass, toggleClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -38,12 +38,11 @@ export class LeftPanelDirective extends StylableComponent {
 
     public $ele;
     public $page;
-    public isTabletApplicationType = false;
 
     private _destroyCollapseActionListener: () => void;
     private _leftPanelAnimator;
 
-    constructor(private page: PageDirective, inj: Injector) {
+    constructor(public app: App, private page: PageDirective, inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$ele = this.$element;
@@ -51,6 +50,9 @@ export class LeftPanelDirective extends StylableComponent {
         addClass(this.$page[0], 'left-panel-collapsed-container');
         if (this.columnwidth) {
             this.setLeftPanelWidth(['md', 'sm'], this.columnwidth);
+        }
+        if (this.app.isTabletApplicationType) {
+            addClass(this.nativeElement, 'wm-tablet-app-left-panel');
         }
     }
 
@@ -73,7 +75,7 @@ export class LeftPanelDirective extends StylableComponent {
         removeClass(this.nativeElement, 'swipee-transition');
         switchClass(this.nativeElement, 'left-panel-expanded', 'left-panel-collapsed');
         this.expanded = true;
-        if (!(this.isTabletApplicationType && this.animation === AnimationType.SLIDE_IN)) {
+        if (!(this.app.isTabletApplicationType && this.animation === AnimationType.SLIDE_IN)) {
             this._destroyCollapseActionListener = this.listenForCollapseAction();
         }
         switchClass(this.$page[0], 'left-panel-expanded-container', 'left-panel-collapsed-container');
@@ -129,7 +131,13 @@ export class LeftPanelDirective extends StylableComponent {
     }
 
     public  toggle(): void {
-        this.$ele.swipeAnimation(this.expanded ? 'gotoLower' : 'gotoUpper');
+        if (this.app.isTabletApplicationType) {
+            setTimeout(() => {
+                this.expanded ? this.collapse() : this.expand();
+            }, 50);
+        } else {
+            this.$ele.swipeAnimation(this.expanded ? 'gotoLower' : 'gotoUpper');
+        }
     }
 
     private listenForCollapseAction(): () => void {

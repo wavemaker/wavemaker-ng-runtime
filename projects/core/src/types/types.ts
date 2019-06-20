@@ -63,6 +63,7 @@ export abstract class App {
     projectName: string;
     isPrefabType: boolean;
     isApplicationType: boolean;
+    isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
     changeLocale: Function;
     getSelectedLocale: Function;

@@ -34,7 +34,7 @@ export class LeftPanelAnimator extends SwipeAnimation {
                 'lower': -(this._leftPanelWidth - offset)
             };
         }
-        if (this.leftPanel.isTabletApplicationType) {
+        if (this.leftPanel.app.isTabletApplicationType) {
             offset = 53.32;
         }
         return {
@@ -65,7 +65,7 @@ export class LeftPanelAnimator extends SwipeAnimation {
         this._$animatedElements = this.leftPanel.$ele;
         if (this.leftPanel.animation === AnimationType.SLIDE_IN) {
             this._$animatedElements = this._$animatedElements.add(this.leftPanel.$page);
-            if (this.leftPanel.isTabletApplicationType) {
+            if (this.leftPanel.app.isTabletApplicationType) {
                 return [
                     {
                         'target': this.leftPanel.$ele,

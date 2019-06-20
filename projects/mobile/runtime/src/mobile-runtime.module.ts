@@ -51,7 +51,7 @@ enum OS {
     IOS = 'ios',
     ANDROID = 'android'
 }
-
+const MINIMUM_TAB_WIDTH = 768;
 const KEYBOARD_CLASS = 'keyboard';
 
 const ionicServices = [
@@ -177,7 +177,12 @@ export class MobileRuntimeModule {
         private webProcessService: WebProcessService
     ) {
         this._$appEl = $('.wm-app:first');
-        this._$appEl.addClass('wm-mobile-app');
+        if (this._$appEl.width() >= MINIMUM_TAB_WIDTH) {
+            app.isTabletApplicationType =  true;
+            this._$appEl.addClass('wm-tablet-app');
+        } else {
+            this._$appEl.addClass('wm-mobile-app');
+        }
         MobileRuntimeModule.initializeRuntime(this, this.app, this.cookieService, this.deviceFileOpenerService, this.deviceService);
     }
 
