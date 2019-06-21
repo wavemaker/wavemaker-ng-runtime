@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AbstractHttpService } from '@wm/core';
+import { AbstractHttpService, App } from '@wm/core';
 
 const cache = new Map<string, string>();
 
@@ -20,6 +20,10 @@ export class AppResourceManagerService {
             }
             return response;
         });
+    }
+
+    public clearCache() {
+        cache.clear();
     }
 
     constructor(private $http: AbstractHttpService) {}

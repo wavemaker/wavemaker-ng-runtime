@@ -6,6 +6,7 @@ export enum ComponentType {
 
 export abstract class ComponentRefProvider {
     abstract async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any>;
+    abstract clearComponentFactoryRefCache();
 }
 
 export abstract class PrefabConfigProvider {

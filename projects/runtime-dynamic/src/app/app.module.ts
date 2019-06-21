@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 
-import { getWmProjectProperties } from '@wm/core';
+import { App, getWmProjectProperties } from '@wm/core';
 
 import {
     AppComponent,
@@ -62,5 +62,10 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     bootstrap: [AppComponent]
 })
 export class AppModule {
-
+    constructor(private app: App, private inj: Injector, private componentRefProvider: ComponentRefProvider) {
+        if (window['cordova']) {
+            // clear the cached urls on logout, to load the Login Page and not the Main Page as app reload(window.location.reload) is not invoked in mobile
+            this.app.subscribe('userLoggedOut', this.componentRefProvider.clearComponentFactoryRefCache.bind(this.componentRefProvider));
+        }
+    }
 }

@@ -214,10 +214,14 @@ export class ComponentRefProviderService extends ComponentRefProvider {
 
     public async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any> {
         // check in the cache.
-        let componentFactoryRef = componentFactoryRefCache.get(componentType).get(componentName);
+        const componentFactoryMap = componentFactoryRefCache.get(componentType);
+        let componentFactoryRef;
+        if (componentFactoryMap) {
+            componentFactoryRef = componentFactoryMap.get(componentName);
 
-        if (componentFactoryRef) {
-            return componentFactoryRef;
+            if (componentFactoryRef) {
+                return componentFactoryRef;
+            }
         }
 
         return this.loadResourcesOfFragment(componentName, componentType)
@@ -242,5 +246,14 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     );
                 }
             });
+    }
+
+    // clears the cache map
+    public clearComponentFactoryRefCache() {
+        this.resouceMngr.clearCache();
+        fragmentCache.clear();
+        componentFactoryRefCache.forEach(map => {
+            map.clear();
+        });
     }
 }
