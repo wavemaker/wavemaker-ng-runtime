@@ -107,24 +107,37 @@ class CurrentGeoPositionOperation implements IDeviceVariableOperation {
         if (this.watchId) {
             navigator.geolocation.clearWatch(this.watchId);
         }
-        this.watchId = this.geoLocation.watchPosition().subscribe(position => {
-            this.lastKnownPosition = {
-                coords: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    altitude: position.coords.altitude,
-                    accuracy: position.coords.accuracy,
-                    altitudeAccuracy: position.coords.altitudeAccuracy,
-                    heading: position.coords.heading,
-                    speed: position.coords.speed
-                },
-                timestamp: position.timestamp
-            };
-            if (this.waitingQueue.length > 0) {
-                this.waitingQueue.forEach(fn => fn(this.lastKnownPosition));
-                this.waitingQueue.length = 0;
+        const options = {
+            maximumAge: 3000,
+            timeout: 30000,
+            enableHighAccuracy: true
+        };
+        this.watchId = this.geoLocation.watchPosition(options).subscribe(position => {
+            if (position['code']) {
+                this.watchId.unsubscribe();
+                this.watchId = null;
+            } else {
+                this.lastKnownPosition = {
+                    coords: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        altitude: position.coords.altitude,
+                        accuracy: position.coords.accuracy,
+                        altitudeAccuracy: position.coords.altitudeAccuracy,
+                        heading: position.coords.heading,
+                        speed: position.coords.speed
+                    },
+                    timestamp: position.timestamp
+                };
+                if (this.waitingQueue.length > 0) {
+                    this.waitingQueue.forEach(fn => fn(this.lastKnownPosition));
+                    this.waitingQueue.length = 0;
+                }
+                $(document).off('touchend.usergesture');
             }
-            $(document).off('touchend.usergesture');
+        }, () => {
+            this.watchId.unsubscribe();
+            this.watchId = null;
         });
     }
 
