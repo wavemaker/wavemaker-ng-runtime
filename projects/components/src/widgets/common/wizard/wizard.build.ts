@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-wizard', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmWizard ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmWizard role="tablist" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
