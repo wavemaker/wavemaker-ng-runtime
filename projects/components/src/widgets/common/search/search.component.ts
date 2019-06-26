@@ -327,7 +327,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.listenQuery = this.isUpdateOnKeyPress();
         this._modelByValue = undefined;
 
-
         // when input is cleared, reset the datavalue
         if (this.query === '') {
             this.queryModel = '';
@@ -338,6 +337,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             if ($event && $event.which !== 9) {
                 this.invokeEventCallback('submit', {$event});
             }
+        } else {
+            // invoking change event on every input value change.
+            this.invokeEventCallback('change', {
+                $event: $event,
+                newVal: this._modelByValue || this.query,
+                oldVal: (this as any).prevDatavalue
+            });
         }
         this.showClosebtn = (this.query !== '');
     }
@@ -682,7 +688,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByValue = item.value;
 
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue, $event || {}, true);
+        this.invokeOnChange(this.datavalue, $event || {});
         if (this.$element.hasClass('full-screen')) {
             this.closeSearch();
         }
