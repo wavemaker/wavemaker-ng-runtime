@@ -96,6 +96,8 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
             this.invokeEventCallback(this.fullscreen ? 'exitfullscreen' : 'fullscreen', {$event});
             this.fullscreen = !this.fullscreen;
             toggleClass(this.nativeElement, 'fullscreen', this.fullscreen);
+            // Re-plot the widgets inside panel
+            this.reDrawChildren();
         }
         this.computeDimensions();
     }
