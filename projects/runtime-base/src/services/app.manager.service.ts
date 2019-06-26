@@ -157,21 +157,24 @@ export class AppManagerService {
         if (!loggedInUser) {
             return;
         }
-
-        const securityConfig = this.$security.get();
-        if (securityConfig && securityConfig.securityEnabled && securityConfig.authenticated) {
-            loggedInUser.isAuthenticated = securityConfig.authenticated;
-            loggedInUser.roles           = securityConfig.userInfo.userRoles;
-            loggedInUser.name            = securityConfig.userInfo.userName;
-            loggedInUser.id              = securityConfig.userInfo.userId;
-            loggedInUser.tenantId        = securityConfig.userInfo.tenantId;
-        } else {
+        this.$security.load().then(()=>{
+            const securityConfig = this.$security.get();
+            if (securityConfig && securityConfig.securityEnabled && securityConfig.authenticated) {
+                loggedInUser.isAuthenticated = securityConfig.authenticated;
+                loggedInUser.roles           = securityConfig.userInfo.userRoles;
+                loggedInUser.name            = securityConfig.userInfo.userName;
+                loggedInUser.id              = securityConfig.userInfo.userId;
+                loggedInUser.tenantId        = securityConfig.userInfo.tenantId;
+            } else {
+                throw null;
+            }
+        }).catch(err => {
             loggedInUser.isAuthenticated = false;
             loggedInUser.roles           = [];
             loggedInUser.name            = undefined;
             loggedInUser.id              = undefined;
             loggedInUser.tenantId        = undefined;
-        }
+        });
     }
 
     /**
