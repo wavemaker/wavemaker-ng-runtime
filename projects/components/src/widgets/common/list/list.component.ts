@@ -460,7 +460,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private onDataChange(newVal) {
-        if (newVal) {
+        // Check for newVal is not empty
+        if (!_.isEmpty(newVal)) {
 
             this.noDataFound = false;
             this.isDataChanged = true;
