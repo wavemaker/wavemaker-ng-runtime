@@ -613,6 +613,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         this.firstSelectedItem = this.lastSelectedItem = null;
 
+        // Added render callback event. This method(onListRender) is calling multiple times so checking isDatachanged flag because this falg is changed whenever new data is rendered.
+        if (this.isDataChanged) {
+            this.invokeEventCallback('render', {$data: this.fieldDefs});
+        }
+
         // don't select first item if multi-select is enabled and at least item is already selected in the list.
         if (listItems.length && this.selectfirstitem && !( this._items.length && this.multiselect)) {
             const $firstItem: ListItemDirective = listItems.first;
@@ -628,7 +633,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             ) {
                 this.clearSelectedItems();
                 this.firstSelectedItem = this.lastSelectedItem = $firstItem;
-                this.toggleListItemSelection($firstItem);
+                // selecting the first record
+                this.selectItem(0);
             }
         } else {
             this.deselectListItems();
@@ -646,11 +652,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             } else {
                 this.bindScrollEvt();
             }
-        }
-
-        // Added render callback event. This method(onListRender) is calling multiple times so checking isDatachanged flag because this falg is changed whenever new data is rendered.
-        if (this.isDataChanged) {
-            this.invokeEventCallback('render', {$data: this.fieldDefs});
         }
 
         this.isDataChanged = false;
