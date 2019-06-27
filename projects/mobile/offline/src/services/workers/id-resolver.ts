@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { noop } from '@wm/core';
+import { isDefined, noop } from '@wm/core';
 
 import { Change, FlushContext, Worker } from './../change-log.service';
 import { LocalDBManagementService } from './../local-db-management.service';
@@ -41,12 +41,21 @@ export class IdResolver implements Worker {
                         .then(store => {
                             return this.exchangeIds(store, dataModelName, entityName, change.params.data)
                                 .then(() => {
+                                    const primaryKeyName = store.primaryKeyName;
                                     if (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity') {
-                                        const primaryKeyName = store.primaryKeyName;
                                         this.transactionLocalId = change['localId'] || change.params.data[primaryKeyName];
                                         change['dataLocalId'] = this.transactionLocalId;
                                         delete change.params.data[primaryKeyName];
                                     } else {
+                                        this.transactionLocalId = change.params.data[primaryKeyName];
+                                        const relationalPrimaryKeyValue = store.getValue(change.params.data, store.primaryKeyName);
+                                        // for the data referring to the relational table based on primary key assign the primaryField values to the relationalPrimaryKeyValue
+                                        if (isDefined(relationalPrimaryKeyValue)) {
+                                            change.params.data[primaryKeyName] = relationalPrimaryKeyValue;
+                                            if (this.transactionLocalId !== null) {
+                                                this.pushIdToStore(dataModelName, entityName, this.transactionLocalId, relationalPrimaryKeyValue);
+                                            }
+                                        }
                                         this.transactionLocalId = null;
                                     }
                                 });
