@@ -100,49 +100,45 @@ class CurrentGeoPositionOperation implements IDeviceVariableOperation {
     private lastKnownPosition;
     private waitingQueue = [];
     private watchId;
+    private options = {
+        maximumAge: 3000,
+        timeout: (2 * 60) * 1000,
+        enableHighAccuracy: true
+    };
 
     constructor (private geoLocation: Geolocation) {}
 
     private watchPosition() {
         if (this.watchId) {
             navigator.geolocation.clearWatch(this.watchId);
-        }
-        const options = {
-            maximumAge: 3000,
-            timeout: 30000,
-            enableHighAccuracy: true
-        };
-        this.watchId = this.geoLocation.watchPosition(options).subscribe(position => {
-            if (position['code']) {
-                this.watchId.unsubscribe();
-                this.watchId = null;
-            } else {
-                this.lastKnownPosition = {
-                    coords: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        altitude: position.coords.altitude,
-                        accuracy: position.coords.accuracy,
-                        altitudeAccuracy: position.coords.altitudeAccuracy,
-                        heading: position.coords.heading,
-                        speed: position.coords.speed
-                    },
-                    timestamp: position.timestamp
-                };
-                if (this.waitingQueue.length > 0) {
-                    this.waitingQueue.forEach(fn => fn(this.lastKnownPosition));
-                    this.waitingQueue.length = 0;
-                }
-                $(document).off('touchend.usergesture');
-            }
-        }, () => {
-            this.watchId.unsubscribe();
             this.watchId = null;
-        });
+        }
+        const options = window['WM_GEO_LOCATION_OPTIONS'] || this.options;
+        this.watchId = navigator.geolocation.watchPosition(position => {
+            this.lastKnownPosition = {
+                coords: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    altitude: position.coords.altitude,
+                    accuracy: position.coords.accuracy,
+                    altitudeAccuracy: position.coords.altitudeAccuracy,
+                    heading: position.coords.heading,
+                    speed: position.coords.speed
+                },
+                timestamp: position.timestamp
+            };
+            if (this.waitingQueue.length > 0) {
+                this.waitingQueue.forEach(fn => fn(this.lastKnownPosition));
+                this.waitingQueue.length = 0;
+            }
+            $(document).off('touchend.usergesture');
+        }, () => {
+            this.watchId = null;
+        }, options);
     }
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
-        if (!this.watchId) {
+        if (!this.watchId || !this.lastKnownPosition) {
             this.watchPosition();
             $(document).on('touchend.usergesture', () => this.watchPosition());
         }
@@ -155,9 +151,18 @@ class CurrentGeoPositionOperation implements IDeviceVariableOperation {
             return Promise.resolve(this.lastKnownPosition);
         }
         return new Promise(resolve => {
-            this.waitingQueue.push(position => {
+            const c = position => {
                 resolve(position);
-            });
+            };
+            setTimeout(() => {
+                const index = this.waitingQueue.indexOf(c);
+                if (index > -1) {
+                    this.waitingQueue.splice(index, 1);
+                    resolve(this.model);
+                }
+            }, this.options.timeout);
+
+            this.waitingQueue.push(c);
         });
     }
 }
