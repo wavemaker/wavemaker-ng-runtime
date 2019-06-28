@@ -417,7 +417,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
         };
 
-        this.eventHandlers.set(eventName, {callback: eventCallback, locals});
+        this.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
         // prepend eventName with on and convert it to camelcase.
         // eg, "click" ---> onClick
         const onEventName =  _.camelCase(`on-${eventName}`);
