@@ -838,7 +838,7 @@ $.widget('wm.datatable', {
                     event.which = 13;
                     $qTarget.trigger(event);
                 }
-            } 
+            }
             return;
         }
 
@@ -1206,7 +1206,7 @@ $.widget('wm.datatable', {
     },
 
     /* Toggles the table row selection. */
-    toggleRowSelection: function ($row, selected, e) {
+    toggleRowSelection: function ($row, selected, e, isSelectAll) {
         if (!$row.length) {
             return;
         }
@@ -1232,7 +1232,10 @@ $.widget('wm.datatable', {
             $checkbox = $row.find('td input[name="gridMultiSelect"]:checkbox:not(:disabled)');
             $checkbox.prop('checked', selected);
             this.preparedData[rowId].checked = selected;
-            this.updateSelectAllCheckboxState();
+            // if we check header checkbox(select/unselect all the records) then updating selectAll checkbox state is not required.
+            if (!isSelectAll) {
+                this.updateSelectAllCheckboxState();
+            }
         } else {
             this._deselectPreviousSelection($row, e);
         }
@@ -2210,7 +2213,7 @@ $.widget('wm.datatable', {
                     }
                     return $relatedTarget.is(invalidTargets);
                 }
-               
+
                 //If focus is on the same row, return here
                 if ($relatedTarget.is('tr.app-datagrid-row')) {
                     if ($relatedTarget.attr('data-row-id') === $row.attr('data-row-id')) {
@@ -2220,7 +2223,7 @@ $.widget('wm.datatable', {
                 if (isRelatedTargetRowAction || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null)) {
                     return;
                 }
-                // Save the Row if any button from Grid action is clicked / AddRow action is 
+                // Save the Row if any button from Grid action is clicked / AddRow action is
                 // triggered from the Row Actions
                 if (!isTargetGridAction && !isTargetRowAction) {
                     //Save the row on last column of the data table. If class has danger, confirm dialog is opened, so dont save the row. Do not save the row if focus is out of input file.
@@ -2432,7 +2435,9 @@ $.widget('wm.datatable', {
                 var $row = $(this).closest('tr.app-datagrid-row'),
                     rowId = $row.attr('data-row-id'),
                     rowData = self.options.data[rowId];
-                self.toggleRowSelection($row, checked, e);
+                // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
+                self.options.assignSelectedItems(rowData, e);
+                self.toggleRowSelection($row, checked, e, true);
                 if (checked && $.isFunction(self.options.onRowSelect)) {
                     self.options.onRowSelect(rowData, e);
                 }
