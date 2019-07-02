@@ -37,6 +37,11 @@ export class MobileHttpInterceptor implements HttpInterceptor {
 
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const subject = new Subject<HttpEvent<any>>();
+        const token = localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
+        if (token) {
+            // Clone the request to add the new header
+            request = request.clone({ headers: request.headers.set(getWmProjectProperties().xsrf_header_name, token) });
+        }
         const data = {request: request};
 
         // invoke the request only when device is ready.
@@ -213,11 +218,6 @@ class SecurityInterceptor implements RequestInterceptor {
     constructor(private app: App, private file: File, private securityService: SecurityService) {}
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
-        const token = localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
-        if (token) {
-            // Clone the request to add the new header
-            request = request.clone({ headers: request.headers.set(getWmProjectProperties().xsrf_header_name, token) });
-        }
         return new Promise<HttpRequest<any>>((resolve, reject) => {
             if (SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
                 return Promise.resolve().then(() => {
