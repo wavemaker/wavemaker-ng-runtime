@@ -554,7 +554,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private getListItemByModel(listModel): ListItemDirective {
         return this.listItems.find((listItem) => {
             let itemObj = listItem.item;
-            if (this.groupby) {
+            if (this.groupby && !_.has(listModel, '_groupIndex')) {
                 // If groupby is enabled, item contains _groupIndex property which should be excluded while comparing model.
                 itemObj = _.clone(itemObj);
                 delete itemObj._groupIndex;
@@ -610,14 +610,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * @param {QueryList<ListItemDirective>} listItems
      */
     private onListRender(listItems: QueryList<ListItemDirective>) {
-        const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
-
-        this.firstSelectedItem = this.lastSelectedItem = null;
-
         // Added render callback event. This method(onListRender) is calling multiple times so checking isDatachanged flag because this falg is changed whenever new data is rendered.
         if (this.isDataChanged) {
             this.invokeEventCallback('render', {$data: this.fieldDefs});
         }
+        const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
+
+        this.firstSelectedItem = this.lastSelectedItem = null;
 
         // don't select first item if multi-select is enabled and at least item is already selected in the list.
         if (listItems.length && this.selectfirstitem && !( this._items.length && this.multiselect)) {
@@ -643,6 +642,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 const listItem: ListItemDirective = this.getListItemByModel(selecteditem);
                 if (listItem) {
                     listItem.isActive = true;
+                    this.lastSelectedItem = listItem;
+                    // focus the active element
+                    listItem.nativeElement.focus();
                 }
             });
         }
