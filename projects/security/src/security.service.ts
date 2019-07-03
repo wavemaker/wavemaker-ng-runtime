@@ -15,6 +15,7 @@ export class SecurityService {
     config;
     lastLoggedInUser;
     loggedInUser;
+    loadPromise: Promise<any>;
     requestQueue: any = {};
 
     constructor(
@@ -34,14 +35,20 @@ export class SecurityService {
     }
 
     load() {
-        return new Promise((resolve, reject) => {
-            this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
-                this.config = response.body;
-                this.lastLoggedInUser = getClonedObject(this.loggedInUser);
-                this.loggedInUser = this.config.userInfo;
-                resolve(response.body);
-            });
+        if(this.loadPromise) {return this.loadPromise;}
+        this.loadPromise = new Promise((resolve, reject) => {
+                this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
+                    this.config = response.body;
+                    this.lastLoggedInUser = getClonedObject(this.loggedInUser);
+                    this.loggedInUser = this.config.userInfo;
+                    resolve(response.body);
+                }).catch((err)=>{
+                    reject(err);
+                }).finally(()=>{
+                    this.loadPromise = null;
+                });
         });
+        return this.loadPromise;
     }
 
     /**
