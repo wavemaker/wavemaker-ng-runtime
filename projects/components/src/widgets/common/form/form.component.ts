@@ -419,7 +419,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 this.widget.validationtype = (nv === true || nv === 'true') ? 'none' : 'default';
                 break;
             case 'formdata':
-                this.setFormData(nv);
+                // For livelist when multiselect is enabled, formdata will be array of objects. In this case consider the last object as formdata.
+                _.isArray(nv) ? this.setFormData(_.last(nv)) : this.setFormData(nv);
                 break;
             case 'defaultmode':
                 if (!this.isLayoutDialog) {
