@@ -68,6 +68,9 @@ export class LiveFormDirective {
     }
 
     onDataSourceChange() {
+        if (_.get(this.form.formFields, 'length')) {
+            this.form.isDataSourceUpdated = true;
+        }
         this.form.formFields.forEach(field => {
             if (!field.isDataSetBound && isDataSetWidget(field.widgettype)) {
                 if (field['is-related']) {

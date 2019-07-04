@@ -89,6 +89,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     autoupdate;
     public formlayout: any;
+    public isDataSourceUpdated: boolean;
     captionAlignClass: string;
     validationtype: string;
     captionalign: string;
@@ -421,6 +422,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             case 'formdata':
                 // For livelist when multiselect is enabled, formdata will be array of objects. In this case consider the last object as formdata.
                 _.isArray(nv) ? this.setFormData(_.last(nv)) : this.setFormData(nv);
+                // if dataset on the formFields are not set as the datasourceChange is triggered before the formFields are registered.
+                if (!this.isDataSourceUpdated) {
+                    this.onDataSourceChange();
+                }
                 break;
             case 'defaultmode':
                 if (!this.isLayoutDialog) {
