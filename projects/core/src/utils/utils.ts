@@ -339,11 +339,10 @@ export const getDateObj = (value): Date => {
      * if date value is string "20-05-2019" then new Date(value) return 20May2019 with current time in India,
      * whereas this will return 19May2019 with time lagging for few hours.
      * This is because it returns UTC time i.e. Coordinated Universal Time (UTC).
-     * To create date in local time use new Date('2019-05-20 00:00')
-     * only for string this applies not for timestamp values
+     * To create date in local time use moment
      */
-    if (_.isString(value) && isDefined(dateObj.getUTCFullYear)) {
-        dateObj = new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate(), dateObj.getUTCHours(), dateObj.getUTCMinutes(), dateObj.getUTCSeconds());
+    if (_.isString(value)) {
+        dateObj = new Date(moment(value).format());
     }
 
     if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
