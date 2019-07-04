@@ -146,7 +146,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                 // trim the extra spaces in bindings
                 let value = attr.value && attr.value.trim();
                 if (_.startsWith(value, 'bind:')) {
-                    // The markup of root node(table, list, carousel) attributes need to be updated only for specific properties mentioned in widgetList map.
+                    // The markup of root node(table, list, carousel) attributes conatains same dataset variable binding then those attributes need to be updated only for specific properties mentioned in widgetList map.
                     if (!widgetList[nodeName] || (widgetList[nodeName] && widgetList[nodeName].indexOf(attr.name) > -1)) {
                         // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                         if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet) {
@@ -154,17 +154,17 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                             value = value.replace(regex, referenceName);
                             value = 'bind:' + value;
                         }
-                        // Replace item if widget property is bound to livelist currentItem
-                        if (currentItemRegEx && currentItemRegEx.test(value)) {
-                            // Change value from 'bind:Widgets.formName.formWidgets.listName.currentItem' to 'bind:Widgets.listName.currentItem'
-                            if (value.includes('.formWidgets') || value.includes('.filterWidgets')) {
-                                value = value.replace(formWidgetsRegex, 'Widgets');
-                            }
-                            value = value.replace(currentItemRegEx, referenceName);
+                    }
+                    // Replace item if widget property is bound to livelist currentItem
+                    if (currentItemRegEx && currentItemRegEx.test(value)) {
+                        // Change value from 'bind:Widgets.formName.formWidgets.listName.currentItem' to 'bind:Widgets.listName.currentItem'
+                        if (value.includes('.formWidgets') || value.includes('.filterWidgets')) {
+                            value = value.replace(formWidgetsRegex, 'Widgets');
                         }
-                        if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
-                            value = value.replace(currentItemWidgetsRegEx, `${instance}currentItemWidgets`);
-                        }
+                        value = value.replace(currentItemRegEx, referenceName);
+                    }
+                    if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
+                        value = value.replace(currentItemWidgetsRegEx, `${instance}currentItemWidgets`);
                     }
                     attr.value = value;
                 }
