@@ -1435,7 +1435,9 @@ $.widget('wm.datatable', {
         this.gridBody.find('tr.app-datagrid-row.active').focus();
     },
     focusNewRow: function () {
-        this.gridBody.find('tr.always-new-row').find("input")[0].focus();
+        var newRow = this.gridBody.find('tr.always-new-row');
+        var newRowInputs = newRow && newRow.find("input") || [];
+        newRowInputs.length && newRowInputs[0].focus();
     },
     disableActions: function (val) {
         var $deleteBtns = this.gridBody.find('.delete-row-button'),
@@ -2035,7 +2037,8 @@ $.widget('wm.datatable', {
                 if (error) {
                   $target.focus();
                 } else {
-                  self.focusNewRow();
+                        self.focusActiveRow();
+                        self.focusNewRow();
                 }
               }
             });
