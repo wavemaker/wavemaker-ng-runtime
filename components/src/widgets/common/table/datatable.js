@@ -2198,14 +2198,15 @@ $.widget('wm.datatable', {
                         return;
                     }
                 }
-                if (isRelatedTargetRowAction || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null)) {
+                // If class has danger, confirm dialog is opened, so dont save the row.
+                if (isRelatedTargetRowAction || $row.hasClass("danger") || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null)) {
                     return;
                 }
                 // Save the Row if any button from Grid action is clicked / AddRow action is 
                 // triggered from the Row Actions
                 if (!isTargetGridAction && !isTargetRowAction) {
-                    //Save the row on last column of the data table. If class has danger, confirm dialog is opened, so dont save the row. Do not save the row if focus is out of input file.
-                    if (!isLastColumn || $row.hasClass("danger") || (!isLastColumn && e.relatedTarget === null) || $target.hasClass("file-upload")) {
+                    //Save the row on last column of the data table. Do not save the row if focus is out of input file.
+                    if (!isLastColumn || (!isLastColumn && e.relatedTarget === null) || $target.hasClass("file-upload")) {
                         return;
                     }
                     //If focusout is because of input element or row action or current row, dont save the row
