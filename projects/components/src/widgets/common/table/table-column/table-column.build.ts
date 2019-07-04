@@ -42,14 +42,17 @@ const getFilterTemplate = (attrs, pCounter)  => {
     const widget = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
     const fieldName = attrs.get('binding');
     const type = attrs.get('type') || 'string';
-    let datasourceBinding;
+    let datasourceBinding, submitEventBinding;
     const datasetAttr = attrs.get('filterdataset.bind');
     // when multicolumn is selected and filterwidget as autocomplete is assigned to dataset.
-    if (attrs.get('filterwidget') === 'autocomplete' && datasetAttr) {
-        const binddatasource = getDataSource(datasetAttr);
-        datasourceBinding = `dataset.bind="${datasetAttr}" datasource.bind="${binddatasource}"`;
+    if (attrs.get('filterwidget') === 'autocomplete') {
+        if (datasetAttr) {
+            const binddatasource = getDataSource(datasetAttr);
+            datasourceBinding = `dataset.bind="${datasetAttr}" datasource.bind="${binddatasource}"`;
+        }
+        submitEventBinding = `submit.event="changeFn('${fieldName}')"`;
     }
-    const innerTmpl = `#filterWidget formControlName="${fieldName + '_filter'}" ${datasourceBinding} change.event="changeFn('${fieldName}')"
+    const innerTmpl = `#filterWidget formControlName="${fieldName + '_filter'}" ${datasourceBinding} ${submitEventBinding} change.event="changeFn('${fieldName}')"
                         disabled.bind="isDisabled('${fieldName}')"`;
     const options = {inputType: 'filterinputtype'} ;
     const widgetTmpl = `${getFormWidgetTemplate(widget, innerTmpl, attrs, options)}`;
