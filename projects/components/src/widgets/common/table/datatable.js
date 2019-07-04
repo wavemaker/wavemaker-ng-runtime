@@ -2231,7 +2231,7 @@ $.widget('wm.datatable', {
                 // triggered from the Row Actions
                 if (!isTargetGridAction && !isTargetRowAction) {
                     //Save the row on last column of the data table. Do not save the row if focus is out of input file.
-                    if (!isLastColumn || (!isLastColumn && e.relatedTarget === null) || $target.hasClass("file-upload")) {
+                    if (!isLastColumn || (isLastColumn && e.relatedTarget === null) || $target.hasClass("file-upload")) {
                         return;
                     }
                     //If focusout is because of input element or row action or current row, dont save the row
