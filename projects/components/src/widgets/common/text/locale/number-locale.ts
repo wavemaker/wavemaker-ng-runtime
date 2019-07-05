@@ -124,7 +124,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {string}
      */
     private transformNumber(number): string {
-        return this.decimalPipe.transform(number, this.numberfilter, this.localefilter);
+        return this.decimalPipe.transform(number, this.numberfilter, this.localefilter || this.selectedLocale);
     }
 
     /**
