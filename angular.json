@@ -236,6 +236,23 @@
                         "project": "projects/components/ng-package.json"
                     }
                 },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/components/src/test.ts",
+                        "polyfills": "projects/components/polyfills.ts",
+                        "tsConfig": "projects/components/tsconfig.spec.json",
+                        "karmaConfig": "projects/components/karma.conf.js",
+                        "styles": [
+                            "../wavemaker-app-runtime/src/main/webapp/application/styles/css/wm-style.css"
+                        ],
+                        "scripts": [],
+//                        "assets": [
+//                            "src/favicon.ico",
+//                            "src/assets"
+//                        ]
+                    }
+                },
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
