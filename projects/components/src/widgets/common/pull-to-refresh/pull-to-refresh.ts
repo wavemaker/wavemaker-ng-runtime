@@ -37,7 +37,7 @@ export class PullToRefresh extends SwipeAnimation {
         // Subscribing for variable updates, wait till the response and stop the animation.
         this.cancelSubscription = this.app.subscribe('toggle-variable-state', (data) => {
             // data.active is true means the variable update has just started whereas false means update has ended.
-            if (data.active) {
+            if (data.active && this.animationInProgress) {
                 this.count++;
                 this.wait();
             } else if (this.count > 0) {
@@ -50,10 +50,10 @@ export class PullToRefresh extends SwipeAnimation {
         });
     }
 
-    public bounds() {
+    public bounds($event, $d) {
         const pageIscroll = (this.$el[0] as any).iscroll;
         // If scroll position is not at the top of the page then do not trigger the animation.
-        if (pageIscroll && !isNaN(pageIscroll.y) && pageIscroll.y !== 0) {
+        if ($d < 0 || (pageIscroll && !isNaN(pageIscroll.y) && pageIscroll.y !== 0)) {
             return {
                 lower: undefined,
                 upper: undefined
