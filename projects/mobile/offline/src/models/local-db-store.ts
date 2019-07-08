@@ -233,7 +233,9 @@ export class LocalDBStore {
                     // updating the id with the latest id obtained from nextId.
                     entity[this.primaryKeyName] = this.localDbManagementService.nextIdCount();
                 } else {
-                    entity[this.primaryKeyName] = undefined;
+                    // for assigned type, get the primaryKeyValue from the relatedTableData which is inside the entity
+                    const primaryKeyValue = this.getValue(entity, this.primaryKeyName);
+                    entity[this.primaryKeyName] = primaryKeyValue;
                 }
             }
         }
