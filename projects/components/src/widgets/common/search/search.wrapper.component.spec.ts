@@ -1,6 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ImagePipe } from '../../../pipes/image.pipe';
-import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {App} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';

@@ -8,6 +8,7 @@ module.exports = function (config) {
           '../../node_modules/jquery/dist/jquery.min.js',
           '../../node_modules/lodash/lodash.min.js',
           '../../node_modules/moment/min/moment.min.js',
+          '../../node_modules/summernote/dist/summernote-lite.js'
       ],
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
