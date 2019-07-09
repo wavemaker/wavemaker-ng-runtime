@@ -2224,7 +2224,7 @@ $.widget('wm.datatable', {
                     }
                 }
                 // If class has danger, confirm dialog is opened, so dont save the row.
-                if (isRelatedTargetRowAction || $row.hasClass("danger") || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null)) {
+                if (isRelatedTargetRowAction || $row.hasClass("danger") || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null) || isInvalidTarget()) {
                     return;
                 }
                 // Save the Row if any button from Grid action is clicked / AddRow action is
@@ -2235,7 +2235,7 @@ $.widget('wm.datatable', {
                         return;
                     }
                     //If focusout is because of input element or row action or current row, dont save the row
-                    if ($relatedTarget.attr("focus-target") === "" || !isLastColumn && isInvalidTarget()) {
+                    if ($relatedTarget.attr("focus-target") === "") {
                         return;
                     }
                 }
