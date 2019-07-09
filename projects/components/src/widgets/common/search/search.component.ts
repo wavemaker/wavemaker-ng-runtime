@@ -311,7 +311,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.typeahead.hide();
                 }
             }, 200);
-            this._unsubscribeDv = this.isUpdateOnKeyPress();
         }
         this._isOpen = false;
         // on outside click, typeahead is hidden. To avoid this, when fullscreen is set, overridding isFocused flag on the typeahead container
