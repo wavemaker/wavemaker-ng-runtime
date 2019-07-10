@@ -236,42 +236,29 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         // make default query with all the values and if response for the value is not in datavalue then add a custom chip object.
         if (searchQuery.length) {
-            // add the chips only when allowonlyselect is false.
-            if (!this.datasource) {
-                if (this.allowonlyselect) {
-                    return Promise.resolve();
-                }
-                searchQuery.forEach(val => {
-                    const transformedData = this.getTransformedData(val);
-                    const chipObj = transformedData[0];
-                    (chipObj as any).iscustom = true;
-                    this.chipsList.push(chipObj);
-                });
-            } else {
-                promises.push(this.getDefaultModel(searchQuery, this.nextItemIndex)
-                    .then(response => {
-                        this.chipsList = this.chipsList.concat(response);
-                        dataValue.forEach((val: any, i: number) => {
-                            const isExists = _.find(this.chipsList, (obj) => {
-                                return obj.value.toString() === val.toString();
-                            });
-
-                            if (!isExists) {
-                                if (this.allowonlyselect) {
-                                    const index = data.indexOf(val);
-                                    if (index > -1) {
-                                        data.splice(index, 1);
-                                    }
-                                    return;
-                                }
-                                const transformedData = this.getTransformedData(val, true);
-                                const chipObj = transformedData[0];
-                                (chipObj as any).iscustom = true;
-                                this.chipsList.push(chipObj);
-                            }
+            promises.push(this.getDefaultModel(searchQuery, this.nextItemIndex)
+                .then(response => {
+                    this.chipsList = this.chipsList.concat(response || []);
+                    dataValue.forEach((val: any, i: number) => {
+                        const isExists = _.find(this.chipsList, (obj) => {
+                            return obj.value.toString() === val.toString();
                         });
-                    }));
-            }
+
+                        if (!isExists) {
+                            if (this.allowonlyselect) {
+                                const index = data.indexOf(val);
+                                if (index > -1) {
+                                    data.splice(index, 1);
+                                }
+                                return;
+                            }
+                            const transformedData = this.getTransformedData(val, true);
+                            const chipObj = transformedData[0];
+                            (chipObj as any).iscustom = true;
+                            this.chipsList.push(chipObj);
+                        }
+                    });
+                }));
         }
 
         // default chip data is adding focus on to the search input. Hence this flag helps not to focus.
@@ -401,7 +388,12 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     // Makes call to searchComponent to filter the dataSource based on the query.
     protected getDefaultModel(query: Array<string> | string, index?: number) {
         this.nextItemIndex++;
-        return this.searchComponent.getDataSource(query, true, index);
+        return this.searchComponent.getDataSource(query, true, index)
+            .then((response) => {
+                return _.filter(query, queryVal => {
+                    _.find(response, {value: queryVal});
+                });
+            });
     }
 
     private handleChipClick($event: Event, chip: DataSetItem) {
