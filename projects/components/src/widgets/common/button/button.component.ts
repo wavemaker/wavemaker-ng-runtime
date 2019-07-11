@@ -30,7 +30,7 @@ export class ButtonComponent extends StylableComponent {
     public badgevalue: string;
     @HostBinding('type') type: string;
     @HostBinding('tabIndex') tabindex: number;
-    @HostBinding('attr.disabled') disabled: boolean;
+    @HostBinding('disabled') disabled: boolean;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
 
