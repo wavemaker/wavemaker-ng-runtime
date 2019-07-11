@@ -663,8 +663,12 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (key === 'limit') {
             this.searchComponent.limit = this.limit;
         }
-        if (key === 'enablereorder' && nv) {
-            this.configureDnD();
+        if (key === 'enablereorder') {
+            if (this.$element.hasClass('ui-sortable')) {
+                this.$element.sortable('option', 'disabled', !nv );
+            } else if (nv) {
+                this.configureDnD();
+            }
         }
         if (key === 'readonly') {
             if (nv) {
