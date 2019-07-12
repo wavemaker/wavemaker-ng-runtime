@@ -184,13 +184,13 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     public setSelectedLocale(locale) {
 
-        const libLocale = _WM_APP_PROPERTIES.supportedLanguages[locale];
-        const supportedLocale = Object.keys(_WM_APP_PROPERTIES.supportedLanguages);
-
         // check if the event is propagated from the select or any such widget
         if (_.isObject(locale)) {
             locale = locale.datavalue;
         }
+
+        const libLocale = _WM_APP_PROPERTIES.supportedLanguages[locale];
+        const supportedLocale = Object.keys(_WM_APP_PROPERTIES.supportedLanguages);
 
         if (!_.includes(supportedLocale, locale)) {
             return Promise.resolve();
