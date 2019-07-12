@@ -247,10 +247,7 @@
                             "../wavemaker-app-runtime/src/main/webapp/application/styles/css/wm-style.css"
                         ],
                         "scripts": [],
-//                        "assets": [
-//                            "src/favicon.ico",
-//                            "src/assets"
-//                        ]
+                        "assets": []
                     }
                 },
                 "lint": {
