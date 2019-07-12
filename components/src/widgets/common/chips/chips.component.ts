@@ -148,7 +148,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             $unwatch(watchName);
             this.registerDestroyListener($watch(this.bindChipclass, this.viewParent, {item, $index}, (nv, ov) => {
                 this.applyItemClass(getConditionalClasses(nv, ov), $index);
-            }), watchName);
+            }, watchName));
         }
     }
 
