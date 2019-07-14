@@ -147,14 +147,19 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             const watchName = `${this.widgetId}_chipItemClass_${$index}`;
             $unwatch(watchName);
             this.registerDestroyListener($watch(this.bindChipclass, this.viewParent, {item, $index}, (nv, ov) => {
-                this.applyItemClass(getConditionalClasses(nv, ov), $index);
+                this.applyItemClass(getConditionalClasses(nv, ov), item, $index);
             }, watchName));
         }
     }
 
-    private applyItemClass(val, index) {
+    private applyItemClass(val, item, index) {
         const chipItem = this.nativeElement.querySelectorAll('.chip-item').item(index);
-        $(chipItem).removeClass(val.toRemove).addClass(val.toAdd);
+        if (chipItem) {
+            item.classList = '';
+            $(chipItem).removeClass(val.toRemove).addClass(val.toAdd);
+        } else {
+            item.classList = val.toAdd.join(' ');
+        }
     }
 
     private removeDuplicates() {
