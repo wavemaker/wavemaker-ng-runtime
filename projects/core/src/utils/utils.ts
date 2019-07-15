@@ -80,6 +80,8 @@ export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('
 
 export const isMobileApp = () => getWmProjectProperties().platformType === 'MOBILE' && getWmProjectProperties().type === 'APPLICATION';
 
+export const isSpotcuesApp = () => getWmProjectProperties().platformType === 'SPOTCUES' && getWmProjectProperties().type === 'APPLICATION';
+
 export const getAndroidVersion = () => {
     const match = (window.navigator.userAgent.toLowerCase()).match(/android\s([0-9\.]*)/);
     return match ? match[1] : '';

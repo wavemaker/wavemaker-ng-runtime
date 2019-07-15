@@ -16,7 +16,8 @@ import {
     App,
     AppDefaults,
     CoreModule,
-    DynamicComponentRefProvider
+    DynamicComponentRefProvider,
+    isSpotcuesApp
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components';
 import { MobileRuntimeModule } from '@wm/mobile/runtime';
@@ -191,6 +192,9 @@ export class RuntimeBaseModule {
 
     constructor() {
         RuntimeBaseModule.addCustomEventPolyfill();
+        if (isSpotcuesApp()) {
+            $('.wm-app:first').addClass('wm-spotcues-app');
+        }
     }
 }
 
