@@ -558,8 +558,17 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
+    // FormFields will contain all the fields in parent and inner form also.
+    // This returns the formFields in the form based on the form name.
+    getFormFields() {
+        return _.filter(this.formFields, formField => {
+            return formField.form.name === this.name;
+        });
+    }
+
     setFormData(data) {
-        this.formFields.forEach(field => {
+        const formFields = this.getFormFields();
+        formFields.forEach(field => {
             field.value =  _.get(data, field.key || field.name);
         });
 
