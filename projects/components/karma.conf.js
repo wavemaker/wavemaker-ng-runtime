@@ -8,7 +8,18 @@ module.exports = function (config) {
           '../../node_modules/jquery/dist/jquery.min.js',
           '../../node_modules/lodash/lodash.min.js',
           '../../node_modules/moment/min/moment.min.js',
-          '../../node_modules/summernote/dist/summernote-lite.js'
+          '../../node_modules/summernote/dist/summernote-lite.js',
+          "../../node_modules/jquery-ui/ui/disable-selection.js",
+          "../../node_modules/jquery-ui/ui/version.js",
+          "../../node_modules/jquery-ui/ui/widget.js",
+          "../../node_modules/jquery-ui/ui/scroll-parent.js",
+          "../../node_modules/jquery-ui/ui/plugin.js",
+          "../../node_modules/jquery-ui/ui/data.js",
+          "../../node_modules/jquery-ui/ui/widgets/mouse.js",
+          "../../node_modules/jquery-ui/ui/widgets/resizable.js",
+          "../../node_modules/jquery-ui/ui/widgets/sortable.js",
+          "../../node_modules/jquery-ui/ui/widgets/droppable.js",
+          '../../libraries/scripts/datatable/datatable.js'
       ],
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
