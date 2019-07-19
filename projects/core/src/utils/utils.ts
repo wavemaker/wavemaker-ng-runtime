@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 
 import { getWmProjectProperties } from './wm-project-properties';
 
-import { $watch } from './watcher';
+import { $watch, $appDigest } from './watcher';
 import { DataType } from '../enums/enums';
 import { DataSource } from '../types/types';
 import { setAttr } from './dom';
@@ -1188,3 +1188,10 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 
 };
 
+/**
+ * This method is to trigger change detection in the app
+ * This is exposed for the end user developer of WM app
+ * This is the alternative for $rs.$safeApply() in AngularJS
+ * See $appDigest in utils for more info
+ */
+export const detectChanges = $appDigest;
