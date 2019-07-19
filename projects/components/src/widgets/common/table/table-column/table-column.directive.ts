@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, ContentChild, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Attribute, ContentChild, ContentChildren, TemplateRef, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
@@ -49,7 +49,7 @@ class FieldDef {
         provideAsWidgetRef(TableColumnDirective)
     ]
 })
-export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit {
+export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit, AfterViewInit {
     static initializeProps = registerProps();
 
     @ContentChildren('filterWidget') _filterInstances;
@@ -121,6 +121,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     private _datasource: any;
     private _debounceSetUpValidators;
     private _debounceSetUpValidatorsNew;
+
+    @ContentChild('filterTmpl') filterTemplateRef: TemplateRef<any>;
 
     constructor(
         inj: Injector,
@@ -203,6 +205,13 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             }
         }
         super.ngAfterContentInit();
+    }
+
+    ngAfterViewInit() {
+        // manually listing the table column templateRef as templateRef will not be available prior.
+        if (this.filterTemplateRef) {
+            this.table.renderDynamicFilterColumn(this.filterTemplateRef);
+        }
     }
 
     addFormControl(suffix?: string) {

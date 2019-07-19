@@ -1066,6 +1066,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     // Function to generate and compile the form fields from the metadata
     async generateDynamicColumns(columns) {
         this.fieldDefs = []; // empty the form fields
+        // empty the filter field template refs.
+        (this.filterTmpl as any)._results = [];
 
         if (_.isEmpty(columns)) {
             return;
@@ -1085,12 +1087,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     }
                 }
             });
-            tmpl += `<wm-table-column ${attrsTmpl}>${customTmpl}</wm-table-column>`;
+            tmpl += `<wm-table-column ${attrsTmpl} tableName="${this.name}">${customTmpl}</wm-table-column>`;
         });
         this.dynamicTableRef.clear();
         if (!this._dynamicContext) {
             this._dynamicContext = Object.create(this.viewParent);
-            this._dynamicContext.table = this;
+            this._dynamicContext[this.getAttr('wmTable')] = this;
         }
         this.noOfColumns = columns.length;
         const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
@@ -1150,8 +1152,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (dataValid && !_.isArray(data)) {
             data = [data];
         }
+        /* if the data is empty, show nodatamessage */
+        if (_.isEmpty(data)) {
+            this.setGridData(data);
+            return;
+        }
 
-        if (_.isEmpty(data) || !dataValid) {
+        if (!dataValid) {
             return;
         }
         /* if new columns to be rendered, prepare default fieldDefs for the data provided*/
@@ -1335,6 +1342,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this._actions.footer.push(action);
             }
         });
+    }
+
+    // this method will render the filter row.
+    renderDynamicFilterColumn(filteTemRef) {
+        // For dynamic table manually pushing the filtertemplateRef as templateRef will not be available prior.
+        if (this.isdynamictable) {
+            (this.filterTmpl as any)._results.push(filteTemRef);
+        }
     }
 
     registerColumns(tableColumn) {

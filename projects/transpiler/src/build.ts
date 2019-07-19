@@ -5,6 +5,7 @@ import {
     Comment,
     getHtmlTagDefinition
 } from '@angular/compiler';
+declare const _;
 
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
@@ -160,7 +161,7 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
     return attrMarkup;
 };
 
-const getRequiredProviders = (nodeDef: IBuildTaskDef, providers: Array<IProviderInfo>) => {
+const getRequiredProviders = (nodeDef: IBuildTaskDef, providers: Array<IProviderInfo>, nodeAttrs) => {
     if (!nodeDef.requires) {
         return [];
     }
@@ -176,6 +177,13 @@ const getRequiredProviders = (nodeDef: IBuildTaskDef, providers: Array<IProvider
     }
 
     return requires.map(require => {
+        // for dynamic table assigning parent provide map to the child,
+        for (let i = nodeAttrs.length - 1; i >= 0; i-- ) {
+            if (nodeAttrs[i].name === 'tableName') {
+                return nodeDef[nodeAttrs[i].value];
+            }
+        }
+
         for (let i = providers.length - 1; i >= 0; i-- ) {
             if (providers[i].nodeName === require) {
                 return providers[i].provide;
@@ -272,7 +280,7 @@ export const processNode = (node, providers?: Array<IProviderInfo>) => {
         let provideInfo: IProviderInfo;
 
         if (nodeDef) {
-            requiredProviders = getRequiredProviders(nodeDef, providers);
+            requiredProviders = getRequiredProviders(nodeDef, providers, node.attrs);
             shared = new Map();
             template(node, shared, ...requiredProviders);
         }
@@ -287,8 +295,14 @@ export const processNode = (node, providers?: Array<IProviderInfo>) => {
             if (nodeDef.provide) {
                 provideInfo = {
                     nodeName: node.name,
-                    provide: nodeDef.provide(attrMap, shared, ...requiredProviders)
+                    provide: _.isFunction(nodeDef.provide) ? nodeDef.provide(attrMap, shared, ...requiredProviders) : nodeDef.provide
                 };
+                // For table node, assigning parent provide map to the child, as child requires some parent provide attrs.
+                if (node.name === 'wm-table') {
+                    const tableColNodeDefn = registry.get('wm-table-column');
+                    tableColNodeDefn[_.find(node.attrs, (el) => el.name === 'name').value] = provideInfo.provide;
+                    registry.set('wm-table-column', tableColNodeDefn);
+                }
                 providers.push(provideInfo);
             }
         } else {

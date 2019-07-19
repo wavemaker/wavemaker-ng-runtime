@@ -37,7 +37,7 @@ register('wm-table', (): IBuildTaskDef => {
             const counter = idGen.nextUid();
             shared.set('counter', counter);
             attrs.set('isdynamictable', shared.get('isdynamictable'));
-            return `<${tagName} wmTable wmTableFilterSort wmTableCUD #${counter} data-identifier="table" role="table" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmTable="${counter}" wmTableFilterSort wmTableCUD #${counter} data-identifier="table" role="table" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`,
         provide: (attrs, shared) => {
