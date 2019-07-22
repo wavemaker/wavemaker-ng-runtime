@@ -77,7 +77,8 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         super.ngOnDestroy();
     }
 
-    public onSelect($event, selectedItem: TabItem) {
+    // triggered on item selection
+    public onItemSelect($event, selectedItem: TabItem) {
         this.invokeEventCallback('select', {$event, $item: selectedItem.value || selectedItem.label});
     }
 
