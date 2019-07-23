@@ -138,12 +138,13 @@ const geneateLimitClause = page => {
 
 const mapRowDataToObj = (schema: EntityInfo, dataObj: any) => {
     schema.columns.forEach(col => {
-        let childEntity;
         const val = dataObj[col.fieldName];
         if (col.foreignRelations) {
             col.foreignRelations.forEach(foreignRelation => {
+                let childEntity = null;
                 _.forEach(foreignRelation.dataMapper, function (childCol, childFieldName) {
-                    if (dataObj[childFieldName]) {
+                    const fieldValue = dataObj[childFieldName];
+                    if (isDefined(fieldValue) && fieldValue !== null && fieldValue !== '') {
                         childEntity = childEntity || {};
                         childEntity[childCol.fieldName] = dataObj[childFieldName];
                     }
