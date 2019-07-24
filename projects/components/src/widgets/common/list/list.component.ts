@@ -588,7 +588,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private toggleListItemSelection($listItem: ListItemDirective) {
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
-            const item = $listItem.item;
+            let item = $listItem.item;
             if ($listItem.isActive) {
                 this._items = _.pullAllWith(this._items, [item], _.isEqual);
                 $listItem.isActive = false;
@@ -596,6 +596,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 // if multiselect is false, clear the selectItem list before adding an item to the selectItem list.
                 if (!this.multiselect) {
                     this.clearSelectedItems();
+                }
+                if (this.groupby && _.has(item, '_groupIndex')) {
+                    // If groupby is enabled, item contains _groupIndex property which should be excluded from selecteditem.
+                    item = _.clone(item);
+                    delete item._groupIndex;
                 }
                 this._items.push(item);
                 this.invokeEventCallback('select', {widget: $listItem, $data: item});
