@@ -20,6 +20,7 @@ let mockApp = {
     template: `
         <div wmList template="true" itemsperrow="xs-1 sm-1 md-1 lg-1" class="media-list" name="testlist"
              dataset.bind="testdata" navigation="Basic"
+             click.event="onListClick($event, widget)"
              beforedatarender.event="onBeforeRender(widget, $data)"
              render.event="onRender(widget, $data)">
             <ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$first="$first" let-$last="$last" let-currentItemWidgets="currentItemWidgets" >
@@ -39,6 +40,10 @@ class ListWrapperComponent {
 
     onRender(widget, $data) {
         console.log('calling on render');
+    }
+
+    onListClick($event, widget) {
+        console.log('clicked list component ')
     }
 
     constructor(_pipeProvider: PipeProvider) {
@@ -106,7 +111,29 @@ describe('ListComponent', () => {
        const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
        expect(liElem.nativeElement.classList).toContain('active');
    });
+   
+   it('should apply disable-item class to li element', () => {
+        listComponent.disableitem = true;
+        fixture.detectChanges();
+        const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
+        expect(liElem.nativeElement.classList).toContain('disable-item');
+        // the click handler should not be called on disabling the item
+        spyOn(wrapperComponent, 'onListClick');
+        listComponent.getNativeElement().click();
+        expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
+    });
 
+    // it('should apply disable-item property using script or binding', () => {
+    //     listComponent.disableitem = wrapperComponent.testdata[1].name === 'Tony';
+    //     fixture.detectChanges();
+    //     const liELe = fixture.debugElement.query(By.directive(ListItemDirective));
+    //     expect(liELe.nativeElement.classList).toContain('disable-item');
+    //     // the click handler should not be called on disabling the item
+    //     spyOn(wrapperComponent, 'onListClick');
+    //     listComponent.getNativeElement().click();
+    //     expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
+    // });
+    
     it('should select item by index from the script in on-render event', () => {
         spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
