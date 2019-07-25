@@ -25,6 +25,7 @@ const markup = `
                 on-click="onButtonClick($event, widget)"
                 on-mouseenter="eventHandler()" on-mouseleave="eventHandler()"
                 on-focus="eventHandler()" on-blur="eventHandler()"
+                tap.event="onButtonTap($event, widget)"
         ></button>
     `;
 @Component({
@@ -39,6 +40,9 @@ class TestComponent {
     public btnCaption: string = 'My Test Button bind';
     public onButtonClick($event, widget) {
         console.log('clicked button in wrapperComponent.');
+    }
+    public onButtonTap($event, widget) {
+        console.log('triggered button tap event');
     }
 }
 
@@ -149,6 +153,14 @@ describe('wm-button: Component specific tests: ', () => {
         wmComponent.getWidget().show = true;
         fixture.detectChanges();
         expect(btnEl.hasAttribute('hidden')).toEqual(false);
+    });
+
+    it('should trigger callback events invoke through script', () => {
+        spyOn(wrapperComponent, 'onButtonTap');
+        // Invoke onTap event
+        wmComponent.getWidget().onTap();
+        fixture.detectChanges();
+        expect(wrapperComponent.onButtonTap).toHaveBeenCalledTimes(1);
     });
 
     // it('should be disabled and callback event not called', () => {
