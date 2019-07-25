@@ -62,6 +62,22 @@ describe('SearchComponent', () => {
         });
     }));
 
+    it('query formation with multiple match modes',async(()=>{
+        searchComponent.dataset = [{deptId: 1,name : "Engineering",deptCode:"Eng"},{deptId:2,name :"General",deptCode:"Gen"}];
+        searchComponent.datafield = "name";
+        searchComponent.query = "Engineering";
+        searchComponent.searchkey = "deptId,deptCode";
+        searchComponent.casesensitive = false;
+
+        let spyonFunction = spyOn((searchComponent as any).dataProvider,'filter').and.callThrough();
+        searchComponent.getDataSource("Engineering",true).then(()=>{
+            expect(spyonFunction).toHaveBeenCalledWith(jasmine.objectContaining({matchMode: "startignorecase"}));
+        }).catch((err)=>{
+            console.log((err));
+        });
+
+    }));
+
     function setInputValue(selector: string, value: string) {
         let input = fixture.debugElement.query(By.css(selector)).nativeElement;
         input.value = value;
