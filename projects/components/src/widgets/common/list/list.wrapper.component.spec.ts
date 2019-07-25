@@ -13,7 +13,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
 let mockApp = {
-    subscribe: ()=>{}
+    subscribe: () => {}
 };
 
 @Component({
@@ -32,6 +32,7 @@ class ListWrapperComponent {
     @ViewChild(ListComponent)
     listComponent: ListComponent;
     public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}];
+    public testdata1: any = [{firstname: 'Peter', id: 1}, {firstname: '', id: 2}];
     onBeforeRender(widget, $data) {
         console.log('calling on before render');
     }
@@ -50,7 +51,7 @@ describe('ListComponent', () => {
    let listComponent: ListComponent;
    let fixture: ComponentFixture<ListWrapperComponent>;
 
-   beforeEach(async(()=>{
+   beforeEach(async(() => {
        TestBed.configureTestingModule({
            imports: [
                FormsModule,
@@ -106,22 +107,89 @@ describe('ListComponent', () => {
        expect(liElem.nativeElement.classList).toContain('active');
    });
 
-/*
-   it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
-       spyOn(wrapperComponent, 'onBeforeRender');
-       // spyOn(wrapperComponent, 'onRender');
-       fixture.detectChanges();
-       console.warn('checking outside...');
-       // tick(100);
-       setTimeout(()=>{
-           expect(wrapperComponent.onBeforeRender).toHaveBeenCalledTimes(1);
-       }, 1000);
-       fixture.whenStable().then(()=>{
-           console.warn('checking now...');
-           //expect(wrapperComponent.onRender).toHaveBeenCalledTimes(2);
-       })
+    it('should select item by index from the script in on-render event', () => {
+        spyOn(wrapperComponent, 'onRender');
+        fixture.detectChanges();
+        expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
+        // select item by passing index
+        listComponent.selectItem(1);
+        fixture.detectChanges();
 
-   }));
-*/
+        // selected item should be the second one in dataset
+        expect(listComponent.selecteditem).toEqual(listComponent.dataset[1]);
+    });
 
+    /*
+    it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
+        spyOn(wrapperComponent, 'onBeforeRender');
+        // spyOn(wrapperComponent, 'onRender');
+        fixture.detectChanges();
+        console.warn('checking outside...');
+        // tick(100);
+        setTimeout(()=>{
+            expect(wrapperComponent.onBeforeRender).toHaveBeenCalledTimes(1);
+        }, 1000);
+        fixture.whenStable().then(()=>{
+            console.warn('checking now...');
+            //expect(wrapperComponent.onRender).toHaveBeenCalledTimes(2);
+        })
+
+    }));
+ */
+
+
+});
+
+describe('ListComponent With groupby', () => {
+    let wrapperComponent: ListWrapperComponent;
+    let listComponent: ListComponent;
+    let fixture: ComponentFixture<ListWrapperComponent>;
+
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            imports: [
+                FormsModule,
+                PaginationModule.forRoot()
+            ],
+            declarations: [ListWrapperComponent, ListComponent, ListItemDirective, TrustAsPipe, PaginationComponent],
+            providers: [
+                {provide: App, useValue: mockApp},
+                {provide: ToDatePipe, useValue: mockApp},
+                {provide: AppDefaults, useClass: AppDefaults}
+            ]
+        })
+            .compileComponents();
+
+        fixture = TestBed.createComponent(ListWrapperComponent);
+        wrapperComponent = fixture.componentInstance;
+        listComponent = wrapperComponent.listComponent;
+
+        fixture.detectChanges();
+        listComponent.groupby = 'firstname';
+        listComponent.dataset = wrapperComponent.testdata1;
+        listComponent.onPropertyChange('dataset', listComponent.dataset);
+        fixture.detectChanges();
+    }));
+
+
+    it('should select item by model from the script with groupby property in on-render event', () => {
+        spyOn(wrapperComponent, 'onRender');
+        fixture.detectChanges();
+        // select item by passing its model
+        listComponent.selectItem(listComponent.dataset[0]);
+        fixture.detectChanges();
+
+        // selected item should be the second one in dataset
+        expect(listComponent.selecteditem).toEqual(listComponent.dataset[0]);
+    });
+
+    it('should display header as others when grouping is done with a column having empty value', () => {
+        fixture.detectChanges();
+        const liElements = fixture.debugElement.nativeElement.querySelectorAll('.app-list-item-header h4');
+        // header text shouldn't be empty.
+        liElements.forEach((ele) => {
+            expect(ele.innerText).not.toBeNull();
+        });
+
+    });
 });
