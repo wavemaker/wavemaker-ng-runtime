@@ -12,7 +12,7 @@ class TestComponent {
 
 }
 
-fdescribe('DataTable',()=>{
+describe('DataTable',()=>{
     let fixture;
     beforeEach(()=>{
         let Dependencies  = [

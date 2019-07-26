@@ -64,6 +64,10 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     }
 
     private onSlidesRender(slides) {
+        // if dynamic carousel, initialize the 'currentslide' property as the first object
+        if (this.fieldDefs && this.fieldDefs.length) {
+            this.currentslide = this.fieldDefs[0];
+        }
         setTimeout(() => {
             this.animator = new CarouselAnimator(this, this.interval, this.ngZone);
         }, 50);

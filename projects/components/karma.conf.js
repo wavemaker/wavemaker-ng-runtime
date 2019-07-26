@@ -19,7 +19,10 @@ module.exports = function (config) {
           "../../node_modules/jquery-ui/ui/widgets/resizable.js",
           "../../node_modules/jquery-ui/ui/widgets/sortable.js",
           "../../node_modules/jquery-ui/ui/widgets/droppable.js",
-          '../../libraries/scripts/datatable/datatable.js'
+          '../../libraries/scripts/datatable/datatable.js',
+          '../../libraries/swipey/bundles/index.umd.js',
+          '../../../wavemaker-app-runtime/src/main/webapp/application/styles/css/wm-style.css',
+          '../../../wavemaker-studio-artifacts/default/themes/material/style.css'
       ],
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
