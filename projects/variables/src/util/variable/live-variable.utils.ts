@@ -416,7 +416,7 @@ export class LiveVariableUtils {
                         const value = rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.between.toLowerCase()
                             ? (_.isArray(rule.value) ? rule.value : [rule.value, rule.secondvalue])
                             : (rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.in.toLowerCase() || rule.matchMode.toLowerCase() === DB_CONSTANTS.DATABASE_MATCH_MODES.notin.toLowerCase()
-                                ? (_.isArray(rule.value) ? rule.value : (rule.value ? rule.value.split(',') : ''))
+                                ? (_.isArray(rule.value) ? rule.value : (rule.value ? rule.value.split(',').map(val => val.trim()) : ''))
                                 : rule.value);
                         rules[index] = LiveVariableUtils.getFilterOption(variable, {
                             'fieldName': rule.target,
