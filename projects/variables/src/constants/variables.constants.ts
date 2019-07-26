@@ -161,7 +161,7 @@ export const DB_CONSTANTS = {
         "notequalsignorecase": "NOT_EQUALS_IGNORECASE",
         'between'          : 'BETWEEN',
         'in'               : 'IN',
-        "notin"            : "NOT_IN",
+        "notin"            : "NOTIN",
         'lessthan'         : 'LESS_THAN',
         'lessthanequal'    : 'LESS_THAN_OR_EQUALS',
         'greaterthan'      : 'GREATER_THAN',
@@ -173,7 +173,7 @@ export const DB_CONSTANTS = {
         'nullorempty'      : 'NULL_OR_EMPTY'
     },
     'DATABASE_EMPTY_MATCH_MODES': ['NULL', 'IS_NOT_NULL', 'EMPTY', 'IS_NOT_EMPTY', 'NULL_OR_EMPTY'],
-    'DATABASE_RANGE_MATCH_MODES': ['IN', 'NOT_IN', 'BETWEEN', 'LESS_THAN', 'LESS_THAN_OR_EQUALS', 'GREATER_THAN', 'GREATER_THAN_OR_EQUALS', 'NOT_EQUALS'],
+    'DATABASE_RANGE_MATCH_MODES': ['IN', 'NOTIN', 'BETWEEN', 'LESS_THAN', 'LESS_THAN_OR_EQUALS', 'GREATER_THAN', 'GREATER_THAN_OR_EQUALS', 'NOT_EQUALS'],
     'DATABASE_NULL_EMPTY_MATCH': {
         'NULL'          : 'NULL',
         'IS_NOT_NULL'   : 'IS_NOT_NULL',
@@ -195,7 +195,7 @@ export const DB_CONSTANTS = {
         "NOT_EQUALS_IGNORECASE"  : "${0}!=${1}",
         'BETWEEN'                : '${0} between ${1}',
         'IN'                     : '${0} in ${1}',
-        'NOT_IN'                 : "${0} not in ${1}",
+        'NOTIN'                  : "${0} not in ${1}",
         'LESS_THAN'              : '${0}<${1}',
         'LESS_THAN_OR_EQUALS'    : '${0}<=${1}',
         'GREATER_THAN'           : '${0}>${1}',

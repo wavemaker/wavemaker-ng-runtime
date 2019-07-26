@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { $appDigest, $parseExpr, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
+import { $appDigest, $unwatch, $watch, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
 
 import { registerProps } from './chips.props';
 import { styler } from '../../framework/styler';
@@ -9,7 +9,7 @@ import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component'
 import { configureDnD, DataSetItem, getUniqObjsByDataField } from '../../../utils/form-utils';
 import { ALLFIELDS } from '../../../utils/data-utils';
 import { IWidgetConfig } from '../../framework/types';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
+import { getConditionalClasses, provideAsNgValueAccessor, provideAsWidgetRef} from '../../../utils/widget-utils';
 
 declare const _;
 
@@ -79,16 +79,18 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (!isDefined(this.showsearchicon)) {
             this.showsearchicon = false;
         }
-        // parse the chipclass expression.
-        if (this.bindChipclass) {
-            this._classExpr = $parseExpr(this.bindChipclass);
-        }
 
         this.multiple = true;
         this.nextItemIndex = 0; // default chip index
 
         this._debounceUpdateQueryModel = debounce((val) => {
-            this.updateQueryModel(val);
+            this.updateQueryModel(val).then(() => {
+                if (this.bindChipclass) {
+                    _.forEach(this.chipsList, (item, index) => {
+                        this.registerChipItemClass(item, index);
+                    });
+                }
+            });
         }, 150);
 
         const datasetSubscription = this.dataset$.subscribe(() => {
@@ -133,10 +135,30 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-
         if (this.enablereorder) {
             this.configureDnD();
         }
+    }
+
+    /**
+     * This method returns the evaluated class expression.
+     * @param $index index of the chip
+     * @param item chip object containing the key, value, label
+     * @returns {any} evaluated class expression value
+     */
+    private registerChipItemClass(item, $index) {
+        if (this.bindChipclass) {
+            const watchName = `${this.widgetId}_chipItemClass_${$index}`;
+            $unwatch(watchName);
+            this.registerDestroyListener($watch(this.bindChipclass, this.viewParent, {item, $index}, (nv, ov) => {
+                this.applyItemClass(getConditionalClasses(nv, ov), $index);
+            }, watchName));
+        }
+    }
+
+    private applyItemClass(val, index) {
+        const chipItem = this.nativeElement.querySelectorAll('.chip-item').item(index);
+        $(chipItem).removeClass(val.toRemove).addClass(val.toAdd);
     }
 
     private removeDuplicates() {
@@ -145,10 +167,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     // This method updates the queryModel.
     // default call to get the default data can be done only when defaultQuery is true.
-    private updateQueryModel(data: any) {
+    private updateQueryModel(data: any): Promise<void> {
+        const promises = [];
         if (!data) {
             this.chipsList = [];
-            return;
+            return Promise.resolve();
         }
 
         // clone the data as the updations on data will change the datavalue.
@@ -213,55 +236,40 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         // make default query with all the values and if response for the value is not in datavalue then add a custom chip object.
         if (searchQuery.length) {
-            // add the chips only when allowonlyselect is false.
-            if (!this.datasource) {
-                if (this.allowonlyselect) {
-                    return;
-                }
-                searchQuery.forEach(val => {
-                    const transformedData = this.getTransformedData(val);
-                    const chipObj = transformedData[0];
-                    (chipObj as any).iscustom = true;
-                    this.chipsList.push(chipObj);
-                });
-            } else {
-                this.getDefaultModel(searchQuery, this.nextItemIndex)
-                    .then(response => {
-                        this.chipsList = this.chipsList.concat(response);
-                        dataValue.forEach((val: any, i: number) => {
-                            const isExists = _.find(this.chipsList, (obj) => {
-                                return obj.value.toString() === val.toString();
-                            });
-
-                            if (!isExists) {
-                                if (this.allowonlyselect) {
-                                    const index = data.indexOf(val);
-                                    if (index > -1) {
-                                        data.splice(index, 1);
-                                    }
-                                    return;
-                                }
-                                const transformedData = this.getTransformedData(val, true);
-                                const chipObj = transformedData[0];
-                                (chipObj as any).iscustom = true;
-                                this.chipsList.push(chipObj);
-                            }
+            promises.push(this.getDefaultModel(searchQuery, this.nextItemIndex)
+                .then(response => {
+                    this.chipsList = this.chipsList.concat(response || []);
+                    dataValue.forEach((val: any, i: number) => {
+                        const isExists = _.find(this.chipsList, (obj) => {
+                            return obj.value.toString() === val.toString();
                         });
-                        this._modelByValue = data;
-                        this.removeDuplicates();
-                        this.updateMaxSize();
-                        $appDigest();
+
+                        if (!isExists) {
+                            if (this.allowonlyselect) {
+                                const index = data.indexOf(val);
+                                if (index > -1) {
+                                    data.splice(index, 1);
+                                }
+                                return;
+                            }
+                            const transformedData = this.getTransformedData(val, true);
+                            const chipObj = transformedData[0];
+                            (chipObj as any).iscustom = true;
+                            this.chipsList.push(chipObj);
+                        }
                     });
-            }
+                }));
         }
 
-        this._modelByValue = data;
-
-        this.removeDuplicates();
-        this.updateMaxSize();
         // default chip data is adding focus on to the search input. Hence this flag helps not to focus.
         this.resetSearchModel(true);
-        $appDigest();
+
+        return Promise.all(promises).then(() => {
+            this._modelByValue = data;
+            this.removeDuplicates();
+            this.updateMaxSize();
+            $appDigest();
+        });
     }
 
     private resetSearchModel(hasFocus?: boolean) {
@@ -284,7 +292,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         let allowAdd;
         let chipObj;
 
-        if (searchComponent && isDefined(searchComponent.queryModel) && searchComponent.queryModel !== '') {
+        if (searchComponent && isDefined(searchComponent.datavalue) && searchComponent.queryModel !== '') {
             if (!searchComponent.query || !_.trim(searchComponent.query)) {
                 return;
             }
@@ -327,6 +335,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             this.resetSearchModel();
             return;
         }
+        this.registerChipItemClass(chipObj, this.chipsList.length);
         this.chipsList.push(chipObj);
 
         if (!this.datavalue) {
@@ -379,7 +388,12 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     // Makes call to searchComponent to filter the dataSource based on the query.
     protected getDefaultModel(query: Array<string> | string, index?: number) {
         this.nextItemIndex++;
-        return this.searchComponent.getDataSource(query, true, index);
+        return this.searchComponent.getDataSource(query, true, index)
+            .then((response) => {
+                return _.filter(query, queryVal => {
+                    _.find(response, {value: queryVal});
+                });
+            });
     }
 
     private handleChipClick($event: Event, chip: DataSetItem) {
@@ -619,18 +633,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.invokeEventCallback('reorder', {$event, $data: this.chipsList, $changedItem: changedItem});
     }
 
-    /**
-     * This method returns the evaluated class expression.
-     * @param $index index of the chip
-     * @param item chip object containing the key, value, label
-     * @returns {any} evaluated class expression value
-     */
-    private getChipClass($index: number, item: DataSetItem) {
-        if (this._classExpr) {
-            return this._classExpr(this.viewParent, {$index, item});
-        }
-    }
-
     onPropertyChange(key: string, nv: any, ov: any) {
         if (key === 'tabindex') {
             return;
@@ -653,8 +655,12 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (key === 'limit') {
             this.searchComponent.limit = this.limit;
         }
-        if (key === 'enablereorder' && nv) {
-            this.configureDnD();
+        if (key === 'enablereorder') {
+            if (this.$element.hasClass('ui-sortable')) {
+                this.$element.sortable('option', 'disabled', !nv );
+            } else if (nv) {
+                this.configureDnD();
+            }
         }
         if (key === 'readonly') {
             if (nv) {

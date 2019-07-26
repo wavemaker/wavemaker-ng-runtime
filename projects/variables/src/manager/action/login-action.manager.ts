@@ -58,6 +58,7 @@ export class LoginActionManager extends BaseActionManager {
     }
 
     login(variable, options, success, error) {
+        let newDataSet;
         options = options || {};
 
         // If login info provided along explicitly with options, don't look into the variable bindings for the same
@@ -101,63 +102,79 @@ export class LoginActionManager extends BaseActionManager {
              */
             appManager.reloadAppData().
             then((config) => {
+                // EVENT: ON_RESULT
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, _.get(config, 'userInfo'));
+                // EVENT: ON_PREPARESETDATA
+                newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, _.get(config, 'userInfo'));
+                if (newDataSet) {
+                        // setting newDataSet as the response to service variable onPrepareSetData
+                        _.set(config, 'userInfo',newDataSet);
+                }
                 // hide the spinner after all the n/w calls are completed
                 this.notifyInflight(variable, false, response);
                 triggerFn(success);
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, _.get(config, 'userInfo'));
+                setTimeout(()=>{
+                    // EVENT: ON_SUCCESS
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, _.get(config, 'userInfo'));
 
-                /* handle navigation if defaultSuccessHandler on variable is true */
-                if (variable.useDefaultSuccessHandler) {
-                    const isSameUserReloggedIn = lastLoggedInUsername === params['j_username'];
-                    // if first time user logging in or same user re-logging in, execute n/w calls failed before logging in
-                    if (!lastLoggedInUsername || isSameUserReloggedIn) {
-                        appManager.executeSessionFailureRequests();
-                    }
-                    // get redirectTo page from URL and remove it from URL
-                    const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo'),
-                        noRedirect = appManager.noRedirect();
-                    // Get query params(page params of page being redirected to) and append to the URL after login.
-                    const queryParamsObj = securityService.getRedirectedRouteQueryParams();
-                    // The redirectTo param isn't required after login
-                    if (queryParamsObj.redirectTo) {
-                        delete queryParamsObj.redirectTo;
-                    }
-                    appManager.noRedirect(false);
-                    // first time login
-                    if (!lastLoggedInUsername) {
-                        // if redirect page found, navigate to it.
-                        if (!_.isEmpty(redirectPage)) {
-                            routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
-                        } else if (!noRedirect) {
-                            // simply reset the URL, route handling will take care of page redirection
-                            routerService.navigate([`/`]);
+                    /* handle navigation if defaultSuccessHandler on variable is true */
+                    if (variable.useDefaultSuccessHandler) {
+                        const isSameUserReloggedIn = lastLoggedInUsername === params['j_username'];
+                        // if first time user logging in or same user re-logging in, execute n/w calls failed before logging in
+                        if (!lastLoggedInUsername || isSameUserReloggedIn) {
+                            appManager.executeSessionFailureRequests();
                         }
-                    } else {
-                    // login after a session timeout
-                        // if redirect page found and same user logs in again, just navigate to redirect page
-                        if (!_.isEmpty(redirectPage)) {
-                            // same user logs in again, just redirect to the redirectPage
-                            if (lastLoggedInUsername === params['j_username']) {
+                        // get redirectTo page from URL and remove it from URL
+                        const redirectPage = securityService.getCurrentRouteQueryParam('redirectTo'),
+                            noRedirect = appManager.noRedirect();
+                        // Get query params(page params of page being redirected to) and append to the URL after login.
+                        const queryParamsObj = securityService.getRedirectedRouteQueryParams();
+                        // The redirectTo param isn't required after login
+                        if (queryParamsObj.redirectTo) {
+                            delete queryParamsObj.redirectTo;
+                        }
+                        appManager.noRedirect(false);
+                        // first time login
+                        if (!lastLoggedInUsername) {
+                            // if redirect page found, navigate to it.
+                            if (!_.isEmpty(redirectPage)) {
                                 routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
-                            } else {
-                                // different user logs in, reload the app and discard the redirectPage
+                            } else if (!noRedirect) {
+                                // simply reset the URL, route handling will take care of page redirection
                                 routerService.navigate([`/`]);
-                                window.location.reload();
                             }
                         } else {
-                            const securityConfig = securityService.get(),
-                                sessionTimeoutLoginMode = _.get(securityConfig, 'loginConfig.sessionTimeout.type') || 'PAGE';
-                            // if in dialog mode and a new user logs in OR login happening through page, reload the app
-                            if (!isSameUserReloggedIn || sessionTimeoutLoginMode !== 'DIALOG') {
-                                routerService.navigate([`/`]);
-                                window.location.reload();
+                        // login after a session timeout
+                            // if redirect page found and same user logs in again, just navigate to redirect page
+                            if (!_.isEmpty(redirectPage)) {
+                                // same user logs in again, just redirect to the redirectPage
+                                if (lastLoggedInUsername === params['j_username']) {
+                                    routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
+                                } else {
+                                    // different user logs in, reload the app and discard the redirectPage
+                                    routerService.navigate([`/`]);
+                                    window.location.reload();
+                                }
+                            } else {
+                                const securityConfig = securityService.get(),
+                                    sessionTimeoutLoginMode = _.get(securityConfig, 'loginConfig.sessionTimeout.type') || 'PAGE';
+                                // if in dialog mode and a new user logs in OR login happening through page, reload the app
+                                if (!isSameUserReloggedIn || sessionTimeoutLoginMode !== 'DIALOG') {
+                                    routerService.navigate([`/`]);
+                                    window.location.reload();
+                                }
                             }
-                        }
 
+                        }
                     }
-                }
+                    // EVENT: ON_CAN_UPDATE
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, _.get(config, 'userInfo'));
+                })
+                
             });
         }, (e) => {
+            // EVENT: ON_RESULT
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, e);
             this.notifyInflight(variable, false, e);
             const errorMsg = e.error || 'Invalid credentials.';
             const xhrObj = e.details;
@@ -166,6 +183,8 @@ export class LoginActionManager extends BaseActionManager {
                 initiateCallback('onError', variable, errorMsg, xhrObj, true);
             }
             triggerFn(error, errorMsg, xhrObj);
+            // EVENT: ON_CAN_UPDATE
+            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, e);
         });
     }
 }

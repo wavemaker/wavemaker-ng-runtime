@@ -138,12 +138,13 @@ const geneateLimitClause = page => {
 
 const mapRowDataToObj = (schema: EntityInfo, dataObj: any) => {
     schema.columns.forEach(col => {
-        let childEntity;
         const val = dataObj[col.fieldName];
         if (col.foreignRelations) {
             col.foreignRelations.forEach(foreignRelation => {
+                let childEntity = null;
                 _.forEach(foreignRelation.dataMapper, function (childCol, childFieldName) {
-                    if (dataObj[childFieldName]) {
+                    const fieldValue = dataObj[childFieldName];
+                    if (isDefined(fieldValue) && fieldValue !== null && fieldValue !== '') {
                         childEntity = childEntity || {};
                         childEntity[childCol.fieldName] = dataObj[childFieldName];
                     }
@@ -233,7 +234,9 @@ export class LocalDBStore {
                     // updating the id with the latest id obtained from nextId.
                     entity[this.primaryKeyName] = this.localDbManagementService.nextIdCount();
                 } else {
-                    entity[this.primaryKeyName] = undefined;
+                    // for assigned type, get the primaryKeyValue from the relatedTableData which is inside the entity
+                    const primaryKeyValue = this.getValue(entity, this.primaryKeyName);
+                    entity[this.primaryKeyName] = primaryKeyValue;
                 }
             }
         }

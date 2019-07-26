@@ -1,0 +1,127 @@
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import {App, AppDefaults, setPipeProvider} from '@wm/core';
+import { Component, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PaginationModule, TypeaheadModule } from 'ngx-bootstrap';
+import { By } from '@angular/platform-browser';
+import { ListComponent } from './list.component';
+import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
+import { ListItemDirective } from './list-item.directive';
+import { ToDatePipe } from '../../../pipes/custom-pipes';
+import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
+import { PaginationComponent } from '../pagination/pagination.component';
+// import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
+
+let mockApp = {
+    subscribe: ()=>{}
+};
+
+@Component({
+    template: `
+        <div wmList template="true" itemsperrow="xs-1 sm-1 md-1 lg-1" class="media-list" name="testlist"
+             dataset.bind="testdata" navigation="Basic"
+             beforedatarender.event="onBeforeRender(widget, $data)"
+             render.event="onRender(widget, $data)">
+            <ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$first="$first" let-$last="$last" let-currentItemWidgets="currentItemWidgets" >
+                <label wmLabel name="Name" class="p media-heading" caption.bind="item.name" fontsize="1.143" fontunit="em"></label>
+            </ng-template>
+        </div>
+    `
+})
+class ListWrapperComponent {
+    @ViewChild(ListComponent)
+    listComponent: ListComponent;
+    public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}];
+    onBeforeRender(widget, $data) {
+        console.log('calling on before render');
+    }
+
+    onRender(widget, $data) {
+        console.log('calling on render');
+    }
+
+    constructor(_pipeProvider: PipeProvider) {
+        setPipeProvider(_pipeProvider);
+    }
+}
+
+describe('ListComponent', () => {
+   let wrapperComponent: ListWrapperComponent;
+   let listComponent: ListComponent;
+   let fixture: ComponentFixture<ListWrapperComponent>;
+
+   beforeEach(async(()=>{
+       TestBed.configureTestingModule({
+           imports: [
+               FormsModule,
+               PaginationModule.forRoot()
+           ],
+           declarations: [ListWrapperComponent, ListComponent, ListItemDirective, TrustAsPipe, PaginationComponent],
+           providers: [
+               {provide: App, useValue: mockApp},
+               {provide: ToDatePipe, useValue: mockApp},
+               {provide: AppDefaults, useClass: AppDefaults}
+           ]
+       })
+           .compileComponents();
+
+       fixture = TestBed.createComponent(ListWrapperComponent);
+       wrapperComponent = fixture.componentInstance;
+       listComponent = wrapperComponent.listComponent;
+
+       fixture.detectChanges();
+       listComponent.dataset = wrapperComponent.testdata;
+       listComponent.onPropertyChange('dataset', listComponent.dataset);
+   }));
+
+   it('should create the List Component', () => {
+       fixture.detectChanges();
+       expect(wrapperComponent).toBeTruthy();
+   });
+
+   it('should apply list class to ul element', () => {
+       const listclass = 'my-list-class';
+       listComponent.listclass = listclass;
+       fixture.detectChanges();
+       const ulElem = fixture.debugElement.query(By.css('ul.app-livelist-container'));
+       expect(ulElem.nativeElement.classList).toContain(listclass);
+   });
+
+   it('should apply list-item class to li element', () => {
+       const itemclass = 'my-listitem-class';
+       listComponent.itemclass = itemclass;
+       fixture.detectChanges();
+       const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
+       expect(liElem.nativeElement.classList).toContain(itemclass);
+   });
+
+   it('should select first item & first li should have "active" class applied', () => {
+       listComponent.selectfirstitem = true;
+       fixture.detectChanges();
+
+       // selected item should be the first one in dataset
+       expect(listComponent.selecteditem).toEqual(listComponent.dataset[0]);
+       // active class to be applied on the first element
+       const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
+       expect(liElem.nativeElement.classList).toContain('active');
+   });
+
+/*
+   it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
+       spyOn(wrapperComponent, 'onBeforeRender');
+       // spyOn(wrapperComponent, 'onRender');
+       fixture.detectChanges();
+       console.warn('checking outside...');
+       // tick(100);
+       setTimeout(()=>{
+           expect(wrapperComponent.onBeforeRender).toHaveBeenCalledTimes(1);
+       }, 1000);
+       fixture.whenStable().then(()=>{
+           console.warn('checking now...');
+           //expect(wrapperComponent.onRender).toHaveBeenCalledTimes(2);
+       })
+
+   }));
+*/
+
+});

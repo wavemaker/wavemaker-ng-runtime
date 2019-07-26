@@ -89,7 +89,7 @@ export class CarouselAnimator extends SwipeAnimation {
 
     public onAnimation() {
         const newIndex = (this._items.length + this._activeIndex) % this._items.length;
-        this.carousel.invokeEventCallback('change', {newIndex: newIndex, oldIndex: this._oldIndex});
+        this.carousel.onChangeCB(newIndex, this._oldIndex);
         this._oldIndex = newIndex;
     }
 

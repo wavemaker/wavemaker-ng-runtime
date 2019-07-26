@@ -9,7 +9,8 @@ export class LogoutActionManager extends BaseActionManager {
     logout(variable, options, success, error) {
         let handleError,
             redirectPage,
-            output;
+            output,
+            newDataSet;
 
         handleError = function (msg, details, xhrObj) {
             /* if in RUN mode, trigger error events associated with the variable */
@@ -38,8 +39,18 @@ export class LogoutActionManager extends BaseActionManager {
                         this.notifyInflight(variable, false, redirectUrl);
                         // EVENT: ON_RESULT
                         initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, redirectUrl);
-                        // EVENT: ON_SUCCESS
-                        initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, redirectUrl);
+                        // EVENT: ON_PREPARESETDATA
+                        newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, redirectUrl);
+                        if (newDataSet) {
+                                // setting newDataSet as the response to service variable onPrepareSetData
+                                redirectUrl = newDataSet;
+                        }
+                        setTimeout(()=>{
+                            // EVENT: ON_SUCCESS
+                            initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, redirectUrl);
+                            // EVENT: ON_CAN_UPDATE
+                            initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, redirectUrl);
+                        })
                     });
 
                     // In case of CAS response will be the redirectUrl

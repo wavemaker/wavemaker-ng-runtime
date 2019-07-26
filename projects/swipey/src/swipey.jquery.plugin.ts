@@ -75,10 +75,10 @@ window.requestAnimationFrame = (function () {
             let result;
             $.each(elementsToObserve, function () {
                 if (this.$ele[0].iscroll) {
-                    if (!isNaN(this.$ele[0].iscroll.y) && this.$ele[0].iscroll.y !== this.last.scrollTop) {
+                    if (!isNaN(this.$ele[0].iscroll.y) && this.$ele[0].iscroll.y !== 0) {
                         result = true;
                     }
-                } else if (this.$ele[0].scrollTop !== this.last.scrollTop) {
+                } else if (this.$ele[0].scrollTop !== 0) {
                     result = true;
                 }
             });
@@ -89,10 +89,10 @@ window.requestAnimationFrame = (function () {
             let result;
             $.each(elementsToObserve, function () {
                 if (this.$ele[0].iscroll) {
-                    if (!isNaN(this.$ele[0].iscroll.x) && this.$ele[0].iscroll.x !== this.last.scrollLeft) {
+                    if (!isNaN(this.$ele[0].iscroll.x) && this.$ele[0].iscroll.x !== 0) {
                         result = true;
                     }
-                } else if (this.$ele[0].scrollLeft !== this.last.scrollLeft) {
+                } else if (this.$ele[0].scrollLeft !== 0) {
                     result = true;
                 }
             });
@@ -100,7 +100,12 @@ window.requestAnimationFrame = (function () {
         }
 
         this.hasSrcolled = function () {
-            return isVerticalScroll() || isHorizontalScroll();
+            if (direction === $.fn.swipey.DIRECTIONS.VERTICAL) {
+                return isVerticalScroll();
+            }
+            if (direction === $.fn.swipey.DIRECTIONS.HORIZONTAL) {
+                return isHorizontalScroll();
+            }
         };
     }
 

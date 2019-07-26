@@ -150,6 +150,14 @@ export class AppManagerService {
         return this.appVariablesFired;
     }
 
+    private clearLoggedInUserVariable(variable) {
+        variable.isAuthenticated = false;
+        variable.roles           = [];
+        variable.name            = undefined;
+        variable.id              = undefined;
+        variable.tenantId        = undefined;
+    }
+
     private updateLoggedInUserVariable() {
         const loggedInUser = _.get(this.$app, 'Variables.loggedInUser.dataSet');
 
@@ -166,6 +174,8 @@ export class AppManagerService {
                 loggedInUser.id              = securityConfig.userInfo.userId;
                 loggedInUser.tenantId        = securityConfig.userInfo.tenantId;
             } else {
+                this.clearLoggedInUserVariable(loggedInUser);
+                loggedInUser.isSecurityEnabled = securityConfig && securityConfig.securityEnabled;
                 throw null;
             }
         }).catch(err => {
