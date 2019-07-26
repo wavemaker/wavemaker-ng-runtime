@@ -33,7 +33,7 @@ export const unMuteWatchers = () => {
     triggerWatchers();
 };
 
-export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false) => {
+export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false, deepClone = false) => {
     if (expr.indexOf('[$i]') !== -1) {
         expr = expr.replace(/\[\$i]/g, '[0]');
     }
@@ -44,7 +44,8 @@ export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGene
         listener,
         expr,
         last: FIRST_TIME_WATCH,
-        doNotClone
+        doNotClone,
+        deepClone
     });
 
     return () => $unwatch(identifier);
@@ -88,7 +89,7 @@ const triggerWatchers = () => {
                 watchInfo.last = nv;
 
                 if (_.isObject(nv) && !watchInfo.doNotClone && nv.__cloneable__ !== false) {
-                    watchInfo.last = _.clone(nv);
+                    watchInfo.last = watchInfo.deepClone ?  _.cloneDeep(nv) : _.clone(nv);
                 }
                 listener(nv, ov);
                 resetChangeFromWatch();
