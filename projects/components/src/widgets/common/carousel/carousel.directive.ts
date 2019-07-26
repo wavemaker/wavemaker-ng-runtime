@@ -36,6 +36,8 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     public animationinterval;
     public animation;
     public controls;
+    public currentslide;
+    public previousslide;
 
     @ContentChildren(SlideComponent) slides: QueryList<SlideComponent>;
 
@@ -73,6 +75,13 @@ export class CarouselDirective extends StylableComponent implements AfterContent
             this.onSlidesRender(slides);
         });
         this.slides.setDirty();
+    }
+
+    public onChangeCB(newIndex, oldIndex) {
+        // assign current and previous slides on widget. In case of static carousel, fieldDefs will be undefined, hence the check
+        this.currentslide = this.fieldDefs && this.fieldDefs[newIndex];
+        this.previousslide = this.fieldDefs && this.fieldDefs[oldIndex];
+        this.invokeEventCallback('change', {newIndex: newIndex, oldIndex: oldIndex});
     }
 
     ngAfterContentInit() {
