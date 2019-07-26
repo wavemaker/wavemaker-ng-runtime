@@ -36,11 +36,11 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
-    onSuccess() {
+    onSuccessCB() {
         this.invokeEventCallback('success');
     }
 
-    onError(error?) {
+    onErrorCB(error?) {
         this.loginMessage = {
             type: 'error',
             caption: this.errormessage || error || this.appLocale.LABEL_INVALID_USERNAME_OR_PASSWORD,
@@ -55,7 +55,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
     doLogin() {
         if (this.eventsource) {
-            this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccess.bind(this), this.onError.bind(this));
+            this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccessCB.bind(this), this.onErrorCB.bind(this));
         } else {
             console.warn('Default action "loginAction" does not exist. Either create the Action or assign an event to onSubmit of the login widget');
         }
