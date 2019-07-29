@@ -174,7 +174,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const position: number = input.selectionStart;
         const preValue: string = input.value;
         this.displayValue = input.value  = this.transformNumber(this.proxyModel);
-        if (this.updateon === 'default') {
+        // in safari browser, setSelectionRange will focus the input by default, which may invoke the focus event on widget.
+        // Hence preventing the setSelectionRange when default value is set i.e. widget is not focused.
+        if (this.updateon === 'default' && !this.isDefaultQuery) {
             this.resetCursorPosition(preValue.length - position);
         }
     }
