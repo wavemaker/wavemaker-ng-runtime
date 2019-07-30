@@ -16,6 +16,7 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
     propertiesMap;
     pagination;
     type;
+    orderBy;
     _options;
     // Used to track a variable http call, so that it can be cancelled at any point of time during its execution
     _observable;
@@ -201,6 +202,17 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     _upgradeInputData(response, data) {
         return getManager().upgradeInputDataToFilterExpressions(this, response, data);
+    }
+
+    setOrderBy(expression) {
+        this.orderBy = expression;
+
+        /* update the variable if autoUpdate flag is set */
+        if (this.autoUpdate) {
+            this.update();
+        }
+
+        return this.orderBy;
     }
 
     // legacy method
