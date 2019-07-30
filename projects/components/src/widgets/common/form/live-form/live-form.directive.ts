@@ -211,7 +211,7 @@ export class LiveFormDirective {
         const dataObject = this.getDataObject();
         const formName = this.form.name;
         let formFields;
-        formFields = isPreviousData ? this.form.prevformFields : this.form.formFields;
+        formFields = isPreviousData ? this.form.prevformFields : this.form.getFormFields();
         formFields.forEach(field => {
             let dateTime,
                 fieldValue;

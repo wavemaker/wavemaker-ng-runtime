@@ -532,8 +532,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     // Construct the data object merging the form fields and custom widgets data
     constructDataObject() {
         const formData     = {};
+        const formFields = this.getFormFields();
         // Get all form fields and prepare form data as key value pairs
-        this.formFields.forEach(field => {
+        formFields.forEach(field => {
             let fieldName,
                 fieldValue;
             fieldValue = field.datavalue || field._control.value;
