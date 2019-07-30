@@ -1,6 +1,6 @@
 import { Attribute, Directive, Injector } from '@angular/core';
 
-import { isMobileApp, setCSS, switchClass } from '@wm/core';
+import { isMobileApp, isSpotcuesApp, setCSS, switchClass } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
 import { IWidgetConfig } from '../../../framework/types';
@@ -34,7 +34,7 @@ export class LayoutGridColumnDirective extends StylableComponent {
     }
 
     onPropertyChange(key, nv, ov?) {
-        const prefix = isMobileApp() ? 'xs' : 'sm';
+        const prefix = isMobileApp() || isSpotcuesApp() ? 'xs' : 'sm';
         if (key === 'columnwidth') {
             switchClass(this.nativeElement, `col-${prefix}-${nv}`, ov ? `col-${prefix}-${ov}` : '');
         } else {
