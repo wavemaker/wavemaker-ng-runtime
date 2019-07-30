@@ -32,7 +32,7 @@ export class NotificationActionManager extends BaseActionManager {
             toaster = toasterService.showCustom(partialPage, {positionClass: positionClass, timeOut: duration,
                 partialParams: variable._binddataSet, context: variable._context});
         } else {
-            toaster = toasterService.show(type, title, body || null, {positionClass: positionClass, timeOut: duration});
+            toaster = toasterService.show(type, title, body || null, {positionClass: positionClass, timeOut: duration, enableHtml: true});
         }
 
         // callbacks
