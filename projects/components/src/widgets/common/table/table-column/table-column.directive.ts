@@ -449,7 +449,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.limit =  this.limit ? +this.limit  :  undefined;
         this.editWidgetType = this['edit-widget-type'] =  this['edit-widget-type'] || getEditModeWidget(this);
         this.filterOn =  this['filter-on'];
-        this.readonly =  isDefined(this.readonly) ? this.readonly  :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
+        this.readonly =  isDefined(this.getAttr('readonly')) ? this.getAttr('readonly') === 'true' :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
         this.filterwidget =  this.filterwidget || getDataTableFilterWidget(this.type || 'string');
         this.isFilterDataSetBound = !!this.bindfilterdataset;
         this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
