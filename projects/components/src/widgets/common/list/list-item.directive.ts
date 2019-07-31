@@ -8,7 +8,7 @@ import { $invokeWatchers, $watch, App } from '@wm/core';
 import { ListComponent } from './list.component';
 import { WidgetRef } from '../../framework/types';
 
-declare const $;
+declare const $, _;
 
 @Directive({
     selector: '[wmListItem]',
@@ -100,7 +100,9 @@ export class ListItemDirective implements OnInit, AfterViewInit {
 
     private triggerWMEvent(eventName) {
         $invokeWatchers(true);
-        this.app.notify('wm-event', {eventName, widgetName: this.listComponent.name, row: this.listComponent.selecteditem});
+        // If we have multiselect for the livelist(List with form template), in run mode deleting a record is getting failed. Becuase the selecteditem will be array of objects. So consider the last object.
+        const row = this.listComponent.multiselect ? _.last(this.listComponent.selecteditem) : this.listComponent.selecteditem;
+        this.app.notify('wm-event', {eventName, widgetName: this.listComponent.name, row: row});
     }
 
     private setUpCUDHandlers() {
