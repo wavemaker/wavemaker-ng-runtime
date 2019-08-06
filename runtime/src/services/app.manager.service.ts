@@ -143,6 +143,7 @@ export class AppManagerService {
             loggedInUser.name            = undefined;
             loggedInUser.id              = undefined;
             loggedInUser.tenantId        = undefined;
+            loggedInUser.isSecurityEnabled = securityConfig && securityConfig.securityEnabled;
         }
     }
 
