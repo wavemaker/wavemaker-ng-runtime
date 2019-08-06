@@ -297,8 +297,8 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
         // construct the path of the node
         $liPath
-            .each(() => {
-                const current = $(this).children('.title').text();
+            .each((i, el) => {
+                const current = $(el).children('.title').text();
                 path = `/${current + path}`;
             });
 
