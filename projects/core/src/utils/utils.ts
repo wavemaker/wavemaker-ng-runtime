@@ -418,7 +418,7 @@ export const validateAccessRoles = (roleExp, loggedInUser) => {
 
 export const getValidJSON = (content) => {
     if (!content) {
-        return false;
+        return undefined;
     }
     try {
         const parsedIntValue = parseInt(content, 10);
@@ -426,7 +426,7 @@ export const getValidJSON = (content) => {
         return isObject(content) || !isNaN(parsedIntValue) ? content : JSON.parse(content);
     } catch (e) {
         /*terminating execution if new variable object is not valid json.*/
-        return false;
+        return undefined;
     }
 };
 
