@@ -23,6 +23,14 @@ export class DialogServiceImpl {
 
     constructor() {}
 
+    // close all the popovers before opening/closing the dialog
+    private closePopover() {
+        if ($('.app-popover').length > 0) {
+            const popoverElements = document.querySelectorAll('.app-popover-wrapper');
+            _.forEach(popoverElements, (ele) => ele.widget.isOpen = false);
+        }
+    }
+
     /**
      * Register dialog by name and scope
      * @param {string} name
@@ -98,7 +106,8 @@ export class DialogServiceImpl {
      */
     public open(name: string, scope?: any, initState?: any) {
         const dialogRef = this.getDialogRef(name, scope);
-
+        // remove the popovers in the page to avoid the overlap with dialog
+        this.closePopover();
         if (!dialogRef) {
             return;
         }
@@ -112,7 +121,8 @@ export class DialogServiceImpl {
      */
     public close(name: string, scope?: any) {
         const dialogRef = this.getDialogRef(name, scope);
-
+        // remove the popovers in the page to avoid the overlap with dialog
+        this.closePopover();
         if (!dialogRef) {
             return;
         }
@@ -124,6 +134,8 @@ export class DialogServiceImpl {
      * closes all the opened dialogs
      */
     closeAllDialogs() {
+        // remove the popovers in the page to avoid the overlap with dialog
+        this.closePopover();
         _.forEach(openedDialogs.reverse(), (dialog) => {
             dialog.close();
         });
