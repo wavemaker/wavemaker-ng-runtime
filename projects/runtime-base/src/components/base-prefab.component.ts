@@ -1,15 +1,16 @@
 import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { $watch, AbstractI18nService, App, isIE, noop, UtilsService } from '@wm/core';
+import { $watch, AbstractI18nService, App, isIE, noop, UtilsService, $invokeWatchers } from '@wm/core';
 import { WidgetRef } from '@wm/components';
 import { VariablesService } from '@wm/variables';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
+import {FragmentMonitor} from "../util/fragment-monitor";
 
 declare const _;
 
-export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
+export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
     Actions: any;
@@ -28,12 +29,19 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
     abstract getVariables();
 
+    getContainerWidgetInjector() {
+        return this.containerWidget.inj || this.containerWidget.injector;
+    }
+
     init() {
         this.App = this.injector.get(App);
 
         this.containerWidget = this.injector.get(WidgetRef);
         this.prefabMngr = this.injector.get(PrefabManagerService);
         this.i18nService = this.injector.get(AbstractI18nService);
+        if (this.getContainerWidgetInjector().view.component.registerFragment) {
+            this.getContainerWidgetInjector().view.component.registerFragment()
+        }
 
         this.initUserScript();
 
@@ -41,6 +49,7 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
         this.initVariables();
         this.registerProps();
         this.defineI18nProps();
+        super.init();
     }
 
     registerWidgets() {
@@ -141,18 +150,27 @@ export abstract class BasePrefabComponent implements AfterViewInit, OnDestroy {
 
 
         this.viewInit$.subscribe(noop, noop, () => {
-
             variableCollection.callback(variableCollection.Variables).catch(noop);
             variableCollection.callback(variableCollection.Actions);
         });
     }
 
+    invokeOnReady() {
+        // triggering watchers so variables and propertiers watching over an expression are updated
+        $invokeWatchers(true, true);
+        this.onReady();
+        if (this.getContainerWidgetInjector().view.component.resolveFragment) {
+            this.getContainerWidgetInjector().view.component.resolveFragment();
+        }
+        this.containerWidget.invokeEventCallback('load');
+    }
+
+
     ngAfterViewInit(): void {
         this.viewInit$.complete();
         this.registerChangeListeners();
         setTimeout(() => {
-            this.onReady();
-            this.containerWidget.invokeEventCallback('load');
+            this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
         }, 100);
     }
 

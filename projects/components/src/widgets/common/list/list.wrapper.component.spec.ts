@@ -13,13 +13,14 @@ import { PaginationComponent } from '../pagination/pagination.component';
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
 let mockApp = {
-    subscribe: ()=>{}
+    subscribe: () => {}
 };
 
 @Component({
     template: `
         <div wmList template="true" itemsperrow="xs-1 sm-1 md-1 lg-1" class="media-list" name="testlist"
              dataset.bind="testdata" navigation="Basic"
+             click.event="onListClick($event, widget)"
              beforedatarender.event="onBeforeRender(widget, $data)"
              render.event="onRender(widget, $data)">
             <ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$first="$first" let-$last="$last" let-currentItemWidgets="currentItemWidgets" >
@@ -32,12 +33,17 @@ class ListWrapperComponent {
     @ViewChild(ListComponent)
     listComponent: ListComponent;
     public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}];
+    public testdata1: any = [{firstname: 'Peter', id: 1}, {firstname: '', id: 2}];
     onBeforeRender(widget, $data) {
         console.log('calling on before render');
     }
 
     onRender(widget, $data) {
         console.log('calling on render');
+    }
+
+    onListClick($event, widget) {
+        console.log('clicked list component ')
     }
 
     constructor(_pipeProvider: PipeProvider) {
@@ -50,7 +56,7 @@ describe('ListComponent', () => {
    let listComponent: ListComponent;
    let fixture: ComponentFixture<ListWrapperComponent>;
 
-   beforeEach(async(()=>{
+   beforeEach(async(() => {
        TestBed.configureTestingModule({
            imports: [
                FormsModule,
@@ -105,23 +111,112 @@ describe('ListComponent', () => {
        const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
        expect(liElem.nativeElement.classList).toContain('active');
    });
+   
+   it('should apply disable-item class to li element', () => {
+        listComponent.disableitem = true;
+        fixture.detectChanges();
+        const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
+        expect(liElem.nativeElement.classList).toContain('disable-item');
+        // the click handler should not be called on disabling the item
+        spyOn(wrapperComponent, 'onListClick');
+        listComponent.getNativeElement().click();
+        expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
+    });
 
-/*
-   it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
-       spyOn(wrapperComponent, 'onBeforeRender');
-       // spyOn(wrapperComponent, 'onRender');
-       fixture.detectChanges();
-       console.warn('checking outside...');
-       // tick(100);
-       setTimeout(()=>{
-           expect(wrapperComponent.onBeforeRender).toHaveBeenCalledTimes(1);
-       }, 1000);
-       fixture.whenStable().then(()=>{
-           console.warn('checking now...');
-           //expect(wrapperComponent.onRender).toHaveBeenCalledTimes(2);
-       })
+    // it('should apply disable-item property using script or binding', () => {
+    //     listComponent.disableitem = wrapperComponent.testdata[1].name === 'Tony';
+    //     fixture.detectChanges();
+    //     const liELe = fixture.debugElement.query(By.directive(ListItemDirective));
+    //     expect(liELe.nativeElement.classList).toContain('disable-item');
+    //     // the click handler should not be called on disabling the item
+    //     spyOn(wrapperComponent, 'onListClick');
+    //     listComponent.getNativeElement().click();
+    //     expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
+    // });
+    
+    it('should select item by index from the script in on-render event', () => {
+        spyOn(wrapperComponent, 'onRender');
+        fixture.detectChanges();
+        expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
+        // select item by passing index
+        listComponent.selectItem(1);
+        fixture.detectChanges();
 
-   }));
-*/
+        // selected item should be the second one in dataset
+        expect(listComponent.selecteditem).toEqual(listComponent.dataset[1]);
+    });
 
+    /*
+    it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
+        spyOn(wrapperComponent, 'onBeforeRender');
+        // spyOn(wrapperComponent, 'onRender');
+        fixture.detectChanges();
+        console.warn('checking outside...');
+        // tick(100);
+        setTimeout(()=>{
+            expect(wrapperComponent.onBeforeRender).toHaveBeenCalledTimes(1);
+        }, 1000);
+        fixture.whenStable().then(()=>{
+            console.warn('checking now...');
+            //expect(wrapperComponent.onRender).toHaveBeenCalledTimes(2);
+        })
+
+    }));
+ */
+
+
+});
+
+describe('ListComponent With groupby', () => {
+    let wrapperComponent: ListWrapperComponent;
+    let listComponent: ListComponent;
+    let fixture: ComponentFixture<ListWrapperComponent>;
+
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            imports: [
+                FormsModule,
+                PaginationModule.forRoot()
+            ],
+            declarations: [ListWrapperComponent, ListComponent, ListItemDirective, TrustAsPipe, PaginationComponent],
+            providers: [
+                {provide: App, useValue: mockApp},
+                {provide: ToDatePipe, useValue: mockApp},
+                {provide: AppDefaults, useClass: AppDefaults}
+            ]
+        })
+            .compileComponents();
+
+        fixture = TestBed.createComponent(ListWrapperComponent);
+        wrapperComponent = fixture.componentInstance;
+        listComponent = wrapperComponent.listComponent;
+
+        fixture.detectChanges();
+        listComponent.groupby = 'firstname';
+        listComponent.dataset = wrapperComponent.testdata1;
+        listComponent.onPropertyChange('dataset', listComponent.dataset);
+        fixture.detectChanges();
+    }));
+
+
+    it('should select item by model from the script with groupby property in on-render event', () => {
+        spyOn(wrapperComponent, 'onRender');
+        fixture.detectChanges();
+        // select item by passing its model
+        listComponent.selectItem(listComponent.dataset[0]);
+        fixture.detectChanges();
+
+        // selected item should be the second one in dataset
+        expect(listComponent.selecteditem).toEqual(listComponent.dataset[0]);
+    });
+
+    it('should display header as others when grouping is done with a column having empty value', () => {
+        fixture.detectChanges();
+        const liElements = fixture.debugElement.nativeElement.querySelectorAll('.app-list-item-header h4');
+        // header text shouldn't be empty.
+        liElements.forEach((ele) => {
+            expect(ele.innerText).not.toBeNull();
+        });
+
+    });
 });

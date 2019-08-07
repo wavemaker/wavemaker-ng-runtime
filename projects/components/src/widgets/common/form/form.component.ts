@@ -423,7 +423,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 // For livelist when multiselect is enabled, formdata will be array of objects. In this case consider the last object as formdata.
                 _.isArray(nv) ? this.setFormData(_.last(nv)) : this.setFormData(nv);
                 // if dataset on the formFields are not set as the datasourceChange is triggered before the formFields are registered.
-                if (!this.isDataSourceUpdated) {
+                if (!this.isDataSourceUpdated && this.datasource) {
                     this.onDataSourceChange();
                 }
                 break;
@@ -532,8 +532,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     // Construct the data object merging the form fields and custom widgets data
     constructDataObject() {
         const formData     = {};
+        const formFields = this.getFormFields();
         // Get all form fields and prepare form data as key value pairs
-        this.formFields.forEach(field => {
+        formFields.forEach(field => {
             let fieldName,
                 fieldValue;
             fieldValue = field.datavalue || field._control.value;
@@ -558,8 +559,17 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
+    // FormFields will contain all the fields in parent and inner form also.
+    // This returns the formFields in the form based on the form name.
+    getFormFields() {
+        return _.filter(this.formFields, formField => {
+            return formField.form.name === this.name;
+        });
+    }
+
     setFormData(data) {
-        this.formFields.forEach(field => {
+        const formFields = this.getFormFields();
+        formFields.forEach(field => {
             field.value =  _.get(data, field.key || field.name);
         });
 

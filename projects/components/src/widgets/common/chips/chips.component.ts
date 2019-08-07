@@ -272,10 +272,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         });
     }
 
-    private resetSearchModel(hasFocus?: boolean) {
+    private resetSearchModel(defaultQuery?: boolean) {
         this._unsubscribeDv = true;
         // clear search will empty the query model and gets the data when minchars is 0 (i.e. autocomplete) on focus
-        (this.searchComponent as any).clearSearch(undefined, !this.minchars);
+        // defaultQuery flag is set when widget is not active. This will only load the autocomplete dropup with minchars as 0 when widget is focused/active
+        (this.searchComponent as any).clearSearch(undefined, !this.minchars && !defaultQuery);
         this._unsubscribeDv = false;
     }
 

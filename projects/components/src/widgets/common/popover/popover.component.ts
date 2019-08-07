@@ -132,9 +132,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (!this.popoverarrow) {
             addClass(popoverContainer.querySelector('.arrow') as HTMLElement, 'hidden');
         }
-
-        this.invokeEventCallback('show', {$event: {type: 'show'}});
-
         if (this.interaction === 'hover' || this.interaction === 'default') {
 
             // do not use addEventListener here
@@ -173,6 +170,11 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             if (this.popoverplacement === 'bottom' || this.popoverplacement === 'top') {
                 this.calculatePopoverPostion(popoverContainer);
             }
+            // triggering onload event after popover content has rendered
+            if (this.contentsource === 'partial') {
+                this.invokeEventCallback('load');
+            }
+            this.invokeEventCallback('show', {$event: {type: 'show'}});
         });
     }
 

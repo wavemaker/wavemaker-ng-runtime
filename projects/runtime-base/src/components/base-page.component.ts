@@ -124,7 +124,9 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         const subscription = this.viewInit$.subscribe(noop, noop, () => {
 
             if (!this.appManager.isAppVariablesFired()) {
-                variableCollection.callback(this.App.Variables).catch(noop);
+                variableCollection.callback(this.App.Variables).catch(noop).then(() => {
+                    this.appManager.notify('app-variables-data-loaded', {pageName: this.pageName});
+                });
                 variableCollection.callback(this.App.Actions);
                 this.appManager.appVariablesReady();
                 this.appManager.isAppVariablesFired(true);
@@ -133,7 +135,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             variableCollection.callback(variableCollection.Variables)
                 .catch(noop)
                 .then(() => {
-                    this.appManager.notify('page-start-up-variables-loaded', {pageName: this.pageName});
+                    this.appManager.notify('page-variables-data-loaded', {pageName: this.pageName});
                     this.startupVariablesLoaded = true;
                     // hide the loader only after the some setTimeout for smooth page load.
                     setTimeout(() => {

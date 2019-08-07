@@ -71,7 +71,8 @@ export class LiveFormDirective {
         if (_.get(this.form.formFields, 'length')) {
             this.form.isDataSourceUpdated = true;
         }
-        this.form.formFields.forEach(field => {
+        const formFields = this.form.getFormFields();
+        formFields.forEach(field => {
             if (!field.isDataSetBound && isDataSetWidget(field.widgettype)) {
                 if (field['is-related']) {
                     field.isDataSetBound = true;
@@ -85,7 +86,7 @@ export class LiveFormDirective {
                         widget: 'widgettype',
                         enableemptyfilter: this.form.enableemptyfilter
                     });
-                    applyFilterOnField(this.form.datasource, field.widget, this.form.formFields, field.value, {isFirst: true});
+                    applyFilterOnField(this.form.datasource, field.widget, formFields, field.value, {isFirst: true});
                 }
             }
         });
@@ -150,7 +151,8 @@ export class LiveFormDirective {
         if (!dataObj) {
             return;
         }
-        this.form.formFields.forEach(field => {
+        const formFields = this.form.getFormFields();
+        formFields.forEach(field => {
             const value = _.get(dataObj, field.key || field.name);
             if (isTimeType(field)) {
                 field.value = getValidTime(value);
@@ -209,7 +211,7 @@ export class LiveFormDirective {
         const dataObject = this.getDataObject();
         const formName = this.form.name;
         let formFields;
-        formFields = isPreviousData ? this.form.prevformFields : this.form.formFields;
+        formFields = isPreviousData ? this.form.prevformFields : this.form.getFormFields();
         formFields.forEach(field => {
             let dateTime,
                 fieldValue;

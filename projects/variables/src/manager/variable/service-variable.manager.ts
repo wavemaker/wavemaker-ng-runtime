@@ -66,9 +66,10 @@ export class ServiceVariableManager extends BaseVariableManager {
         let dataSet;
         let newDataSet;
         let pagination = {};
-        let advancedOptions: AdvancedOptions ;
+        let advancedOptions: AdvancedOptions;
+        let jsonParsedResponse: any = getValidJSON(response);
 
-        response = getValidJSON(response) || xmlToJson(response) || response;
+        response = isDefined(jsonParsedResponse) ? jsonParsedResponse : (xmlToJson(response) || response);
 
         const isResponsePageable = isPageable(response);
         if (isResponsePageable) {
@@ -299,7 +300,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 }
                 param.sampleValue = inputFields[param.name];
                 /* supporting pagination for query service variable */
-                if (variable.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY && variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.DATA && VARIABLE_CONSTANTS.PAGINATION_PARAMS.indexOf(param.name) !== -1) {
+                if (VARIABLE_CONSTANTS.PAGINATION_PARAMS.indexOf(param.name) !== -1) {
                     if (param.name === 'size') {
                         param.sampleValue = options.size || param.sampleValue || parseInt(variable.maxResults, 10);
                     } else if (param.name === 'page') {

@@ -39,15 +39,16 @@ export class IdResolver implements Worker {
                     change.params.skipLocalDB = true ;
                     return this.localDBManagementService.getStore(dataModelName, entityName)
                         .then(store => {
+                            const primaryKeyName = store.primaryKeyName;
+                            if (primaryKeyName) {
+                                this.transactionLocalId = change.params.data[primaryKeyName];
+                                change['dataLocalId'] = this.transactionLocalId;
+                            }
                             return this.exchangeIds(store, dataModelName, entityName, change.params.data)
                                 .then(() => {
-                                    const primaryKeyName = store.primaryKeyName;
                                     if (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity') {
-                                        this.transactionLocalId = change['localId'] || change.params.data[primaryKeyName];
-                                        change['dataLocalId'] = this.transactionLocalId;
                                         delete change.params.data[primaryKeyName];
                                     } else {
-                                        this.transactionLocalId = change.params.data[primaryKeyName];
                                         const relationalPrimaryKeyValue = store.getValue(change.params.data, store.primaryKeyName);
                                         // for the data referring to the relational table based on primary key assign the primaryField values to the relationalPrimaryKeyValue
                                         if (isDefined(relationalPrimaryKeyValue)) {
@@ -145,13 +146,14 @@ export class IdResolver implements Worker {
         store.entitySchema.columns.forEach(col => {
             if (col.foreignRelations) {
                 col.foreignRelations.forEach( foreignRelation => {
+                    if (data[col.fieldName]) {// if id value
+                        this.exchangeId(store, dataModelName, foreignRelation.targetEntity, data, col.fieldName);
+                    }
                     if (data[foreignRelation.sourceFieldName]) {// if object reference
                         exchangeIdPromises.push(this.localDBManagementService.getStore(dataModelName, foreignRelation.targetEntity)
                             .then(refStore => {
                                 return this.exchangeIds(refStore, dataModelName, foreignRelation.targetEntity, data[foreignRelation.sourceFieldName]);
                             }));
-                    } else if (data[col.fieldName]) {// if id value
-                        this.exchangeId(store, dataModelName, foreignRelation.targetEntity, data, col.fieldName);
                     }
                 });
             }

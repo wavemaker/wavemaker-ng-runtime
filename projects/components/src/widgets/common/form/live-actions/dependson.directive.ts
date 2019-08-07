@@ -73,8 +73,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
                 }
                 break;
             case Live_Operations.DELETE:
-               // If we have multiselect for the livelist(List with form template), in run mode deleting a record is getting failed. Becuase the row will be array of objects. So constructing dataobject.
-                (<any>this.app).Widgets[this.dependson].call('delete', {row: this.form.constructDataObject()});
+                (<any>this.app).Widgets[this.dependson].call('delete', {row: options.row});
                 break;
             case Live_Operations.READ:
                 if (!this.isLayoutDialog) {
