@@ -66,9 +66,10 @@ export class ServiceVariableManager extends BaseVariableManager {
         let dataSet;
         let newDataSet;
         let pagination = {};
-        let advancedOptions: AdvancedOptions ;
+        let advancedOptions: AdvancedOptions;
+        let jsonParsedResponse: any = getValidJSON(response);
 
-        response = getValidJSON(response) || xmlToJson(response) || response;
+        response = isDefined(jsonParsedResponse) ? jsonParsedResponse : (xmlToJson(response) || response);
 
         const isResponsePageable = isPageable(response);
         if (isResponsePageable) {
