@@ -3,7 +3,7 @@ import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
@@ -305,6 +305,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.invokeEventCallback('rowclick', {$data: rowData, $event: e, row: rowData});
             }
         },
+        closePopover: closePopover,
         onColumnSelect: (col, e) => {
             this.selectedColumns = this.callDataGridMethod('getSelectedColumns');
             this.invokeEventCallback('columnselect', {$data: col, $event: e});

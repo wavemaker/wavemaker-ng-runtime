@@ -1188,6 +1188,18 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 
 };
 
+// close all the popovers.
+export const closePopover = () => {
+    if ($('.app-popover').length > 0) {
+        const popoverElements = document.querySelectorAll('.app-popover-wrapper');
+        _.forEach(popoverElements, (ele) => {
+            if (ele.widget.isOpen) {
+                ele.widget.isOpen = false;
+            }
+        });
+    }
+};
+
 /**
  * This method is to trigger change detection in the app
  * This is exposed for the end user developer of WM app
