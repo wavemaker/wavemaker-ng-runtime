@@ -165,7 +165,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if ( Number.isNaN(number) || Number.isNaN(decimal)) {
             return NaN;
         }
-        return number + decimal;
+        // if the number is negative then calculate the number as number - decimal
+        // Ex: number = -123 and decimal = 0.45 then number - decimal = -123-045 = -123.45
+        return number >= 0 ? number + decimal : number - decimal;
     }
 
     // updates the widgets text value.
@@ -264,7 +266,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             return;
         }
 
-        const validity = new RegExp(`^[\\d\\s,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
+        const validity = new RegExp(`^[\\d\\s-,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
         const inputValue = $event.target.value;
         // validates if user entered an invalid character.
         if (!validity.test($event.key)) {
@@ -278,7 +280,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (_.intersection(_.toArray(inputValue), ['e', 'E']).length && _.includes('eE', $event.key)) {
             return false;
         }
-        if (_.includes(inputValue, '+') &&  $event.key === '+') {
+        if ((_.includes(inputValue, '+') || _.includes(inputValue, '-') ) &&  ($event.key === '+' || $event.key === '-')) {
             return false;
         }
     }
