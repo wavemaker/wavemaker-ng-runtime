@@ -1338,10 +1338,7 @@ $.widget('wm.datatable', {
     },
     closePopover: function() {
         //If the DataTable is in the popover, popover shouldn't be closed
-        if (!this.element.closest('.app-popover').length) {
-            //removes all the popovers
-            $('.app-popover-wrapper').click();
-        }
+        this.options.closePopover();
     },
     headerClickHandler: function (e) {
         var $th = $(e.target).closest('th.app-datagrid-header-cell'),
@@ -2223,7 +2220,7 @@ $.widget('wm.datatable', {
                         return;
                     }
                 }
-                // If class has danger, confirm dialog is opened, so dont save the row. 
+                // If class has danger, confirm dialog is opened, so dont save the row.
                  //If focusout is because of input element or row action or current row, dont save the row
                 if (isRelatedTargetRowAction || $row.hasClass("danger") || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null) || isInvalidTarget() || $relatedTarget.attr("focus-target") === "") {
                     return;
