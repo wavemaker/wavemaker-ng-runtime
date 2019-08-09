@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
 
-import { hasCordova, noop } from '@wm/core';
+import { $appDigest, hasCordova, noop } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 
@@ -27,11 +27,17 @@ export class DeviceService {
                 console.warn('Waiting For %O', this._startUpServices.map(i => i.serviceName));
             }
         }, maxWaitTime * 1000);
-        document.addEventListener('backbutton', ($event) => {
-            _.forEach(this._backBtnTapListeners, fn => {
-                return fn($event) !== false;
-            });
+        document.addEventListener('backbutton', this.executeBackTapListeners.bind(this));
+    }
+
+    public executeBackTapListeners($event) {
+        _.forEach(this._backBtnTapListeners, fn => {
+            return fn($event) !== false;
         });
+        // explicitly applying the digest cycle as the backbutton listener is not rendering the page content.
+        // This is because zone is not run (there is no change detection)
+        // https://weblogs.thinktecture.com/thomas/2017/02/cordova-vs-zonejs-or-why-is-angulars-document-event-listener-not-in-a-zone.html
+        $appDigest();
     }
 
     public addStartUpService(service: IDeviceStartUpService) {
