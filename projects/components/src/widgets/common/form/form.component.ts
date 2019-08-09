@@ -1,4 +1,4 @@
-import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit } from '@angular/core';
+import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource } from '@wm/core';
@@ -157,7 +157,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private validationMessages = [];
 
     private _debouncedSubmitForm = debounce(($event) => {
-        this.submitForm($event);
+        // calling submit event in ngZone as change detection is not triggered post the submit callback and actions like notification are not shown
+        this.ngZone.run(() => {
+            this.submitForm($event);
+        });
     }, 250);
 
     set isLayoutDialog(nv) {
@@ -198,6 +201,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         private fb: FormBuilder,
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
+        private ngZone: NgZone,
         @Optional() public parentList: ListComponent,
         @SkipSelf() @Optional() public parentForm: FormComponent,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
