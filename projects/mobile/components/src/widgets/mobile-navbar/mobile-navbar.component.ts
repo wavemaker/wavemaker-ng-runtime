@@ -68,12 +68,12 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
             }
         });
         this._backBtnListenerDestroyer = deviceService.onBackButtonTap($event => {
-            if (app.landingPageName === app.activePageName) {
-                window.navigator['app'].exitApp();
-            } else {
-                this.goBack($event);
+            if (this._isReady) {
+                if (this.backbtnClickEvt) {
+                    this.invokeEventCallback('backbtnclick', {$event});
+                    return false;
+                }
             }
-            return false;
         });
         setTimeout(() => this._isReady = true, 1000);
     }
@@ -96,13 +96,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
           * TODO: while trying navigating from details page to edit page in wavereads, app is navigating
           * as details -> editPage -> details. For now, keeping this callback to react after 1 second.
           */
-        if (this._isReady) {
-            if (this.backbtnClickEvt) {
-                this.invokeEventCallback('backbtnclick', {$event});
-            } else {
-                this.navigationService.goToPrevious();
-            }
-        }
+         this.deviceService.executeBackTapListeners($event);
     }
 
     public ngOnDestroy() {
