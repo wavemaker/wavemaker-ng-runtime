@@ -1338,7 +1338,7 @@ $.widget('wm.datatable', {
     },
     closePopover: function() {
         //If the DataTable is in the popover, popover shouldn't be closed
-        this.options.closePopover();
+        this.options.closePopover(this.element);
     },
     headerClickHandler: function (e) {
         var $th = $(e.target).closest('th.app-datagrid-header-cell'),

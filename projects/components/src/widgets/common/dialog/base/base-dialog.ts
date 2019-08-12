@@ -1,7 +1,7 @@
 import { Injector, OnDestroy, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
-import { AbstractDialogService } from '@wm/core';
+import { AbstractDialogService, closePopover } from '@wm/core';
 
 import { IDialog, IWidgetConfig } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
@@ -70,6 +70,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      */
     public open(initState?: any) {
 
+        // remove the popovers in the page to avoid the overlap with dialog
+        closePopover(this.$element);
+
         // do not open the dialog again if it is already opened
         const duplicateDialogCheck = (openedDialog) => {
            return openedDialog === this;
@@ -91,6 +94,8 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      * invokes the on-close event callback
      */
     public close() {
+        // remove the popovers in the page to avoid the overlap with dialog
+        closePopover(this.$element);
         if (this.dialogRef) {
             this.dialogService.addToClosedDialogs(this);
             this.dialogRef.hide();
