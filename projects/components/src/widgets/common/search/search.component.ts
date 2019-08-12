@@ -513,7 +513,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         } else {
             this.queryModel = undefined;
             this.query = '';
-            this._modelByValue = undefined;
             return;
         }
         this.updateDatavalueFromQueryModel();
