@@ -1189,8 +1189,8 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 };
 
 // close all the popovers.
-export const closePopover = () => {
-    if ($('.app-popover').length > 0) {
+export const closePopover = (element) => {
+    if (!element.closest('.app-popover').length) {
         const popoverElements = document.querySelectorAll('.app-popover-wrapper');
         _.forEach(popoverElements, (ele) => {
             if (ele.widget.isOpen) {
