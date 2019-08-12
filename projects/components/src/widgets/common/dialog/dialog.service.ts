@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { closePopover } from '@wm/core';
 
 import { BaseDialog } from './base/base-dialog';
 
@@ -99,8 +98,6 @@ export class DialogServiceImpl {
      */
     public open(name: string, scope?: any, initState?: any) {
         const dialogRef = this.getDialogRef(name, scope);
-        // remove the popovers in the page to avoid the overlap with dialog
-        closePopover();
         if (!dialogRef) {
             return;
         }
@@ -114,8 +111,6 @@ export class DialogServiceImpl {
      */
     public close(name: string, scope?: any) {
         const dialogRef = this.getDialogRef(name, scope);
-        // remove the popovers in the page to avoid the overlap with dialog
-        closePopover();
         if (!dialogRef) {
             return;
         }
@@ -127,8 +122,6 @@ export class DialogServiceImpl {
      * closes all the opened dialogs
      */
     closeAllDialogs() {
-        // remove the popovers in the page to avoid the overlap with dialog
-        closePopover();
         _.forEach(openedDialogs.reverse(), (dialog) => {
             dialog.close();
         });
