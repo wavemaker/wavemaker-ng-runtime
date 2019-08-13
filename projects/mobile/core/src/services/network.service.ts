@@ -109,7 +109,7 @@ export class NetworkService implements IDeviceStartUpService {
      *
      * @returns {boolean} Returns true, if app is connected to server. Otherwise, returns false.
      */
-    public isConnected = () => networkState.isConnected;
+    public isConnected = () => networkState.isConnected && (navigator.connection.type !== Connection.NONE);
 
     /**
      * Returns true if app is trying to connect to server. Otherwise, returns false.
@@ -165,11 +165,12 @@ export class NetworkService implements IDeviceStartUpService {
         return defer.promise;
     }
 
-    public start(): Promise<void> {
+    public start(): Promise<any> {
         if (window['cordova']) {
+            networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
+            networkState.isConnected = networkState.isNetworkAvailable && networkState.isConnected;
             // Connection constant will be available only when network plugin is included.
             if (window['Connection'] && navigator.connection) {
-                networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
                 /*
                  * When the device comes online, check is the service is available. If the service is available and auto
                  * connect flag is true, then app is automatically connected to remote server.
@@ -206,8 +207,7 @@ export class NetworkService implements IDeviceStartUpService {
             }
         }
         // to set the default n/w connection values.
-        this.tryToConnect(true).catch(noop);
-        return Promise.resolve();
+        return this.tryToConnect(true).catch(noop);
     }
 
     /**
