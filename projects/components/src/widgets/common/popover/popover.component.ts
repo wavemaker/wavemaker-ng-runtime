@@ -88,6 +88,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     // Trigger on hiding popover
     public onHidden() {
         this.invokeEventCallback('hide', {$event: {type: 'hide'}});
+    }
+
+    private setFocusToPopoverLink() {
         setTimeout(() => this.anchorRef.nativeElement.focus(), 10);
     }
 
@@ -148,6 +151,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
         const deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
             this.isOpen = false;
+            this.setFocusToPopoverLink();
             deRegister();
         });
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
@@ -157,6 +161,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Shift+Tab key
             if (action === 'shift.tab') {
                 this.bsPopoverDirective.hide();
+                this.setFocusToPopoverLink();
             }
         };
         popoverEndBtn.onkeydown = (event) => {
@@ -164,6 +169,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Tab key
             if (action === 'tab') {
                 this.bsPopoverDirective.hide();
+                this.setFocusToPopoverLink();
             }
         };
 

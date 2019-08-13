@@ -71,7 +71,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     public open(initState?: any) {
 
         // remove the popovers in the page to avoid the overlap with dialog
-        closePopover(this.$element);
+        // closePopover(this.$element); Commenting this line because it is causing regression(if we have dialog inside popover as partail content, then the dialog close is not working because on closing the popover the partial get destroyed.)
 
         // do not open the dialog again if it is already opened
         const duplicateDialogCheck = (openedDialog) => {
@@ -95,7 +95,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      */
     public close() {
         // remove the popovers in the page to avoid the overlap with dialog
-        closePopover(this.$element);
+        // closePopover(this.$element); Commenting this line because it is causing regression(if we have dialog inside popover as partail content, then the dialog close is not working because on closing the popover the partial get destroyed.)
         if (this.dialogRef) {
             this.dialogService.addToClosedDialogs(this);
             this.dialogRef.hide();
