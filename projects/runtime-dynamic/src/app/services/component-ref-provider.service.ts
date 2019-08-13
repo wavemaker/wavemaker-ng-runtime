@@ -187,7 +187,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)),
                     script: _decodeURIComponent(script),
-                    styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
+                    styles: _decodeURIComponent(styles), //scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)), // Commenting this for now to avoid regression [WMS-17655]
                     variables: getValidJSON(_decodeURIComponent(variables))
                 };
                 fragmentCache.set(url, response);
