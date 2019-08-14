@@ -111,7 +111,7 @@ export class NetworkService implements IDeviceStartUpService {
      */
     public isConnected = () => {
         // checking for connection type.
-        if (navigator.connection.type) {
+        if (_.get(navigator, 'connection') && navigator.connection.type) {
             networkState.isConnected = networkState.isConnected && (navigator.connection.type !== 'none');
         }
         this.checkForNetworkStateChange();
