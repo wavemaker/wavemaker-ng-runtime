@@ -174,10 +174,10 @@ export class NetworkService implements IDeviceStartUpService {
 
     public start(): Promise<any> {
         if (window['cordova']) {
-            networkState.isNetworkAvailable = (navigator.connection.type !== 'none');
-            networkState.isConnected = networkState.isNetworkAvailable && networkState.isConnected;
             // Connection constant will be available only when network plugin is included.
             if (window['Connection'] && navigator.connection) {
+                networkState.isNetworkAvailable = navigator.connection.type !== 'none';
+                networkState.isConnected = networkState.isNetworkAvailable && networkState.isConnected;
                 /*
                  * When the device comes online, check is the service is available. If the service is available and auto
                  * connect flag is true, then app is automatically connected to remote server.
