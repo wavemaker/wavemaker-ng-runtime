@@ -94,6 +94,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private promiseResolverFn: Function;
     private propsInitPromise: Promise<any>;
     private $ulEle: any;
+    private isDataChanged: boolean;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -399,9 +400,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private onDataChange(newVal) {
-        if (newVal) {
+        // Check for newVal is not empty
+        if (!_.isEmpty(newVal)) {
 
             this.noDataFound = false;
+            this.isDataChanged = true;
 
             if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
                 // clone the the data in case of live and service variables to prevent the two-way binding for these variables.
@@ -550,6 +553,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * @param {QueryList<ListItemDirective>} listItems
      */
     private onListRender(listItems: QueryList<ListItemDirective>) {
+        // Added render callback event. This method(onListRender) is calling multiple times so checking isDatachanged flag because this falg is changed whenever new data is rendered.
+        if (this.isDataChanged) {
+            this.invokeEventCallback('render', {$data: this.fieldDefs});
+        }
         const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
 
         this.firstSelectedItem = this.lastSelectedItem = null;
@@ -557,7 +564,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // selectfirst item when the pagination in the first page.
         if (listItems.length && this.selectfirstitem && !(_.get(this, ['dataNavigator', 'dn', 'currentPage']) !== 1 && this.multiselect)) {
             const $firstItem: ListItemDirective = listItems.first;
-            if (!$firstItem.disableItem) {
+            if (!$firstItem.disableItem && this.isDataChanged) {
                 this.clearSelectedItems();
                 this.firstSelectedItem = this.lastSelectedItem = $firstItem;
                 this.toggleListItemSelection($firstItem);
@@ -575,6 +582,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.fieldDefs.length && this.infScroll) {
             this.bindScrollEvt();
         }
+        this.isDataChanged = false;
     }
 
     private setupHandlers() {
