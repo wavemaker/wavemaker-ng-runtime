@@ -295,6 +295,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 // for forms which are inside the list, which is again inside the form has the unique formGroupName(formName_1, formName_2) for which formWidget will be undefined
                 const formName = formWidget ? formWidget.name : k;
                 this.setValidationOnFields(v.controls, innerFormFields, validationObj, prefix + '.' + formName, validateTouch);
+                // setting validation messages on the child form groups also
+                formWidget.setValidationMsgs();
                 return;
             }
             const field = formFields.find(e => e.key === k);
@@ -336,7 +338,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     // This will return a object containing the error details from the list of formFields that are invalid
     private setValidationMsgs(validateTouch?: boolean) {
-        if (!this.formFields.length) {
+        if (!this.formFields.length && _.isEmpty(this.ngform.controls)) {
             return;
         }
         this.setValidationOnFields(this.ngform.controls, this.formFields, this.validationMessages, this.name, validateTouch);
