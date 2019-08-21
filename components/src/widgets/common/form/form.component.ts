@@ -157,6 +157,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private _dynamicContext;
     private _isGridLayoutPresent;
     private validationMessages = [];
+    private formGroupName;
 
     private _debouncedSubmitForm = debounce(($event) => {
         this.submitForm($event);
@@ -252,6 +253,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 innerBinding = `${binding}_${counter}`;
                 counter++;
             }
+            this.formGroupName = innerBinding;
             // If parent form is present, add the current form as as formGroup for parent form
             this.parentForm.ngform.addControl(innerBinding, this.ngform);
         }
@@ -280,10 +282,13 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         const validationMsgs = [];
         _.forEach(formObjs, e => {
             const formInstance = (e as any).widget;
-            let formName = formInstance.name;
+            // differentiating the validationMessages prefix based on the formGroupName
+            // as the formName's are same when forms are in list
+            let formName = _.get(formInstance, 'formGroupName') || formInstance.name;
             let current = formInstance;
             while (_.get(current, 'parentForm')) {
-                formName = current.parentForm.name + '.' + formName;
+                const parentName = current.parentForm.formGroupName || current.parentForm.name;
+                formName = parentName + '.' + formName;
                 current = current.parentForm;
             }
             this.setValidationOnFields(formInstance, formName, validateTouch);
@@ -525,11 +530,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     updateFormDataOutput(dataObject) {
         // Set the values of the widgets inside the live form (other than form fields) in form data
         _.forEach(this.ngform.value, (val, key) => {
-            _.forEach(this.formFields, field => {
-                if (field.parentList) {
-
-                }
-            });
             if (!_.find(this.formFields, {key})) {
                 dataObject[key] = val;
             }
