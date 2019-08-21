@@ -273,67 +273,77 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         context.submit = evt => this.submit(evt);
     }
 
+    // This method gets all the inner forms and validates each form.
+    private setValidationOnInnerForms(validateTouch) {
+        const formEle = this.getNativeElement();
+        const formObjs = formEle.querySelectorAll('.app-form');
+        const validationMsgs = [];
+        _.forEach(formObjs, e => {
+            const formInstance = (e as any).widget;
+            let formName = formInstance.name;
+            let current = formInstance;
+            while (_.get(current, 'parentForm')) {
+                formName = current.parentForm.name + '.' + formName;
+                current = current.parentForm;
+            }
+            this.setValidationOnFields(formInstance, formName, validateTouch);
+        });
+    }
+
     /**
      * This method sets validation on formFields.
-     * Applies to form inside form or list of form fields.
-     * @param {Object} controls
-     * @param formFields
-     * @param validationObj
+     * Applies to innerform and also sets innerform validation on parent form.
      * @param prefix contains the form name, which also includes its parents form name
      * @param {boolean} validateTouch
      */
-    private setValidationOnFields(controls: Object, formFields: any, validationObj: any, prefix: string, validateTouch?: boolean) {
+    private setValidationOnFields(form: FormComponent, prefix: string, validateTouch?: boolean) {
+        const controls = form.ngform.controls;
+        const formFields = form.formFields;
         if (!formFields) {
             return;
         }
         _.forEach(controls, (v, k) => {
-            // setting validation messages for inner forms also.
-            if (_.get(v, 'controls')) {
-                // retrieving the formfields for the innerForm using the formName.
-                const formWidget = _.get(document.querySelector('[name = ' + k + ']'), 'widget');
-                const innerFormFields = _.get(formWidget, 'formFields');
-                // for forms which are inside the list, which is again inside the form has the unique formGroupName(formName_1, formName_2) for which formWidget will be undefined
-                const formName = formWidget ? formWidget.name : k;
-                this.setValidationOnFields(v.controls, innerFormFields, validationObj, prefix + '.' + formName, validateTouch);
-                // setting validation messages on the child form groups also
-                formWidget.setValidationMsgs();
-                return;
-            }
             const field = formFields.find(e => e.key === k);
             if (!field || (validateTouch && !v.touched)) {
                 return;
             }
-            const index = validationObj.findIndex(e => (e.field === k && e.fullyQualifiedFormName === prefix));
-
-            if (v.invalid) {
-                if (index === -1) {
-                    /**
-                     * field contains the fieldName
-                     * value contains the field value
-                     * errorType contains the list of errors
-                     * message contains the validation message
-                     * getElement returns the element having focus-target
-                     * formName returns the name of the form
-                     */
-                    validationObj.push({
-                        field: k,
-                        value: field.value,
-                        errorType: _.keys(v.errors),
-                        message: field.validationmessage || '',
-                        getElement: () => {
-                            return field.$element.find('[focus-target]');
-                        },
-                        formName: _.last(prefix.split('.')),
-                        fullyQualifiedFormName: prefix
-                    });
-                } else {
-                    validationObj[index].value = field.value;
-                    validationObj[index].errorType = _.keys(v.errors);
-                }
-            } else if (v.valid && index > -1) {
-                validationObj.splice(index, 1);
-            }
+            // invoking the prepareValidation on both parent form and current form.
+            this.prepareValidationObj(v, k, field, prefix);
+            this.prepareValidationObj.call(form, v, k, field, prefix);
         });
+    }
+
+    // Assigns / updates validationMessages based on angular errors on field
+    private prepareValidationObj(v, k, field, prefix) {
+        const index = this.validationMessages.findIndex(e => (e.field === k && e.fullyQualifiedFormName === prefix));
+        if (v.invalid) {
+            if (index === -1) {
+                /**
+                 * field contains the fieldName
+                 * value contains the field value
+                 * errorType contains the list of errors
+                 * message contains the validation message
+                 * getElement returns the element having focus-target
+                 * formName returns the name of the form
+                 */
+                this.validationMessages.push({
+                    field: k,
+                    value: field.value,
+                    errorType: _.keys(v.errors),
+                    message: field.validationmessage || '',
+                    getElement: () => {
+                        return field.$element.find('[focus-target]');
+                    },
+                    formName: _.last(prefix.split('.')),
+                    fullyQualifiedFormName: prefix
+                });
+            } else {
+                this.validationMessages[index].value = field.value;
+                this.validationMessages[index].errorType = _.keys(v.errors);
+            }
+        } else if (v.valid && index > -1) {
+            this.validationMessages.splice(index, 1);
+        }
     }
 
     // This will return a object containing the error details from the list of formFields that are invalid
@@ -341,7 +351,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (!this.formFields.length && _.isEmpty(this.ngform.controls)) {
             return;
         }
-        this.setValidationOnFields(this.ngform.controls, this.formFields, this.validationMessages, this.name, validateTouch);
+        this.setValidationOnFields(this, this.name, validateTouch);
+        this.setValidationOnInnerForms(validateTouch);
     }
 
     // change and blur events are added from the template
@@ -514,6 +525,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     updateFormDataOutput(dataObject) {
         // Set the values of the widgets inside the live form (other than form fields) in form data
         _.forEach(this.ngform.value, (val, key) => {
+            _.forEach(this.formFields, field => {
+                if (field.parentList) {
+
+                }
+            });
             if (!_.find(this.formFields, {key})) {
                 dataObject[key] = val;
             }
