@@ -12,7 +12,7 @@ export const dateTimeProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['excludedays', PROP_STRING],
         ['excludedates', PROP_STRING],
-        ['hint', {value: '', ...PROP_STRING}],
+        ['hint', PROP_STRING],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],
