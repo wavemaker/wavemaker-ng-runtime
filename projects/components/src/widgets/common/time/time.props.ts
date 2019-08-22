@@ -9,7 +9,7 @@ export const timeProps = new Map(
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
-        ['hint', {value: '', ...PROP_STRING}],
+        ['hint', PROP_STRING],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
         ['maxtime', PROP_STRING],
         ['mintime', PROP_STRING],

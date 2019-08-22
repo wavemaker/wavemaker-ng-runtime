@@ -11,7 +11,7 @@ export const dateProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['excludedays', PROP_STRING],
         ['excludedates', PROP_STRING],
-        ['hint', {value: '', ...PROP_STRING}],
+        ['hint', PROP_STRING],
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],
         ['name', PROP_STRING],
