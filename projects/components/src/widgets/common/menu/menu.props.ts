@@ -13,6 +13,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['dataset', {value: 'Menu Item 1, Menu Item 2, Menu Item 3', ...PROP_ANY}],
                 ['hint', {value: '', ...PROP_STRING}],
+                ['isactive', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['iconposition', {value: 'left', ...PROP_STRING}],
                 ['itemaction', PROP_STRING],

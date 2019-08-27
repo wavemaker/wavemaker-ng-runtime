@@ -1,7 +1,7 @@
 import { Attribute, ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { $parseEvent, addClass, App, getRouteNameFromLink, getUrlParams, openLink, removeClass, UserDefinedExecutionContext } from '@wm/core';
+import { addClass, App, removeClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './nav.props';
@@ -44,7 +44,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
-        private router: Router,
+        private route: Router,
         private userDefinedExecutionContext: UserDefinedExecutionContext,
         private app: App,
         @Attribute('select.event') selectEventCB
@@ -53,6 +53,37 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.disableMenuContext = !!selectEventCB;
         this.pageScope = this.viewParent;
+        // For selecting the item on load
+        const datasetSubscription = this.nodes$.subscribe(() => {
+            if (!_.isEmpty(this.nodes)) {
+                let itemFound = false;
+                const getItem = (nodes, isMenuWidget?) => {
+                    _.forEach(nodes, (item) => {
+                        if (itemFound) {
+                            return;
+                        }
+                        if (item.isactive) {
+                            itemFound = true;
+                            this.selecteditem = isMenuWidget ? _.omit(item, ['children', 'value']) : item;
+                            // If we have children inside nav widget then these will be handled form menu widget, so check for nav widget only.
+                            if (!isMenuWidget) {
+                                this.invokeEventCallback('select', {$event: {}, $item: item.value});
+                                // Trigger the action associated with active item
+                                triggerItemAction(this, item);
+                                item._selected = true;
+                            }
+                            return false;
+                        }
+                        if (!_.isEmpty(item.children)) {
+                            getItem(item.children, 'menu');
+                        }
+                    });
+                };
+                getItem(this.nodes);
+            }
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+
     }
 
 
@@ -67,6 +98,11 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     public onNavSelect($event: Event, item: any, liRef: HTMLElement) {
         $event.preventDefault();
 
+        const selectedItem = _.find(this.nodes, '_selected');
+        if (selectedItem) {
+            delete selectedItem._selected;
+        }
+
         if (this.activeNavLINode) {
             removeClass(this.activeNavLINode, 'active');
         }
@@ -78,26 +114,8 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         this.selecteditem = item;
 
         this.invokeEventCallback('select', {$event, $item: item.value});
-
-        let itemLink = item.link;
-        const itemAction = item.action;
-        const linkTarget = item.target;
-        if (itemAction) {
-            if (!this.itemActionFn) {
-                this.itemActionFn = $parseEvent(itemAction);
-            }
-
-            this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
-        }
-        if (itemLink) {
-            if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
-                const queryParams = getUrlParams(itemLink);
-                itemLink = getRouteNameFromLink(itemLink);
-                this.router.navigate([itemLink], {queryParams});
-            } else {
-                openLink(itemLink, linkTarget);
-            }
-        }
+        // Trigger the action associated with active item
+        triggerItemAction(this, item);
     }
 
     ngOnInit() {

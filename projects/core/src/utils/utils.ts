@@ -6,6 +6,7 @@ import { $watch, $appDigest } from './watcher';
 import { DataType } from '../enums/enums';
 import { DataSource } from '../types/types';
 import { setAttr } from './dom';
+import { $parseEvent } from './expression-parser';
 
 declare const _, X2JS;
 declare const moment;
@@ -1207,3 +1208,30 @@ export const closePopover = (element) => {
  * See $appDigest in utils for more info
  */
 export const detectChanges = $appDigest;
+
+/**
+ * This method is to trigger the action/link of menu/nav item
+ * @param scope - scope of the widget
+ * @param item - item object
+ */
+export const triggerItemAction  = (scope, item) => {
+    let itemLink = item.link;
+    const itemAction = item.action;
+    const linkTarget = item.target;
+    if (itemAction) {
+        if (!scope.itemActionFn) {
+            scope.itemActionFn = $parseEvent(itemAction);
+        }
+
+        scope.itemActionFn(scope.userDefinedExecutionContext, Object.create(item));
+    }
+    if (itemLink) {
+        if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
+            const queryParams = getUrlParams(itemLink);
+            itemLink = getRouteNameFromLink(itemLink);
+            scope.route.navigate([itemLink], {queryParams});
+        } else {
+            openLink(itemLink, linkTarget);
+        }
+    }
+};
