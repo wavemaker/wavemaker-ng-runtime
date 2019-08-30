@@ -10,10 +10,25 @@ declare const _;
 
 let eventsRegistered = false;
 
+const findRootContainer = ($el) => {
+    let root = $el.closest('.app-prefab');
+    if (!root.length) {
+        root = $el.closest('.app-partial');
+    }
+    if (!root.length) {
+        root = $el.closest('.app-page');
+    }
+    return root.length && root.parent()[0].tagName;
+};
 
 const invokeOpenedCallback = (ref) => {
     if (ref) {
         setTimeout(() => {
+            const root = findRootContainer(ref.$element);
+            // if page styles have to be applied to dialog then dialog has to be child of page element.
+            if (root) {
+                $('body:first > modal-container > div').wrap('<' + root + '/>');
+            }
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
         });
     }
