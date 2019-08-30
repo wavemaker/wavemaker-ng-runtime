@@ -116,7 +116,7 @@ export const getEvaluatedData = (dataObj: any, options: any, context?: any) => {
     // Handling field name with special charecters
     // Ex: field = "f name"
     if (!bindExpr && !expr) {
-        return dataObj[field];
+        return _.get(dataObj, field);
     }
 
     return $parseExpr(expressionValue)(context, Object.assign({}, dataObj, {__1: dataObj}));
