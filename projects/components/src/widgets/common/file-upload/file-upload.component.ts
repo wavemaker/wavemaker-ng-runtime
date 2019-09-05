@@ -121,24 +121,12 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
             /* check for the file content type before uploading */
             if (!this.isValidFile(file.name, this.chooseFilter, this.getFileExtension(file.name), this._isMobileType)) {
                 const msg = `${this.appLocale.LABEL_FILE_EXTENTION_VALIDATION_MESSAGE} ${this.chooseFilter}`;
-                this.app.notifyApp(msg, 'Error');
-                const error = {
-                    key: 'INVALID_FILE_EXTENSION',
-                    message: msg
-                };
-                file.error = error;
-                errorFiles.push(file);
+                this.handleErrorFiles('INVALID_FILE_EXTENSION', msg, file, errorFiles);
                 return;
             }
             if (file.size > MAXFILEUPLOAD_SIZE) {
                 const msg = `${this.appLocale.LABEL_FILE_EXCEED_VALIDATION_MESSAGE} ${MAX_FILE_UPLOAD_FORMATTED_SIZE}`;
-                this.app.notifyApp(msg, 'Error');
-                const error = {
-                    key: 'INVALID_FILE_SIZE',
-                    message: msg
-                };
-                file.error = error;
-                errorFiles.push(file);
+                this.handleErrorFiles('INVALID_FILE_SIZE', msg, file, errorFiles);
                 return;
             }
             validFiles.push(file);
@@ -147,6 +135,19 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
             validFiles: validFiles,
             errorFiles: errorFiles
         };
+    }
+
+    handleErrorFiles(key, msg, file, errorFiles) {
+        // Check whether the error callback exist or not. If it exists then dont show taoster message
+        if (!this.hasEventCallback('error')) {
+            this.app.notifyApp(msg, 'Error');
+        }
+        const error = {
+            key: key,
+            message: msg
+        };
+        file.error = error;
+        errorFiles.push(file);
     }
 
     /*Overwrite the caption only if they are default*/
