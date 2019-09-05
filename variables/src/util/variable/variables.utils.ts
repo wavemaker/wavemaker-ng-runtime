@@ -303,7 +303,7 @@ const downloadThroughIframe = (requestParams, success) => {
     if (iFrameElement.length) {
         iFrameElement.first().remove();
     }
-    iFrameElement = $('<iframe id="' + IFRAME_NAME + '" name="' + IFRAME_NAME + '" class="ng-hide"></iframe>');
+    iFrameElement = $('<iframe id="' + IFRAME_NAME + '" name="' + IFRAME_NAME + '" hidden></iframe>');
     formEl        = $('<form id="' + FORM_NAME + '" name="' + FORM_NAME + '"></form>');
     formEl.attr({
         'target'  : iFrameElement.attr('name'),
