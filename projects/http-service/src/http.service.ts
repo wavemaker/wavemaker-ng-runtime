@@ -92,7 +92,7 @@ export class HttpServiceImpl extends AbstractHttpService {
 
         // WM services have the format of error response as errorDetails.error
         if (errorDetails && errorDetails.errors) {
-            errMsg = this.parseErrors(errorDetails.errors);
+            errMsg = this.parseErrors(errorDetails.errors) || errMsg || 'Service Call Failed';
         } else {
             errMsg = errMsg || 'Service Call Failed';
         }
@@ -146,9 +146,11 @@ export class HttpServiceImpl extends AbstractHttpService {
 
     parseErrors(errors) {
         let errMsg = '';
-        errors.error.forEach((errorDetails, i) => {
-            errMsg += this.parseError(errorDetails) + (i > 0 ? '\n' : '');
-        });
+        if (errors && errors.error && errors.error.length) {
+            errors.error.forEach((errorDetails, i) => {
+                errMsg += this.parseError(errorDetails) + (i > 0 ? '\n' : '');
+            });
+        }
         return errMsg;
     }
 
