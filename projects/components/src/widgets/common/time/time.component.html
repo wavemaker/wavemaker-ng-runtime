@@ -15,6 +15,7 @@
                [attr.placeholder]="placeholder"
                [attr.accesskey]="shortcutkey"
                [required]="required"
+               [readOnly]="isReadOnly"
                (click)="toggleDropdown($event)"
                (focus)="invokeOnFocus($event)"
                (blur)="onInputBlur($event)"
