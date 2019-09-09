@@ -17,6 +17,10 @@ const DATEPICKER_DROPDOWN_OPTIONS = {
     BUTTON: 'button',
     DEFAULT: 'default'
 };
+const DATAENTRYMODE_DROPDOWN_OPTIONS = {
+    PICKER: 'picker',
+    DEFAULT: 'default'
+};
 
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
@@ -24,6 +28,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public outputformat;
     public mindate;
     public maxdate;
+    public dataentrymode;
     public useDatapicker = true;
     protected activeDate;
     private keyEventPluginInstance;
@@ -33,6 +38,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected showseconds: boolean;
     protected ismeridian: boolean;
     protected datePipe;
+    protected isReadOnly = false;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -62,6 +68,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         return dropdownvalue === DATEPICKER_DROPDOWN_OPTIONS.DEFAULT;
     }
 
+    /**
+     * returns true if the input value is default (i.e Data entry can be done either by selecting from the Date/DateTime/Time Picker or by entering  manually using the keyboard. )
+     * @param1 dropdownvalue, user selected value
+     * **/
+    protected  isDataEntryModeEnabledOnInput (dropdownvalue) {
+        return dropdownvalue === DATAENTRYMODE_DROPDOWN_OPTIONS.DEFAULT;
+    }
     /**
      * This method is used to show validation message depending on the isNativePicker flag.
      */
@@ -732,6 +745,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+        this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
         if (this.bsDatePickerDirective) {
             this.dateOnShowSubscription = this.bsDatePickerDirective
                 .onShown

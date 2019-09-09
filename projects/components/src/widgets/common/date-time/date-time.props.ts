@@ -6,6 +6,7 @@ export const dateTimeProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
+        ['dataentrymode', {value: 'default', ...PROP_STRING}],
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['datepattern', PROP_STRING],

@@ -16,7 +16,7 @@ declare const _;
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel',
-                            'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataset'];
+                            'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataentrymode', 'dataset'];
 const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required'];
 inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
 
