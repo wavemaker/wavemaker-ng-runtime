@@ -1,6 +1,8 @@
 import { Injector } from '@angular/core';
 
-import { $appDigest, findValueOf, isObject, validateAccessRoles } from '@wm/core';
+import { Subject } from 'rxjs';
+
+import { $appDigest, findValueOf, isObject, isDefined, validateAccessRoles } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
 import { createArrayFrom } from '../../../utils/data-utils';
@@ -37,6 +39,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
     public itemaction: string;
     public itemclass: string;
     public itemid: string;
+    public isactive: string;
     public userrole: string;
     public orderby: string;
     public datafield: string;
@@ -51,9 +54,11 @@ export class DatasetAwareNavComponent extends StylableComponent {
     private binditemlink: string | null;
     private binditemtarget: string | null;
     private binduserrole: string | null;
+    private bindisactive: string | null;
     private securityService: any;
 
     protected binditemid: string | null;
+    protected nodes$ = new Subject();
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
@@ -67,6 +72,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
         this.binditemlink = this.nativeElement.getAttribute('itemlink.bind');
         this.binditemtarget = this.nativeElement.getAttribute('itemtarget.bind');
         this.binduserrole = this.nativeElement.getAttribute('userrole.bind');
+        this.bindisactive = this.nativeElement.getAttribute('isactive.bind');
     }
 
     /**
@@ -89,6 +95,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             link: getValidLink(getEvaluatedData(node, {expression: 'itemlink', bindExpression: this.binditemlink}, context) || _.get(node, fields.linkField)),
             target: getValidLink(getEvaluatedData(node, {expression: 'itemtarget', bindExpression: this.binditemtarget}, context) || _.get(node, fields.targetField)),
             role: getEvaluatedData(node, {expression: 'userrole', bindExpression: this.binduserrole}, context),
+            isactive: this.bindisactive ? getEvaluatedData(node, {expression: 'isactive', bindExpression: this.bindisactive}, context) : _.get(node, fields.isactiveField),
             // older projects have display field & data field property for menu.
             value: this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
         };
@@ -110,7 +117,8 @@ export class DatasetAwareNavComponent extends StylableComponent {
                 badgeField: this.itembadge || 'badge',
                 childrenField: this.itemchildren || 'children',
                 classField: this.itemclass || 'class',
-                actionField: this.itemaction || 'action'
+                actionField: this.itemaction || 'action',
+                isactiveField: this.isactive || 'isactive'
             };
         }
         return this._itemFieldMap;
@@ -161,6 +169,8 @@ export class DatasetAwareNavComponent extends StylableComponent {
         this.resetItemFieldMap();
         this.nodes = this.getNodes();
         $appDigest();
+        // notify the node listeners
+        this.nodes$.next();
     }
 
     // debounce function for reset nodes functions.
@@ -175,6 +185,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             case 'itemtarget':
             case 'itemclass':
             case 'itemchildren':
+            case 'isactive':
             case 'orderby':
                 // calls resetnodes method after 50ms. any calls within 50ms will be ignored.
                 this._resetNodes();

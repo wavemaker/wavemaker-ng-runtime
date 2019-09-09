@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
 
-import { $parseEvent, addClass, getRouteNameFromLink, getUrlParams, openLink, UserDefinedExecutionContext } from '@wm/core';
+import { addClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
 import { isActiveNavItem } from '../../../../utils/widget-utils';
@@ -148,28 +148,10 @@ export class MenuDropdownItemComponent implements OnInit {
 
         $event.preventDefault();
         const args = {$event, $item: item};
-        const linkTarget = item.target || this.menuRef.linktarget;
-        const itemAction = item.action;
-
-        let menuLink = item.link;
-
         this.menuRef.onMenuItemSelect(args);
-
-        if (itemAction) {
-            if (!this.itemActionFn) {
-                this.itemActionFn = $parseEvent(itemAction);
-            }
-
-            this.itemActionFn(this.userDefinedExecutionContext, Object.create(item));
-        }
-        if (menuLink) {
-            if (menuLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
-                const queryParams = getUrlParams(menuLink);
-                menuLink = getRouteNameFromLink(menuLink);
-                this.menuRef.route.navigate([menuLink], { queryParams});
-            } else {
-                openLink(menuLink, linkTarget);
-            }
-        }
+        const selectedItem = _.clone(item);
+        selectedItem.target = selectedItem.target || this.menuRef.linktarget;
+        // Trigger the action associated with active item
+        triggerItemAction(this, selectedItem);
     }
 }
