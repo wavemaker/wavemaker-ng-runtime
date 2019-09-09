@@ -683,7 +683,12 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         // whereas formFields explicitly passed can contain innerform fields also.
         formFields = formFields || this.getFormFields();
         formFields.forEach(field => {
-            field.value =  _.get(data, field.key || field.name);
+            const key = field.key || field.name;
+            // if customfield param value is not in the formdata then do not assign field value
+            // as it can contain default value which will again be overridden by undefined.
+            if (data && data.hasOwnProperty(key)) {
+                field.value =  _.get(data, key);
+            }
             const formGroupName = field.form.formGroupName;
             /**
              * if formGroupName is defined which means field is inside the inner form
