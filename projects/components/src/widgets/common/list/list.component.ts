@@ -655,7 +655,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
 
         if (this.fieldDefs.length && this.infScroll) {
-            if (isMobileApp()) {
+            const smoothScrollEl = this.$element.closest('[wmsmoothscroll]');
+            // if smoothscroll is set to false, then native scroll has to be applied
+            // otherwise smoothscroll events will be binded.
+            if (isMobileApp() && smoothScrollEl.length && smoothScrollEl.attr('wmsmoothscroll') === 'true') {
                 this.bindIScrollEvt();
             } else {
                 this.bindScrollEvt();
