@@ -80,7 +80,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private showValidation($event, displayValue, isNativePicker, msg) {
         if (isNativePicker) {
-            alert(msg);
+            console.warn('min max date validation failed ', msg);
             return $($event.target).val(displayValue);
         }
     }
