@@ -1229,7 +1229,8 @@ export const triggerItemAction  = (scope, item) => {
         if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
             const queryParams = getUrlParams(itemLink);
             itemLink = getRouteNameFromLink(itemLink);
-            scope.route.navigate([itemLink], {queryParams});
+            const router = _.get(scope, 'route') || _.get(scope, 'menuRef.route');
+            router.navigate([itemLink], {queryParams});
         } else {
             openLink(itemLink, linkTarget);
         }
