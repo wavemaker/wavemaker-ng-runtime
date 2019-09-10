@@ -122,6 +122,7 @@ export class PrefabRenderer {
     }
 
     private invokeOnReady(instance: any, containerWidget: any) {
+        this.app.notify('prefab-ready', {prefabInstance: this});
         (instance.onReady || noop)();
         containerWidget.invokeEventCallback('load');
     }
