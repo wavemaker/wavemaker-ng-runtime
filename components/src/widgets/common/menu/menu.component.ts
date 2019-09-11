@@ -146,8 +146,8 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         // For selecting the item on load
         const datasetSubscription = this.nodes$.subscribe(() => {
             if (!_.isEmpty(this.nodes)) {
-                // If parent nav item is selected then dont check for child item isactive property
-                if (this.parentNav && _.find(this.parentNav.nodes, '_selected')) {
+                // If menu widget is inside nav widget then dont check for item isactive property because these will be handled from nav widget.
+                if (this.parentNav) {
                     return;
                 }
                 let itemFound = false;
