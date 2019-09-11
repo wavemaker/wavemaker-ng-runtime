@@ -1,7 +1,7 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 
 import { transpile } from '@wm/transpiler';
-import { $watch, AbstractI18nService, App, isIE, noop } from '@wm/core';
+import { $watch, AbstractI18nService, App, isIE, noop, $invokeWatchers} from '@wm/core';
 import { BaseComponent } from '@wm/components';
 
 import { FragmentRenderer } from './fragment-renderer';
@@ -122,7 +122,9 @@ export class PrefabRenderer {
     }
 
     private invokeOnReady(instance: any, containerWidget: any) {
-        this.app.notify('prefab-ready', {prefabInstance: this});
+        // triggering watchers so variables and propertiers watching over an expression are updated
+        $invokeWatchers(true);
+        this.app.notify('prefab-ready', {prefabInstance: instance});
         (instance.onReady || noop)();
         containerWidget.invokeEventCallback('load');
     }
