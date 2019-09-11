@@ -368,9 +368,9 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                 if (componentType === 0 || componentType === 'PAGE') {
                     selector = `.wm-app app-page-${componentName} ${selector}`;
                 } else if (componentType === 1 || componentType === 'PREFAB') {
-                    selector = `.wm-app .app-page app-prefab-${componentName} ${selector}`;
+                    selector = `.wm-app app-prefab-${componentName} ${selector}`;
                 } else if (componentType === 2 || componentType === 'PARTIAL') {
-                    selector = `.wm-app .app-page app-partial-${componentName} ${selector}`;
+                    selector = `.wm-app app-partial-${componentName} ${selector}`;
                 }
             }
             selector = prefixSpaceCharSeq + selector;
