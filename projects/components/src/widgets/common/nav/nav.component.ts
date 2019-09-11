@@ -65,12 +65,12 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
                         if (item.isactive) {
                             itemFound = true;
                             this.selecteditem = isMenuWidget ? _.omit(item, ['children', 'value']) : item;
-                            // If we have children inside nav widget then these will be handled form menu widget, so check for nav widget only.
+                            this.invokeEventCallback('select', {$event: {}, $item: item.value});
+                            // Trigger the action associated with active item
+                            triggerItemAction(this, item);
+                            // _selected is used to add active class for nav item. If we have children inside nav widget then it is not required.
                             if (!isMenuWidget) {
-                                this.invokeEventCallback('select', {$event: {}, $item: item.value});
-                                // Trigger the action associated with active item
-                                triggerItemAction(this, item);
-                                item._selected = true;
+                               item._selected = true;
                             }
                             return false;
                         }
