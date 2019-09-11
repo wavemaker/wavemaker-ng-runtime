@@ -14,6 +14,7 @@ export const registerProps = () => {
                 ['col-ng-class', PROP_STRING],
                 ['currencypattern', PROP_STRING],
                 ['customExpression', PROP_BOOLEAN], // Internal property to check if column has custom expression
+                ['dataentrymode', {value: 'default', ...PROP_STRING}],
                 ['datafield', PROP_STRING],
                 ['dataoptions', PROP_ANY],
                 ['dataset', PROP_ANY],

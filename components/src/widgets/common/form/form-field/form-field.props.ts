@@ -72,6 +72,7 @@ const widgetPropsMap = new Map(
 );
 const formFieldMap = new Map(
     [
+        ['dataentrymode', {value: 'default', ...PROP_STRING}],
         ['defaultvalue', PROP_STRING],
         ['displayname', PROP_STRING],
         ['display-name', PROP_STRING],

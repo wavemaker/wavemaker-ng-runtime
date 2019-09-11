@@ -43,10 +43,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmCurrency ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${innerTmpl}></div>`;
+            tmpl = `<div wmDate dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${innerTmpl}></div>`;
+            tmpl = `<div wmDateTime dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
             tmpl = `<div wmNumber ${innerTmpl} type="number" aria-label="Only numbers" ${updateOnTmpl}></div>`;
@@ -83,10 +83,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-textarea ${innerTmpl} role="textbox" aria-describedby="Place your text" ${updateOnTmpl}></wm-textarea>`;
             break;
         case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${innerTmpl}></div>`;
+            tmpl = `<div wmTime dataentrymode="${attrs.get('dataentrymode')}"  ${innerTmpl}></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
-            tmpl = `<div wmDateTime ${innerTmpl} role="input"></div>`;
+            tmpl = `<div wmDateTime dataentrymode="${attrs.get('dataentrymode')}"  ${innerTmpl} role="input"></div>`;
             break;
         case FormWidgetType.UPLOAD:
             const counter = options.counter;

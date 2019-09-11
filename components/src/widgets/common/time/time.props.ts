@@ -5,6 +5,7 @@ export const timeProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
+        ['dataentrymode', {value: 'default', ...PROP_STRING}],
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],

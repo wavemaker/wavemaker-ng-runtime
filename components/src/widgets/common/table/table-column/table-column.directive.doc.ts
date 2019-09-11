@@ -151,6 +151,10 @@ export class TableColumn {
      */
     @Input() showdropdownon: string = 'default';
     /**
+     * This property specifies how the user can enter data.If the Value is set to default, data entry can be done either by selecting from the Date/DateTime/Time Picker or by entering manually through the keyboard, else data entry can be done only by selecting from the Date/DateTime/Time Picker.
+     */
+    @Input() dataentrymode: string = 'default';
+    /**
      * This property enables sort on the column.
      */
     @Input() sortable: boolean = true;

@@ -17,6 +17,7 @@
                [autofocus]="autofocus"
                [disabled]="disabled || readonly || isCurrentDate"
                [required]="required"
+               [readOnly]="isReadOnly"
                [attr.placeholder]="placeholder"
                [attr.accesskey]="shortcutkey"
                (keydown)="onDisplayKeydown($event)">
