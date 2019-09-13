@@ -21,7 +21,7 @@ export class NotificationActionManager extends BaseActionManager {
             positionClass = 'toast-' + (options.position || variable.dataBinding.toasterPosition || 'bottom right').replace(' ', '-'),
             partialPage = variable.dataBinding.page,
             DEFAULT_DURATION = 3000;
-        let duration = parseInt(variable.dataBinding.duration || options.duration, null),
+        let duration = parseInt(options.duration || variable.dataBinding.duration, null),
             toaster;
 
         // duration
