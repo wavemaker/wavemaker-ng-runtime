@@ -147,11 +147,11 @@ export class LiveFormDirective {
         });
     }
 
-    setFormData(dataObj) {
+    setFormData(dataObj, formFields?) {
         if (!dataObj) {
             return;
         }
-        const formFields = this.form.getFormFields();
+        formFields = formFields || this.form.getFormFields();
         formFields.forEach(field => {
             const value = _.get(dataObj, field.key || field.name);
             if (isTimeType(field)) {
