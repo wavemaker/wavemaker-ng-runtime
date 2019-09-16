@@ -561,7 +561,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.$element.removeData('oldIndex');
     }
 
-    private onBeforeservicecall(inputData) {
+    private invokeOnBeforeServiceCall(inputData) {
         this.invokeEventCallback('beforeservicecall', {inputData});
     }
 

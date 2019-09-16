@@ -20,7 +20,7 @@
     <div #search wmSearch class="app-chip-input"
          name="app-chip-search"
          submit.event="addItem($event, widget)"
-         beforeservicecall.event="onBeforeservicecall(inputData)"
+         beforeservicecall.event="invokeOnBeforeServiceCall(inputData)"
          disabled.bind="disabled || readonly || saturate"
          datafield.bind="datafield"
          allowonlyselect.bind="allowonlyselect"
