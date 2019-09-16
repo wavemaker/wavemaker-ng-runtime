@@ -679,9 +679,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     setFormData(data, formFields?) {
-        // here getFormFields will just contain formfields in the current form.
         // whereas formFields explicitly passed can contain innerform fields also.
-        formFields = formFields || this.getFormFields();
+        formFields = formFields || this.formFields;
         formFields.forEach(field => {
             const key = field.key || field.name;
             // if customfield param value is not in the formdata then do not assign field value
@@ -696,6 +695,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
              */
             if (formGroupName && isDefined(data[formGroupName])) {
                 this.setFormData.call(field.form, data[formGroupName]);
+            }
+            // if formdata is assigned later then on propertyChangeHandler, even inner forms data also needs to be updated.
+            if (_.get(field.form, 'parentFormArray')) {
+                this.setFormDataFromParentFormData.call(field.form, data);
             }
         });
         this.constructDataObject();
@@ -797,7 +800,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         return this.getNearestParentFormData(form.parentForm);
     }
 
-    setInnerFormData(formdata: any) {
+    setFormDataFromParentFormData(formdata: any) {
         if (_.isEmpty(this.formdata) && this.parentForm && formdata) {
             /**
              * If form is inside list,
@@ -818,13 +821,13 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                     if (!this.bindformdata) {
                         this.formdata = childFormArrayData[this.formArrayIndex];
                     }
-                    this.setFormData(this.formdata, this.formFields);
+                    this.setFormData(this.formdata);
                 } else if (this.isParentList && this.parentForm.formGroupName) {
                     const parentFormData = _.get(formdata, this.parentForm.formGroupName);
-                    this.setInnerFormData(parentFormData);
+                    this.setFormDataFromParentFormData(parentFormData);
                 }
             } else {
-                this.setFormData(formdata, this.formFields);
+                this.setFormData(formdata);
             }
         }
     }
@@ -840,7 +843,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
              * this applies only when formdata is not given on the inner form.
              */
             const formdata = this.getNearestParentFormData(this);
-            this.setInnerFormData(formdata);
+            this.setFormDataFromParentFormData(formdata);
         }
     }
 

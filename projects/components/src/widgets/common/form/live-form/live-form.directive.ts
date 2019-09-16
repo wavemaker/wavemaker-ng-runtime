@@ -151,7 +151,7 @@ export class LiveFormDirective {
         if (!dataObj) {
             return;
         }
-        formFields = formFields || this.form.getFormFields();
+        formFields = formFields || this.form.formFields;
         formFields.forEach(field => {
             const value = _.get(dataObj, field.key || field.name);
             if (isTimeType(field)) {
