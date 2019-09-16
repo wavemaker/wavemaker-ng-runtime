@@ -214,7 +214,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (this.parentList && this.parentForm && !isDefined(this._formIsInList)) {
             const formEle = this.$element;
             const listEle = formEle.closest('.app-livelist[name="' + this.parentList.name + '"]');
-            this._formIsInList = !(listEle.find('.app-form[name="' + this.parentForm.name + '"]')).length;
+            this._formIsInList = !(listEle.find('.app-form[widget-id="' + this.parentForm.widgetId + '"]')).length;
         }
         return isDefined(this._formIsInList) ? this._formIsInList : this.parentList;
     }
