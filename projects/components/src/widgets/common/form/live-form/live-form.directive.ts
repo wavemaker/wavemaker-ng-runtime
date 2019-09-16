@@ -161,7 +161,7 @@ export class LiveFormDirective {
                 field.href  = this.getBlobURL(dataObj, field.key, value);
                 field.value = _.isString(value) ? '' : value;
             } else {
-                field.value = value;
+                this.form.setFieldValue(field, dataObj);
             }
         });
         this.savePrevDataValues();

@@ -678,28 +678,32 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         });
     }
 
+    setFieldValue(field, data) {
+        const key = field.key || field.name;
+        // if customfield param value is not in the formdata then do not assign field value
+        // as it can contain default value which will again be overridden by undefined.
+        if (data && data.hasOwnProperty(key)) {
+            field.value =  _.get(data, key);
+        }
+        const formGroupName = field.form.formGroupName;
+        /**
+         * if formGroupName is defined which means field is inside the inner form
+         * then set the formdata on the field's form using formGroupName
+         */
+        if (formGroupName && _.get(data, formGroupName)) {
+            this.setFormData.call(field.form, data[formGroupName]);
+        }
+        // if formdata is assigned later then on propertyChangeHandler, even inner forms data also needs to be updated.
+        if (_.get(field.form, 'parentFormArray')) {
+            this.setFormDataFromParentFormData.call(field.form, data);
+        }
+    }
+
     setFormData(data, formFields?) {
         // whereas formFields explicitly passed can contain innerform fields also.
         formFields = formFields || this.formFields;
         formFields.forEach(field => {
-            const key = field.key || field.name;
-            // if customfield param value is not in the formdata then do not assign field value
-            // as it can contain default value which will again be overridden by undefined.
-            if (data && data.hasOwnProperty(key)) {
-                field.value =  _.get(data, key);
-            }
-            const formGroupName = field.form.formGroupName;
-            /**
-             * if formGroupName is defined which means field is inside the inner form
-             * then set the formdata on the field's form using formGroupName
-             */
-            if (formGroupName && isDefined(data[formGroupName])) {
-                this.setFormData.call(field.form, data[formGroupName]);
-            }
-            // if formdata is assigned later then on propertyChangeHandler, even inner forms data also needs to be updated.
-            if (_.get(field.form, 'parentFormArray')) {
-                this.setFormDataFromParentFormData.call(field.form, data);
-            }
+            this.setFieldValue(field, data);
         });
         this.constructDataObject();
     }
