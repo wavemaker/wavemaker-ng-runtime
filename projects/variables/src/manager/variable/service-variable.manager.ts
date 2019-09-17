@@ -425,6 +425,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 triggerFn(success);
             }, function () {
                 initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null, null, null);
+                $queue.process(variable);
                 triggerFn(error);
             });
         }
