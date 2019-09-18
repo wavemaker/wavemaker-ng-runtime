@@ -64,7 +64,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
                         }
                         if (item.isactive) {
                             itemFound = true;
-                            this.selecteditem = isMenuWidget ? _.omit(item, ['children', 'value']) : item;
+                            this.selecteditem = isMenuWidget ? _.omit(item, ['children', 'value']) : item.value;
                             this.invokeEventCallback('select', {$event: {}, $item: item.value});
                             // Trigger the action associated with active item
                             triggerItemAction(this, item);
@@ -111,7 +111,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
 
         addClass(liRef, 'active');
 
-        this.selecteditem = item;
+        this.selecteditem = item.value;
 
         this.invokeEventCallback('select', {$event, $item: item.value});
         // Trigger the action associated with active item
