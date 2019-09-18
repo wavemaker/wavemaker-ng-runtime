@@ -42,6 +42,7 @@ export class HttpServiceImpl extends AbstractHttpService {
         const headers = options.headers;
         const params = options.params;
         const responseType = options.responseType;
+        const withCredentials = options.withCredentials;
 
         // this header is not to be sent with non-proxy calls from service variable
         if (!options.isDirectCall) {
@@ -62,7 +63,8 @@ export class HttpServiceImpl extends AbstractHttpService {
         const reqOptions = {
             headers: reqHeaders,
             params: reqParams,
-            responseType: responseType
+            responseType: responseType,
+            withCredentials: withCredentials
         };
         if (_.includes(this.nonBodyTypeMethods, options.method && options.method.toUpperCase())) {
             third = reqOptions;
