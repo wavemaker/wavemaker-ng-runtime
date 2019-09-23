@@ -111,10 +111,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             .create((observer: any) => {
             // Runs on every search
             if (this.listenQuery) {
-                if (this.isMobileAutoComplete() && !this.$element.hasClass('full-screen')) {
-                    this.renderMobileAutoComplete();
-                    return;
-                }
                 this._defaultQueryInvoked = false;
                 this._loadingItems = true;
                 observer.next(this.query);
@@ -211,7 +207,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (!this.$element.hasClass('full-screen')) {
             // this flag is set to notify that the typeahead-container dom has changed its position
             this._domUpdated = true;
-            this.$element.appendTo('div[data-role="pageContainer"]');
             // Add full screen class on focus of the input element.
             this.$element.addClass('full-screen');
 
@@ -268,7 +263,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // Check if the widget is of type autocomplete in mobile view/ app
-    private isMobileAutoComplete() {
+    public isMobileAutoComplete() {
         return this.type === 'autocomplete' && isMobile();
     }
 
@@ -396,6 +391,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         // open full-screen search view
         if (this.isMobileAutoComplete()) {
+            if (!this.$element.hasClass('full-screen')) {
+                this.renderMobileAutoComplete();
+            }
             const dropdownEl = this.dropdownEl.closest('typeahead-container');
 
             dropdownEl.insertAfter(this.$element.find('input:first'));
