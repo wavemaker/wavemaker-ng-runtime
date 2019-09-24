@@ -371,7 +371,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    private onBeforeservicecall(inputData) {
+    private invokeOnBeforeServiceCall(inputData) {
         this.invokeEventCallback('beforeservicecall', {inputData});
     }
 
@@ -546,7 +546,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             limit: this.limit,
             pagesize: this.pagesize,
             page: this.page,
-            onBeforeservicecall: this.onBeforeservicecall.bind(this)
+            onBeforeservicecall: this.invokeOnBeforeServiceCall.bind(this)
         };
 
         if (this.dataoptions) {
