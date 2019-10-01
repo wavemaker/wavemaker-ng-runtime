@@ -682,12 +682,14 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         const key = field.key || field.name;
         // if customfield param value is not in the formdata then do not assign field value
         // as it can contain default value which will again be overridden by undefined.
-        if (data && data.hasOwnProperty(key)) {
-            field.value =  _.get(data, key);
-        } else if (_.includes(key, '.')) {
-            // key contains '.' when mapping the fields to child reference i.e. childCol is having key as "parent.childCol"
-            if (data.hasOwnProperty(_.split(key, '.')[0])) {
+        if (data) {
+            if (data.hasOwnProperty(key)) {
                 field.value =  _.get(data, key);
+            } else if (_.includes(key, '.')) {
+                // key contains '.' when mapping the fields to child reference i.e. childCol is having key as "parent.childCol"
+                if (data.hasOwnProperty(_.split(key, '.')[0])) {
+                    field.value =  _.get(data, key);
+                }
             }
         }
         const formGroupName = field.form.formGroupName;

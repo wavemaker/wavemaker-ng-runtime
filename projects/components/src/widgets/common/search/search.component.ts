@@ -509,14 +509,17 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         } else if (this.datafield === ALLFIELDS && _.isObject(data)) {
             this.queryModel = this.getTransformedData(extractDataAsArray(data));
         } else {
-            this.queryModel = undefined;
-            this.query = '';
-            return;
+            // resetting the queryModel only when prevDatavalue is equal to data
+            if ((this as any).prevDatavalue !== data) {
+                this.queryModel = undefined;
+                this.query = '';
+                return;
+            }
         }
         this.updateDatavalueFromQueryModel();
 
         // Show the label value on input.
-        this._lastQuery = this.query = this.queryModel.length ? this.queryModel[0].label : '';
+        this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? _.get(this.queryModel[0], 'label') : '';
     }
 
 
