@@ -114,6 +114,11 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
             if (this.isActive) {
                 setTimeout(() => this.$lazyLoad(), 100);
             }
+        } else if (key === 'show') {
+            // overridding the base component show propertyChangeHandler
+            this.nativeElement.hidden = !nv;
+            // setting default tab pane whenever show property changes
+            (this as any).tabsRef.selectDefaultPaneByIndex((this as any).tabsRef.defaultpaneindex);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
