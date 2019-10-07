@@ -40,8 +40,8 @@
                             "src/styles.css",
                             "src/assets/styles/css/wm-style.css",
                             "src/assets/styles/css/wm-responsive.css",
-                            "src/assets/themes/material/style.css",
-                            "src/assets/app.css"
+                            {"input":"src/assets/themes/material/style.css","lazy":true,"bundleName":"themes-and-app"},
+                            {"input":"src/assets/app.css","lazy":true,"bundleName":"themes-and-app"}
                         ],
                         "scripts": [
                             "./node_modules/lodash/lodash.min.js",
