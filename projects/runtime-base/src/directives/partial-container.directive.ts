@@ -43,7 +43,7 @@ export class PartialContainerDirective {
         }
     }
 
-    renderPartial = _.debounce(this._renderPartial, 200, {leading: true});
+    renderPartial = _.debounce(this._renderPartial, 200);
 
     onLoadSuccess() {
         this.componentInstance.invokeEventCallback('load');
