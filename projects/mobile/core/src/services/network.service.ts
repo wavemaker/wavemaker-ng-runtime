@@ -48,8 +48,7 @@ XMLHttpRequest.prototype.open = function (method: string, url: string, async: bo
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService implements IDeviceStartUpService {
-
-    public serviceName = NetworkService.name;
+    static readonly SERVICE_NAME = 'NetworkService';
 
     private _autoConnect = localStorage.getItem(AUTO_CONNECT_KEY) !== 'false';
     private _lastKnownNetworkState: any;
@@ -215,6 +214,10 @@ export class NetworkService implements IDeviceStartUpService {
         }
         // to set the default n/w connection values.
         return this.tryToConnect(true).catch(noop);
+    }
+
+    public getServiceName() {
+        return NetworkService.SERVICE_NAME;
     }
 
     /**

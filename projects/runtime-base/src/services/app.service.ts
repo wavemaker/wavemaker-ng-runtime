@@ -115,9 +115,12 @@ export class AppRef {
             }
             let providerInstance = injectorMap[injToken] && this.inj.get(injectorMap[injToken]);
             if (!providerInstance && this.inj['_providers']) {
-                this.inj['_providers'].forEach( e => {
-                    if (e && e.__proto__.constructor.toString().indexOf('function ' + injToken + '(') === 0) {
-                        providerInstance = this.inj.get(e.__proto__.constructor);
+                _.forEach(this.inj['_providers'], val => {
+                    if (_.isObject(val)) {
+                        if (val.__proto__.constructor.SERVICE_NAME === injToken) {
+                            providerInstance = val;
+                            return false;
+                        }
                     }
                 });
             }

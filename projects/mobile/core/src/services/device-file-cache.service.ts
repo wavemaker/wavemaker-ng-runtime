@@ -14,9 +14,7 @@ const CACHE_FILE_INDEX_NAME = 'appCache.json';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceFileCacheService implements IDeviceStartUpService {
-
-    public serviceName = DeviceFileCacheService.name;
-
+    static readonly SERVICE_NAME = 'DeviceFileCacheService';
     private _cacheIndex = {};
     private _writing;
     private _saveCache;
@@ -56,6 +54,10 @@ export class DeviceFileCacheService implements IDeviceStartUpService {
             .then(content => {
                 this._cacheIndex = JSON.parse(content);
             }, noop);
+    }
+
+    public getServiceName() {
+        return DeviceFileCacheService.SERVICE_NAME;
     }
 
     private download(url: string, isPersistent: boolean): Promise<string> {

@@ -49,7 +49,7 @@ export class OfflineModule {
         }
 
         deviceService.addStartUpService({
-            serviceName: 'OfflineStartupService',
+            getServiceName: () => 'OfflineStartupService',
             start: () => {
                 if (window['SQLitePlugin']) {
                     localDBManagementService.setLogSQl((sessionStorage.getItem('wm.logSql') === 'true') || (sessionStorage.getItem('debugMode') === 'true'));

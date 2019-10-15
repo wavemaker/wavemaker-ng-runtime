@@ -14,7 +14,7 @@ declare const _;
 
 @Injectable({ providedIn: 'root' })
 export class DeviceFileDownloadService {
-
+    static readonly SERVICE_NAME = 'DeviceFileDownloadService';
     private _downloadQueue = [];
     private _concurrentDownloads = 0;
 

@@ -16,8 +16,7 @@ declare const resolveLocalFileSystemURL;
 
 @Injectable({ providedIn: 'root' })
 export class DeviceFileOpenerService implements IDeviceStartUpService {
-
-    public serviceName = DeviceFileOpenerService.name;
+    static readonly SERVICE_NAME = 'DeviceFileOpenerService';
 
     private _downloadsFolder;
 
@@ -64,6 +63,10 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
             .then(() => {
                 this._downloadsFolder = downloadsParent + 'downloads/';
             });
+    }
+
+    public getServiceName() {
+        return DeviceFileCacheService.SERVICE_NAME;
     }
 
     private generateFileName(url: string, extension: string): string {

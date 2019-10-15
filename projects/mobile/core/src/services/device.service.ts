@@ -12,6 +12,7 @@ const REGISTRY_FILE_NAME = 'registry.info';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
+    static readonly SERVICE_NAME = 'DeviceService';
 
     private _registry = {};
     private _isReady = false;
@@ -24,7 +25,7 @@ export class DeviceService {
         setTimeout(() => {
             if (!this._isReady) {
                 console.warn(`Device is not ready even after ${maxWaitTime} seconds`);
-                console.warn('Waiting For %O', this._startUpServices.map(i => i.serviceName));
+                console.warn('Waiting For %O', this._startUpServices.map(i => i.getServiceName()));
             }
         }, maxWaitTime * 1000);
         document.addEventListener('backbutton', this.executeBackTapListeners.bind(this));
@@ -73,7 +74,7 @@ export class DeviceService {
             }).then(() => {
                 return Promise.all(this._startUpServices.map(s => {
                     return s.start().catch((error) => {
-                        console.error('%s failed to start due to: %O', s.serviceName, error);
+                        console.error('%s failed to start due to: %O', s.getServiceName(), error);
                         return Promise.reject(error);
                     });
                 }));
@@ -85,6 +86,10 @@ export class DeviceService {
                 this._isReady = true;
             });
         }
+    }
+
+    public getServiceName() {
+        return DeviceService.SERVICE_NAME;
     }
 
     public whenReady(): Promise<void> {

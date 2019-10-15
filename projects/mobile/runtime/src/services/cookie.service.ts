@@ -16,7 +16,7 @@ interface CookieInfo {
     providedIn: 'root'
 })
 export class CookieService implements IDeviceStartUpService {
-
+    static readonly SERVICE_NAME = 'CookieService';
     private cookieInfo = {};
 
     public serviceName = 'CookeService';
@@ -74,6 +74,10 @@ export class CookieService implements IDeviceStartUpService {
             });
         }
         return Promise.all(promises);
+    }
+
+    public getServiceName() {
+        return CookieService.SERVICE_NAME;
     }
 
     /**

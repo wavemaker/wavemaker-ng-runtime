@@ -7,7 +7,7 @@ declare const _;
 
 @Injectable({providedIn: 'root'})
 export class LocalDbService {
-
+    static readonly SERVICE_NAME = 'LocalDbService';
     private searchTableData;
     private searchTableDataWithQuery;
     private getDistinctDataByFields;

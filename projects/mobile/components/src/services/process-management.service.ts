@@ -4,6 +4,7 @@ import { ProcessManagerComponent, ProcessApi } from '../widgets/process-manager/
 
 @Injectable({ providedIn: 'root' })
 export class ProcessManagementService {
+    static readonly SERVICE_NAME = 'ProcessManagementService';
 
     private processManagerComponent: ProcessManagerComponent;
 

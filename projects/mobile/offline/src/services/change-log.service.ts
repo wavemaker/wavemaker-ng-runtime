@@ -64,6 +64,7 @@ export const LAST_PUSH_INFO_KEY = 'changeLogService.lastPushInfo';
 
 @Injectable({providedIn: 'root'})
 export class ChangeLogService {
+    static readonly SERVICE_NAME = 'ChangeLogService';
 
     private workers: Worker[] = [];
 

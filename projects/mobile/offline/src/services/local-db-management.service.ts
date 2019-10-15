@@ -83,7 +83,7 @@ export interface CallBack {
 
 @Injectable({providedIn: 'root'})
 export class LocalDBManagementService {
-
+    static readonly SERVICE_NAME = 'LocalDBManagementService';
     private callbacks: CallBack[] = [];
     private dbInstallDirectory: string;
     private dbInstallDirectoryName: string;
