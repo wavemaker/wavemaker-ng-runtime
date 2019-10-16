@@ -131,10 +131,10 @@ describe("DataTable", () => {
                     );
                     quick_edit_fixture.detectChanges();
                 });
-                xit("Should create the component", () => {
+                it("Should create the component", () => {
                     expect(quick_edit_fixture.componentInstance).toBeDefined();
                 });
-                xit("Should have a editable new row ", () => {
+                it("Should have a editable new row ", () => {
                     const debugEl =
                         quick_edit_fixture.debugElement.nativeElement;
                     const tableBodyEl = debugEl.querySelector(
@@ -145,7 +145,7 @@ describe("DataTable", () => {
                     );
                     expect(tableRowEls.length).toEqual(1);
                 });
-                xit("Should have a editable new row in the end", () => {
+                it("Should have a editable new row in the end", () => {
                     const debugEl = quick_edit_fixture.debugElement.query(
                         By.css("div")
                     );
@@ -164,7 +164,7 @@ describe("DataTable", () => {
                         )
                     ).toBeTruthy();
                 });
-                xit("Should have a editable new row with all the columns of the loaded data in the end", () => {
+                it("Should have a editable new row with all the columns of the loaded data in the end", () => {
                     const debugEl = quick_edit_fixture.debugElement.query(
                         By.css("div")
                     );
@@ -179,7 +179,7 @@ describe("DataTable", () => {
                         Object.keys(testData[0]).length
                     );
                 });
-                xit("Should have a new row with all the columns of data in the end with empty value", () => {
+                it("Should have a new row with all the columns of data in the end with empty value", () => {
                     const debugEl = quick_edit_fixture.debugElement.query(
                         By.css("div")
                     );
