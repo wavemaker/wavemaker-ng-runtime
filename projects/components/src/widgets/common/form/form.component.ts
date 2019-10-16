@@ -1,4 +1,4 @@
-import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, NgZone } from '@angular/core';
+import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import { $appDigest, getClonedObject, getFiles, isDefined, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource } from '@wm/core';
@@ -82,7 +82,7 @@ const setTouchedState = ngForm => {
         provideAsWidgetRef(FormComponent)
     ]
 })
-export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit {
+export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit, AfterViewInit {
     static  initializeProps = registerFormProps();
     @ViewChild('dynamicForm', {read: ViewContainerRef}) dynamicFormRef: ViewContainerRef;
     @ViewChild(MessageComponent) messageRef;
@@ -214,7 +214,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (this.parentList && this.parentForm && !isDefined(this._formIsInList)) {
             const formEle = this.$element;
             const listEle = formEle.closest('.app-livelist[name="' + this.parentList.name + '"]');
-            this._formIsInList = !(listEle.find('.app-form[widget-id="' + this.parentForm.widgetId + '"]')).length;
+            if (listEle.length) {
+                this._formIsInList = !(listEle.find('form[widget-id="' + this.parentForm.widgetId + '"]')).length;
+            }
         }
         return isDefined(this._formIsInList) ? this._formIsInList : this.parentList;
     }
@@ -259,6 +261,17 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     ngAfterContentInit() {
+       setTimeout(() => {
+            this.componentRefs.forEach(componentRef => {
+                if (componentRef.name) {
+                    // Register widgets inside form with formWidgets
+                    this.formWidgets[componentRef.name] = componentRef;
+                }
+            });
+        }, 250);
+    }
+
+    ngAfterViewInit() {
         if (this.parentForm && this.parentForm.ngform && this.isParentList) {
             // setting formArray control on ngform.
             if (!_.get(this.parentForm.ngform.controls, this.parentList.name)) {
@@ -269,14 +282,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this.formArrayIndex = this.parentFormArray.length - 1;
         }
         this.addInnerNgFormToForm(this.bindingValue);
-        setTimeout(() => {
-            this.componentRefs.forEach(componentRef => {
-                if (componentRef.name) {
-                    // Register widgets inside form with formWidgets
-                    this.formWidgets[componentRef.name] = componentRef;
-                }
-            });
-        }, 250);
     }
 
     findOperationType() {}
