@@ -18,7 +18,7 @@ const markup = `
              tabindex="1"
              disabled="false"
              width="200" height="200" show="true" class="btn-primary"
-             fontsize="20" fontfamily="Segoe UI" color="#0000FF" fontweight="bold" whitespace="nowrap"
+             fontsize="20" fontfamily="Segoe UI" color="#0000FF" fontweight="700" whitespace="nowrap"
              fontstyle="italic" textdecoration="underline" textalign="center" backgroundcolor="#00ff29"
              backgroundimage="http://www.google.com/doodle4google/images/splashes/featured.png"
              backgroundrepeat="repeat" backgroundposition="left" backgroundsize="200px 200px" backgroundattachment="fixed"

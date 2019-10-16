@@ -310,6 +310,10 @@ export class ComponentTestBase {
                     } else if (cssName === 'backgroundPosition') {
                         // TODO: write logic to compute background position based on value. Now hardcoding for 'left'
                         initValue = '0% 50%';
+                    } else if (cssName === 'textDecoration') {
+                        // if text decoration is just assigned as 'underline' css value is still 'underline solid rgba(0, 0, 255)'. so compare only first value
+                        initValue = (initValue || '').split(' ').shift();
+                        cssValue = (cssValue || '').split(' ').shift();
                     }
                     //console.log(cssName, cssValue, initValue);
                     if (initValue) {

@@ -244,7 +244,7 @@
                         "tsConfig": "projects/components/tsconfig.spec.json",
                         "karmaConfig": "projects/components/karma.conf.js",
                         "styles": [
-                            "../wavemaker-app-runtime/src/main/webapp/application/styles/css/wm-style.css"
+                            "../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css"
                         ],
                         "scripts": [],
                         "assets": []
