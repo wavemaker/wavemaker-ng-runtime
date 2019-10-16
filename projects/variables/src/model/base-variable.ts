@@ -1,6 +1,7 @@
 import { DataSource } from '@wm/core';
 
 import DatasetUtil from '../util/dataset-util';
+declare const _;
 
 export abstract class BaseVariable {
 
@@ -27,13 +28,13 @@ export abstract class BaseVariable {
                 returnVal = this._context;
                 break;
             case DataSource.Operation.ADD_ITEM:
-                returnVal = this.addItem(options.item);
+                returnVal = this.addItem(options.item, _.omit(options, 'item'));
                 break;
             case DataSource.Operation.SET_ITEM:
-                returnVal = this.setItem(options.prevItem, options.item);
+                returnVal = this.setItem(options.prevItem, options.item,  _.omit(options, 'prevItem', 'item'));
                 break;
             case DataSource.Operation.REMOVE_ITEM:
-                returnVal = this.removeItem(options.item);
+                returnVal = this.removeItem(options.item, _.omit(options, 'item'));
                 break;
         }
         return returnVal;
@@ -69,16 +70,61 @@ export abstract class BaseVariable {
      * @param value
      * @returns {any}
      */
-    setItem(index: any, value: any) {
-        return DatasetUtil.setItem(this.dataSet, index, value, this.isList);
+    setItem(index: any, value: any, options?: any) {
+        options = this.getChildDetails(options);
+        return DatasetUtil.setItem(this.dataSet, index, value, options);
     }
 
-    addItem(value: any, index?: number) {
-        return DatasetUtil.addItem(this.dataSet, value, index, this.isList);
+    /**
+     * This method is to get target node options like path, parentIndex and isList
+     * @param options: provided options
+     * @returns {object}
+     * Example: if we have parent dataset as object and we are performing operations on inner list then we have to set isList as true.
+     * So finding the target node type and updating the isList option.
+     */
+    private getChildDetails (options) {
+        let parentIndex, isList = this.isList, path;
+        if (options && options.path) {
+            path = options.path;
+            let targetNode;
+            if (isList) {
+                parentIndex = options.parentIndex || 0;
+                targetNode =  _.get(this.dataSet[parentIndex], options.path);
+            } else {
+                targetNode = _.get(this.dataSet, options.path);
+            }
+            isList = targetNode ? _.isArray(targetNode) ? true : false : true;
+        }
+        return {path, isList, parentIndex};
     }
 
-    removeItem(index: any, exactMatch?: boolean) {
-        return DatasetUtil.removeItem(this.dataSet, index, exactMatch);
+    addItem(value: any, options?) {
+        let index;
+        if (_.isNumber(options)) {
+            index = options;
+        }
+        if (_.isObject(options)) {
+            index = options.index;
+        }
+
+        options = this.getChildDetails(options);
+        return DatasetUtil.addItem(this.dataSet, value, index, options);
+    }
+
+    removeItem(index: any, options?: any) {
+        let exactMatch, parentIndex;
+        if (options) {
+            if (_.isBoolean(options)) {
+                exactMatch = options;
+            }
+            if (_.isObject(options)) {
+                exactMatch = options.exactMatch;
+                if (this.isList) {
+                    parentIndex = options.parentIndex || 0;
+                }
+            }
+        }
+        return DatasetUtil.removeItem(this.dataSet, index, { exactMatch, path: options.path, parentIndex });
     }
 
     clearData() {

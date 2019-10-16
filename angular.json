@@ -412,6 +412,18 @@
                         "project": "projects/variables/ng-package.json"
                     }
                 },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/variables/src/test.ts",
+                        "polyfills": "projects/variables/polyfills.ts",
+                        "tsConfig": "projects/variables/tsconfig.spec.json",
+                        "karmaConfig": "projects/variables/karma.conf.js",
+                        "styles": [],
+                        "scripts": [],
+                        "assets": []
+                    }
+                },
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {

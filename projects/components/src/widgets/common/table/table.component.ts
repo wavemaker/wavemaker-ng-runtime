@@ -1,14 +1,15 @@
-import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getDatasourceFromExpr, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
+import { ListComponent } from '../list/list.component';
 import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
 import { getConditionalClasses, getOrderByExpr, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -679,6 +680,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         public fb: FormBuilder,
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
+        @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
@@ -1249,6 +1251,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             case 'dataset':
                 if (this.binddatasource && !this.datasource) {
                     return;
+                }
+                // if table is inside list then table dataset will be set as "item.XXX" and there is no datasource.
+                // So extracting datasource from the datset bound expression.
+                if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
+                    this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
                 this.watchVariableDataSet(nv);
                 break;
