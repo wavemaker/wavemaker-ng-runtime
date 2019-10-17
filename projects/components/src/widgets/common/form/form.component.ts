@@ -314,8 +314,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                  */
                 const prefabInnerForm = parentContentEl.find('form').first();
                 const isInsideList = prefabInnerForm.closest('.app-livelist');
-                const isListInsideParentContainer = isInsideList.length && isInsideList.closest('[name="' + _.get(parentContainer, name) + '"]');
-                if (!isListInsideParentContainer.length && !prefabInnerForm.siblings('form').length) {
+                // check whether form inside prefab container is inside the list. If true, do not change the name.
+                if (!isInsideList.length && !prefabInnerForm.siblings('form').length) {
                     binding = _.get(parentContainer, 'name');
                 }
             }
