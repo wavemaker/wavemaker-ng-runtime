@@ -22,24 +22,27 @@ const getChangeEvt = () => {
 
 declare const _, $;
 
+const overrideSummerNote = () => {
+    if (!$.summernote.__overidden) {
+        // override summernote methods
 
-// override summernote methods
+        const origFn = $.summernote.ui.button.bind($.summernote);
 
-const origFn = $.summernote.ui.button.bind($.summernote);
+        $.summernote.ui.button = (...args) => {
 
-$.summernote.ui.button = (...args) => {
+            const retVal = origFn(...args);
+            const origCallback = retVal.callback;
 
-    const retVal = origFn(...args);
-    const origCallback = retVal.callback;
-
-    retVal.callback = ($node, options) => {
-        // add bs3 btn class to the buttons
-        $node.addClass('btn');
-        return origCallback($node, options);
-    };
-    return retVal;
+            retVal.callback = ($node, options) => {
+                // add bs3 btn class to the buttons
+                $node.addClass('btn');
+                return origCallback($node, options);
+            };
+            return retVal;
+        };
+        $.summernote.__overidden = true;
+    }
 };
-//
 
 @Component({
     selector: 'div[wmRichTextEditor]',
@@ -120,6 +123,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
     constructor(inj: Injector, private domSanitizer: DomSanitizer, private ngZone: NgZone) {
         super(inj, WIDGET_INFO);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
+        overrideSummerNote();
     }
 
     ngOnInit() {

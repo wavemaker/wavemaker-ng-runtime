@@ -1,8 +1,8 @@
-import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { $watch, AbstractI18nService, App, isIE, noop, UtilsService, $invokeWatchers } from '@wm/core';
-import { WidgetRef } from '@wm/components';
+import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers } from '@wm/core';
+import { PrefabContainerDirective, WidgetRef} from '@wm/components';
 import { VariablesService } from '@wm/variables';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
@@ -22,6 +22,9 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     prefabName: string;
     i18nService: AbstractI18nService;
     appLocale: any;
+    @ViewChild(PrefabContainerDirective) prefabContainerDirective;
+    scriptLoaderService: ScriptLoaderService;
+    compileContent = false;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -38,7 +41,8 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
         this.containerWidget = this.injector.get(WidgetRef);
         this.prefabMngr = this.injector.get(PrefabManagerService);
-        this.i18nService = this.injector.get(AbstractI18nService);
+        this.i18nService = this.injector.get(AbstractI18nService);;
+        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
             this.getContainerWidgetInjector().view.component.registerFragment()
         }
@@ -165,13 +169,29 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         this.containerWidget.invokeEventCallback('load');
     }
 
+    private loadScripts() {
+        return new Promise((resolve) => {
+            const scriptsRequired = this.prefabContainerDirective.$element.attr('scripts-to-load');
+            if (scriptsRequired) {
+                this.scriptLoaderService
+                    .load(...scriptsRequired.split(','))
+                    .then(resolve);
+            } else {
+                resolve();
+            }
+        });
+    }
+
 
     ngAfterViewInit(): void {
-        this.viewInit$.complete();
-        this.registerChangeListeners();
-        setTimeout(() => {
-            this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
-        }, 100);
+        this.loadScripts().then(() => {
+            this.compileContent = true;
+            this.viewInit$.complete();
+            this.registerChangeListeners();
+            setTimeout(() => {
+                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
+            }, 100);
+        });
     }
 
     ngOnDestroy(): void {

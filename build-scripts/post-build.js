@@ -1,5 +1,5 @@
 const util = require(`util`);
-const fs = require('fs-extra')
+const fs = require('fs-extra');
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const copyFile = util.promisify(fs.copyFile);
@@ -11,13 +11,34 @@ const copyCssFiles = (hash)=>{
     copyFile(`${opPath}/wm-styles.css`,`${opPath}/wm-styles.${hash}.css`);
     copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
     copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
-}
+};
 const generateHash = async (filepath)=>{
     const cssContent = await readFile(filepath);
     let hash = crypto.createHash('md5');
     hash.update(cssContent);
     return hash.digest('hex');
-}
+};
+const generateHashForScripts = () => {
+    const scriptsMap = {};
+    return new Promise(resolve => {
+        fs.readdir(opPath, (err, items) => {
+            const promises = items.map(i => {
+                const nohashIndex = i.indexOf('-NOHASH.');
+                if (nohashIndex > 0) {
+                    const ext = i.substring(nohashIndex + 8);
+                    const key = i.substring(0, nohashIndex);
+                    return generateHash(`${opPath}/${i}`).then( hash => {
+                        scriptsMap[`${key}.${ext}`] = `${key}.${hash}.${ext}`;
+                        return copyFile(`${opPath}/${key}-NOHASH.${ext}`, `${opPath}/${key}.${hash}.${ext}`);
+                    });
+                }
+            });
+            Promise.all(promises).then(() => {
+                return writeFile(`${opPath}/path_mapping.json`, JSON.stringify(scriptsMap, null, 2));
+            }).then(resolve);
+        });
+    });
+};
 (async () => {
     try {
         fs.copyFileSync('./dist/ng-bundle/index.html', './dist/index.html');
@@ -29,7 +50,7 @@ const generateHash = async (filepath)=>{
             if(isDevBuild){
                 $("head").append(
                     `<script> const WMStylesPath = "ng-bundle/wm-styles.js" </script>`
-                )    
+                )
             }
             if(isProdBuild){
                 const isOptimizeCss = $('meta[optimizecss]').length;
@@ -46,6 +67,7 @@ const generateHash = async (filepath)=>{
                 );
             }
         await writeFile(`./dist/index.html`, $.html());
+        generateHashForScripts();
     } catch (e) {
         console.error(`Error in Post ng build Script | ${e}`);
     }

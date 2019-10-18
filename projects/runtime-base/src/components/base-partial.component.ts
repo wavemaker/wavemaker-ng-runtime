@@ -1,10 +1,10 @@
-import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 
-import { AbstractI18nService, AbstractNavigationService, App, noop, UtilsService } from '@wm/core';
-import { WidgetRef } from '@wm/components';
+import { AbstractI18nService, AbstractNavigationService, App, noop, ScriptLoaderService, UtilsService } from '@wm/core';
+import { PartialDirective, WidgetRef} from '@wm/components';
 import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
@@ -29,6 +29,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     containerWidget: any;
     i18nService: AbstractI18nService;
     appLocale: any;
+    @ViewChild(PartialDirective) partialDirective;
+    scriptLoaderService: ScriptLoaderService;
+    compileContent = false;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -46,6 +49,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.App = this.injector.get(App);
         this.containerWidget = this.injector.get(WidgetRef);
         this.i18nService = this.injector.get(AbstractI18nService);
+        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
             this.getContainerWidgetInjector().view.component.registerFragment();
         }
@@ -130,13 +134,29 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         }
     }
 
+    private loadScripts() {
+        return new Promise((resolve) => {
+            const scriptsRequired = this.partialDirective.$element.attr('scripts-to-load');
+            if (scriptsRequired) {
+                this.scriptLoaderService
+                    .load(...scriptsRequired.split(','))
+                    .then(resolve);
+            } else {
+                resolve();
+            }
+        });
+    }
+
     ngAfterViewInit(): void {
-        setTimeout(() => {
-            this.viewInit$.complete();
+        this.loadScripts().then(() => {
+            this.compileContent = true;
+            setTimeout(() => {
+                this.viewInit$.complete();
 
-            this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
+                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
 
-        }, 100);
+            }, 100);
+        });
     }
 
     ngOnDestroy(): void {

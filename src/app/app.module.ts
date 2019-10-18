@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 
+import { isMobileApp, isIos, ScriptLoaderService } from '@wm/core';
 import {
     AppComponent,
     AppJSProvider,
@@ -58,5 +59,14 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     bootstrap: [AppComponent]
 })
 export class AppModule {
-
+    constructor(scriptLoaderService: ScriptLoaderService) {
+        setTimeout(() => {
+            if(isMobileApp()) {
+                scriptLoaderService.load('scripts/hammerjs/hammer.min.js');
+            }
+            if (isIos()) {
+                scriptLoaderService.load('scripts/iscroll/build/iscroll.js');
+            }
+        }, 100);
+    }
 }
