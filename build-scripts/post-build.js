@@ -25,38 +25,18 @@ const generateHash = async (filepath)=>{
         $('script').attr('defer', 'true');
         isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.css`);
         isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.js`);
-        console.log(`isProdBuild | ${isProdBuild}`);
-        console.log(`isDevBuild | ${isDevBuild}`);
         try {
-            // OPTIONAL CHANGES | WILL BE REMOVED LATER
-            const isOptimizeCss = $('#optimizeCss').length;
-            console.log(`isOptimized | ${isOptimizeCss}`);
-            if(isOptimizeCss){
-                if(isDevBuild){
-                    $("head").append(
-                        `<script> const WMStylesPath = "ng-bundle/wm-styles.js" </script>`
-                    )    
-                }
-                if(isProdBuild){
-                    const hash = await generateHash(`${opPath}/wm-styles.css`);
-                    copyCssFiles(hash);
-                    $("head").append(
-                        `<script> const WMStylesPath = "ng-bundle/wm-styles.${hash}.css" </script>`
-                    );
-                }
+            if(isDevBuild){
+                $("head").append(
+                    `<script> const WMStylesPath = "ng-bundle/wm-styles.js" </script>`
+                )    
             }
-            else {
-                if(isDevBuild){
-                    $("head").append(
-                        `<script> const WMStylesPath = "ng-bundle/wm-styles.js" </script>`
-                    )
-                }
-                if(isProdBuild){
-                    $("head").append(
-                        `<script> const WMStylesPath = "ng-bundle/wm-styles.css" </script>`
-                    )
-                }
-                
+            if(isProdBuild){
+                const hash = await generateHash(`${opPath}/wm-styles.css`);
+                copyCssFiles(hash);
+                $("head").append(
+                    `<script> const WMStylesPath = "ng-bundle/wm-styles.${hash}.css" </script>`
+                );
             }
         }
         catch(e){
