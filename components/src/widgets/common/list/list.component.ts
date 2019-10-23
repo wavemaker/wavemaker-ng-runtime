@@ -456,12 +456,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         dataNavigator.maxResults = this.pagesize || 5;
         this.removePropertyBinding('dataset');
-        this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource);
+        this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource, this.dataset, this.binddatasource);
     }
 
     private onDataSetChange(newVal) {
         if (!this.dataNavigatorWatched) {
-            if (this.navigation && this.navigation !== NAVIGATION_TYPE.NONE && this.binddatasource) {
+            if (this.navigation && this.navigation !== NAVIGATION_TYPE.NONE) {
                 this.setupDataSource();
             } else {
                 this.onDataChange(newVal);
@@ -733,7 +733,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'dataset') {
-            if (!nv) {
+            if (!nv && this.binddatasource && !this.datasource) {
                 return;
             }
             this.onDataSetChange(nv);

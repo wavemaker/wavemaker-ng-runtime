@@ -1175,3 +1175,47 @@ export const triggerItemAction  = (scope, item) => {
     }
 };
 
+/**
+ * This method is to get datsource from the expression
+ * @param expr - expression of the dataset
+ * @param scope - scope of the widget
+ * Example1: expr - "Variables.staticVar1.dataSet.details[$i].addresses" then the method will return datasource as Variables.staticVar1
+ * Example2: expr - "Widgets.list1.currentItem.addresses" and list1 is bound to "Variables.staticVar1.dataSet.details" then the method will return datasource as Variables.staticVar1
+ */
+export const getDatasourceFromExpr = (expr, scope) => {
+    const isBoundToVariable = _.startsWith(expr, 'Variables.');
+    const isBoundToWidget = _.startsWith(expr, 'Widgets.');
+    const parts = expr.split('.');
+    if (isBoundToVariable) {
+        return _.get(scope.viewParent.Variables, parts[1]);
+    }
+    if (isBoundToWidget) {
+        const widgetScope = _.get(scope.viewParent.Widgets, parts[1]);
+        const widgetDatasetBoundExpr = widgetScope.$attrs.get('datasetboundexpr');
+        let widgetBoundExpression;
+        widgetBoundExpression = (!widgetScope.datasource && widgetDatasetBoundExpr) ? widgetDatasetBoundExpr :  widgetScope.binddataset;
+        return getDatasourceFromExpr(widgetBoundExpression, widgetScope);
+    }
+};
+
+/**
+ * This method is to get dataset bound expression from list currentitem expression
+ * @param expr - bound dataset expression
+ * @param scope - scope of the widget
+ * Example1: expr - "Widgets.list1.currentItem.details" and list1 is bound to "Variables.staticVar1.dataSet" then it returns expression as "Variables.staticVar1.dataSet[$i].details"
+ */
+export const extractCurrentItemExpr = (expr, scope) => {
+    const currentItemRegEx = /^Widgets\..*\.currentItem/g;
+    if (currentItemRegEx.test(expr)) {
+        const parts = expr.split('.');
+        const widgetScope = _.get(scope.viewParent.Widgets, parts[1]);
+        const widgetDatasetBoundExpr = widgetScope.$attrs.get('datasetboundexpr');
+        if (!widgetScope.datasource && widgetDatasetBoundExpr) {
+            expr = expr.replace(/^Widgets\..*\.currentItem/g, `${widgetDatasetBoundExpr}[$i]`);
+            return extractCurrentItemExpr(expr, scope);
+        } else {
+            expr = expr.replace(/^Widgets\..*\.currentItem/g, `${widgetScope.binddataset}[$i]`);
+        }
+    }
+    return expr;
+};

@@ -1,15 +1,16 @@
-import { AfterContentInit, Attribute, Component, ContentChildren, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ContentChildren, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, DataSource, getClonedObject, getDatasourceFromExpr, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn } from '@wm/core';
 import { transpile } from '@wm/transpiler';
 
 import { styler } from '../../framework/styler';
 import { StylableComponent } from '../base/stylable.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
+import { ListComponent } from '../list/list.component';
 import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
 import { transformData } from '../../../utils/data-utils';
 import { getConditionalClasses, getOrderByExpr, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -681,7 +682,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         public inj: Injector,
         public fb: FormBuilder,
         private app: App,
+        @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
+        @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
         private ngZone: NgZone
     ) {
@@ -993,7 +996,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 maxResults: this.pagesize || 5
             };
             this.removePropertyBinding('dataset');
-            this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource);
+            this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource, this.dataset, this.binddatasource);
         }
     }
 
@@ -1222,8 +1225,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.onDataSourceChange();
                 break;
             case 'dataset':
-                if (!this.datasource) {
+                if (this.binddatasource && !this.datasource) {
                     return;
+                }
+                // if table is inside list then table dataset will be set as "item.XXX" and there is no datasource.
+                // So extracting datasource from the datset bound expression.
+                if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item.')) {
+                    this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
                 this.watchVariableDataSet(nv);
                 break;

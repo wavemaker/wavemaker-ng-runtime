@@ -1,9 +1,11 @@
 import { Directive, Inject, Self } from '@angular/core';
 
-import { $appDigest, AbstractDialogService, DataSource, triggerFn } from '@wm/core';
+import { $appDigest, AbstractDialogService, DataSource, extractCurrentItemExpr, triggerFn } from '@wm/core';
 
 import { TableComponent } from './table.component';
 import { refreshDataSource } from '../../../utils/data-utils';
+
+declare const $, _;
 
 const OPERATION = {
     'NEW': 'new',
@@ -109,6 +111,31 @@ export class TableCUDDirective {
         }
     }
 
+    generatePath(binddataset) {
+        let path, index;
+        let dataBoundExpr = this.table.widget.$attrs.get('datasetboundexpr');
+        if (_.startsWith(binddataset, 'item.') && dataBoundExpr) {
+            if (_.startsWith(dataBoundExpr, 'Widgets.')) {
+                dataBoundExpr = extractCurrentItemExpr(dataBoundExpr, this.table);
+            }
+            const parentListItems = this.table.$element.parents('.app-list-item');
+            const indexArr = _.map(parentListItems, (item) => _.parseInt($(item).attr('listitemindex')));
+            for (let i = indexArr.length - 1; i >= 0; i--) {
+                dataBoundExpr = dataBoundExpr.replace('$i', indexArr[i]);
+            }
+            index = _.last(indexArr);
+            path = dataBoundExpr.replace(/^Variables\..*\.dataSet([^.])*(\.|$)/g, '');
+        } else {
+            // if we have dataset as "Variables.staticVar1.dataSet[1].details" then pass index as 1.
+            const regEx = /^Variables\..*\.dataSet([\[][0-9]])/g;
+            if (regEx.test(binddataset)) {
+                index = _.parseInt(binddataset.replace(/^Variables\..*\.dataSet([\[])/g, ''));
+            }
+            path = binddataset.replace(/^Variables\..*\.dataSet([^.])*(\.|$)/g, '');
+        }
+        return { path, index };
+    }
+
     insertRecord(options) {
         const dataSource = this.table.datasource;
         if (!dataSource) {
@@ -122,7 +149,8 @@ export class TableCUDDirective {
 
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-                dataSource.execute(DataSource.Operation.ADD_ITEM, {item: options.row});
+                const extraOptions = this.generatePath(this.table.binddataset);
+                dataSource.execute(DataSource.Operation.ADD_ITEM, {item: options.row, path: extraOptions.path, parentIndex: extraOptions.index});
                 this.insertSuccessHandler(options.row, options);
                 return;
             }
@@ -155,6 +183,8 @@ export class TableCUDDirective {
             if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_CRUD)) {
                 this.table.initiateSelectItem('current', response, undefined, false, options.callBack);
                 this.updateVariable(response, options.callBack);
+            } else if (!this.table.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+                this.table.initiateSelectItem('current', response, undefined, false, options.callBack);
             }
             triggerFn(options.success, response);
             this.table.invokeEventCallback('rowupdate', {$event: options.event, $data: response, row: response});
@@ -175,7 +205,8 @@ export class TableCUDDirective {
 
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-                dataSource.execute(DataSource.Operation.SET_ITEM, {prevItem: options.prevData, item: options.row});
+                const extraOptions = this.generatePath(this.table.binddataset);
+                dataSource.execute(DataSource.Operation.SET_ITEM, {prevItem: options.prevData, item: options.row, path: extraOptions.path, parentIndex: extraOptions.index});
                 this.updateSuccessHandler(options.row, options);
                 return;
             }
@@ -232,7 +263,8 @@ export class TableCUDDirective {
         }
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-                dataSource.execute(DataSource.Operation.REMOVE_ITEM, {item: options.row});
+                const extraOptions = this.generatePath(this.table.binddataset);
+                dataSource.execute(DataSource.Operation.REMOVE_ITEM, {item: options.row, path: extraOptions.path, parentIndex: extraOptions.index});
                 this.deleteSuccessHandler(options.row, undefined, options.evt, options.callBack);
                 return;
             }

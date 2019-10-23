@@ -1,4 +1,4 @@
-import { Element } from '@angular/compiler';
+import { Attribute, Element } from '@angular/compiler';
 
 import { FormWidgetType } from '../enums/enums';
 
@@ -114,6 +114,15 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
     return tmpl;
 };
 
+// This mehtod is used to add datasetboundexpr attribute for node
+const addDatasetBoundExprAttribute = (childNode, attr, attrValue) => {
+    attrValue = attrValue.replace('bind:', '');
+    const datasetBoundAttribute = childNode.attrs.find( a => a.name === 'datasetboundexpr');
+    if (attr.name === 'dataset' && !datasetBoundAttribute) {
+        childNode.attrs.push(new Attribute('datasetboundexpr', attrValue, attr.sourceSpan, attr.valueSpan));
+    }
+};
+
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
 export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '', referenceName: string = 'item') => {
 
@@ -144,6 +153,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                     if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet) {
                         value = value.replace('bind:', '');
+                        addDatasetBoundExprAttribute(childNode, attr, value);
                         value = value.replace(regex, referenceName);
                         value = 'bind:' + value;
                     }
@@ -153,6 +163,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                         if (value.includes('.formWidgets') || value.includes('.filterWidgets')) {
                             value = value.replace(formWidgetsRegex, 'Widgets');
                         }
+                        addDatasetBoundExprAttribute(childNode, attr, value);
                         value = value.replace(currentItemRegEx, referenceName);
                     }
                     if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
