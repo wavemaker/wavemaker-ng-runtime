@@ -86,9 +86,6 @@ export default class DatasetUtil {
             return dataSet;
         }
 
-        // check for index sanity
-        index = index !== undefined ? index : dataSet.length;
-
         // set the value against the specified index
         if (options.path) {
             const innerArray = DatasetUtil.getTargetNode(dataSet, options);
