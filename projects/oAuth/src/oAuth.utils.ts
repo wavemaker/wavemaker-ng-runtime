@@ -3,7 +3,6 @@ import { _WM_APP_PROJECT, hasCordova, isIE } from '@wm/core';
 declare const moment, _;
 
 const accessTokenSuffix = '.access_token';
-const isWaveLens = false;
 
 export const parseConfig = (serviceParams: any): any => {
 
@@ -292,7 +291,7 @@ export const performAuthorization = (url, providerId, onSuccess, onError, http, 
             postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack);
         }
     } else {
-        if (isWaveLens) {
+        if (window['WaveLens']) {
             requestSourceType = 'WAVELENS';
         } else if (hasCordova()) {
             requestSourceType = 'MOBILE';
