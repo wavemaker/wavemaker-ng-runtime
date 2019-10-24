@@ -1,7 +1,10 @@
 import { AfterViewInit, Attribute, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 import { AbstractNavigationService, App } from '@wm/core';
-import { BaseComponent, getImageUrl, IWidgetConfig, LeftPanelDirective, PageDirective, provideAsWidgetRef, SearchComponent } from '@wm/components';
+import { BaseComponent, getImageUrl, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
+import { PageDirective } from '@wm/components/page';
+import { LeftPanelDirective } from '@wm/components/page/left-panel';
+import { SearchComponent } from '@wm/components/basic/search';
 import { DeviceService } from '@wm/mobile/core';
 
 import { registerProps } from './mobile-navbar.props';

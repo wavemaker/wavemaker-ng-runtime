@@ -1,6 +1,6 @@
 import { Directive, DoCheck, Inject, Input, Self } from '@angular/core';
 
-import { WidgetRef } from '@wm/components';
+import { WidgetRef } from '@wm/components/base';
 import { hasCordova, noop } from '@wm/core';
 import { DeviceFileCacheService } from '@wm/mobile/core';
 

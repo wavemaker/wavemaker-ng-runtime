@@ -6,7 +6,11 @@ const tagName = 'wm-input';
 register('wm-text', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        }]
     };
 });
 

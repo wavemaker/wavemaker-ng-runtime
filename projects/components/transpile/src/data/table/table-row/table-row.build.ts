@@ -26,7 +26,11 @@ register('wm-table-row', (): IBuildTaskDef => {
                          <div *ngFor="let param of rowDef.partialParams | keyvalue" wmParam hidden
                             [name]="param.key" [value]="param.value"></div>`;
         },
-        post: () => `</div></ng-template></${tagName}>`
+        post: () => `</div></ng-template></${tagName}>`,
+        imports: [{
+            from: '@wm/components/data/table',
+            name: 'TableModule'
+        }]
     };
 });
 

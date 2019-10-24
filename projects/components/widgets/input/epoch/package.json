@@ -1,0 +1,22 @@
+{
+    "name": "@wm/components/input/epoch",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/epoch",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input.epoch",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "ngx-bootstrap/datepicker": "ngxBootstrap",
+                "ngx-bootstrap/dropdown": "ngxBootstrap",
+                "ngx-bootstrap/timepicker": "ngxBootstrap",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

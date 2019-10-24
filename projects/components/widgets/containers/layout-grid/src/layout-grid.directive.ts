@@ -1,10 +1,8 @@
 import { Directive, Injector } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
+
 import { registerProps } from './layout-grid.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-grid-layout clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {

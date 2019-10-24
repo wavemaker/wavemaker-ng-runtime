@@ -117,7 +117,7 @@ export const convertDataToObject = dataResult => {
  * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
  * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
  */
-export const transformData = (context: any, dataSet: any, myDataField?: string, displayOptions?, startIndex?: number): Array<DataSetItem> => {
+export const transformFormData = (context: any, dataSet: any, myDataField?: string, displayOptions?, startIndex?: number): Array<DataSetItem> => {
     const data = [];
     if (!dataSet) {
         return;

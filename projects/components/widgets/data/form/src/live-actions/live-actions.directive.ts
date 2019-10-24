@@ -1,9 +1,8 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { AbstractDialogService, App, DataSource, triggerFn } from '@wm/core';
-
-import { ListComponent } from '../../list/list.component';
-import { Live_Operations, performDataOperation } from '../../../../utils/data-utils';
+import { Live_Operations, performDataOperation } from '@wm/components/base';
+import { ListComponent } from '@wm/components/data/list';
 
 @Directive({
     selector: '[wmLiveActions]'

@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
 
-import { DateComponent } from '@wm/components';
+import { DateComponent } from '@wm/components/input/epoch';
 
 @Directive({
     selector: '[wmDate]'

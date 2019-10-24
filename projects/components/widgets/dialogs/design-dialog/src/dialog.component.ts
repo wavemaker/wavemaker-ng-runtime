@@ -1,11 +1,9 @@
 import { Attribute, Component, ContentChild, Inject, Injector, OnInit, Self, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
+import { BaseDialog, Context, IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 
-import { Context } from '../../../framework/types';
 import { registerProps } from './dialog.props';
-import { BaseDialog } from '../base/base-dialog';
-import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DIALOG_CLS = 'app-dialog modal-dialog';
 

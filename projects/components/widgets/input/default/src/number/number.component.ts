@@ -3,10 +3,9 @@ import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
+import { IWidgetConfig, provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './number.props';
-import { IWidgetConfig } from '../../framework/types';
-import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { NumberLocale } from '../text/locale/number-locale';
 
 const WIDGET_CONFIG: IWidgetConfig = {

@@ -2,11 +2,9 @@ import { AfterViewInit, ContentChildren, Directive, Injector } from '@angular/co
 
 import { addForIdAttributes, switchClass } from '@wm/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig, WidgetRef } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
+
 import { registerProps } from './composite.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const $;
 

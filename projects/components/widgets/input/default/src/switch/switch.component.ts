@@ -1,12 +1,9 @@
 import { AfterViewInit, Component, Injector } from '@angular/core';
 
 import { $appDigest, debounce, isDefined, setCSS, toBoolean } from '@wm/core';
+import { DatasetAwareFormComponent, DataSetItem, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
 import { registerProps } from './switch.props';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { DataSetItem } from '../../../utils/form-utils';
 
 declare const _, $;
 

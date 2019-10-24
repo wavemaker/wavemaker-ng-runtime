@@ -1,13 +1,10 @@
 import { AfterViewInit, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
 
 import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
+import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IRedrawableComponent } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const $, _, d3, nv;
 
@@ -93,7 +90,7 @@ const angle = d => {
 @Component({
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
-    styleUrls: ['../../../../../../node_modules/wm-nvd3/build/nv.d3.css'],
+    styleUrls: ['../../../../../node_modules/wm-nvd3/build/nv.d3.css'],
     providers: [
         provideAsWidgetRef(ChartComponent)
     ],

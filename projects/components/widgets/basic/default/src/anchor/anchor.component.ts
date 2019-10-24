@@ -1,15 +1,9 @@
-import { AfterViewInit, Component, HostBinding, Injector, Optional } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional } from '@angular/core';
 
-import { addClass, App, encodeUrl, getRouteNameFromLink, setAttr } from '@wm/core';
+import {addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr} from '@wm/core';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { DISPLAY_TYPE } from '../../framework/constants';
 import { registerProps } from './anchor.props';
-import { StylableComponent } from '../base/stylable.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { NavItemDirective } from '../nav/nav-item/nav-item.directive';
-import { disableContextMenu } from '../nav/navigation-control.directive';
 
 const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -19,6 +13,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 const regex = /Actions.goToPage_(\w+)\.invoke\(\)/g;
+export const disableContextMenu = ($event: Event) => {
+    $event.preventDefault();
+};
 
 @Component({
     selector: 'a[wmAnchor]',
@@ -27,7 +24,7 @@ const regex = /Actions.goToPage_(\w+)\.invoke\(\)/g;
         provideAsWidgetRef(AnchorComponent)
     ]
 })
-export class AnchorComponent extends StylableComponent implements AfterViewInit {
+export class AnchorComponent extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
     private hasNavigationToCurrentPageExpr: boolean;
@@ -44,10 +41,10 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
     @HostBinding('target') target: string;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
+    private _eventNotifier = new EventNotifier(false);
 
     constructor(
         inj: Injector,
-        @Optional() private navItemRef: NavItemDirective,
         private app: App
     ) {
         super(inj, WIDGET_CONFIG);
@@ -74,10 +71,8 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
         }
     }
 
-    private setNavItemActive() {
-        if (this.navItemRef) {
-            addClass(this.navItemRef.getNativeElement(), 'active');
-        }
+    public onActive(callback: (data: any) =>void) {
+        this._eventNotifier.subscribe('on-active', callback);
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any, meta?: string) {
@@ -121,15 +116,16 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit 
         if (this.hasNavigationToCurrentPageExpr) {
             addClass(this.nativeElement, 'active');
         }
-        if (this.navItemRef) {
-            setTimeout(() => {
-                if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`) {
-                    this.setNavItemActive();
-                } else if (this.hasNavigationToCurrentPageExpr) {
-                    this.setNavItemActive();
-                }
-            });
-        }
+        setTimeout(() => {
+            if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`
+                || this.hasNavigationToCurrentPageExpr) {
+                this._eventNotifier.notify("on-active", {});
+            }
+        });
 
+    }
+
+    public ngOnDestroy() {
+        this._eventNotifier.destroy();
     }
 }

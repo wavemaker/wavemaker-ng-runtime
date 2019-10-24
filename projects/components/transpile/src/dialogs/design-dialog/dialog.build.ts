@@ -5,7 +5,14 @@ const tagName = 'div';
 register('wm-dialog', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmDialog ${getAttrMarkup(attrs)} wm-navigable-element="true"><ng-template #dialogBody>`,
-        post: () => `</ng-template></${tagName}>`
+        post: () => `</ng-template></${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        },{
+            from: '@wm/components/dialogs/design-dialog',
+            name: 'DesignDialogModule'
+        }]
     };
 });
 

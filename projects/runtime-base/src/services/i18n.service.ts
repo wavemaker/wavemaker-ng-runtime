@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 
-import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 
 import {
     _WM_APP_PROJECT,

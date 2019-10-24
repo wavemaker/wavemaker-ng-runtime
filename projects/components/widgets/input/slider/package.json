@@ -1,0 +1,18 @@
+{
+    "name": "@wm/components/input/slider",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/slider",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input.slider",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

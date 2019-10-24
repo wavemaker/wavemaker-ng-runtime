@@ -1,5 +1,5 @@
 import { Injector, OnDestroy, TemplateRef } from '@angular/core';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { AbstractDialogService, closePopover } from '@wm/core';
 

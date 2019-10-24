@@ -1,6 +1,6 @@
-import { isMobileApp } from '@wm/core';
+import { FormWidgetType, isMobileApp } from '@wm/core';
 
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
 
 export const timeProps = new Map(
     [
@@ -37,5 +37,9 @@ export const registerProps = () => {
     register(
         'wm-time',
         timeProps
+    );
+    registerFormWidget(
+        FormWidgetType.TIME,
+        new Map(timeProps)
     );
 };

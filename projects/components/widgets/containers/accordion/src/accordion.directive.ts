@@ -1,13 +1,10 @@
 import { AfterContentInit, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
 import { isNumber, noop } from '@wm/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './accordion.props';
-import { StylableComponent } from '../base/stylable.component';
 import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-accordion panel-group';
 const WIDGET_CONFIG: IWidgetConfig = {

@@ -1,8 +1,7 @@
-import { getFormMarkupAttr, IBuildTaskDef, register } from '@wm/transpiler';
-import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp } from '@wm/core';
+import { getFormMarkupAttr, IBuildTaskDef, ImportDef, register } from '@wm/transpiler';
+import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp, getRequiredFormWidgetImports } from '@wm/core';
 
-import { ALLFIELDS } from '../../../../utils/data-utils';
-import { isDataSetWidget } from '../../../../utils/widget-utils';
+import { ALLFIELDS, isDataSetWidget } from '../../../utils/utils';
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
@@ -152,6 +151,14 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const provider = new Map();
             provider.set('form_reference', shared.get('counter'));
             return provider;
+        },
+        imports: (attrs: Map<String, String>): Array<ImportDef> => {
+            const imports = getRequiredFormWidgetImports(attrs.get('widget'));
+            imports.push({
+                from: '@wm/components/data/form',
+                name: 'FormModule'
+            });
+            return imports;
         }
     };
 };

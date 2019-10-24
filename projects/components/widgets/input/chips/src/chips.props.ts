@@ -1,4 +1,5 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
+import { FormWidgetType } from '@wm/core';
 
 export const chipsProps = new Map(
     [
@@ -45,6 +46,10 @@ export const registerProps = () => {
     register(
         'wm-chips',
         chipsProps
+    );
+    registerFormWidget(
+        FormWidgetType.CHIPS,
+        new Map(chipsProps)
     );
 };
 

@@ -7,7 +7,11 @@ const tagName = 'div';
 register('wm-number', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmNumber ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        }]
     };
 });
 

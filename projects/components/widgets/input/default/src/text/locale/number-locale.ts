@@ -3,9 +3,9 @@ import { AbstractControl, Validator } from '@angular/forms';
 import { DecimalPipe, getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
+import { IWidgetConfig } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
-import { IWidgetConfig } from '../../../framework/types';
 
 declare const _;
 

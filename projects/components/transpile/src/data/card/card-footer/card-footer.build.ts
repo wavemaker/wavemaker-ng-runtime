@@ -5,7 +5,11 @@ const tagName = 'div';
 register('wm-card-footer', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmCardFooter ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/data/card',
+            name: 'CardModule'
+        }]
     };
 });
 

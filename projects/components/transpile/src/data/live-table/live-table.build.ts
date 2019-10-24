@@ -16,7 +16,14 @@ register('wm-livetable', (): IBuildTaskDef => {
             const provider = new Map();
             provider.set('liveform_dialog_id', shared.get('counter'));
             return provider;
-        }
+        },
+        imports: [{
+            from: '@wm/components/data/live-table',
+            name: 'LiveTableModule'
+        }, {
+            from: '@wm/components/data/table',
+            name: 'TableModule'
+        }]
     };
 });
 

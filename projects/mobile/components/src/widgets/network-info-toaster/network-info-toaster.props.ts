@@ -1,4 +1,4 @@
-import { register } from '@wm/components';
+import { register } from '@wm/components/base';
 
 export const registerProps = () => {
     register(

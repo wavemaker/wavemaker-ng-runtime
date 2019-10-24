@@ -42,7 +42,14 @@ register('wm-pagedialog', (): IBuildTaskDef => {
                 preContent =  `</div></ng-template>`;
             }
             return `${preContent}</${tagName}>`;
-        }
+        },
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        },{
+            from: '@wm/components/dialogs/partial-dialog',
+            name: 'PartialDialogModule'
+        }]
     };
 });
 

@@ -2,12 +2,8 @@ import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { addClass, removeClass } from '@wm/core';
-
-import { IWidgetConfig } from '../../framework/types';
-import { styler } from '../../framework/styler';
+import { BaseFormCustomComponent,IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 import { registerProps } from './color-picker.props';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 
 const DEFAULT_CLS = 'input-group app-colorpicker';

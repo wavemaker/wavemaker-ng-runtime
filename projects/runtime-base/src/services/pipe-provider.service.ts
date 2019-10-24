@@ -29,7 +29,7 @@ import {
     NumberToStringPipe,
     StateClassPipe,
     StringToNumberPipe
-} from '@wm/components';
+} from '@wm/components/base';
 import { getSessionStorageItem } from '@wm/core';
 
 @Injectable({

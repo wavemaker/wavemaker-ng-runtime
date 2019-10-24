@@ -2,14 +2,10 @@ import { AfterContentInit, AfterViewInit, Attribute, ContentChild, ContentChildr
 import { Validators } from '@angular/forms';
 
 import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
-
-import { BaseComponent } from '../../base/base.component';
-import { EDIT_MODE, getDataTableFilterWidget, getDefaultValue, getEditModeWidget, setHeaderConfigForTable } from '../../../../utils/live-utils';
+import { applyFilterOnField, BaseComponent, EDIT_MODE, fetchRelatedFieldData, getDataTableFilterWidget, getDefaultValue, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField, getEditModeWidget, getWatchIdentifier, isDataSetWidget, provideAsWidgetRef, setHeaderConfigForTable } from '@wm/components/base';
 import { registerProps } from './table-column.props';
-import { getWatchIdentifier, isDataSetWidget, provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
-import { applyFilterOnField, fetchRelatedFieldData, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField } from '../../../../utils/data-utils';
 
 declare const _;
 

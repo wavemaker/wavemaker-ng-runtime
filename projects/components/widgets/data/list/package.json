@@ -1,0 +1,21 @@
+{
+    "name": "@wm/components/data/list",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/data/list",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.data.list",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@swipey": "swipey",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/data/pagination": "wm.components.data.pagination",
+                "@wm/components/input": "wm.components.input"
+            }
+        }
+    }
+}

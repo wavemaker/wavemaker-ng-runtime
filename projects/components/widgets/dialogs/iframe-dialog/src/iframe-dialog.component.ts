@@ -1,10 +1,9 @@
 import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
+import { BaseDialog, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './iframe-dialog.props';
-import { BaseDialog } from '../base/base-dialog';
-import { provideAsDialogRef, provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
 const WIDGET_INFO = {widgetType: 'wm-iframedialog'};

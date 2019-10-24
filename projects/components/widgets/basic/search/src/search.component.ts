@@ -3,16 +3,12 @@ import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, Quer
 import { from, Observable, of } from 'rxjs';
 import { debounceTime, mergeMap } from 'rxjs/operators';
 
-import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap';
+import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { ALLFIELDS, convertDataToObject, DataSetItem, DatasetAwareFormComponent, extractDataAsArray, getUniqObjsByDataField, provideAsNgValueAccessor, provideAsWidgetRef, styler, transformFormData } from '@wm/components/base';
 
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, transformData } from '../../../utils/form-utils';
-import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { styler } from '../../framework/styler';
 import { registerProps } from './search.props';
-import { ALLFIELDS } from '../../../utils/data-utils';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
 
 declare const _;
@@ -622,7 +618,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             itemIndex++;
         }
 
-        const transformedData = transformData(
+        const transformedData = transformFormData(
             this.viewParent,
             data,
             this.datafield,

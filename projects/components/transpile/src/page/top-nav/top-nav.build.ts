@@ -5,7 +5,11 @@ const tagName = 'section';
 register('wm-top-nav', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmTopNav partialContainer data-role="page-topnav" role="region" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/page/top-nav',
+            name: 'TopNavModule'
+        }]
     };
 });
 

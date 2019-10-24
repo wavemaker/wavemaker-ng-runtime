@@ -21,7 +21,7 @@
 
             "@wm/core": "wm.core",
             "@wm/mobile/core": "wm.mobile.core",
-            "@wm/components": "wm.components",
+            "@wm/components/base": "wm.components.base",
             "@wm/transpiler": "wm.transpiler",
             "@wm/security": "wm.security",
             "@wm/variables": "wm.variables"

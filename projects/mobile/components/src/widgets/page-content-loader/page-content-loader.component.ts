@@ -1,7 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
 
 import { addClass } from '@wm/core';
-import { provideAsWidgetRef } from '@wm/components';
+import { provideAsWidgetRef } from '@wm/components/base';
 
 @Component({
     selector: '[wmPageContentLoader]',

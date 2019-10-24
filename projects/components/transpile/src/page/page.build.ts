@@ -40,7 +40,11 @@ register('wm-page', (): IBuildTaskDef => {
             }
         },
         pre: attrs => `<${tagName} wmPage data-role="pageContainer" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/page',
+            name: 'PageModule'
+        }]
     };
 });
 

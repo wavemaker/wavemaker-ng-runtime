@@ -1,8 +1,8 @@
 import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
 
-import { BaseComponent } from '../../base/base.component';
+import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+
 import { registerProps } from './table-row.props';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};

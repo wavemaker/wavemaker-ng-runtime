@@ -5,7 +5,11 @@ const tagName = 'div';
 register('wm-accordion', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmAccordion role="tablist" aria-multiselectable="true" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/containers/accordion',
+            name: 'AccordionModule'
+        }]
     };
 });
 

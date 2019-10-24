@@ -6,7 +6,11 @@ const tagName = 'div';
 register('wm-search', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmSearch ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/basic/search',
+            name: 'SearchModule'
+        }]
     };
 });
 

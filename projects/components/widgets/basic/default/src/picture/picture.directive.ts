@@ -1,14 +1,9 @@
 import { Directive, HostBinding, Injector, OnInit } from '@angular/core';
 
 import { setAttr, setCSS, switchClass } from '@wm/core';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './picture.props';
-import { StylableComponent } from '../base/stylable.component';
-import { DISPLAY_TYPE } from '../../framework/constants';
-import { ImagePipe } from '../../../pipes/image.pipe';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-picture';
 const WIDGET_CONFIG: IWidgetConfig = {

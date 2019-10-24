@@ -1,4 +1,4 @@
-import {PROP_ANY, PROP_STRING, register} from '../../framework/widget-props';
+import {PROP_ANY, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(

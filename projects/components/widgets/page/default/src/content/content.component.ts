@@ -1,10 +1,8 @@
 import { Component, Injector } from '@angular/core';
 
-import { styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
+import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+
 import { registerProps } from './content.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-content clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};

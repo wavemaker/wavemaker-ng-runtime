@@ -1,10 +1,7 @@
 import { Directive, HostBinding, Injector } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './button-group.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'btn-group app-button-group';
 const WIDGET_CONFIG: IWidgetConfig = {

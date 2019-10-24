@@ -1,14 +1,13 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
-import { BsDatepickerDirective, TimepickerComponent } from 'ngx-bootstrap';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
+import { TimepickerComponent } from 'ngx-bootstrap/timepicker';
 
 import { addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
+import { BaseDateTimeComponent, provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
 import { registerProps } from './date-time.props';
-import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 declare const moment, $, _;
 

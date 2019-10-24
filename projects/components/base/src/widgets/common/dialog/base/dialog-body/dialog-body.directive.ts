@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostBinding, Inject } from '@angular/core';
 
-import { BsModalService } from 'ngx-bootstrap';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { addClass, setAttr, setCSS } from '@wm/core';
 

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { AbstractI18nService, AbstractNavigationService, App, noop, ScriptLoaderService, UtilsService } from '@wm/core';
-import { PartialDirective, WidgetRef} from '@wm/components';
+import { PartialDirective, WidgetRef} from '@wm/components/base';
 import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';

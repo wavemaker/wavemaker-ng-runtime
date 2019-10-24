@@ -1,12 +1,9 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
 import { generateGUId, setCSS } from '@wm/core';
+import { DatasetAwareFormComponent, getOrderedDataset, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './rating.props';
-import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { getOrderedDataset } from '../../../utils/form-utils';
 
 declare const _;
 

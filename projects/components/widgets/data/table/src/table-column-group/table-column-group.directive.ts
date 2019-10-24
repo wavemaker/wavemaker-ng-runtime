@@ -1,9 +1,7 @@
 import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
 
-import { BaseComponent } from '../../base/base.component';
-import { setHeaderConfigForTable } from '../../../../utils/live-utils';
+import { BaseComponent,  provideAsWidgetRef, setHeaderConfigForTable} from '@wm/components/base';
 import { registerProps } from './table-column-group.props';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};

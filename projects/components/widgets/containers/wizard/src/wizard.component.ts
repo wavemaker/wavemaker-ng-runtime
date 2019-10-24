@@ -1,13 +1,10 @@
 import { AfterContentInit, AfterViewInit, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
 import { noop } from '@wm/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './wizard.props';
-import { StylableComponent } from '../base/stylable.component';
 import { WizardStepDirective } from './wizard-step/wizard-step.directive';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-wizard panel clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {

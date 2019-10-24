@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/navigation/menu",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/navigation/menu",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.navigation.menu",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "ngx-bootstrap/dropdown": "ngxBootstrap",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/navigation/nav": "wm.components.navigation.nav"
+            }
+        }
+    }
+}

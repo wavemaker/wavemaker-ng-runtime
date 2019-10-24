@@ -1,4 +1,5 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { FormWidgetType } from '@wm/core';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
 
 export const searchProps = new Map(
     [
@@ -45,5 +46,13 @@ export const registerProps = () => {
     register(
         'wm-search',
         searchProps
+    );
+    registerFormWidget(
+        FormWidgetType.AUTOCOMPLETE,
+        new Map(searchProps)
+    );
+    registerFormWidget(
+        FormWidgetType.TYPEAHEAD,
+        new Map(searchProps)
     );
 };

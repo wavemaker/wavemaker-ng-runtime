@@ -2,7 +2,7 @@ import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { ScriptLoaderService } from '@wm/core';
-import { PageDirective } from '@wm/components';
+import { PageDirective } from '@wm/components/page';
 
 import { Subject } from 'rxjs';
 

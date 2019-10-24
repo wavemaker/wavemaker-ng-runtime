@@ -6,7 +6,11 @@ const tagName = 'wm-select';
 register('wm-select', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        }]
     };
 });
 

@@ -1,6 +1,7 @@
 import { AfterViewInit, Attribute, Component, Injector, OnDestroy } from '@angular/core';
 
-import { getEvaluatedData, IWidgetConfig, PageDirective, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
+import { getEvaluatedData, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { PageDirective } from '@wm/components/page';
 
 import { registerProps } from './tabbar.props';
 

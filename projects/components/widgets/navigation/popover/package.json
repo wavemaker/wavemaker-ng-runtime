@@ -1,0 +1,19 @@
+{
+    "name": "@wm/components/navigation/popover",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/navigation/popover",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.navigation.popover",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "ngx-bootstrap/popover": "ngxBootstrap",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

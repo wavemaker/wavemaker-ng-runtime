@@ -6,7 +6,11 @@ const tagName = 'ul';
 register('wm-checkboxset', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmCheckboxset ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        }]
     };
 });
 

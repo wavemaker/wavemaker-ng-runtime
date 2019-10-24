@@ -1,10 +1,9 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType } from '@wm/core';
+import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSource } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
-import { refreshDataSource } from '../../../utils/data-utils';
-import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget } from '../../../utils/widget-utils';
 
 declare const _, $;
 declare const moment;

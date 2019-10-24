@@ -1,0 +1,18 @@
+{
+    "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../libraries/components/widgets",
+    "lib": {
+        "flatModuleFile": "index",
+        "entryFile": "public_api.ts",
+        "umdId": "wm.components.widgets",
+        "umdModuleIds": {
+            "@angular/compiler": "ng.compiler",
+            "@angular/core": "ng.core",
+            "@angular/forms": "ng.forms",
+
+            "@swipey": "swipey",
+            "@wm/core": "wm.core",
+            "@wm/components/base": "wm.components.base"
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Injector } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './segment-content.props';
 import { SegmentedControlComponent } from '../segmented-control.component';

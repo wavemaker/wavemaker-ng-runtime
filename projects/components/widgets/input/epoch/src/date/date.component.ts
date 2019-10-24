@@ -1,15 +1,12 @@
 import { ChangeDetectorRef, Component, Inject, Injector, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
-import { BsDatepickerDirective } from 'ngx-bootstrap';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
 import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate } from '@wm/core';
+import { BaseDateTimeComponent, IWidgetConfig, provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './date.props';
-import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 declare const _, $;
 

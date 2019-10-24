@@ -1,11 +1,9 @@
 import { ContentChildren, Directive, HostBinding, Injector, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { IWidgetConfig } from '../../../framework/types';
+import { BaseComponent, IWidgetConfig, provideAsWidgetRef, RedrawableDirective } from '@wm/components/base';
+
 import { registerProps } from './wizard-step.props';
-import { BaseComponent } from '../../base/base.component';
-import { RedrawableDirective } from '../../redraw/redrawable.directive';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-wizard-step-content';
 const WIDGET_CONFIG: IWidgetConfig = {

@@ -1,12 +1,12 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { Validator } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { BsDropdownDirective } from 'ngx-bootstrap';
+import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
 import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
 
 import { BaseFormCustomComponent } from './base-form-custom.component';
-import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap';
+import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { ToDatePipe } from '../../../pipes/custom-pipes';
 
 declare const moment, _, $;

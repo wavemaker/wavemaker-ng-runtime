@@ -1,14 +1,9 @@
 import { Attribute, Component, Injector, OnInit } from '@angular/core';
 
 import { AppDefaults, noop, switchClass } from '@wm/core';
+import { DatasetAwareFormComponent, convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAsNgValueAccessor, provideAsWidgetRef, styler, ToDatePipe, toggleAllHeaders } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from '../checkboxset/checkboxset.props';
-import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { convertDataToObject, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
 
 declare const _, $;
 

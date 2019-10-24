@@ -1,0 +1,18 @@
+{
+    "name": "@wm/components/containers/tabs",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/containers/tabs",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.containers.tabs",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@swipey": "swipey",
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

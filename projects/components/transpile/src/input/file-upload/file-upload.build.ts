@@ -11,7 +11,11 @@ register('wm-fileupload', (): IBuildTaskDef => {
             }
             return `<${tagName} wmFileUpload ${getAttrMarkup(attrs)} role="input">`;
         },
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input/file-upload',
+            name: 'FileUploadModule'
+        }]
     };
 });
 

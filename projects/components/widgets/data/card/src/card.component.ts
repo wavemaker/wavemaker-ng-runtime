@@ -1,10 +1,9 @@
 import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler } from '@wm/components/base';
+import { MenuAdapterComponent } from '@wm/components/navigation/menu';
+
 import { registerProps } from './card.props';
-import { MenuAdapterComponent } from '../base/menu-adapator.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-card card app-panel';
 const WIDGET_CONFIG: IWidgetConfig = {

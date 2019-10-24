@@ -2,12 +2,9 @@ import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, View
 import { NgModel } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
+import { BaseFormCustomComponent, IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import { IWidgetConfig } from '../../framework/types';
-import { styler } from '../../framework/styler';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './checkbox.props';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG: IWidgetConfig = {

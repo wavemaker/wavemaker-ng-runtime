@@ -1,9 +1,10 @@
 import { Attribute, Directive, Inject, OnInit, Self, Optional } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
+import { WidgetRef } from '@wm/components/base';
+import { TableComponent } from '@wm/components/data/table';
+
 import { FormComponent } from './form.component';
-import { WidgetRef } from '../../framework/types';
-import { TableComponent } from '../table/table.component';
 
 @Directive({
     selector: '[wmFormWidget]'

@@ -5,7 +5,11 @@ const tagName = 'span';
 register('wm-icon', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmIcon aria-hidden="true" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/basic',
+            name: 'BasicModule'
+        }]
     };
 });
 

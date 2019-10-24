@@ -1,4 +1,5 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
+import { FormWidgetType } from '@wm/core';
 
 export const currencyProps = new Map(
     [
@@ -24,5 +25,9 @@ export const registerProps = () => {
     register(
         'wm-currency',
         currencyProps
+    );
+    registerFormWidget(
+        FormWidgetType.CURRENCY,
+        new Map(currencyProps)
     );
 };

@@ -1,11 +1,7 @@
 import { Component, Injector } from '@angular/core';
 
-import { styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { DISPLAY_TYPE } from '../../framework/constants';
-import { StylableComponent } from '../base/stylable.component';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './audio.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 
 const DEFAULT_CLS = 'app-audio';

@@ -4,14 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
 import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes } from '@wm/core';
+import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
+import { ListComponent } from '@wm/components/data/list';
 
 import { registerProps } from './form-field.props';
-import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
-import { getDefaultViewModeWidget } from '../../../../utils/live-utils';
-import { StylableComponent } from '../../base/stylable.component';
 import { FormComponent } from '../form.component';
-import { Context } from '../../../framework/types';
-import { ListComponent } from '../../list/list.component';
 
 declare const _, $;
 

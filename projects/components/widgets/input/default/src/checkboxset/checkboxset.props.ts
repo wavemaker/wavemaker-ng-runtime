@@ -1,4 +1,5 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { FormWidgetType } from '@wm/core';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
 
 export const checkboxsetProps = new Map(
     [
@@ -35,5 +36,9 @@ export const registerProps = () => {
     register(
         'wm-checkboxset',
         checkboxsetProps
+    );
+    registerFormWidget(
+        FormWidgetType.CHECKBOXSET,
+        new Map(checkboxsetProps)
     );
 };

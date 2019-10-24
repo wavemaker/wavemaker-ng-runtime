@@ -3,19 +3,13 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 import { Subscription } from 'rxjs';
 
 import { $appDigest, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
+import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
+import { PaginationComponent } from '@wm/components/data/pagination';
+import { ButtonComponent } from '@wm/components/input';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './list.props';
-import { NAVIGATION_TYPE, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { PaginationComponent } from '../pagination/pagination.component';
 import { ListItemDirective } from './list-item.directive';
 import { ListAnimator } from './list.animator';
-import { configureDnD, getOrderedDataset, groupData, handleHeaderClick, toggleAllHeaders } from '../../../utils/form-utils';
-import { WidgetRef } from '../../framework/types';
-import { ButtonComponent } from '../button/button.component';
-import { DEBOUNCE_TIMES } from '../../framework/constants';
 
 declare const _;
 declare const $;

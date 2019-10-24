@@ -1,7 +1,7 @@
 import { Directive, ElementRef } from '@angular/core';
 
 import { addClass, AbstractNavigationService, App } from '@wm/core';
-import { PageDirective } from '@wm/components';
+import { PageDirective } from '@wm/components/page';
 import { DeviceService } from '@wm/mobile/core';
 
 declare const $;

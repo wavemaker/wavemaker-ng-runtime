@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/input",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/default",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "angular2-text-mask": "angular2TextMask",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

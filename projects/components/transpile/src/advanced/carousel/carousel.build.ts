@@ -39,7 +39,15 @@ register('wm-carousel', (): IBuildTaskDef => {
             const provider = new Map();
             provider.set('carousel_ref', shared.get('carousel_ref'));
             return provider;
-        }
+        },
+        imports: [{
+            from: 'ngx-bootstrap/carousel',
+            name: 'CarouselModule',
+            as: 'ngxCarouselModule'
+        }, {
+            from: '@wm/components/advanced/carousel',
+            name: 'CarouselModule'
+        }]
     };
 });
 

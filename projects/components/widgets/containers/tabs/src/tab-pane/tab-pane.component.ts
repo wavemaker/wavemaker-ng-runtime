@@ -2,13 +2,9 @@ import { AfterViewInit, Attribute, Component, ContentChildren, HostBinding, Inje
 
 import { noop, removeAttr } from '@wm/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IWidgetConfig } from '../../../framework/types';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler, StylableComponent } from '@wm/components/base';
 import { registerProps } from './tab-pane.props';
-import { StylableComponent } from '../../base/stylable.component';
 import { TabsComponent } from '../tabs.component';
-import { RedrawableDirective } from '../../redraw/redrawable.directive';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'tab-pane';
 const WIDGET_CONFIG: IWidgetConfig = {

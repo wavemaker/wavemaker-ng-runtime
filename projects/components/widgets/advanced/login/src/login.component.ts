@@ -1,14 +1,10 @@
 import { AfterViewInit, Component, ContentChild, ContentChildren, Injector, QueryList, ViewChild } from '@angular/core';
 
-import { $appDigest } from '@wm/core';
+import { APPLY_STYLES_TYPE, MessageComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { FormComponent } from '@wm/components/data/form';
+import { ButtonComponent } from '@wm/components/input';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './login.props';
-import { ButtonComponent } from '../button/button.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { FormComponent } from '../form/form.component';
-import { MessageComponent } from '../message/message.component';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 

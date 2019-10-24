@@ -1,0 +1,17 @@
+{
+    "name": "@wm/components/containers/tile",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/containers/tile",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.containers.tile",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

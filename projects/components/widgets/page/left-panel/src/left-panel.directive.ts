@@ -1,14 +1,11 @@
 import { Directive, Injector } from '@angular/core';
 
 import { App, addClass, removeClass, switchClass, toggleClass } from '@wm/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { PageDirective } from '@wm/components/page';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './left-panel.props';
 import { LeftPanelAnimator } from './left-panel.animator';
-import { PageDirective } from '../page/page.directive';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-left-panel left-panel-collapsed';
 const WIDGET_CONFIG: IWidgetConfig = {

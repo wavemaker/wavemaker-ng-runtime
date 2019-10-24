@@ -1,8 +1,6 @@
 import { Directive, Injector } from '@angular/core';
 
-import { IWidgetConfig } from '../../../framework/types';
-import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { StylableComponent } from '../../base/stylable.component';
+import { APPLY_STYLES_TYPE, IWidgetConfig, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './card-actions.props';
 
 const DEFAULT_CLS = 'app-card-actions';

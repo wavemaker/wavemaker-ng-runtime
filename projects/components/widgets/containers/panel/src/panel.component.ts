@@ -1,13 +1,9 @@
 import { AfterContentInit, Component, ContentChildren, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { $appDigest, noop, removeAttr, setCSS, toggleClass } from '@wm/core';
-
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler } from '@wm/components/base';
+import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 import { registerProps } from './panel.props';
-import { RedrawableDirective } from '../redraw/redrawable.directive';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { MenuAdapterComponent } from '../base/menu-adapator.component';
 
 const DEFAULT_CLS = 'app-panel panel';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-panel', hostClass: DEFAULT_CLS};

@@ -1,10 +1,9 @@
 import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
+import { APPLY_STYLES_TYPE, BaseFormCustomComponent, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+
 import { registerProps } from './rich-text-editor.props';
-import { BaseFormCustomComponent } from '../base/base-form-custom.component';
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 

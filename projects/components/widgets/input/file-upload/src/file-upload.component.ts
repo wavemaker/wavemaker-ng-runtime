@@ -3,11 +3,9 @@ import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/
 import { Subject } from 'rxjs';
 
 import { App, DataSource, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
+import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './file-upload.props';
-import { StylableComponent } from '../base/stylable.component';
-import { styler } from '../../framework/styler';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _, $;
 

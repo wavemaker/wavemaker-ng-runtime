@@ -1,13 +1,8 @@
 import { Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit } from '@angular/core';
 
 import { $appDigest, $watch, AppConstants, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
-
+import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
 import { registerProps } from './pagination.props';
-import { styler } from '../../framework/styler';
-import { StylableComponent } from '../base/stylable.component';
-import { getOrderByExpr, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { WidgetRef } from '../../framework/types';
-import { DEBOUNCE_TIMES } from '../../framework/constants';
 
 declare const _;
 

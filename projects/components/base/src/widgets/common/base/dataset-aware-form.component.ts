@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 
 import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean } from '@wm/core';
 
-import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformData, transformDataWithKeys } from '../../../utils/form-utils';
+import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformFormData, transformDataWithKeys } from '../../../utils/form-utils';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 import { ALLFIELDS } from '../../../utils/data-utils';
 
@@ -244,7 +244,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (this.usekeys) {
             this.datasetItems = transformDataWithKeys(orderedDataset);
         } else {
-            const displayOptions = transformData(this.viewParent, orderedDataset, this.datafield, {
+            const displayOptions = transformFormData(this.viewParent, orderedDataset, this.datafield, {
                 displayField: this.displayfield || this.displaylabel,
                 displayExpr: this.displayexpression,
                 bindDisplayExpr: this.binddisplayexpression || this.binddisplaylabel,

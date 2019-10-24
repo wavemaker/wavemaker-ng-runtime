@@ -1,76 +1,8 @@
 import { FormWidgetType } from '@wm/core';
 
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../../framework/widget-props';
-import { searchProps } from '../../search/search.props';
-import { checkboxProps } from '../../checkbox/checkbox.props';
-import { colorPickerProps } from '../../color-picker/color-picker.props';
-import { currencyProps } from '../../currency/currency.props';
-import { checkboxsetProps } from '../../checkboxset/checkboxset.props';
-import { chipsProps } from '../../chips/chips.props';
-import { dateProps } from '../../date/date.props';
-import { dateTimeProps } from '../../date-time/date-time.props';
-import { numberProps } from '../../number/number.props';
-import { inputNumberTypeProps } from '../../text/number/input-number.props';
-import { inputTextTypeProps } from '../../text/text/input-text.props';
-import { inputCalendarTypeProps } from '../../text/calendar/input-calendar.props';
-import { inputColorTypeProps } from '../../text/color/input-color.props';
-import { inputEmailTypeProps } from '../../text/email/input-email.props';
-import { radiosetProps } from '../../radioset/radioset.props';
-import { ratingProps } from '../../rating/rating.props';
-import { richTextProps } from '../../rich-text-editor/rich-text-editor.props';
-import { selectProps } from '../../select/select.props';
-import { sliderProps } from '../../slider/slider.props';
-import { switchProps } from '../../switch/switch.props';
-import { textareaProps } from '../../textarea/textarea.props';
-import { timeProps } from '../../time/time.props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, getWidgetPropsByType } from '@wm/components/base';
 
 export const registerProps = () => {
-    const uploadProps = new Map([
-        ['disabled', PROP_BOOLEAN],
-        ['extensions', PROP_STRING],
-        ['filetype', PROP_STRING],
-        ['multiple', PROP_BOOLEAN],
-        ['readonly', PROP_BOOLEAN],
-        ['required', PROP_BOOLEAN]
-    ]);
-
-    const textProps = new Map(inputTextTypeProps);
-
-    const mergeTextProps = (typeProps) => {
-        typeProps.forEach((v: any, k) => textProps.set(k, v));
-    };
-    mergeTextProps(inputCalendarTypeProps);
-    mergeTextProps(inputColorTypeProps);
-    mergeTextProps(inputEmailTypeProps);
-    mergeTextProps(inputNumberTypeProps);
-
-    const widgetPropsMap = new Map(
-        [
-            [FormWidgetType.AUTOCOMPLETE, searchProps],
-            [FormWidgetType.CHECKBOX, checkboxProps],
-            [FormWidgetType.CHECKBOXSET, checkboxsetProps],
-            [FormWidgetType.CHIPS, chipsProps],
-            [FormWidgetType.COLORPICKER, colorPickerProps],
-            [FormWidgetType.CURRENCY, currencyProps],
-            [FormWidgetType.DATE, dateProps],
-            [FormWidgetType.DATETIME, dateTimeProps],
-            [FormWidgetType.NUMBER, numberProps],
-            [FormWidgetType.PASSWORD, inputTextTypeProps],
-            [FormWidgetType.RADIOSET, radiosetProps],
-            [FormWidgetType.RATING, ratingProps],
-            [FormWidgetType.RICHTEXT, richTextProps],
-            [FormWidgetType.SELECT, selectProps],
-            [FormWidgetType.SLIDER, sliderProps],
-            [FormWidgetType.SWITCH, switchProps],
-            [FormWidgetType.TEXT, textProps],
-            [FormWidgetType.TEXTAREA, textareaProps],
-            [FormWidgetType.TIME, timeProps],
-            [FormWidgetType.TIMESTAMP, dateTimeProps],
-            [FormWidgetType.TOGGLE, checkboxProps],
-            [FormWidgetType.TYPEAHEAD, searchProps],
-            [FormWidgetType.UPLOAD, uploadProps]
-        ]
-    );
     const formFieldMap = new Map(
         [
             ['dataentrymode', {value: 'default', ...PROP_STRING}],
@@ -110,13 +42,14 @@ export const registerProps = () => {
             ['widgettype', PROP_STRING]
         ]
     );
-    widgetPropsMap.forEach((val, key) => {
-        const propsMap = new Map(formFieldMap);
-        const widgetProps = widgetPropsMap.get(key);
-        widgetProps.forEach((v: any, k) => propsMap.set(k, v));
-        register(
-            'wm-form-field-' + key,
-            propsMap
-        );
-    });
+
+    for (const key in FormWidgetType) {
+        const widgetName = 'wm-form-field-' + FormWidgetType[key];
+        const widgetProps = getWidgetPropsByType(widgetName);
+        formFieldMap.forEach((v, k: string) => {
+            if (widgetProps.get(k) == undefined) {
+                widgetProps.set(k, v);
+            }
+        });
+    }
 };

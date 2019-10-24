@@ -4,14 +4,10 @@ import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 
 import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
+import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef, StylableComponent, styler, transformData } from '@wm/components/base';
+import { PaginationComponent } from '@wm/components/data/pagination';
 
-import { styler } from '../../framework/styler';
-import { StylableComponent } from '../base/stylable.component';
-import { PaginationComponent } from '../pagination/pagination.component';
 import { registerProps } from './table.props';
-import { EDIT_MODE, getRowOperationsColumn } from '../../../utils/live-utils';
-import { transformData } from '../../../utils/data-utils';
-import { getConditionalClasses, getOrderByExpr, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _, $;
 

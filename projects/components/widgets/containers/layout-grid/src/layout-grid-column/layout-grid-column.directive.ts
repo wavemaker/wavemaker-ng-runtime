@@ -2,11 +2,9 @@ import { Attribute, Directive, Injector } from '@angular/core';
 
 import { isMobileApp, setCSS, switchClass } from '@wm/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IWidgetConfig } from '../../../framework/types';
-import { StylableComponent } from '../../base/stylable.component';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
+
 import { registerProps } from './layout-grid-column.props';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-grid-column';
 const WIDGET_CONFIG: IWidgetConfig = {

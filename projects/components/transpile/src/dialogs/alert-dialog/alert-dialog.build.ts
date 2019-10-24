@@ -5,7 +5,14 @@ const tagName = 'div';
 register('wm-alertdialog', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmAlertDialog role="alertdialog" wm-navigable-element="true" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        },{
+            from: '@wm/components/dialogs/alert-dialog',
+            name: 'AlertDialogModule'
+        }]
     };
 });
 

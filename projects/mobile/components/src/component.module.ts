@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { WmComponentsModule } from '@wm/components';
+import { WmComponentsModule } from '@wm/components/base';
 
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { AppUpdateComponent } from './widgets/app-update/app-update.component';

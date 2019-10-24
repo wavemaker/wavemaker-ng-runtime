@@ -1,6 +1,5 @@
-import { isMobileApp } from '@wm/core';
-
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { FormWidgetType, isMobileApp } from '@wm/core';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
 
 export const dateTimeProps = new Map(
     [
@@ -42,5 +41,13 @@ export const registerProps = () => {
     register(
         'wm-datetime',
         dateTimeProps
+    );
+    registerFormWidget(
+        FormWidgetType.DATETIME,
+        new Map(dateTimeProps)
+    );
+    registerFormWidget(
+        FormWidgetType.TIMESTAMP,
+        new Map(dateTimeProps)
     );
 };

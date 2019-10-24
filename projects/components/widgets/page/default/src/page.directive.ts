@@ -2,11 +2,9 @@ import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { EventNotifier } from '@wm/core';
+import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './page.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { updateDeviceView } from '../../framework/deviceview';
 
 const DEFAULT_CLS = 'app-page container';
 const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};

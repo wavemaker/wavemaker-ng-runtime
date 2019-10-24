@@ -1,12 +1,9 @@
 import { Component, Injector } from '@angular/core';
 
 import { App, switchClass } from '@wm/core';
+import { APPLY_STYLES_TYPE, PullToRefresh, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './page-content.props';
-import { StylableComponent } from '../base/stylable.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { PullToRefresh } from '../pull-to-refresh/pull-to-refresh';
 
 const DEFAULT_CLS = 'app-page-content app-content-column';
 const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};

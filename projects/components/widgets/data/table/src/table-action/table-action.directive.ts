@@ -1,8 +1,8 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { BaseComponent } from '../../base/base.component';
+import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+
 import { registerProps } from './table-action.props';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { TableComponent } from '../table.component';
 
 declare const _;

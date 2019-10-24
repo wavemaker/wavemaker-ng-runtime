@@ -1,12 +1,10 @@
 import { AfterViewInit, Component, Injector, ViewChild } from '@angular/core';
 import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circle-progress';
 
-import { IRedrawableComponent, IWidgetConfig } from '../../../framework/types';
-import { styler } from '../../../framework/styler';
-import { StylableComponent } from '../../base/stylable.component';
+
+import { IWidgetConfig, provideAsWidgetRef, IRedrawableComponent, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './progress-circle.props';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
-import { calculatePercent, getDecimalCount, isPercentageValue } from '../progress-utils';
+import { calculatePercent, getDecimalCount, isPercentageValue } from '../utils';
 
 declare const _;
 

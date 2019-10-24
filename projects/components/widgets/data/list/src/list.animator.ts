@@ -2,9 +2,9 @@ import { QueryList } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { SwipeAnimation } from '@swipey';
+import { ButtonComponent } from '@wm/components/input';
 
 import { ListComponent } from './list.component';
-import { ButtonComponent } from '../button/button.component';
 
 declare  const _, $;
 

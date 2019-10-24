@@ -1,14 +1,11 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
 import { addClass, appendNode, noop, removeClass } from '@wm/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { TabsAnimator } from './tabs.animator';
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './tabs.props';
-import { StylableComponent } from '../base/stylable.component';
 import { TabPaneComponent } from './tab-pane/tab-pane.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 declare const _, $;
 

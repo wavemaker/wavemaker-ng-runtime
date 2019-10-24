@@ -1,9 +1,9 @@
 import { Directive, Attribute, ContentChildren, AfterContentInit, OnDestroy } from '@angular/core';
 
 import { AbstractDialogService, App } from '@wm/core';
+import { Live_Operations } from '@wm/components/base';
 
 import { FormComponent } from '../form.component';
-import { Live_Operations } from '../../../../utils/data-utils';
 
 @Directive({
     selector: '[dependson]'

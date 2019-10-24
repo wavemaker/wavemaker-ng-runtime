@@ -30,7 +30,7 @@ import {
     noop,
     removeNode
 } from '@wm/core';
-import { FileExtensionFromMimePipe } from '@wm/components';
+import { FileExtensionFromMimePipe } from '@wm/components/base';
 import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
 import { PushService, PushServiceImpl } from '@wm/mobile/offline';

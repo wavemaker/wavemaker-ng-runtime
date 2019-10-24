@@ -1,14 +1,12 @@
 import { Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
-import { TimepickerComponent } from 'ngx-bootstrap';
+import { TimepickerComponent } from 'ngx-bootstrap/timepicker';
 
 import { $appDigest, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
+import { BaseDateTimeComponent, IWidgetConfig, provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
 import { registerProps } from './time.props';
-import { provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { BaseDateTimeComponent } from '../base/base-date-time.component';
 
 const CURRENT_TIME = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';

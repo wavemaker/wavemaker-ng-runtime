@@ -2,11 +2,8 @@ import { Attribute, Directive, Injector } from '@angular/core';
 
 import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
-import { IRedrawableComponent } from '../../framework/types';
+import { getEvaluatedData, getOrderedDataset, IRedrawableComponent, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 import { registerProps } from './tree.props';
-import { getEvaluatedData, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { getOrderedDataset } from '../../../utils/form-utils';
-import { StylableComponent } from '../base/stylable.component';
 
 declare const _, $;
 const defaultTreeIconClass = 'plus-minus';

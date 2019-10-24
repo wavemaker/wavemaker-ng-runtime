@@ -1,10 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IWidgetConfig } from '../../../framework/types';
-import { StylableComponent } from '../../base/stylable.component';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './card-content.props';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-card-content card-body card-block';
 const WIDGET_CONFIG: IWidgetConfig = {

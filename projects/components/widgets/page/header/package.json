@@ -1,0 +1,17 @@
+{
+    "name": "@wm/components/page/header",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/page/header",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.page.header",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

@@ -1,10 +1,8 @@
 import { AfterViewInit, ContentChild, ContentChildren, Directive, Inject, OnDestroy, QueryList, Self } from '@angular/core';
 
 import { $appDigest } from '@wm/core';
-
-import { Context, DialogRef } from '../../../framework/types';
-import { FormComponent } from '../../form/form.component';
-import { MessageComponent } from '../../message/message.component';
+import { Context, DialogRef, MessageComponent } from '@wm/components/base';
+import { FormComponent } from '@wm/components/data/form';
 
 @Directive({
     selector: '[wmDialog][wmLoginDialog]'

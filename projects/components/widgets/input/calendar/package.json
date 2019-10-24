@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/input/calendar",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/calendar",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input.calendar",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "ngx-bootstrap/datepicker": "ngxBootstrap",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

@@ -4,7 +4,7 @@ import { debounceTime, filter } from 'rxjs/operators';
 
 import { App, $invokeWatchers, noop } from '@wm/core';
 
-import { WidgetRef } from '@wm/components';
+import { WidgetRef } from '@wm/components/base';
 
 import { ComponentRefProvider, ComponentType, PartialRefProvider } from '../types/types';
 

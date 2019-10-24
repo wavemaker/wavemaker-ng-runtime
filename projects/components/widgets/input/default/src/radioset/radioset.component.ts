@@ -2,10 +2,8 @@ import { Component, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
-import { styler } from '../../framework/styler';
+import { DatasetAwareFormComponent, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 import { registerProps } from './radioset.props';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
 declare const $, _;
 

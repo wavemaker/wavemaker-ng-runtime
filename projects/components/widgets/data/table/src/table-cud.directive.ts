@@ -1,9 +1,9 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { $appDigest, AbstractDialogService, App, DataSource, triggerFn } from '@wm/core';
+import { refreshDataSource } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
-import { refreshDataSource } from '../../../utils/data-utils';
 
 declare const $;
 

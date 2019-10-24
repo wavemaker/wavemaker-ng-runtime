@@ -2,18 +2,11 @@ import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, S
 import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import { $appDigest, getClonedObject, getFiles, isDefined, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource } from '@wm/core';
+import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
+import { PrefabDirective } from '@wm/components/prefab';
+import { ListComponent } from '@wm/components/data/list';
 
-import { styler } from '../../framework/styler';
-import { WidgetRef } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
 import { registerFormProps } from './form.props';
-import { getFieldLayoutConfig, parseValueByType } from '../../../utils/live-utils';
-import { performDataOperation } from '../../../utils/data-utils';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { MessageComponent } from '../message/message.component';
-import { ListComponent } from '../list/list.component';
-import { PrefabDirective } from '../prefab/prefab.directive';
-import { PartialDirective } from '../partial/partial.directive';
 
 declare const _;
 

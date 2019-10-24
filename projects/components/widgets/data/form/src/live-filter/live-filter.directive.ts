@@ -1,10 +1,9 @@
 import { Directive, Inject, Self } from '@angular/core';
 import { $appDigest, DataSource, DataType, debounce, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
+import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode, isDataSetWidget } from '@wm/components/base';
 
 import { FormComponent } from '../form.component';
 import { registerLiveFilterProps } from '../form.props';
-import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode } from '../../../../utils/data-utils';
-import { isDataSetWidget } from '../../../../utils/widget-utils';
 
 declare const _;
 

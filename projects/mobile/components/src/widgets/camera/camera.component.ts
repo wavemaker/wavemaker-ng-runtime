@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, ElementRef, HostListener, Injector } from
 import { Camera } from '@ionic-native/camera';
 import { MediaCapture } from '@ionic-native/media-capture';
 
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { convertToBlob, hasCordova } from '@wm/core';
 
 import { registerProps } from './camera.props';

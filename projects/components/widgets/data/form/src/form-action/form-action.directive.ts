@@ -1,8 +1,8 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { BaseComponent } from '../../base/base.component';
+import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+
 import { registerProps } from './form-action.props';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 import { FormComponent } from '../form.component';
 
 declare const _;

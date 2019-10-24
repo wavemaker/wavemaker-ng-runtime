@@ -1,6 +1,7 @@
 import { Directive, ElementRef, OnDestroy } from '@angular/core';
 
-import { LeftPanelDirective, PageDirective } from '@wm/components';
+import { PageDirective } from '@wm/components/page';
+import { LeftPanelDirective } from '@wm/components/page/left-panel';
 import { addClass } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 

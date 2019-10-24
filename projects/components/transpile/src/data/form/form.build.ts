@@ -122,7 +122,20 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const provider = new Map();
             provider.set('form_reference', shared.get('counter'));
             return provider;
-        }
+        },
+        imports: [{
+            from: '@wm/components/data/form',
+            name: 'FormModule'
+        },{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        },{
+            from: '@wm/components/page',
+            name: 'PageModule'
+        },{
+            from: '@wm/components/dialogs/design-dialog',
+            name: 'DesignDialogModule'
+        }]
     };
 };
 

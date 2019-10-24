@@ -1,10 +1,10 @@
 {
-    "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-    "dest": "../../libraries/components",
+    "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../libraries/components/base",
     "lib": {
         "flatModuleFile": "index",
         "entryFile": "src/public_api.ts",
-        "umdId": "wm.components",
+        "umdId": "wm.components.base",
         "umdModuleIds": {
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
@@ -16,11 +16,9 @@
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators",
 
-            "ngx-bootstrap/pagination": "ngxBootstrap",
-            "ngx-color-picker": "zef.ngxColorPicker",
-            "angular2-text-mask": "angular2TextMask",
-            "ng-circle-progress": "ngCircleProgress",
-            "ngx-bootstrap": "ngxBootstrap",
+            "ngx-bootstrap/dropdown": "ngxBootstrap",
+            "ngx-bootstrap/datepicker": "ngxBootstrap",
+            "ngx-bootstrap/modal": "ngxBootstrap",
 
             "@swipey": "swipey",
             "@wm/core": "wm.core",

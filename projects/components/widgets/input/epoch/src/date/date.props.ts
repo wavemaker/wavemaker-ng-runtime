@@ -1,5 +1,5 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
-import { isMobileApp } from '@wm/core';
+import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
+import { FormWidgetType, isMobileApp } from '@wm/core';
 
 export const dateProps = new Map(
     [
@@ -37,5 +37,9 @@ export const registerProps = () => {
     register(
         'wm-date',
         dateProps
+    );
+    registerFormWidget(
+        FormWidgetType.DATE,
+        new Map(dateProps)
     );
 };

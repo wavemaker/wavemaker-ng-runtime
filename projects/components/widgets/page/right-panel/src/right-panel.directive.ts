@@ -2,11 +2,8 @@ import { Directive, Injector } from '@angular/core';
 
 import { switchClass } from '@wm/core';
 
-import { IWidgetConfig } from '../../framework/types';
-import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
-import { StylableComponent } from '../base/stylable.component';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './right-panel.props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-right-panel';
 const WIDGET_CONFIG: IWidgetConfig = {

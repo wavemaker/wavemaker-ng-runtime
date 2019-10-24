@@ -223,26 +223,26 @@
                 }
             }
         },
-        "@wm/components": {
-            "root": "projects/components",
-            "sourceRoot": "projects/components/src",
+        "@wm/components/base": {
+            "root": "projects/components/base",
+            "sourceRoot": "projects/components/base/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
-                        "tsConfig": "projects/components/tsconfig.lib.json",
-                        "project": "projects/components/ng-package.json"
+                        "tsConfig": "projects/components/base/tsconfig.lib.json",
+                        "project": "projects/components/base/ng-package.json"
                     }
                 },
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "projects/components/src/test.ts",
-                        "polyfills": "projects/components/polyfills.ts",
-                        "tsConfig": "projects/components/tsconfig.spec.json",
-                        "karmaConfig": "projects/components/karma.conf.js",
+                        "main": "projects/components/base/src/test.ts",
+                        "polyfills": "projects/components/base/polyfills.ts",
+                        "tsConfig": "projects/components/base/tsconfig.spec.json",
+                        "karmaConfig": "projects/components/base/karma.conf.js",
                         "styles": [
                             "../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css"
                         ],
@@ -254,8 +254,1304 @@
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
                         "tsConfig": [
-                            "projects/components/tsconfig.lib.json",
-                            "projects/components/tsconfig.spec.json"
+                            "projects/components/base/tsconfig.lib.json",
+                            "projects/components/base/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/basic": {
+            "root": "projects/components/widgets/basic/default",
+            "sourceRoot": "projects/components/widgets/basic/default/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/basic/default/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/basic/progress": {
+            "root": "projects/components/widgets/basic/progress",
+            "sourceRoot": "projects/components/widgets/basic/progress/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/basic/progress/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/basic/rich-text-editor": {
+            "root": "projects/components/widgets/basic/rich-text-editor",
+            "sourceRoot": "projects/components/widgets/basic/rich-text-editor/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/basic/rich-text-editor/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/basic/search": {
+            "root": "projects/components/widgets/basic/search",
+            "sourceRoot": "projects/components/widgets/basic/search/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/basic/search/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/basic/tree": {
+            "root": "projects/components/widgets/basic/tree",
+            "sourceRoot": "projects/components/widgets/basic/tree/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/basic/tree/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input": {
+            "root": "projects/components/widgets/input/default",
+            "sourceRoot": "projects/components/widgets/input/default/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/default/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/calendar": {
+            "root": "projects/components/widgets/input/calendar",
+            "sourceRoot": "projects/components/widgets/input/calendar/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/calendar/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/chips": {
+            "root": "projects/components/widgets/input/chips",
+            "sourceRoot": "projects/components/widgets/input/chips/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/chips/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/color-picker": {
+            "root": "projects/components/widgets/input/color-picker",
+            "sourceRoot": "projects/components/widgets/input/color-picker/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/color-picker/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/currency": {
+            "root": "projects/components/widgets/input/currency",
+            "sourceRoot": "projects/components/widgets/input/currency/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/currency/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/epoch": {
+            "root": "projects/components/widgets/input/epoch",
+            "sourceRoot": "projects/components/widgets/input/epoch/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/epoch/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/file-upload": {
+            "root": "projects/components/widgets/input/file-upload",
+            "sourceRoot": "projects/components/widgets/input/file-upload/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/file-upload/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/rating": {
+            "root": "projects/components/widgets/input/rating",
+            "sourceRoot": "projects/components/widgets/input/rating/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/rating/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/input/slider": {
+            "root": "projects/components/widgets/input/slider",
+            "sourceRoot": "projects/components/widgets/input/slider/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/input/slider/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/data/card": {
+            "root": "projects/components/widgets/data/card",
+            "sourceRoot": "projects/components/widgets/data/card/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/data/card/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/data/form": {
+            "root": "projects/components/widgets/data/form",
+            "sourceRoot": "projects/components/widgets/data/form/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/data/form/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/data/list": {
+            "root": "projects/components/widgets/data/list",
+            "sourceRoot": "projects/components/widgets/data/list/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/data/list/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/data/pagination": {
+            "root": "projects/components/widgets/data/pagination",
+            "sourceRoot": "projects/components/widgets/data/pagination/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/data/pagination/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/data/live-table": {
+            "root": "projects/components/widgets/data/live-table",
+            "sourceRoot": "projects/components/widgets/data/live-table/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/data/live-table/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/data/table": {
+            "root": "projects/components/widgets/data/table",
+            "sourceRoot": "projects/components/widgets/data/table/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/data/table/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/chart": {
+            "root": "projects/components/widgets/chart",
+            "sourceRoot": "projects/components/widgets/chart/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/chart/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/containers/accordion": {
+            "root": "projects/components/widgets/containers/accordion",
+            "sourceRoot": "projects/components/widgets/containers/accordion/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/containers/accordion/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/containers/layout-grid": {
+            "root": "projects/components/widgets/containers/layout-grid",
+            "sourceRoot": "projects/components/widgets/containers/layout-grid/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/containers/layout-grid/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/containers/panel": {
+            "root": "projects/components/widgets/containers/panel",
+            "sourceRoot": "projects/components/widgets/containers/panel/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/containers/panel/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/containers/tabs": {
+            "root": "projects/components/widgets/containers/tabs",
+            "sourceRoot": "projects/components/widgets/containers/tabs/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/containers/tabs/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/containers/tile": {
+            "root": "projects/components/widgets/containers/tile",
+            "sourceRoot": "projects/components/widgets/containers/tile/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/containers/tile/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/containers/wizard": {
+            "root": "projects/components/widgets/containers/wizard",
+            "sourceRoot": "projects/components/widgets/containers/wizard/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/containers/wizard/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/navigation/breadcrumb": {
+            "root": "projects/components/widgets/navigation/breadcrumb",
+            "sourceRoot": "projects/components/widgets/navigation/breadcrumb/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/navigation/breadcrumb/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/navigation/menu": {
+            "root": "projects/components/widgets/navigation/menu",
+            "sourceRoot": "projects/components/widgets/navigation/menu/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/navigation/menu/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/navigation/nav": {
+            "root": "projects/components/widgets/navigation/nav",
+            "sourceRoot": "projects/components/widgets/navigation/nav/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/navigation/nav/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/navigation/navbar": {
+            "root": "projects/components/widgets/navigation/navbar",
+            "sourceRoot": "projects/components/widgets/navigation/navbar/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/navigation/navbar/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/navigation/popover": {
+            "root": "projects/components/widgets/navigation/popover",
+            "sourceRoot": "projects/components/widgets/navigation/popover/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/navigation/popover/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/dialogs/alert-dialog": {
+            "root": "projects/components/widgets/dialogs/alert-dialog",
+            "sourceRoot": "projects/components/widgets/dialogs/alert-dialog/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/dialogs/alert-dialog/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/dialogs/confirm-dialog": {
+            "root": "projects/components/widgets/dialogs/confirm-dialog",
+            "sourceRoot": "projects/components/widgets/dialogs/confirm-dialog/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/dialogs/confirm-dialog/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/dialogs/design-dialog": {
+            "root": "projects/components/widgets/dialogs/design-dialog",
+            "sourceRoot": "projects/components/widgets/dialogs/design-dialog/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/dialogs/design-dialog/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/dialogs/iframe-dialog": {
+            "root": "projects/components/widgets/dialogs/iframe-dialog",
+            "sourceRoot": "projects/components/widgets/dialogs/iframe-dialog/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/dialogs/iframe-dialog/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/dialogs/login-dialog": {
+            "root": "projects/components/widgets/dialogs/login-dialog",
+            "sourceRoot": "projects/components/widgets/dialogs/login-dialog/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/dialogs/login-dialog/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/dialogs/partial-dialog": {
+            "root": "projects/components/widgets/dialogs/partial-dialog",
+            "sourceRoot": "projects/components/widgets/dialogs/partial-dialog/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/dialogs/partial-dialog/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/advanced/carousel": {
+            "root": "projects/components/widgets/advanced/carousel",
+            "sourceRoot": "projects/components/widgets/advanced/carousel/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/advanced/carousel/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/advanced/marquee": {
+            "root": "projects/components/widgets/advanced/marquee",
+            "sourceRoot": "projects/components/widgets/advanced/marquee/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/advanced/marquee/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/advanced/login": {
+            "root": "projects/components/widgets/advanced/login",
+            "sourceRoot": "projects/components/widgets/advanced/login/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/advanced/login/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/page": {
+            "root": "projects/components/widgets/page/default",
+            "sourceRoot": "projects/components/widgets/page/default/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/page/default/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/page/footer": {
+            "root": "projects/components/widgets/page/footer",
+            "sourceRoot": "projects/components/widgets/page/footer/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/page/footer/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/page/header": {
+            "root": "projects/components/widgets/page/header",
+            "sourceRoot": "projects/components/widgets/page/header/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/page/header/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/page/left-panel": {
+            "root": "projects/components/widgets/page/left-panel",
+            "sourceRoot": "projects/components/widgets/page/left-panel/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/page/left-panel/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/page/right-panel": {
+            "root": "projects/components/widgets/page/right-panel",
+            "sourceRoot": "projects/components/widgets/page/right-panel/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/page/right-panel/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/page/top-nav": {
+            "root": "projects/components/widgets/page/top-nav",
+            "sourceRoot": "projects/components/widgets/page/top-nav/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/page/top-nav/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/components/prefab": {
+            "root": "projects/components/widgets/prefab",
+            "sourceRoot": "projects/components/widgets/prefab/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/prefab/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
                         ],
                         "exclude": [
                             "**/node_modules/**"

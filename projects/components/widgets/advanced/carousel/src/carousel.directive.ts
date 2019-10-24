@@ -1,13 +1,11 @@
 import { AfterContentInit, ContentChildren, Directive, Injector, NgZone, OnDestroy, OnInit, QueryList } from '@angular/core';
 
-import { CarouselComponent, SlideComponent } from 'ngx-bootstrap';
+import { CarouselComponent, SlideComponent } from 'ngx-bootstrap/carousel';
 
-import { styler } from '../../framework/styler';
-import { StylableComponent } from '../base/stylable.component';
-import { IWidgetConfig } from '../../framework/types';
+import { createArrayFrom, IWidgetConfig, StylableComponent, styler } from '@wm/components/base';
+
 import { registerProps } from './carousel.props';
 import { CarouselAnimator } from './carousel.animator';
-import { createArrayFrom } from '../../../utils/data-utils';
 
 declare const _;
 

@@ -6,7 +6,6 @@ import { Observable, Subject } from 'rxjs';
 import { $invokeWatchers, $watch, App } from '@wm/core';
 
 import { ListComponent } from './list.component';
-import { WidgetRef } from '../../framework/types';
 
 declare const $, _;
 

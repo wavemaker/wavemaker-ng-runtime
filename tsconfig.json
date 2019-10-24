@@ -27,8 +27,20 @@
             "@wm/core": [
                 "libraries/core"
             ],
-            "@wm/components": [
-                "libraries/components"
+            "@wm/components/base": [
+                "libraries/components/base"
+            ],
+            "@wm/components/basic": [
+                "libraries/components/basic/default"
+            ],
+            "@wm/components/input": [
+                "libraries/components/input/default"
+            ],
+            "@wm/components/page": [
+                "libraries/components/page/default"
+            ],
+            "@wm/components/*": [
+                "libraries/components/*"
             ],
             "@wm/transpiler": [
                 "libraries/transpiler"

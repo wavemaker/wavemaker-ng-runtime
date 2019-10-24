@@ -5,7 +5,11 @@ const  tagName = 'div';
 register('wm-tile', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmTile aria-describedby="Tile" wm-navigable-element="true" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/containers/tile',
+            name: 'TileModule'
+        }]
     };
 });
 

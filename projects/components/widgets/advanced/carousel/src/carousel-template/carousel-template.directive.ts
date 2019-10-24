@@ -1,8 +1,6 @@
 import { Directive, Injector } from '@angular/core';
 
-import { IWidgetConfig } from '../../../framework/types';
-import { styler } from '../../../framework/styler';
-import { StylableComponent } from '../../base/stylable.component';
+import { IWidgetConfig, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './carousel-template.props';
 
 const DEFAULT_CLS = 'app-carousel-item';

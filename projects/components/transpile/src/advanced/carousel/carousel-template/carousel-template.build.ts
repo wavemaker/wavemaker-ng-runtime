@@ -22,7 +22,11 @@ register('wm-carousel-template', (): IBuildTaskDef => {
                     </${carouselContentTagName}>
                     <ng-template #tempRef let-item="item" let-index="index">`;
         },
-        post: () => `</ng-template>`
+        post: () => `</ng-template>`,
+        imports: [{
+            from: '@wm/components/advanced/carousel',
+            name: 'CarouselModule'
+        }]
     };
 });
 

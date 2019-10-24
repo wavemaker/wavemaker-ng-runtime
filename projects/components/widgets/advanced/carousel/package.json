@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/advanced/carousel",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/advanced/carousel",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.advanced.carousel",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "ngx-bootstrap/carousel": "ngxBootstrap",
+
+                "@swipey": "swipey",
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

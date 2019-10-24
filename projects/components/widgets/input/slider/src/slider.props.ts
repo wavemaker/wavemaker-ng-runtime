@@ -1,4 +1,5 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
+import { FormWidgetType } from '@wm/core';
 
 export const sliderProps = new Map(
     [
@@ -21,5 +22,9 @@ export const registerProps = () => {
     register(
         'wm-slider',
         sliderProps
+    );
+    registerFormWidget(
+        FormWidgetType.SLIDER,
+        new Map(sliderProps)
     );
 };

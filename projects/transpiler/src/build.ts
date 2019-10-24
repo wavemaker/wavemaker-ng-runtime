@@ -254,7 +254,7 @@ const processDimensionAttributes = attrMap => {
 // replace <:svg:svg> -> <svg>, <:svg:*> -> <svg:*>
 const getNodeName = name => name.replace(':svg:svg', 'svg').replace(':svg:', 'svg:');
 
-export const processNode = (node, providers?: Array<IProviderInfo>) => {
+export const processNode = (node, importCollector: (i: ImportDef[]) => void, providers?: Array<IProviderInfo>) => {
     const nodeDef = registry.get(node.name);
 
     let pre, post, template;
@@ -309,7 +309,7 @@ export const processNode = (node, providers?: Array<IProviderInfo>) => {
             markup = `<${nodeName} ${getAttrMarkup(attrMap)}>`;
         }
 
-        node.children.forEach(child => markup += processNode(child, providers));
+        node.children.forEach(child => markup += processNode(child, importCollector, providers));
 
         if (nodeDef) {
             if (provideInfo) {
@@ -328,7 +328,13 @@ export const processNode = (node, providers?: Array<IProviderInfo>) => {
             markup += node.value;
         }
     }
-
+    if (nodeDef && nodeDef.imports) {
+        if (typeof nodeDef.imports === 'function') {
+            importCollector(nodeDef.imports(attrMap));
+        } else {
+            importCollector(nodeDef.imports);
+        }
+    }
     return markup;
 };
 
@@ -336,7 +342,7 @@ export const transpile = (markup: string = '') => {
     if (!markup.length) {
         return;
     }
-
+    let requiredWMComponents = [];
     const nodes = htmlParser.parse(markup, '');
 
     if (nodes.errors.length) {
@@ -345,12 +351,27 @@ export const transpile = (markup: string = '') => {
 
     let output = '';
     for (const node of nodes.rootNodes) {
-        output += processNode(node);
+        output += processNode(node, (imports: ImportDef[]) => {
+            if (imports) {
+                requiredWMComponents = requiredWMComponents.concat(imports);
+            }
+        });
     }
-    return output;
+    requiredWMComponents = _.uniqWith(requiredWMComponents, _.isEqual);
+    requiredWMComponents = _.sortBy(requiredWMComponents, ['from', 'name']);
+    return {
+        markup: output,
+        requiredWMComponents: requiredWMComponents
+    };
 };
 
 export const register = (nodeName: string, nodeDefFn: () => IBuildTaskDef) => registry.set(nodeName, nodeDefFn());
+
+export interface ImportDef {
+    from: string;
+    name: string;
+    as?: string;
+};
 
 export interface IBuildTaskDef {
     requires?: string | Array<string>;
@@ -358,6 +379,7 @@ export interface IBuildTaskDef {
     pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
     provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
     post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
+    imports?:  Array<ImportDef> | ((attrs: Map<string, string>) => Array<ImportDef>)
 }
 
 export const scopeComponentStyles = (componentName, componentType, styles = '') => {

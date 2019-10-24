@@ -33,7 +33,7 @@
             "@wm/mobile/variables": "wm.mobile.variables",
             "@wm/mobile/components": "wm.mobile.components",
             "@wm/mobile/offline": "wm.mobile.offline",
-            "@wm/components": "wm.components",
+            "@wm/components/base": "wm.components.base",
             "@wm/variables": "wm.variables",
             "@wm/security": "wm.security"
         }

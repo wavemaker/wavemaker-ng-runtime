@@ -11,7 +11,11 @@ register('wm-wizardstep', (): IBuildTaskDef => {
             return `<${tagName} wmWizardStep #${counter}="wmWizardStep" ${getAttrMarkup(attrs)}>
                        <ng-template [ngIf]="${counter}.isInitialized">`;
         },
-        post: () => `</ng-template></${tagName}>`
+        post: () => `</ng-template></${tagName}>`,
+        imports: [{
+            from: '@wm/components/containers/wizard',
+            name: 'WizardModule'
+        }]
     };
 });
 

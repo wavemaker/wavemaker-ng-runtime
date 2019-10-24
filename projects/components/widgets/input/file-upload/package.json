@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/input/file-upload",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/file-upload",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input.fileupload",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "rxjs": "rxjs",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

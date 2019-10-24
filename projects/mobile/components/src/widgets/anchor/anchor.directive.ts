@@ -1,6 +1,6 @@
 import { Directive, HostListener, Inject } from '@angular/core';
 
-import { WidgetRef } from '@wm/components';
+import { WidgetRef } from '@wm/components/base';
 
 declare const _;
 declare const cordova;

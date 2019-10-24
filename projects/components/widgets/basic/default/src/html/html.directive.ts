@@ -1,13 +1,9 @@
 import { Attribute, Directive, Injector, SecurityContext, OnInit } from '@angular/core';
 
 import { setCSS, setProperty } from '@wm/core';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
-import { IWidgetConfig } from '../../framework/types';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './html.props';
-import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-html-container';
 const WIDGET_CONFIG: IWidgetConfig = {

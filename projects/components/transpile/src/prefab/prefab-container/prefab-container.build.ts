@@ -23,7 +23,11 @@ register('wm-prefab-container', (): IBuildTaskDef => {
             node.children.push(conditionalNode);
         },
         pre: attrs => `<${tagName} wmPrefabContainer ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/page/prefab',
+            name: 'PrefabModule'
+        }]
     };
 });
 

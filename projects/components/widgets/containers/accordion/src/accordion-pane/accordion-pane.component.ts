@@ -1,14 +1,10 @@
 import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
 
 import { noop, removeAttr } from '@wm/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, StylableComponent, styler,  } from '@wm/components/base';
 
-import { APPLY_STYLES_TYPE, styler } from '../../../framework/styler';
-import { IWidgetConfig } from '../../../framework/types';
 import { registerProps } from './accordion-pane.props';
-import { StylableComponent } from '../../base/stylable.component';
 import { AccordionDirective } from '../accordion.directive';
-import { RedrawableDirective } from '../../redraw/redrawable.directive';
-import { provideAsWidgetRef } from '../../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-accordion-panel panel';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};

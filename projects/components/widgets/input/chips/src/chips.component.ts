@@ -1,15 +1,10 @@
 import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { $appDigest, $unwatch, $watch, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
+import { ALLFIELDS, configureDnD, DatasetAwareFormComponent, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { SearchComponent } from '@wm/components/basic/search';
 
 import { registerProps } from './chips.props';
-import { styler } from '../../framework/styler';
-import { SearchComponent } from '../search/search.component';
-import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
-import { configureDnD, DataSetItem, getUniqObjsByDataField } from '../../../utils/form-utils';
-import { ALLFIELDS } from '../../../utils/data-utils';
-import { IWidgetConfig } from '../../framework/types';
-import { getConditionalClasses, provideAsNgValueAccessor, provideAsWidgetRef} from '../../../utils/widget-utils';
 
 declare const _;
 

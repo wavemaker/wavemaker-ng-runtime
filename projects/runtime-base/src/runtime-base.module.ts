@@ -4,7 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
-import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule, TooltipModule } from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import {
     _WM_APP_PROJECT,
@@ -18,7 +19,8 @@ import {
     CoreModule,
     DynamicComponentRefProvider
 } from '@wm/core';
-import { WmComponentsModule } from '@wm/components';
+import { WmComponentsModule } from '@wm/components/base';
+import { PrefabModule } from '@wm/components/prefab';
 import { MobileRuntimeModule } from '@wm/mobile/runtime';
 import { SecurityModule } from '@wm/security';
 import { HttpServiceModule } from '@wm/http';
@@ -74,10 +76,7 @@ const definitions = [
     EmptyPageComponent
 ];
 
-export const carouselModule = CarouselModule.forRoot();
-export const bsDropDownModule = BsDropdownModule.forRoot();
-export const popoverModule = PopoverModule.forRoot();
-export const tooltipModule = TooltipModule.forRoot();
+export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [];
 
 // setting parseExpr as exprEvaluator for swipeAnimation
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
@@ -91,19 +90,18 @@ export const tooltipModule = TooltipModule.forRoot();
         ReactiveFormsModule,
         HttpClientModule,
 
-        carouselModule,
-        bsDropDownModule,
-        popoverModule,
-        tooltipModule,
-
         ModalModule,
+        BsDatepickerModule,
+
         WmComponentsModule,
+        PrefabModule,
         MobileRuntimeModule,
         CoreModule,
         SecurityModule,
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
+        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     exports: [
         definitions,
@@ -113,10 +111,6 @@ export const tooltipModule = TooltipModule.forRoot();
         ReactiveFormsModule,
 
         ModalModule,
-        CarouselModule,
-        BsDropdownModule,
-        PopoverModule,
-        TooltipModule,
 
         WmComponentsModule,
         MobileRuntimeModule,
@@ -124,7 +118,8 @@ export const tooltipModule = TooltipModule.forRoot();
         SecurityModule,
         OAuthModule,
         VariablesModule,
-        HttpServiceModule
+        HttpServiceModule,
+        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     entryComponents: [CustomToasterComponent]
 })

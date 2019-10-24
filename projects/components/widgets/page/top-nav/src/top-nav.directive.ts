@@ -1,9 +1,7 @@
 import { Directive, Injector } from '@angular/core';
 
-import { styler } from '../../framework/styler';
+import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './top-nav.props';
-import { StylableComponent } from '../base/stylable.component';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-top-nav';
 const WIDGET_CONFIG = {widgetType: 'wm-top-nav', hostClass: DEFAULT_CLS};

@@ -114,6 +114,70 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
     return tmpl;
 };
 
+export const getRequiredFormWidgetImports = (widgetType): any => {
+    const imports = [];
+    switch (widgetType) {
+        case FormWidgetType.AUTOCOMPLETE:
+        case FormWidgetType.TYPEAHEAD:
+            imports.push({
+                from: '@wm/components/basic/search',
+                name: 'SearchModule'
+            });
+            break;
+        case FormWidgetType.CHIPS:
+            imports.push({
+                from: '@wm/components/input/chips',
+                name: 'ChipsModule'
+            });
+            break;
+        case FormWidgetType.COLORPICKER:
+            imports.push({
+                from: '@wm/components/input/color-picker',
+                name: 'ColorPickerModule'
+            });
+            break;
+        case FormWidgetType.CURRENCY:
+            imports.push({
+                from: '@wm/components/input/currency',
+                name: 'CurrencyModule'
+            });
+            break;
+        case FormWidgetType.DATE:
+        case FormWidgetType.DATETIME:
+        case FormWidgetType.TIME:
+        case FormWidgetType.TIMESTAMP:
+            imports.push({
+                from: '@wm/components/input/epoch',
+                name: 'EpochModule'
+            });
+            break;
+        case FormWidgetType.RATING:
+            imports.push({
+                from: '@wm/components/input/rating',
+                name: 'RatingModule'
+            });
+            break;
+        case FormWidgetType.RICHTEXT:
+            imports.push({
+                from: '@wm/components/basic/rich-text-editor',
+                name: 'RichTextEditorModule'
+            });
+            break;
+        case FormWidgetType.SLIDER:
+            imports.push({
+                from: '@wm/components/input/slider',
+                name: 'SliderModule'
+            });
+            break;
+        default:
+            imports.push({
+                from: '@wm/components/input',
+                name: 'InputModule'
+            });
+    }
+    return imports;
+};
+
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
 export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '', referenceName: string = 'item') => {
 

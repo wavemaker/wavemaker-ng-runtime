@@ -1,13 +1,9 @@
 import { Component, Injector, SecurityContext } from '@angular/core';
 
 import { appendNode, createElement, removeNode } from '@wm/core';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
-import { DISPLAY_TYPE } from '../../framework/constants';
-import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './video.props';
-import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-video';
 const WIDGET_CONFIG = {

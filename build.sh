@@ -117,7 +117,7 @@ ngBuild() {
     local ngModuleName=$3;
     hasSourceChanges ${bundle} ${sourceLocation}
     if [[ "$?" -eq "0" ]]; then
-        execCommand ng-build ${ngModuleName} "$NG build $ngModuleName"
+        execCommand ng-build ${ngModuleName} "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build $ngModuleName"
         isSourceModified=true
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
@@ -137,8 +137,56 @@ bundleWeb() {
         ./libraries/http/bundles/index.umd.js \
         ./libraries/oAuth/bundles/index.umd.js \
         ./libraries/security/bundles/index.umd.js \
+        ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
-        ./libraries/components/bundles/index.umd.js \
+        ./libraries/components/basic/default/bundles/index.umd.js \
+        ./libraries/components/basic/progress//bundles/index.umd.js \
+        ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
+        ./libraries/components/basic/search/bundles/index.umd.js \
+        ./libraries/components/basic/tree/bundles/index.umd.js \
+        ./libraries/components/input/default/bundles/index.umd.js \
+        ./libraries/components/input/calendar/bundles/index.umd.js \
+        ./libraries/components/input/chips/bundles/index.umd.js \
+        ./libraries/components/input/color-picker/bundles/index.umd.js \
+        ./libraries/components/input/currency/bundles/index.umd.js \
+        ./libraries/components/input/epoch/bundles/index.umd.js \
+        ./libraries/components/input/file-upload/bundles/index.umd.js \
+        ./libraries/components/input/rating/bundles/index.umd.js \
+        ./libraries/components/input/slider/bundles/index.umd.js \
+        ./libraries/components/chart/bundles/index.umd.js \
+        ./libraries/components/navigation/nav/bundles/index.umd.js \
+        ./libraries/components/navigation/navbar/bundles/index.umd.js \
+        ./libraries/components/navigation/breadcrumb/bundles/index.umd.js \
+        ./libraries/components/navigation/menu/bundles/index.umd.js \
+        ./libraries/components/navigation/popover/bundles/index.umd.js \
+        ./libraries/components/dialogs/alert-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/confirm-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/design-dialog/bundles/index.umd.js \
+        ./libraries/components/page/default/bundles/index.umd.js \
+        ./libraries/components/page/footer/bundles/index.umd.js \
+        ./libraries/components/page/header/bundles/index.umd.js \
+        ./libraries/components/page/left-panel/bundles/index.umd.js \
+        ./libraries/components/page/right-panel/bundles/index.umd.js \
+        ./libraries/components/page/top-nav/bundles/index.umd.js \
+        ./libraries/components/prefab/bundles/index.umd.js \
+        ./libraries/components/data/pagination/bundles/index.umd.js \
+        ./libraries/components/data/card/bundles/index.umd.js \
+        ./libraries/components/data/list/bundles/index.umd.js \
+        ./libraries/components/data/table/bundles/index.umd.js \
+        ./libraries/components/data/live-table/bundles/index.umd.js \
+        ./libraries/components/data/form/bundles/index.umd.js \
+        ./libraries/components/dialogs/iframe-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/login-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
+        ./libraries/components/containers/accordion/bundles/index.umd.js \
+        ./libraries/components/containers/layoutgrid/bundles/index.umd.js \
+        ./libraries/components/containers/panel/bundles/index.umd.js \
+        ./libraries/components/containers/tabs/bundles/index.umd.js \
+        ./libraries/components/containers/tile/bundles/index.umd.js \
+        ./libraries/components/containers/wizard/bundles/index.umd.js \
+        ./libraries/components/advanced/carousel/bundles/index.umd.js \
+        ./libraries/components/advanced/marquee/bundles/index.umd.js \
+        ./libraries/components/advanced/login/bundles/index.umd.js \
         ./libraries/variables/bundles/index.umd.js \
         ./libraries/mobile/placeholder/bundles/index.umd.js \
         ./libraries/runtime/base/bundles/index.umd.js \
@@ -164,8 +212,56 @@ bundleMobile() {
         ./libraries/http/bundles/index.umd.js \
         ./libraries/oAuth/bundles/index.umd.js \
         ./libraries/security/bundles/index.umd.js \
+        ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
-        ./libraries/components/bundles/index.umd.js \
+        ./libraries/components/basic/default/bundles/index.umd.js \
+        ./libraries/components/basic/progress//bundles/index.umd.js \
+        ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
+        ./libraries/components/basic/search/bundles/index.umd.js \
+        ./libraries/components/basic/tree/bundles/index.umd.js \
+        ./libraries/components/input/default/bundles/index.umd.js \
+        ./libraries/components/input/calendar/bundles/index.umd.js \
+        ./libraries/components/input/chips/bundles/index.umd.js \
+        ./libraries/components/input/color-picker/bundles/index.umd.js \
+        ./libraries/components/input/currency/bundles/index.umd.js \
+        ./libraries/components/input/epoch/bundles/index.umd.js \
+        ./libraries/components/input/file-upload/bundles/index.umd.js \
+        ./libraries/components/input/rating/bundles/index.umd.js \
+        ./libraries/components/input/slider/bundles/index.umd.js \
+        ./libraries/components/chart/bundles/index.umd.js \
+        ./libraries/components/navigation/nav/bundles/index.umd.js \
+        ./libraries/components/navigation/navbar/bundles/index.umd.js \
+        ./libraries/components/navigation/breadcrumb/bundles/index.umd.js \
+        ./libraries/components/navigation/menu/bundles/index.umd.js \
+        ./libraries/components/navigation/popover/bundles/index.umd.js \
+        ./libraries/components/dialogs/alert-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/confirm-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/design-dialog/bundles/index.umd.js \
+        ./libraries/components/page/default/bundles/index.umd.js \
+        ./libraries/components/page/footer/bundles/index.umd.js \
+        ./libraries/components/page/header/bundles/index.umd.js \
+        ./libraries/components/page/left-panel/bundles/index.umd.js \
+        ./libraries/components/page/right-panel/bundles/index.umd.js \
+        ./libraries/components/page/top-nav/bundles/index.umd.js \
+        ./libraries/components/prefab/bundles/index.umd.js \
+        ./libraries/components/data/pagination/bundles/index.umd.js \
+        ./libraries/components/data/card/bundles/index.umd.js \
+        ./libraries/components/data/list/bundles/index.umd.js \
+        ./libraries/components/data/table/bundles/index.umd.js \
+        ./libraries/components/data/live-table/bundles/index.umd.js \
+        ./libraries/components/data/form/bundles/index.umd.js \
+        ./libraries/components/dialogs/iframe-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/login-dialog/bundles/index.umd.js \
+        ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
+        ./libraries/components/containers/accordion/bundles/index.umd.js \
+        ./libraries/components/containers/layoutgrid/bundles/index.umd.js \
+        ./libraries/components/containers/panel/bundles/index.umd.js \
+        ./libraries/components/containers/tabs/bundles/index.umd.js \
+        ./libraries/components/containers/tile/bundles/index.umd.js \
+        ./libraries/components/containers/wizard/bundles/index.umd.js \
+        ./libraries/components/advanced/carousel/bundles/index.umd.js \
+        ./libraries/components/advanced/marquee/bundles/index.umd.js \
+        ./libraries/components/advanced/login/bundles/index.umd.js \
         ./libraries/mobile/core/bundles/index.umd.js \
         ./libraries/mobile-build-task/bundles/index.umd.js \
         ./libraries/mobile/components/bundles/index.umd.js \
@@ -188,7 +284,7 @@ bundleMobile() {
 }
 
 buildApp() {
-    hasSourceChanges components projects/components
+    hasSourceChanges components-base projects/components/base
     local hasChangesInComponents=$?
 
     hasSourceChanges mobile-components projects/mobile/components
@@ -201,7 +297,66 @@ buildApp() {
     ngBuild oAuth projects/oAuth '@wm/oAuth'
     ngBuild security projects/security '@wm/security'
     ngBuild variables projects/variables '@wm/variables'
-    ngBuild components projects/components '@wm/components'
+    ngBuild components-base projects/components/base '@wm/components/base'
+
+    ngBuild components-basic projects/components/widgets/basic '@wm/components/basic'
+    ngBuild components-basic-progress projects/components/widgets/basic/progress '@wm/components/basic/progress'
+    ngBuild components-basic-richtexteditor projects/components/widgets/basic/rich-text-editor '@wm/components/basic/rich-text-editor'
+    ngBuild components-basic-search projects/components/widgets/basic/search '@wm/components/basic/search'
+    ngBuild components-basic-tree projects/components/widgets/basic/tree '@wm/components/basic/tree'
+
+    ngBuild components-input projects/components/widgets/input '@wm/components/input'
+    ngBuild components-input-calendar projects/components/widgets/input/calendar '@wm/components/input/calendar'
+    ngBuild components-input-chips projects/components/widgets/input/chips '@wm/components/input/chips'
+    ngBuild components-input-colorpicker projects/components/widgets/input/color-picker '@wm/components/input/color-picker'
+    ngBuild components-input-currency projects/components/widgets/input/currency '@wm/components/input/currency'
+    ngBuild components-input-epoch projects/components/widgets/input/epoch '@wm/components/input/epoch'
+    ngBuild components-input-fileupload projects/components/widgets/input/file-upload '@wm/components/input/file-upload'
+    ngBuild components-input-rating projects/components/widgets/input/rating '@wm/components/input/rating'
+    ngBuild components-input-slider projects/components/widgets/input/slider '@wm/components/input/slider'
+
+    ngBuild components-charts projects/components/widgets/chart '@wm/components/chart'
+
+    ngBuild components-navigation-nav projects/components/widgets/navigation/nav '@wm/components/navigation/nav'
+    ngBuild components-navigation-navbar projects/components/widgets/navigation/navbar '@wm/components/navigation/navbar'
+    ngBuild components-navigation-breadcrumb projects/components/widgets/navigation/breadcrumb '@wm/components/navigation/breadcrumb'
+    ngBuild components-navigation-menu projects/components/widgets/navigation/menu '@wm/components/navigation/menu'
+    ngBuild components-navigation-popover projects/components/widgets/navigation/popover '@wm/components/navigation/popover'
+
+    ngBuild components-containers-accordion projects/components/widgets/containers/accordion '@wm/components/containers/accordion'
+    ngBuild components-containers-layoutgrid projects/components/widgets/containers/layout-grid '@wm/components/containers/layout-grid'
+    ngBuild components-containers-panel projects/components/widgets/containers/panel '@wm/components/containers/panel'
+    ngBuild components-containers-tabs projects/components/widgets/containers/tabs '@wm/components/containers/tabs'
+    ngBuild components-containers-tile projects/components/widgets/containers/tile '@wm/components/containers/tile'
+    ngBuild components-containers-wizard projects/components/widgets/containers/wizard '@wm/components/containers/wizard'
+
+    ngBuild components-dialogs-alertdialog projects/components/widgets/dialogs/alert-dialog '@wm/components/dialogs/alert-dialog'
+    ngBuild components-dialogs-confirmdialog projects/components/widgets/dialogs/confirm-dialog '@wm/components/dialogs/confirm-dialog'
+    ngBuild components-dialogs-designdialog projects/components/widgets/dialogs/design-dialog '@wm/components/dialogs/design-dialog'
+    ngBuild components-dialogs-iframedialog projects/components/widgets/dialogs/iframe-dialog '@wm/components/dialogs/iframe-dialog'
+    ngBuild components-dialogs-partialdialog projects/components/widgets/dialogs/partial-dialog '@wm/components/dialogs/partial-dialog'
+
+    ngBuild components-page projects/components/widgets/page '@wm/components/page'
+    ngBuild components-page-footer projects/components/widgets/page/footer '@wm/components/page/footer'
+    ngBuild components-page-header projects/components/widgets/page/header '@wm/components/page/header'
+    ngBuild components-page-leftpanel projects/components/widgets/page/left-panel '@wm/components/page/left-panel'
+    ngBuild components-page-rightpanel projects/components/widgets/page/footer '@wm/components/page/right-panel'
+    ngBuild components-page-topnav projects/components/widgets/page/top-nav '@wm/components/page/top-nav'
+
+    ngBuild components-prefab projects/components/widgets/prefab '@wm/components/prefab'
+
+    ngBuild components-data-card projects/components/widgets/data/card '@wm/components/data/card'
+    ngBuild components-data-pagination projects/components/widgets/data/pagination '@wm/components/data/pagination'
+    ngBuild components-data-list projects/components/widgets/data/list '@wm/components/data/list'
+    ngBuild components-data-table projects/components/widgets/data/table '@wm/components/data/table'
+    ngBuild components-data-livetable projects/components/widgets/data/live-table '@wm/components/data/live-table'
+    ngBuild components-data-form projects/components/widgets/data/form '@wm/components/data/form'
+
+    ngBuild components-dialogs-logindialog projects/components/widgets/dialogs/login-dialog '@wm/components/dialogs/login-dialog'
+
+    ngBuild components-advanced-carousel projects/components/widgets/advanced/carousel '@wm/components/advanced/carousel'
+    ngBuild components-advanced-marquee projects/components/widgets/advanced/marquee '@wm/components/advanced/marquee'
+    ngBuild components-advanced-login projects/components/widgets/advanced/login '@wm/components/advanced/login'
 
     ngBuild mobile-core projects/mobile/core '@wm/mobile/core'
     ngBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
@@ -210,9 +365,8 @@ buildApp() {
     ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'
     ngBuild mobile-placeholder projects/mobile/placeholder '@wm/mobile/placeholder'
 
-
     if [[ ${hasChangesInComponents} -eq "0" ]]; then
-        ./node_modules/.bin/ng-packagr -p projects/components/ng-package-buildtask.json -c ./projects/components/tsconfig.lib.json
+        ./node_modules/.bin/ng-packagr -p projects/components/transpile/ng-package.json -c ./projects/components/transpile/tsconfig.lib.json
     fi
 
     if [[ ${hasChangesInMobileComponents} -eq "0" ]]; then
@@ -355,7 +509,7 @@ bundleWebLibs() {
         ./node_modules/hammerjs/hammer.min.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
-        ./projects/components/src/widgets/common/table/datatable.js \
+        ./projects/components/widgets/data/table/src/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-libs.min.js \
@@ -412,7 +566,7 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
-        ./projects/components/src/widgets/common/table/datatable.js \
+        ./projects/components/widgets/data/table/src/datatable.js \
         ./dist/tmp/libs/ionic-native/ionic-native-core.umd.js \
         ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \

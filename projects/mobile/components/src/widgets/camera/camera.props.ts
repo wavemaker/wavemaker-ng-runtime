@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components';
+import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
 
 export const registerProps = () => {
     register(

@@ -1,8 +1,7 @@
 import { AppConstants, DataSource, findValueOf, getClonedObject } from '@wm/core';
 
-import { convertDataToObject } from '../../../../utils/form-utils';
+import { convertDataToObject, interpolateBindExpressions } from '@wm/components/base';
 import { IDataProvider, IDataProviderConfig } from './data-provider';
-import { interpolateBindExpressions } from '../../../../utils/data-utils';
 
 declare const _;
 

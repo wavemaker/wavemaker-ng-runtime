@@ -6,7 +6,11 @@ const tagName = 'wm-textarea';
 register('wm-textarea', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        }]
     };
 });
 

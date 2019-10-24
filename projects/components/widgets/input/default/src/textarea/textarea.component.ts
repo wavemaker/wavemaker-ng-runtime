@@ -1,10 +1,10 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
+import { provideAsNgValueAccessor, provideAsWidgetRef } from '@wm/components/base';
+
 import { registerProps } from './textarea.props';
 import { BaseInput } from '../text/base/base-input';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-
 const WIDGET_CONFIG = {
     widgetType: 'wm-textarea',
     hostClass: 'app-input-wrapper'

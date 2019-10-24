@@ -1,11 +1,9 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
 import { DataSource, removeAttr, setAttr } from '@wm/core';
+import { DatasetAwareFormComponent, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import { styler } from '../../framework/styler';
 import { registerProps } from './select.props';
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
-import { DatasetAwareFormComponent } from '../base/dataset-aware-form.component';
 
 declare const _;
 

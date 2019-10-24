@@ -43,7 +43,11 @@ register('wm-popover', (): IBuildTaskDef => {
             }
 
             return `${markup}<button class="popover-end"></button></ng-template></${tagName}>`;
-        }
+        },
+        imports: [{
+            from: '@wm/components/navigation/popover',
+            name: 'PopoverModule'
+        }]
     };
 });
 

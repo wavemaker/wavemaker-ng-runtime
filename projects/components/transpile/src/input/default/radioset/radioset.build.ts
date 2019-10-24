@@ -6,7 +6,11 @@ const tagName = 'ul';
 register('wm-radioset', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmRadioset role="radiogroup" ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/components/input',
+            name: 'InputModule'
+        }]
     };
 });
 
