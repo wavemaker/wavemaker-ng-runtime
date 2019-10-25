@@ -1230,7 +1230,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 // if table is inside list then table dataset will be set as "item.XXX" and there is no datasource.
                 // So extracting datasource from the datset bound expression.
-                if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item.')) {
+                if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
                     this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
                 this.watchVariableDataSet(nv);

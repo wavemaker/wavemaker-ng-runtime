@@ -116,7 +116,7 @@ export class TableCUDDirective {
     generatePath(binddataset) {
         let path, index;
         let dataBoundExpr = this.table.widget.$attrs.get('datasetboundexpr');
-        if (_.startsWith(binddataset, 'item.') && dataBoundExpr) {
+        if (_.startsWith(binddataset, 'item') && dataBoundExpr) {
             if (_.startsWith(dataBoundExpr, 'Widgets.')) {
                 dataBoundExpr = extractCurrentItemExpr(dataBoundExpr, this.table);
             }
