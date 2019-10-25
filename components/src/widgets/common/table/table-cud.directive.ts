@@ -63,6 +63,8 @@ export class TableCUDDirective {
         }
         /*Re-calculate the paging values like pageCount etc that could change due to change in the dataSize.*/
         this.table.dataNavigator.calculatePagingValues();
+        /* updating pagination fulldata*/
+        this.table.dataNavigator.__fullData = this.table.__fullData;
         this.table.dataNavigator.navigatePage(index, null, true, () => {
             if (this.table.isNavigationEnabled() || isStaticVariable) {
                 this.selectItemOnSuccess(row, skipSelectItem, callBack);
@@ -231,6 +233,8 @@ export class TableCUDDirective {
             this.table.dataNavigator.calculatePagingValues();
             /*If the current page does not contain any records due to deletion, then navigate to the previous page.*/
             index = this.table.dataNavigator.pageCount < this.table.dataNavigator.dn.currentPage ? 'prev' : undefined;
+            /* updating pagination fulldata*/
+            this.table.dataNavigator.__fullData = this.table.__fullData;
             this.table.dataNavigator.navigatePage(index, null, true, () => {
                 setTimeout(() => {
                     triggerFn(callBack);
