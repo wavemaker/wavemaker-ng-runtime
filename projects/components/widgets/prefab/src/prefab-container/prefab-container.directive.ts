@@ -1,9 +1,6 @@
 import { Directive, Injector } from '@angular/core';
 
-import { StylableComponent } from '../base/stylable.component';
-import { IWidgetConfig } from '../../framework/types';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
-import { styler } from '../../framework/styler';
+import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './prefab-container.props';
 
 const DEFAULT_CLS = 'app-prefab-container full-height';

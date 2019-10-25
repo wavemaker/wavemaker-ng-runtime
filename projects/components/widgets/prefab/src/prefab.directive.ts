@@ -2,10 +2,7 @@ import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector } from '@
 
 import { setCSS } from '@wm/core';
 
-import { StylableComponent } from '../base/stylable.component';
-import { styler } from '../../framework/styler';
-import { PROP_TYPE, register } from '../../framework/widget-props';
-import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import { PROP_TYPE, register, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { prefabProps } from './prefab.props';
 
 const DEFAULT_CLS = 'app-prefab';

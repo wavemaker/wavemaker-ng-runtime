@@ -117,7 +117,7 @@ ngBuild() {
     local ngModuleName=$3;
     hasSourceChanges ${bundle} ${sourceLocation}
     if [[ "$?" -eq "0" ]]; then
-        execCommand ng-build ${ngModuleName} "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build $ngModuleName"
+        execCommand ng-build ${ngModuleName} "$NG build $ngModuleName"
         isSourceModified=true
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}

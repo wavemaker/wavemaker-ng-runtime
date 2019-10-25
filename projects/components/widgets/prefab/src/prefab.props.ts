@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_STRING } from '../../framework/widget-props';
+import { PROP_BOOLEAN, PROP_STRING } from '@wm/components/base'; 
 
 export const prefabProps = new Map(
     [
