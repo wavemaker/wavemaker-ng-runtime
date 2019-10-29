@@ -97,10 +97,10 @@ export class AppModule {
     constructor(scriptLoaderService: ScriptLoaderService) {
         setTimeout(() => {
             if(isMobileApp()) {
-                scriptLoaderService.load('scripts/hammerjs/hammer.min.js');
+                scriptLoaderService.load('node_modules-hammerjs-hammer.min.js');
             }
             if (isIos()) {
-                scriptLoaderService.load('scripts/iscroll/build/iscroll.js');
+                scriptLoaderService.load('node_modules-iscroll-build-iscroll.js');
             }
         }, 100);
     }

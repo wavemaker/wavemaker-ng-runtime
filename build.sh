@@ -179,7 +179,7 @@ bundleWeb() {
         ./libraries/components/dialogs/login-dialog/bundles/index.umd.js \
         ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
         ./libraries/components/containers/accordion/bundles/index.umd.js \
-        ./libraries/components/containers/layoutgrid/bundles/index.umd.js \
+        ./libraries/components/containers/layout-grid/bundles/index.umd.js \
         ./libraries/components/containers/panel/bundles/index.umd.js \
         ./libraries/components/containers/tabs/bundles/index.umd.js \
         ./libraries/components/containers/tile/bundles/index.umd.js \
@@ -254,7 +254,7 @@ bundleMobile() {
         ./libraries/components/dialogs/login-dialog/bundles/index.umd.js \
         ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
         ./libraries/components/containers/accordion/bundles/index.umd.js \
-        ./libraries/components/containers/layoutgrid/bundles/index.umd.js \
+        ./libraries/components/containers/layout-grid/bundles/index.umd.js \
         ./libraries/components/containers/panel/bundles/index.umd.js \
         ./libraries/components/containers/tabs/bundles/index.umd.js \
         ./libraries/components/containers/tile/bundles/index.umd.js \
