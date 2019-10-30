@@ -1,7 +1,7 @@
-import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, AfterViewInit, NgZone } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource } from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, isDefined, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { WidgetRef } from '../../framework/types';
@@ -12,6 +12,8 @@ import { performDataOperation } from '../../../utils/data-utils';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { MessageComponent } from '../message/message.component';
 import { ListComponent } from '../list/list.component';
+import { PrefabDirective } from '../prefab/prefab.directive';
+import { PartialDirective } from '../partial/partial.directive';
 
 declare const _;
 
@@ -80,7 +82,7 @@ const setTouchedState = ngForm => {
         provideAsWidgetRef(FormComponent)
     ]
 })
-export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit {
+export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit, AfterViewInit {
     static  initializeProps = registerFormProps();
     @ViewChild('dynamicForm', {read: ViewContainerRef}) dynamicFormRef: ViewContainerRef;
     @ViewChild(MessageComponent) messageRef;
@@ -155,9 +157,16 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private _dynamicContext;
     private _isGridLayoutPresent;
     private validationMessages = [];
+    private formGroupName;
+    private formArrayIndex;
+    private bindingValue;
+    private _formIsInList;
 
     private _debouncedSubmitForm = debounce(($event) => {
-        this.submitForm($event);
+        // calling submit event in ngZone as change detection is not triggered post the submit callback and actions like notification are not shown
+        this.ngZone.run(() => {
+            this.submitForm($event);
+        });
     }, 250);
 
     set isLayoutDialog(nv) {
@@ -193,13 +202,35 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.reset();
     }
 
+    // returns the formArray control on the parentForm.
+    get parentFormArray(): FormArray {
+        return this.parentForm && this.isParentList && this.parentForm.ngform.get(this.parentList.name) as FormArray;
+    }
+
+    // returns true only when closest livelist is the immediate parent of the form.
+    // checks for livelist having any form elements with parentForm name.
+    // If livelist is not containing any parentForm elements then it returns true.
+    get isParentList() {
+        if (this.parentList && this.parentForm && !isDefined(this._formIsInList)) {
+            const formEle = this.$element;
+            const listEle = formEle.closest('.app-livelist[name="' + this.parentList.name + '"]');
+            if (listEle.length) {
+                this._formIsInList = !(listEle.find('form[widget-id="' + this.parentForm.widgetId + '"]')).length;
+            }
+        }
+        return isDefined(this._formIsInList) ? this._formIsInList : this.parentList;
+    }
+
     constructor(
         inj: Injector,
         private fb: FormBuilder,
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
+        private ngZone: NgZone,
         @Optional() public parentList: ListComponent,
         @SkipSelf() @Optional() public parentForm: FormComponent,
+        @SkipSelf() @Optional() public parentPrefab: PrefabDirective,
+        @SkipSelf() @Optional() public parentPartial: PartialDirective,
         @Attribute('beforesubmit.event') public onBeforeSubmitEvt,
         @Attribute('submit.event') public onSubmitEvt,
         @Attribute('beforerender.event') public onBeforeRenderEvt,
@@ -218,7 +249,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.isUpdateMode = true;
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});
-        this.addInnerNgFormToForm(key || name);
+        this.bindingValue = key || name;
 
         // On value change in form, update the dataoutput
         const onValueChangeSubscription =  this.ngform.valueChanges
@@ -230,7 +261,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     ngAfterContentInit() {
-        setTimeout(() => {
+       setTimeout(() => {
             this.componentRefs.forEach(componentRef => {
                 if (componentRef.name) {
                     // Register widgets inside form with formWidgets
@@ -240,10 +271,54 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }, 250);
     }
 
+    ngAfterViewInit() {
+        if (this.parentForm && this.parentForm.ngform && this.isParentList) {
+            // setting formArray control on ngform.
+            if (!_.get(this.parentForm.ngform.controls, this.parentList.name)) {
+                this.parentForm.ngform.setControl(this.parentList.name, new FormArray([]));
+            }
+            // pushing the ngform to formArray.
+            this.parentFormArray.push(this.ngform);
+            this.formArrayIndex = this.parentFormArray.length - 1;
+        }
+        this.addInnerNgFormToForm(this.bindingValue);
+    }
+
     findOperationType() {}
 
     private addInnerNgFormToForm(binding) {
         if (this.parentForm && this.parentForm.ngform) {
+            // handling as formArray when parent is list. Hence returning here from adding to parentForm again.
+            if (this.isParentList) {
+                return;
+            }
+            // assigning the control name of the form inside the prefab with the prefab name.
+            // This will happen only when there is only one form inside prefab.
+            // We do not support changing this when multiple forms are inside prefab.
+            // This scenario has to be handled by end user by changing form names in prefab according to the datamodel binding.
+            const parentContainer = this.parentPrefab || this.parentPartial;
+            if (parentContainer) {
+                let parentContentEl;
+                if (this.parentPrefab) {
+                    parentContentEl = parentContainer.$element.find('[wmprefabcontainer]');
+                } else {
+                    parentContentEl = parentContainer.$element;
+                }
+                /**
+                 * assigning the form name to the parentContainer name i.e. partial name or perfab name by following
+                 * 1. retrieving all the forms in the parentContainer
+                 * 2. consider the first form
+                 * 3. if this form is inside list i.e. also find if this list is also inside the parentContainer (prefab / partial)
+                 * 4. then do not change the form name when form is inside list and also when there are siblings to the form
+                 * 5. this means form name change applies only when there is single form (immediate child) inside the parentContainer.
+                 */
+                const prefabInnerForm = parentContentEl.find('form').first();
+                const isInsideList = prefabInnerForm.closest('.app-livelist');
+                // check whether form inside prefab container is inside the list. If true, do not change the name.
+                if (!isInsideList.length && !prefabInnerForm.siblings('form').length) {
+                    binding = _.get(parentContainer, 'name');
+                }
+            }
             let counter = 1;
             let innerBinding = binding;
             // Inner forms may have same names. If same name is present, append unqiue identifier
@@ -251,6 +326,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 innerBinding = `${binding}_${counter}`;
                 counter++;
             }
+            this.formGroupName = innerBinding;
             // If parent form is present, add the current form as as formGroup for parent form
             this.parentForm.ngform.addControl(innerBinding, this.ngform);
         }
@@ -272,73 +348,95 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         context.submit = evt => this.submit(evt);
     }
 
+    // This method gets all the inner forms and validates each form.
+    private setValidationOnInnerForms(validateTouch) {
+        const formEle = this.getNativeElement();
+        const formObjs = formEle.querySelectorAll('.app-form');
+        const validationMsgs = [];
+        _.forEach(formObjs, e => {
+            const formInstance = (e as any).widget;
+            // differentiating the validationMessages prefix based on the formGroupName
+            // as the formName's are same when forms are in list
+            let formName = _.get(formInstance, 'formGroupName') || formInstance.name;
+            if (isDefined(formInstance.formArrayIndex)) {
+                formName = formName + '[' + formInstance.formArrayIndex + ']';
+            }
+            let current = formInstance;
+            while (_.get(current, 'parentForm')) {
+                let parentName = current.parentForm.formGroupName || current.parentForm.name;
+                if (current.parentForm.parentFormArray) {
+                    parentName = parentName + '[' + current.parentForm.formArrayIndex + ']';
+                }
+                formName = parentName + '.' + formName;
+                current = current.parentForm;
+            }
+            this.setValidationOnFields(formInstance, formName, validateTouch);
+        });
+    }
+
     /**
      * This method sets validation on formFields.
-     * Applies to form inside form or list of form fields.
-     * @param {Object} controls
-     * @param formFields
-     * @param validationObj
+     * Applies to innerform and also sets innerform validation on parent form.
      * @param prefix contains the form name, which also includes its parents form name
      * @param {boolean} validateTouch
      */
-    private setValidationOnFields(controls: Object, formFields: any, validationObj: any, prefix: string, validateTouch?: boolean) {
+    private setValidationOnFields(form: FormComponent, prefix: string, validateTouch?: boolean) {
+        const controls = form.ngform.controls;
+        const formFields = form.formFields;
         if (!formFields) {
             return;
         }
         _.forEach(controls, (v, k) => {
-            // setting validation messages for inner forms also.
-            if (_.get(v, 'controls')) {
-                // retrieving the formfields for the innerForm using the formName.
-                const formWidget = _.get(document.querySelector('[name = ' + k + ']'), 'widget');
-                const innerFormFields = _.get(formWidget, 'formFields');
-                // for forms which are inside the list, which is again inside the form has the unique formGroupName(formName_1, formName_2) for which formWidget will be undefined
-                const formName = formWidget ? formWidget.name : k;
-                this.setValidationOnFields(v.controls, innerFormFields, validationObj, prefix + '.' + formName, validateTouch);
-                return;
-            }
             const field = formFields.find(e => e.key === k);
             if (!field || (validateTouch && !v.touched)) {
                 return;
             }
-            const index = validationObj.findIndex(e => (e.field === k && e.fullyQualifiedFormName === prefix));
-
-            if (v.invalid) {
-                if (index === -1) {
-                    /**
-                     * field contains the fieldName
-                     * value contains the field value
-                     * errorType contains the list of errors
-                     * message contains the validation message
-                     * getElement returns the element having focus-target
-                     * formName returns the name of the form
-                     */
-                    validationObj.push({
-                        field: k,
-                        value: field.value,
-                        errorType: _.keys(v.errors),
-                        message: field.validationmessage || '',
-                        getElement: () => {
-                            return field.$element.find('[focus-target]');
-                        },
-                        formName: _.last(prefix.split('.')),
-                        fullyQualifiedFormName: prefix
-                    });
-                } else {
-                    validationObj[index].value = field.value;
-                    validationObj[index].errorType = _.keys(v.errors);
-                }
-            } else if (v.valid && index > -1) {
-                validationObj.splice(index, 1);
-            }
+            // invoking the prepareValidation on both parent form and current form.
+            this.prepareValidationObj(v, k, field, prefix);
+            this.prepareValidationObj.call(form, v, k, field, prefix);
         });
+    }
+
+    // Assigns / updates validationMessages based on angular errors on field
+    private prepareValidationObj(v, k, field, prefix) {
+        const index = this.validationMessages.findIndex(e => (e.field === k && e.fullyQualifiedFormName === prefix));
+        if (v.invalid) {
+            if (index === -1) {
+                /**
+                 * field contains the fieldName
+                 * value contains the field value
+                 * errorType contains the list of errors
+                 * message contains the validation message
+                 * getElement returns the element having focus-target
+                 * formName returns the name of the form
+                 */
+                this.validationMessages.push({
+                    field: k,
+                    value: field.value,
+                    errorType: _.keys(v.errors),
+                    message: field.validationmessage || '',
+                    getElement: () => {
+                        return field.$element.find('[focus-target]');
+                    },
+                    formName: _.last(prefix.split('.')),
+                    fullyQualifiedFormName: prefix
+                });
+            } else {
+                this.validationMessages[index].value = field.value;
+                this.validationMessages[index].errorType = _.keys(v.errors);
+            }
+        } else if (v.valid && index > -1) {
+            this.validationMessages.splice(index, 1);
+        }
     }
 
     // This will return a object containing the error details from the list of formFields that are invalid
     private setValidationMsgs(validateTouch?: boolean) {
-        if (!this.formFields.length) {
+        if (!this.formFields.length && _.isEmpty(this.ngform.controls)) {
             return;
         }
-        this.setValidationOnFields(this.ngform.controls, this.formFields, this.validationMessages, this.name, validateTouch);
+        this.setValidationOnFields(this, this.name, validateTouch);
+        this.setValidationOnInnerForms(validateTouch);
     }
 
     // change and blur events are added from the template
@@ -423,7 +521,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 // For livelist when multiselect is enabled, formdata will be array of objects. In this case consider the last object as formdata.
                 _.isArray(nv) ? this.setFormData(_.last(nv)) : this.setFormData(nv);
                 // if dataset on the formFields are not set as the datasourceChange is triggered before the formFields are registered.
-                if (!this.isDataSourceUpdated) {
+                if (!this.isDataSourceUpdated && this.datasource) {
                     this.onDataSourceChange();
                 }
                 break;
@@ -511,6 +609,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (this.parentForm) {
             this.parentForm.formFields.push(formField);
             this.parentForm.formfields[formField.key] = formField;
+            this.parentForm.setFormData(this.parentForm.formdata, this.formFields);
         }
     }
 
@@ -532,8 +631,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     // Construct the data object merging the form fields and custom widgets data
     constructDataObject() {
         const formData     = {};
+        const formFields = this.getFormFields();
         // Get all form fields and prepare form data as key value pairs
-        this.formFields.forEach(field => {
+        formFields.forEach(field => {
             let fieldName,
                 fieldValue;
             fieldValue = field.datavalue || field._control.value;
@@ -544,8 +644,25 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             }
 
             fieldName = field.key || field.target || field.name;
-            // In case of update the field will be already present in form data
-            _.set(formData, fieldName, fieldValue);
+
+            // on current Form, when field is innerForm field then we group these fields under new object using formGroupName as key
+            // For suppose, applicantName, applicantID are formfields in currentForm
+            // This form is having innerform i.e. address, these fields are listed as
+            // {"applicantName": "", "applicantID": "", "address": {"street": ""}}
+            if (field.form.widgetId !== this.widgetId && field.form.formGroupName) {
+                const fd = _.get(formData, field.form.formGroupName, {});
+                fd[fieldName] = fieldValue;
+                _.set(formData, field.form.formGroupName, fd);
+            } else if (field.form.isParentList) {
+                // setting formdata based on formArrayIndex
+                const fd = _.get(formData, field.form.parentList.name, []);
+                fd[field.form.formArrayIndex] = fd[field.form.formArrayIndex] || {};
+                fd[field.form.formArrayIndex][fieldName] = fieldValue;
+                _.set(formData, field.form.parentList.name, fd);
+            } else {
+                // In case of update the field will be already present in form data
+                _.set(formData, fieldName, fieldValue);
+            }
         });
         this.updateFormDataOutput(formData);
         return this.dataoutput;
@@ -558,11 +675,48 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
-    setFormData(data) {
-        this.formFields.forEach(field => {
-            field.value =  _.get(data, field.key || field.name);
+    // FormFields will contain all the fields in parent and inner form also.
+    // This returns the formFields in the form based on the form name.
+    getFormFields() {
+        return _.filter(this.formFields, formField => {
+            return formField.form.name === this.name;
         });
+    }
 
+    setFieldValue(field, data) {
+        const key = field.key || field.name;
+        // if customfield param value is not in the formdata then do not assign field value
+        // as it can contain default value which will again be overridden by undefined.
+        if (data) {
+            if (data.hasOwnProperty(key)) {
+                field.value =  _.get(data, key);
+            } else if (_.includes(key, '.')) {
+                // key contains '.' when mapping the fields to child reference i.e. childCol is having key as "parent.childCol"
+                if (data.hasOwnProperty(_.split(key, '.')[0])) {
+                    field.value =  _.get(data, key);
+                }
+            }
+        }
+        const formGroupName = field.form.formGroupName;
+        /**
+         * if formGroupName is defined which means field is inside the inner form
+         * then set the formdata on the field's form using formGroupName
+         */
+        if (formGroupName && _.get(data, formGroupName)) {
+            this.setFormData.call(field.form, data[formGroupName]);
+        }
+        // if formdata is assigned later then on propertyChangeHandler, even inner forms data also needs to be updated.
+        if (_.get(field.form, 'parentFormArray')) {
+            this.setFormDataFromParentFormData.call(field.form, data);
+        }
+    }
+
+    setFormData(data, formFields?) {
+        // whereas formFields explicitly passed can contain innerform fields also.
+        formFields = formFields || this.formFields;
+        formFields.forEach(field => {
+            this.setFieldValue(field, data);
+        });
         this.constructDataObject();
     }
 
@@ -647,8 +801,66 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
+    /**
+     * This method tranverses through the parent containing formdata and returns the parent formdata.
+     * @param form, represents the current form instance
+     * @returns {any}
+     */
+    getNearestParentFormData(form) {
+        if (!form.parentForm) {
+            return {};
+        }
+        if (!form.bindformdata && _.get(form.parentForm, 'formdata') && !_.isEmpty(form.parentForm.formdata)) {
+            return form.parentForm.formdata;
+        }
+        return this.getNearestParentFormData(form.parentForm);
+    }
+
+    setFormDataFromParentFormData(formdata: any) {
+        if (_.isEmpty(this.formdata) && this.parentForm && formdata) {
+            /**
+             * If form is inside list,
+             * 1. directly applying the formdata to the formArray to update the formdata on list of forms using patchValue.
+             * 2. and also setting individual formdata to the form inside each item based on formArrayIndex, when form is not bound to formdata.
+             * 3. explicitly invoking formdata as formFields will contain all the formfields including innerForm's fields
+             * (if we do not invoke explicitly then formFields will just contain the fields inside current form and not inner form fields)
+             * 4. if childFormArrayData is not available we will check for inner form data using "formGroupName" and will set the innerform data
+             * If not inside list, just set the formdata on all the formfields including innerForm fields
+             */
+            if (this.parentFormArray) {
+                let childFormArrayData = _.get(formdata, this.parentList.name);
+                if (childFormArrayData) {
+                    if (!_.isArray(childFormArrayData)) {
+                        childFormArrayData = [childFormArrayData];
+                    }
+                    this.parentFormArray.patchValue(childFormArrayData);
+                    if (!this.bindformdata) {
+                        this.formdata = childFormArrayData[this.formArrayIndex];
+                    }
+                    this.setFormData(this.formdata);
+                } else if (this.isParentList && this.parentForm.formGroupName) {
+                    const parentFormData = _.get(formdata, this.parentForm.formGroupName);
+                    this.setFormDataFromParentFormData(parentFormData);
+                }
+            } else {
+                this.setFormData(formdata);
+            }
+        }
+    }
+
     // On form data source change. This method is overridden by live form and live filter
     onDataSourceChange() {
+        if (_.get(this.formFields, 'length') && !this.bindformdata) {
+            this.isDataSourceUpdated = true;
+            /**
+             * formdata on the parent form will be set before the inner forms are rendered.
+             * Hence handling formdata on the innerForms, which might be rendered slowly (suppose prefab with form)
+             * setting inner form's formdata obtained from parent formdata
+             * this applies only when formdata is not given on the inner form.
+             */
+            const formdata = this.getNearestParentFormData(this);
+            this.setFormDataFromParentFormData(formdata);
+        }
     }
 
     // On form data source change. This method is overridden by live form and live filter
@@ -761,5 +973,22 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     invokeActionEvent($event, expression: string) {
         const fn = $parseEvent(expression);
         fn(this.viewParent, Object.assign(this.context, {$event}));
+    }
+
+    ngOnDestroy() {
+        // on form destroy, removing this form from the parentForm too.
+        const controls = this.parentForm && _.get(this.parentForm, 'ngform.controls');
+        if (controls) {
+            // when current form is inside the list (i.e. incase of formArray).
+            if (_.get(this.parentList, 'name') && controls.hasOwnProperty(this.parentList.name)) {
+                this.parentForm.ngform.removeControl(this.parentList.name);
+            }
+            // when we have formGroupName set i.e. multiple formInstance with counter appended to formName
+            if (this.formGroupName && controls.hasOwnProperty(this.formGroupName)) {
+                this.parentForm.ngform.removeControl(this.formGroupName);
+            } else {
+                this.parentForm.ngform.removeControl(this.name);
+            }
+        }
     }
 }

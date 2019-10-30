@@ -108,6 +108,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     /* this return the array of files which are having the file size not more than maxfilesize and filters based on contenttype */
     getValidFiles($files) {
         const validFiles = [];
+        const errorFiles = [];
         const MAXFILEUPLOAD_SIZE = parseFloat(this.maxfilesize) * this.FILESIZE_MB || this.FILESIZE_MB;
         const MAX_FILE_UPLOAD_FORMATTED_SIZE = (this.maxfilesize || '1') + 'MB';
 
@@ -119,16 +120,34 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         _.forEach($files, (file) => {
             /* check for the file content type before uploading */
             if (!this.isValidFile(file.name, this.chooseFilter, this.getFileExtension(file.name), this._isMobileType)) {
-                this.app.notifyApp('Expected a ' + this.chooseFilter + ' file', 'Error');
+                const msg = `${this.appLocale.LABEL_FILE_EXTENTION_VALIDATION_MESSAGE} ${this.chooseFilter}`;
+                this.handleErrorFiles('INVALID_FILE_EXTENSION', msg, file, errorFiles);
                 return;
             }
             if (file.size > MAXFILEUPLOAD_SIZE) {
-                this.app.notifyApp('File size exceeded limit. Max upload size is ' + MAX_FILE_UPLOAD_FORMATTED_SIZE, 'Error');
+                const msg = `${this.appLocale.LABEL_FILE_EXCEED_VALIDATION_MESSAGE} ${MAX_FILE_UPLOAD_FORMATTED_SIZE}`;
+                this.handleErrorFiles('INVALID_FILE_SIZE', msg, file, errorFiles);
                 return;
             }
             validFiles.push(file);
         });
-        return validFiles;
+        return {
+            validFiles: validFiles,
+            errorFiles: errorFiles
+        };
+    }
+
+    handleErrorFiles(key, msg, file, errorFiles) {
+        // Check whether the error callback exist or not. If it exists then dont show taoster message
+        if (!this.hasEventCallback('error')) {
+            this.app.notifyApp(msg, 'Error');
+        }
+        const error = {
+            key: key,
+            message: msg
+        };
+        file.error = error;
+        errorFiles.push(file);
     }
 
     /*Overwrite the caption only if they are default*/
@@ -177,7 +196,17 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     /*this function to append upload status dom elements to widget */
     onFileSelect($event, $files) {
         let beforeSelectVal;
-        $files = this.getValidFiles($files);
+        const files = this.getValidFiles($files);
+        $files = files.validFiles;
+
+        // Trigger error callback event if any invalid file found.
+        if (!_.isEmpty(files.errorFiles)) {
+            this.invokeEventCallback('error', {
+                $event,
+                files: files.errorFiles
+            });
+        }
+
         // Make call if there are valid files else no call is made
         if ($files.length) {
             this.progressObservable = new Subject();

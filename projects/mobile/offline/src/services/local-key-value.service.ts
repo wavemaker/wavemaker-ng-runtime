@@ -4,7 +4,7 @@ import { LocalDBStore } from '../models/local-db-store';
 
 @Injectable({providedIn: 'root'})
 export class LocalKeyValueService {
-
+    static readonly SERVICE_NAME = 'LocalKeyValueService';
     private store: LocalDBStore;
 
     /**

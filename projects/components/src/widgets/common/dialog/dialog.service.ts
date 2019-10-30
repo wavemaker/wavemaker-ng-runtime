@@ -98,7 +98,6 @@ export class DialogServiceImpl {
      */
     public open(name: string, scope?: any, initState?: any) {
         const dialogRef = this.getDialogRef(name, scope);
-
         if (!dialogRef) {
             return;
         }
@@ -112,7 +111,6 @@ export class DialogServiceImpl {
      */
     public close(name: string, scope?: any) {
         const dialogRef = this.getDialogRef(name, scope);
-
         if (!dialogRef) {
             return;
         }

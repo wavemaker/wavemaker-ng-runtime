@@ -1,7 +1,7 @@
 import { Injector, OnDestroy, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
-import { AbstractDialogService } from '@wm/core';
+import { AbstractDialogService, closePopover } from '@wm/core';
 
 import { IDialog, IWidgetConfig } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
@@ -10,10 +10,25 @@ declare const _;
 
 let eventsRegistered = false;
 
+const findRootContainer = ($el) => {
+    let root = $el.closest('.app-prefab');
+    if (!root.length) {
+        root = $el.closest('.app-partial');
+    }
+    if (!root.length) {
+        root = $el.closest('.app-page');
+    }
+    return root.length && root.parent()[0].tagName;
+};
 
 const invokeOpenedCallback = (ref) => {
     if (ref) {
         setTimeout(() => {
+            const root = findRootContainer(ref.$element);
+            // if page styles have to be applied to dialog then dialog has to be child of page element.
+            if (root) {
+                $('body:first > modal-container > div').wrap('<' + root + '/>');
+            }
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
         });
     }
@@ -70,6 +85,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      */
     public open(initState?: any) {
 
+        // remove the popovers in the page to avoid the overlap with dialog
+        // closePopover(this.$element); Commenting this line because it is causing regression(if we have dialog inside popover as partail content, then the dialog close is not working because on closing the popover the partial get destroyed.)
+
         // do not open the dialog again if it is already opened
         const duplicateDialogCheck = (openedDialog) => {
            return openedDialog === this;
@@ -91,6 +109,8 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
      * invokes the on-close event callback
      */
     public close() {
+        // remove the popovers in the page to avoid the overlap with dialog
+        // closePopover(this.$element); Commenting this line because it is causing regression(if we have dialog inside popover as partail content, then the dialog close is not working because on closing the popover the partial get destroyed.)
         if (this.dialogRef) {
             this.dialogService.addToClosedDialogs(this);
             this.dialogRef.hide();

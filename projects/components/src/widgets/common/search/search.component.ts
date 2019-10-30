@@ -111,10 +111,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             .create((observer: any) => {
             // Runs on every search
             if (this.listenQuery) {
-                if (this.isMobileAutoComplete() && !this.$element.hasClass('full-screen')) {
-                    this.renderMobileAutoComplete();
-                    return;
-                }
                 this._defaultQueryInvoked = false;
                 this._loadingItems = true;
                 observer.next(this.query);
@@ -211,7 +207,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (!this.$element.hasClass('full-screen')) {
             // this flag is set to notify that the typeahead-container dom has changed its position
             this._domUpdated = true;
-            this.$element.appendTo('div[data-role="pageContainer"]');
             // Add full screen class on focus of the input element.
             this.$element.addClass('full-screen');
 
@@ -268,7 +263,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // Check if the widget is of type autocomplete in mobile view/ app
-    private isMobileAutoComplete() {
+    public isMobileAutoComplete() {
         return this.type === 'autocomplete' && isMobile();
     }
 
@@ -311,7 +306,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.typeahead.hide();
                 }
             }, 200);
-            this._unsubscribeDv = this.isUpdateOnKeyPress();
         }
         this._isOpen = false;
         // on outside click, typeahead is hidden. To avoid this, when fullscreen is set, overridding isFocused flag on the typeahead container
@@ -377,7 +371,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    private onBeforeservicecall(inputData) {
+    private invokeOnBeforeServiceCall(inputData) {
         this.invokeEventCallback('beforeservicecall', {inputData});
     }
 
@@ -397,6 +391,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         // open full-screen search view
         if (this.isMobileAutoComplete()) {
+            if (!this.$element.hasClass('full-screen')) {
+                this.renderMobileAutoComplete();
+            }
             const dropdownEl = this.dropdownEl.closest('typeahead-container');
 
             dropdownEl.insertAfter(this.$element.find('input:first'));
@@ -512,15 +509,17 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         } else if (this.datafield === ALLFIELDS && _.isObject(data)) {
             this.queryModel = this.getTransformedData(extractDataAsArray(data));
         } else {
-            this.queryModel = undefined;
-            this.query = '';
-            this._modelByValue = undefined;
-            return;
+            // resetting the queryModel only when prevDatavalue is equal to data
+            if ((this as any).prevDatavalue !== data) {
+                this.queryModel = undefined;
+                this.query = '';
+                return;
+            }
         }
         this.updateDatavalueFromQueryModel();
 
         // Show the label value on input.
-        this._lastQuery = this.query = this.queryModel.length ? this.queryModel[0].label : '';
+        this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? _.get(this.queryModel[0], 'label') : '';
     }
 
 
@@ -550,7 +549,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             limit: this.limit,
             pagesize: this.pagesize,
             page: this.page,
-            onBeforeservicecall: this.onBeforeservicecall.bind(this)
+            onBeforeservicecall: this.invokeOnBeforeServiceCall.bind(this)
         };
 
         if (this.dataoptions) {

@@ -27,7 +27,7 @@ export class AppJSResolve implements Resolve<any> {
             const appScriptFn = await this.appJsProvider.getAppScriptFn();
             appScriptFn(this.app, this.utilService, this.inj);
         } catch (e) {
-            console.warn('Error in executing app.js');
+            console.warn('Error in executing app.js', e);
         }
 
         appJsLoaded = true;

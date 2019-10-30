@@ -37,6 +37,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     private activeTab: TabPaneComponent;
     private readonly promiseResolverFn: Function;
     private tabsAnimator: TabsAnimator;
+    private _oldPaneIndex: number;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
@@ -94,15 +95,17 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         paneRef.invokeOnSelectCallback(evt);
 
         this.activeTab = paneRef.getWidget();
+        const newPaneIndex = this.getPaneIndexByRef(paneRef);
 
         // invoke change callback if the evt is present, select a tab programmatically will not have the event
         if (evt) {
             this.invokeEventCallback('change', {
                 $event: evt,
-                newPaneIndex: this.getPaneIndexByRef(paneRef),
-                oldPaneIndex: this.getActiveTabIndex()
+                newPaneIndex: newPaneIndex,
+                oldPaneIndex: this._oldPaneIndex || 0
             });
         }
+        this._oldPaneIndex = newPaneIndex;
 
         if (evt) {
             headerElement = $(evt.target as HTMLElement).closest('li.tab-header');

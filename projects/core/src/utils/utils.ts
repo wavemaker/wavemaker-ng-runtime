@@ -2,10 +2,11 @@ import { Subject } from 'rxjs';
 
 import { getWmProjectProperties } from './wm-project-properties';
 
-import { $watch } from './watcher';
+import { $watch, $appDigest } from './watcher';
 import { DataType } from '../enums/enums';
 import { DataSource } from '../types/types';
 import { setAttr } from './dom';
+import { $parseEvent } from './expression-parser';
 
 declare const _, X2JS;
 declare const moment;
@@ -420,7 +421,7 @@ export const validateAccessRoles = (roleExp, loggedInUser) => {
 
 export const getValidJSON = (content) => {
     if (!content) {
-        return false;
+        return undefined;
     }
     try {
         const parsedIntValue = parseInt(content, 10);
@@ -428,7 +429,7 @@ export const getValidJSON = (content) => {
         return isObject(content) || !isNaN(parsedIntValue) ? content : JSON.parse(content);
     } catch (e) {
         /*terminating execution if new variable object is not valid json.*/
-        return false;
+        return undefined;
     }
 };
 
@@ -1190,3 +1191,50 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 
 };
 
+// close all the popovers.
+export const closePopover = (element) => {
+    if (!element.closest('.app-popover').length) {
+        const popoverElements = document.querySelectorAll('.app-popover-wrapper');
+        _.forEach(popoverElements, (ele) => {
+            if (ele.widget.isOpen) {
+                ele.widget.isOpen = false;
+            }
+        });
+    }
+};
+
+/**
+ * This method is to trigger change detection in the app
+ * This is exposed for the end user developer of WM app
+ * This is the alternative for $rs.$safeApply() in AngularJS
+ * See $appDigest in utils for more info
+ */
+export const detectChanges = $appDigest;
+
+/**
+ * This method is to trigger the action/link of menu/nav item
+ * @param scope - scope of the widget
+ * @param item - item object
+ */
+export const triggerItemAction  = (scope, item) => {
+    let itemLink = item.link;
+    const itemAction = item.action;
+    const linkTarget = item.target;
+    if (itemAction) {
+        if (!scope.itemActionFn) {
+            scope.itemActionFn = $parseEvent(itemAction);
+        }
+
+        scope.itemActionFn(scope.userDefinedExecutionContext, Object.create(item));
+    }
+    if (itemLink) {
+        if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
+            const queryParams = getUrlParams(itemLink);
+            itemLink = getRouteNameFromLink(itemLink);
+            const router = _.get(scope, 'route') || _.get(scope, 'menuRef.route');
+            router.navigate([itemLink], {queryParams});
+        } else {
+            openLink(itemLink, linkTarget);
+        }
+    }
+};

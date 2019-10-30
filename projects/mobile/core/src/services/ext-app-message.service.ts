@@ -16,7 +16,7 @@ interface Handler {
 
 @Injectable({ providedIn: 'root' })
 export class ExtAppMessageService {
-
+    static readonly SERVICE_NAME = 'ExtAppMessageService';
     private handlers = [];
 
     constructor(private app: App) {

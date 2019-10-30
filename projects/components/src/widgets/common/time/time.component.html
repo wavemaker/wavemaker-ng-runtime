@@ -2,7 +2,7 @@
 </ng-container>
 
 <ng-template #timePickerTemplate>
-    <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" container="body" style="display: inherit" [title]="hint">
+    <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" container="body" style="display: inherit">
         <input class="form-control app-textbox display-input" aria-label="Set the time"
                focus-target
                [tabindex]="tabindex"
@@ -15,6 +15,7 @@
                [attr.placeholder]="placeholder"
                [attr.accesskey]="shortcutkey"
                [required]="required"
+               [readOnly]="isReadOnly"
                (click)="toggleDropdown($event)"
                (focus)="invokeOnFocus($event)"
                (blur)="onInputBlur($event)"

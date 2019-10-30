@@ -40,8 +40,8 @@
                             "src/styles.css",
                             "src/assets/styles/css/wm-style.css",
                             "src/assets/styles/css/wm-responsive.css",
-                            "src/assets/themes/style.css",
-                            "src/assets/app.css"
+                            {"input":"src/assets/themes/material/style.css","lazy":true,"bundleName":"wm-styles"},
+                            {"input":"src/assets/app.css","lazy":true,"bundleName":"wm-styles"}
                         ],
                         "scripts": [
                             "./node_modules/lodash/lodash.min.js",
@@ -110,7 +110,7 @@
                         "styles": [
                             "src/styles.css",
                             "src/assets/styles/css/wm-style.css",
-                            "src/assets/themes/style.css",
+                            "src/assets/themes/material/style.css",
                             "src/assets/app.css"
                         ],
                         "scripts": [
@@ -234,6 +234,20 @@
                     "options": {
                         "tsConfig": "projects/components/tsconfig.lib.json",
                         "project": "projects/components/ng-package.json"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/components/src/test.ts",
+                        "polyfills": "projects/components/polyfills.ts",
+                        "tsConfig": "projects/components/tsconfig.spec.json",
+                        "karmaConfig": "projects/components/karma.conf.js",
+                        "styles": [
+                            "../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css"
+                        ],
+                        "scripts": [],
+                        "assets": []
                     }
                 },
                 "lint": {

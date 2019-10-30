@@ -50,8 +50,7 @@ const APP_FOLDER_STRUCTURE = [{
 
 @Injectable({ providedIn: 'root' })
 export class DeviceFileService implements IDeviceStartUpService {
-
-    public serviceName = DeviceFileService.name;
+    static readonly SERVICE_NAME = 'DeviceFileService';
 
     private _appName: string;
     private _fileTypeVsPathMap = {
@@ -222,6 +221,10 @@ export class DeviceFileService implements IDeviceStartUpService {
                 }
             }).then(resolve, reject);
         });
+    }
+
+    public getServiceName() {
+        return DeviceFileService.SERVICE_NAME;
     }
 
     private createFolderIfNotExists(parent: string, folders, fileTypeLocationMap) {

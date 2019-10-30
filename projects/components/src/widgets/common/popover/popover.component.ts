@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { PopoverDirective } from 'ngx-bootstrap';
 
-import { addClass, setAttr, setCSSFromObj } from '@wm/core';
+import { addClass, App, setAttr, setCSSFromObj } from '@wm/core';
 
 import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
@@ -44,6 +44,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public readonly popoverContainerCls;
     private keyEventPlugin;
     public canPopoverOpen = true;
+    private Widgets;
+    private Variables;
+    private Actions;
 
     public interaction: string;
     public popoverarrow: boolean;
@@ -62,8 +65,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor') anchorRef: ElementRef;
     @ContentChild(TemplateRef) popoverTemplate;
+    @ContentChild('partial') partialRef;
 
-    constructor(inj: Injector, @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
+    constructor(inj: Injector, private app: App, @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
         super(inj, WIDGET_CONFIG);
 
         // KeyEventsPlugin
@@ -83,7 +87,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
     // Trigger on hiding popover
     public onHidden() {
-        this.invokeEventCallback('hide', {$event: {type: 'show'}});
+        this.invokeEventCallback('hide', {$event: {type: 'hide'}});
+    }
+
+    private setFocusToPopoverLink() {
         setTimeout(() => this.anchorRef.nativeElement.focus(), 10);
     }
 
@@ -132,9 +139,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (!this.popoverarrow) {
             addClass(popoverContainer.querySelector('.arrow') as HTMLElement, 'hidden');
         }
-
-        this.invokeEventCallback('show', {$event: {type: 'show'}});
-
         if (this.interaction === 'hover' || this.interaction === 'default') {
 
             // do not use addEventListener here
@@ -147,6 +151,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
         const deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
             this.isOpen = false;
+            this.setFocusToPopoverLink();
             deRegister();
         });
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
@@ -156,6 +161,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Shift+Tab key
             if (action === 'shift.tab') {
                 this.bsPopoverDirective.hide();
+                this.setFocusToPopoverLink();
             }
         };
         popoverEndBtn.onkeydown = (event) => {
@@ -163,6 +169,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Tab key
             if (action === 'tab') {
                 this.bsPopoverDirective.hide();
+                this.setFocusToPopoverLink();
             }
         };
 
@@ -173,7 +180,33 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             if (this.popoverplacement === 'bottom' || this.popoverplacement === 'top') {
                 this.calculatePopoverPostion(popoverContainer);
             }
+            // triggering onload and onshow events after popover content has rendered
+            this.triggerPopoverEvents();
         });
+    }
+
+    triggerPopoverEvents() {
+        if (this.contentsource === 'partial') {
+            const cancelSubscription = this.app.subscribe('partialLoaded', (data) => {
+                const parEle = this.partialRef.nativeElement;
+                let partialScope;
+
+                if (parEle) {
+                    partialScope  = parEle.widget;
+                    this.Widgets   = partialScope.Widgets;
+                    this.Variables = partialScope.Variables;
+                    this.Actions   = partialScope.Actions;
+                    this.invokeEventCallback('load');
+                    this.invokeEventCallback('show', {$event: {type: 'show'}});
+                }
+                cancelSubscription();
+            });
+        } else {
+            this.Widgets   = this.viewParent.Widgets;
+            this.Variables = this.viewParent.Variables;
+            this.Actions   = this.viewParent.Actions;
+            this.invokeEventCallback('show', {$event: {type: 'show'}});
+        }
     }
 
     private hidePopover() {

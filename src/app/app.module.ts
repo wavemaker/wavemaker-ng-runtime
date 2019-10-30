@@ -57,6 +57,4 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-
-}
+export class AppModule {}

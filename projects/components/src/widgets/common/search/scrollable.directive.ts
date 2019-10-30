@@ -22,9 +22,11 @@ export class ScrollableDirective implements AfterContentInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        // assigning width for the dropdown.
-        const typeAheadInput = this.searchRef.$element.find('input:first');
-        this.searchRef.dropdownEl.width(typeAheadInput.outerWidth());
+        if (!this.searchRef.isMobileAutoComplete()) {
+            // assigning width for the dropdown.
+            const typeAheadInput = this.searchRef.$element.find('input:first');
+            this.searchRef.dropdownEl.width(typeAheadInput.outerWidth());
+        }
     }
 
     private notifyParent(evt: Event) {

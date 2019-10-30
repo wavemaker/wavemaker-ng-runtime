@@ -16,6 +16,7 @@ export interface FileContent {
 
 @Injectable({ providedIn: 'root' })
 export class FileSelectorService {
+    static readonly SERVICE_NAME = 'FileSelectorService';
 
     private fileBrowserComponent: FileBrowserComponent;
 

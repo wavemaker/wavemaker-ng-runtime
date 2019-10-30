@@ -25,6 +25,7 @@ import { AppManagerService, ComponentRefProvider, ComponentType } from '@wm/runt
 export class PageWrapperComponent implements OnInit, OnDestroy {
 
     subscription: Subscription;
+    queryParamSubscription: Subscription;
 
     constructor(
         private injector: Injector,
@@ -91,6 +92,14 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         return retVal === undefined ? true : retVal;
     }
 
+    loadPage(pageName) {
+        this.ngZone.run(() => {
+            if (pageName) {
+                this.renderPage(pageName);
+            }
+        });
+    }
+
     ngOnInit() {
         if (this.app.isPrefabType) {
             // there is only one route
@@ -98,11 +107,10 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         } else {
             $(this.getTargetNode()).find('>div:first').remove();
             this.subscription = this.route.params.subscribe(({pageName}: any) => {
-                this.ngZone.run(() => {
-                    if (pageName) {
-                        this.renderPage(pageName);
-                    }
-                });
+               this.loadPage(pageName);
+            });
+            this.queryParamSubscription = this.route.queryParams.subscribe(p => {
+                this.loadPage(this.app.activePageName);
             });
         }
     }
@@ -111,6 +119,9 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.vcRef.clear();
         if (this.subscription) {
             this.subscription.unsubscribe();
+        }
+        if (this.queryParamSubscription) {
+            this.queryParamSubscription.unsubscribe();
         }
     }
 }

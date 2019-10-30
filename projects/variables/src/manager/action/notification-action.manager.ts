@@ -21,7 +21,7 @@ export class NotificationActionManager extends BaseActionManager {
             positionClass = 'toast-' + (options.position || variable.dataBinding.toasterPosition || 'bottom right').replace(' ', '-'),
             partialPage = variable.dataBinding.page,
             DEFAULT_DURATION = 3000;
-        let duration = parseInt(variable.dataBinding.duration || options.duration, null),
+        let duration = parseInt(options.duration || variable.dataBinding.duration, null),
             toaster;
 
         // duration
@@ -32,7 +32,7 @@ export class NotificationActionManager extends BaseActionManager {
             toaster = toasterService.showCustom(partialPage, {positionClass: positionClass, timeOut: duration,
                 partialParams: variable._binddataSet, context: variable._context});
         } else {
-            toaster = toasterService.show(type, title, body || null, {positionClass: positionClass, timeOut: duration});
+            toaster = toasterService.show(type, title, body || null, {positionClass: positionClass, timeOut: duration, enableHtml: true});
         }
 
         // callbacks

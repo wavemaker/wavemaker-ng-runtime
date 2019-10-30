@@ -1,7 +1,7 @@
 <ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
 
 <ng-template #dataPickerTemplate>
-    <div dropdown [isOpen]="isTimeOpen" autoClose="false" [container]="'body'" (onShown)="onTimepickerOpen()" [title]="hint"
+    <div dropdown [isOpen]="isTimeOpen" autoClose="false" [container]="'body'" (onShown)="onTimepickerOpen()"
          style="display: inherit;">
         <input class="form-control app-textbox display-input" aria-label="Set the date and time"
                focus-target
@@ -16,6 +16,7 @@
                [autofocus]="autofocus"
                [disabled]="disabled || readonly || isCurrentDate"
                [required]="required"
+               [readOnly]="isReadOnly"
                [attr.placeholder]="placeholder"
                [attr.accesskey]="shortcutkey"
                (keydown)="onDisplayKeydown($event)">

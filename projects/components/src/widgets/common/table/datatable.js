@@ -1338,10 +1338,7 @@ $.widget('wm.datatable', {
     },
     closePopover: function() {
         //If the DataTable is in the popover, popover shouldn't be closed
-        if (!this.element.closest('.app-popover').length) {
-            //removes all the popovers
-            $('.app-popover-wrapper').click();
-        }
+        this.options.closePopover(this.element);
     },
     headerClickHandler: function (e) {
         var $th = $(e.target).closest('th.app-datagrid-header-cell'),
@@ -2224,7 +2221,8 @@ $.widget('wm.datatable', {
                     }
                 }
                 // If class has danger, confirm dialog is opened, so dont save the row.
-                if (isRelatedTargetRowAction || $row.hasClass("danger") || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null)) {
+                 //If focusout is because of input element or row action or current row, dont save the row
+                if (isRelatedTargetRowAction || $row.hasClass("danger") || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null) || isInvalidTarget() || $relatedTarget.attr("focus-target") === "") {
                     return;
                 }
                 // Save the Row if any button from Grid action is clicked / AddRow action is
@@ -2232,10 +2230,6 @@ $.widget('wm.datatable', {
                 if (!isTargetGridAction && !isTargetRowAction) {
                     //Save the row on last column of the data table. Do not save the row if focus is out of input file.
                     if (!isLastColumn || (isLastColumn && e.relatedTarget === null) || $target.hasClass("file-upload")) {
-                        return;
-                    }
-                    //If focusout is because of input element or row action or current row, dont save the row
-                    if ($relatedTarget.attr("focus-target") === "" || !isLastColumn && isInvalidTarget()) {
                         return;
                     }
                 }

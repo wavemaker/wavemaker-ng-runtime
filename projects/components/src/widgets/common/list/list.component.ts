@@ -588,7 +588,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private toggleListItemSelection($listItem: ListItemDirective) {
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
-            const item = $listItem.item;
+            let item = $listItem.item;
+            if (this.groupby && _.has(item, '_groupIndex')) {
+                // If groupby is enabled, item contains _groupIndex property which should be excluded from selecteditem.
+                item = _.clone(item);
+                delete item._groupIndex;
+            }
             if ($listItem.isActive) {
                 this._items = _.pullAllWith(this._items, [item], _.isEqual);
                 $listItem.isActive = false;
@@ -650,7 +655,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
 
         if (this.fieldDefs.length && this.infScroll) {
-            if (isMobileApp()) {
+            const smoothScrollEl = this.$element.closest('[wmsmoothscroll]');
+            // if smoothscroll is set to false, then native scroll has to be applied
+            // otherwise smoothscroll events will be binded.
+            if (isMobileApp() && smoothScrollEl.length && smoothScrollEl.attr('wmsmoothscroll') === 'true') {
                 this.bindIScrollEvt();
             } else {
                 this.bindScrollEvt();
@@ -861,7 +869,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             selectCount = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
 
             // Handling multiselect for mobile applications
-            if (this.multiselect && isMobile()) {
+            if (this.multiselect && isMobileApp()) {
                 if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
                     this.toggleListItemSelection($listItem);
                 } else {

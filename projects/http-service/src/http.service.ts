@@ -42,6 +42,7 @@ export class HttpServiceImpl extends AbstractHttpService {
         const headers = options.headers;
         const params = options.params;
         const responseType = options.responseType;
+        const withCredentials = options.withCredentials;
 
         // this header is not to be sent with non-proxy calls from service variable
         if (!options.isDirectCall) {
@@ -62,7 +63,8 @@ export class HttpServiceImpl extends AbstractHttpService {
         const reqOptions = {
             headers: reqHeaders,
             params: reqParams,
-            responseType: responseType
+            responseType: responseType,
+            withCredentials: withCredentials
         };
         if (_.includes(this.nonBodyTypeMethods, options.method && options.method.toUpperCase())) {
             third = reqOptions;
@@ -92,7 +94,7 @@ export class HttpServiceImpl extends AbstractHttpService {
 
         // WM services have the format of error response as errorDetails.error
         if (errorDetails && errorDetails.errors) {
-            errMsg = this.parseErrors(errorDetails.errors);
+            errMsg = this.parseErrors(errorDetails.errors) || errMsg || 'Service Call Failed';
         } else {
             errMsg = errMsg || 'Service Call Failed';
         }
@@ -146,9 +148,11 @@ export class HttpServiceImpl extends AbstractHttpService {
 
     parseErrors(errors) {
         let errMsg = '';
-        errors.error.forEach((errorDetails, i) => {
-            errMsg += this.parseError(errorDetails) + (i > 0 ? '\n' : '');
-        });
+        if (errors && errors.error && errors.error.length) {
+            errors.error.forEach((errorDetails, i) => {
+                errMsg += this.parseError(errorDetails) + (i > 0 ? '\n' : '');
+            });
+        }
         return errMsg;
     }
 

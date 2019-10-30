@@ -4,7 +4,7 @@ const tagName = 'button';
 
 register('wm-camera', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmCamera ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} type='button' wmCamera ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

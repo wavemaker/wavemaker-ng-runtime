@@ -24,17 +24,18 @@ const noSpan = ({} as ParseSourceSpan);
 register('wm-page', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
-            if (isMobileApp()) {
-                const pageContentNode = findChild(findChild(node, 'wm-content'), 'wm-page-content');
-                if (pageContentNode) {
-                    const conditionalNode = createElement('ng-container');
-                    addAtrribute(conditionalNode, '*ngIf', 'compilePageContent');
+            const pageContentNode = findChild(findChild(node, 'wm-content'), 'wm-page-content');
+            if (pageContentNode) {
+                const conditionalNode = createElement('ng-container');
+                addAtrribute(conditionalNode, '*ngIf', 'compilePageContent');
+                conditionalNode.children = conditionalNode.children.concat(pageContentNode.children);
+                conditionalNode.children.push(new Text('{{onPageContentReady()}}', null));
+                pageContentNode.children = [conditionalNode];
+                if (isMobileApp()) {
                     const loader = createElement('div');
                     addAtrribute(loader, 'wmPageContentLoader', '');
                     addAtrribute(loader, '*ngIf', '!showPageContent');
-                    conditionalNode.children = conditionalNode.children.concat(pageContentNode.children);
-                    conditionalNode.children.push(new Text('{{onPageContentReady()}}', null));
-                    pageContentNode.children = [conditionalNode, loader];
+                    pageContentNode.children.push(loader);
                 }
             }
         },

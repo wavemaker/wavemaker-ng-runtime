@@ -15,6 +15,7 @@ Object.freeze(FIRST_TIME_WATCH);
 export const isFirstTimeChange = v => v === FIRST_TIME_WATCH;
 
 let muted = false;
+let appRef;
 
 export const debounce = (fn: Function, wait: number = 50) => {
     let timeout;
@@ -105,26 +106,8 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
 
 export const setNgZone = zone => ngZone = zone;
 
-export const setAppRef = appRef => {
-    $appDigest = (() => {
-        let queued = false;
-        return (force?: boolean) => {
-            if (force) {
-                ngZone.run(() => appRef.tick());
-                queued = false;
-            } else {
-                if (queued) {
-                    return;
-                } else {
-                    queued = true;
-                    $RAF(() => {
-                        ngZone.run(() => appRef.tick());
-                        queued = false;
-                    });
-                }
-            }
-        };
-    })();
+export const setAppRef = ref => {
+    appRef = ref
 };
 
 export const isChangeFromWatch = () => changedByWatch;
@@ -152,4 +135,25 @@ export const $invokeWatchers = (force?: boolean, ignoreMuted?: boolean) => {
     }
 };
 
-export let $appDigest = (force?: boolean) => {};
+export const $appDigest = (() => {
+    let queued = false;
+    return (force?: boolean) => {
+        if (!appRef) {
+            return;
+        }
+        if (force) {
+            ngZone.run(() => appRef.tick());
+            queued = false;
+        } else {
+            if (queued) {
+                return;
+            } else {
+                queued = true;
+                $RAF(() => {
+                    ngZone.run(() => appRef.tick());
+                    queued = false;
+                });
+            }
+        }
+    };
+})();

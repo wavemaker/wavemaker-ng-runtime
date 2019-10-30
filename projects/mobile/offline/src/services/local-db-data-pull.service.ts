@@ -63,7 +63,7 @@ const pullProcessManager = (() => {
  */
 @Injectable({providedIn: 'root'})
 export class LocalDBDataPullService {
-
+    static readonly SERVICE_NAME = 'LocalDBDataPullService';
     constructor(
         private app: App,
         private localDBManagementService: LocalDBManagementService,

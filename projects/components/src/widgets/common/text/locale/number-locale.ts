@@ -124,7 +124,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {string}
      */
     private transformNumber(number): string {
-        return this.decimalPipe.transform(number, this.numberfilter, this.localefilter);
+        return this.decimalPipe.transform(number, this.numberfilter, this.localefilter || this.selectedLocale);
     }
 
     /**
@@ -165,7 +165,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if ( Number.isNaN(number) || Number.isNaN(decimal)) {
             return NaN;
         }
-        return number + decimal;
+        // if the number is negative then calculate the number as number - decimal
+        // Ex: number = -123 and decimal = 0.45 then number - decimal = -123-045 = -123.45
+        return number >= 0 ? number + decimal : number - decimal;
     }
 
     // updates the widgets text value.
@@ -174,7 +176,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const position: number = input.selectionStart;
         const preValue: string = input.value;
         this.displayValue = input.value  = this.transformNumber(this.proxyModel);
-        if (this.updateon === 'default') {
+        // in safari browser, setSelectionRange will focus the input by default, which may invoke the focus event on widget.
+        // Hence preventing the setSelectionRange when default value is set i.e. widget is not focused.
+        if (this.updateon === 'default' && !this.isDefaultQuery) {
             this.resetCursorPosition(preValue.length - position);
         }
     }
@@ -262,7 +266,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             return;
         }
 
-        const validity = new RegExp(`^[\\d\\s,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
+        const validity = new RegExp(`^[\\d\\s-,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
         const inputValue = $event.target.value;
         // validates if user entered an invalid character.
         if (!validity.test($event.key)) {
@@ -276,7 +280,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (_.intersection(_.toArray(inputValue), ['e', 'E']).length && _.includes('eE', $event.key)) {
             return false;
         }
-        if (_.includes(inputValue, '+') &&  $event.key === '+') {
+        if ((_.includes(inputValue, '+') || _.includes(inputValue, '-') ) &&  ($event.key === '+' || $event.key === '-')) {
             return false;
         }
     }

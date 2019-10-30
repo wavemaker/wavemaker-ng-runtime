@@ -1,5 +1,8 @@
-import { AfterViewInit, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+
+import { ScriptLoaderService } from '@wm/core';
+import { PageDirective } from '@wm/components';
 
 import { Subject } from 'rxjs';
 
@@ -42,6 +45,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     appLocale: any;
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
+    @ViewChild(PageDirective) pageDirective;
+    scriptLoaderService: ScriptLoaderService;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -57,6 +62,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.route = this.injector.get(ActivatedRoute);
         this.appManager = this.injector.get(AppManagerService);
         this.navigationService = this.injector.get(AbstractNavigationService);
+        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.router = this.injector.get(Router);
 
@@ -124,7 +130,9 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         const subscription = this.viewInit$.subscribe(noop, noop, () => {
 
             if (!this.appManager.isAppVariablesFired()) {
-                variableCollection.callback(this.App.Variables).catch(noop);
+                variableCollection.callback(this.App.Variables).catch(noop).then(() => {
+                    this.appManager.notify('app-variables-data-loaded', {pageName: this.pageName});
+                });
                 variableCollection.callback(this.App.Actions);
                 this.appManager.appVariablesReady();
                 this.appManager.isAppVariablesFired(true);
@@ -133,7 +141,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             variableCollection.callback(variableCollection.Variables)
                 .catch(noop)
                 .then(() => {
-                    this.appManager.notify('page-start-up-variables-loaded', {pageName: this.pageName});
+                    this.appManager.notify('page-variables-data-loaded', {pageName: this.pageName});
                     this.startupVariablesLoaded = true;
                     // hide the loader only after the some setTimeout for smooth page load.
                     setTimeout(() => {
@@ -176,30 +184,41 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
     }
 
-    ngAfterViewInit(): void {
-        const transition = this.navigationService.getPageTransition();
-        if (transition) {
-            const pageOutlet = $('app-page-outlet:first');
-            pageOutlet.prepend(pageOutlet.children().first().clone());
-        }
-        this.runPageTransition(transition).then(() => {
-            this.pageTransitionCompleted = true;
-            (this as any).compilePageContent = true;
+    private loadScripts() {
+        return new Promise((resolve) => {
+            const scriptsRequired = this.pageDirective.$element.attr('scripts-to-load');
+            if (scriptsRequired) {
+                this.scriptLoaderService
+                    .load(...scriptsRequired.split(','))
+                    .then(resolve);
+            } else {
+                resolve();
+            }
         });
-        setTimeout(() => {
-            unMuteWatchers();
-            this.viewInit$.complete();
-            if (isMobileApp()) {
+    }
+
+    ngAfterViewInit(): void {
+        this.loadScripts().then(() => {
+            const transition = this.navigationService.getPageTransition();
+            if (transition) {
+                const pageOutlet = $('app-page-outlet:first');
+                pageOutlet.prepend(pageOutlet.children().first().clone());
+            }
+            this.runPageTransition(transition).then(() => {
+                this.pageTransitionCompleted = true;
+                (this as any).compilePageContent = true;
+            });
+            setTimeout(() => {
+                unMuteWatchers();
+                this.viewInit$.complete();
                 this.onPageContentReady = () => {
                     this.fragmentsLoaded$.subscribe(noop, noop, () => {
                         this.invokeOnReady();
                     });
                     this.onPageContentReady = noop;
                 };
-            } else {
-                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
-            }
-        }, 300);
+            }, 300);
+        });
     }
 
     ngOnDestroy(): void {

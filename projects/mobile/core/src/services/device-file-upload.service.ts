@@ -85,7 +85,7 @@ export class UploadRequest {
 
 @Injectable({ providedIn: 'root' })
 export class DeviceFileUploadService {
-
+    static readonly SERVICE_NAME = 'DeviceFileUploadService';
     constructor(private cordovaFile: File) {}
 
     public upload(url: string, fileParamName: string, path: string, fileName?: string, params?: any, headers?: any): Promise<IUploadResponse> {

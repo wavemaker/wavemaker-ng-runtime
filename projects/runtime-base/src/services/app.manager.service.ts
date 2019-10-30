@@ -29,6 +29,7 @@ enum POST_MESSAGES {
 
 @Injectable()
 export class AppManagerService {
+    static readonly SERVICE_NAME = 'AppManagerService';
 
     private appVariablesLoaded = false;
     private appVariablesFired = false;
@@ -150,6 +151,14 @@ export class AppManagerService {
         return this.appVariablesFired;
     }
 
+    private clearLoggedInUserVariable(variable) {
+        variable.isAuthenticated = false;
+        variable.roles           = [];
+        variable.name            = undefined;
+        variable.id              = undefined;
+        variable.tenantId        = undefined;
+    }
+
     private updateLoggedInUserVariable() {
         const loggedInUser = _.get(this.$app, 'Variables.loggedInUser.dataSet');
 
@@ -157,7 +166,7 @@ export class AppManagerService {
         if (!loggedInUser) {
             return;
         }
-        this.$security.load().then(()=>{
+        return this.$security.load().then(() => {
             const securityConfig = this.$security.get();
             if (securityConfig && securityConfig.securityEnabled && securityConfig.authenticated) {
                 loggedInUser.isAuthenticated = securityConfig.authenticated;
@@ -166,8 +175,11 @@ export class AppManagerService {
                 loggedInUser.id              = securityConfig.userInfo.userId;
                 loggedInUser.tenantId        = securityConfig.userInfo.tenantId;
             } else {
+                this.clearLoggedInUserVariable(loggedInUser);
+                loggedInUser.isSecurityEnabled = securityConfig && securityConfig.securityEnabled;
                 throw null;
             }
+            return securityConfig;
         }).catch(err => {
             loggedInUser.isAuthenticated = false;
             loggedInUser.roles           = [];
@@ -319,7 +331,7 @@ export class AppManagerService {
     reloadAppData() {
         return this.loadSecurityConfig().then(() => {
             return this.loadMetadata().then(() => {
-                this.updateLoggedInUserVariable();
+                return this.updateLoggedInUserVariable();
             });
         });
     }

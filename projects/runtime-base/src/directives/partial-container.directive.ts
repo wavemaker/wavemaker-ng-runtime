@@ -2,7 +2,7 @@ import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Inj
 
 import { debounceTime, filter } from 'rxjs/operators';
 
-import { $invokeWatchers, noop } from '@wm/core';
+import { App, $invokeWatchers, noop } from '@wm/core';
 
 import { WidgetRef } from '@wm/components';
 
@@ -43,10 +43,12 @@ export class PartialContainerDirective {
         }
     }
 
-    renderPartial = _.debounce(this._renderPartial, 200, {leading: true});
+    renderPartial = _.debounce(this._renderPartial, 200);
 
     onLoadSuccess() {
         this.componentInstance.invokeEventCallback('load');
+
+        this.app.notify('partialLoaded');
     }
 
     constructor(
@@ -54,6 +56,7 @@ export class PartialContainerDirective {
         public vcRef: ViewContainerRef,
         public elRef: ElementRef,
         public inj: Injector,
+        private app: App,
         @Attribute('content') _content: string,
         private resolver: ComponentFactoryResolver,
         private componentRefProvider: ComponentRefProvider,

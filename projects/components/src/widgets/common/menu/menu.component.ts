@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { BsDropdownDirective } from 'ngx-bootstrap';
 
-import { $appDigest, addClass, removeClass } from '@wm/core';
+import { $appDigest, addClass, removeClass, triggerItemAction, UserDefinedExecutionContext  } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { isActiveNavItem, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -75,6 +75,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public autoclose: string;
     public autoopen: string;
 
+    private itemActionFn: Function;
     private menuCaret = 'fa-caret-down';
     private _selectFirstItem = false;
 
@@ -132,6 +133,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     constructor(
         inj: Injector,
         public route: Router,
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Self() @Optional() public bsDropdown: BsDropdownDirective,
         @Optional() private parentNav: NavComponent,
         @Attribute('select.event') public selectEventCB: string
@@ -142,6 +144,37 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         } else {
             this.disableMenuContext = !!selectEventCB;
         }
+        // For selecting the item on load
+        const datasetSubscription = this.nodes$.subscribe(() => {
+            if (!_.isEmpty(this.nodes)) {
+                // If menu widget is inside nav widget then dont check for item isactive property because these will be handled form nav widget.
+                if (this.parentNav) {
+                   return;
+                }
+                let itemFound = false;
+                const getItem = (nodes) => {
+                     _.forEach(nodes, (item) => {
+                         if (itemFound) {
+                             return;
+                         }
+                        if (item.isactive) {
+                            itemFound = true;
+                            this.onMenuItemSelect({$event: {}, $item: item});
+                            // Trigger the action associated with active item
+                            triggerItemAction(this, item);
+                            return false;
+                        }
+                        if (!_.isEmpty(item.children)) {
+                            getItem(item.children);
+                        }
+
+                    });
+                };
+                getItem(this.nodes);
+            }
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+
     }
 
     /**

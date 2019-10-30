@@ -20,7 +20,7 @@ register('wm-popover', (): IBuildTaskDef => {
                     contentMarkup = `content.bind="${bindContent}"`;
                 }
 
-                popoverTemplate = `<div wmContainer partialContainer ${contentMarkup}>`;
+                popoverTemplate = `<div wmContainer #partial partialContainer ${contentMarkup}>`;
                 shared.set('hasPopoverContent', true);
             }
 

@@ -1,4 +1,4 @@
-import { AfterContentInit, Attribute, ContentChild, ContentChildren, Directive, Injector, OnInit, Optional } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Attribute, ContentChild, ContentChildren, TemplateRef, Directive, Injector, OnInit, Optional } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
@@ -16,7 +16,7 @@ declare const _;
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel',
-                            'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataset'];
+                            'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataentrymode', 'dataset'];
 const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required'];
 inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
 
@@ -49,7 +49,7 @@ class FieldDef {
         provideAsWidgetRef(TableColumnDirective)
     ]
 })
-export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit {
+export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit, AfterViewInit {
     static initializeProps = registerProps();
 
     @ContentChildren('filterWidget') _filterInstances;
@@ -121,6 +121,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     private _datasource: any;
     private _debounceSetUpValidators;
     private _debounceSetUpValidatorsNew;
+
+    @ContentChild('filterTmpl') filterTemplateRef: TemplateRef<any>;
 
     constructor(
         inj: Injector,
@@ -203,6 +205,13 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             }
         }
         super.ngAfterContentInit();
+    }
+
+    ngAfterViewInit() {
+        // manually listing the table column templateRef as templateRef will not be available prior.
+        if (this.filterTemplateRef) {
+            this.table.renderDynamicFilterColumn(this.filterTemplateRef);
+        }
     }
 
     addFormControl(suffix?: string) {
@@ -449,7 +458,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.limit =  this.limit ? +this.limit  :  undefined;
         this.editWidgetType = this['edit-widget-type'] =  this['edit-widget-type'] || getEditModeWidget(this);
         this.filterOn =  this['filter-on'];
-        this.readonly =  isDefined(this.readonly) ? this.readonly  :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
+        this.readonly =  isDefined(this.getAttr('readonly')) ? this.getAttr('readonly') === 'true' :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
         this.filterwidget =  this.filterwidget || getDataTableFilterWidget(this.type || 'string');
         this.isFilterDataSetBound = !!this.bindfilterdataset;
         this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);

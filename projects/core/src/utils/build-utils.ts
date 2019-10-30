@@ -43,10 +43,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmCurrency ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${innerTmpl}></div>`;
+            tmpl = `<div wmDate dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${innerTmpl}></div>`;
+            tmpl = `<div wmDateTime dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
             tmpl = `<div wmNumber ${innerTmpl} type="number" aria-label="Only numbers" ${updateOnTmpl}></div>`;
@@ -83,10 +83,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-textarea ${innerTmpl} role="textbox" aria-describedby="Place your text" ${updateOnTmpl}></wm-textarea>`;
             break;
         case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${innerTmpl}></div>`;
+            tmpl = `<div wmTime dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
-            tmpl = `<div wmDateTime ${innerTmpl} role="input"></div>`;
+            tmpl = `<div wmDateTime dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} role="input"></div>`;
             break;
         case FormWidgetType.UPLOAD:
             const counter = options.counter;
@@ -149,7 +149,8 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     // The markup of root node(table, list, carousel) attributes conatains same dataset variable binding then those attributes need to be updated only for specific properties mentioned in widgetList map.
                     if (!widgetList[nodeName] || (widgetList[nodeName] && widgetList[nodeName].indexOf(attr.name) > -1)) {
                         // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
-                        if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet) {
+                        // [WMS-17908]: if child widget contains bind expression as parendataset.length > 0 then dont replace it with item
+                        if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet && !_.includes(value, 'bind:' + parentDataSet + '.length')) {
                             value = value.replace('bind:', '');
                             value = value.replace(regex, referenceName);
                             value = 'bind:' + value;

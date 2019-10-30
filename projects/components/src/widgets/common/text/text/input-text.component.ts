@@ -80,7 +80,7 @@ export class InputTextComponent extends BaseInput {
 
     get mask() {
         if (this.displayformat) {
-            return {mask: this.maskVal};
+            return {mask: this.maskVal, showMask: true};
         } else {
             return {mask: false};
         }

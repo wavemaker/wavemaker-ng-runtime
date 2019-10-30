@@ -48,11 +48,11 @@ XMLHttpRequest.prototype.open = function (method: string, url: string, async: bo
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService implements IDeviceStartUpService {
-
-    public serviceName = NetworkService.name;
+    static readonly SERVICE_NAME = 'NetworkService';
 
     private _autoConnect = localStorage.getItem(AUTO_CONNECT_KEY) !== 'false';
     private _lastKnownNetworkState: any;
+    private _isCheckingServer = false;
 
     constructor(private httpClient: HttpClient, private app: App, private network: Network) {
     }
@@ -108,7 +108,14 @@ export class NetworkService implements IDeviceStartUpService {
      *
      * @returns {boolean} Returns true, if app is connected to server. Otherwise, returns false.
      */
-    public isConnected = () => networkState.isConnected;
+    public isConnected = () => {
+        // checking for connection type.
+        if (_.get(navigator, 'connection') && navigator.connection.type) {
+            networkState.isConnected = networkState.isConnected && (navigator.connection.type !== 'none');
+        }
+        this.checkForNetworkStateChange();
+        return networkState.isConnected;
+    }
 
     /**
      * Returns true if app is trying to connect to server. Otherwise, returns false.
@@ -164,11 +171,12 @@ export class NetworkService implements IDeviceStartUpService {
         return defer.promise;
     }
 
-    public start(): Promise<void> {
+    public start(): Promise<any> {
         if (window['cordova']) {
             // Connection constant will be available only when network plugin is included.
             if (window['Connection'] && navigator.connection) {
-                networkState.isNetworkAvailable = (navigator.connection.type !== Connection.NONE);
+                networkState.isNetworkAvailable = navigator.connection.type !== 'none';
+                networkState.isConnected = networkState.isNetworkAvailable && networkState.isConnected;
                 /*
                  * When the device comes online, check is the service is available. If the service is available and auto
                  * connect flag is true, then app is automatically connected to remote server.
@@ -192,15 +200,24 @@ export class NetworkService implements IDeviceStartUpService {
                      * If network is available and server is not available,then
                      * try to connect when server is available.
                      */
-                    if (data.isNetworkAvailable && !data.isServiceAvailable) {
-                        this.checkForServiceAvailiblity().then(() => this.connect());
+                    if (data.isNetworkAvailable && !data.isServiceAvailable && !this._isCheckingServer) {
+                        this._isCheckingServer = true;
+                        this.checkForServiceAvailiblity().then(() => {
+                            this._isCheckingServer = false;
+                            this.connect();
+                        }, () => {
+                            this._isCheckingServer = false;
+                        });
                     }
                 });
             }
         }
         // to set the default n/w connection values.
-        this.tryToConnect(true).catch(noop);
-        return Promise.resolve();
+        return this.tryToConnect(true).catch(noop);
+    }
+
+    public getServiceName() {
+        return NetworkService.SERVICE_NAME;
     }
 
     /**
@@ -228,12 +245,14 @@ export class NetworkService implements IDeviceStartUpService {
         const maxTimeout = 4500;
         return new Promise<void>(resolve => {
             const intervalId = setInterval(() => {
-                this.isServiceAvailable(maxTimeout).then(available => {
-                    if (available) {
-                        clearInterval(intervalId);
-                        resolve();
-                    }
-                });
+                if (networkState.isNetworkAvailable) {
+                    this.isServiceAvailable(maxTimeout).then(available => {
+                        if (available) {
+                            clearInterval(intervalId);
+                            resolve();
+                        }
+                    });
+                }
             }, 5000);
         });
     }
@@ -272,6 +291,7 @@ export class NetworkService implements IDeviceStartUpService {
 
             const timer = setTimeout(() => {
                 oReq.abort(); // abort request
+                resolve(false);
             }, maxTimeout);
 
             oReq.addEventListener('load', () => {
@@ -306,7 +326,7 @@ export class NetworkService implements IDeviceStartUpService {
      */
     private tryToConnect(silentMode = false): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            this.isServiceAvailable().then(() => {
+            this.isServiceAvailable(5000).then(() => {
                 if (networkState.isServiceAvailable && this._autoConnect) {
                     networkState.isConnecting = true;
                     if (!silentMode) {
