@@ -23,13 +23,16 @@ const generateHashForScripts = () => {
     return new Promise(resolve => {
         fs.readdir(opPath, (err, items) => {
             const promises = items.map(i => {
-                const nohashIndex = i.indexOf('-NOHASH.');
+                const nohashIndex = i.indexOf('-NOHASH.js');
                 if (nohashIndex > 0) {
-                    const ext = i.substring(nohashIndex + 8);
                     const key = i.substring(0, nohashIndex);
                     return generateHash(`${opPath}/${i}`).then( hash => {
-                        scriptsMap[`${key}.${ext}`] = `${key}.${hash}.${ext}`;
-                        return copyFile(`${opPath}/${key}-NOHASH.${ext}`, `${opPath}/${key}.${hash}.${ext}`);
+                        scriptsMap[`${key}.js`] = `${key}.${hash}.js`;
+                        return Promise.all([
+                            copyFile(`${opPath}/${key}-NOHASH.js`, `${opPath}/${key}.${hash}.js`),
+                            copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
+                            copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
+                        ]);
                     });
                 }
             });

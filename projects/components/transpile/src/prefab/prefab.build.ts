@@ -7,7 +7,7 @@ register('wm-prefab', () => {
         pre: attrs => `<${tagName} wmPrefab data-role="perfab" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
-            from: '@wm/components/page/prefab',
+            from: '@wm/components/prefab',
             name: 'PrefabModule'
         }]
     };

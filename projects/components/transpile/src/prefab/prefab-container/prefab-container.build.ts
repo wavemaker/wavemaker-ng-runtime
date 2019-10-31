@@ -25,7 +25,7 @@ register('wm-prefab-container', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmPrefabContainer ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
-            from: '@wm/components/page/prefab',
+            from: '@wm/components/prefab',
             name: 'PrefabModule'
         }]
     };
