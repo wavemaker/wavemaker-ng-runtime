@@ -27,7 +27,7 @@ export class ScriptLoaderService {
         });
     }
 
-    load(...scripts: string[]) {
+    load(...scripts: string[]): Promise<any> {
         if (scripts && scripts.length) {
             return Promise.resolve()
                 .then(() => this.pathMappings || this.loadPathMappings())
