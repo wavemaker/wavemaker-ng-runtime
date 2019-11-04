@@ -11,7 +11,12 @@ export abstract class SwipeAnimation {
     private _isGesturesEnabled = true;
 
     public abstract animation(): [{}] | {};
-    public bindEvents() { return ['touch']; }
+    public bindEvents() {
+        if (window['PointerEvent']) {
+            return ['pointer'];
+        }
+        return ['touch'];
+    }
     public bounds(e?, $d?: number) { return {}; }
     public context() { return {}; }
     public direction() { return $.fn.swipey.DIRECTIONS.HORIZONTAL; }
