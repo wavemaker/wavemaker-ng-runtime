@@ -47,8 +47,31 @@ export class WizardStepDirective extends BaseComponent {
         return this.active;
     }
 
+    /**
+     * along with the wizard form , also validate the forms
+     * if there are any inside the wizard
+     * @returns {boolean}
+     */
     public get isValid() {
-        return this.ngForm.valid;
+        return this.ngForm.valid && this.areEmbeddedFormsValid();
+    }
+
+    /**
+     * get all the forms inside the wizard if any and validate
+     * @returns {boolean}
+     */
+    private areEmbeddedFormsValid() {
+        let embeddedForms = this.getAllEmbeddedForms();
+        for (let form of embeddedForms) {
+            if(!form.widget.ngform.valid) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private getAllEmbeddedForms() {
+        return this.$element.find('form');
     }
 
     public get enableNext() {
@@ -67,7 +90,6 @@ export class WizardStepDirective extends BaseComponent {
         const isActive = this.active;
         this.status = STEP_STATUS.CURRENT;
         if (nv && !isActive) {
-            this.invokeEventCallback('load');
             this.redrawChildren();
         }
     }
@@ -118,6 +140,7 @@ export class WizardStepDirective extends BaseComponent {
             if (this.reDrawableComponents) {
                 this.reDrawableComponents.forEach(c => c.redraw());
             }
+            this.invokeEventCallback('load');
         }, 100);
     }
 }
