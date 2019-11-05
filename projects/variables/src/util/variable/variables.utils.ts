@@ -147,9 +147,9 @@ export const initiateCallback = (type: string, variable: any, data: any, options
     const fn = $parseEvent(variable[type]);
     if (type === VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE) {
         if (variable.category === 'wm.LiveVariable' && variable.operation === 'read') {
-            return fn(variable._context, {variable: variable, dataFilter: data});
+            return fn(variable._context, {variable: variable, dataFilter: data, options: options});
         } else {
-            return fn(variable._context, {variable: variable, inputData: data});
+            return fn(variable._context, {variable: variable, inputData: data, options: options});
         }
     } else {
         return fn(variable._context, {variable: variable, data: data, options: options});
