@@ -14,7 +14,9 @@ import { PartialRefProvider, ComponentType } from "@wm/runtime/base";
 
 type ModuleWithRoot = Type<any> & { rootComponent: Type<any> };
 
-@Injectable()
+@Injectable({
+    providedIn: "root"
+})
 export class PartialRefProviderService extends PartialRefProvider {
     private moduleRef: NgModuleRef<any>;
     constructor(

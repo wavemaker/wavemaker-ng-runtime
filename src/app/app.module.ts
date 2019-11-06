@@ -52,7 +52,7 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
         {provide: AppJSProvider, useClass: AppJSProviderService},
         {provide: AppVariablesProvider, useClass: AppVariablesProviderService},
         {provide: ComponentRefProvider, useClass: ComponentRefProviderService},
-        {provide: PartialRefProvider, useClass: PartialRefProviderService},
+        {provide: PartialRefProvider, useClass: ComponentRefProviderService},
         {provide: PrefabConfigProvider, useClass: PrefabConfigProviderService}
     ],
     bootstrap: [AppComponent]
