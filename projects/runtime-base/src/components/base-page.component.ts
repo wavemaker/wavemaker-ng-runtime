@@ -100,7 +100,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     registerPageParams() {
-        const subscription = this.route.queryParams.subscribe(params => this.pageParams = params);
+        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = params);
         this.registerDestroyListener(() => subscription.unsubscribe());
     }
 
