@@ -170,7 +170,9 @@ export class LiveVariableOfflineBehaviour {
                             } else if (operation.type === 'INSERT') {
                                 params = _.clone(params);
                                 params.data = _.clone(response.body);
-                                this.offlineDBService[operation.name](params, noop, noop);
+                                this.offlineDBService[operation.name](params, noop, noop, {
+                                    resetPrimaryKey: false
+                                });
                             } else {
                                 this.offlineDBService[operation.name](params, noop, noop);
                             }
