@@ -337,9 +337,9 @@ window.requestAnimationFrame = (function () {
         const events = settings.bindEvents;
         let listenFor = '';
         if (_.includes(events, 'touch')) {
-            listenFor += ' touchstart';
+            listenFor += 'touchstart';
         } else if (_.includes(events, 'mouse')) {
-            listenFor += ' mousedown';
+            listenFor += 'mousedown';
         } else if (_.includes(events, 'pointer')) {
             listenFor += 'pointerdown';
         }
