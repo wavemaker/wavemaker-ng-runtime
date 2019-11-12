@@ -50,7 +50,8 @@ export abstract class SwipeAnimation {
             onAnimation: this.onAnimation.bind(this),
             onLower: this.onLower.bind(this),
             onUpper: this.onUpper.bind(this),
-            threshold: this.threshold()
+            threshold: this.threshold(),
+            disableMouse: true
         });
     }
 }
