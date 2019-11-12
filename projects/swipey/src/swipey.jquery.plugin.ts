@@ -349,6 +349,10 @@ window.requestAnimationFrame = (function () {
         }
 
         addEventListener(settings.target[0], listenFor, function (es) {
+            // not supporting swipe actions in web app.
+            if (settings.disableMouse && es.pointerType === 'mouse') {
+                return;
+            }
             if (es.pointerType !== 'mouse' && es.MSPOINTER_TYPE_MOUSE && es.pointerType !== es.MSPOINTER_TYPE_MOUSE) {
                 // we prevent default on the event for few form controls.
                 if (TAG_WHITE_LIST.indexOf(es.target.tagName) < 0) {
@@ -374,7 +378,8 @@ window.requestAnimationFrame = (function () {
                 'threshold': 30,
                 'onSwipeStart': $.noop,
                 'onSwipe': $.noop,
-                'onSwipeEnd': $.noop
+                'onSwipeEnd': $.noop,
+                'disableMouse': true
             }, settings));
         });
         return this;
