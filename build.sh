@@ -29,7 +29,7 @@ done
 
 RIMRAF=./node_modules/.bin/rimraf
 ROLLUP=./node_modules/.bin/rollup
-UGLIFYJS='./node_modules/.bin/uglifyjs -b ascii_only=true'
+TERSER='./node_modules/.bin/terser -b ascii_only=true'
 NGC=./node_modules/.bin/ngc
 NG=./node_modules/.bin/ng
 TSC=./node_modules/.bin/tsc
@@ -130,7 +130,7 @@ ngBuild() {
 bundleWeb() {
     echo "uglify: web"
 
-    ${UGLIFYJS} \
+    ${TERSER} \
         ./libraries/core/bundles/index.umd.js \
         ./libraries/swipey/bundles/index.umd.js \
         ./libraries/transpiler/bundles/index.umd.js \
@@ -193,8 +193,8 @@ bundleWeb() {
         ./libraries/runtime/dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-loader.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-loader.js \
-        -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -m  --mangle-props -b beautify=false,ascii_only=true
+    ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-loader.js \
+        -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -m   -b beautify=false,ascii_only=true
 
     if [[ "$?" -eq "0" ]]; then
         echo "uglify: web - success"
@@ -205,7 +205,7 @@ bundleWeb() {
 
 bundleMobile() {
     echo "uglify: mobile"
-    ${UGLIFYJS} \
+    ${TERSER} \
         ./libraries/core/bundles/index.umd.js \
         ./libraries/swipey/bundles/index.umd.js \
         ./libraries/transpiler/bundles/index.umd.js \
@@ -273,8 +273,8 @@ bundleMobile() {
         ./libraries/runtime/dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-mobileloader.js \
-        -c -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -m  --mangle-props -b beautify=false,ascii_only=true
+    ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-mobileloader.js \
+        -c -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -m   -b beautify=false,ascii_only=true
 
     if [[ "$?" -eq "0" ]]; then
         echo "uglify: mobile - success"
@@ -466,7 +466,7 @@ buildNgCircleProgressbar() {
 
 bundleWebLibs() {
     echo "uglify: web-libs"
-    ${UGLIFYJS} \
+    ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
@@ -512,8 +512,8 @@ bundleWebLibs() {
         ./projects/components/widgets/data/table/src/datatable.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmapp/scripts/wm-libs.js \
-        -c -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -m  --mangle-props -b beautify=false,ascii_only=true
+    ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
+        -c -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -m   -b beautify=false,ascii_only=true
 
 
     if [[ "$?" -eq "0" ]]; then
@@ -525,7 +525,7 @@ bundleWebLibs() {
 
 bundleMobileLibs() {
     echo "uglify: mobile-libs"
-    ${UGLIFYJS} \
+    ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
@@ -573,8 +573,8 @@ bundleMobileLibs() {
         ./node_modules/js-cookie/src/js.cookie.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
-    ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-libs.js \
-        -c -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -m  --mangle-props -b beautify=false,ascii_only=true
+    ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-libs.js \
+        -c -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -m   -b beautify=false,ascii_only=true
 
 
     if [[ "$?" -eq "0" ]]; then
