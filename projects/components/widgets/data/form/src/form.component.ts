@@ -537,6 +537,15 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             case 'metadata':
                 this.generateFormFields();
                 break;
+            case 'dataset':
+                const formFields = this.getFormFields();
+                formFields.forEach(field => {
+                    // notifying the dataset change to the form-field widget.
+                    if (!field.isDataSetBound && _.get(field.formWidget, 'dataset$')) {
+                        field.formWidget.dataset$.next();
+                    }
+                });
+                break;
             default:
                 super.onPropertyChange(key, nv, ov);
         }
