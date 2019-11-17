@@ -207,17 +207,18 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             this.runPageTransition(transition).then(() => {
                 this.pageTransitionCompleted = true;
                 (this as any).compilePageContent = true;
+            }).then(() => {
+                setTimeout(() => {
+                    unMuteWatchers();
+                    this.viewInit$.complete();
+                    this.onPageContentReady = () => {
+                        this.fragmentsLoaded$.subscribe(noop, noop, () => {
+                            this.invokeOnReady();
+                        });
+                        this.onPageContentReady = noop;
+                    };
+                }, 300);
             });
-            setTimeout(() => {
-                unMuteWatchers();
-                this.viewInit$.complete();
-                this.onPageContentReady = () => {
-                    this.fragmentsLoaded$.subscribe(noop, noop, () => {
-                        this.invokeOnReady();
-                    });
-                    this.onPageContentReady = noop;
-                };
-            }, 300);
         });
     }
 
