@@ -116,7 +116,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         if (nv !== undefined && nv !== null) {
             this.$hiddenInputEle.val(nv);
             this.performEditorOperation('reset');
-            this.performEditorOperation('insertText', nv);
+            this.performEditorOperation('code', nv);
         }
     }
 
