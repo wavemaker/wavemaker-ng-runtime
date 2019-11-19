@@ -53,7 +53,11 @@ register('wm-media-list', (): IBuildTaskDef => {
             }
         },
         pre: attrs => `<${tagName} wmMediaList ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/mobile/components/data/media-list',
+            name: 'MediaListModule'
+        }]
     };
 });
 
