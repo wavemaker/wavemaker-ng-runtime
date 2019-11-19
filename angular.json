@@ -1803,6 +1803,33 @@
                 }
             }
         },
+        "@wm/mobile/components/containers/segmented-control": {
+            "root": "projects/mobile/components/src/widgets/containers/segmented-control",
+            "sourceRoot": "projects/mobile/components/src/widgets/containers/segmented-control/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/containers/segmented-control/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
         "@wm/mobile/offline": {
             "root": "projects/mobile/offline",
             "sourceRoot": "projects/mobile/offline/src",

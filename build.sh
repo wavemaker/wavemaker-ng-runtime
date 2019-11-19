@@ -360,7 +360,10 @@ buildApp() {
 
     ngBuild mobile-core projects/mobile/core '@wm/mobile/core'
     ngBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
-    ngBuild mobile-components-basic projects/mobile/components/basic '@wm/mobile/components/basic'
+
+    ngBuild mobile-components-basic projects/mobile/components/src/widgets/basic '@wm/mobile/components/basic'
+    ngBuild mobile-components-containers-segmented projects/mobile/components/src/widgets/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
+
     ngBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
     ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'
     ngBuild mobile-placeholder projects/mobile/placeholder '@wm/mobile/placeholder'
