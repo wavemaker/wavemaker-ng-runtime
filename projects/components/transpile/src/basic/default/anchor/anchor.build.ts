@@ -9,6 +9,11 @@ register('wm-anchor', (): IBuildTaskDef => {
         imports: [{
             from: '@wm/components/basic',
             name: 'BasicModule'
+        },{
+            from: '@wm/mobile/components/basic',
+            name: 'BasicModule',
+            as: 'WM_MobileBasicModule',
+            platformType: 'MOBILE'
         }]
     };
 });

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { SearchModule  } from '@wm/components/basic/search';
 
 import { AnchorDirective } from './widgets/anchor/anchor.directive';
 import { AppUpdateComponent } from './widgets/app-update/app-update.component';
@@ -58,6 +59,7 @@ const PIPES = [];
 @NgModule({
     imports: [
         CommonModule,
+        SearchModule,
         WmComponentsModule
     ],
     declarations: [...wmMobileComponents, ...PIPES],
