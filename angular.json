@@ -1857,6 +1857,60 @@
                 }
             }
         },
+        "@wm/mobile/components/device/barcode-scanner": {
+            "root": "projects/mobile/components/src/widgets/device/barcode-scanner",
+            "sourceRoot": "projects/mobile/components/src/widgets/device/barcode-scanner/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/device/barcode-scanner/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/mobile/components/device/camera": {
+            "root": "projects/mobile/components/src/widgets/device/camera",
+            "sourceRoot": "projects/mobile/components/src/widgets/device/camera/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/device/camera/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
         "@wm/mobile/offline": {
             "root": "projects/mobile/offline",
             "sourceRoot": "projects/mobile/offline/src",

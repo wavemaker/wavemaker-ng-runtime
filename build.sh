@@ -364,6 +364,8 @@ buildApp() {
     ngBuild mobile-components-basic projects/mobile/components/src/widgets/basic '@wm/mobile/components/basic'
     ngBuild mobile-components-containers-segmented projects/mobile/components/src/widgets/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
     ngBuild mobile-components-data-medialist projects/mobile/components/src/widgets/data/media-list '@wm/mobile/components/data/media-list'
+    ngBuild mobile-components-device-barcodescanner projects/mobile/components/src/widgets/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
+    ngBuild mobile-components-device-camera projects/mobile/components/src/widgets/device/camera '@wm/mobile/components/device/camera'
 
     ngBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
     ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'

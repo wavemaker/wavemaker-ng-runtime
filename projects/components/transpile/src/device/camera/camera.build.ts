@@ -5,7 +5,11 @@ const tagName = 'button';
 register('wm-camera', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} type='button' wmCamera ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: [{
+            from: '@wm/mobile/components/device/camera',
+            name: 'CameraModule'
+        }]
     };
 });
 
