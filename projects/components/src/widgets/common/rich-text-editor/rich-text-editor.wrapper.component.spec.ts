@@ -5,7 +5,11 @@ import { ComponentsTestModule } from '../../../test/components.test.module';
 import { compileTestComponent } from '../../../test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../test/common-widget.specs';
 
-const  markup = `<div wmRichTextEditor role="textbox" name="richtexteditor1" showpreview="false"></div>`;
+const  markup = `<div wmRichTextEditor
+                      hint="Help text for test richtext editor"
+                      readonly="false" show="true" showpreview="false"
+                      tabindex="1" class="text-success" name="richtexteditor1">
+                </div>`;
 
 @Component({
     template: markup
@@ -25,11 +29,10 @@ const componentDef: ITestComponentDef = {
     testModuleDef: testModuleDef,
     testComponent: RichTextEditorWrapperComponent
 };
-// const testBase: ComponentTestBase = new ComponentTestBase(componentDef);
+const testBase: ComponentTestBase = new ComponentTestBase(componentDef);
 
-// testBase.verifyPropsInitialization();
-// testBase.verifyCommonProperties();
-// testBase.verifyStyles();
+testBase.verifyPropsInitialization();
+testBase.verifyCommonProperties();
 
 describe('component Spectific Tests',  () => {
     let fixture: ComponentFixture<RichTextEditorWrapperComponent>;
@@ -43,6 +46,9 @@ describe('component Spectific Tests',  () => {
     });
     it('should create the Richtext Editor compoent', () => {
         expect(wrapperComponent).toBeTruthy();
+    });
+    it('should display datavalue as undefined', () => {
+        expect(wmComponent.datavalue).toBe(undefined);
     });
     it('shoould display default value as text', () => {
         const testData = 'hello world';
@@ -61,6 +67,12 @@ describe('component Spectific Tests',  () => {
         wmComponent.datavalue = testData;
         fixture.detectChanges();
         expect(wmComponent.performEditorOperation('code')).toEqual(testData);
-        expect(wmComponent.$element.find('.note-editable b').css('font-weight')).toEqual('700');
+        expect(wmComponent.$element.find('div.note-editable b').css('font-weight')).toEqual('700');
+    });
+    it('should apply provided height for the editor', () => {
+        const height = '300px';
+        wmComponent.getWidget().height = height;
+        fixture.detectChanges();
+        expect(wmComponent.$element.find('div.note-editable').css('height')).toEqual(height);
     });
 });
