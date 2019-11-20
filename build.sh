@@ -362,12 +362,22 @@ buildApp() {
     ngBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
 
     ngBuild mobile-components-basic projects/mobile/components/src/widgets/basic '@wm/mobile/components/basic'
+    ngBuild mobile-components-basic-search projects/mobile/components/src/widgets/basic/search '@wm/mobile/components/basic/search'
+
     ngBuild mobile-components-containers-segmented projects/mobile/components/src/widgets/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
+
     ngBuild mobile-components-data-medialist projects/mobile/components/src/widgets/data/media-list '@wm/mobile/components/data/media-list'
+
     ngBuild mobile-components-device-barcodescanner projects/mobile/components/src/widgets/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
     ngBuild mobile-components-device-camera projects/mobile/components/src/widgets/device/camera '@wm/mobile/components/device/camera'
+
     ngBuild mobile-components-input-epoch projects/mobile/components/src/widgets/input/epoch '@wm/mobile/components/input/epoch'
     ngBuild mobile-components-input-fileupload projects/mobile/components/src/widgets/input/file-upload '@wm/mobile/components/input/file-upload'
+
+    ngBuild mobile-components-page projects/mobile/components/src/widgets/page '@wm/mobile/components/page'
+    ngBuild mobile-components-page-leftpanel projects/mobile/components/src/widgets/page/left-panel '@wm/mobile/components/page/left-panel'
+    ngBuild mobile-components-page-mobilenavbar projects/mobile/components/src/widgets/page/mobile-navbar '@wm/mobile/components/page/mobile-navbar'
+    ngBuild mobile-components-page-tabbar projects/mobile/components/src/widgets/page/tab-bar '@wm/mobile/components/page/tab-bar'
 
     ngBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
     ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'

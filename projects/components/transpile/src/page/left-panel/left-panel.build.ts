@@ -12,6 +12,11 @@ register('wm-left-panel', (): IBuildTaskDef => {
         },{
             from: '@wm/components/page/left-panel',
             name: 'LeftPanelModule'
+        },{
+            from: '@wm/mobile/components/page/left-panel',
+            name: 'LeftPanelModule',
+            as: 'WM_MobileLeftPanelModule',
+            platformType: 'MOBILE'
         }]
     };
 });

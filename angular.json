@@ -1803,6 +1803,33 @@
                 }
             }
         },
+        "@wm/mobile/components/basic/search": {
+            "root": "projects/mobile/components/src/widgets/basic/search",
+            "sourceRoot": "projects/mobile/components/src/widgets/basic/search/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/basic/search/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
         "@wm/mobile/components/containers/segmented-control": {
             "root": "projects/mobile/components/src/widgets/containers/segmented-control",
             "sourceRoot": "projects/mobile/components/src/widgets/containers/segmented-control/src",
@@ -1949,6 +1976,114 @@
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
                         "project": "projects/mobile/components/src/widgets/input/file-upload/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/mobile/components/page": {
+            "root": "projects/mobile/components/src/widgets/page",
+            "sourceRoot": "projects/mobile/components/src/widgets/page/default/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/page/default/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/mobile/components/page/left-panel": {
+            "root": "projects/mobile/components/src/widgets/page/left-panel",
+            "sourceRoot": "projects/mobile/components/src/widgets/page/left-panel/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/page/left-panel/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/mobile/components/page/mobile-navbar": {
+            "root": "projects/mobile/components/src/widgets/page/mobile-navbar",
+            "sourceRoot": "projects/mobile/components/src/widgets/page/mobile-navbar/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/page/mobile-navbar/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/components/tsconfig.lib.json",
+                            "projects/mobile/components/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/mobile/components/page/tab-bar": {
+            "root": "projects/mobile/components/src/widgets/page/tab-bar",
+            "sourceRoot": "projects/mobile/components/src/widgets/page/tab-bar/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
+                        "project": "projects/mobile/components/src/widgets/page/tab-bar/package.json"
                     }
                 },
                 "lint": {

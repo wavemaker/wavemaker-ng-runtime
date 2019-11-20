@@ -44,6 +44,11 @@ register('wm-page', (): IBuildTaskDef => {
         imports: [{
             from: '@wm/components/page',
             name: 'PageModule'
+        },{
+            from: '@wm/mobile/components/page',
+            name: 'PageModule',
+            as: 'WM_MobilePageModule',
+            platformType: 'MOBILE'
         }]
     };
 });
