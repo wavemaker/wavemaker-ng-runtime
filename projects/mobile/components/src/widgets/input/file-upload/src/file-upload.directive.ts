@@ -3,7 +3,7 @@ import { Directive } from '@angular/core';
 import { FileUploadComponent } from '@wm/components/input/file-upload';
 import { hasCordova } from '@wm/core';
 
-import { FileContent, FileSelectorService } from '../../services/file-selector.service';
+import { FileContent, FileSelectorService } from '@wm/mobile/components/basic';
 
 @Directive({
     selector: '[wmFileUpload]'

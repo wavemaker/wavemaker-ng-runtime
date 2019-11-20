@@ -39,6 +39,12 @@
             "@wm/components/page": [
                 "libraries/components/page/default"
             ],
+            "@wm/mobile/components/basic": [
+                "libraries/components/mobile/basic/default"
+            ],
+            "@wm/mobile/components/*": [
+                "libraries/components/mobile/*"
+            ],
             "@wm/components/*": [
                 "libraries/components/*"
             ],

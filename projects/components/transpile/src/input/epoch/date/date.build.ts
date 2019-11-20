@@ -22,6 +22,11 @@ register('wm-date', (): IBuildTaskDef => {
         },{
             from: '@wm/components/input/epoch',
             name: 'EpochModule'
+        },{
+            from: '@wm/mobile/components/input/epoch',
+            name: 'EpochModule',
+            as: 'WM_MobileEpochModule',
+            platformType: 'MOBILE'
         }]
     };
 });

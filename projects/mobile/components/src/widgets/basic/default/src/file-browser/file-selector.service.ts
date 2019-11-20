@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Camera } from '@ionic-native/camera';
 
 import { convertToBlob, isIphone } from '@wm/core';
-import { FileBrowserComponent } from '../widgets/file-browser/file-browser.component';
+import { FileBrowserComponent } from './file-browser.component';
 
 declare const _;
 declare const window;

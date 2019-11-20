@@ -15,6 +15,11 @@ register('wm-fileupload', (): IBuildTaskDef => {
         imports: [{
             from: '@wm/components/input/file-upload',
             name: 'FileUploadModule'
+        },{
+            from: '@wm/mobile/components/input/file-upload',
+            name: 'FileUploadModule',
+            as: 'WM_MobileFileUploadModule',
+            platformType: 'MOBILE'
         }]
     };
 });
