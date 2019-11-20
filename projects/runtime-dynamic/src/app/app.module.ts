@@ -38,6 +38,8 @@ import { FileUploadModule } from '@wm/components/input/file-upload';
 import { RatingModule } from '@wm/components/input/rating';
 import { SliderModule } from '@wm/components/input/slider';
 
+import { MOBILE_COMPONENT_MODULES_FOR_ROOT } from '@wm/mobile/runtime/dynamic';
+
 // Data
 import { CardModule } from '@wm/components/data/card';
 import { FormModule } from '@wm/components/data/form';
@@ -204,6 +206,7 @@ const componentsModule = [
 ];
 
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...componentsModule);
+REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...MOBILE_COMPONENT_MODULES_FOR_ROOT);
 
 @NgModule({
     declarations: [

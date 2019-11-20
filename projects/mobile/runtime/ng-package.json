@@ -31,7 +31,7 @@
             "@wm/core": "wm.core",
             "@wm/mobile/core": "wm.mobile.core",
             "@wm/mobile/variables": "wm.mobile.variables",
-            "@wm/mobile/components": "wm.mobile.components",
+            "@wm/mobile/components/basic": "wm.mobile.components.basic",
             "@wm/mobile/offline": "wm.mobile.offline",
             "@wm/components/base": "wm.components.base",
             "@wm/variables": "wm.variables",

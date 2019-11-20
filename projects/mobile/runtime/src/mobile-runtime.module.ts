@@ -31,7 +31,6 @@ import {
     removeNode
 } from '@wm/core';
 import { FileExtensionFromMimePipe } from '@wm/components/base';
-import { WmMobileComponentsModule } from '@wm/mobile/components';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
 import { PushService, PushServiceImpl } from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
@@ -75,13 +74,11 @@ const ionicServices = [
         AppExtComponent
     ],
     exports: [
-        AppExtComponent,
-        WmMobileComponentsModule
+        AppExtComponent
     ],
     imports: [
         MobileCoreModule,
-        VariablesModule,
-        WmMobileComponentsModule
+        VariablesModule
     ],
     bootstrap: []
 })

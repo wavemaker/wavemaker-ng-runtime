@@ -1749,36 +1749,9 @@
                 }
             }
         },
-        "@wm/mobile/components": {
-            "root": "projects/mobile/components",
-            "sourceRoot": "projects/mobile/components/src",
-            "projectType": "library",
-            "prefix": "lib",
-            "architect": {
-                "build": {
-                    "builder": "@angular-devkit/build-ng-packagr:build",
-                    "options": {
-                        "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/ng-package.json"
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "projects/mobile/components/tsconfig.lib.json",
-                            "projects/mobile/components/tsconfig.spec.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**"
-                        ]
-                    }
-                }
-            }
-        },
         "@wm/mobile/components/basic": {
-            "root": "projects/mobile/components/src/widgets/basic/default",
-            "sourceRoot": "projects/mobile/components/src/widgets/basic/default/src",
+            "root": "projects/mobile/components/basic/default",
+            "sourceRoot": "projects/mobile/components/basic/default/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1786,7 +1759,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/basic/default/package.json"
+                        "project": "projects/mobile/components/basic/default/package.json"
                     }
                 },
                 "lint": {
@@ -1804,8 +1777,8 @@
             }
         },
         "@wm/mobile/components/basic/search": {
-            "root": "projects/mobile/components/src/widgets/basic/search",
-            "sourceRoot": "projects/mobile/components/src/widgets/basic/search/src",
+            "root": "projects/mobile/components/basic/search",
+            "sourceRoot": "projects/mobile/components/basic/search/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1813,7 +1786,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/basic/search/package.json"
+                        "project": "projects/mobile/components/basic/search/package.json"
                     }
                 },
                 "lint": {
@@ -1831,8 +1804,8 @@
             }
         },
         "@wm/mobile/components/containers/segmented-control": {
-            "root": "projects/mobile/components/src/widgets/containers/segmented-control",
-            "sourceRoot": "projects/mobile/components/src/widgets/containers/segmented-control/src",
+            "root": "projects/mobile/components/containers/segmented-control",
+            "sourceRoot": "projects/mobile/components/containers/segmented-control/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1840,7 +1813,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/containers/segmented-control/package.json"
+                        "project": "projects/mobile/components/containers/segmented-control/package.json"
                     }
                 },
                 "lint": {
@@ -1858,8 +1831,8 @@
             }
         },
         "@wm/mobile/components/data/media-list": {
-            "root": "projects/mobile/components/src/widgets/data/media-list",
-            "sourceRoot": "projects/mobile/components/src/widgets/data/media-list/src",
+            "root": "projects/mobile/components/data/media-list",
+            "sourceRoot": "projects/mobile/components/data/media-list/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1867,7 +1840,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/data/media-list/package.json"
+                        "project": "projects/mobile/components/data/media-list/package.json"
                     }
                 },
                 "lint": {
@@ -1885,8 +1858,8 @@
             }
         },
         "@wm/mobile/components/device/barcode-scanner": {
-            "root": "projects/mobile/components/src/widgets/device/barcode-scanner",
-            "sourceRoot": "projects/mobile/components/src/widgets/device/barcode-scanner/src",
+            "root": "projects/mobile/components/device/barcode-scanner",
+            "sourceRoot": "projects/mobile/components/device/barcode-scanner/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1894,7 +1867,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/device/barcode-scanner/package.json"
+                        "project": "projects/mobile/components/device/barcode-scanner/package.json"
                     }
                 },
                 "lint": {
@@ -1912,8 +1885,8 @@
             }
         },
         "@wm/mobile/components/device/camera": {
-            "root": "projects/mobile/components/src/widgets/device/camera",
-            "sourceRoot": "projects/mobile/components/src/widgets/device/camera/src",
+            "root": "projects/mobile/components/device/camera",
+            "sourceRoot": "projects/mobile/components/device/camera/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1921,7 +1894,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/device/camera/package.json"
+                        "project": "projects/mobile/components/device/camera/package.json"
                     }
                 },
                 "lint": {
@@ -1939,8 +1912,8 @@
             }
         },
         "@wm/mobile/components/input/epoch": {
-            "root": "projects/mobile/components/src/widgets/input/epoch",
-            "sourceRoot": "projects/mobile/components/src/widgets/input/epoch/src",
+            "root": "projects/mobile/components/input/epoch",
+            "sourceRoot": "projects/mobile/components/input/epoch/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1948,7 +1921,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/input/epoch/package.json"
+                        "project": "projects/mobile/components/input/epoch/package.json"
                     }
                 },
                 "lint": {
@@ -1966,8 +1939,8 @@
             }
         },
         "@wm/mobile/components/input/file-upload": {
-            "root": "projects/mobile/components/src/widgets/input/file-upload",
-            "sourceRoot": "projects/mobile/components/src/widgets/input/file-upload/src",
+            "root": "projects/mobile/components/input/file-upload",
+            "sourceRoot": "projects/mobile/components/input/file-upload/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -1975,7 +1948,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/input/file-upload/package.json"
+                        "project": "projects/mobile/components/input/file-upload/package.json"
                     }
                 },
                 "lint": {
@@ -1993,8 +1966,8 @@
             }
         },
         "@wm/mobile/components/page": {
-            "root": "projects/mobile/components/src/widgets/page",
-            "sourceRoot": "projects/mobile/components/src/widgets/page/default/src",
+            "root": "projects/mobile/components/page",
+            "sourceRoot": "projects/mobile/components/page/default/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -2002,7 +1975,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/page/default/package.json"
+                        "project": "projects/mobile/components/page/default/package.json"
                     }
                 },
                 "lint": {
@@ -2020,8 +1993,8 @@
             }
         },
         "@wm/mobile/components/page/left-panel": {
-            "root": "projects/mobile/components/src/widgets/page/left-panel",
-            "sourceRoot": "projects/mobile/components/src/widgets/page/left-panel/src",
+            "root": "projects/mobile/components/page/left-panel",
+            "sourceRoot": "projects/mobile/components/page/left-panel/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -2029,7 +2002,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/page/left-panel/package.json"
+                        "project": "projects/mobile/components/page/left-panel/package.json"
                     }
                 },
                 "lint": {
@@ -2047,8 +2020,8 @@
             }
         },
         "@wm/mobile/components/page/mobile-navbar": {
-            "root": "projects/mobile/components/src/widgets/page/mobile-navbar",
-            "sourceRoot": "projects/mobile/components/src/widgets/page/mobile-navbar/src",
+            "root": "projects/mobile/components/page/mobile-navbar",
+            "sourceRoot": "projects/mobile/components/page/mobile-navbar/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -2056,7 +2029,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/page/mobile-navbar/package.json"
+                        "project": "projects/mobile/components/page/mobile-navbar/package.json"
                     }
                 },
                 "lint": {
@@ -2074,8 +2047,8 @@
             }
         },
         "@wm/mobile/components/page/tab-bar": {
-            "root": "projects/mobile/components/src/widgets/page/tab-bar",
-            "sourceRoot": "projects/mobile/components/src/widgets/page/tab-bar/src",
+            "root": "projects/mobile/components/page/tab-bar",
+            "sourceRoot": "projects/mobile/components/page/tab-bar/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -2083,7 +2056,7 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-                        "project": "projects/mobile/components/src/widgets/page/tab-bar/package.json"
+                        "project": "projects/mobile/components/page/tab-bar/package.json"
                     }
                 },
                 "lint": {
@@ -2235,9 +2208,36 @@
                 }
             }
         },
-        "@wm/mobile/placeholder": {
-            "root": "projects/mobile/placeholder",
-            "sourceRoot": "projects/mobile/placeholder/src",
+        "@wm/mobile/runtime/dynamic": {
+            "root": "projects/mobile/runtime-dynamic",
+            "sourceRoot": "projects/mobile/runtime-dynamic/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/runtime-dynamic/tsconfig.lib.json",
+                        "project": "projects/mobile/runtime-dynamic/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/runtime/tsconfig.lib.json",
+                            "projects/mobile/runtime/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/mobile/placeholder/runtime": {
+            "root": "projects/mobile/placeholder/runtime",
+            "sourceRoot": "projects/mobile/placeholder/runtime/src",
             "projectType": "library",
             "prefix": "lib",
             "architect": {
@@ -2245,7 +2245,34 @@
                     "builder": "@angular-devkit/build-ng-packagr:build",
                     "options": {
                         "tsConfig": "projects/mobile/placeholder/tsconfig.lib.json",
-                        "project": "projects/mobile/placeholder/ng-package.json"
+                        "project": "projects/mobile/placeholder/runtime/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/mobile/placeholder/tsconfig.lib.json",
+                            "projects/mobile/placeholder/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
+        "@wm/mobile/placeholder/runtime/dynamic": {
+            "root": "projects/mobile/placeholder/runtime-dynamic",
+            "sourceRoot": "projects/mobile/placeholder/runtime-dynamic/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/mobile/placeholder/tsconfig.lib.json",
+                        "project": "projects/mobile/placeholder/runtime-dynamic/package.json"
                     }
                 },
                 "lint": {

@@ -76,10 +76,10 @@
                 "libraries/runtime/dynamic"
             ],
             "@wm/mobile/runtime": [
-                "libraries/mobile/placeholder"
+                "libraries/mobile/placeholder/runtime"
             ],
-            "@wm/mobile/placeholder": [
-                "libraries/mobile/placeholder"
+            "@wm/mobile/runtime-dynamic": [
+                "libraries/mobile/placeholder/runtime/dynamic"
             ]
         }
     }

@@ -1,0 +1,22 @@
+{
+    "name": "@wm/mobile/components/basic",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/basic/default",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.basic",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "rxjs": "rxjs",
+                "@ionic-native/file": "ionicNative.plugins",
+                "@ionic-native/file-opener": "ionicNative.plugins",
+
+                "@wm/core": "wm.core",
+                "@wm/mobile/core": "wm.mobile.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

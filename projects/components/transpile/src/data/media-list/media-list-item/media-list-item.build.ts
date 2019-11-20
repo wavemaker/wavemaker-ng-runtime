@@ -7,6 +7,10 @@ register('wm-media-template', (): IBuildTaskDef => {
         pre: () => `<${tagName} #mediaListTemplate let-item="item" let-index="index">`,
         post: () => `</${tagName}>`,
         imports: [{
+            from: '@wm/mobile/components/basic',
+            name: 'BasicModule',
+            as: 'WM_MobileBasicMobile'
+        },{
             from: '@wm/mobile/components/data/media-list',
             name: 'MediaListModule'
         }]

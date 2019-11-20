@@ -40,10 +40,13 @@
                 "libraries/components/page/default"
             ],
             "@wm/mobile/components/basic": [
-                "libraries/components/mobile/basic/default"
+                "libraries/mobile/components/basic/default"
+            ],
+            "@wm/mobile/components/page": [
+                "libraries/mobile/components/page/default"
             ],
             "@wm/mobile/components/*": [
-                "libraries/components/mobile/*"
+                "libraries/mobile/components/*"
             ],
             "@wm/components/*": [
                 "libraries/components/*"
@@ -87,8 +90,8 @@
             "@wm/mobile/runtime": [
                 "libraries/mobile/runtime"
             ],
-            "@wm/mobile/placeholder": [
-                "libraries/mobile/placeholder"
+            "@wm/mobile/runtime/dynamic": [
+                "libraries/mobile/runtime-dynamic"
             ]
         }
     }

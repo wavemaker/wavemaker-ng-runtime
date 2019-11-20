@@ -1,0 +1,17 @@
+{
+    "name": "@wm/mobile/components/basic/search",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/basic/search",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.basic.search",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

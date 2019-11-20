@@ -188,7 +188,8 @@ bundleWeb() {
         ./libraries/components/advanced/marquee/bundles/index.umd.js \
         ./libraries/components/advanced/login/bundles/index.umd.js \
         ./libraries/variables/bundles/index.umd.js \
-        ./libraries/mobile/placeholder/bundles/index.umd.js \
+        ./libraries/mobile/placeholder/runtime/bundles/index.umd.js \
+        ./libraries/mobile/placeholder/runtime-dynamic/bundles/index.umd.js \
         ./libraries/runtime/base/bundles/index.umd.js \
         ./libraries/runtime/dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-loader.js -b
@@ -263,12 +264,23 @@ bundleMobile() {
         ./libraries/components/advanced/marquee/bundles/index.umd.js \
         ./libraries/components/advanced/login/bundles/index.umd.js \
         ./libraries/mobile/core/bundles/index.umd.js \
-        ./libraries/mobile-build-task/bundles/index.umd.js \
-        ./libraries/mobile/components/bundles/index.umd.js \
+        ./libraries/mobile/components/basic/default/bundles/index.umd.js \
+        ./libraries/mobile/components/basic/search/bundles/index.umd.js \
+        ./libraries/mobile/components/containers/segmented-control/bundles/index.umd.js \
+        ./libraries/mobile/components/device/barcode-scanner/bundles/index.umd.js \
+        ./libraries/mobile/components/device/camera/bundles/index.umd.js \
+        ./libraries/mobile/components/input/epoch/bundles/index.umd.js \
+        ./libraries/mobile/components/input/file-upload/bundles/index.umd.js \
+        ./libraries/mobile/components/page/default/bundles/index.umd.js \
+        ./libraries/mobile/components/page/left-panel/bundles/index.umd.js \
+        ./libraries/mobile/components/page/mobile-navbar/bundles/index.umd.js \
+        ./libraries/mobile/components/page/tab-bar/bundles/index.umd.js \
+        ./libraries/mobile/components/data/media-list/bundles/index.umd.js \
         ./libraries/variables/bundles/index.umd.js \
         ./libraries/mobile/offline/bundles/index.umd.js \
         ./libraries/mobile/variables/bundles/index.umd.js \
         ./libraries/mobile/runtime/bundles/index.umd.js \
+        ./libraries/mobile/runtime-dynamic/bundles/index.umd.js \
         ./libraries/runtime/base/bundles/index.umd.js \
         ./libraries/runtime/dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.js -b
@@ -284,11 +296,8 @@ bundleMobile() {
 }
 
 buildApp() {
-    hasSourceChanges components-base projects/components/base
-    local hasChangesInComponents=$?
-
-    hasSourceChanges mobile-components projects/mobile/components
-    local hasChangesInMobileComponents=$?
+    hasSourceChanges components-transpilation projects/components/transpile
+    local hasChangesInComponentsTranpilation=$?
 
     ngBuild core projects/core '@wm/core'
     ngBuild transpiler projects/transpiler '@wm/transpiler'
@@ -361,34 +370,35 @@ buildApp() {
     ngBuild mobile-core projects/mobile/core '@wm/mobile/core'
     ngBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
 
-    ngBuild mobile-components-basic projects/mobile/components/src/widgets/basic '@wm/mobile/components/basic'
-    ngBuild mobile-components-basic-search projects/mobile/components/src/widgets/basic/search '@wm/mobile/components/basic/search'
+    ngBuild mobile-components-basic projects/mobile/components/basic/default '@wm/mobile/components/basic'
+    ngBuild mobile-components-basic-search projects/mobile/components/basic/search '@wm/mobile/components/basic/search'
 
-    ngBuild mobile-components-containers-segmented projects/mobile/components/src/widgets/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
+    ngBuild mobile-components-containers-segmented projects/mobile/components/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
 
-    ngBuild mobile-components-data-medialist projects/mobile/components/src/widgets/data/media-list '@wm/mobile/components/data/media-list'
+    ngBuild mobile-components-data-medialist projects/mobile/components/data/media-list '@wm/mobile/components/data/media-list'
 
-    ngBuild mobile-components-device-barcodescanner projects/mobile/components/src/widgets/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
-    ngBuild mobile-components-device-camera projects/mobile/components/src/widgets/device/camera '@wm/mobile/components/device/camera'
+    ngBuild mobile-components-device-barcodescanner projects/mobile/components/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
+    ngBuild mobile-components-device-camera projects/mobile/components/device/camera '@wm/mobile/components/device/camera'
 
-    ngBuild mobile-components-input-epoch projects/mobile/components/src/widgets/input/epoch '@wm/mobile/components/input/epoch'
-    ngBuild mobile-components-input-fileupload projects/mobile/components/src/widgets/input/file-upload '@wm/mobile/components/input/file-upload'
+    ngBuild mobile-components-input-epoch projects/mobile/components/input/epoch '@wm/mobile/components/input/epoch'
+    ngBuild mobile-components-input-fileupload projects/mobile/components/input/file-upload '@wm/mobile/components/input/file-upload'
 
-    ngBuild mobile-components-page projects/mobile/components/src/widgets/page '@wm/mobile/components/page'
-    ngBuild mobile-components-page-leftpanel projects/mobile/components/src/widgets/page/left-panel '@wm/mobile/components/page/left-panel'
-    ngBuild mobile-components-page-mobilenavbar projects/mobile/components/src/widgets/page/mobile-navbar '@wm/mobile/components/page/mobile-navbar'
-    ngBuild mobile-components-page-tabbar projects/mobile/components/src/widgets/page/tab-bar '@wm/mobile/components/page/tab-bar'
+    ngBuild mobile-components-page projects/mobile/components/page '@wm/mobile/components/page'
+    ngBuild mobile-components-page-leftpanel projects/mobile/components/page/left-panel '@wm/mobile/components/page/left-panel'
+    ngBuild mobile-components-page-mobilenavbar projects/mobile/components/page/mobile-navbar '@wm/mobile/components/page/mobile-navbar'
+    ngBuild mobile-components-page-tabbar projects/mobile/components/page/tab-bar '@wm/mobile/components/page/tab-bar'
 
     ngBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
     ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'
-    ngBuild mobile-placeholder projects/mobile/placeholder '@wm/mobile/placeholder'
+    ngBuild mobile-runtime-dynamic projects/mobile/runtime-dynamic '@wm/mobile/runtime/dynamic'
+    ngBuild mobile-placeholder-runtime projects/mobile/placeholder/runtime '@wm/mobile/placeholder/runtime'
+    ngBuild mobile-placeholder-runtimedynamic projects/mobile/placeholder/runtime-dynamic '@wm/mobile/placeholder/runtime/dynamic'
 
-    if [[ ${hasChangesInComponents} -eq "0" ]]; then
+    if [[ ${hasChangesInComponentsTranpilation} -eq "0" ]]; then
         ./node_modules/.bin/ng-packagr -p projects/components/transpile/ng-package.json -c ./projects/components/transpile/tsconfig.lib.json
-    fi
-
-    if [[ ${hasChangesInMobileComponents} -eq "0" ]]; then
-        ./node_modules/.bin/ng-packagr -p projects/mobile/components/ng-package-buildtask.json -c ./projects/mobile/components/tsconfig.lib.json
+        if [[ "$?" -eq "0" ]]; then
+            touch ./dist/tmp/components-transpilation_${SUCCESS_FILE}
+        fi
     fi
 
     ngBuild runtime-base projects/runtime-base '@wm/runtime/base'

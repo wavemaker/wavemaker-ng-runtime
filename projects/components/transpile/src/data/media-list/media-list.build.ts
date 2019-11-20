@@ -55,6 +55,19 @@ register('wm-media-list', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmMediaList ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
+            from: '@wm/components/basic',
+            name: 'BasicModule'
+        },{
+            from: '@wm/components/page',
+            name: 'PageModule'
+        },{
+            from: '@wm/mobile/components/page/mobile-navbar',
+            name: 'MobileNavbarModule'
+        },{
+            from: '@wm/mobile/components/basic',
+            name: 'BasicModule',
+            as: 'WM_MobileBasicMobile'
+        },{
             from: '@wm/mobile/components/data/media-list',
             name: 'MediaListModule'
         }]

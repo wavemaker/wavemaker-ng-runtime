@@ -69,7 +69,8 @@
             "@wm/components/prefab": "wm.components.prefab",
             "@wm/components/advanced/carousel": "wm.components.advanced.carousel",
             "@wm/components/advanced/login": "wm.components.advanced.login",
-            "@wm/components/advanced/marquee": "wm.components.advanced.marquee"
+            "@wm/components/advanced/marquee": "wm.components.advanced.marquee",
+            "@wm/mobile/runtime/dynamic": "wm.mobile.runtime.dynamic"
         }
     }
 }

@@ -27,7 +27,7 @@
             "@wm/security":  "wm.security",
             "@wm/core":  "wm.core",
             "@wm/variables":  "wm.variables",
-            "@wm/mobile/components": "wm.mobile.components"
+            "@wm/mobile/components/basic": "wm.mobile.components.basic"
         }
     }
 }

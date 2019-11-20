@@ -1,0 +1,18 @@
+{
+    "name": "@wm/mobile/components/page/tab-bar",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/page/tab-bar",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.page.tabbar",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/page": "wm.components.page"
+            }
+        }
+    }
+}

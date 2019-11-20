@@ -2,7 +2,7 @@ import { Observer } from 'rxjs/index';
 
 import { App, noop, toPromise } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
-import { FileSelectorService, ProcessApi, ProcessManagementService } from '@wm/mobile/components';
+import { FileSelectorService, ProcessApi, ProcessManagementService } from '@wm/mobile/components/basic';
 import { Change, ChangeLogService, LocalDBManagementService, LocalDBDataPullService, PushInfo, PullInfo } from '@wm/mobile/offline';
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback, VARIABLE_CONSTANTS } from '@wm/variables';
 import { SecurityService } from '@wm/security';

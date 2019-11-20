@@ -1,0 +1,19 @@
+{
+    "name": "@wm/mobile/components/page",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/page/default",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.page",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/mobile/core": "wm.mobile.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/page": "wm.components.page"
+            }
+        }
+    }
+}
