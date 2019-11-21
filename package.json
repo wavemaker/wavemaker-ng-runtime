@@ -7,6 +7,7 @@
         "build": "ng build",
         "test": "ng test",
         "test_components": "ng t @wm/components --code-coverage --watch=false",
+        "test_mobile": "ng t @wm/mobile/components --code-coverage --watch=false",
         "test_variables": "ng t @wm/variables --code-coverage --watch=false",
         "test-prod": "npm run test_variables && npm run test_components",
         "lint": "ng lint",
