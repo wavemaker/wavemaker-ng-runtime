@@ -478,6 +478,19 @@
                         "project": "projects/mobile/components/ng-package.json"
                     }
                 },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/mobile/components/src/test.ts",
+                        "polyfills": "projects/mobile/components/polyfills.ts",
+                        "tsConfig": "projects/mobile/components/tsconfig.spec.json",
+                        "karmaConfig": "projects/mobile/components/karma.conf.js",
+                        "styles": [
+                        ],
+                        "scripts": [],
+                        "assets": []
+                    }
+                },
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
