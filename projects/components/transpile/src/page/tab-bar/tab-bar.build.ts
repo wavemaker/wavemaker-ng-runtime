@@ -7,8 +7,8 @@ register('wm-mobile-tabbar', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmMobileTabbar ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
-            from: '@wm/mobile/components/tab-bar',
-            name: 'TabbarModule'
+            from: '@wm/mobile/components/page/tab-bar',
+            name: 'TabBarModule'
         }]
     };
 });

@@ -12,6 +12,7 @@
                 "rxjs": "rxjs",
                 "@ionic-native/file": "ionicNative.plugins",
                 "@ionic-native/file-opener": "ionicNative.plugins",
+                "@ionic-native/camera": "ionicNative.plugins",
 
                 "@wm/core": "wm.core",
                 "@wm/mobile/core": "wm.mobile.core",

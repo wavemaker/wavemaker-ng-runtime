@@ -66,7 +66,8 @@ register('wm-media-list', (): IBuildTaskDef => {
         },{
             from: '@wm/mobile/components/basic',
             name: 'BasicModule',
-            as: 'WM_MobileBasicMobile'
+            as: 'WM_MobileBasicModule',
+            platformType: 'MOBILE'
         },{
             from: '@wm/mobile/components/data/media-list',
             name: 'MediaListModule'
