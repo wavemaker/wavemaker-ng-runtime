@@ -187,21 +187,22 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.runPageTransition(transition).then(() => {
             this.pageTransitionCompleted = true;
             (this as any).compilePageContent = true;
+        }).then(() => {
+            setTimeout(() => {
+                unMuteWatchers();
+                this.viewInit$.complete();
+                if (isMobileApp()) {
+                    this.onPageContentReady = () => {
+                        this.fragmentsLoaded$.subscribe(noop, noop, () => {
+                            this.invokeOnReady();
+                        });
+                        this.onPageContentReady = noop;
+                    };
+                } else {
+                    this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
+                }
+            }, 300);
         });
-        setTimeout(() => {
-            unMuteWatchers();
-            this.viewInit$.complete();
-            if (isMobileApp()) {
-                this.onPageContentReady = () => {
-                    this.fragmentsLoaded$.subscribe(noop, noop, () => {
-                        this.invokeOnReady();
-                    });
-                    this.onPageContentReady = noop;
-                };
-            } else {
-                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
-            }
-        }, 300);
     }
 
     ngOnDestroy(): void {
