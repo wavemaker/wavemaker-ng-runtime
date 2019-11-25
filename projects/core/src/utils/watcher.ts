@@ -68,6 +68,7 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
     const limit = 5;
     let pass = 1;
     let changeDetected;
+    let watchExpr;
 
     do {
         changeDetected = false;
@@ -76,11 +77,12 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
             const listener = watchInfo.listener;
             const ov = watchInfo.last;
             let nv;
+            watchExpr = watchInfo.expr;
 
             try {
                 nv = fn();
             } catch (e) {
-                console.warn(`error in executing expression: '${watchInfo.expr}'`);
+                console.warn(`error in executing expression: '${watchExpr}'`);
             }
 
             if (!_.isEqual(nv, ov)) {
@@ -100,7 +102,7 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
     } while (changeDetected && pass < limit);
 
     if (changeDetected && pass === limit) {
-        console.warn(`Number of watch cycles gone above set limit of: ${limit} `);
+        console.warn(`Number of watch cycles gone above set limit of: ${limit} for expression: ${watchExpr}`);
     }
 };
 
