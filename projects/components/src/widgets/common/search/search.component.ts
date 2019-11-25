@@ -181,6 +181,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeEventCallback('clearsearch');
     }
 
+    // function to  clear the input value
+    private clearText() {
+        this.$element.find('input').val('');
+        this.showClosebtn = false;
+    }
+
     // Close the full screen mode in mobile view of auto complete
     private closeSearch() {
         this._loadingItems = false;
