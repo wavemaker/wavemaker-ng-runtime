@@ -417,6 +417,7 @@ bundleMobileLibs() {
         ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
+        ./projects/swipey/src/swipey.jquery.plugin.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -b
 
     ./node_modules/.bin/uglifyjs ./dist/bundles/wmmobile/scripts/wm-libs.min.js \
