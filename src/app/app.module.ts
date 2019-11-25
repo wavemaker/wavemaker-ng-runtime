@@ -19,8 +19,6 @@ import {
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastrModule } from 'ngx-toastr';
 
-import { isMobileApp, isIos, ScriptLoaderService } from '@wm/core';
-
 import {
     AppComponent,
     AppJSProvider,
@@ -38,6 +36,7 @@ import { ComponentRefProviderService } from '../framework/services/component-ref
 import { PartialRefProviderService } from '../framework/services/partial-ref-provider.service';
 import { PrefabConfigProviderService } from '../framework/services/prefab-config-provider.service';
 import { AppCodeGenModule, xsrfHeaderName } from './app-codegen.module';
+import { LazyLoadScriptsResolve } from './lazy-load-scripts.resolve';
 
 export const routerModule = RouterModule.forRoot(routes, {useHash: true, scrollPositionRestoration: 'top'});
 export const toastrModule = ToastrModule.forRoot({maxOpened: 1, autoDismiss: true });
@@ -89,20 +88,9 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
         {provide: AppVariablesProvider, useClass: AppVariablesProviderService},
         {provide: ComponentRefProvider, useClass: ComponentRefProviderService},
         {provide: PartialRefProvider, useClass: PartialRefProviderService},
-        {provide: PrefabConfigProvider, useClass: PrefabConfigProviderService}
+        {provide: PrefabConfigProvider, useClass: PrefabConfigProviderService},
+        LazyLoadScriptsResolve
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-    constructor(scriptLoaderService: ScriptLoaderService) {
-        setTimeout(() => {
-            if(isMobileApp()) {
-                scriptLoaderService.load('node_modules-hammerjs-hammer.min.js');
-            }
-            if (isIos()) {
-                scriptLoaderService.load('node_modules-iscroll-build-iscroll.js');
-            }
-        }, 100);
-    }
-
-}
+export class AppModule {}
