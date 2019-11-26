@@ -246,9 +246,7 @@
                         "styles": [
                             "../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css"
                         ],
-                        "scripts": [
-                            "./libraries/scripts/swipey/swipey.jquery.plugin.js"
-                        ],
+                        "scripts": [],
                         "assets": []
                     }
                 },
