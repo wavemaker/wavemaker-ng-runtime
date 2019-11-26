@@ -25,6 +25,8 @@ done
 #copy datatable to libraries
 mkdir -p libraries/scripts/datatable/
 cp projects/components/src/widgets/common/table/datatable.js libraries/scripts/datatable/
+mkdir -p libraries/scripts/swipey
+cp ./projects/swipey/src/swipey.jquery.plugin.js libraries/scripts/swipey/
 
 node_modules/.bin/rollup -c rollup.build-task.js
 

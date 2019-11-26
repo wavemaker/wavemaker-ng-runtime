@@ -60,6 +60,7 @@
                             "./node_modules/jquery-ui/ui/widgets/sortable.js",
                             "./node_modules/jquery-ui/ui/widgets/droppable.js",
                             "./libraries/scripts/datatable/datatable.js",
+                            "./libraries/scripts/swipey/swipey.jquery.plugin.js",
                             "./node_modules/moment/min/moment-with-locales.min.js",
                             "./node_modules/fullcalendar/dist/fullcalendar.min.js",
                             "./node_modules/summernote/dist/summernote-lite.min.js",
