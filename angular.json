@@ -60,7 +60,8 @@
                             "./node_modules/jquery-ui/ui/widgets/sortable.js",
                             "./node_modules/jquery-ui/ui/widgets/droppable.js",
                             "./libraries/scripts/datatable/datatable.js",
-                            "./node_modules/moment/min/moment-with-locales.min.js",
+                            "./node_modules/moment/min/moment.min.js",
+                            "./libraries/scripts/swipey/swipey.jquery.plugin.js",
                             "./node_modules/fullcalendar/dist/fullcalendar.min.js",
                             "./node_modules/summernote/dist/summernote-lite.min.js",
                             "./node_modules/hammerjs/hammer.min.js",
@@ -130,7 +131,7 @@
                             "./node_modules/jquery-ui/ui/widgets/sortable.js",
                             "./node_modules/jquery-ui/ui/widgets/droppable.js",
                             "./libraries/scripts/datatable/datatable.js",
-                            "./node_modules/moment/min/moment-with-locales.min.js",
+                            "./node_modules/moment/min/moment.min.js",
                             "./node_modules/fullcalendar/dist/fullcalendar.min.js",
                             "./node_modules/summernote/dist/summernote-lite.min.js",
                             "./node_modules/hammerjs/hammer.min.js",
@@ -246,7 +247,9 @@
                         "styles": [
                             "../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css"
                         ],
-                        "scripts": [],
+                        "scripts": [
+                            "./libraries/scripts/swipey/swipey.jquery.plugin.js"
+                        ],
                         "assets": []
                     }
                 },
@@ -1843,6 +1846,18 @@
                         "project": "projects/mobile/components/data/media-list/package.json"
                     }
                 },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/variables/src/test.ts",
+                        "polyfills": "projects/variables/polyfills.ts",
+                        "tsConfig": "projects/variables/tsconfig.spec.json",
+                        "karmaConfig": "projects/variables/karma.conf.js",
+                        "styles": [],
+                        "scripts": [],
+                        "assets": []
+                    }
+                },
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
@@ -2057,6 +2072,19 @@
                     "options": {
                         "tsConfig": "projects/mobile/components/tsconfig.lib.json",
                         "project": "projects/mobile/components/page/tab-bar/package.json"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/mobile/components/src/test.ts",
+                        "polyfills": "projects/mobile/components/polyfills.ts",
+                        "tsConfig": "projects/mobile/components/tsconfig.spec.json",
+                        "karmaConfig": "projects/mobile/components/karma.conf.js",
+                        "styles": [
+                        ],
+                        "scripts": [],
+                        "assets": []
                     }
                 },
                 "lint": {

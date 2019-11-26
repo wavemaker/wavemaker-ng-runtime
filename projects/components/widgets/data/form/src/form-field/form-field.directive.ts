@@ -350,6 +350,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         return this.ngform && this.ngform.controls[this._fieldName + '_max'];
     }
 
+    // Get the displayValue
+    get displayValue () {
+    return this.formWidget && this.formWidget.displayValue;
+    }
+
     // Create the reactive form control
     createControl() {
         return this.fb.control(undefined, {

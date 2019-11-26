@@ -87,7 +87,7 @@ export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModul
         {provide: AppJSProvider, useClass: AppJSProviderService},
         {provide: AppVariablesProvider, useClass: AppVariablesProviderService},
         {provide: ComponentRefProvider, useClass: ComponentRefProviderService},
-        {provide: PartialRefProvider, useClass: PartialRefProviderService},
+        {provide: PartialRefProvider, useClass: ComponentRefProviderService},
         {provide: PrefabConfigProvider, useClass: PrefabConfigProviderService},
         LazyLoadScriptsResolve
     ],

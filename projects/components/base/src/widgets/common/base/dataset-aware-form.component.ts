@@ -235,6 +235,8 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected initDatasetItems() {
         if (!this.dataset || _.isEmpty(this.dataset)) {
             this.datasetItems = [];
+            // notify the dataset listeners
+            this.dataset$.next(this.datasetItems);
             return;
         }
 

@@ -471,8 +471,6 @@ export class LiveFormDirective {
             return;
         }
 
-        this.form.resetFormState();
-
         requestData.row = data;
         requestData.transform = true;
         requestData.skipNotification = true;
@@ -512,6 +510,6 @@ export class LiveFormDirective {
             this.form.onResult(error, false, event);
             this.form.toggleMessage(true, error, 'error');
             $appDigest();
-        });
+        }).then(this.form.resetFormState.bind(this.form));
     }
 }

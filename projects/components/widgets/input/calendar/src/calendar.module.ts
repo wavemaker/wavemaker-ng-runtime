@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { DatepickerModule } from 'ngx-bootstrap/datepicker';
 
+import { CoreModule } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
 
 import { CalendarComponent } from './calendar.component';
@@ -14,6 +15,7 @@ const components = [
 
 @NgModule({
     imports: [
+        CoreModule,
         DatepickerModule,
         CommonModule,
         FormsModule,

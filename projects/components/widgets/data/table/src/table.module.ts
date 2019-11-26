@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { ListModule } from '@wm/components/data/list';
 import { PaginationModule } from '@wm/components/data/pagination';
 
 import { TableComponent } from './table.component';
@@ -29,6 +30,7 @@ const components = [
 @NgModule({
     imports: [
         CommonModule,
+        ListModule,
         PaginationModule,
         TooltipModule,
         WmComponentsModule

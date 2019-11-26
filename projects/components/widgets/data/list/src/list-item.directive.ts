@@ -135,6 +135,8 @@ export class ListItemDirective implements OnInit, AfterViewInit {
                 this.listComponent.invokeEventCallback('mouseleave', {widget: this, $event});
             });
         }
+        // adding item attribute on every list item
+        $(this.nativeElement).attr('listitemindex', this.$index);
     }
 
     ngAfterViewInit() {

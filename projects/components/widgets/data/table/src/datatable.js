@@ -1195,7 +1195,12 @@ $.widget('wm.datatable', {
             if ($row.length) {
                 this.preparedData[rowIndex].selected = !value;
             }
-            $row.trigger('click');
+            if (value) {
+                $row.trigger('click');
+            } else {
+                this.toggleRowSelection($row, value);
+                this.options.callOnRowDeselectEvent(this.preparedData[rowIndex]);
+            }
         }
     },
     /**

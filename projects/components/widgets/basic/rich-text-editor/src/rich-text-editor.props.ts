@@ -7,6 +7,7 @@ export const richTextProps = new Map(
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['height', PROP_STRING],
+        ['hint', PROP_STRING],
         ['name', PROP_STRING],
         ['placeholder', PROP_STRING],
         ['readonly', PROP_BOOLEAN],

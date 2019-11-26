@@ -1,12 +1,13 @@
-import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
+import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
+import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getDatasourceFromExpr, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
 import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef, StylableComponent, styler, transformData } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
+import { ListComponent } from '@wm/components/data/list';
 import { registerProps } from './table.props';
 
 declare const _, $;
@@ -292,6 +293,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
         },
         callOnRowDeselectEvent: (row, e) => {
+            this.items = this.selectedItems = this.callDataGridMethod('getSelectedRows');
             this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
         },
         callOnRowClickEvent: (row, e) => {
@@ -675,6 +677,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         public fb: FormBuilder,
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
+        @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
@@ -1245,6 +1248,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             case 'dataset':
                 if (this.binddatasource && !this.datasource) {
                     return;
+                }
+                // if table is inside list then table dataset will be set as "item.XXX" and there is no datasource.
+                // So extracting datasource from the datset bound expression.
+                if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
+                    this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
                 this.watchVariableDataSet(nv);
                 break;

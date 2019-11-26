@@ -56,6 +56,9 @@ register('wm-table', (): IBuildTaskDef => {
             from: '@wm/components/data/pagination',
             name: 'PaginationModule'
         }, {
+            from: '@wm/components/data/list',
+            name: 'ListModule'
+        }, {
             from: '@wm/components/data/table',
             name: 'TableModule'
         }]

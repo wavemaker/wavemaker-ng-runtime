@@ -5,10 +5,10 @@ import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
-import {compileTestComponent} from "../../../test/util/component-test-util";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../test/common-widget.specs";
+import { compileTestComponent } from '../../../test/util/component-test-util';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../test/common-widget.specs';
 
-let mockApp = {};
+const mockApp = {};
 
 const markup = `
         <div wmSearch name="testsearch"
@@ -35,6 +35,7 @@ const markup = `
 class SearchWrapperComponent {
     @ViewChild(SearchComponent)
     wmComponent: SearchComponent;
+    public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}, {name: 'John', age: 25}, {name: 'Peter Son', age: 28}];
 
     public onChange($event, widget, newVal, oldVal) {
         console.log('Searching...');
@@ -71,31 +72,57 @@ describe('SearchComponent', () => {
    let wmComponent: SearchComponent;
    let fixture: ComponentFixture<SearchWrapperComponent>;
 
-   beforeEach(async(()=>{
+   beforeEach(async(() => {
        fixture = compileTestComponent(testModuleDef, SearchWrapperComponent);
        wrapperComponent = fixture.componentInstance;
        wmComponent = wrapperComponent.wmComponent;
        fixture.detectChanges();
    }));
 
-   it('should create the Search Component', () => {
+   it('should create the Search Component', async() => {
+       await fixture.whenStable();
        expect(wrapperComponent).toBeTruthy() ;
    });
 
-    it('should change the input and call the onChange event', async(() => {
+    it('should change the input and call the onChange event', async() => {
         const testValue = 'abc';
         spyOn(wrapperComponent, 'onChange');
-        setInputValue('.app-search-input', testValue).then(()=> {
+        await fixture.whenStable();
+        setInputValue('.app-search-input', testValue).then(() => {
             expect(wmComponent.query).toEqual(testValue);
             expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
         });
-    }));
+    });
 
     function setInputValue(selector: string, value: string) {
-        let input = fixture.debugElement.query(By.css(selector)).nativeElement;
+        const input = fixture.debugElement.query(By.css(selector)).nativeElement;
         input.value = value;
         input.dispatchEvent(new Event('input'));
         fixture.detectChanges();
         return fixture.whenStable();
     }
+
+    it('should invoke getDatasource method on entering the query', async(() => {
+        const testValue = 'abc';
+        spyOn(wmComponent, 'getDataSource').and.returnValue(Promise.resolve([]));
+        setInputValue('.app-search-input', testValue).then(() => {
+            expect(wmComponent.getDataSource).toHaveBeenCalled();
+        });
+    }));
+
+    it('last result has to be reset to undefined on changing the dataset', ((done) => {
+        wmComponent.dataset = wrapperComponent.testdata;
+        wmComponent.onPropertyChange('dataset', wrapperComponent.testdata, []);
+        fixture.detectChanges();
+        (wmComponent as any)._lastResult = [{name: 'Tony', age: 42}];
+        expect((wmComponent as any)._lastResult).toBeDefined();
+        (wmComponent as any).dataset$.subscribe((result) => {
+            done();
+            expect((wmComponent as any)._lastResult).toBeUndefined();
+        });
+        wmComponent.dataset = [];
+        wmComponent.onPropertyChange('dataset', wmComponent.dataset, wrapperComponent.testdata);
+
+        fixture.detectChanges();
+    }));
 });

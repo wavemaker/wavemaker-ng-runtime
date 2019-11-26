@@ -27,14 +27,14 @@ export class ScriptLoaderService {
         });
     }
 
-    load(...scripts: string[]) {
+    load(...scripts: string[]): Promise<any> {
         if (scripts && scripts.length) {
             return Promise.resolve()
                 .then(() => this.pathMappings || this.loadPathMappings())
-                .then(() => this.loadScript(scripts[0]))
                 .then(() => {
-                    scripts.shift();
-                    return this.load(...scripts);
+                    return Promise.all(scripts.map( s => {
+                        return this.loadScript(s);
+                    }));
                 });
         }
         return Promise.resolve();
@@ -63,6 +63,7 @@ export class ScriptLoaderService {
             //load script
             let script = document.createElement('script');
             script.type = 'text/javascript';
+            script.async = false;
             let src = this.scripts[name].src;
             src = this.pathMappings[src] || src;
             if (src.startsWith("http")) {

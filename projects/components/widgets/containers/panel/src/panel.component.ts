@@ -6,7 +6,8 @@ import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 import { registerProps } from './panel.props';
 
 const DEFAULT_CLS = 'app-panel panel';
-const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-panel', hostClass: DEFAULT_CLS};
+declare const _;
+const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAULT_CLS };
 
 @Component({
     selector: '[wmPanel]',
@@ -29,6 +30,7 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     public title: string;
     public subheading: string;
     public actions: any;
+    public selectedAction: string;
 
     public helpClass = '';
     public helptext = '';
@@ -38,12 +40,12 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     @ViewChild('panelHeading') private panelHeader: ElementRef;
     @ViewChild('panelContent') private panelContent: ElementRef;
     @ViewChild('panelBody') private panelBody: ElementRef;
-    @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
+    @ContentChildren(RedrawableDirective, { descendants: true }) reDrawableComponents;
 
     private hasFooter: boolean;
 
     // conditions to show the footer
-    public get hideFooter () {
+    public get hideFooter() {
         return !this.hasFooter || !this.expanded;
     }
 
@@ -65,7 +67,7 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     // toggle the panel state between collapsed - expanded. invoke the respective callbacks
     public toggle($event) {
         if (this.collapsible) {
-            this.invokeEventCallback(this.expanded ? 'collapse' : 'expand', {$event});
+            this.invokeEventCallback(this.expanded ? 'collapse' : 'expand', { $event });
             this.expanded = !this.expanded;
             if (this.expanded) {
                 this.$lazyLoad();
@@ -89,7 +91,7 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     // toggle the fullscreen state of the panel. invoke the respective callbacks
     protected toggleFullScreen($event) {
         if (this.enablefullscreen) {
-            this.invokeEventCallback(this.fullscreen ? 'exitfullscreen' : 'fullscreen', {$event});
+            this.invokeEventCallback(this.fullscreen ? 'exitfullscreen' : 'fullscreen', { $event });
             this.fullscreen = !this.fullscreen;
             toggleClass(this.nativeElement, 'fullscreen', this.fullscreen);
             // Re-plot the widgets inside panel
@@ -105,10 +107,16 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
         $appDigest();
     }
 
+    // On action item click
+    protected menuActionItemClick($event, $item) {
+        this.selectedAction = _.omit($item, ['children', 'value']);
+        this.invokeEventCallback('actionsclick', { $event, $item: this.selectedAction });
+    }
+
     // hide the panel and invoke the respective event handler
     protected close($event) {
         this.getWidget().show = false;
-        this.invokeEventCallback('close', {$event});
+        this.invokeEventCallback('close', { $event });
     }
 
     // calculation of dimensions when the panel the panel state changes from/to fullscreen
@@ -121,7 +129,7 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
         let inlineHeight;
 
         if (this.fullscreen) {
-            inlineHeight = this.hideFooter ?  (vHeight - headerHeight) : vHeight - (footer.offsetHeight + headerHeight);
+            inlineHeight = this.hideFooter ? (vHeight - headerHeight) : vHeight - (footer.offsetHeight + headerHeight);
         } else {
             inlineHeight = this.height || '';
         }

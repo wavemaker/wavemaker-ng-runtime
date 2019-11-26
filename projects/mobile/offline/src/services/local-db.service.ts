@@ -32,10 +32,10 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public insertTableData(params: any, successCallback?: any, failureCallback?: any) {
+    public insertTableData(params: any, successCallback?: any, failureCallback?: any, options = {}) {
         this.getStore(params).then(store => {
             const isPKAutoIncremented = (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity');
-            if (isPKAutoIncremented && params.data[store.primaryKeyName]) {
+            if (_.get(options, 'resetPrimaryKey') !== false && isPKAutoIncremented && params.data[store.primaryKeyName]) {
                 delete params.data[store.primaryKeyName];
             }
             return store.add(params.data).then(() => {
@@ -54,11 +54,11 @@ export class LocalDbService {
      * @param {function=} failureCallback
      *                    Callback function to be triggered on failure.
      */
-    public insertMultiPartTableData(params: any, successCallback?: any, failureCallback?: any) {
+    public insertMultiPartTableData(params: any, successCallback?: any, failureCallback?: any, options = {}) {
         this.getStore(params).then(store => {
             store.serialize(params.data).then(data => {
                 params.data = data;
-                this.insertTableData(params, successCallback, failureCallback);
+                this.insertTableData(params, successCallback, failureCallback, options);
             });
         }).catch(failureCallback);
     }

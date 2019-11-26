@@ -22,6 +22,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class TabPaneComponent extends StylableComponent implements OnInit, AfterViewInit {
     static initializeProps = registerProps();
 
+    private _isFirstLoad: boolean = true;
+
     public $lazyLoad = noop;
     public name: string;
     public show: boolean;
@@ -113,8 +115,11 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         } else if (key === 'show') {
             // overridding the base component show propertyChangeHandler
             this.nativeElement.hidden = !nv;
-            // setting default tab pane whenever show property changes
-            (this as any).tabsRef.selectDefaultPaneByIndex((this as any).tabsRef.defaultpaneindex);
+            // setting default tab pane on pageload whenever show property is bindable
+            if (this._isFirstLoad) {
+                (this as any).tabsRef.selectDefaultPaneByIndex((this as any).tabsRef.defaultpaneindex);
+            }
+            this._isFirstLoad = false;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

@@ -135,6 +135,7 @@ export abstract class AbstractI18nService {
     public abstract setSelectedLocale(locale);
     public abstract loadDefaultLocale();
     public abstract getLocalizedMessage(message, ...args);
+    public abstract initCalendarLocale(): Promise<any>;
     protected abstract loadAppLocaleBundle();
     protected abstract loadMomentLocaleBundle(localeLang);
     protected abstract loadLocaleBundles(localeLang);

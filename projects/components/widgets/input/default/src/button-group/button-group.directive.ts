@@ -1,4 +1,4 @@
-import { Directive, HostBinding, Injector } from '@angular/core';
+import { Directive, HostBinding, HostListener, Injector} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './button-group.props';
@@ -18,6 +18,11 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class ButtonGroupDirective extends StylableComponent {
     static initializeProps = registerProps();
     @HostBinding('class.btn-group-vertical') vertical: boolean;
+    @HostListener('click', ['$event']) handleClick(event) {
+        const $target = $(event.target).closest('.app-button');
+        this.$element.find('.app-button').removeClass('selected');
+        $target.addClass('selected');
+    }
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

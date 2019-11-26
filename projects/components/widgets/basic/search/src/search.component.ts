@@ -158,6 +158,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         const datasetSubscription = this.dataset$.subscribe(() => {
             // set the next item index.
             this.startIndex = this.datasetItems.length;
+            this._lastResult = undefined;
             this.updateByDataset(this.datavalue || this.toBeProcessedDatavalue);
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
@@ -342,11 +343,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private handleEnterEvent($event) {
         // submit event triggered when there is no search results
         if (!this.typeahead._container) {
-            this.onSelect($event);
+            this.onSearchSelect($event);
         }
     }
     // Triggerred when typeahead option is selected.
-    private onSelect($event: Event) {
+    private onSearchSelect($event: Event) {
         // searchOn is set as onBtnClick, then invoke the search api call manually.
         if (!this.isUpdateOnKeyPress()) {
             this.listenQuery = true;
