@@ -297,6 +297,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
         },
         callOnRowDeselectEvent: (row, e) => {
+            this.items = this.selectedItems = this.callDataGridMethod('getSelectedRows');
             this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
         },
         callOnRowClickEvent: (row, e) => {
