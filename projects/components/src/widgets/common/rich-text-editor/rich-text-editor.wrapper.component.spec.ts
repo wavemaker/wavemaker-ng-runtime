@@ -34,7 +34,7 @@ const testBase: ComponentTestBase = new ComponentTestBase(componentDef);
 testBase.verifyPropsInitialization();
 testBase.verifyCommonProperties();
 
-describe('component Spectific Tests',  () => {
+describe('wm-richtexteditor: Component Spectific Tests',  () => {
     let fixture: ComponentFixture<RichTextEditorWrapperComponent>;
     let wrapperComponent: RichTextEditorWrapperComponent;
     let wmComponent: RichTextEditorComponent;
@@ -48,7 +48,7 @@ describe('component Spectific Tests',  () => {
         expect(wrapperComponent).toBeTruthy();
     });
     it('should display datavalue as undefined', () => {
-        expect(wmComponent.datavalue).toBe(undefined);
+        expect(wmComponent.datavalue).toBeUndefined();
     });
     it('shoould display default value as text', () => {
         const testData = 'hello world';

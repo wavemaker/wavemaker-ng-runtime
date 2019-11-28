@@ -14,7 +14,7 @@ const markup = `
                 disabled="false"
                 iconclass="icon class"
                 iconurl="http://www.google.com/doodle4google/images/splashes/featured.png" iconwidth="20" iconheight="12" iconmargin="5"
-                width="200" height="200" show="true" class="btn-primary"
+                width="200" height="200" show="true"
                 fontsize="20" fontfamily="Segoe UI" color="#0000FF" fontweight="700" whitespace="nowrap"
                 fontstyle="italic" textdecoration="underline" textalign="center" backgroundcolor="#00ff29"
                 backgroundimage="http://www.google.com/doodle4google/images/splashes/featured.png"
@@ -64,7 +64,7 @@ TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
 
-describe('wm-button: Component specific tests: ', () => {
+fdescribe('wm-button: Component specific tests: ', () => {
    let wrapperComponent: TestComponent;
    let wmComponent: ButtonComponent;
    let fixture: ComponentFixture<TestComponent>;
@@ -77,6 +77,7 @@ describe('wm-button: Component specific tests: ', () => {
    let iconclassValue: string = 'wi wi-star';
    let badgeValue: string = '12';
    let iconpositionValue: string = 'right';
+   let btnClass: string = 'btn-primary';
 
    let getButtonEl = () => {
        return fixture.nativeElement.querySelector('[wmButton]');
@@ -101,6 +102,20 @@ describe('wm-button: Component specific tests: ', () => {
 
    it('should create Button Component', () => {
        expect(wrapperComponent).toBeTruthy() ;
+   });
+
+   it('should not contain btn-default class', () => {
+       expect(wmComponent.getWidget().class).toBeUndefined();
+   });
+
+   it('should contain class as btn-primary', (done) => {
+       wmComponent.getWidget().class = btnClass;
+       fixture.detectChanges();
+       btnEl = getButtonEl();
+       setTimeout(() => {
+           expect(btnEl.classList).toContain(btnClass);
+           done();
+       }, 50);
    });
 
     it('should have valid caption', () => {
