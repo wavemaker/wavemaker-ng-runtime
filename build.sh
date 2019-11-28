@@ -538,7 +538,6 @@ bundleWebLibs() {
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
-        ./projects/swipey/src/swipey.jquery.plugin.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
     ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
@@ -600,7 +599,6 @@ bundleMobileLibs() {
         ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
-        ./projects/swipey/src/swipey.jquery.plugin.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
     ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-libs.js \

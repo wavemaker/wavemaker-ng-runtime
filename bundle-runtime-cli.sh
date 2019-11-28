@@ -41,8 +41,6 @@ mkdir -p libraries/scripts/hammerjs
 cp ./node_modules/hammerjs/hammer.min.js libraries/scripts/hammerjs/
 mkdir -p libraries/scripts/iscroll/build
 cp ./node_modules/iscroll/build/iscroll.js libraries/scripts/iscroll/build/
-mkdir -p libraries/scripts/swipey
-cp ./projects/swipey/src/swipey.jquery.plugin.js libraries/scripts/swipey/
 
 node_modules/.bin/rollup -c rollup.build-task.js
 

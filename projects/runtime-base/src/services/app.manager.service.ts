@@ -29,6 +29,7 @@ enum POST_MESSAGES {
 
 @Injectable()
 export class AppManagerService {
+    static readonly SERVICE_NAME = 'AppManagerService';
 
     private appVariablesLoaded = false;
     private appVariablesFired = false;
@@ -165,7 +166,7 @@ export class AppManagerService {
         if (!loggedInUser) {
             return;
         }
-        return this.$security.load().then(()=>{
+        return this.$security.load().then(() => {
             const securityConfig = this.$security.get();
             if (securityConfig && securityConfig.securityEnabled && securityConfig.authenticated) {
                 loggedInUser.isAuthenticated = securityConfig.authenticated;
