@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['badgevalue', PROP_STRING],
                 ['caption', PROP_STRING],
-                ['class', {value: 'btn-default', ...PROP_STRING}],
+                ['class', PROP_STRING],
                 ['conditionalclass', PROP_ANY],
                 ['conditionalstyle', PROP_ANY],
                 ['disabled', PROP_BOOLEAN],
