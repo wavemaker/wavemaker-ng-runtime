@@ -150,7 +150,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     runPageTransition(transition: string): Promise<void> {
         return new Promise(resolve => {
-            const $target = $('app-page-outlet:first');
+            const $target = this.getPageTransitionTarget();
             if (transition) {
                 const onTransitionEnd = () => {
                     if (resolve) {
@@ -178,10 +178,15 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
     }
 
+    getPageTransitionTarget() {
+        // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
+        return $('app-page-outlet:first').length?$('app-page-outlet:first'):$('div[data-role="pageContainer"]:first').parent();
+    }
+
     ngAfterViewInit(): void {
         const transition = this.navigationService.getPageTransition();
         if (transition) {
-            const pageOutlet = $('app-page-outlet:first');
+            const pageOutlet = this.getPageTransitionTarget();
             pageOutlet.prepend(pageOutlet.children().first().clone());
         }
         this.runPageTransition(transition).then(() => {
