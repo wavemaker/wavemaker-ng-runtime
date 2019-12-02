@@ -61,7 +61,7 @@ export class TableActionDirective extends BaseComponent implements OnInit {
             position: this.position,
             widgetType: this['widget-type'],
             hyperlink: this.hyperlink,
-            target: this.target,
+            target: this.target || '',
             conditionalclass: this.conditionalclass || '',
             conditionalstyle: this.conditionalstyle || {}
         };

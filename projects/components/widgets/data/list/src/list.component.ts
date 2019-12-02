@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
+import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
@@ -611,6 +611,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private onListRender(listItems: QueryList<ListItemDirective>) {
         // Added render callback event. This method(onListRender) is calling multiple times so checking isDatachanged flag because this falg is changed whenever new data is rendered.
         if (this.isDataChanged) {
+            // Whenever dataset is changed, trigger watchers to evaluate listitem bind expressions.
+            $invokeWatchers(true);
             this.invokeEventCallback('render', {$data: this.fieldDefs});
         }
         const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];

@@ -110,7 +110,11 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
                this.loadPage(pageName);
             });
             this.queryParamSubscription = this.route.queryParams.subscribe(p => {
-                this.loadPage(this.app.activePageName);
+                // if we navigate to the same page with new page params only then re-render the page
+                // this.route.params.subscribe will takecare of navigation of new page
+                if (this.app.activePageName === this.route.snapshot.paramMap.get('pageName')) {
+                    this.loadPage(this.app.activePageName);
+                }
             });
         }
     }

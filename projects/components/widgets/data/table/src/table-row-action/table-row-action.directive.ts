@@ -66,7 +66,7 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
             tabindex: this.tabindex ? +this.tabindex : undefined,
             widgetType: this['widget-type'] || 'button',
             hyperlink: this.hyperlink,
-            target: this.target,
+            target: this.target || '',
             conditionalclass: this.conditionalclass || '',
             conditionalstyle: this.conditionalstyle || {}
         };
