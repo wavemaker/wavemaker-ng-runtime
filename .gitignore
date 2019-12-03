@@ -39,3 +39,6 @@ testem.log
 .DS_Store
 Thumbs.db
 *.iml
+
+# Karma test report: UI unit tests
+karma-test-report.txt
