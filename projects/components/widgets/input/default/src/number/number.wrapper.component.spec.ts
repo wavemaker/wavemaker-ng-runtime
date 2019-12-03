@@ -4,7 +4,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NumberComponent } from './number.component';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, registerLocaleData } from '@angular/common';
-import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
+import { PipeProvider } from '../../../../../../runtime-base/src/services/pipe-provider.service';
 import localePT from '@angular/common/locales/pt.js';
 
 

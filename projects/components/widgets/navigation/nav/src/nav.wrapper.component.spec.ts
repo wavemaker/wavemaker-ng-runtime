@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { App, UserDefinedExecutionContext} from '@wm/core';
 import { NavComponent} from './nav.component';
 import { NavigationControlDirective } from './navigation-control.directive';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../test/common-widget.specs';
-import { ComponentsTestModule } from '../../../test/components.test.module';
-import { compileTestComponent } from '../../../test/util/component-test-util';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
+import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
+import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { SecurityService } from '@wm/security';
 
 const mockApp = {};

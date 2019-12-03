@@ -2,14 +2,13 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import {App, AppDefaults, setPipeProvider} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PaginationModule, TypeaheadModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
 import { ListComponent } from './list.component';
-import { TrustAsPipe } from '../../../pipes/trust-as.pipe';
 import { ListItemDirective } from './list-item.directive';
-import { ToDatePipe } from '../../../pipes/custom-pipes';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
-import { PaginationComponent } from '../pagination/pagination.component';
+import { PaginationModule as WmPaginationModule } from '@wm/components/data/pagination';
+import { WmComponentsModule, ToDatePipe, TrustAsPipe } from '@wm/components/base';
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
 let mockApp = {
@@ -60,9 +59,11 @@ describe('ListComponent', () => {
        TestBed.configureTestingModule({
            imports: [
                FormsModule,
-               PaginationModule.forRoot()
+               PaginationModule.forRoot(),
+               WmPaginationModule,
+               WmComponentsModule.forRoot()
            ],
-           declarations: [ListWrapperComponent, ListComponent, ListItemDirective, TrustAsPipe, PaginationComponent],
+           declarations: [ListWrapperComponent, ListComponent, ListItemDirective],
            providers: [
                {provide: App, useValue: mockApp},
                {provide: ToDatePipe, useValue: mockApp},
@@ -111,7 +112,7 @@ describe('ListComponent', () => {
        const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
        expect(liElem.nativeElement.classList).toContain('active');
    });
-   
+
    it('should apply disable-item class to li element', () => {
         listComponent.disableitem = true;
         fixture.detectChanges();
@@ -133,7 +134,7 @@ describe('ListComponent', () => {
     //     listComponent.getNativeElement().click();
     //     expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
     // });
-    
+
     it('should select item by index from the script in on-render event', () => {
         spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
@@ -176,9 +177,11 @@ describe('ListComponent With groupby', () => {
         TestBed.configureTestingModule({
             imports: [
                 FormsModule,
-                PaginationModule.forRoot()
+                PaginationModule.forRoot(),
+                WmPaginationModule,
+                WmComponentsModule.forRoot()
             ],
-            declarations: [ListWrapperComponent, ListComponent, ListItemDirective, TrustAsPipe, PaginationComponent],
+            declarations: [ListWrapperComponent, ListComponent, ListItemDirective],
             providers: [
                 {provide: App, useValue: mockApp},
                 {provide: ToDatePipe, useValue: mockApp},

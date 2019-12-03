@@ -1,9 +1,9 @@
 /*global describe, it, WM, beforeEach, expect, module, inject, _, parseInt, document, Hammer*/
 
 import {async} from '@angular/core/testing';
-import * as _ from '../../../../node_modules/lodash/lodash.min';
+import * as _ from '../../../../../node_modules/lodash/lodash.min';
 import {isBooleanAttr, isDimensionProp} from "../widgets/framework/constants";
-import {toDimension} from "../../../core/src/utils/dom";
+import {toDimension} from "../../../../core/src/utils/dom";
 import {compileTestComponent} from "./util/component-test-util";
 
 // TODO: Pending basic common Events, basic touch events, dialog events and properties

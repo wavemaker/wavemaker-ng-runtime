@@ -2,7 +2,7 @@ import { By } from "@angular/platform-browser";
 import { detectChanges } from "./../../../../../core/src/utils/utils";
 import { TestBed } from "@angular/core/testing";
 import { Component, ViewChild } from "@angular/core";
-import { TrustAsPipe } from "projects/components/src/pipes/trust-as.pipe";
+import { TrustAsPipe } from "../../../../base/src/pipes/trust-as.pipe";
 import { FormBuilder } from "@angular/forms";
 import { App, DynamicComponentRefProvider } from "@wm/core";
 import { TableComponent } from "./table.component";
@@ -15,7 +15,7 @@ import { TableComponent } from "./table.component";
 class TestComponent {}
 /*
 abstract class ComponentFixture {
-    debugElement;       // test helper 
+    debugElement;       // test helper
     componentInstance;  // access properties and methods
     nativeElement;      // access DOM
     detectChanges();    // trigger component change detection

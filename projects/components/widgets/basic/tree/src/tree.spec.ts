@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import {TreeDirective} from "./tree.directive";
 import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
 import {App, setPipeProvider} from "@wm/core";
-import {TrustAsPipe} from "../../../pipes/trust-as.pipe";
+import {TrustAsPipe} from "../../../../base/src/pipes/trust-as.pipe";
 
 const mockApp = {
     subscribe: ()=>{}

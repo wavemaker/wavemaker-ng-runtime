@@ -2,10 +2,10 @@ import { ComponentFixture } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { App} from '@wm/core';
 import { FileUploadComponent } from './file-upload.component';
-import { ComponentsTestModule} from '../../../test/components.test.module';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef  } from '../../../test/common-widget.specs';
-import { compileTestComponent } from '../../../test/util/component-test-util';
-import { FileSizePipe, FileIconClassPipe, StateClassPipe } from '../../../pipes/custom-pipes';
+import { ComponentsTestModule} from '../../../../base/src/test/components.test.module';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef  } from '../../../../base/src/test/common-widget.specs';
+import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
+import { FileSizePipe, FileIconClassPipe, StateClassPipe } from '../../../../base/src/pipes/custom-pipes';
 
 const mockApp = {
     notifyApp: function () {}

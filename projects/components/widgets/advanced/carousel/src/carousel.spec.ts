@@ -2,11 +2,11 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import { Component, ViewChild } from '@angular/core';
 import { CarouselModule } from 'ngx-bootstrap';
 import {CarouselDirective} from "./carousel.directive";
-import {TrustAsPipe} from "../../../pipes/trust-as.pipe";
 import {CarouselTemplateDirective} from "./carousel-template/carousel-template.directive";
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import {App, setPipeProvider, $parseExpr} from '@wm/core';
-import {LabelDirective} from "../label/label.directive";
+import { BasicModule } from '@wm/components/basic';
+import { WmComponentsModule } from '@wm/components/base';
 
 // this is required by swipey
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
@@ -52,13 +52,10 @@ describe('wm-carousel: Widget specific test cases', () => {
 
     beforeEach(async(()=>{
         TestBed.configureTestingModule({
-            imports: [CarouselModule],
-            declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective, LabelDirective],
+            imports: [CarouselModule, BasicModule, WmComponentsModule.forRoot()],
+            declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
             providers: [
-                {provide: App, useValue: mockApp},
-                {provide: TrustAsPipe, useClass: TrustAsPipe},
-                // {provide: ToDatePipe, useValue: mockApp},
-                // {provide: AppDefaults, useClass: AppDefaults}
+                {provide: App, useValue: mockApp}
             ]
         })
             .compileComponents();

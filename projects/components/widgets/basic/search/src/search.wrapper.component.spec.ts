@@ -5,8 +5,8 @@ import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
-import { compileTestComponent } from '../../../test/util/component-test-util';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../test/common-widget.specs';
+import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 
 const mockApp = {};
 

@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { RichTextEditorComponent } from './rich-text-editor.component';
-import { ComponentsTestModule } from '../../../test/components.test.module';
-import { compileTestComponent } from '../../../test/util/component-test-util';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../test/common-widget.specs';
+import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
+import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 
 const  markup = `<div wmRichTextEditor
                       hint="Help text for test richtext editor"

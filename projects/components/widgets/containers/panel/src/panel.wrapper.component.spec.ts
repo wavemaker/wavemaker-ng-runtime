@@ -2,18 +2,18 @@ import { async, ComponentFixture } from '@angular/core/testing';
 import { PanelComponent } from './panel.component';
 import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { MenuDropdownItemComponent } from "../menu/menu-dropdown-item/menu-dropdown-item.component";
-import { MenuDropdownComponent } from "../menu/menu-dropdown/menu-dropdown.component";
-import { NavigationControlDirective } from "../nav/navigation-control.directive";
-import { MenuComponent } from "../menu/menu.component";
+import { MenuDropdownItemComponent } from "../../../navigation/menu/src/menu-dropdown-item/menu-dropdown-item.component";
+import { MenuDropdownComponent } from "../../../navigation/menu/src//menu-dropdown/menu-dropdown.component";
+import { NavigationControlDirective } from "../../../navigation/nav/src/navigation-control.directive";
+import { MenuComponent } from "../../../navigation/menu/src//menu.component";
 import { Router } from '@angular/router';
 import { UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { DatasetAwareNavComponent, NavNode } from '../base/dataset-aware-nav.component';
+import { DatasetAwareNavComponent, NavNode } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
 import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../test/common-widget.specs";
-import { ComponentsTestModule } from "../../../test/components.test.module";
-import { compileTestComponent } from "../../../test/util/component-test-util";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
+import { compileTestComponent } from "../../../../base/src/test/util/component-test-util";
 
 const markup = `<div wmPanel partialContainer aria-label="panel"  wm-navigable-element="true"  subheading="subheading"  iconclass="wi wi-account-circle" autoclose="outsideClick" title="Title" name="panel1" actions="testData" actionsclick.event="panel1Actionsclick($item)"></div>`;
 @Component({
