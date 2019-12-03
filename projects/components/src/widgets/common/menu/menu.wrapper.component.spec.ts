@@ -50,7 +50,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(menuComponentDef);
 // TestBase.verifyCommonProperties();
 // TestBase.verifyStyles();
 
-fdescribe('MenuComponent', () => {
+describe('MenuComponent', () => {
     let menuWrapperComponent: MenuWrapperComponent;
     let menuComponent: MenuComponent;
     let fixture: ComponentFixture<MenuWrapperComponent>;
