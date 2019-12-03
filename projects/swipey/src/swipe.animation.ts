@@ -1,7 +1,7 @@
 
-import initSwipeyJqueryPlugin from './swipey.jquery.plugin';
+// import initSwipeyJqueryPlugin from './swipey.jquery.plugin';
 
-initSwipeyJqueryPlugin();
+// initSwipeyJqueryPlugin();
 
 declare const  $;
 
