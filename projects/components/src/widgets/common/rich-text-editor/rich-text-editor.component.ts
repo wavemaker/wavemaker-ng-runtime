@@ -1,7 +1,7 @@
 import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { setCSS } from '@wm/core';
+import {setCSS, setHtml} from '@wm/core';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './rich-text-editor.props';
@@ -97,7 +97,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
             }
         },
         fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Merriweather'],
-        placeholder: '',
+        placeholder: 'write here...',
         minHeight: 100,
         disableResizeEditor: true
     };
@@ -139,10 +139,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'placeholder') {
-            this.EDITOR_DEFAULT_OPTIONS.placeholder = nv;
-            this.performEditorOperation({
-                placeholder: nv
-            });
+            this.performEditorOperation('placeholder', nv);
         } else if (key === 'disabled' || key === 'readonly') {
             this.performEditorOperation(nv ? 'disable' : 'enable');
         } else {
@@ -160,6 +157,8 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         if (this.isEditorLoaded) {
             if (key === 'height') {
                 setCSS(this.nativeElement.querySelector('div.note-editable'), key, value, true);
+            } else if (key === 'placeholder') {
+                setHtml(this.nativeElement.querySelector('div.note-placeholder'), value, true);
             } else {
                 // if editor content is empty then summernote('code') is returning empty p tags like <p></br></p>. So checking for empty and returning undefined.
                 if (arguments.length === 1 && key === 'code' && this.$richTextEditor.summernote('isEmpty')) {
