@@ -14,6 +14,7 @@ const markup = `
         <div wmSearch name="testsearch"
             searchon="typing"
              hint="Help text for test search"
+             placeholder="Type here to search.."
              type="button"
              tabindex="1"
              disabled="false"
