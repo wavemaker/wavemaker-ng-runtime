@@ -32,6 +32,7 @@ export class TabsAnimator extends SwipeAnimation {
             w = this._$el.find('>.tab-pane:first').width(),
             noOfTabs = this._$el.find('>.tab-pane:visible').length,
             centerVal = -1 * activeTabIndex * w;
+        this.clearContentFocus();
         return {
             strict: false,
             lower: activeTabIndex === noOfTabs - 1 ? 0 : -w,
@@ -52,7 +53,13 @@ export class TabsAnimator extends SwipeAnimation {
             '-webkit-transform': 'translate3d(${{ ($D + $d)/w * 100 + \'%\'}}, 0, 0)'
         };
     }
-
+    /* WMS-18031 | On Tab Switch | Remove the Focus on the Existing Tab Contents */
+    private clearContentFocus() {
+        let activeTab = this._$el.find('>.tab-pane.active');
+        if(activeTab.length && activeTab.find(document.activeElement).length){
+            (document.activeElement as HTMLElement).blur();
+        }
+    }
     public transitionTabIntoView() {
         const activeTabIndex = this.tabs.getActiveTabIndex();
         setCSS(this._$el[0], 'transform', `translate3d(${-1 *  activeTabIndex / this._noOfTabs * 100}%, 0, 0)`);
