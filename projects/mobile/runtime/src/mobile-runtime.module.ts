@@ -154,6 +154,21 @@ export class MobileRuntimeModule {
         }
         deviceService.start();
         deviceService.whenReady().then(() => {
+            // To make wavelens work with spotcues environment
+            if (isSpotcues) {
+                var params = location.search.substring(1)
+                    .split('&')
+                    .map(s => s.split('='))
+                    .reduce((a, c, i, s) => {
+                        a[s[i][0]] = s[i][1];
+                        return a;
+                    }, {});
+                if (params && params['wavelens']) {
+                    const $body = $('body:first');
+                    $body.append(`<script src="${params['wavelens']}/runtime/script.js"></script>`);
+                    $body.append(`<link rel="stylesheet" href="${params['wavelens']}/runtime/styles.css">`);
+                }
+            }
             if (hasCordova()) {
                 runtimeModule._$appEl.addClass('cordova');
                 runtimeModule.exposeOAuthService();
