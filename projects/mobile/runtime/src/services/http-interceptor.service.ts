@@ -5,7 +5,15 @@ import { File } from '@ionic-native/file';
 import { from, Observable, Subject } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
-import { App, executePromiseChain, getWmProjectProperties, hasCordova, noop, removeExtraSlashes } from '@wm/core';
+import {
+    App,
+    executePromiseChain,
+    getWmProjectProperties,
+    hasCordova,
+    isSpotcues,
+    noop,
+    removeExtraSlashes
+} from '@wm/core';
 import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS } from '@wm/variables';
@@ -28,7 +36,7 @@ export class MobileHttpInterceptor implements HttpInterceptor {
                        private deviceService: DeviceService,
                        private networkService: NetworkService,
                        securityService: SecurityService) {
-        if (hasCordova() && !CONSTANTS.isWaveLens) {
+        if (hasCordova() && !CONSTANTS.isWaveLens && !isSpotcues) {
             this.requestInterceptors.push(new SecurityInterceptor(app, file, securityService));
             this.requestInterceptors.push(new RemoteSyncInterceptor(app, deviceFileDownloadService, deviceService, file, networkService));
             this.requestInterceptors.push(new ServiceCallInterceptor(app));

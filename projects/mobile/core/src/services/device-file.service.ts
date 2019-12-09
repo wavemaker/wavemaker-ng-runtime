@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
 
-import { isAndroid, noop } from '@wm/core';
+import { isAndroid, isSpotcues, noop } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 
@@ -202,8 +202,12 @@ export class DeviceFileService implements IDeviceStartUpService {
          * with cordova file plugin. So, increasing it to 512 Kb to read large database schema files (>256 Kb).
          */
         FileReader.READ_CHUNK_SIZE = 512 * 1024;
-        return new Promise((resolve, reject) => {
-            this.cordovaAppVersion.getAppName().then(appName => {
+        return Promise.resolve().then(() => {
+                if (isSpotcues) {
+                    return 'spotcues'
+                }
+                return this.cordovaAppVersion.getAppName();
+            }).then(appName => {
                 const promises = [];
                 this._appName = appName;
                 promises.push(this.createFolderIfNotExists(this.getTemporaryRootPath(),
@@ -219,8 +223,7 @@ export class DeviceFileService implements IDeviceStartUpService {
                     // this is necessary to prevent multiple file permission popup.
                     return this.cordovaFile.readAsText(cordova.file.externalRootDirectory, 'random-file-for-permission').catch(noop);
                 }
-            }).then(resolve, reject);
-        });
+            });
     }
 
     public getServiceName() {
