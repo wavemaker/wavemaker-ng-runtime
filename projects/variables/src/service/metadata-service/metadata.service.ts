@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AbstractHttpService, hasCordova } from '@wm/core';
+import { AbstractHttpService, hasCordova, isSpotcues } from '@wm/core';
 
 @Injectable()
 export class MetadataService {
@@ -15,7 +15,7 @@ export class MetadataService {
 
     load(prefabName?: string): Promise<any> {
         let url;
-        if (hasCordova()) {
+        if (hasCordova() && !isSpotcues) {
             url = 'metadata/' + (prefabName ? `prefabs/${prefabName}/` : 'app/') + 'service-definitions.json';
         } else {
             url = './services/' + (prefabName ? `prefabs/${prefabName}/` : '') + 'servicedefs';

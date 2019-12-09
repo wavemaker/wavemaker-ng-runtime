@@ -80,7 +80,7 @@ export class AppRef {
 
     private _eventNotifier = new EventNotifier();
 
-    landingPageName: string;
+    landingPageName = getWmProjectProperties().homePage;
 
     reload() {
         window.location.reload();

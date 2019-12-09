@@ -811,6 +811,8 @@ export const hasCordova = () => {
     return !!window['cordova'];
 };
 
+export const isSpotcues = /Spotcues/i.test(window['navigator'].userAgent);
+
 export const AppConstants = {
     INT_MAX_VALUE: 2147483647
 } ;
