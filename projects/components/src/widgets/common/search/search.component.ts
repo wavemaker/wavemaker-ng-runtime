@@ -708,7 +708,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByValue = item.value;
 
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue, $event || {});
+        this.invokeOnChange(this.datavalue, $event || {}, true);
         if (this.$element.hasClass('full-screen')) {
             this.closeSearch();
         }
