@@ -618,21 +618,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             });
     }
 
-    // this method returns the parent context i.e. Page context and not parent component's context.
-    private getContext(context) {
-        if (context && _.get(context, 'widget')) {
-            return this.getContext(context.viewParent);
-        }
-        return context;
-    }
-
     public getTransformedData(data: any, itemIndex?: number, iscustom?: boolean): DataSetItem[] {
         if (isDefined(itemIndex)) {
             itemIndex++;
         }
 
         const transformedData = transformData(
-            this.getContext(this.viewParent),
+            this.viewParent,
             data,
             this.datafield,
             {
