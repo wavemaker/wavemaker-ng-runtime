@@ -529,6 +529,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? _.get(this.queryModel[0], 'label') : '';
     }
 
+    // If we have last search results then open dropdown on focus
+    private handleFocus($event) {
+        if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
+            (this.typeahead as any).keyUpEventEmitter.emit(this.query);
+        }
+    }
 
     // This method returns a promise that provides the filtered data from the datasource.
     public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
