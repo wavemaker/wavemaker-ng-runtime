@@ -213,6 +213,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         return this.widget;
     }
 
+    public setProperty(propName, propValue) {
+        this.widget[propName] = propValue;
+    }
+
     public getViewParent(): any {
         return this.viewParent;
     }

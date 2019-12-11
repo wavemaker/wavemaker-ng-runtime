@@ -12,6 +12,7 @@ export * from './utils/utils';
 export * from './utils/watcher';
 export * from './utils/id-generator';
 export * from './types/types';
+export * from './services/constant.service';
 export * from './services/utils.service';
 export * from './services/field-type.service';
 export * from './services/field-widget.service';
