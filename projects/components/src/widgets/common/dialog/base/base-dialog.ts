@@ -1,7 +1,7 @@
 import { Injector, OnDestroy, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap';
 
-import { AbstractDialogService, closePopover } from '@wm/core';
+import { AbstractDialogService, closePopover, findRootContainer } from '@wm/core';
 
 import { IDialog, IWidgetConfig } from '../../../framework/types';
 import { BaseComponent } from '../../base/base.component';
@@ -9,17 +9,6 @@ import { BaseComponent } from '../../base/base.component';
 declare const _;
 
 let eventsRegistered = false;
-
-const findRootContainer = ($el) => {
-    let root = $el.closest('.app-prefab');
-    if (!root.length) {
-        root = $el.closest('.app-partial');
-    }
-    if (!root.length) {
-        root = $el.closest('.app-page');
-    }
-    return root.length && root.parent()[0].tagName;
-};
 
 const invokeOpenedCallback = (ref) => {
     if (ref) {

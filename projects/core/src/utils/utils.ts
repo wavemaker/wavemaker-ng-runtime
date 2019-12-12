@@ -1236,3 +1236,15 @@ export const triggerItemAction  = (scope, item) => {
         }
     }
 };
+
+// this will add the html tag to the widget to scope the css to the page.
+export const findRootContainer = ($el) => {
+    let root = $el.closest('.app-prefab');
+    if (!root.length) {
+        root = $el.closest('.app-partial');
+    }
+    if (!root.length) {
+        root = $el.closest('.app-page');
+    }
+    return root.length && root.parent()[0].tagName;
+};
