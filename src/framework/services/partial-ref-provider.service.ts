@@ -6,7 +6,6 @@ import {
     Injector,
     SystemJsNgModuleLoader,
     Inject,
-    ReflectiveInjector,
     NgModuleFactory
 } from "@angular/core";
 import { PartialRefProvider, ComponentType } from "@wm/runtime/base";
@@ -17,7 +16,7 @@ type ModuleWithRoot = Type<any> & { rootComponent: Type<any> };
 @Injectable({
     providedIn: "root"
 })
-export class PartialRefProviderService extends PartialRefProvider {
+export class LazyComponentRefProviderService extends PartialRefProvider {
     private moduleRef: NgModuleRef<any>;
     constructor(
         @Inject(NgModuleFactoryLoader) private loader: SystemJsNgModuleLoader,
@@ -25,19 +24,25 @@ export class PartialRefProviderService extends PartialRefProvider {
     ) {
         super();
     }
-    private getModulePath(partialName: string): string {
-        if (partialName.length > 0) {
-            return `src/app/partials/${partialName}/${partialName}.module#${partialName
-                .charAt(0)
-                .toUpperCase()}${partialName.slice(1)}Module`;
+    private getModulePath(componentName: string, componentType: ComponentType): string {
+        if (componentName.length > 0) {
+            if (componentType == ComponentType.PARTIAL) {
+                return `src/app/partials/${componentName}/${componentName}.module#${componentName
+                    .charAt(0)
+                    .toUpperCase()}${componentName.slice(1)}Module`;
+            } else if (componentType == ComponentType.PREFAB) {
+                return `src/app/prefabs/${componentName}/${componentName}.module#${componentName
+                    .charAt(0)
+                    .toUpperCase()}${componentName.slice(1)}Module`;
+            }
         }
         return null;
     }
-    public async getComponentFactoryRef(partialName:string,componentType: ComponentType) {
+    public async getComponentFactoryRef(componentName:string,componentType: ComponentType) {
         let moduleFactory: NgModuleFactory<any>;
         try {
             moduleFactory = await this.loader.load(
-                this.getModulePath(partialName)
+                this.getModulePath(componentName, componentType)
             );
             this.moduleRef = moduleFactory.create(this.injector);
             const rootComponent = (moduleFactory.moduleType as ModuleWithRoot)

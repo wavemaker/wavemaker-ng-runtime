@@ -1,7 +1,7 @@
 import { ComponentFactoryResolver, Injectable, Inject } from '@angular/core';
 
 import { ComponentRefProvider, ComponentType } from '@wm/runtime/base';
-import { PartialRefProviderService } from './partial-ref-provider.service';
+import { LazyComponentRefProviderService } from './partial-ref-provider.service';
 
 const componentRefCache = new Map<ComponentType, Map<string, any>>();
 
@@ -16,14 +16,14 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         componentRefCache.get(type).set(name, {ref: ref, componentFactory: componentFactory});
     }
 
-    constructor(private componentFactoryResolver: ComponentFactoryResolver, @Inject(PartialRefProviderService) private lazyPartialRef) {
+    constructor(private componentFactoryResolver: ComponentFactoryResolver, @Inject(LazyComponentRefProviderService) private lazyComponentRef) {
         super();
     }
 
     public async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any> {
         const value = componentRefCache.get(componentType).get(componentName);
-        if (!value && componentType === ComponentType.PARTIAL) {
-            const partialRef = await this.lazyPartialRef.getComponentFactoryRef(
+        if (!value && (componentType === ComponentType.PARTIAL || componentType === ComponentType.PREFAB)) {
+            const partialRef = await this.lazyComponentRef.getComponentFactoryRef(
                 componentName,
                 componentType
             );
