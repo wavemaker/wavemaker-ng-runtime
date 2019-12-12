@@ -17,7 +17,8 @@
                   class="app-badge label label-{{badgetype}}">{{badgevalue}}</span>
             <div wmMenu aria-label="dropdown" dropdown type="anchor" class="panel-action" dataset.bind="actions"
                  *ngIf="actions" caption="" menuposition="down,left" iconclass="wi wi-more-vert"
-                 datafield.bind="datafield" select.event="menuActionItemClick($event,$item)"></div>
+                 autoclose.bind="autoclose" datafield.bind="datafield" select.event="menuActionItemClick($event,$item)">
+            </div>
             <button type="button" aria-label="Help" class="app-icon panel-action wi" [title]="appLocale.LABEL_HELP"
                     *ngIf="helptext" (click)="toggleHelp()"><i class="wi-question"></i></button>
             <button type="button" aria-label="Collapse/Expand" class="app-icon wi panel-action" *ngIf="collapsible"

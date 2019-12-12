@@ -21,6 +21,7 @@ import {
     AbstractHttpService,
     fetchContent,
     hasCordova,
+    isSpotcues,
     insertAfter,
     isIpad,
     isIphone,
@@ -123,14 +124,16 @@ export class MobileRuntimeModule {
         if (hasCordova()) {
             runtimeModule.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
-            app.subscribe('userLoggedIn', () => {
-                let url = $rootScope.project.deployedUrl;
-                if (url.endsWith('/')) {
-                    url = url.substr(0, url.length - 1);
-                }
-                cookieService.persistCookie(url, 'JSESSIONID').catch(noop);
-                cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
-            });
+            if (!isSpotcues) {
+                app.subscribe('userLoggedIn', () => {
+                    let url = $rootScope.project.deployedUrl;
+                    if (url.endsWith('/')) {
+                        url = url.substr(0, url.length - 1);
+                    }
+                    cookieService.persistCookie(url, 'JSESSIONID').catch(noop);
+                    cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
+                });
+            }
             app.subscribe('device-file-download', (data) => {
                 deviceFileOpenerService.openRemoteFile(data.url, data.extension, data.name).then(data.successCb, data.errorCb);
             });
@@ -148,10 +151,28 @@ export class MobileRuntimeModule {
         }
         deviceService.start();
         deviceService.whenReady().then(() => {
+            // To make wavelens work with spotcues environment
+            if (isSpotcues) {
+                var params = location.search.substring(1)
+                    .split('&')
+                    .map(s => s.split('='))
+                    .reduce((a, c, i, s) => {
+                        a[s[i][0]] = s[i][1];
+                        return a;
+                    }, {});
+                if (params && params['wavelens']) {
+                    const $body = $('body:first');
+                    $body.append(`<script src="${params['wavelens']}/runtime/script.js"></script>`);
+                    $body.append(`<link rel="stylesheet" href="${params['wavelens']}/runtime/styles.css">`);
+                }
+            }
             if (hasCordova()) {
                 runtimeModule._$appEl.addClass('cordova');
                 runtimeModule.exposeOAuthService();
-                navigator.splashscreen.hide();
+
+                if (!isSpotcues) {
+                    navigator.splashscreen.hide();
+                }
                 // Fix for issue: ios device is not considering the background style, eventhough value is set in config.xml.
                 if (window['StatusBar']) {
                     window['StatusBar'].overlaysWebView(false);
@@ -229,7 +250,7 @@ export class MobileRuntimeModule {
     private getDeployedUrl(): string {
         const waveLensAppUrl = window['WaveLens'] && window['WaveLens']['appUrl'];
         let deployedUrl = $rootScope.project.deployedUrl;
-        if (hasCordova()) {
+        if (hasCordova() && !isSpotcues) {
             if (waveLensAppUrl) {
                 // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
                 deployedUrl = waveLensAppUrl;

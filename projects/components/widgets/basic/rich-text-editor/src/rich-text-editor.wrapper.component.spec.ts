@@ -7,6 +7,7 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../.
 
 const  markup = `<div wmRichTextEditor
                       hint="Help text for test richtext editor"
+                      placeholder="test placeholder"
                       readonly="false" show="true" showpreview="false"
                       tabindex="1" class="text-success" name="richtexteditor1">
                 </div>`;

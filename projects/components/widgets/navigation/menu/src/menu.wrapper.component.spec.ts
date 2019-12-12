@@ -14,13 +14,13 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../.
 import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
 import { compileTestComponent } from "../../../../base/src/test/util/component-test-util";
 
-const markup = `<div wmMenu dropdown  caption="My Menu" autoclose="outsideClick" name="menu1" select.event="menu1Select($event, widget, $item)">`;
+const markup = `<div wmMenu dropdown  tabindex="0"  caption="My Menu" autoclose="outsideClick" name="menu1" select.event="menu1Select($event, widget, $item)">`;
 @Component({
     template: markup
 })
 class MenuWrapperComponent {
     @ViewChild(MenuComponent)
-    menuComponent: MenuComponent;
+    wmComponent: MenuComponent;
 
     public testdata = "Op1,op2,op3";
 
@@ -41,18 +41,19 @@ const menuComponentDef: ITestComponentDef = {
     $unCompiled: $(markup),
     type: 'wm-menu',
     widgetSelector: '[wmMenu]',
+    inputElementSelector: 'button.app-button',
     testModuleDef: menuComponentModuleDef,
     testComponent: MenuWrapperComponent
 }
 
 const TestBase: ComponentTestBase = new ComponentTestBase(menuComponentDef);
-// TestBase.verifyPropsInitialization();
-// TestBase.verifyCommonProperties();
-// TestBase.verifyStyles();
+TestBase.verifyPropsInitialization();
+TestBase.verifyCommonProperties();
+TestBase.verifyStyles();
 
 describe('MenuComponent', () => {
     let menuWrapperComponent: MenuWrapperComponent;
-    let menuComponent: MenuComponent;
+    let wmComponent: MenuComponent;
     let fixture: ComponentFixture<MenuWrapperComponent>;
 
     let getButtonElement = () => {
@@ -68,7 +69,7 @@ describe('MenuComponent', () => {
 
         fixture = compileTestComponent(menuComponentModuleDef, MenuWrapperComponent);
         menuWrapperComponent = fixture.componentInstance;
-        menuComponent = menuWrapperComponent.menuComponent;
+        wmComponent = menuWrapperComponent.wmComponent;
 
         fixture.detectChanges();
 
@@ -76,7 +77,7 @@ describe('MenuComponent', () => {
     });
 
     it("should create the menu component ", () => {
-        expect(menuComponent).toBeTruthy();
+        expect(wmComponent).toBeTruthy();
 
     });
 
@@ -94,7 +95,7 @@ describe('MenuComponent', () => {
 
     it("should open the dropdown  on menu button click", () => {
         let buttonEle = getButtonElement();
-        menuComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonEle.nativeElement.click();
         fixture.whenStable().then(() => {
             let menudropdownEle = getwmMenudropdownElem();
@@ -109,7 +110,7 @@ describe('MenuComponent', () => {
 
     it("should trigger the menu select option click event ", () => {
         let buttonEle = getButtonElement();
-        menuComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonEle.nativeElement.click();
 
         fixture.whenStable().then(() => {

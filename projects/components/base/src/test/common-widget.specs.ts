@@ -2,9 +2,9 @@
 
 import {async} from '@angular/core/testing';
 import * as _ from '../../../../../node_modules/lodash/lodash.min';
-import {isBooleanAttr, isDimensionProp} from "../widgets/framework/constants";
-import {toDimension} from "../../../../core/src/utils/dom";
-import {compileTestComponent} from "./util/component-test-util";
+import {isBooleanAttr, isDimensionProp} from '../widgets/framework/constants';
+import {toDimension} from '../../../../core/src/utils/dom';
+import {compileTestComponent} from './util/component-test-util';
 
 // TODO: Pending basic common Events, basic touch events, dialog events and properties
 
@@ -20,8 +20,7 @@ export interface ITestComponentDef {
     widgetSelector: string;
     inputElementSelector?: string;
     testModuleDef: ITestModuleDef;
-    testComponent: any,
-    PropertiesToBeExcluded?: Array<string>
+    testComponent: any
 }
 
 export class ComponentTestBase {
@@ -51,11 +50,9 @@ export class ComponentTestBase {
             let component,
                 fixture,
                 widgetProps,
-                widgetAttr = _.replace(this.widgetDef.type, '-', ''),
-                propsExcluded = this.widgetDef.PropertiesToBeExcluded ? this.widgetDef.PropertiesToBeExcluded : [];
-            propsExcluded.push(widgetAttr);
+                widgetAttr = _.replace(this.widgetDef.type, '-', '');
 
-            beforeEach(async(()=> {
+            beforeEach(async(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -69,14 +66,14 @@ export class ComponentTestBase {
                     attrValue = attr.value,
                     processedAttrValue = attrValue;
 
-                // ignore the event related attributes and attributes having hyphen(-) in them(custom attrs)
-                if (attr.name.indexOf('.event') !== -1 || attr.name.indexOf('on-') === 1 || attr.name.indexOf('-') !== -1 || propsExcluded.indexOf(attrName) !== -1) {
+                // ignore the event related attributes and attributes having hyphen(-) in them(custom attrs) and attributes which do not have value
+                if (attrName.indexOf('.event') !== -1 || attrName.indexOf('on-') === 1 || attrName.indexOf('-') !== -1 || attrName === widgetAttr || !attrValue) {
                     return;
                 }
 
                 it('"' + attrName + '" should be on the widget with value as: ' + processedAttrValue, () => {
                     let attrProps = widgetProps.get(attrName) || {};
-                    //console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
+                    // console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
 
                     // convert the type of the attr.value and compare with its corresponding iScope property
                     if (attrProps.type === 1) {
@@ -115,12 +112,9 @@ export class ComponentTestBase {
                 fixture,
                 widgetProps,
                 $element,
-                $inputEl,
-                widgetAttr = _.replace(this.widgetDef.type, '-', ''),
-                propsExcluded = this.widgetDef.PropertiesToBeExcluded ? this.widgetDef.PropertiesToBeExcluded : [];
-            propsExcluded.push(widgetAttr);
+                $inputEl;
 
-            beforeEach(async(()=> {
+            beforeEach(async(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -130,99 +124,97 @@ export class ComponentTestBase {
             }));
 
             // check for name property
-            if(propsExcluded.indexOf('name') < 0) {
-                it('should have given name', () => {
-                    if (!widgetProps.get('name')) {
-                        return;
-                    }
-                    expect($element.getAttribute('name')).toBe(component.name);
-                });
-            }
+            it('should have given name', () => {
+                if (!widgetProps.get('name')) {
+                    return;
+                }
+                expect($element.getAttribute('name')).toBe(component.name);
+            });
 
             // check for class property
-            if(propsExcluded.indexOf('class') < 0) {
-                it('"class" should be applied"', () => {
-                    if (!widgetProps.get('class')) {
-                        return;
-                    }
-                    let classValue = component.class;
-                    if (classValue) {
-                        expect($element.classList).toContain(classValue);
-                    }
-                });
-            }
+            it('"class" should be applied"', () => {
+                if (!widgetProps.get('class')) {
+                    return;
+                }
+                let classValue = component.class;
+                if (classValue) {
+                    expect($element.classList).toContain(classValue);
+                }
+            });
 
             // check for show property
-            if(propsExcluded.indexOf('show') < 0) {
-                it('"show" property change should reflect on the root element', () => {
-                    if (!widgetProps.get('show')) {
-                        return;
-                    }
-                    const isShowDefined = this.widgetDef.$unCompiled[0].attributes.hasOwnProperty('show'),
-                        initShowValue = isShowDefined ? component.getWidget().show : true;
+            it('"show" property change should reflect on the root element', () => {
+                if (!widgetProps.get('show')) {
+                    return;
+                }
+                const isShowDefined = this.widgetDef.$unCompiled[0].attributes.hasOwnProperty('show'),
+                    initShowValue = isShowDefined ? component.getWidget().show : true;
 
                     expect($element.hasAttribute('hidden')).not.toBe(initShowValue);
 
-                    component.getWidget().show = true;
-                    fixture.detectChanges();
-                    expect($element.hasAttribute('hidden')).toBe(false);
+                component.getWidget().show = true;
+                fixture.detectChanges();
+                expect($element.hasAttribute('hidden')).toBe(false);
 
-                    component.getWidget().show = false;
-                    fixture.detectChanges();
-                    expect($element.hasAttribute('hidden')).toBe(true);
-                });
-            }
+                component.getWidget().show = false;
+                fixture.detectChanges();
+                expect($element.hasAttribute('hidden')).toBe(true);
+            });
 
             // check for hint property
-            if(propsExcluded.indexOf('hint') < 0) {
-                it('"hint" property change should be reflected', async(() => {
-                    if (!widgetProps.get('hint')) {
-                        return;
-                    }
+            it('"hint" property change should be reflected', async(() => {
+                if (!widgetProps.get('hint')) {
+                    return;
+                }
+                expect($element.getAttribute('title')).toBe(component.getWidget().hint);
+                component.getWidget().hint = 'updated';
+                fixture.detectChanges();
+                setTimeout(() => {
                     expect($element.getAttribute('title')).toBe(component.getWidget().hint);
-                    component.getWidget().hint = 'updated';
-                    fixture.detectChanges();
-                    setTimeout(()=>{
-                        expect($element.getAttribute('title')).toBe(component.getWidget().hint);
-                    },200);
-                }));
-            }
+                }, 200);
+            }));
+
+            // check for placeholder property
+            it('"placeholder" property change should be reflected', () => {
+                if (!widgetProps.get('placeholder')) {
+                    return;
+                }
+                expect($inputEl.getAttribute('placeholder')).toBe(component.getWidget().placeholder);
+                component.getWidget().placeholder = 'updated';
+                fixture.detectChanges();
+                setTimeout(() => {
+                    expect($inputEl.getAttribute('placeholder')).toBe(component.getWidget().placeholder);
+                }, 200);
+            });
 
             // check for tab index property
-            if(propsExcluded.indexOf('tabindex') < 0) {
-                it('"tabindex" should work', () => {
-                    if (!widgetProps.get('tabindex')) {
-                        return;
-                    }
-                    let givenTabindex = this.widgetDef.$unCompiled.attr('tabindex');
-                    expect($inputEl.getAttribute('tabindex')).toBe(givenTabindex);
-                });
-            }
+            it('"tabindex" should work', () => {
+                if (!widgetProps.get('tabindex')) {
+                    return;
+                }
+                let givenTabindex = this.widgetDef.$unCompiled.attr('tabindex');
+                expect($inputEl.getAttribute('tabindex')).toBe(givenTabindex);
+            });
 
             // check for badge value property
-            if(propsExcluded.indexOf('badgevalue') < 0) {
-                it('"badgevalue" should work', () => {
-                    if (!widgetProps.get('badgevalue')) {
-                        return;
-                    }
-                    expect($element.getAttribute('badgevalue')).toBe(component.badgevalue);
-                });
-            }
+            it('"badgevalue" should work', () => {
+                if (!widgetProps.get('badgevalue')) {
+                    return;
+                }
+                expect($element.getAttribute('badgevalue')).toBe(component.badgevalue);
+            });
         });
     }
 
     /**
      * This function tests for style properties applicable for a widget
      */
-    public verifyStyles(isDialog?: boolean):void {
+    public verifyStyles(isDialog?: boolean): void {
         describe(this.widgetDef.type + ': Styles verification :', () => {
 
             let component,
                 fixture,
-                widgetProps,
-                widgetAttr = _.replace(this.widgetDef.type, '-', ''),
-                propsExcluded = this.widgetDef.PropertiesToBeExcluded ? this.widgetDef.PropertiesToBeExcluded : [];
-            propsExcluded.push(widgetAttr);
+                widgetProps;
 
             beforeEach(async(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
@@ -234,7 +226,7 @@ export class ComponentTestBase {
             // check for width and height properties
             // TODO
             // This has to refactor for dialogues
-            if(!isDialog) {
+            if (!isDialog) {
                 _.forEach(['width', 'height'], (cssName) => {
                     // check if property is given
                     const propName = cssName.toLowerCase();
@@ -273,6 +265,7 @@ export class ComponentTestBase {
                 'borderWidth',
                 'borderStyle',
                 'opacity',
+                'overflow',
                 'cursor',
                 'zIndex',
                 'visibility',
@@ -296,27 +289,27 @@ export class ComponentTestBase {
                 it(prop + ': should be applied', () => {
                     initValue = this.widgetDef.$unCompiled.attr(propName);
                     cssValue = component.$element.css(cssName);
-                    if (cssName === 'backgroundImage') {
-                        initValue = 'url("' + initValue + '")';
-                    } else if (cssName === 'fontSize') {
-                        initValue = +(initValue);
-                        let fontUnit = this.widgetDef.$unCompiled.attr('fontunit') || 'px';
-                        initValue = initValue + fontUnit;
-                    } else if (cssName === 'fontFamily') {
-                        initValue = '"' + initValue + '"';
-                    } else if (cssName === 'color' || cssName === 'backgroundColor' || cssName === 'borderColor') {
-                        initValue = initValue ? initValue.toLowerCase() : '';
-                        cssValue = this.rgbToHex(component.$element.css(cssName)).toLowerCase();
-                    } else if (cssName === 'backgroundPosition') {
-                        // TODO: write logic to compute background position based on value. Now hardcoding for 'left'
-                        initValue = '0% 50%';
-                    } else if (cssName === 'textDecoration') {
-                        // if text decoration is just assigned as 'underline' css value is still 'underline solid rgba(0, 0, 255)'. so compare only first value
-                        initValue = (initValue || '').split(' ').shift();
-                        cssValue = (cssValue || '').split(' ').shift();
-                    }
-                    //console.log(cssName, cssValue, initValue);
                     if (initValue) {
+                        if (cssName === 'backgroundImage') {
+                            initValue = 'url("' + initValue + '")';
+                        } else if (cssName === 'fontSize') {
+                            initValue = +(initValue);
+                            let fontUnit = this.widgetDef.$unCompiled.attr('fontunit') || 'px';
+                            initValue = initValue + fontUnit;
+                        } else if (cssName === 'fontFamily') {
+                            initValue = '"' + initValue + '"';
+                        } else if (cssName === 'color' || cssName === 'backgroundColor' || cssName === 'borderColor') {
+                            initValue = initValue ? initValue.toLowerCase() : '';
+                            cssValue = this.rgbToHex(component.$element.css(cssName)).toLowerCase();
+                        } else if (cssName === 'backgroundPosition') {
+                            // TODO: write logic to compute background position based on value. Now hardcoding for 'left'
+                            initValue = '0% 50%';
+                        } else if (cssName === 'textDecoration') {
+                            // if text decoration is just assigned as 'underline' css value is still 'underline solid rgba(0, 0, 255)'. so compare only first value
+                            initValue = (initValue || '').split(' ').shift();
+                            cssValue = (cssValue || '').split(' ').shift();
+                        }
+                    // console.log(cssName, cssValue, initValue);
                         expect(cssValue).toBe(initValue);
                     }
                 });

@@ -601,6 +601,7 @@ bundleMobileLibs() {
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./projects/mobile/runtime/src/spotcue-utils.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
     ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-libs.js \
