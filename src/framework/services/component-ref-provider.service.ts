@@ -1,7 +1,7 @@
 import { ComponentFactoryResolver, Injectable, Inject } from '@angular/core';
 
 import { ComponentRefProvider, ComponentType } from '@wm/runtime/base';
-import { LazyComponentRefProviderService } from './partial-ref-provider.service';
+import { LazyComponentRefProviderService } from './lazy-component-ref-provider.service';
 
 const componentRefCache = new Map<ComponentType, Map<string, any>>();
 
