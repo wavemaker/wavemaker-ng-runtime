@@ -41,7 +41,7 @@
            [optionsListTemplate]="customListTemplate"
            (input)="onInputChange($event)"
            (keydown)="listenQuery = true"
-           (keydown.enter)="$typeaheadEvent = $event;"
+           (keydown.enter)="$typeaheadEvent = $event;handleEnterEvent($event)"
            (keydown.arrowdown)="selectNext($event)"
            (blur)="invokeOnTouched($event)"
            (focus)="_unsubscribeDv = false; listenQuery = true; invokeOnFocus($event);"
@@ -99,7 +99,7 @@
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>
             <button title="Search" [disabled]="disabled" class="app-search-button wi wi-search" type="submit"
-                    (click)="onSelect($event)"></button>
+                    (click)="onSearchSelect($event)"></button>
         </form>
     </span>
 </ng-template>

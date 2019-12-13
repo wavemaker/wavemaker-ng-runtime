@@ -1,6 +1,7 @@
 import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { setCSS } from '@wm/core';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { registerProps } from './rich-text-editor.props';
@@ -97,7 +98,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         },
         fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Merriweather'],
         placeholder: '',
-        height: 100,
+        minHeight: 100,
         disableResizeEditor: true
     };
 
@@ -151,16 +152,22 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
 
     onStyleChange(key, nv, ov) {
         if (key === 'height') {
-            this.EDITOR_DEFAULT_OPTIONS.height = nv;
-            this.performEditorOperation({
-                height: nv
-            });
+            this.performEditorOperation('height', nv);
         }
     }
 
     performEditorOperation(key, value?) {
         if (this.isEditorLoaded) {
-            return this.$richTextEditor.summernote(key, value);
+            if (key === 'height') {
+                setCSS(this.nativeElement.querySelector('div.note-editable'), key, value, true);
+            } else {
+                // if editor content is empty then summernote('code') is returning empty p tags like <p></br></p>. So checking for empty and returning undefined.
+                if (arguments.length === 1 && key === 'code' && this.$richTextEditor.summernote('isEmpty')) {
+                    const content = this.$richTextEditor.summernote('code');
+                    return content === '' ? content : undefined;
+                }
+                return this.$richTextEditor.summernote(key, value);
+            }
         } else {
             const op: any = new Map();
             op.set(key, value);
