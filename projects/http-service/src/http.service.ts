@@ -66,7 +66,8 @@ export class HttpServiceImpl extends AbstractHttpService {
             responseType: responseType,
             withCredentials: withCredentials
         };
-        if (_.includes(this.nonBodyTypeMethods, options.method && options.method.toUpperCase())) {
+        // Even if method is not expecting request body, if body is passed in request, pass it on.
+        if (_.includes(this.nonBodyTypeMethods, options.method && options.method.toUpperCase()) && options.data === undefined) {
             third = reqOptions;
             fourth = null;
         } else {
