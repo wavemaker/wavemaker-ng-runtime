@@ -4,6 +4,7 @@
                [ngClass]="{active : rate.index <= selectedRatingValue}"
                [ngStyle]="{'font-size' :iconsize, color: rate.index <= selectedRatingValue && iconcolor}"
                [title]="rate.label || rate.index"
+               (touchstart)="onTouchStart($event)"
                (mouseleave)="onMouseleave($event, rate)"
                (mouseover)="onMouseOver($event, rate)"
                [for]="_id + '-' + rate.index">

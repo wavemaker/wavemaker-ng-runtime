@@ -1,6 +1,6 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 
-import { generateGUId, setCSS } from '@wm/core';
+import { generateGUId, setCSS, noop } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { provideAsNgValueAccessor, provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -39,6 +39,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
     public iconsize: string;
     public iconcolor: string;
     public onFocus: any;
+    private touchEnabled:boolean;
     @ViewChild('ratingInput', {read: ElementRef}) ratingEl: ElementRef;
 
     get selectedRatingValue() {
@@ -209,11 +210,17 @@ export class RatingComponent extends DatasetAwareFormComponent {
         }
     }
 
+    /* Detect touch enabled devices & update hover styles*/
+    onTouchStart($event) {
+        this.touchEnabled = true;
+        this.onTouchStart = noop;
+    }
     onMouseleave() {
         this.caption = this.displayValue as string;
     }
 
     onMouseOver($event, rate) {
         this.caption = rate.label;
+        !this.touchEnabled && !$event.target.classList.contains('rating-label-hover') && $event.target.classList.add('rating-label-hover');
     }
 }
