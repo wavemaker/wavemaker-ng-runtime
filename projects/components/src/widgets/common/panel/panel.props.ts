@@ -6,7 +6,8 @@ export const registerProps = () => {
         new Map(
             [
                 ['actions', {}],
-                ['badgetype', {value: 'default', ...PROP_STRING}],
+                ['autoclose', PROP_STRING],
+                ['badgetype', { value: 'default', ...PROP_STRING }],
                 ['badgevalue', PROP_STRING],
                 ['class', PROP_STRING],
                 ['closable', PROP_BOOLEAN],
@@ -16,7 +17,7 @@ export const registerProps = () => {
                 ['content', PROP_STRING],
                 ['datafield', PROP_STRING],
                 ['enablefullscreen', PROP_BOOLEAN],
-                ['expanded', {value: true, ...PROP_BOOLEAN}],
+                ['expanded', { value: true, ...PROP_BOOLEAN }],
                 ['fullscreen', PROP_BOOLEAN],
                 ['helptext', PROP_STRING],
                 ['iconclass', PROP_STRING],
@@ -30,7 +31,7 @@ export const registerProps = () => {
                 ['itemlabel', PROP_STRING],
                 ['itemlink', PROP_STRING],
                 ['name', PROP_STRING],
-                ['show', {value: true, ...PROP_BOOLEAN}],
+                ['show', { value: true, ...PROP_BOOLEAN }],
                 ['subheading', PROP_STRING],
                 ['title', PROP_STRING],
                 ['userrole', PROP_STRING]

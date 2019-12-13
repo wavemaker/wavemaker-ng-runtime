@@ -15,13 +15,13 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../t
 import { ComponentsTestModule } from "../../../test/components.test.module";
 import { compileTestComponent } from "../../../test/util/component-test-util";
 
-const markup = `<div wmPanel partialContainer aria-label="panel"  wm-navigable-element="true"  subheading="subheading"  iconclass="wi wi-account-circle" autoclose="outsideClick" title="Title" name="panel1" actions="testData" actionsclick.event="panel1Actionsclick($item)"></div>`;
+const markup = `<div wmPanel badgevalue="Test val" partialContainer aria-label="panel"  wm-navigable-element="true"  subheading="subheading"  iconclass="wi wi-account-circle"  title="Title" name="panel1" actions="testData" autoclose="outsideClick"  actionsclick.event="panel1Actionsclick($item)"></div>`;
 @Component({
     template: markup
 })
 class PanelWrapperComponent {
     @ViewChild(PanelComponent)
-    panelComponent: PanelComponent;
+    wmComponent: PanelComponent;
 
     public testData = "Option1, Option2, Option3";
     public outsideClick = true;
@@ -48,13 +48,13 @@ const panelComponentDef: ITestComponentDef = {
 }
 
 const TestBase: ComponentTestBase = new ComponentTestBase(panelComponentDef);
-// TestBase.verifyPropsInitialization();
-// TestBase.verifyCommonProperties();
-// TestBase.verifyStyles();
+TestBase.verifyPropsInitialization();
+TestBase.verifyCommonProperties();
+TestBase.verifyStyles();
 
 describe("PanelComponent", () => {
     let panelWrapperComponent: PanelWrapperComponent;
-    let component: PanelComponent;
+    let wmComponent: PanelComponent;
     let fixture: ComponentFixture<PanelWrapperComponent>;
     let dropdownToggleEle;
 
@@ -74,7 +74,7 @@ describe("PanelComponent", () => {
     beforeEach((async () => {
         fixture = compileTestComponent(panelComponentModuleDef, PanelWrapperComponent);
         panelWrapperComponent = fixture.componentInstance;
-        component = panelWrapperComponent.panelComponent;
+        wmComponent = panelWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
 
