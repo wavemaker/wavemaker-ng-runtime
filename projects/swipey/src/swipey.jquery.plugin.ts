@@ -25,6 +25,7 @@ window.requestAnimationFrame = (function () {
     };
     const abs = Math.abs;
     const max = Math.max;
+    const TAG_WHITE_LIST = ['INPUT', 'SELECT', 'OPTION'];
     let SwipeTracer;
     let activeEventProcessor;
     const swipeMask = $('<div style="background-color:rgba(0, 0, 0, 0);position: fixed; top: 0;width:100vw; height: 100vh;z-index: 100000;"></div>');
@@ -49,11 +50,26 @@ window.requestAnimationFrame = (function () {
         (target.__zone_symbol__addEventListener || target.addEventListener).call(target, event, callback);
     }
 
-    addEventListener(document, 'mousemove', onTouch);
-    addEventListener(document, 'touchmove', onTouch);
-    addEventListener(document, 'mouseup', onTouchEnd);
-    addEventListener(document, 'touchcancel', onTouchEnd);
-    addEventListener(document, 'touchend', onTouchEnd);
+    // this methods returns ios version
+    function iOSversion() {
+        if (/iP(hone|od|ad)/.test(navigator.platform)) {
+            const v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+            return parseInt(v[1], 10);
+        }
+    }
+
+    // additional check for ios version, as mobile preview in chrome browser is not recognising the pointermove events.
+    if (window['PointerEvent'] && iOSversion() >= 13) {
+        addEventListener(document, 'pointermove', onTouch);
+        addEventListener(document, 'pointerup', onTouchEnd);
+        addEventListener(document, 'pointercancel', onTouchEnd);
+    } else {
+        addEventListener(document, 'mousemove', onTouch);
+        addEventListener(document, 'touchmove', onTouch);
+        addEventListener(document, 'mouseup', onTouchEnd);
+        addEventListener(document, 'touchcancel', onTouchEnd);
+        addEventListener(document, 'touchend', onTouchEnd);
+    }
 
     function ScrollObserver(parent, child, direction) {
         const elementsToObserve = (function (array) {
@@ -143,6 +159,10 @@ window.requestAnimationFrame = (function () {
     activeEventProcessor = new SwipeEventSmoother();
 
     function getTouchEvent(event) {
+        // when event is of pointer type
+        if (event.originalEvent && event.originalEvent.pointerType !== 'mouse') {
+            return event.originalEvent;
+        }
         return (event.originalEvent && event.originalEvent.touches && event.originalEvent.touches[0]) ||
             (event && event.touches && event.touches[0]) ||
             event;
@@ -317,16 +337,30 @@ window.requestAnimationFrame = (function () {
         const events = settings.bindEvents;
         let listenFor = '';
         if (_.includes(events, 'touch')) {
-            listenFor += ' touchstart';
+            listenFor += 'touchstart';
         } else if (_.includes(events, 'mouse')) {
-            listenFor += ' mousedown';
+            listenFor += 'mousedown';
+        } else if (_.includes(events, 'pointer')) {
+            listenFor += 'pointerdown';
         }
 
         if (!listenFor) {
             return;
         }
 
-        settings.target.on(listenFor, function (es) {
+        addEventListener(settings.target[0], listenFor, function (es) {
+            // not supporting swipe actions in web app.
+            if (settings.disableMouse && es.pointerType === 'mouse') {
+                return;
+            }
+            if (es.pointerType !== 'mouse' && es.MSPOINTER_TYPE_MOUSE && es.pointerType !== es.MSPOINTER_TYPE_MOUSE) {
+                // we prevent default on the event for few form controls.
+                if (TAG_WHITE_LIST.indexOf(es.target.tagName) < 0) {
+                    es.preventDefault();
+                } else {
+                    return;
+                }
+            }
             const touch = getTouchEvent(es);
             if (touch) {
                 listenPassiveSwipe(touch, settings);
@@ -344,7 +378,8 @@ window.requestAnimationFrame = (function () {
                 'threshold': 30,
                 'onSwipeStart': $.noop,
                 'onSwipe': $.noop,
-                'onSwipeEnd': $.noop
+                'onSwipeEnd': $.noop,
+                'disableMouse': true
             }, settings));
         });
         return this;
