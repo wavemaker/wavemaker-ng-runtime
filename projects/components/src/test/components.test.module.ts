@@ -1,12 +1,12 @@
-import {NgModule} from '@angular/core'
-import {ButtonComponent} from "../widgets/common/button/button.component";
-import {ImagePipe} from "../pipes/image.pipe";
-import {TrustAsPipe} from "../pipes/trust-as.pipe";
+import {NgModule} from '@angular/core';
+import {ButtonComponent} from '../widgets/common/button/button.component';
+import {ImagePipe} from '../pipes/image.pipe';
+import {TrustAsPipe} from '../pipes/trust-as.pipe';
 import {App} from '@wm/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap';
-import {SearchComponent} from "../widgets/common/search/search.component";
+import {SearchComponent} from '../widgets/common/search/search.component';
 
 let mockApp = {};
 

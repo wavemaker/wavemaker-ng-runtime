@@ -5,7 +5,7 @@ import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
-import { compileTestComponent } from '../../../test/util/component-test-util';
+import { compileTestComponent, setInputValue } from '../../../test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../test/common-widget.specs';
 
 const mockApp = {};
@@ -89,24 +89,16 @@ describe('SearchComponent', () => {
         const testValue = 'abc';
         spyOn(wrapperComponent, 'onChange');
         await fixture.whenStable();
-        setInputValue('.app-search-input', testValue).then(() => {
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
             expect(wmComponent.query).toEqual(testValue);
             expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
         });
     });
 
-    function setInputValue(selector: string, value: string) {
-        const input = fixture.debugElement.query(By.css(selector)).nativeElement;
-        input.value = value;
-        input.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
-        return fixture.whenStable();
-    }
-
     it('should invoke getDatasource method on entering the query', async(() => {
         const testValue = 'abc';
         spyOn(wmComponent, 'getDataSource').and.returnValue(Promise.resolve([]));
-        setInputValue('.app-search-input', testValue).then(() => {
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
             expect(wmComponent.getDataSource).toHaveBeenCalled();
         });
     }));
