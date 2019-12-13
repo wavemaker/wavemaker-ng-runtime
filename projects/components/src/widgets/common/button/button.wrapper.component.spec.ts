@@ -1,16 +1,16 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ButtonComponent} from './button.component';
 import { Component, ViewChild } from '@angular/core';
-import {ComponentsTestModule} from "../../../test/components.test.module";
-import {compileTestComponent} from "../../../test/util/component-test-util";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../test/common-widget.specs";
+import {ComponentsTestModule} from '../../../test/components.test.module';
+import {compileTestComponent} from '../../../test/util/component-test-util';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../test/common-widget.specs';
 
 const markup = `
         <button wmButton name="testbutton"
                 hint="Help text for test label"
-                caption="Test Button" 
+                caption="Test Button"
                 type="button"
-                tabindex="1" badgevalue="1" 
+                tabindex="1" badgevalue="1"
                 disabled="false"
                 iconclass="icon class"
                 iconurl="http://www.google.com/doodle4google/images/splashes/featured.png" iconwidth="20" iconheight="12" iconmargin="5"
@@ -73,10 +73,11 @@ describe('wm-button: Component specific tests: ', () => {
    let iconEl: HTMLElement;
    let badgeEl: HTMLElement;
 
-   let captionValue: string = "Test Caption";
+   let captionValue: string = 'Test Caption';
    let iconclassValue: string = 'wi wi-star';
    let badgeValue: string = '12';
    let iconpositionValue: string = 'right';
+   let btnClass: string = 'btn-success';
 
    let getButtonEl = () => {
        return fixture.nativeElement.querySelector('[wmButton]');
@@ -91,7 +92,7 @@ describe('wm-button: Component specific tests: ', () => {
        return fixture.nativeElement.querySelector('.badge');
    };
 
-   beforeEach(async(()=>{
+   beforeEach(async(() => {
        fixture  = compileTestComponent(testModuleDef, TestComponent);
        wrapperComponent = fixture.componentInstance;
        captionEl = fixture.nativeElement.querySelector('.btn-caption');
@@ -101,6 +102,17 @@ describe('wm-button: Component specific tests: ', () => {
 
    it('should create Button Component', () => {
        expect(wrapperComponent).toBeTruthy() ;
+   });
+
+   it('should contain class as btn-success', (done) => {
+       wmComponent.getWidget().class = btnClass;
+       fixture.detectChanges();
+       btnEl = getButtonEl();
+       // Wait for class to apply on button widget because in base.component.ts switchclass method, sync param is not passed. So it is applying class after sometime
+       setTimeout(() => {
+           expect(btnEl.classList).toContain(btnClass);
+           done();
+       }, 50);
    });
 
     it('should have valid caption', () => {
@@ -126,7 +138,7 @@ describe('wm-button: Component specific tests: ', () => {
         expect(badgeEl.textContent).toEqual(badgeValue);
     });
 
-    it('should have icon-position right on root element', ()=>{
+    it('should have icon-position right on root element', () => {
         wmComponent.iconposition = iconpositionValue;
         fixture.detectChanges();
         btnEl = getButtonEl();
@@ -142,7 +154,7 @@ describe('wm-button: Component specific tests: ', () => {
         expect(wrapperComponent.onButtonClick).toHaveBeenCalled();
     });
 
-    it('should hide the button on changing show property', ()=>{
+    it('should hide the button on changing show property', () => {
         // setting show on wmComponent not working.
         // setting it on the proxy, wmComponent.getWidget() is working
         wmComponent.getWidget().show = false;
@@ -196,3 +208,46 @@ describe('wm-button: Component specific tests: ', () => {
     // });
 
 });
+
+// Button widget without class property in the markup
+const btnMarkup = `<button wmButton name="testbutton1" caption="Test Button1" type="button"></button>`;
+@Component({
+    template: btnMarkup
+})
+class BtnTestComponent {
+    @ViewChild(ButtonComponent)
+    wmComponent: ButtonComponent;
+}
+const btnTestModuleDef: ITestModuleDef = {
+    declarations: [BtnTestComponent],
+    imports: [ComponentsTestModule]
+};
+describe('wm-button: Component Specific tests', () => {
+    let wrapperComponent: BtnTestComponent;
+    let wmComponent: ButtonComponent;
+    let fixture: ComponentFixture<BtnTestComponent>;
+    let btnClass = 'btn-primary';
+    beforeEach(async() => {
+        fixture = compileTestComponent(btnTestModuleDef, BtnTestComponent);
+        wrapperComponent = fixture.componentInstance;
+        wmComponent = wrapperComponent.wmComponent;
+        fixture.detectChanges();
+    });
+    it('should create button Component', () => {
+        expect(wrapperComponent).toBeTruthy();
+    });
+    it('should not contain btn-default class', () => {
+        expect(wmComponent.getWidget().class).toBeUndefined();
+    });
+    it('should contain class as btn-primary', (done) => {
+        wmComponent.getWidget().class = btnClass;
+        fixture.detectChanges();
+        // Wait for class to apply on button widget because in base.component.ts switchclass method, sync param is not passed. So it is applying class after sometime
+        setTimeout(() => {
+            expect(fixture.nativeElement.querySelector('[wmButton]').classList).toContain(btnClass);
+            done();
+        }, 50);
+    });
+});
+
+

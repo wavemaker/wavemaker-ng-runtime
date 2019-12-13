@@ -150,7 +150,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     runPageTransition(transition: string): Promise<void> {
         return new Promise(resolve => {
-            const $target = $('app-page-outlet:first');
+            const $target = this.getPageTransitionTarget();
             if (transition) {
                 const onTransitionEnd = () => {
                     if (resolve) {
@@ -178,30 +178,36 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
     }
 
+    getPageTransitionTarget() {
+        // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
+        return $('app-page-outlet:first').length?$('app-page-outlet:first'):$('div[data-role="pageContainer"]:first').parent();
+    }
+
     ngAfterViewInit(): void {
         const transition = this.navigationService.getPageTransition();
         if (transition) {
-            const pageOutlet = $('app-page-outlet:first');
+            const pageOutlet = this.getPageTransitionTarget();
             pageOutlet.prepend(pageOutlet.children().first().clone());
         }
         this.runPageTransition(transition).then(() => {
             this.pageTransitionCompleted = true;
             (this as any).compilePageContent = true;
+        }).then(() => {
+            setTimeout(() => {
+                unMuteWatchers();
+                this.viewInit$.complete();
+                if (isMobileApp()) {
+                    this.onPageContentReady = () => {
+                        this.fragmentsLoaded$.subscribe(noop, noop, () => {
+                            this.invokeOnReady();
+                        });
+                        this.onPageContentReady = noop;
+                    };
+                } else {
+                    this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
+                }
+            }, 300);
         });
-        setTimeout(() => {
-            unMuteWatchers();
-            this.viewInit$.complete();
-            if (isMobileApp()) {
-                this.onPageContentReady = () => {
-                    this.fragmentsLoaded$.subscribe(noop, noop, () => {
-                        this.invokeOnReady();
-                    });
-                    this.onPageContentReady = noop;
-                };
-            } else {
-                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
-            }
-        }, 300);
     }
 
     ngOnDestroy(): void {
