@@ -81,6 +81,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public selectedItemWidgets: Array<WidgetRef> | WidgetRef;
     public variableInflight;
     public name;
+    public currentPage;
 
     public handleHeaderClick: Function;
     public toggleAllHeaders: void;
@@ -435,9 +436,35 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      */
     private updateFieldDefs(newVal: Array<any>) {
         if (this.infScroll || this.onDemandLoad) {
-
             if (!isDefined(this.fieldDefs) || this.dataNavigator.isFirstPage()) {
                 this.fieldDefs = [];
+                this.currentPage = 1;
+            } else if (this.fieldDefs.length / this.pagesize <= this.dataNavigator.pageCount) {
+                let itemsLength,
+                    itemsToPush = [];
+                // we push the newVal only when dn.currentPage gets incremented because that is when new items gets added to newVal
+                if (this.fieldDefs.length === this.currentPage * this.pagesize && (this.currentPage + 1 ) === this.dataNavigator.dn.currentPage) {
+                    itemsToPush = newVal;
+                    this.currentPage ++;
+                } else if (this.fieldDefs.length < this.currentPage * this.pagesize) {
+                    if ((this.fieldDefs.length === (this.currentPage - 1) * this.pagesize) && ((this.currentPage - 1) === this.dataNavigator.dn.currentPage)) {
+                        // if dn.currentPage is not incremented still only old newVal is present hence we push empty array
+                        newVal = [];
+                    } else if (this.dataNavigator.dataSize < this.currentPage * this.pagesize) {
+                        // if number of elements added to datanavigator is less than  product of currentpage and pagesize we only add elements extra elements added
+                        itemsLength = this.dataNavigator.dataSize - this.fieldDefs.length;
+                    } else {
+                         // if number of elements added to datanavigator is greater than  product of currentpage and pagesize we add elements the extra elements in newVal
+                        itemsLength = this.currentPage * this.pagesize - this.fieldDefs.length;
+                        this.currentPage ++;
+                    }
+                    const startIndex = newVal.length - itemsLength;
+                    itemsToPush = newVal.slice(startIndex);
+                } else if (this.fieldDefs.length === this.currentPage * this.pagesize && this.currentPage === this.dataNavigator.dn.currentPage) {
+                    // if dn.currentPage is not incremented still only old newVal is present hence we push empty array
+                    itemsToPush = [];
+                }
+                newVal = itemsToPush;
             }
             this.fieldDefs = [...this.fieldDefs, ...newVal];
         } else {
@@ -478,6 +505,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             if (_.isString(newVal)) {
                 newVal = newVal.split(',');
             }
+
+            // if the page number is greater than 1 on initial load then we render the first page.
+            if (this.datasource.owner === "App" && (this.infScroll || this.onDemandLoad) && !this.currentPage && this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS).number > 0) {
+                newVal = this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
+                 'page': 1
+             });
+             }
 
             if (_.isArray(newVal)) {
                 if (newVal.length) {

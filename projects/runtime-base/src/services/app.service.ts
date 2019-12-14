@@ -12,6 +12,7 @@ import {
     getWmProjectProperties,
     isDefined,
     isString,
+    ConstantService,
     UtilsService,
     DynamicComponentRefProvider
 } from '@wm/core';
@@ -25,6 +26,7 @@ const injectorMap = {
     SpinnerService: AbstractSpinnerService,
     ToasterService: AbstractToasterService,
     Utils: UtilsService,
+    CONSTANTS: ConstantService,
     FIELD_TYPE: FieldTypeService,
     FIELD_WIDGET: FieldWidgetService,
     DynamicComponentService: DynamicComponentRefProvider

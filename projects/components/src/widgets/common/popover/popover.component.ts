@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { PopoverDirective } from 'ngx-bootstrap';
 
-import { addClass, App, setAttr, setCSSFromObj } from '@wm/core';
+import { addClass, App, setAttr, setCSSFromObj, findRootContainer } from '@wm/core';
 
 import { IWidgetConfig } from '../../framework/types';
 import { styler } from '../../framework/styler';
@@ -121,9 +121,14 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
     }
 
-
     // Trigger on showing popover
     public onShown() {
+        const root = findRootContainer(this.$element);
+        // if page styles have to be applied to popover then popover has to be child of page element.
+        if (root) {
+            $('body:first > popover-container').wrap('<' + root + '/>');
+        }
+
         if (activePopover && activePopover.isOpen) {
             activePopover.isOpen = false;
         }

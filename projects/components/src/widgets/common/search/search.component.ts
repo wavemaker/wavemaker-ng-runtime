@@ -529,6 +529,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? _.get(this.queryModel[0], 'label') : '';
     }
 
+    // If we have last search results then open dropdown on focus
+    private handleFocus($event) {
+        if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
+            (this.typeahead as any).keyUpEventEmitter.emit(this.query);
+        }
+    }
 
     // This method returns a promise that provides the filtered data from the datasource.
     public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
@@ -624,13 +630,21 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             });
     }
 
+    // this method returns the parent context i.e. Page context and not parent component's context.
+    private getContext(context) {
+        if (context && _.get(context, 'widget')) {
+            return this.getContext(context.viewParent);
+        }
+        return context;
+    }
+
     public getTransformedData(data: any, itemIndex?: number, iscustom?: boolean): DataSetItem[] {
         if (isDefined(itemIndex)) {
             itemIndex++;
         }
 
         const transformedData = transformData(
-            this.viewParent,
+            this.getContext(this.viewParent),
             data,
             this.datafield,
             {
