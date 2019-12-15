@@ -1,4 +1,5 @@
 import { Injectable} from '@angular/core';
+import { VALIDATOR } from '../utils/utils';
 
 @Injectable({providedIn: 'root'})
 export class ConstantService {
@@ -12,4 +13,6 @@ export class ConstantService {
         IS_EQUAL_WITH_IGNORE_CASE: 'exactignorecase',
         IS_EQUAL: 'exact'
     };
+
+    VALIDATOR = VALIDATOR;
 }

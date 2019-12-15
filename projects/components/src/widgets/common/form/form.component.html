@@ -42,7 +42,7 @@
 <ng-template #buttonRef let-btn="btn">
     <button  wmButton name="{{btn.key}}" caption.bind="btn.displayName" class.bind="btn.class" iconclass.bind="btn.iconclass" show.bind="btn.show"
              (click)="invokeActionEvent($event, btn.action)" type.bind="btn.type" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey" disabled.bind="btn.disabled"
-             tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+             tabindex.bind="btn.tabindex" disabled.bind="ngform.touched && ngform.status === 'PENDING'" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
 </ng-template>
 
 <ng-template #anchorRef let-btn="btn">

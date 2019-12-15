@@ -118,7 +118,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
                                    class="help-block text-danger"
-                                   [textContent]="${counter}.validationmessage"></p>` : '';
+                                   [textContent]="(${counter}.hasValidators && ${counter}.setCustomValidationMessage()) || ${counter}.validationmessage"></p>` : '';
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));
@@ -141,6 +141,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, isInList)}
+                                <span aria-hidden="true" *ngIf="${counter}.showPendingSpinner" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span>
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>
                                 ${validationMsg}
