@@ -507,7 +507,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
 
             // if the page number is greater than 1 on initial load then we render the first page.
-            if (this.datasource.owner === "App" && (this.infScroll || this.onDemandLoad) && !this.currentPage && this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS).number > 0) {
+            if (this.datasource && this.datasource.owner === 'App' && (this.infScroll || this.onDemandLoad) && !this.currentPage && this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS).number > 0) {
                 newVal = this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                  'page': 1
              });
