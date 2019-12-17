@@ -2,15 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import {
-    AbstractHttpService,
-    App,
-    getClonedObject,
-    getWmProjectProperties,
-    hasCordova,
-    isSpotcues,
-    triggerFn
-} from '@wm/core';
+import { AbstractHttpService, App, getClonedObject, getWmProjectProperties, hasCordova, triggerFn } from '@wm/core';
 
 declare const _;
 
@@ -130,7 +122,7 @@ export class SecurityService {
             return;
         }
 
-        if (!hasCordova() || isSpotcues) {
+        if (!hasCordova()) {
             // for web project, return config returned from backend API call.
             this.getWebConfig(onSuccess.bind(this), onError.bind(this));
         }
