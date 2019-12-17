@@ -163,7 +163,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // set the next item index.
             this.startIndex = this.datasetItems.length;
             this._lastResult = undefined;
-            this.updateByDataset(this.datavalue || this.toBeProcessedDatavalue);
+            const defaultValue = this.datavalue || this.toBeProcessedDatavalue;
+            // invoking updateByDataset only when datavalue is present, as entered value i.e. query is setting back to ''
+            if (isDefined(defaultValue)) {
+                this.updateByDataset(defaultValue);
+            }
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
@@ -708,7 +712,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByValue = item.value;
 
         this.invokeOnTouched();
-        this.invokeOnChange(this.datavalue, $event || {}, true);
+        this.invokeOnChange(this.datavalue, $event || {});
+        // updating the variable bound to default value as invokeOnChange is not updating the variable.
+        if (this.datavalue !== (this as any).prevDatavalue) {
+            this.updateBoundVariable(this.datavalue);
+        }
         if (this.$element.hasClass('full-screen')) {
             this.closeSearch();
         }
