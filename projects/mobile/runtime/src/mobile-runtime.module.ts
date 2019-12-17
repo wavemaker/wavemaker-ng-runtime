@@ -21,7 +21,6 @@ import {
     AbstractHttpService,
     fetchContent,
     hasCordova,
-    isSpotcues,
     insertAfter,
     isIpad,
     isIphone,
@@ -127,16 +126,14 @@ export class MobileRuntimeModule {
         if (hasCordova()) {
             runtimeModule.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
-            if (!isSpotcues) {
-                app.subscribe('userLoggedIn', () => {
-                    let url = $rootScope.project.deployedUrl;
-                    if (url.endsWith('/')) {
-                        url = url.substr(0, url.length - 1);
-                    }
-                    cookieService.persistCookie(url, 'JSESSIONID').catch(noop);
-                    cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
-                });
-            }
+            app.subscribe('userLoggedIn', () => {
+                let url = $rootScope.project.deployedUrl;
+                if (url.endsWith('/')) {
+                    url = url.substr(0, url.length - 1);
+                }
+                cookieService.persistCookie(url, 'JSESSIONID').catch(noop);
+                cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
+            });
             app.subscribe('device-file-download', (data) => {
                 deviceFileOpenerService.openRemoteFile(data.url, data.extension, data.name).then(data.successCb, data.errorCb);
             });
@@ -157,10 +154,7 @@ export class MobileRuntimeModule {
             if (hasCordova()) {
                 runtimeModule._$appEl.addClass('cordova');
                 runtimeModule.exposeOAuthService();
-
-                if (!isSpotcues) {
-                    navigator.splashscreen.hide();
-                }
+                navigator.splashscreen.hide();
                 // Fix for issue: ios device is not considering the background style, eventhough value is set in config.xml.
                 if (window['StatusBar']) {
                     window['StatusBar'].overlaysWebView(false);
@@ -238,7 +232,7 @@ export class MobileRuntimeModule {
     private getDeployedUrl(): string {
         const waveLensAppUrl = window['WaveLens'] && window['WaveLens']['appUrl'];
         let deployedUrl = $rootScope.project.deployedUrl;
-        if (hasCordova() && !isSpotcues) {
+        if (hasCordova()) {
             if (waveLensAppUrl) {
                 // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
                 deployedUrl = waveLensAppUrl;

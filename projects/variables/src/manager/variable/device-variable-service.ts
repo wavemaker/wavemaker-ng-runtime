@@ -1,4 +1,4 @@
-import {$invokeWatchers, hasCordova} from '@wm/core';
+import { $invokeWatchers } from '@wm/core';
 
 import { initiateCallback } from '../../util/variable/variables.utils';
 import { IDeviceVariableOperation } from './device-variable-operation';
@@ -17,7 +17,7 @@ export class DeviceVariableService {
         if (operation == null) {
             initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, null);
             return Promise.reject(`Could not find operation '${variable.operation}' in service '${this.name}'`);
-        } else if (hasCordova()) {
+        } else if (CONSTANTS.hasCordova) {
             const dataBindings = new Map<string, any>();
             if (variable.dataBinding !== undefined) {
                 Object.entries(variable).forEach(o => {
