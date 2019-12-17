@@ -7,6 +7,7 @@ import { TypeaheadModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
 import { compileTestComponent, setInputValue } from '../../../test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../test/common-widget.specs';
+import { BaseFormComponent } from '../base/base-form.component';
 
 const mockApp = {};
 
@@ -118,4 +119,27 @@ describe('SearchComponent', () => {
 
         fixture.detectChanges();
     }));
+
+    it('datavalue change should update the static variable bound to the dataset', ((done) => {
+        const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'input-group'};
+        const baseformComponent = new (BaseFormComponent as any)((wmComponent as any).inj, WIDGET_CONFIG);
+        spyOn(baseformComponent.__proto__, 'updateBoundVariable');
+        const sampleData = ['java', 'oracle', 'angular'];
+        wmComponent.dataset = sampleData;
+        wmComponent.onPropertyChange('dataset', sampleData, []);
+        fixture.detectChanges();
+        const testValue = 'ora';
+        fixture.detectChanges();
+        fixture.whenStable();
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+                const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+                const options = {'key': 'Enter', 'keyCode': 13, 'code': 'Enter'};
+                input.dispatchEvent(new KeyboardEvent('keyup', options));
+                fixture.detectChanges();
+                return fixture.whenStable();
+            }).then(() => {
+                done();
+                expect(baseformComponent.__proto__.updateBoundVariable).toHaveBeenCalled();
+            });
+        }));
 });
