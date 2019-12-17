@@ -113,6 +113,7 @@ import { ProgressBarComponent } from './widgets/common/progress-bar/progress-bar
 import { RadiosetComponent } from './widgets/common/radioset/radioset.component';
 import { RatingComponent } from './widgets/common/rating/rating.component';
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
+import { RenderComponentDirective } from './widgets/common/search/render-component.directive';
 import { RichTextEditorComponent } from './widgets/common/rich-text-editor/rich-text-editor.component';
 import { RightPanelDirective } from './widgets/common/right-panel/right-panel.directive';
 import { SearchComponent } from './widgets/common/search/search.component';
@@ -255,6 +256,7 @@ const wmComponents = [
     RadiosetComponent,
     RatingComponent,
     RedrawableDirective,
+    RenderComponentDirective,
     RichTextEditorComponent,
     RightPanelDirective,
     ScrollableDirective,

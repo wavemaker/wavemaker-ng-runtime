@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { addForIdAttributes, debounce, FormWidgetType, isDefined, isMobile, VALIDATOR, $unwatch, $watch } from '@wm/core';
+import { addForIdAttributes, debounce, DynamicComponentRefProvider, FormWidgetType, isDefined, isMobile, VALIDATOR, $unwatch, $watch } from '@wm/core';
 
 import { registerProps } from './form-field.props';
 import { getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef } from '../../../../utils/widget-utils';
@@ -54,6 +54,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private excludeProps;
     private _validators;
     private _oldUploadVal;
+    private dynamicComponentProvider;
+    private userComponentParams;
 
     ngform: FormGroup;
     defaultvalue;
@@ -61,6 +63,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     displayfield;
     displaylabel;
     displayname;
+    usercomponent;
     generator;
     key;
     target;
@@ -107,6 +110,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     constructor(
         inj: Injector,
         form: FormComponent,
+        dynamicComponentProvider: DynamicComponentRefProvider,
         fb: FormBuilder,
         @Optional() parentList: ListComponent,
         @Attribute('dataset.bind') binddataset,
@@ -136,6 +140,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
+        this.dynamicComponentProvider = dynamicComponentProvider;
         this._fieldName = key || name;
         this.isRange = isRange;
         this.excludeProps = new Set(['type', 'name']);
@@ -143,6 +148,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.parentList = parentList;
         this.defaultValidatorMessages = [];
         this.notifyForFields = [];
+        this.userComponentParams = {};
 
         if (this.binddataset || this.$element.attr('dataset')) {
             this.isDataSetBound = true;
@@ -655,6 +661,34 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.ngform = this.form.ngform;
         this.registerFormField();
         super.ngOnInit();
+    }
+
+    onValueChanged(newVal?, oldVal?) {
+        this.value = this.usercomponent.getValue();
+    }
+
+    setValidState(state, message?) {
+        if (!state) {
+            this._control.markAsTouched();
+            this._control.setErrors({'incorrect': true});
+            this.validationmessage = message;
+        } else {
+            this._control.setErrors(null);
+            this.validationmessage = '';
+        }
+    }
+
+    setTemplateComponent(template) {
+        this.usercomponent = new template();
+        this.userComponentParams.onValueChanged = () => {
+            this.onValueChanged();
+        };
+        this.userComponentParams.setValidState = (state, message?) => {
+            this.setValidState(state, message);
+        };
+        this.userComponentParams.fieldDef = this.widget;
+        const markup = `<div renderComponent [ngClass]="{'ng-invalid': _control.invalid, 'ng-touched': _control.touched}" [customclass]="usercomponent" [item]="userComponentParams"></div>`;
+        this.dynamicComponentProvider.addComponent(this.$element.find('.form-control-static'), markup, this, {method: 'after'});
     }
 
     ngAfterContentInit() {

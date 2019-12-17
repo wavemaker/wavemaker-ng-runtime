@@ -63,7 +63,7 @@ const getWidgetTemplate = (attrs, options) => {
     const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : (options.isInList ? `[formControlName]="${options.counter}._fieldName"` : `formControlName="${fieldName}"`);
     const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const widgetName = name ? (options.isMaxWidget ? `name="${name}_formWidgetMax"` : `name="${name}_formWidget"`) : '';
-    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef} ${widgetName}`;
+    const defaultTmpl = `[hidden]="${options.counter}.usercomponent" [class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef} ${widgetName}`;
     return getFormWidgetTemplate(options.widgetType, defaultTmpl, attrs, {counter: options.counter, pCounter: options.pCounter});
 };
 

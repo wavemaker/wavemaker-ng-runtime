@@ -1,8 +1,9 @@
 <ng-template #customItemTemplate let-model="item" let-index="index" let-query="query" let-match="match">
-    <a>
+    <a *ngIf="!userComponent">
         <img *ngIf="model.imgSrc" [src]="model.imgSrc" alt="Search" [style.width]="imagewidth">
         <span [title]="model.label" [innerHtml]="highlight(match, query) || model.label"></span>
     </a>
+    <a *ngIf="userComponent" renderComponent [customclass]="userComponent" [item]="model"></a>
 </ng-template>
 
 <ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">

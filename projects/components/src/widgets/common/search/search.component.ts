@@ -49,6 +49,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private formattedDataset: any;
     private isformfield: boolean;
     private $typeaheadEvent: Event;
+    private userComponent;
 
     public tabindex: number;
     public startIndex: number;
@@ -724,6 +725,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeEventCallback('submit', {$event});
 
         this.updatePrevDatavalue(this.datavalue);
+    }
+
+    setTemplateComponent(template) {
+        this.userComponent = new template();
     }
 
     onPropertyChange(key: string, nv: any, ov: any) {

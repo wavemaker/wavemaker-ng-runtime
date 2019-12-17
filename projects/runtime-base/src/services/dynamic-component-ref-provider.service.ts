@@ -95,10 +95,14 @@ export class DynamicComponentRefProviderService {
     public async addComponent(target: HTMLElement, markup: string, context = {}, options: any = {}) {
         options.transpile = isDefined(options.transpile) ? options.transpile : true;
         options.noCache = isDefined(options.noCache) ? options.noCache : true;
-        options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-'+ this.counter++;
+        options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-' + this.counter++;
         const componentFactoryRef = await this.getComponentFactoryRef(options.selector, markup, options);
         const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0);
         extendProto(component.instance, context);
-        target.appendChild(component.location.nativeElement);
+        if (options.method === 'after') {
+            target.after(component.location.nativeElement);
+        } else {
+            target.appendChild(component.location.nativeElement);
+        }
     }
 }

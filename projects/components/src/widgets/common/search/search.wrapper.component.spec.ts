@@ -13,7 +13,7 @@ const mockApp = {};
 
 const markup = `
         <div wmSearch name="testsearch"
-            searchon="typing"
+             searchon="typing"
              hint="Help text for test search"
              placeholder="Type here to search.."
              type="button"
