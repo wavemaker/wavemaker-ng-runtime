@@ -382,8 +382,9 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
             }
             if (!selector.startsWith('/*') && selector.trim().length > 0) {
                 // splits the selector by commas and we iterate over the array and add page level scoping and join it.
-                selector = selector.split(',').map(s=>{
+                selector = selector.split(',').map( s => {
                     const spaceIndex = selector.indexOf(' ');
+                    s = s.trim();
                     if (s.startsWith('.wm-app')) {
                         if (spaceIndex > 0) {
                             s = s.substring(spaceIndex + 1);
@@ -391,7 +392,6 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                             return selector;
                         }
                     }
-    
                     if (componentType === 0 || componentType === 'PAGE') {
                         s = `.wm-app app-page-${componentName} ${s}`;
                     } else if (componentType === 1 || componentType === 'PREFAB') {
