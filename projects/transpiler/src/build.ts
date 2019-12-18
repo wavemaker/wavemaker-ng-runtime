@@ -384,6 +384,7 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                 // splits the selector by commas and we iterate over the array and add page level scoping and join it.
                 selector = selector.split(',').map(s=>{
                     const spaceIndex = selector.indexOf(' ');
+                    s = s.trim();
                     if (s.startsWith('.wm-app')) {
                         if (spaceIndex > 0) {
                             s = s.substring(spaceIndex + 1);
