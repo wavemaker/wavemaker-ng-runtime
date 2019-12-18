@@ -381,22 +381,27 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                 selector = selector.substring(firstNonSpaceCharIndex);
             }
             if (!selector.startsWith('/*') && selector.trim().length > 0) {
-                const spaceIndex = selector.indexOf(' ');
-                if (selector.startsWith('.wm-app')) {
-                    if (spaceIndex > 0) {
-                        selector = selector.substring(spaceIndex + 1);
-                    } else {
-                        return selector;
+                // splits the selector by commas and we iterate over the array and add page level scoping and join it.
+                selector = selector.split(',').map(s=>{
+                    const spaceIndex = selector.indexOf(' ');
+                    s = s.trim();
+                    if (s.startsWith('.wm-app')) {
+                        if (spaceIndex > 0) {
+                            s = s.substring(spaceIndex + 1);
+                        } else {
+                            return selector;
+                        }
                     }
-                }
-
-                if (componentType === 0 || componentType === 'PAGE') {
-                    selector = `.wm-app app-page-${componentName} ${selector}`;
-                } else if (componentType === 1 || componentType === 'PREFAB') {
-                    selector = `.wm-app app-prefab-${componentName} ${selector}`;
-                } else if (componentType === 2 || componentType === 'PARTIAL') {
-                    selector = `.wm-app app-partial-${componentName} ${selector}`;
-                }
+    
+                    if (componentType === 0 || componentType === 'PAGE') {
+                        s = `.wm-app app-page-${componentName} ${s}`;
+                    } else if (componentType === 1 || componentType === 'PREFAB') {
+                        s = `.wm-app app-prefab-${componentName} ${s}`;
+                    } else if (componentType === 2 || componentType === 'PARTIAL') {
+                        s = `.wm-app app-partial-${componentName} ${s}`;
+                    }
+                    return s;
+                }).join(',');
             }
             selector = prefixSpaceCharSeq + selector;
         }
