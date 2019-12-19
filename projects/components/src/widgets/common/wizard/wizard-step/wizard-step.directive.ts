@@ -123,15 +123,15 @@ export class WizardStepDirective extends BaseComponent {
     }
 
     public onNext(index: number): boolean {
-        return this.invokeEventCallback('next', {currentStep: this, stepIndex: index});
+        return this.invokeEventCallback('callNext', {currentStep: this, stepIndex: index});
     }
 
     public onPrev(index: number): boolean {
-        return this.invokeEventCallback('prev', {currentStep: this, stepIndex: index});
+        return this.invokeEventCallback('callPrev', {currentStep: this, stepIndex: index});
     }
 
     public onSkip(index: number): boolean {
-        return this.invokeEventCallback('skip', {currentStep: this, stepIndex: index});
+        return this.invokeEventCallback('callSkip', {currentStep: this, stepIndex: index});
     }
 
     // redraw all the projected components which are projected.

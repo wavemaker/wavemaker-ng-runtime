@@ -199,12 +199,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         }
     }
 
-    // Method to navigate to next step
-    public next(eventName: string = 'next') {
+    // Method to check and execute next/skip button callback events
+    public callNext(eventName: string = 'next') {
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
-
-        let nextStep: WizardStepDirective;
 
         // abort if onSkip method returns false
         if (eventName === 'skip') {
@@ -216,6 +214,15 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
                 return;
             }
         }
+    }
+
+    // Method to navigate to next step
+    public next() {
+        const currentStep = this.currentStep;
+        const currentStepIndex = this.getCurrentStepIndex();
+
+        let nextStep: WizardStepDirective;
+
         nextStep = this.getNextValidStepFormIndex(currentStepIndex + 1);
         nextStep.isInitialized = true;
 
@@ -226,17 +233,24 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this.currentStep = nextStep;
         }
     }
+
+    // Method to check and execute previous button callback events
+    public callPrev() {
+        const currentStep = this.currentStep;
+        const currentStepIndex = this.getCurrentStepIndex();
+
+        // abort if onPrev method returns false.
+        if (currentStep.onPrev(currentStepIndex) === false) {
+            return;
+        }
+    }
+
     // Method to navigate to previous step
     public prev() {
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
         let prevStep: WizardStepDirective;
-
-        // abort if onPrev method returns false.
-        if (currentStep.onPrev(currentStepIndex) === false) {
-            return;
-        }
 
         prevStep = this.getPreviousValidStepFormIndex(currentStepIndex - 1);
 
@@ -248,8 +262,8 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         }
     }
 
-    public skip() {
-        this.next('skip');
+    public callSkip() {
+        this.callNext('skip');
     }
 
     // Method to invoke on-Done event on wizard
