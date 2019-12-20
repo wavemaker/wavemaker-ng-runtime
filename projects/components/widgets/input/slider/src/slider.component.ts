@@ -1,7 +1,8 @@
 import { Component, Injector, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { BaseFormCustomComponent, IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './slider.props';
 
@@ -16,7 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmSlider]',
     templateUrl: './slider.component.html',
     providers: [
-        provideAsNgValueAccessor(SliderComponent),
+        provideAs(SliderComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(SliderComponent)
     ]
 })

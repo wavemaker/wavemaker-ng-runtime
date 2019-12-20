@@ -13,6 +13,7 @@
                 "ngx-color-picker": "zef.ngxColorPicker",
 
                 "@wm/core": "wm.core",
+                "@wm/components/input": "wm.components.input",
                 "@wm/components/base": "wm.components.base"
             }
         }

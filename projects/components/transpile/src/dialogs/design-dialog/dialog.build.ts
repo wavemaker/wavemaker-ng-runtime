@@ -7,8 +7,16 @@ register('wm-dialog', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmDialog ${getAttrMarkup(attrs)} wm-navigable-element="true"><ng-template #dialogBody>`,
         post: () => `</ng-template></${tagName}>`,
         imports: [{
+            from: 'ngx-bootstrap/modal',
+            name: 'ModalModule',
+            as: 'ngx_ModalModule',
+            forRoot: true
+        },{
             from: '@wm/components/input',
             name: 'InputModule'
+        },{
+            from: '@wm/components/dialogs',
+            name: 'DialogModule'
         },{
             from: '@wm/components/dialogs/design-dialog',
             name: 'DesignDialogModule'

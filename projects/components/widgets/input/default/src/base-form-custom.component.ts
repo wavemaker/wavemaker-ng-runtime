@@ -1,8 +1,6 @@
 import { ControlValueAccessor, FormControlName } from '@angular/forms';
 import { OnInit } from '@angular/core';
 
-import { noop } from '@wm/core';
-
 import { BaseFormComponent } from './base-form.component';
 
 export abstract class BaseFormCustomComponent extends BaseFormComponent implements ControlValueAccessor, OnInit {

@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 import { getWmProjectProperties } from './wm-project-properties';
 

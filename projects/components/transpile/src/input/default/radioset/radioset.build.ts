@@ -8,6 +8,10 @@ register('wm-radioset', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmRadioset role="radiogroup" ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
+            from: '@angular/forms',
+            name: 'FormsModule',
+            as: 'ngFormsModule'
+        },{
             from: '@wm/components/input',
             name: 'InputModule'
         }]

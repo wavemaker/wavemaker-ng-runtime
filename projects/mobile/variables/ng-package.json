@@ -9,8 +9,7 @@
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
 
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
+            "rxjs/Observer": "rxjs",
 
             "@ionic-native/app-version": "ionicNative.plugins",
             "@ionic-native/barcode-scanner": "ionicNative.plugins",

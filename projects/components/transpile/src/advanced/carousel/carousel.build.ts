@@ -43,7 +43,8 @@ register('wm-carousel', (): IBuildTaskDef => {
         imports: [{
             from: 'ngx-bootstrap/carousel',
             name: 'CarouselModule',
-            as: 'ngxCarouselModule'
+            as: 'ngxCarouselModule',
+            forRoot: true
         }, {
             from: '@wm/components/advanced/carousel',
             name: 'CarouselModule'

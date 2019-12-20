@@ -1,7 +1,9 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { generateGUId, setCSS } from '@wm/core';
-import { DatasetAwareFormComponent, getOrderedDataset, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { getOrderedDataset, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { DatasetAwareFormComponent } from '@wm/components/input';
 
 import { registerProps } from './rating.props';
 
@@ -17,7 +19,7 @@ const DEFAULT_RATING = 5;
     selector: '[wmRating]',
     templateUrl: './rating.component.html',
     providers: [
-        provideAsNgValueAccessor(RatingComponent),
+        provideAs(RatingComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(RatingComponent)
     ]
 })

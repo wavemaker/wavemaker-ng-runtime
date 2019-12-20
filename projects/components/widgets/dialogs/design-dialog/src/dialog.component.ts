@@ -1,7 +1,8 @@
 import { Attribute, Component, ContentChild, Inject, Injector, OnInit, Self, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-import { BaseDialog, Context, IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
+import { Context, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
+import { BaseDialog } from '@wm/components/dialogs';
 
 import { registerProps } from './dialog.props';
 

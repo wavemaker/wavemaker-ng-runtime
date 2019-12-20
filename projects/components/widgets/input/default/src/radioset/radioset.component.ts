@@ -1,8 +1,10 @@
 import { Component, Injector } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { switchClass } from '@wm/core';
 
-import { DatasetAwareFormComponent, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
+import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 import { registerProps } from './radioset.props';
 
 declare const $, _;
@@ -15,7 +17,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
     exportAs: 'wmRadioset',
     templateUrl: './radioset.component.html',
     providers: [
-        provideAsNgValueAccessor(RadiosetComponent),
+        provideAs(RadiosetComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(RadiosetComponent)
     ]
 })

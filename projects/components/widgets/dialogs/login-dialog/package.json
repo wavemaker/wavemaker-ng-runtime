@@ -11,6 +11,7 @@
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
+                "@wm/components/dialogs": "wm.components.dialogs",
                 "@wm/components/dialogs/design-dialog": "wm.components.dialogs.designdialog",
                 "@wm/components/data/form": "wm.components.data.form",
                 "@wm/components/input": "wm.components.input"

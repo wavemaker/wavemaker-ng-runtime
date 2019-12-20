@@ -11,6 +11,7 @@
                 "@angular/forms": "ng.forms",
 
                 "@wm/core": "wm.core",
+                "@wm/components/input": "wm.components.input",
                 "@wm/components/base": "wm.components.base"
             }
         }

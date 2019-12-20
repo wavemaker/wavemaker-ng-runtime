@@ -1,5 +1,5 @@
 import { QueryList } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import { SwipeAnimation } from '@swipey';
 import { ButtonComponent } from '@wm/components/input';

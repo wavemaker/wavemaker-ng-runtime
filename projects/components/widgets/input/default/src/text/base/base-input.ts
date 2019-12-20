@@ -2,7 +2,8 @@ import { AfterViewInit, ElementRef, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { $appDigest, addClass, switchClass } from '@wm/core';
-import { IWidgetConfig, BaseFormCustomComponent, styler } from '@wm/components/base';
+import { IWidgetConfig, styler } from '@wm/components/base';
+import { BaseFormCustomComponent } from '../../base-form-custom.component';
 
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {
     public class: string;

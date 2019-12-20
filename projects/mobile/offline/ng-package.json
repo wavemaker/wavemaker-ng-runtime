@@ -12,7 +12,10 @@
             "@angular/common/http": "ng.common.http",
             "@angular/platform-browser": "ng.platformBrowser",
 
-            "rxjs": "rxjs",
+            "rxjs/Observer": "rxjs",
+            "rxjs/observable/from": "rxjs.observable",
+            "rxjs/Observable": "rxjs.observable",
+
             "@ionic-native/app-version": "ionicNative.plugins",
             "@ionic-native/file": "ionicNative.plugins",
             "@ionic-native/sqlite": "ionicNative.plugins",

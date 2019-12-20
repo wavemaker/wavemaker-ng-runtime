@@ -13,8 +13,8 @@
             "@angular/platform-browser": "ng.platformBrowser",
             "@angular/forms": "ng.forms",
 
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
+            "rxjs/ReplaySubject": "rxjs",
+            "rxjs/Subject": "rxjs",
 
             "ngx-bootstrap/dropdown": "ngxBootstrap",
             "ngx-bootstrap/datepicker": "ngxBootstrap",

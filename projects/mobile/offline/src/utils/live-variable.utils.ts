@@ -1,4 +1,4 @@
-import { from } from 'rxjs';
+import { from } from 'rxjs/observable/from';
 
 import { LVService } from '@wm/variables';
 

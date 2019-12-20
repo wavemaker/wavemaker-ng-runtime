@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { registerProps } from './input-calendar.props';
 import { BaseInput } from '../base/base-input';
 
@@ -14,7 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'wm-input[type="date"], wm-input[type="datetime-local"], wm-input[type="month"], wm-input[type="time"], wm-input[type="week"]',
     templateUrl: './input-calendar.component.html',
     providers: [
-        provideAsNgValueAccessor(InputCalendarComponent),
+        provideAs(InputCalendarComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(InputCalendarComponent)
     ]
 })

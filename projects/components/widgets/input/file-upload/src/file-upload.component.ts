@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/core';
 
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 import { App, DataSource, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
 import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';

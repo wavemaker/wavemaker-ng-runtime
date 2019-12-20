@@ -1,6 +1,7 @@
 import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 
-import { debounceTime, filter } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators/debounceTime';
+import { filter } from 'rxjs/operators/filter';
 
 import { App, $invokeWatchers, noop } from '@wm/core';
 

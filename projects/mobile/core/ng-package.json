@@ -11,8 +11,9 @@
             "@angular/common": "ng.common",
             "@angular/common/http": "ng.common.http",
 
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
+            "rxjs/Observer": "rxjs",
+            "rxjs/operators/filter": "rxjs.operators",
+            "rxjs/operators/map": "rxjs.operators",
 
             "@ionic-native/barcode-scanner": "ionicNative.plugins",
             "@ionic-native/camera": "ionicNative.plugins",

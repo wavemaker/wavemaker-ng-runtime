@@ -49,9 +49,15 @@ register('wm-table', (): IBuildTaskDef => {
             return provider;
         },
         imports: [{
+            from: 'ngx-bootstrap/pagination',
+            name: 'PaginationModule',
+            as: 'ngxPaginationModule',
+            forRoot: true
+        },{
             from: 'ngx-bootstrap/tooltip',
             name: 'TooltipModule',
-            as: 'ngxTooltipModule'
+            as: 'ngxTooltipModule',
+            forRoot: true
         }, {
             from: '@wm/components/data/pagination',
             name: 'PaginationModule'

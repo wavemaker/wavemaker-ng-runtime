@@ -12,13 +12,19 @@
             "@angular/common": "ng.common",
             "@angular/router": "ng.router",
 
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
+
+            "rxjs/Observable": "rxjs",
+            "rxjs/Subject": "rxjs",
+            "rxjs/operators/debounceTime": "rxjs.operators",
+            "rxjs/operators/tap": "rxjs.operators",
+            "rxjs/operators/filter": "rxjs.operators",
+
             "ngx-toastr":  "ngxToastr",
 
             "ngx-bootstrap/chronos": "ngxBootstrap",
             "ngx-bootstrap/datepicker": "ngxBootstrap",
             "ngx-bootstrap/modal": "ngxBootstrap",
+            "ngx-bootstrap/utils": "ngxBootstrap",
 
             "@wm/core": "wm.core",
             "@wm/variables": "wm.variables",

@@ -8,9 +8,11 @@
             "umdId": "wm.components.basic.richtexteditor",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
 
                 "@wm/core": "wm.core",
-                "@wm/components/base": "wm.components.base"
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/input": "wm.components.input"
             }
         }
     }

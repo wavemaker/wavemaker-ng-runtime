@@ -12,6 +12,7 @@
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
+                "@wm/components/input": "wm.components.input",
                 "@wm/components/basic/search": "wm.components.basic.search"
             }
         }

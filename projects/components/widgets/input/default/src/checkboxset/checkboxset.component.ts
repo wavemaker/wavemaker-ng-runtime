@@ -1,7 +1,9 @@
 import { Attribute, Component, Injector, OnInit } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { AppDefaults, noop, switchClass } from '@wm/core';
-import { DatasetAwareFormComponent, convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAsNgValueAccessor, provideAsWidgetRef, styler, ToDatePipe, toggleAllHeaders } from '@wm/components/base';
+import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, ToDatePipe, toggleAllHeaders } from '@wm/components/base';
+import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from '../checkboxset/checkboxset.props';
 
@@ -15,7 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: D
     exportAs: 'wmCheckboxset',
     templateUrl: 'checkboxset.component.html',
     providers: [
-        provideAsNgValueAccessor(CheckboxsetComponent),
+        provideAs(CheckboxsetComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(CheckboxsetComponent)
     ]
 })

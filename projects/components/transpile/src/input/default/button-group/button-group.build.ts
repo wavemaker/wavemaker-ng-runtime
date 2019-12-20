@@ -7,6 +7,10 @@ register('wm-buttongroup', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmButtonGroup role="group" aria-labelledby="button group" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
+            from: '@angular/forms',
+            name: 'FormsModule',
+            as: 'ngFormsModule'
+        },{
             from: '@wm/components/input',
             name: 'InputModule'
         }]

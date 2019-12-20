@@ -1,10 +1,11 @@
 import { Injector, OnDestroy, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
+import { Subscription } from 'rxjs/Subscription';
+
 import { AbstractDialogService, closePopover } from '@wm/core';
 
-import { IDialog, IWidgetConfig } from '../../../framework/types';
-import { BaseComponent } from '../../base/base.component';
+import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
 
 declare const _;
 
@@ -59,24 +60,29 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
 
-        // Subscribe to onShown and onHidden events only once as we will not be
-        // unsubscribing to the,m ever and we will handle the logic of calling
-        // respective dialog callbacks.
-        if (!eventsRegistered) {
-            eventsRegistered = true;
+        const subscriptions: Subscription[] = [
             this.bsModal.onShown.subscribe(() => {
-                // Always get the reference of last pushed dialog in the array for calling onOpen callback
-                invokeOpenedCallback(this.dialogService.getLastOpenedDialog());
-            });
-
+                const ref = this.dialogService.getLastOpenedDialog();
+                if (ref === this) {
+                    // Always get the reference of last pushed dialog in the array for calling onOpen callback
+                    invokeOpenedCallback(ref);
+                }
+            }),
             this.bsModal.onHidden.subscribe((closeReason) => {
                 const ref = closeReason === 'esc' || closeReason === 'backdrop-click' ? this.dialogService.getLastOpenedDialog() : this.dialogService.getDialogRefFromClosedDialogs();
-                // remove the dialog reference from opened dialogs and closed dialogs
-                this.dialogService.removeFromOpenedDialogs(ref);
-                this.dialogService.removeFromClosedDialogs(ref);
-                invokeClosedCallback(ref);
-            });
-        }
+                if (ref === this) {
+                    // remove the dialog reference from opened dialogs and closed dialogs
+                    this.dialogService.removeFromOpenedDialogs(ref);
+                    this.dialogService.removeFromClosedDialogs(ref);
+                    invokeClosedCallback(ref);
+                }
+            })
+        ];
+        this.registerDestroyListener(() => {// remove the dialog reference from opened dialogs and closed dialogs
+            this.dialogService.removeFromOpenedDialogs(this);
+            this.dialogService.removeFromClosedDialogs(this);
+            subscriptions.forEach(s => s.unsubscribe());
+        })
     }
 
     /**

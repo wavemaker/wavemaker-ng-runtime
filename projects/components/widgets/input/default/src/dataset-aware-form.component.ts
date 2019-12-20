@@ -1,12 +1,11 @@
 import { Injector } from '@angular/core';
 
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean } from '@wm/core';
 
-import { convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformFormData, transformDataWithKeys } from '../../../utils/form-utils';
+import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformFormData, transformDataWithKeys } from '@wm/components/base';
 import { BaseFormCustomComponent } from './base-form-custom.component';
-import { ALLFIELDS } from '../../../utils/data-utils';
 
 declare const _;
 

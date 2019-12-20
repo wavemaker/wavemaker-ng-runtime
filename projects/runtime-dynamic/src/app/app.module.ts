@@ -3,13 +3,16 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {
+    defineLocale,
+    BsLocaleService,
     BsDatepickerModule,
     BsDropdownModule,
     CarouselModule as ngxCarouselModule,
     DatepickerModule as ngxDatepickerModule,
+    ModalModule,
     PaginationModule as ngxPaginationModule,
     PopoverModule as ngxPopoverModule,
     ProgressbarModule,
@@ -17,7 +20,7 @@ import {
     TypeaheadModule
 } from 'ngx-bootstrap';
 import { NgCircleProgressModule } from 'ng-circle-progress';
-import { ToastrModule } from 'ngx-toastr';
+import { ToastNoAnimationModule } from 'ngx-toastr';
 
 import { App, getWmProjectProperties } from '@wm/core';
 // Basic widgets
@@ -108,12 +111,13 @@ import { PrefabConfigProviderService } from './services/prefab-config-provider.s
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 
 export const routerModule = RouterModule.forRoot(routes, {useHash: true, scrollPositionRestoration: 'top'});
-export const toastrModule = ToastrModule.forRoot({maxOpened: 1, autoDismiss: true });
+export const toastrModule = ToastNoAnimationModule.forRoot({maxOpened: 1, autoDismiss: true });
 export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     cookieName: 'wm_xsrf_token',
     headerName: getWmProjectProperties().xsrf_header_name
 });
 
+export const modalModule:ModuleWithProviders = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders = BsDatepickerModule.forRoot();
 export const datepickerModule: ModuleWithProviders = ngxDatepickerModule.forRoot();
 export const timepickerModule: ModuleWithProviders = ngxTimepickerModule.forRoot();
@@ -207,6 +211,7 @@ const componentsModule = [
 
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...componentsModule);
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...MOBILE_COMPONENT_MODULES_FOR_ROOT);
+REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
 
 @NgModule({
     declarations: [
@@ -217,8 +222,8 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...MOBILE_COMPONENT_MODULES_FOR_ROO
         CommonModule,
         RouterModule,
         HttpClientModule,
-        BrowserAnimationsModule,
 
+        modalModule,
         bsDatePickerModule,
         datepickerModule,
         timepickerModule,
@@ -247,7 +252,10 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...MOBILE_COMPONENT_MODULES_FOR_ROO
     bootstrap: [AppComponent]
 })
 export class AppModule {
-    constructor(private app: App, private inj: Injector, private componentRefProvider: ComponentRefProvider) {
+    constructor(private app: App, private inj: Injector, private bsLocaleService: BsLocaleService, private componentRefProvider: ComponentRefProvider) {
+        const selectedLocale = this.app.getSelectedLocale();
+        defineLocale(selectedLocale);
+        this.bsLocaleService.use(selectedLocale);
         if (window['cordova']) {
             // clear the cached urls on logout, to load the Login Page and not the Main Page as app reload(window.location.reload) is not invoked in mobile
             this.app.subscribe('userLoggedOut', this.componentRefProvider.clearComponentFactoryRefCache.bind(this.componentRefProvider));

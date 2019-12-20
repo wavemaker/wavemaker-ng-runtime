@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, Injector } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { $appDigest, debounce, isDefined, setCSS, toBoolean } from '@wm/core';
-import { DatasetAwareFormComponent, DataSetItem, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { DataSetItem, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from './switch.props';
 
@@ -14,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-switch', hostClass: DEFAULT_CLS};
     selector: '[wmSwitch]',
     templateUrl: './switch.component.html',
     providers: [
-        provideAsNgValueAccessor(SwitchComponent),
+        provideAs(SwitchComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(SwitchComponent)
     ]
 })

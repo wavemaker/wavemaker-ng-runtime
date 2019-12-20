@@ -12,7 +12,11 @@
             "@angular/common/http": "ng.common.http",
             "@angular/platform-browser": "ng.platformBrowser",
 
-            "rxjs": "rxjs",
+
+            "rxjs/observable/from": "rxjs.observable",
+            "rxjs/operators/mergeMap": "rxjs.operators",
+            "rxjs/Subject": "rxjs",
+            "rxjs/Observable": "rxjs.observable",
 
             "@ionic-native/app-version": "ionicNative.plugins",
             "@ionic-native/barcode-scanner": "ionicNative.plugins",

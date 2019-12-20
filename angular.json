@@ -1133,6 +1133,33 @@
                 }
             }
         },
+        "@wm/components/dialogs": {
+            "root": "projects/components/widgets/dialogs/default",
+            "sourceRoot": "projects/components/widgets/dialogs/default/src",
+            "projectType": "library",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-ng-packagr:build",
+                    "options": {
+                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                        "project": "projects/components/widgets/dialogs/default/package.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/components/widgets/tsconfig.lib.json",
+                            "projects/components/widgets/tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        },
         "@wm/components/dialogs/alert-dialog": {
             "root": "projects/components/widgets/dialogs/alert-dialog",
             "sourceRoot": "projects/components/widgets/dialogs/alert-dialog/src",

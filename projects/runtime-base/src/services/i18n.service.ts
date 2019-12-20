@@ -2,9 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 
-import { defineLocale } from 'ngx-bootstrap/chronos';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-
 import {
     _WM_APP_PROJECT,
     AbstractI18nService,
@@ -38,7 +35,6 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     constructor(
         private $http: HttpClient,
-        private bsLocaleService: BsLocaleService,
         private appDefaults: AppDefaults
     ) {
         super();
@@ -136,8 +132,9 @@ export class I18nServiceImpl extends AbstractI18nService {
                 // For ngx bootstrap locale, get the config from script and apply locale
                 let _config;
                 fn.apply({moment: {defineLocale: (code, config) => _config = config}});
-                defineLocale(this.selectedLocale, _config);
-                this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
+                // TODO: Moved ngxBootstrap locale configuratiob to app.module.ts
+                //defineLocale(this.selectedLocale, _config);
+                //this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
             });
     }
 

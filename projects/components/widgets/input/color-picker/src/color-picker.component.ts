@@ -1,8 +1,9 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { addClass, removeClass } from '@wm/core';
-import { BaseFormCustomComponent,IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { BaseFormCustomComponent } from '@wm/components/input';
 import { registerProps } from './color-picker.props';
 
 
@@ -17,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html',
     providers: [
-        provideAsNgValueAccessor(ColorPickerComponent),
+        provideAs(ColorPickerComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(ColorPickerComponent)
     ]
 })

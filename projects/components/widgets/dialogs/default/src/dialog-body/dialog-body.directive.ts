@@ -4,7 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { addClass, setAttr, setCSS } from '@wm/core';
 
-import { DialogRef } from '../../../../framework/types';
+import { DialogRef } from '@wm/components/base';
 
 declare const $;
 

@@ -1,4 +1,3 @@
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { forwardRef } from '@angular/core';
 
 import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate } from '@wm/core';
@@ -194,14 +193,6 @@ export function provideAs(reference: any, key: any, multi?: boolean) {
         useExisting: forwardRef(() => reference),
         multi: multi
     };
-}
-
-export function provideAsNgValidators(reference: any) {
-    return provideAs(reference, NG_VALIDATORS, true);
-}
-
-export function provideAsNgValueAccessor(reference: any) {
-    return provideAs(reference, NG_VALUE_ACCESSOR, true);
 }
 
 export function provideAsWidgetRef(reference: any) {

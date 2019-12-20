@@ -2,7 +2,7 @@ import { Component, ElementRef, Inject, Input } from '@angular/core';
 
 import { addClass, toBoolean } from '@wm/core';
 
-import { DialogRef } from '../../../../framework/types';
+import { DialogRef } from '@wm/components/base';
 import { BaseDialog } from '../base-dialog';
 
 const DEFAULT_CLS = 'app-dialog-header modal-header';

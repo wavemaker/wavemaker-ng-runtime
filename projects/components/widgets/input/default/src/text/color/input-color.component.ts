@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './input-color.props';
 import { BaseInput } from '../base/base-input';
@@ -15,7 +15,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'wm-input[type="color"]',
     templateUrl: './input-color.component.html',
     providers: [
-        provideAsNgValueAccessor(InputColorComponent),
+        provideAs(InputColorComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(InputColorComponent)
     ]
 })

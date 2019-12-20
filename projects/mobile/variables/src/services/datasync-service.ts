@@ -1,4 +1,4 @@
-import { Observer } from 'rxjs/index';
+import { Observer } from 'rxjs/Observer';
 
 import { App, noop, toPromise } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';

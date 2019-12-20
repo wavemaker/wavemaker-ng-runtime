@@ -1,16 +1,10 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
-
-import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { AbstractDialogService } from '@wm/core';
 import { SecurityModule } from '@wm/security';
 
 import { ContainerDirective } from './widgets/common/container/container.directive';
-import { DialogBodyDirective } from './widgets/common/dialog/base/dialog-body/dialog-body.directive';
-import { DialogFooterDirective } from './widgets/common/dialog/base/dialog-footer/dialog-footer.directive';
-import { DialogHeaderComponent } from './widgets/common/dialog/base/dialog-header/dialog-header.component';
 import { ImagePipe } from './pipes/image.pipe';
 import { LazyLoadDirective } from './widgets/common/lazy-load/lazy-load.directive';
 import { MessageComponent } from './widgets/common/message/message.component';
@@ -43,9 +37,6 @@ import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
 
 const wmComponents = [
     ContainerDirective,
-    DialogBodyDirective,
-    DialogFooterDirective,
-    DialogHeaderComponent,
     LazyLoadDirective,
     MessageComponent,
     PartialDirective,
@@ -78,8 +69,6 @@ const PIPES = [
 @NgModule({
     imports: [
         CommonModule,
-        FormsModule,
-        ModalModule,
         SecurityModule
     ],
     declarations: [...wmComponents, ...PIPES],

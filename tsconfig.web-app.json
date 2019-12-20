@@ -36,6 +36,9 @@
             "@wm/components/page": [
                 "libraries/components/page/default"
             ],
+            "@wm/components/dialogs": [
+                "libraries/components/dialogs/default"
+            ],
             "@wm/components/*": [
                 "libraries/components/*"
             ],

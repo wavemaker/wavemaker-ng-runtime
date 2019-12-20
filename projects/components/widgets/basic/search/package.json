@@ -8,10 +8,16 @@
             "umdId": "wm.components.basic.search",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
 
+                "rxjs/observable/from": "rxjs.observable",
+                "rxjs/observable/of": "rxjs.observable",
+                "rxjs/Observable": "rxjs",
+                "rxjs/operators/mergeMap": "rxjs.operators",
                 "ngx-bootstrap/typeahead": "ngxBootstrap",
                 "@wm/core": "wm.core",
-                "@wm/components/base": "wm.components.base"
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/input": "wm.components.input"
             }
         }
     }

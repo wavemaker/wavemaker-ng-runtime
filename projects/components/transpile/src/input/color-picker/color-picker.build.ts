@@ -8,6 +8,10 @@ register('wm-colorpicker', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmColorPicker ${getAttrMarkup(attrs)} role="input" ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
+            from: '@angular/forms',
+            name: 'FormsModule',
+            as: 'ngFormsModule'
+        },{
             from: 'ngx-color-picker',
             name: 'ColorPickerModule',
             as: 'ngx_ColorPickerModule'

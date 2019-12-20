@@ -1,7 +1,6 @@
 import {Directive, DoCheck, ElementRef, Injector, Input, OnDestroy, OnInit} from '@angular/core';
 
 import { App, debounce, isKitkatDevice, isMobileApp } from '@wm/core';
-import {Subscription} from 'rxjs';
 
 declare const IScroll;
 declare const _, $;

@@ -371,6 +371,7 @@ export interface ImportDef {
     from: string;
     name: string;
     as?: string;
+    forRoot?: boolean;
     platformType?: string;
 };
 

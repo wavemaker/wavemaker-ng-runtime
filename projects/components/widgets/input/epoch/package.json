@@ -10,11 +10,14 @@
                 "@angular/core": "ng.core",
                 "@angular/forms": "ng.forms",
 
+                "rxjs/Subscription": "rxjs",
+
                 "ngx-bootstrap/datepicker": "ngxBootstrap",
                 "ngx-bootstrap/dropdown": "ngxBootstrap",
                 "ngx-bootstrap/timepicker": "ngxBootstrap",
 
                 "@wm/core": "wm.core",
+                "@wm/components/input": "wm.components.input",
                 "@wm/components/base": "wm.components.base"
             }
         }

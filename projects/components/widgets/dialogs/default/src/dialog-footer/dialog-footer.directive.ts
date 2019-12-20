@@ -1,9 +1,7 @@
 import { Directive, Injector } from '@angular/core';
 
-import { IWidgetConfig } from '../../../../framework/types';
-import { BaseComponent } from '../../../base/base.component';
+import { BaseComponent, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './dialog-footer.props';
-import { provideAsWidgetRef } from '../../../../../utils/widget-utils';
 
 const WIDGET_INFO: IWidgetConfig = {
     widgetType: 'wm-dialogfooter',

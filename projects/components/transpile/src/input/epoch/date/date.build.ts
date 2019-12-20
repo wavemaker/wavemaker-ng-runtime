@@ -8,17 +8,24 @@ register('wm-date', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmDate ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
+            from: '@angular/forms',
+            name: 'FormsModule',
+            as: 'ngFormsModule'
+        },{
             from: 'ngx-bootstrap/datepicker',
             name: 'BsDatepickerModule',
-            as: 'ngx_BsDatepickerModule'
+            as: 'ngx_BsDatepickerModule',
+            forRoot: true
         },{
             from: 'ngx-bootstrap/dropdown',
             name: 'BsDropdownModule',
-            as: 'ngx_BsDropdownModule'
+            as: 'ngx_BsDropdownModule',
+            forRoot: true
         },{
             from: 'ngx-bootstrap/timepicker',
             name: 'TimepickerModule',
-            as: 'ngx_TimepickerModule'
+            as: 'ngx_TimepickerModule',
+            forRoot: true
         },{
             from: '@wm/components/input/epoch',
             name: 'EpochModule'

@@ -1,7 +1,9 @@
 import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { $appDigest, $unwatch, $watch, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
-import { ALLFIELDS, configureDnD, DatasetAwareFormComponent, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { DatasetAwareFormComponent } from '@wm/components/input';
 import { SearchComponent } from '@wm/components/basic/search';
 
 import { registerProps } from './chips.props';
@@ -17,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmChips]',
     templateUrl: './chips.component.html',
     providers: [
-        provideAsNgValueAccessor(ChipsComponent),
+        provideAs(ChipsComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(ChipsComponent)
     ]
 })

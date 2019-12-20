@@ -8,8 +8,8 @@
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
 
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
+            "rxjs/Subscription": "rxjs",
+
             "ngx-toastr": "ngxToastr",
 
             "@wm/runtime/base": "wm.runtime.base",

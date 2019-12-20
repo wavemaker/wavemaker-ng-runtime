@@ -2,8 +2,7 @@ import { Injector } from '@angular/core';
 
 import { DataSource } from '@wm/core';
 
-import { StylableComponent } from './stylable.component';
-import { IWidgetConfig } from '../../framework/types';
+import { IWidgetConfig, StylableComponent } from '@wm/components/base';
 
 declare const _;
 

@@ -45,6 +45,9 @@
             "@wm/mobile/components/page": [
                 "libraries/mobile/components/page/default"
             ],
+            "@wm/components/dialogs": [
+                "libraries/components/dialogs/default"
+            ],
             "@wm/mobile/components/*": [
                 "libraries/mobile/components/*"
             ],

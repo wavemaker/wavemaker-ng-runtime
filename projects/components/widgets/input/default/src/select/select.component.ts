@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { DataSource, removeAttr, setAttr } from '@wm/core';
-import { DatasetAwareFormComponent, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
+import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from './select.props';
 
@@ -13,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
     selector: 'wm-select',
     templateUrl: './select.component.html',
     providers: [
-        provideAsNgValueAccessor(SelectComponent),
+        provideAs(SelectComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(SelectComponent)
     ]
 })

@@ -1,10 +1,10 @@
 import {AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self} from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators/debounceTime';
 
 import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes } from '@wm/core';
-import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAsNgValueAccessor, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
+import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
 import { registerProps } from './form-field.props';
@@ -28,7 +28,7 @@ const FILE_TYPES = {
     exportAs: 'wmFormField',
     providers: [
         provideAsWidgetRef(FormFieldDirective),
-        provideAsNgValueAccessor(FormFieldDirective),
+        provideAs(FormFieldDirective, NG_VALUE_ACCESSOR, true),
         {provide: Context, useValue: {}, multi: true}
     ]
 })

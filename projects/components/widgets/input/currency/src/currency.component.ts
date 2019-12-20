@@ -1,9 +1,9 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import {  DecimalPipe } from '@angular/common';
 
 import { CURRENCY_INFO, AbstractI18nService } from '@wm/core';
-import { IWidgetConfig, provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/base';
 import { NumberLocale } from '@wm/components/input';
 
 import { registerProps } from './currency.props';
@@ -19,8 +19,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html',
     providers: [
-        provideAsNgValueAccessor(CurrencyComponent),
-        provideAsNgValidators(CurrencyComponent),
+        provideAs(CurrencyComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(CurrencyComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(CurrencyComponent)
     ]
 })

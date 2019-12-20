@@ -11,6 +11,7 @@
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
+                "@wm/components/dialogs": "wm.components.dialogs",
                 "@wm/components/input": "wm.components.input"
             }
         }

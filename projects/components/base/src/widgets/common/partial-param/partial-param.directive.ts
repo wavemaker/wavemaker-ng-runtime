@@ -1,6 +1,6 @@
 import { Attribute, Directive, Inject, Self, Input, OnInit } from '@angular/core';
 
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 import { $watch } from '@wm/core';
 

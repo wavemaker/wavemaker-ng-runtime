@@ -4,7 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ScriptLoaderService } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 import {
     AbstractI18nService,

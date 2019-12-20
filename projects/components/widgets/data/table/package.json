@@ -9,6 +9,9 @@
             "umdModuleIds": {
                 "@angular/core": "ng.core",
 
+                "rxjs/Subject": "rxjs",
+                "rxjs/Observable": "rxjs",
+
                 "ngx-bootstrap/tooltip": "ngxBootstrap",
 
                 "@wm/core": "wm.core",

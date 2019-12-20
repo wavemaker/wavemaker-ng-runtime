@@ -1,10 +1,11 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormGroup } from '@angular/forms';
+import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 
 import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getDatasourceFromExpr, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAsNgValueAccessor, provideAsWidgetRef, StylableComponent, styler, transformData } from '@wm/components/base';
+import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
@@ -49,7 +50,7 @@ const isInputBodyWrapper = target => {
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [
-        provideAsNgValueAccessor(TableComponent),
+        provideAs(TableComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(TableComponent)
     ]
 })
@@ -128,7 +129,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     deletecanceltext;
 
     selectedItemChange = new Subject();
-    selectedItemChange$ = this.selectedItemChange.asObservable();
+    selectedItemChange$: Observable<any> = this.selectedItemChange.asObservable();
 
     actions = [];
     _actions = {

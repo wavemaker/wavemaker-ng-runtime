@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { DialogModule } from '@wm/components/dialogs';
 import { DesignDialogModule } from '@wm/components/dialogs/design-dialog';
 import { InputModule } from '@wm/components/input';
 
@@ -15,6 +16,7 @@ const components = [
     imports: [
         CommonModule,
         DesignDialogModule,
+        DialogModule,
         InputModule,
         WmComponentsModule
     ],

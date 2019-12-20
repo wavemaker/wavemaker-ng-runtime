@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { BaseDialog } from './base/base-dialog';
-
 const openedDialogs = [];
 /*We need closedDialogs array because onHidden event is asynchronous,
 and if the user uses script and calls dialog1.close() and then dialog2.close() then
@@ -29,7 +27,7 @@ export class DialogServiceImpl {
      * @param {BaseDialog} dialogRef
      * @param {scope}
      */
-    public register(name: string, dialogRef: BaseDialog, scope: any) {
+    public register(name: string, dialogRef: any, scope: any) {
         if (!name) {
             return;
         }
@@ -172,6 +170,6 @@ export class DialogServiceImpl {
     }
 
     public getDialogRefFromClosedDialogs() {
-        return closeDialogsArray.splice(0, 1)[0];
+        return closeDialogsArray[closeDialogsArray.length - 1];
     }
 }

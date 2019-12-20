@@ -44,8 +44,16 @@ register('wm-pagedialog', (): IBuildTaskDef => {
             return `${preContent}</${tagName}>`;
         },
         imports: [{
+            from: 'ngx-bootstrap/modal',
+            name: 'ModalModule',
+            as: 'ngx_ModalModule',
+            forRoot: true
+        },{
             from: '@wm/components/input',
             name: 'InputModule'
+        },{
+            from: '@wm/components/dialogs',
+            name: 'DialogModule'
         },{
             from: '@wm/components/dialogs/partial-dialog',
             name: 'PartialDialogModule'

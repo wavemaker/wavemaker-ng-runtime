@@ -9,7 +9,8 @@ register('wm-menu', (): IBuildTaskDef => {
         imports: [{
             from: 'ngx-bootstrap/dropdown',
             name: 'BsDropdownModule',
-            as: 'ngxBsDropdownModule'
+            as: 'ngxBsDropdownModule',
+            forRoot: true
         }, {
             from: '@wm/components/navigation/menu',
             name: 'MenuModule'

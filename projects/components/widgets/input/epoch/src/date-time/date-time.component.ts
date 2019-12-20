@@ -1,12 +1,14 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerComponent } from 'ngx-bootstrap/timepicker';
 
 import { addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
-import { BaseDateTimeComponent, provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
+import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date-time.props';
 
 declare const moment, $, _;
@@ -20,8 +22,8 @@ const CURRENT_DATE = 'CURRENT_DATE';
     selector: '[wmDateTime]',
     templateUrl: './date-time.component.html',
     providers: [
-        provideAsNgValueAccessor(DatetimeComponent),
-        provideAsNgValidators(DatetimeComponent),
+        provideAs(DatetimeComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(DatetimeComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(DatetimeComponent)
     ]
 })

@@ -9,6 +9,10 @@
             "umdModuleIds": {
                 "@angular/core": "ng.core",
 
+                "rxjs/Observable": "rxjs.observable",
+                "rxjs/Subject": "rxjs",
+                "rxjs/Subscription": "rxjs",
+
                 "@swipey": "swipey",
 
                 "@wm/core": "wm.core",

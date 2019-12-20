@@ -1,7 +1,8 @@
 import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-import { BaseDialog, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
+import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
+import { BaseDialog } from '@wm/components/dialogs';
 
 import { registerProps } from './partial-dialog.props';
 

@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component, Inject, Injector, ViewChild } from '@angular/core';
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
 import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate } from '@wm/core';
-import { BaseDateTimeComponent, IWidgetConfig, provideAsNgValidators, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 
+import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 
 declare const _, $;
@@ -21,8 +23,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmDate]',
     templateUrl: './date.component.html',
     providers: [
-        provideAsNgValueAccessor(DateComponent),
-        provideAsNgValidators(DateComponent),
+        provideAs(DateComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(DateComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(DateComponent)
     ]
 })

@@ -13,6 +13,10 @@ register('wm-wizardstep', (): IBuildTaskDef => {
         },
         post: () => `</ng-template></${tagName}>`,
         imports: [{
+            from: '@angular/forms',
+            name: 'FormsModule',
+            as: 'ngFormsModule'
+        },{
             from: '@wm/components/containers/wizard',
             name: 'WizardModule'
         }]

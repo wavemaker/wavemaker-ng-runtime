@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { provideAsNgValueAccessor, provideAsWidgetRef } from '@wm/components/base';
+import { provideAs, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './textarea.props';
 import { BaseInput } from '../text/base/base-input';
@@ -14,7 +14,7 @@ const WIDGET_CONFIG = {
     selector: 'wm-textarea',
     templateUrl: './textarea.component.html',
     providers: [
-        provideAsNgValueAccessor(TextareaComponent),
+        provideAs(TextareaComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(TextareaComponent)
     ]
 })

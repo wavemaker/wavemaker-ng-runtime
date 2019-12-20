@@ -1,6 +1,6 @@
 import { Injector } from '@angular/core';
 
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 import { $appDigest, findValueOf, isObject, isDefined, validateAccessRoles } from '@wm/core';
 import { SecurityService } from '@wm/security';

@@ -1,12 +1,16 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { from, Observable, of } from 'rxjs';
-import { debounceTime, mergeMap } from 'rxjs/operators';
+import { from } from 'rxjs/observable/from';
+import { of } from 'rxjs/observable/of';
+import { Observable } from 'rxjs/Observable';
+import { mergeMap } from 'rxjs/operators/mergeMap';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
-import { ALLFIELDS, convertDataToObject, DataSetItem, DatasetAwareFormComponent, extractDataAsArray, getUniqObjsByDataField, provideAsNgValueAccessor, provideAsWidgetRef, styler, transformFormData } from '@wm/components/base';
+import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData } from '@wm/components/base';
+import { DatasetAwareFormComponent } from '@wm/components/input';
 
 import { registerProps } from './search.props';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
@@ -19,7 +23,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'input-group'};
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [
-        provideAsNgValueAccessor(SearchComponent),
+        provideAs(SearchComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(SearchComponent)
     ]
 })

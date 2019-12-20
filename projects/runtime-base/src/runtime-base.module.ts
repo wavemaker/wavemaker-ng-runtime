@@ -1,11 +1,9 @@
 import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ToastrModule } from 'ngx-toastr';
 
 import {
     _WM_APP_PROJECT,
@@ -85,14 +83,10 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [];
     declarations: definitions,
     imports: [
         CommonModule,
-        FormsModule,
         RouterModule,
-        ReactiveFormsModule,
         HttpClientModule,
 
-        ModalModule,
-        BsDatepickerModule,
-
+        ToastrModule,
         WmComponentsModule,
         PrefabModule,
         MobileRuntimeModule,
@@ -107,10 +101,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [];
         definitions,
 
         CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-
-        ModalModule,
 
         WmComponentsModule,
         MobileRuntimeModule,
@@ -192,7 +182,6 @@ export class RuntimeBaseModule {
 export const WM_MODULES_FOR_ROOT = [
     WmComponentsModule.forRoot(),
     MobileRuntimeModule.forRoot(),
-    ModalModule.forRoot(),
     CoreModule.forRoot(),
     SecurityModule.forRoot(),
     OAuthModule.forRoot(),

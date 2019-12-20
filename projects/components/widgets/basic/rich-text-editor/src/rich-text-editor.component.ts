@@ -1,8 +1,10 @@
 import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { setCSS, setHtml } from '@wm/core';
-import { APPLY_STYLES_TYPE, BaseFormCustomComponent, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './rich-text-editor.props';
 
@@ -48,7 +50,7 @@ const overrideSummerNote = () => {
     selector: 'div[wmRichTextEditor]',
     templateUrl: './rich-text-editor.component.html',
     providers: [
-        provideAsNgValueAccessor(RichTextEditorComponent),
+        provideAs(RichTextEditorComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(RichTextEditorComponent)
     ]
 })

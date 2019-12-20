@@ -1,7 +1,8 @@
 import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-import { BaseDialog, IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
+import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
+import { BaseDialog } from '@wm/components/dialogs';
 
 import { registerProps } from './alert-dialog.props';
 

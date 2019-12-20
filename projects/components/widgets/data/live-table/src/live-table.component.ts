@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
 
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators/debounceTime';
 
 import { $appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn } from '@wm/core';
 import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';

@@ -37,6 +37,11 @@ register(wmListTag, (): IBuildTaskDef => {
             return provider;
         },
         imports: [{
+            from: 'ngx-bootstrap/pagination',
+            name: 'PaginationModule',
+            as: 'ngxPaginationModule',
+            forRoot: true
+        },{
             from: '@wm/components/input',
             name: 'InputModule'
         }, {

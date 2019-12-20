@@ -12,6 +12,8 @@
 
                 "angular2-text-mask": "angular2TextMask",
 
+                "rxjs/Subject": "rxjs",
+
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base"
             }

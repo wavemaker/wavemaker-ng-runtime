@@ -139,12 +139,12 @@ bundleWeb() {
         ./libraries/security/bundles/index.umd.js \
         ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/input/default/bundles/index.umd.js \
         ./libraries/components/basic/default/bundles/index.umd.js \
         ./libraries/components/basic/progress//bundles/index.umd.js \
         ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
         ./libraries/components/basic/search/bundles/index.umd.js \
         ./libraries/components/basic/tree/bundles/index.umd.js \
-        ./libraries/components/input/default/bundles/index.umd.js \
         ./libraries/components/input/calendar/bundles/index.umd.js \
         ./libraries/components/input/chips/bundles/index.umd.js \
         ./libraries/components/input/color-picker/bundles/index.umd.js \
@@ -159,6 +159,7 @@ bundleWeb() {
         ./libraries/components/navigation/breadcrumb/bundles/index.umd.js \
         ./libraries/components/navigation/menu/bundles/index.umd.js \
         ./libraries/components/navigation/popover/bundles/index.umd.js \
+        ./libraries/components/dialogs/default/bundles/index.umd.js \
         ./libraries/components/dialogs/alert-dialog/bundles/index.umd.js \
         ./libraries/components/dialogs/confirm-dialog/bundles/index.umd.js \
         ./libraries/components/dialogs/design-dialog/bundles/index.umd.js \
@@ -215,12 +216,12 @@ bundleMobile() {
         ./libraries/security/bundles/index.umd.js \
         ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
+        ./libraries/components/input/default/bundles/index.umd.js \
         ./libraries/components/basic/default/bundles/index.umd.js \
         ./libraries/components/basic/progress//bundles/index.umd.js \
         ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
         ./libraries/components/basic/search/bundles/index.umd.js \
         ./libraries/components/basic/tree/bundles/index.umd.js \
-        ./libraries/components/input/default/bundles/index.umd.js \
         ./libraries/components/input/calendar/bundles/index.umd.js \
         ./libraries/components/input/chips/bundles/index.umd.js \
         ./libraries/components/input/color-picker/bundles/index.umd.js \
@@ -235,6 +236,7 @@ bundleMobile() {
         ./libraries/components/navigation/breadcrumb/bundles/index.umd.js \
         ./libraries/components/navigation/menu/bundles/index.umd.js \
         ./libraries/components/navigation/popover/bundles/index.umd.js \
+        ./libraries/components/dialogs/default/bundles/index.umd.js \
         ./libraries/components/dialogs/alert-dialog/bundles/index.umd.js \
         ./libraries/components/dialogs/confirm-dialog/bundles/index.umd.js \
         ./libraries/components/dialogs/design-dialog/bundles/index.umd.js \
@@ -308,13 +310,13 @@ buildApp() {
     ngBuild variables projects/variables '@wm/variables'
     ngBuild components-base projects/components/base '@wm/components/base'
 
+    ngBuild components-input projects/components/widgets/input '@wm/components/input'
     ngBuild components-basic projects/components/widgets/basic '@wm/components/basic'
     ngBuild components-basic-progress projects/components/widgets/basic/progress '@wm/components/basic/progress'
     ngBuild components-basic-richtexteditor projects/components/widgets/basic/rich-text-editor '@wm/components/basic/rich-text-editor'
     ngBuild components-basic-search projects/components/widgets/basic/search '@wm/components/basic/search'
     ngBuild components-basic-tree projects/components/widgets/basic/tree '@wm/components/basic/tree'
 
-    ngBuild components-input projects/components/widgets/input '@wm/components/input'
     ngBuild components-input-calendar projects/components/widgets/input/calendar '@wm/components/input/calendar'
     ngBuild components-input-chips projects/components/widgets/input/chips '@wm/components/input/chips'
     ngBuild components-input-colorpicker projects/components/widgets/input/color-picker '@wm/components/input/color-picker'
@@ -339,6 +341,7 @@ buildApp() {
     ngBuild components-containers-tile projects/components/widgets/containers/tile '@wm/components/containers/tile'
     ngBuild components-containers-wizard projects/components/widgets/containers/wizard '@wm/components/containers/wizard'
 
+    ngBuild components-dialogs projects/components/widgets/dialogs '@wm/components/dialogs'
     ngBuild components-dialogs-alertdialog projects/components/widgets/dialogs/alert-dialog '@wm/components/dialogs/alert-dialog'
     ngBuild components-dialogs-confirmdialog projects/components/widgets/dialogs/confirm-dialog '@wm/components/dialogs/confirm-dialog'
     ngBuild components-dialogs-designdialog projects/components/widgets/dialogs/design-dialog '@wm/components/dialogs/design-dialog'
@@ -375,8 +378,6 @@ buildApp() {
 
     ngBuild mobile-components-containers-segmented projects/mobile/components/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
 
-    ngBuild mobile-components-data-medialist projects/mobile/components/data/media-list '@wm/mobile/components/data/media-list'
-
     ngBuild mobile-components-device-barcodescanner projects/mobile/components/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
     ngBuild mobile-components-device-camera projects/mobile/components/device/camera '@wm/mobile/components/device/camera'
 
@@ -387,6 +388,8 @@ buildApp() {
     ngBuild mobile-components-page-leftpanel projects/mobile/components/page/left-panel '@wm/mobile/components/page/left-panel'
     ngBuild mobile-components-page-mobilenavbar projects/mobile/components/page/mobile-navbar '@wm/mobile/components/page/mobile-navbar'
     ngBuild mobile-components-page-tabbar projects/mobile/components/page/tab-bar '@wm/mobile/components/page/tab-bar'
+
+    ngBuild mobile-components-data-medialist projects/mobile/components/data/media-list '@wm/mobile/components/data/media-list'
 
     ngBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
     ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'

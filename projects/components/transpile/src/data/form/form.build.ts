@@ -124,6 +124,14 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             return provider;
         },
         imports: [{
+            from: '@angular/forms',
+            name: 'FormsModule',
+            as: 'ngFormsModule'
+        },{
+            from: '@angular/forms',
+            name: 'ReactiveFormsModule',
+            as: 'ngReactiveFormsModule'
+        },{
             from: '@wm/components/data/form',
             name: 'FormModule'
         },{

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './input-number.props';
 import { BaseInput } from '../base/base-input';
 
@@ -14,7 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'wm-input[type="number"]',
     templateUrl: './input-number.component.html',
     providers: [
-        provideAsNgValueAccessor(InputNumberComponent),
+        provideAs(InputNumberComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(InputNumberComponent)
     ]
 })

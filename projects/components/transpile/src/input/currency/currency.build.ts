@@ -8,6 +8,10 @@ register('wm-currency', (): IBuildTaskDef => {
         pre: attrs => `<${tagName} wmCurrency ${getAttrMarkup(attrs)} role="input" ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`,
         imports: [{
+            from: '@angular/forms',
+            name: 'FormsModule',
+            as: 'ngFormsModule'
+        },{
             from: '@wm/components/input',
             name: 'InputModule'
         },{

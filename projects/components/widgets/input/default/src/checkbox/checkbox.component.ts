@@ -1,8 +1,9 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
-import { BaseFormCustomComponent, IWidgetConfig, provideAsNgValueAccessor, provideAsWidgetRef, styler } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { BaseFormCustomComponent } from '../base-form-custom.component';
 
 import { registerProps } from './checkbox.props';
 
@@ -39,7 +40,7 @@ const unStringify = (val, defaultVal?) => {
     selector: '[wmCheckbox]',
     templateUrl: './checkbox.component.html',
     providers: [
-        provideAsNgValueAccessor(CheckboxComponent),
+        provideAs(CheckboxComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(CheckboxComponent)
     ]
 })
