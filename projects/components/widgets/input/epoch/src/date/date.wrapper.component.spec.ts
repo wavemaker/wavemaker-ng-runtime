@@ -10,24 +10,24 @@ import { WmComponentsModule } from '@wm/components/base';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { BsDatepickerModule } from 'ngx-bootstrap';
 import { DateComponent } from './date.component';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
-import { ComponentsTestModule } from "../../../../../base/src/test/components.test.module";
-import { compileTestComponent, getHtmlSelectorElement, checkElementClass, onClickCheckTaglengthOnBody, onClickCheckClassEleLengthOnBody, hasAttributeCheck } from "../../../../../base/src/test/util/component-test-util";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
+import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
+import { compileTestComponent, getHtmlSelectorElement, checkElementClass, onClickCheckTaglengthOnBody, onClickCheckClassEleLengthOnBody, hasAttributeCheck } from '../../../../../base/src/test/util/component-test-util';
 import { datepatternTest, outputpatternTest, disableMaxDatePanel, disableMindatePanel, excludedDaysDisable, expectCheckEleHasDisabled } from '../../../../../base/src/test/util/date-test-util';
 import { moment } from 'ngx-bootstrap/chronos/test/chain';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
-//import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
+// import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
 
-let mockApp = {
+const mockApp = {
     subscribe: () => { }
 };
 const currentDate = new Date().toISOString().split('T')[0];
 
 const markup = `<div wmDate  name="date1" mindate="2019-12-02"  excludedays="1,6"
  excludedates="2020-01-01" datavalue="${currentDate}" dataentrymode="default" placeholder="Select birth date"
-   shortcutkey="d" class="input-group-sm" showdropdownon="button" showweeks="true"  hint="Test hint" datepattern="yyyy-MM-dd" 
+   shortcutkey="d" class="input-group-sm" showdropdownon="button" showweeks="true"  hint="Test hint" datepattern="yyyy-MM-dd"
    outputformat="yyyy-MM-dd" required="true" tabindex="1"  autofocus="true" class="input-group-sm" color="#b6a9a9"
-    change.event="date1Change($event, widget, newVal, oldVal)" focus.event="date1Focus($event, widget)" 
+    change.event="date1Change($event, widget, newVal, oldVal)" focus.event="date1Focus($event, widget)"
     blur.event="date1Blur($event, widget)" click.event="date1Click($event, widget)" mouseenter.event="date1Mouseenter($event, widget)"
      mouseleave.event="date1Mouseleave($event, widget)" tap.event="date1Tap($event, widget)" margintop="30px" marginright="23px" ngModel></div>`;
 @Component({
@@ -40,29 +40,29 @@ class DateWrapperComponent {
 
 
     date1Tap(evt, widget) {
-        console.log("Date control tap action triggered");
+        console.log('Date control tap action triggered');
     }
     date1Click(evt, widget) {
-        console.log("Date control click action triggered");
+        console.log('Date control click action triggered');
 
     }
 
     date1Mouseenter(evt, widget) {
-        console.log("Mouse enter event triggered");
+        console.log('Mouse enter event triggered');
     }
     date1Mouseleave(evt, wiget) {
-        console.log("Mouse leave event triggered");
+        console.log('Mouse leave event triggered');
     }
 
     date1Focus(evt, widget) {
-        console.log("Focus event triggered");
+        console.log('Focus event triggered');
     }
     date1Blur(evt, widget) {
-        console.log("Blur event triggered");
+        console.log('Blur event triggered');
     }
 
     date1Change(evt, widget, newVal, oldVal) {
-        console.log("Change event triggered!");
+        console.log('Change event triggered!');
     }
 
 }
@@ -78,7 +78,7 @@ const dateComponentModuleDef: ITestModuleDef = {
     { provide: DatePipe, useClass: DatePipe }
 
     ]
-}
+};
 
 const dateComponentDef: ITestComponentDef = {
     $unCompiled: $(markup),
@@ -88,7 +88,7 @@ const dateComponentDef: ITestComponentDef = {
 
     testModuleDef: dateComponentModuleDef,
     testComponent: DateWrapperComponent
-}
+};
 
 const TestBase: ComponentTestBase = new ComponentTestBase(dateComponentDef);
 TestBase.verifyPropsInitialization();
@@ -125,7 +125,7 @@ TestBase.verifyEvents([
 ]);
 
 
-describe("DateComponent", () => {
+describe('DateComponent', () => {
     let dateWrapperComponent: DateWrapperComponent;
     let wmComponent: DateComponent;
     let fixture: ComponentFixture<DateWrapperComponent>;
@@ -140,49 +140,62 @@ describe("DateComponent", () => {
 
     /************************* Properties starts ****************************************** **/
 
-    it("should show the calendar panel on click the date button (show date picker on button click)", async(() => {
+    it('should show the calendar panel on click the date button (show date picker on button click)', async(() => {
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1);
     }));
 
-    it("should not show the calendar panel on click the input control (show date picker on only button click) ", async(() => {
+    it('should not show the calendar panel on click the input control (show date picker on only button click) ', async(() => {
         onClickCheckTaglengthOnBody(fixture, '.app-dateinput', 'bs-datepicker-container', 0);
 
     }));
 
-    //TODO: Need to check
+    // TODO: Need to check
     // it("should allow user to select the date from picker only(Date entry mode picker)", () => {
     //     wmComponent.getWidget().dataentrymode = "picker";
     //     fixture.detectChanges();
     //     hasAttributeCheck(fixture, '.app-dateinput', 'readonly');
     // });
 
-    it("should show the week numbers on the calendar pan ", async(() => {
+    it('should show the week numbers on the calendar pan ', async(() => {
         onClickCheckClassEleLengthOnBody(fixture, '.btn-time', 'table.weeks', 1);
 
     }));
 
-    it("should not show the week numbers on the calendar pan ", async(() => {
+    it('should not show the week numbers on the calendar pan ', async(() => {
         wmComponent.getWidget().showweeks = false;
         onClickCheckClassEleLengthOnBody(fixture, '.btn-time', 'table.weeks', 0);
 
     }));
 
     it('should assign the shortkey to the input control as attribute accesskey ', async(() => {
-        let dateInputControl = getHtmlSelectorElement(fixture, '.app-dateinput');
+        const dateInputControl = getHtmlSelectorElement(fixture, '.app-dateinput');
         expect(dateInputControl.nativeElement.getAttribute('accesskey')).toEqual('d');
-    }))
+    }));
 
 
     it('should set the current date as default value ', async(() => {
-        let dateInputControl = getHtmlSelectorElement(fixture, '.app-dateinput');
+        const dateInputControl = getHtmlSelectorElement(fixture, '.app-dateinput');
         expect(dateInputControl.nativeElement.value).toEqual(currentDate);
     }));
 
+    it('should update the datevalue as currentdate', async (done) => {
+        wmComponent.setProperty('datavalue', 'CURRENT_DATE');
+        fixture.detectChanges();
+        const dateInputControl = getHtmlSelectorElement(fixture, '.app-dateinput');
+        expect(dateInputControl.nativeElement.value).toBe(wmComponent.datavalue);
+        const newDateValue = '2020-01-24';
+        wmComponent.setProperty('datavalue', newDateValue);
+        setTimeout(() => {
+            expect(dateInputControl.nativeElement.value).toBe(newDateValue);
+            done();
+        }, 1000);
+
+    });
 
     it('should show the date patten as yyyy-mm-dd format ', async(() => {
         datepatternTest(fixture, '.app-date', '.app-dateinput');
 
-    }))
+    }));
 
     it('should get the date outputformat as yyyy-mm-dd ', async(() => {
         outputpatternTest(fixture, '.app-date', dateWrapperComponent.wmComponent.datavalue);
@@ -193,7 +206,7 @@ describe("DateComponent", () => {
         hasAttributeCheck(fixture, '.app-dateinput', 'autofocus');
 
     }));
-    //TODO
+    // TODO
     // it('should autofocus the date control ', () => {
     //     let inputEle = getHtmlSelectorElement(fixture, '.app-dateinput');
     //     fixture.whenStable().then(() => {
@@ -284,8 +297,8 @@ describe("DateComponent", () => {
         dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-02';
 
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
-            let datePickerRows = ele[0].querySelectorAll('tbody tr');
-            var eleRow = datePickerRows[0];
+            const datePickerRows = ele[0].querySelectorAll('tbody tr');
+            const eleRow = datePickerRows[0];
             expectCheckEleHasDisabled(eleRow, 5);
         });
 
@@ -297,10 +310,10 @@ describe("DateComponent", () => {
 
     /************************ Scenarios starts **************************************** */
 
-    it("should close the caledar as soon as select the date and should select the date", async(() => {
+    it('should close the caledar as soon as select the date and should select the date', async(() => {
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (el) => {
-            let datePickerRows = el[0].querySelectorAll('tbody tr');
-            var eleRow = datePickerRows[0];
+            const datePickerRows = el[0].querySelectorAll('tbody tr');
+            const eleRow = datePickerRows[0];
             eleRow.children[6].querySelector('[bsdatepickerdaydecorator]').click();
             fixture.detectChanges();
             expect(new Date(wmComponent.datavalue).getDay()).toEqual(5);
