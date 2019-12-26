@@ -142,6 +142,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
     nodes.forEach((childNode: Element) => {
         if (childNode.name) {
             const nodeName = childNode.name;
+            const parentDataSetLengthRegex =  new RegExp('bind:\\s*\\(*' + parentDataSet + '\\)*\\.length\\)*');
             childNode.attrs.forEach((attr) => {
                 // trim the extra spaces in bindings
                 let value = attr.value && attr.value.trim();
@@ -150,7 +151,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     if (!widgetList[nodeName] || (widgetList[nodeName] && widgetList[nodeName].indexOf(attr.name) > -1)) {
                         // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                         // [WMS-17908]: if child widget contains bind expression as parendataset.length > 0 then dont replace it with item
-                        if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet && !_.includes(value, 'bind:' + parentDataSet + '.length')) {
+                        if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet && !parentDataSetLengthRegex.test(value)) {
                             value = value.replace('bind:', '');
                             value = value.replace(regex, referenceName);
                             value = 'bind:' + value;
