@@ -34,9 +34,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;
-    private isCurrentDate = false;
     private isOpen: boolean;
-    private timeinterval;
     private isEnterPressedOnDateInput = false;
 
     private keyEventPlugin;
@@ -58,12 +56,9 @@ export class DateComponent extends BaseDateTimeComponent {
     // sets the dataValue and computes the display model values
     set datavalue(newVal) {
         if (newVal === CURRENT_DATE) {
-            this.isCurrentDate = true;
-            this.setTimeInterval();
             this.bsDataValue = new Date();
         } else {
             this.bsDataValue = newVal ? getDateObj(newVal) : undefined;
-            this.clearTimeInterval();
         }
         // update the previous datavalue.
         this.invokeOnChange(this.datavalue, undefined, true);
@@ -223,28 +218,6 @@ export class DateComponent extends BaseDateTimeComponent {
             }
         } else {
             this.hideDatepickerDropdown();
-        }
-    }
-
-    /**
-     * This is an internal method used to maintain a time interval to update the time model when the data value is set to CURRENT_TIME
-     */
-    private setTimeInterval() {
-        if (this.timeinterval) {
-            return;
-        }
-        this.timeinterval = setInterval( () => {
-            this.bsDataValue = new Date();
-        }, 1000 * 60);
-    }
-
-    /**
-     * This is an internal method used to clear the time interval created
-     */
-    private clearTimeInterval() {
-        if (this.timeinterval) {
-            clearInterval(this.timeinterval);
-            this.timeinterval = null;
         }
     }
 
