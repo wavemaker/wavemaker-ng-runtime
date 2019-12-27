@@ -161,6 +161,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
+        this.setCustomValidationMessage();
         this._activeField = false;
     }
 
@@ -403,6 +404,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         const validators = this.getDefaultValidators();
         this._control.setValidators(_.concat(this._syncValidators || [], validators));
         this._control.updateValueAndValidity();
+        this.setCustomValidationMessage();
     }
 
     // Method to set the properties on inner max form widget (when range is selected)
@@ -562,6 +564,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     setCustomValidationMessage() {
         const fieldErrors = this._control.errors;
 
+        if (!fieldErrors) {
+            return;
+        }
         if (fieldErrors.hasOwnProperty('errorMessage')) {
             this.validationmessage = _.get(fieldErrors, 'errorMessage');
         } else {
@@ -573,7 +578,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 this.validationmessage = (fieldErrors[key]).toString();
             }
         }
-        return this.validationmessage;
     }
 
     setReadOnlyState() {
