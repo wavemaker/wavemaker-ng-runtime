@@ -1248,3 +1248,11 @@ export const findRootContainer = ($el) => {
     }
     return root.length && root.parent()[0].tagName;
 };
+
+export const VALIDATOR = {
+    REQUIRED: 'required',
+    MAXCHARS: 'maxchars',
+    MINVALUE: 'minvalue',
+    MAXVALUE: 'maxvalue',
+    REGEXP: 'regexp'
+};
