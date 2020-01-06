@@ -573,8 +573,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             const keys = _.keys(fieldErrors);
             const key = keys[0];
             if (_.get(DEFAULT_VALIDATOR, key)) {
-                this.validationmessage = _.get(this.defaultValidatorMessages, DEFAULT_VALIDATOR[key]);
+                this.validationmessage = _.get(this.defaultValidatorMessages, DEFAULT_VALIDATOR[key]) || this.validationmessage;
             } else {
+                // fallback when there is no validationmessage for fields other than default validators.
+                // value of the first key in the error object will be shown as validation message.
                 this.validationmessage = (fieldErrors[key]).toString();
             }
         }
