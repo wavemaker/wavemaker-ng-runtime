@@ -375,7 +375,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this._control.setAsyncValidators([this._asyncValidatorFn()]);
             this._control.updateValueAndValidity();
         }
-        this.form.highlightInvalidFields();
+        // show the validation erros show when form is touched and not on load. This just highlights the field that is subscribed for changes.
+        if (this.form.touched) {
+            this._control.markAsTouched();
+        }
     }
 
     // Method to set the properties on inner form widget
