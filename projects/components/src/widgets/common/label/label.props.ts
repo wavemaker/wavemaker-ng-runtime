@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-label',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['caption', {value: 'Label', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_ANY],

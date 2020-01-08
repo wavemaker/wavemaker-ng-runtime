@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['actions', {}],
+                ['animation', PROP_STRING],
                 ['autoclose', PROP_STRING],
                 ['badgetype', { value: 'default', ...PROP_STRING }],
                 ['badgevalue', PROP_STRING],

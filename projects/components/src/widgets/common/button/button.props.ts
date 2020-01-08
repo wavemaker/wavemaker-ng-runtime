@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-button',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['badgevalue', PROP_STRING],
                 ['caption', PROP_STRING],
                 ['class', PROP_STRING],

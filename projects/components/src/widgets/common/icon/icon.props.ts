@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-icon',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['caption', PROP_STRING],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_ANY],

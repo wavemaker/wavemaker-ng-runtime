@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-container',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_ANY],
                 ['conditionalstyle', PROP_ANY],

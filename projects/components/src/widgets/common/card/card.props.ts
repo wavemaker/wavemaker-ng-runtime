@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['actions', PROP_STRING],
+                ['animation', PROP_STRING],
                 ['class', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['iconurl', PROP_STRING],
