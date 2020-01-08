@@ -41,11 +41,7 @@ register('wm-progress-bar', (): IBuildTaskDef => {
             }
         },
         pre: attrs => `<${tagName} wmProgressBar ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/basic/progress',
-            name: 'ProgressModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

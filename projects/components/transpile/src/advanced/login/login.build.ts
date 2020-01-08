@@ -10,11 +10,7 @@ register('wm-login', (): IBuildTaskDef => {
             const provider = new Map();
             provider.set('isLogin', true);
             return provider;
-        },
-        imports: [{
-            from: '@wm/components/advanced/login',
-            name: 'LoginModule'
-        }]
+        }
     };
 });
 

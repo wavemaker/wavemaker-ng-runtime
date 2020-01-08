@@ -5,6 +5,7 @@ import {
     Comment,
     getHtmlTagDefinition
 } from '@angular/compiler';
+import { WIDGET_IMPORTS } from './imports';
 declare const _;
 
 const CSS_REGEX = {
@@ -328,12 +329,17 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
             markup += node.value;
         }
     }
+    importCollector(WIDGET_IMPORTS.get(node.name));
     if (nodeDef && nodeDef.imports) {
+        let imports = [];
         if (typeof nodeDef.imports === 'function') {
-            importCollector(nodeDef.imports(attrMap));
+            imports = nodeDef.imports(attrMap);
         } else {
-            importCollector(nodeDef.imports);
+            imports = nodeDef.imports;
         }
+        imports.forEach( i => {
+            importCollector(WIDGET_IMPORTS.get(i));
+        });
     }
     return markup;
 };
@@ -381,7 +387,7 @@ export interface IBuildTaskDef {
     pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
     provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
     post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
-    imports?:  Array<ImportDef> | ((attrs: Map<string, string>) => Array<ImportDef>)
+    imports?:  string[] | ((attrs: Map<string, string>) => string[])
 }
 
 export const scopeComponentStyles = (componentName, componentType, styles = '') => {

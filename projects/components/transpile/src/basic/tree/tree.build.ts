@@ -5,11 +5,7 @@ const tagName = 'div';
 register('wm-tree', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmTree redrawable ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/basic/tree',
-            name: 'TreeModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

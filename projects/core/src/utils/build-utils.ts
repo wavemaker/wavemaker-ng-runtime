@@ -114,68 +114,33 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
     return tmpl;
 };
 
-export const getRequiredFormWidgetImports = (widgetType): any => {
-    const imports = [];
+export const getRequiredFormWidget = (widgetType): any => {
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            imports.push({
-                from: '@wm/components/basic/search',
-                name: 'SearchModule'
-            });
-            break;
+            return 'wm-search';
         case FormWidgetType.CHIPS:
-            imports.push({
-                from: '@wm/components/input/chips',
-                name: 'ChipsModule'
-            });
-            break;
+            return 'wm-chips';
         case FormWidgetType.COLORPICKER:
-            imports.push({
-                from: '@wm/components/input/color-picker',
-                name: 'ColorPickerModule'
-            });
-            break;
+            return 'wm-colorpicker';
         case FormWidgetType.CURRENCY:
-            imports.push({
-                from: '@wm/components/input/currency',
-                name: 'CurrencyModule'
-            });
-            break;
+            return 'wm-currency';
         case FormWidgetType.DATE:
+            return 'wm-date';
         case FormWidgetType.DATETIME:
+            return 'wm-datetime';
         case FormWidgetType.TIME:
         case FormWidgetType.TIMESTAMP:
-            imports.push({
-                from: '@wm/components/input/epoch',
-                name: 'EpochModule'
-            });
-            break;
+            return 'wm-time';
         case FormWidgetType.RATING:
-            imports.push({
-                from: '@wm/components/input/rating',
-                name: 'RatingModule'
-            });
-            break;
+            return 'wm-rating';
         case FormWidgetType.RICHTEXT:
-            imports.push({
-                from: '@wm/components/basic/rich-text-editor',
-                name: 'RichTextEditorModule'
-            });
-            break;
+            return 'wm-richtexteditor';
         case FormWidgetType.SLIDER:
-            imports.push({
-                from: '@wm/components/input/slider',
-                name: 'SliderModule'
-            });
-            break;
+            return 'wm-slider';
         default:
-            imports.push({
-                from: '@wm/components/input',
-                name: 'InputModule'
-            });
+            return 'wm-text';
     }
-    return imports;
 };
 
 // This mehtod is used to add datasetboundexpr attribute for node

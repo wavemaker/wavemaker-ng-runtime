@@ -6,15 +6,7 @@ const tagName = 'div';
 register('wm-slider', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmSlider ${getAttrMarkup(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@angular/forms',
-            name: 'FormsModule',
-            as: 'ngFormsModule'
-        },{
-            from: '@wm/components/input/slider',
-            name: 'SliderModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

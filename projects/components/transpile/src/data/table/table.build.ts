@@ -47,27 +47,7 @@ register('wm-table', (): IBuildTaskDef => {
             provider.set('editmode', attrs.get('editmode'));
             provider.set('shownewrow', attrs.get('shownewrow'));
             return provider;
-        },
-        imports: [{
-            from: 'ngx-bootstrap/pagination',
-            name: 'PaginationModule',
-            as: 'ngxPaginationModule',
-            forRoot: true
-        },{
-            from: 'ngx-bootstrap/tooltip',
-            name: 'TooltipModule',
-            as: 'ngxTooltipModule',
-            forRoot: true
-        }, {
-            from: '@wm/components/data/pagination',
-            name: 'PaginationModule'
-        }, {
-            from: '@wm/components/data/list',
-            name: 'ListModule'
-        }, {
-            from: '@wm/components/data/table',
-            name: 'TableModule'
-        }]
+        }
     };
 });
 

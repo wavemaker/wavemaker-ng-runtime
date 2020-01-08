@@ -38,11 +38,7 @@ register('wm-table-row-action', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmTableRowAction ${getAttrMarkup(attrs)}>
                         ${getRowActionTmpl(attrs)}`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/data/table',
-            name: 'TableModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

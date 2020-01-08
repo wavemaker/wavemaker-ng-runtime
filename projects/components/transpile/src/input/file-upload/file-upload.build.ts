@@ -11,16 +11,7 @@ register('wm-fileupload', (): IBuildTaskDef => {
             }
             return `<${tagName} wmFileUpload ${getAttrMarkup(attrs)} role="input">`;
         },
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/input/file-upload',
-            name: 'FileUploadModule'
-        },{
-            from: '@wm/mobile/components/input/file-upload',
-            name: 'FileUploadModule',
-            as: 'WM_MobileFileUploadModule',
-            platformType: 'MOBILE'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

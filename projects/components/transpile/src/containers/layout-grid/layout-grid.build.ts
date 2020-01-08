@@ -5,11 +5,7 @@ const tagName = 'div';
 register('wm-layoutgrid', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmLayoutGrid ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/containers/layout-grid',
-            name: 'LayoutGridModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

@@ -11,15 +11,7 @@ register('wm-wizardstep', (): IBuildTaskDef => {
             return `<${tagName} wmWizardStep #${counter}="wmWizardStep" ${getAttrMarkup(attrs)}>
                        <ng-template [ngIf]="${counter}.isInitialized">`;
         },
-        post: () => `</ng-template></${tagName}>`,
-        imports: [{
-            from: '@angular/forms',
-            name: 'FormsModule',
-            as: 'ngFormsModule'
-        },{
-            from: '@wm/components/containers/wizard',
-            name: 'WizardModule'
-        }]
+        post: () => `</ng-template></${tagName}>`
     };
 });
 

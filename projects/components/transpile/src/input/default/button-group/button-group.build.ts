@@ -5,15 +5,7 @@ const tagName = 'div';
 register('wm-buttongroup', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmButtonGroup role="group" aria-labelledby="button group" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@angular/forms',
-            name: 'FormsModule',
-            as: 'ngFormsModule'
-        },{
-            from: '@wm/components/input',
-            name: 'InputModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

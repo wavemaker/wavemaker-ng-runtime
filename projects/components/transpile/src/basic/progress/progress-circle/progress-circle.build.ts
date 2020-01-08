@@ -5,11 +5,7 @@ const tagName = 'div';
 register('wm-progress-circle', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmProgressCircle ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/basic/progress',
-            name: 'ProgressModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

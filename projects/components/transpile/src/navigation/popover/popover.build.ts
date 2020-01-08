@@ -43,16 +43,7 @@ register('wm-popover', (): IBuildTaskDef => {
             }
 
             return `${markup}<button class="popover-end"></button></ng-template></${tagName}>`;
-        },
-        imports: [{
-            from: 'ngx-bootstrap/popover',
-            name: 'PopoverModule',
-            as: 'ngxPopoverModule',
-            forRoot: true
-        },{
-            from: '@wm/components/navigation/popover',
-            name: 'PopoverModule'
-        }]
+        }
     };
 });
 

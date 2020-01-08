@@ -35,22 +35,7 @@ register(wmListTag, (): IBuildTaskDef => {
             const provider = new Map();
             provider.set('parent_form_reference', shared.get('form_reference'));
             return provider;
-        },
-        imports: [{
-            from: 'ngx-bootstrap/pagination',
-            name: 'PaginationModule',
-            as: 'ngxPaginationModule',
-            forRoot: true
-        },{
-            from: '@wm/components/input',
-            name: 'InputModule'
-        }, {
-            from: '@wm/components/data/pagination',
-            name: 'PaginationModule'
-        }, {
-            from: '@wm/components/data/list',
-            name: 'ListModule'
-        }]
+        }
     };
 });
 

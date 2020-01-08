@@ -6,11 +6,7 @@ const tagName = 'div';
 register('wm-rating', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmRating ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/input/rating',
-            name: 'RatingModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 

@@ -1,6 +1,6 @@
 import { Attribute, Element, Text } from '@angular/compiler';
 
-import { DataType, FormWidgetType, getFormWidgetTemplate, getRequiredFormWidgetImports, IDGenerator, isDateTimeType } from '@wm/core';
+import { DataType, FormWidgetType, getFormWidgetTemplate, getRequiredFormWidget, IDGenerator, isDateTimeType } from '@wm/core';
 import {getAttrMarkup, getDataSource, IBuildTaskDef, ImportDef, register} from '@wm/transpiler';
 
 import { EDIT_MODE, getDataTableFilterWidget, getEditModeWidget } from '../../../utils/utils';
@@ -251,12 +251,8 @@ register('wm-table-column', (): IBuildTaskDef => {
         },
         imports: (attrs: Map<String, String>): Array<ImportDef> => {
             const widgetType = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
-            const imports = getRequiredFormWidgetImports(widgetType);
-            imports.push({
-                from: '@wm/components/data/table',
-                name: 'TableModule'
-            });
-            return imports;
+            const requiredWidget = getRequiredFormWidget(widgetType);
+            return [requiredWidget, 'wm-table'];
         }
     };
 });

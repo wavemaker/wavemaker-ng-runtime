@@ -5,11 +5,7 @@ const tagName = 'div';
 register('wm-spinner', (): IBuildTaskDef => {
     return {
         pre: attrs => `<${tagName} wmSpinner role="loading" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`,
-        imports: [{
-            from: '@wm/components/basic',
-            name: 'BasicModule'
-        }]
+        post: () => `</${tagName}>`
     };
 });
 
