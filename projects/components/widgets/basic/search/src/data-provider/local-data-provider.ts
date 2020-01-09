@@ -3,10 +3,26 @@ import { IDataProvider, IDataProviderConfig } from './data-provider';
 declare const _;
 
 export class LocalDataProvider implements IDataProvider {
+    private applyFilter(entry, queryText, filtername?) {
+        if (_.includes(filtername, 'start') ) {
+            return _.startsWith(entry, queryText);
+        } else if (_.includes(filtername, 'end')) {
+            return _.endsWith(entry, queryText);
+        } else if (_.includes(filtername, 'exact')) {
+            return _.isEqual(entry, queryText);
+        }
+        return _.includes(entry, queryText);
+    }
+
     // LocalData filtering is done based on the searchkey.
     public filter(config: IDataProviderConfig): Promise<any> {
         const entries = config.dataset;
-        const casesensitive = config.casesensitive;
+        let casesensitive = config.casesensitive;
+        const matchMode = config.matchMode;
+        // for supporting existing projects
+        if (matchMode && !_.includes(matchMode, 'ignorecase')) {
+            casesensitive = true;
+        }
         let queryText = config.query,
         filteredData;
 
@@ -26,7 +42,7 @@ export class LocalDataProvider implements IDataProvider {
                             a = _.toLower(_.toString(a));
                             b = _.toLower(_.toString(b));
                         }
-                        return _.includes(a, b);
+                        return this.applyFilter(a, b, matchMode);
                     });
                 });
             } else {
@@ -34,7 +50,12 @@ export class LocalDataProvider implements IDataProvider {
                 // Iterate over each item and return the filtered data containing the matching string.
                 if (_.isArray(entries) && _.isObject(entries[0])) {
                     filteredData = _.filter(entries, entry => {
-                        return (_.includes(_.toLower(_.values(entry).join(' ')), _.toLower(queryText)));
+                        let a = _.values(entry).join(' ');
+                        if (!casesensitive) {
+                            a = _.toLower(a);
+                            queryText = _.toLower(queryText);
+                        }
+                        return this.applyFilter(a, queryText);
                     });
                 } else {
                     filteredData = _.filter(entries, entry => {
@@ -42,7 +63,7 @@ export class LocalDataProvider implements IDataProvider {
                             entry = _.toLower(entry);
                             queryText = _.toLower(queryText);
                         }
-                        return _.includes(entry, queryText);
+                        return this.applyFilter(entry, queryText, matchMode);
                     });
                 }
             }

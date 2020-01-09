@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { generateGUId, setCSS } from '@wm/core';
+import { generateGUId, setCSS, noop } from '@wm/core';
 import { getOrderedDataset, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
@@ -38,6 +38,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
     public iconsize: string;
     public iconcolor: string;
     public onFocus: any;
+    private touchEnabled:boolean;
     @ViewChild('ratingInput', {read: ElementRef}) ratingEl: ElementRef;
 
     get selectedRatingValue() {
@@ -208,11 +209,17 @@ export class RatingComponent extends DatasetAwareFormComponent {
         }
     }
 
+    /* Detect touch enabled devices & update hover styles*/
+    onTouchStart($event) {
+        this.touchEnabled = true;
+        this.onTouchStart = noop;
+    }
     onMouseleave() {
         this.caption = this.displayValue as string;
     }
 
     onMouseOver($event, rate) {
         this.caption = rate.label;
+        !this.touchEnabled && !$event.target.classList.contains('rating-label-hover') && $event.target.classList.add('rating-label-hover');
     }
 }

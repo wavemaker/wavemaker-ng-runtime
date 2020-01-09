@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-message',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['caption', {value: 'Message', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['hideclose', {value: false, ...PROP_BOOLEAN}],

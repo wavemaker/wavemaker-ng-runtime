@@ -64,11 +64,6 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.$lazyLoad();
         this.redrawChildren();
         this.notifyParent($event);
-
-        if ($event) {
-            $event.stopPropagation();
-            $event.preventDefault();
-        }
     }
 
     public deselect() {

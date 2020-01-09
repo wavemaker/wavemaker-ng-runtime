@@ -5,8 +5,9 @@ import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
-import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
+import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
+import { BaseFormComponent } from '../base/base-form.component';
 
 const mockApp = {};
 
@@ -89,24 +90,16 @@ describe('SearchComponent', () => {
         const testValue = 'abc';
         spyOn(wrapperComponent, 'onChange');
         await fixture.whenStable();
-        setInputValue('.app-search-input', testValue).then(() => {
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
             expect(wmComponent.query).toEqual(testValue);
             expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
         });
     });
 
-    function setInputValue(selector: string, value: string) {
-        const input = fixture.debugElement.query(By.css(selector)).nativeElement;
-        input.value = value;
-        input.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
-        return fixture.whenStable();
-    }
-
     it('should invoke getDatasource method on entering the query', async(() => {
         const testValue = 'abc';
         spyOn(wmComponent, 'getDataSource').and.returnValue(Promise.resolve([]));
-        setInputValue('.app-search-input', testValue).then(() => {
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
             expect(wmComponent.getDataSource).toHaveBeenCalled();
         });
     }));
@@ -126,4 +119,27 @@ describe('SearchComponent', () => {
 
         fixture.detectChanges();
     }));
+
+    it('datavalue change should update the static variable bound to the dataset', ((done) => {
+        const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'input-group'};
+        const baseformComponent = new (BaseFormComponent as any)((wmComponent as any).inj, WIDGET_CONFIG);
+        spyOn(baseformComponent.__proto__, 'updateBoundVariable');
+        const sampleData = ['java', 'oracle', 'angular'];
+        wmComponent.dataset = sampleData;
+        wmComponent.onPropertyChange('dataset', sampleData, []);
+        fixture.detectChanges();
+        const testValue = 'ora';
+        fixture.detectChanges();
+        fixture.whenStable();
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+                const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+                const options = {'key': 'Enter', 'keyCode': 13, 'code': 'Enter'};
+                input.dispatchEvent(new KeyboardEvent('keyup', options));
+                fixture.detectChanges();
+                return fixture.whenStable();
+            }).then(() => {
+                done();
+                expect(baseformComponent.__proto__.updateBoundVariable).toHaveBeenCalled();
+            });
+        }));
 });

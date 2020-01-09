@@ -3,24 +3,13 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs/Subscription';
 
-import { AbstractDialogService, closePopover } from '@wm/core';
+import { AbstractDialogService, closePopover, findRootContainer } from '@wm/core';
 
 import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
 
 declare const _;
 
 let eventsRegistered = false;
-
-const findRootContainer = ($el) => {
-    let root = $el.closest('.app-prefab');
-    if (!root.length) {
-        root = $el.closest('.app-partial');
-    }
-    if (!root.length) {
-        root = $el.closest('.app-page');
-    }
-    return root.length && root.parent()[0].tagName;
-};
 
 const invokeOpenedCallback = (ref) => {
     if (ref) {

@@ -140,6 +140,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, isInList)}
+                                <span aria-hidden="true" *ngIf="${counter}.showPendingSpinner" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span>
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
                                    class="help-block" [textContent]="${counter}.hint"></p>
                                 ${validationMsg}
@@ -152,7 +153,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             provider.set('form_reference', shared.get('counter'));
             return provider;
         },
-        imports: (attrs: Map<String, String>): Array<ImportDef> => {
+        imports: (attrs: Map<String, String>): string[] => {
             const requiredWidget = getRequiredFormWidget(attrs.get('widget'));
             return [requiredWidget, 'wm-form'];
         }

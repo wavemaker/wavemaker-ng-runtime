@@ -435,7 +435,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.currentPage = 1;
             } else if (this.fieldDefs.length / this.pagesize <= this.dataNavigator.pageCount) {
                 let itemsLength,
-                    itemsToPush;
+                    itemsToPush = [];
                 // we push the newVal only when dn.currentPage gets incremented because that is when new items gets added to newVal
                 if (this.fieldDefs.length === this.currentPage * this.pagesize && (this.currentPage + 1 ) === this.dataNavigator.dn.currentPage) {
                     itemsToPush = newVal;
@@ -449,12 +449,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                         itemsLength = this.dataNavigator.dataSize - this.fieldDefs.length;
                     } else {
                          // if number of elements added to datanavigator is greater than  product of currentpage and pagesize we add elements the extra elements in newVal
-                        itemsLength = this.currentPage * this.pagesize - this.fieldDefs.length ;
+                        itemsLength = this.currentPage * this.pagesize - this.fieldDefs.length;
                         this.currentPage ++;
                     }
                     const startIndex = newVal.length - itemsLength;
                     itemsToPush = newVal.slice(startIndex);
-                } else if(this.fieldDefs.length === this.currentPage * this.pagesize && this.currentPage === this.dataNavigator.dn.currentPage) {
+                } else if (this.fieldDefs.length === this.currentPage * this.pagesize && this.currentPage === this.dataNavigator.dn.currentPage) {
                     // if dn.currentPage is not incremented still only old newVal is present hence we push empty array
                     itemsToPush = [];
                 }
@@ -499,6 +499,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             if (_.isString(newVal)) {
                 newVal = newVal.split(',');
             }
+
+            // if the page number is greater than 1 on initial load then we render the first page.
+            if (this.datasource && this.datasource.owner === 'App' && (this.infScroll || this.onDemandLoad) && !this.currentPage && this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS).number > 0) {
+                newVal = this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
+                 'page': 1
+             });
+             }
 
             if (_.isArray(newVal)) {
                 if (newVal.length) {

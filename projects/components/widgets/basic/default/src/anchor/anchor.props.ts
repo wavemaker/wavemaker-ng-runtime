@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-anchor',
         new Map(
             [
+                ['animation', PROP_STRING],
                 ['badgevalue', PROP_STRING],
                 ['caption', {value: 'Link', ...PROP_STRING}],
                 ['class', PROP_STRING],

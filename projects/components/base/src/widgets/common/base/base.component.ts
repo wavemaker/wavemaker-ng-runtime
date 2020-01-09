@@ -214,6 +214,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         return this.widget;
     }
 
+    public setProperty(propName, propValue) {
+        this.widget[propName] = propValue;
+    }
+
     public getViewParent(): any {
         return this.viewParent;
     }
@@ -343,9 +347,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             const tagName = this.widgetType === 'wm-audio' ? 'audio' : 'video';
             // Trigger media(audio/video) element load method after changing autoplay property
             this.nativeElement.querySelector(tagName).load();
-        }  else if (key === 'conditionalstyle') {
+        } else if (key === 'conditionalstyle') {
             // update styles if old and nv value are different
             updateStyles(nv, ov, this.nativeElement);
+        } else if (key === 'animation') {
+            // update styles if old and nv value are different
+            addClass(this.nativeElement, "animated " + nv);
         }
     }
 
