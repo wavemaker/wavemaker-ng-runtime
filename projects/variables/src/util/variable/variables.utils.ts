@@ -612,7 +612,7 @@ export const processBinding = (variable: any, context: any, bindSource?: string,
     const bindMap = variable[bindSource];
     variable[bindSource] = {};
     variable['_bind' + bindSource] = bindMap;
-    if (!bindMap) {
+    if (!bindMap || !_.isArray(bindMap)) {
         return;
     }
     bindMap.forEach(function (node) {

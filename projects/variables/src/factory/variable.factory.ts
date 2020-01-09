@@ -1,5 +1,6 @@
 import { DeviceVariable } from '../model/variable/device-variable';
 import { LiveVariable } from '../model/variable/live-variable';
+import { CrudVariable } from '../model/variable/crud-variable';
 import { NavigationAction } from '../model/action/navigation-action';
 import { ModelVariable } from '../model/variable/model-variable';
 import { ServiceVariable } from '../model/variable/service-variable';
@@ -23,6 +24,9 @@ export class VariableFactory {
                 break;
             case VARIABLE_CONSTANTS.CATEGORY.LIVE:
                 variableInstance = new LiveVariable(variable);
+                break;
+            case VARIABLE_CONSTANTS.CATEGORY.CRUD:
+                variableInstance = new CrudVariable(variable);
                 break;
             case VARIABLE_CONSTANTS.CATEGORY.DEVICE:
                 variableInstance = new DeviceVariable(variable);

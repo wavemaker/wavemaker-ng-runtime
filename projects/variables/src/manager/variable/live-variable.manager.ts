@@ -987,13 +987,13 @@ export class LiveVariableManager extends BaseVariableManager {
             reject(errorMsg);
         };
 
-            return new Promise((resolve, reject) => {
-                this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
-                    getDistinctDataByFieldsSuccess(response, resolve);
-                }, () => {
-                    getDistinctDataByFieldsError(error, reject);
-                });
+        return new Promise((resolve, reject) => {
+            this.makeCall(variable, dbOperation, dbOperationOptions).then((response) => {
+                getDistinctDataByFieldsSuccess(response, resolve);
+            }, () => {
+                getDistinctDataByFieldsError(error, reject);
             });
+        });
     }
 
     /*Function to get the aggregated data based on the fields chosen*/

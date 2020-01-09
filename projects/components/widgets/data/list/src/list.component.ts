@@ -106,6 +106,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public listclass: any;
     private isDataChanged: boolean;
 
+    _isDependent;
+
     public get selecteditem() {
         if (this.multiselect) {
             return getClonedObject(this._items);
@@ -210,8 +212,49 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         // Show loading status based on the variable life cycle
         this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
+        this.app.subscribe('setup-cud-listener', param => {
+            if (this.nativeElement.getAttribute('name') !== param) {
+                return;
+            }
+            this._isDependent = true;
+        });
     }
 
+    private triggerWMEvent(eventName, item?) {
+        $invokeWatchers(true);
+        // If we have multiselect for the livelist(List with form template), in run mode deleting a record is getting failed. Becuase the selecteditem will be array of objects. So consider the last object.
+        let row = this.multiselect ? _.last(this.selecteditem) : this.selecteditem;
+        if (item) {
+            row = item;
+        }
+        this.app.notify('wm-event', {eventName, widgetName: this.name, row: row});
+    }
+
+    addNewRow() {
+        if (this._isDependent) {
+            this.triggerWMEvent('insert');
+        }
+    }
+
+    editRow(item?) {
+        if (this._isDependent) {
+            let listItem;
+            if (item) {
+                listItem = this.getItemRefByIndexOrModel(item).item;
+            }
+            this.triggerWMEvent('update', listItem);
+        }
+    }
+
+    deleteRow(item?) {
+        if (this._isDependent) {
+            let listItem;
+            if (item) {
+                listItem = this.getItemRefByIndexOrModel(item).item;
+            }
+            this.triggerWMEvent('delete', listItem);
+        }
+    }
     handleLoading(data) {
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
@@ -1040,10 +1083,21 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         };
     }
 
+    private setUpCUDHandlers() {
+        const $addItem = document.getElementsByClassName("add-list-item")[0];
+        if ($addItem) {
+            // Triggered on click of edit action
+            $addItem.addEventListener('click', evt => {
+                this.addNewRow();
+            });
+        }
+    }
+
     ngAfterViewInit() {
         this.promiseResolverFn();
         this.propsInitPromise.then(() => {
             super.ngAfterViewInit();
+            this.setUpCUDHandlers();
             this.selectedItemWidgets = this.multiselect ? [] : {};
             if (this.enablereorder && !this.groupby) {
                 this.configureDnD();

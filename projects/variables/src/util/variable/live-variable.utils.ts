@@ -69,7 +69,7 @@ export class LiveVariableUtils {
             return;
         }
         if (hasCordova()) {
-             href += _.endsWith(deployedUrl, '/') ? deployedUrl : deployedUrl + '/';
+            href += _.endsWith(deployedUrl, '/') ? deployedUrl : deployedUrl + '/';
         }
         href += ((variable._prefabName !== '' && variable._prefabName !== undefined) ? 'prefabs/' + variable._prefabName : 'services') + '/' + variable.liveSource + '/' + variable.type + '/';
         primaryKeys = variable.propertiesMap.primaryFields || variable.propertiesMap.primaryKeys;

@@ -11,6 +11,7 @@ export const VARIABLE_CONSTANTS = {
     CATEGORY: {
         MODEL: 'wm.Variable',
         LIVE: 'wm.LiveVariable',
+        CRUD: 'wm.CrudVariable',
         SERVICE: 'wm.ServiceVariable',
         WEBSOCKET: 'wm.WebSocketVariable',
         NAVIGATION: 'wm.NavigationVariable',
