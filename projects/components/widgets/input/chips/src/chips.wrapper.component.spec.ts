@@ -8,7 +8,7 @@ import { App } from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
-import { SearchComponent } from '../../../basic/search/src/search.component';
+import { SearchComponent } from '@wm/components/basic/search';
 
 let mockApp = {};
 

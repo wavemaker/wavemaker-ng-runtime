@@ -7,7 +7,7 @@ import { TypeaheadModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
 import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { BaseFormComponent } from '../base/base-form.component';
+import { BaseFormComponent } from '@wm/components/input';
 
 const mockApp = {};
 
