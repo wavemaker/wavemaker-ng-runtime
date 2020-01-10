@@ -11,6 +11,7 @@
             "@angular/forms": "ng.forms",
 
             "@swipey": "swipey",
+            
             "@wm/core": "wm.core",
             "@wm/components/base": "wm.components.base"
         }
