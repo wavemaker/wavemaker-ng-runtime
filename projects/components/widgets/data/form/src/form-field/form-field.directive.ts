@@ -325,8 +325,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         _.forEach(validators, (obj, index) => {
             // custom validation is bound to function.
             if (obj.bind) {
-                validators[index] = obj.bind(undefined, this, this.form);
-                this._syncValidators.push(validators[index]);
+                this._syncValidators.push(obj.bind(undefined, this, this.form));
             } else {
                 // checks for default validator like required, maxchars etc.
                 const key = _.get(obj, 'type');
@@ -334,17 +333,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 if (this.isDefaultValidator(key)) {
                     const value = _.get(obj, 'validator');
                     this.setDefaultValidator(key, value);
-                    validators[index] = '';
                 }
             }
         });
 
-        // _syncValidators contains all the custom validations on the form field. will not include default validators.
-        this._syncValidators = _.filter(validators, val => {
-            if (val) {
-                return val;
-            }
-        });
         this.applyDefaultValidators();
     }
 

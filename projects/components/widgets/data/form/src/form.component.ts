@@ -7,6 +7,8 @@ import { PrefabDirective } from '@wm/components/prefab';
 import { ListComponent } from '@wm/components/data/list';
 
 import { registerFormProps } from './form.props';
+import { FormFieldList } from './form-field/FormFieldList';
+import { FormList } from './FormList';
 
 declare const _;
 
@@ -153,6 +155,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private formGroupName;
     private formArrayIndex;
     private bindingValue;
+    private fieldsToValidate = [];
     private _formIsInList;
 
     private _debouncedSubmitForm = debounce(($event) => {
@@ -161,6 +164,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this.submitForm($event);
         });
     }, 250);
+    private pageReadySubscriber;
+    private componentRefsLoaded: boolean;
 
     set isLayoutDialog(nv) {
         if (nv) {
@@ -214,6 +219,80 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         return isDefined(this._formIsInList) ? this._formIsInList : this.parentList;
     }
 
+    // checks for formArrayIndex in order to trigger formload only for first index which applies to all the forms in list
+    get invokeFormLoadEvt() {
+        return this.onFormLoad && (!isDefined(this.formArrayIndex) || (isDefined(this.formArrayIndex) && this.formArrayIndex === 0));
+    }
+
+    // This method checks if pageReady event has been already triggered or not by checking for pageReadySubscriber on the form.
+    // pageReadySubscriber prop will be removed on the form after page ready event.
+    // If form has this prop, then check with the parentForm else check for "pageReadyInvoked" within the page context
+    get isPageReadyInvoked() {
+        if (this.pageReadySubscriber) {
+            if (!_.get(this, 'parentForm.pageReadySubscriber') || _.get(this.viewParent, 'pageReadyInvoked')) {
+                delete this.pageReadySubscriber;
+            }
+        }
+        return !this.pageReadySubscriber;
+    }
+
+    innerField(widget, widgetType, name) {
+        if (widgetType === 'wm-list') {
+            this.fieldsToValidate = widget.getWidgets(name);
+            return {
+                field: (...args) => {
+                    return this.field.call(this, ...args, widget);
+                }
+            };
+        }
+        if (_.includes(widgetType, 'wm-prefab')) {
+            const prefabInnerForm = widget.$element.find('form').first();
+            const isInsideList = prefabInnerForm.closest('.app-livelist');
+            // check whether form inside prefab container is inside the list. If true, do not change the name.
+            if (prefabInnerForm.length && !isInsideList.length && !prefabInnerForm.siblings('form').length) {
+                return prefabInnerForm[0].widget;
+            }
+        }
+
+        return this;
+    }
+
+    field(name, ref?) {
+        let fields = [];
+        if (!ref) {
+            fields = this.getFormFields();
+        }
+        const fieldsToValidate = _.filter(fields, {key: name});
+        this.fieldsToValidate = this.fieldsToValidate.concat(fieldsToValidate);
+        if (!fieldsToValidate.length) {
+            if (ref) {
+                // in case of list widget ref, returning list of formFields or forms depending on widgetType
+                const widgets = ref.getWidgets(name);
+                if (widgets.length) {
+                    const type = widgets[0].widgetType;
+                    if (type === 'wm-form-field') {
+                        return new FormFieldList(...widgets);
+                    } else if (type === 'wm-form') {
+                        return new FormList(...widgets);
+                    }
+                }
+            }
+            const widget = this.formWidgets[name];
+            const widgetType = _.get(widget, 'widgetType');
+            if (widgetType === 'wm-form') {
+                return widget;
+            }
+            return this.innerField(widget, widgetType, name);
+        }
+        return this;
+    }
+
+    setValidators(validatorFn) {
+        _.forEach(this.fieldsToValidate, field => {
+            field.setValidators(validatorFn);
+        });
+    }
+
     constructor(
         inj: Injector,
         private fb: FormBuilder,
@@ -229,6 +308,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         @Attribute('beforerender.event') public onBeforeRenderEvt,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('formdata.bind') private bindformdata,
+        @Attribute('formload.event') public onFormLoad,
         @Attribute('wmLiveForm') isLiveForm,
         @Attribute('wmLiveFilter') isLiveFilter,
         @Attribute('role') role,
@@ -250,6 +330,20 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
         this.elScope = this;
 
+        // subscribe to an event named pageReady which notifies this subscriber
+        // when all widgets in page are loaded i.e when page is ready
+        // Subscribe to pageReady only when ready event on page is not yet invoked.
+        if (!_.get(this.viewParent, 'pageReadyInvoked')) {
+            this.pageReadySubscriber = this.app.subscribe('pageReady', (page) => {
+                if (this.pageReadySubscriber) {
+                    this.pageReadySubscriber();
+                }
+                if (this.componentRefsLoaded && this.invokeFormLoadEvt) {
+                    this.invokeEventCallback('formload');
+                }
+                delete this.pageReadySubscriber;
+            });
+        }
         this.addEventsToContext(this.context);
     }
 
@@ -261,6 +355,12 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                     this.formWidgets[componentRef.name] = componentRef;
                 }
             });
+            this.componentRefsLoaded = true;
+            // wait untill the page is ready to invoke formload event. If form is in list, then trigger formload only for first index which applies to all the forms in list
+           // if form is in prefab or partial, then directly invoke formload event.
+           if ((this.isPageReadyInvoked || (this.parentPrefab || this.parentPartial)) && this.invokeFormLoadEvt) {
+               this.invokeEventCallback('formload');
+           }
         }, 250);
     }
 
@@ -306,10 +406,12 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                  * 5. this means form name change applies only when there is single form (immediate child) inside the parentContainer.
                  */
                 const prefabInnerForm = parentContentEl.find('form').first();
-                const isInsideList = prefabInnerForm.closest('.app-livelist');
-                // check whether form inside prefab container is inside the list. If true, do not change the name.
-                if (!isInsideList.length && !prefabInnerForm.siblings('form').length) {
-                    binding = _.get(parentContainer, 'name');
+                if (_.get(prefabInnerForm[0], 'widget.widgetId') === this.widgetId) {
+                    const isInsideList = prefabInnerForm.closest('.app-livelist');
+                    // check whether form inside prefab container is inside the list. If true, do not change the name.
+                    if (!isInsideList.length && !prefabInnerForm.siblings('form').length) {
+                        binding = _.get(parentContainer, 'name');
+                    }
                 }
             }
             let counter = 1;

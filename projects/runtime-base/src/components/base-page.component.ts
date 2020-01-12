@@ -41,6 +41,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     router: Router;
     pageParams: any;
     showPageContent: boolean;
+    pageReadyInvoked: boolean;
     i18nService: AbstractI18nService;
     appLocale: any;
     startupVariablesLoaded = false;
@@ -182,6 +183,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.onReady();
         (this.App.onPageReady || noop)(this.pageName, this);
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
+        this.pageReadyInvoked = true;
     }
 
     private loadScripts() {
@@ -199,7 +201,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     getPageTransitionTarget() {
         // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
-        return $('app-page-outlet:first').length?$('app-page-outlet:first'):$('div[data-role="pageContainer"]:first').parent();
+        return $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
     }
 
     ngAfterViewInit(): void {
