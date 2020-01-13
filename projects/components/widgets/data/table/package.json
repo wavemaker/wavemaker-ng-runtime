@@ -16,6 +16,8 @@
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
+                "@wm/components/input": "wm.components.input",
                 "@wm/components/data/list": "wm.components.data.list",
                 "@wm/components/data/pagination": "wm.components.data.pagination"
             }
