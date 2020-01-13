@@ -1,10 +1,10 @@
 /*global describe, it, WM, beforeEach, expect, module, inject, _, parseInt, document, Hammer*/
 
-import {async} from '@angular/core/testing';
+import { async } from '@angular/core/testing';
 import * as _ from '../../../../../node_modules/lodash/lodash.min';
-import {isBooleanAttr, isDimensionProp} from '../widgets/framework/constants';
-import {toDimension} from '../../../../core/src/utils/dom';
-import {compileTestComponent} from './util/component-test-util';
+import { isBooleanAttr, isDimensionProp } from '../widgets/framework/constants';
+import { toDimension } from '../../../../core/src/utils/dom';
+import { compileTestComponent, getHtmlSelectorElement } from './util/component-test-util';
 
 // TODO: Pending basic common Events, basic touch events, dialog events and properties
 
@@ -34,7 +34,7 @@ export class ComponentTestBase {
      * util function to convert rgb color code to hex
      * @param rgbColor, rgb color expression
      */
-    private rgbToHex (rgbColor) {
+    private rgbToHex(rgbColor) {
         rgbColor = rgbColor.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
         function hex(x) {
             return ('0' + parseInt(x, 10).toString(16)).slice(-2);
@@ -150,7 +150,7 @@ export class ComponentTestBase {
                 const isShowDefined = this.widgetDef.$unCompiled[0].attributes.hasOwnProperty('show'),
                     initShowValue = isShowDefined ? component.getWidget().show : true;
 
-                    expect($element.hasAttribute('hidden')).not.toBe(initShowValue);
+                expect($element.hasAttribute('hidden')).not.toBe(initShowValue);
 
                 component.getWidget().show = true;
                 fixture.detectChanges();
@@ -203,6 +203,8 @@ export class ComponentTestBase {
                 }
                 expect($element.getAttribute('badgevalue')).toBe(component.badgevalue);
             });
+
+
         });
     }
 
@@ -309,11 +311,69 @@ export class ComponentTestBase {
                             initValue = (initValue || '').split(' ').shift();
                             cssValue = (cssValue || '').split(' ').shift();
                         }
-                    // console.log(cssName, cssValue, initValue);
+                        // console.log(cssName, cssValue, initValue);
                         expect(cssValue).toBe(initValue);
                     }
                 });
             });
         });
+    }
+
+
+    public verifyEvents(eventList: Array<any>): void {
+
+
+        describe(this.widgetDef.type + ': Common mouse events test: ', () => {
+
+            let component,
+                fixture,
+                widgetProps,
+                $element,
+                $inputEl;
+
+            beforeEach((() => {
+                fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                component = fixture.componentInstance.wmComponent;
+                widgetProps = component.widgetProps;
+                fixture.detectChanges();
+            }));
+
+            _.forEach(eventList, (evtObj) => {
+
+                if (evtObj.clickableEle) {
+                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                        // fixture.whenStable().then(() => {
+                        let eleControl = getHtmlSelectorElement(fixture, evtObj.clickableEle);
+                        eleControl.nativeElement.click();
+                        fixture.whenStable().then(() => {
+                            spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
+                            expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
+                        });
+                        // });
+                    }))
+                } else if (evtObj.mouseSelectionEle) {
+                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                        fixture.whenStable().then(() => {
+                            spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
+                            let eleControl = getHtmlSelectorElement(fixture, evtObj.mouseSelectionEle);
+                            eleControl.nativeElement.dispatchEvent(new MouseEvent(evtObj.eventName));
+                            expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
+                        });
+                    }));
+                } else if (evtObj.eventTrigger) {
+                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                        fixture.whenStable().then(() => {
+                            spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
+                            let eleControl = getHtmlSelectorElement(fixture, evtObj.eventTrigger);
+                            eleControl.triggerEventHandler(evtObj.eventName, {});
+                            expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
+                        });
+                    }));
+                }
+
+            })
+
+        });
+
     }
 }
