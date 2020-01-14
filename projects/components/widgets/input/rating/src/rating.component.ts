@@ -116,8 +116,8 @@ export class RatingComponent extends DatasetAwareFormComponent {
     }
 
     onRatingClick($event, rate) {
-        this.selectedRatingValue = rate.index;
         this.modelByKey = rate.key;
+        this.selectedRatingValue = rate.index;
 
         // support if the caption is binded in the old projects for backward compatibility
         if (!this.showcaptions) {
