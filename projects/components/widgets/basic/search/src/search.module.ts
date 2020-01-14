@@ -7,9 +7,11 @@ import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { WmComponentsModule } from '@wm/components/base';
 
 import { SearchComponent } from './search.component';
+import { ScrollableDirective } from './scrollable.directive';
 
 const components = [
-    SearchComponent
+    SearchComponent,
+    ScrollableDirective
 ];
 
 @NgModule({
