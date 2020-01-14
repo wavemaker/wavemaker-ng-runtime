@@ -85,7 +85,20 @@ export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {
         }
 
         this._$el.addClass('smoothscroll-wrapper');
-
+        /*  WMS-17904
+        document.scrollIntoView overrides default iScroll scroll,
+        so the fix is done to ensure, the scroll action from 'scrollIntoView'
+        is captured & executed through iScroll APIs
+        */
+        el.onscroll = function(e) {
+            if (e.target.iscroll && e.target.scrollTop) {
+                e.target.iscroll.scrollTo(
+                    e.target.iscroll.x,
+                    e.target.iscroll.y - e.target.scrollTop
+                );
+                e.target.scrollTop = 0;
+            }
+        };
         if (activeEl && activeEl.tagName === 'INPUT') {
             activeEl.focus();
         }
