@@ -8,6 +8,7 @@
             "umdId": "wm.components.data.table",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
 
                 "rxjs": "rxjs",
 
