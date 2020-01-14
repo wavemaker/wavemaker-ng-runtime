@@ -13,6 +13,8 @@
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
+                "@wm/components/input": "wm.components.input",
                 "@wm/components/navigation/nav": "wm.components.navigation.nav"
             }
         }

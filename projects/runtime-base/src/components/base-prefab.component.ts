@@ -1,5 +1,5 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers } from '@wm/core';
 import { WidgetRef} from '@wm/components/base';

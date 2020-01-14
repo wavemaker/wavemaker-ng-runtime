@@ -1,7 +1,7 @@
 import {AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { debounceTime } from 'rxjs/operators/debounceTime';
+import { debounceTime } from 'rxjs/operators';
 
 import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes,  VALIDATOR, $unwatch, $watch } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, StylableComponent } from '@wm/components/base';

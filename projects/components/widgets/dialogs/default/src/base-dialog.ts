@@ -1,7 +1,7 @@
 import { Injector, OnDestroy, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { AbstractDialogService, closePopover, findRootContainer } from '@wm/core';
 

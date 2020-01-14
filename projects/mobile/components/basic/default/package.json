@@ -16,7 +16,8 @@
 
                 "@wm/core": "wm.core",
                 "@wm/mobile/core": "wm.mobile.core",
-                "@wm/components/base": "wm.components.base"
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/basic/progress": "wm.components.basic.progress"
             }
         }
     }

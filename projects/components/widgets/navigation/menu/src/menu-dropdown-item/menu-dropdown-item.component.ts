@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@a
 
 import { addClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
 import { isActiveNavItem } from '@wm/components/base';
-import { NavComponent } from '@wm/components/navigation/nav';
+import { NavComponent } from '../nav/nav.component';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
 

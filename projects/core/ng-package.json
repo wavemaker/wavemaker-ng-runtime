@@ -9,7 +9,7 @@
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
 
-            "rxjs/Subject": "rxjs"
+            "rxjs": "rxjs"
         }
     }
 }

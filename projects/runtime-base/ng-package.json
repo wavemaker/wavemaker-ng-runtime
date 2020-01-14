@@ -13,11 +13,8 @@
             "@angular/router": "ng.router",
 
 
-            "rxjs/Observable": "rxjs",
-            "rxjs/Subject": "rxjs",
-            "rxjs/operators/debounceTime": "rxjs.operators",
-            "rxjs/operators/tap": "rxjs.operators",
-            "rxjs/operators/filter": "rxjs.operators",
+            "rxjs": "rxjs",
+            "rxjs/operators": "rxjs.operators",
 
             "ngx-toastr":  "ngxToastr",
 
@@ -30,6 +27,9 @@
             "@wm/variables": "wm.variables",
             "@wm/transpiler": "wm.transpiler",
             "@wm/components/base": "wm.components.base",
+            "@wm/components/dialogs": "wm.components.dialogs",
+            "@wm/components/dialogs/confirm-dialog": "wm.components.dialogs.confirmdialog",
+            "@wm/components/dialogs/design-dialog": "wm.components.dialogs.designdialog",
             "@wm/components/prefab": "wm.components.prefab",
             "@wm/components/page": "wm.components.page",
             "@wm/security": "wm.security",

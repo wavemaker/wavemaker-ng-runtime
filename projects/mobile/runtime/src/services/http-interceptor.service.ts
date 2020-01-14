@@ -2,10 +2,9 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } fr
 import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
-import { from } from 'rxjs/observable/from';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { mergeMap } from 'rxjs/operators/mergeMap';
+import { from } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import {
     App,

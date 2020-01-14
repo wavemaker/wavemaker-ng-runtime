@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { ProgressModule } from '@wm/components/basic/progress';
 
 import { AnchorDirective } from './anchor/anchor.directive';
 import { AppUpdateComponent } from './app-update/app-update.component';
@@ -11,7 +12,7 @@ import { NetworkInfoToasterComponent } from './network-info-toaster/network-info
 import { ProcessManagerComponent } from './process-manager/process-manager.component';
 
 const components = [
-    AnchorDirective, 
+    AnchorDirective,
     AppUpdateComponent,
     FileBrowserComponent,
     ImageCacheDirective,
@@ -22,6 +23,7 @@ const components = [
 @NgModule({
     imports: [
         CommonModule,
+        ProgressModule,
         WmComponentsModule
     ],
     declarations: [...components],

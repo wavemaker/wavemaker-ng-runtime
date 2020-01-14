@@ -1,6 +1,6 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { Validator } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
 import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';

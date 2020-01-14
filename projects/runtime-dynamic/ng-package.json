@@ -8,7 +8,7 @@
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
 
-            "rxjs/Subscription": "rxjs",
+            "rxjs": "rxjs",
 
             "ngx-toastr": "ngxToastr",
 

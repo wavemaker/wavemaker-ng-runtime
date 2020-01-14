@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PopoverModule as NgxPopoverModule } from 'ngx-bootstrap/popover';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { BasicModule } from '@wm/components/basic';
 
 import { PopoverComponent } from './popover.component';
 
@@ -14,6 +15,7 @@ const components = [
 @NgModule({
     imports: [
         CommonModule,
+        BasicModule,
         NgxPopoverModule,
         WmComponentsModule
     ],

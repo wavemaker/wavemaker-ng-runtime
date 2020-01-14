@@ -1,10 +1,8 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { from } from 'rxjs/observable/from';
-import { of } from 'rxjs/observable/of';
-import { Observable } from 'rxjs/Observable';
-import { mergeMap } from 'rxjs/operators/mergeMap';
+import { Observable, from, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 

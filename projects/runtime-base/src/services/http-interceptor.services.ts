@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
-import { tap } from 'rxjs/operators/tap';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { httpService, appManager } from '@wm/variables';
 import { WmHttpRequest, WmHttpResponse } from '@wm/http';

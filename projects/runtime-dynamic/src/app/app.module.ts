@@ -64,8 +64,6 @@ import { WizardModule } from '@wm/components/containers/wizard';
 
 //Dialogs
 import { AlertDialogModule } from '@wm/components/dialogs/alert-dialog';
-import { ConfirmDialogModule } from '@wm/components/dialogs/confirm-dialog';
-import { DesignDialogModule } from '@wm/components/dialogs/design-dialog';
 import { IframeDialogModule } from '@wm/components/dialogs/iframe-dialog';
 import { LoginDialogModule } from '@wm/components/dialogs/login-dialog';
 import { PartialDialogModule } from '@wm/components/dialogs/partial-dialog';
@@ -73,7 +71,6 @@ import { PartialDialogModule } from '@wm/components/dialogs/partial-dialog';
 // Navigation
 import { BreadcrumbModule } from '@wm/components/navigation/breadcrumb';
 import { MenuModule } from '@wm/components/navigation/menu';
-import { NavModule } from '@wm/components/navigation/nav';
 import { NavbarModule } from '@wm/components/navigation/navbar';
 import { PopoverModule } from '@wm/components/navigation/popover';
 
@@ -181,8 +178,6 @@ const componentsModule = [
 
     // dialogs
     AlertDialogModule,
-    ConfirmDialogModule,
-    DesignDialogModule,
     IframeDialogModule,
     LoginDialogModule,
     PartialDialogModule,
@@ -190,7 +185,6 @@ const componentsModule = [
     // navigation
     BreadcrumbModule,
     MenuModule,
-    NavModule,
     NavbarModule,
     PopoverModule,
 

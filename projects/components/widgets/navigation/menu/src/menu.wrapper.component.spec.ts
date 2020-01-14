@@ -5,7 +5,7 @@ import { Component, ViewChild } from '@angular/core';
 import { MenuComponent } from './menu.component';
 import { MenuDropdownComponent } from "./menu-dropdown/menu-dropdown.component";
 import { MenuDropdownItemComponent } from "./menu-dropdown-item/menu-dropdown-item.component";
-import { NavModule } from '@wm/components/navigation/nav';
+import { NavigationControlDirective } from './nav/navigation-control.directive';
 import { Router } from '@angular/router';
 import { UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
@@ -30,8 +30,8 @@ class MenuWrapperComponent {
 }
 
 const menuComponentModuleDef: ITestModuleDef = {
-    declarations: [MenuWrapperComponent, MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent],
-    imports: [ComponentsTestModule, NavModule, BsDropdownModule.forRoot()],
+    declarations: [MenuWrapperComponent, MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective],
+    imports: [ComponentsTestModule, BsDropdownModule.forRoot()],
     providers: [{ provide: Router, useValue: Router }, { provide: SecurityService, useValue: SecurityService },
     { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
     ]

@@ -11,7 +11,7 @@
 
                 "ngx-bootstrap/modal": "ngxBootstrap",
 
-                "rxjs/Subscription": "rxjs",
+                "rxjs": "rxjs",
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base"

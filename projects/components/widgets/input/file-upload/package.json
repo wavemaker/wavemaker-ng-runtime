@@ -10,7 +10,7 @@
                 "@angular/core": "ng.core",
                 "@angular/forms": "ng.forms",
 
-                "rxjs/Subject": "rxjs",
+                "rxjs": "rxjs",
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base"
