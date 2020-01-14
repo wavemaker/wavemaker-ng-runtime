@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
@@ -36,6 +37,8 @@ const components = [
         BasicModule,
         BsDropdownModule,
         CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
         InputModule,
         ListModule,
         MenuModule,
