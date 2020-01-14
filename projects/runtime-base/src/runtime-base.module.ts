@@ -18,6 +18,9 @@ import {
     DynamicComponentRefProvider
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
+import { DialogModule } from '@wm/components/dialogs';
+import { ConfirmDialogModule } from '@wm/components/dialogs/confirm-dialog';
+import { DesignDialogModule } from '@wm/components/dialogs/design-dialog';
 import { PrefabModule } from '@wm/components/prefab';
 import { MobileRuntimeModule } from '@wm/mobile/runtime';
 import { SecurityModule } from '@wm/security';
@@ -74,7 +77,11 @@ const definitions = [
     EmptyPageComponent
 ];
 
-export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [];
+export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
+    ConfirmDialogModule,
+    DesignDialogModule,
+    DialogModule
+];
 
 // setting parseExpr as exprEvaluator for swipeAnimation
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;

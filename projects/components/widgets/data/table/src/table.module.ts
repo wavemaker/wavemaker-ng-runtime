@@ -2,10 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { WmComponentsModule } from '@wm/components/base';
 import { BasicModule } from '@wm/components/basic';
 import { InputModule } from '@wm/components/input';
+import { MenuModule } from '@wm/components/navigation/menu';
 import { ListModule } from '@wm/components/data/list';
 import { PaginationModule } from '@wm/components/data/pagination';
 
@@ -32,9 +34,11 @@ const components = [
 @NgModule({
     imports: [
         BasicModule,
+        BsDropdownModule,
         CommonModule,
         InputModule,
         ListModule,
+        MenuModule,
         PaginationModule,
         TooltipModule,
         WmComponentsModule

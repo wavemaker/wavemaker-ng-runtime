@@ -8,8 +8,7 @@
         "umdModuleIds": {
             "@angular/core": "ng.core",
 
-            "rxjs/Observable": "rxjs.observable",
-            "rxjs/Subject": "rxjs",
+            "rxjs": "rxjs",
 
             "@wm/core": "wm.core"
         }

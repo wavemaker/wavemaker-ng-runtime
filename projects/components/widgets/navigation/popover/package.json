@@ -12,7 +12,8 @@
                 "ngx-bootstrap/popover": "ngxBootstrap",
 
                 "@wm/core": "wm.core",
-                "@wm/components/base": "wm.components.base"
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic"
             }
         }
     }

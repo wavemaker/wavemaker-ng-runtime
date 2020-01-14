@@ -1052,33 +1052,6 @@
                 }
             }
         },
-        "@wm/components/navigation/nav": {
-            "root": "projects/components/widgets/navigation/nav",
-            "sourceRoot": "projects/components/widgets/navigation/nav/src",
-            "projectType": "library",
-            "prefix": "lib",
-            "architect": {
-                "build": {
-                    "builder": "@angular-devkit/build-ng-packagr:build",
-                    "options": {
-                        "tsConfig": "projects/components/widgets/tsconfig.lib.json",
-                        "project": "projects/components/widgets/navigation/nav/package.json"
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "projects/components/widgets/tsconfig.lib.json",
-                            "projects/components/widgets/tsconfig.spec.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**"
-                        ]
-                    }
-                }
-            }
-        },
         "@wm/components/navigation/navbar": {
             "root": "projects/components/widgets/navigation/navbar",
             "sourceRoot": "projects/components/widgets/navigation/navbar/src",

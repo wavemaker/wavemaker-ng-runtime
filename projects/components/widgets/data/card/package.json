@@ -13,6 +13,7 @@
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
                 "@wm/components/navigation/menu": "wm.components.navigation.menu"
             }
         }

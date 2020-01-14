@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
-import { NavModule } from '@wm/components/navigation/nav'
+import { MenuModule } from '@wm/components/navigation/menu'
 
 import { BreadcrumbComponent } from './breadcrumb.component';
 
@@ -13,7 +13,7 @@ const components = [
 @NgModule({
     imports: [
         CommonModule,
-        NavModule,
+        MenuModule,
         WmComponentsModule
     ],
     declarations: [...components],

@@ -5,7 +5,7 @@ import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
 import { $appDigest, addClass, removeClass, triggerItemAction, UserDefinedExecutionContext  } from '@wm/core';
 import { DatasetAwareNavComponent, isActiveNavItem, NavNode, provideAsWidgetRef, styler,  } from '@wm/components/base';
-import { NavComponent } from '@wm/components/navigation/nav';
+import { NavComponent } from './nav/nav.component';
 
 import { registerProps } from './menu.props';
 

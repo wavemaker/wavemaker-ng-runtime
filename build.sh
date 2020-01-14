@@ -154,10 +154,9 @@ bundleWeb() {
         ./libraries/components/input/rating/bundles/index.umd.js \
         ./libraries/components/input/slider/bundles/index.umd.js \
         ./libraries/components/chart/bundles/index.umd.js \
-        ./libraries/components/navigation/nav/bundles/index.umd.js \
+        ./libraries/components/navigation/menu/bundles/index.umd.js \
         ./libraries/components/navigation/navbar/bundles/index.umd.js \
         ./libraries/components/navigation/breadcrumb/bundles/index.umd.js \
-        ./libraries/components/navigation/menu/bundles/index.umd.js \
         ./libraries/components/navigation/popover/bundles/index.umd.js \
         ./libraries/components/dialogs/default/bundles/index.umd.js \
         ./libraries/components/dialogs/alert-dialog/bundles/index.umd.js \
@@ -231,10 +230,9 @@ bundleMobile() {
         ./libraries/components/input/rating/bundles/index.umd.js \
         ./libraries/components/input/slider/bundles/index.umd.js \
         ./libraries/components/chart/bundles/index.umd.js \
-        ./libraries/components/navigation/nav/bundles/index.umd.js \
+        ./libraries/components/navigation/menu/bundles/index.umd.js \
         ./libraries/components/navigation/navbar/bundles/index.umd.js \
         ./libraries/components/navigation/breadcrumb/bundles/index.umd.js \
-        ./libraries/components/navigation/menu/bundles/index.umd.js \
         ./libraries/components/navigation/popover/bundles/index.umd.js \
         ./libraries/components/dialogs/default/bundles/index.umd.js \
         ./libraries/components/dialogs/alert-dialog/bundles/index.umd.js \
@@ -328,10 +326,9 @@ buildApp() {
 
     ngBuild components-charts projects/components/widgets/chart '@wm/components/chart'
 
-    ngBuild components-navigation-nav projects/components/widgets/navigation/nav '@wm/components/navigation/nav'
+    ngBuild components-navigation-menu projects/components/widgets/navigation/menu '@wm/components/navigation/menu'
     ngBuild components-navigation-navbar projects/components/widgets/navigation/navbar '@wm/components/navigation/navbar'
     ngBuild components-navigation-breadcrumb projects/components/widgets/navigation/breadcrumb '@wm/components/navigation/breadcrumb'
-    ngBuild components-navigation-menu projects/components/widgets/navigation/menu '@wm/components/navigation/menu'
     ngBuild components-navigation-popover projects/components/widgets/navigation/popover '@wm/components/navigation/popover'
 
     ngBuild components-containers-accordion projects/components/widgets/containers/accordion '@wm/components/containers/accordion'

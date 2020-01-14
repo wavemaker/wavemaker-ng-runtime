@@ -1,8 +1,7 @@
 import { AfterContentInit, AfterViewInit, ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subject } from 'rxjs/Subject';
+import { ReplaySubject, Subject } from 'rxjs';
 
 import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
 

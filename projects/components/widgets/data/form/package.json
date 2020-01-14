@@ -10,9 +10,10 @@
                 "@angular/core": "ng.core",
                 "@angular/forms": "ng.forms",
 
-                "rxjs/operators/debounceTime": "rxjs.operators",
+                "rxjs/operators": "rxjs.operators",
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
                 "@wm/components/data/list": "wm.components.data.list",
                 "@wm/components/data/live-table": "wm.components.data.livetable",
                 "@wm/components/data/table": "wm.components.data.table",

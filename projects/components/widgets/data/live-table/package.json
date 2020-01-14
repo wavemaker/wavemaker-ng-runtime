@@ -9,7 +9,7 @@
             "umdModuleIds": {
                 "@angular/core": "ng.core",
 
-                "rxjs/operators/debounceTime": "rxjs.operators",
+                "rxjs/operators": "rxjs.operators",
 
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",

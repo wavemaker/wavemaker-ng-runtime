@@ -1,5 +1,4 @@
-import { Observable } from 'rxjs/Observable';
-import { from } from 'rxjs/observable/from';
+import { Observable, from } from 'rxjs';
 
 import { AbstractHttpService } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';

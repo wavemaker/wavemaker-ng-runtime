@@ -1,6 +1,6 @@
 import { noop } from '@wm/core';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 export abstract class FragmentMonitor {
     fragments = 0;

@@ -1,6 +1,6 @@
 import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ContentChildren, ElementRef, Injector, NgZone, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';

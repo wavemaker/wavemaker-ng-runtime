@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { BasicModule } from '@wm/components/basic';
 import { MenuModule } from '@wm/components/navigation/menu';
 
 import { CardComponent } from './card.component';
@@ -20,6 +21,7 @@ const components = [
 
 @NgModule({
     imports: [
+        BasicModule,
         BsDropdownModule,
         CommonModule,
         MenuModule,

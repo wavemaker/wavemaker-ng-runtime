@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Observer } from 'rxjs/Observer';
+import { Observer } from 'rxjs';
 
 import { executePromiseChain, getAbortableDefer, isString, noop } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';

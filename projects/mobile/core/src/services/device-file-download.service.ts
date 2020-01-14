@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
 
 import { File } from '@ionic-native/file';
-import { Observer } from 'rxjs/Observer';
-import { filter } from 'rxjs/operators/filter';
-import { map } from 'rxjs/operators/map';
+import { Observer } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 import { FileExtensionFromMimePipe } from '@wm/components/base';
 

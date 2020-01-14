@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { MenuModule } from '@wm/components/navigation/menu';
 
 import { PanelComponent } from './panel.component';
 
@@ -12,6 +13,7 @@ const components = [
 @NgModule({
     imports: [
         CommonModule,
+        MenuModule,
         WmComponentsModule
     ],
     declarations: [...components],

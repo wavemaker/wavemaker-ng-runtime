@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
+import { BasicModule } from '@wm/components/basic';
 import { InputModule } from '@wm/components/input';
 import { DesignDialogModule } from '@wm/components/dialogs/design-dialog';
 
@@ -25,6 +26,7 @@ const components = [
 
 @NgModule({
     imports: [
+        BasicModule,
         CommonModule,
         DesignDialogModule,
         InputModule,
