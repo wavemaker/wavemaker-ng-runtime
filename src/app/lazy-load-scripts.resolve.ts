@@ -13,8 +13,6 @@ export class LazyLoadScriptsResolve implements Resolve<any> {
         const scriptsToLoad = [];
         if(isMobileApp()) {
             scriptsToLoad.push('node_modules-hammerjs-hammer.min.js');
-        }
-        if (isIos()) {
             scriptsToLoad.push('node_modules-iscroll-build-iscroll.js');
         }
         if (scriptsToLoad.length > 0) {
