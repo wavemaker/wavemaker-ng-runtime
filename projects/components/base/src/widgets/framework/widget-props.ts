@@ -22,9 +22,9 @@ export const register = (identifier: string, props: Map<string, any>) => {
 
 export const registerFormWidget = (identifier: string, props: Map<string, any>) => {
     const widgetName = formFieldPrefix + identifier;
-    if (widgetProps[widgetName]) {
-        const existing = widgetProps[widgetName];
-        props.forEach((v: any, k) => existing.set(k, v));
+    const existingProps = widgetProps.get(widgetName);
+    if (existingProps) {
+        props.forEach((v: any, k) => existingProps.set(k, v));
     }
 };
 
