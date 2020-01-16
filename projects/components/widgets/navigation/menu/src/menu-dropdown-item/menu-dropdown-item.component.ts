@@ -77,6 +77,7 @@ export class MenuDropdownItemComponent implements OnInit {
     }
 
     @HostListener('keydown.tab', ['$event', '"TAB"'])
+    @HostListener('keydown.shift.tab', ['$event', '"SHIFT-TAB"'])
     @HostListener('keydown.escape', ['$event', '"ESC"'])
     @HostListener('keydown.enter', ['$event', '"ENTER"'])
     @HostListener('keydown.arrowup', ['$event', '"UP-ARROW"'])
@@ -95,10 +96,13 @@ export class MenuDropdownItemComponent implements OnInit {
             $event.preventDefault();
         }
 
-        if ((eventAction === KEY_MOVEMENTS.ON_TAB && $parentUl.children().last()[0] === this.nativeElement) || eventAction === KEY_MOVEMENTS.ON_ESCAPE) {
+        if ((eventAction === KEY_MOVEMENTS.ON_TAB && $parentUl.children().last()[0] === this.nativeElement)
+            || (eventAction === KEY_MOVEMENTS.ON_SHIFT_TAB && $parentUl.children().first()[0] === this.nativeElement)
+            || eventAction === KEY_MOVEMENTS.ON_ESCAPE) {
             /*closing all the children elements when
             * 1. Tab is clicked on the last $element
-            * 2. When Escape key is clicked*/
+            * 2. Shift Tab is clicked on the first $element
+            * 3. When Escape key is clicked*/
             $event.preventDefault();
             this.menuRef.bsDropdown.hide();
         } else if ((eventAction === KEY_MOVEMENTS.ON_ENTER && !this.item.link) || eventAction === KEY_MOVEMENTS.MOVE_RIGHT) {
@@ -110,7 +114,9 @@ export class MenuDropdownItemComponent implements OnInit {
             } else {
                 $li.find('> a').focus();
             }
-        } else if (eventAction === KEY_MOVEMENTS.MOVE_LEFT || (eventAction === KEY_MOVEMENTS.ON_TAB && $ul.children().last()[0] === this.nativeElement)) {
+        } else if (eventAction === KEY_MOVEMENTS.MOVE_LEFT
+            || (eventAction === KEY_MOVEMENTS.ON_TAB && $ul.children().last()[0] === this.nativeElement)
+            || (eventAction === KEY_MOVEMENTS.ON_SHIFT_TAB && $ul.children().first()[0] === this.nativeElement)) {
             if ($parentUl[0] !== $ul[0]) {
                 const $parentItem = $ul.parent();
                 $parentItem.toggleClass('open').find('li.open').removeClass('open');
@@ -125,7 +131,10 @@ export class MenuDropdownItemComponent implements OnInit {
             }
         } else if (eventAction === KEY_MOVEMENTS.MOVE_DOWN) {
             $event.stopPropagation();
-            if ($parentUl.find('> li:last')[0] === this.nativeElement && (this.menuRef.menulayout !== MENU_LAYOUT_TYPE.HORIZONTAL && this.menuRef.menuposition === MENU_POSITION.UP_RIGHT || this.menuRef.menuposition === MENU_POSITION.UP_LEFT)) {
+            if ($parentUl.find('> li:last')[0] === this.nativeElement
+                && (this.menuRef.menulayout !== MENU_LAYOUT_TYPE.HORIZONTAL
+                    && this.menuRef.menuposition === MENU_POSITION.UP_RIGHT
+                    || this.menuRef.menuposition === MENU_POSITION.UP_LEFT)) {
                 this.menuRef.bsDropdown.hide();
             } else {
                 $li.next().find('> a').focus();
