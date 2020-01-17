@@ -1,16 +1,16 @@
 import { ComponentFixture } from '@angular/core/testing';
-import { Component, ViewChild} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { App, UserDefinedExecutionContext} from '@wm/core';
-import { NavComponent} from './nav.component';
+import { App, UserDefinedExecutionContext } from '@wm/core';
+import { NavComponent } from './nav.component';
 import { NavigationControlDirective } from './navigation-control.directive';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
-import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
+import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
+import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
 import { SecurityService } from '@wm/security';
 
 const mockApp = {};
-class MockSecurityService {}
+class MockSecurityService { }
 const markup = ` <ul wmNav data-element-type="wmNav" data-role="page-header"  type="pills" autoclose="outsideClick" name="testNav"
                    itemlabel="label" itemlink="link" itemicon="icon" itemaction="task" isactive="active" select.event="onSelect($event, widget, $item)"></ul>`;
 
@@ -61,10 +61,10 @@ const testModuleDef: ITestModuleDef = {
     declarations: [NavWrapperComponent, NavComponent, NavigationControlDirective],
     imports: [ComponentsTestModule],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: Router, useValue: mockApp},
-        {provide: UserDefinedExecutionContext, useValue: mockApp},
-        {provide: SecurityService, useClass: MockSecurityService}]
+        { provide: App, useValue: mockApp },
+        { provide: Router, useValue: mockApp },
+        { provide: UserDefinedExecutionContext, useValue: mockApp },
+        { provide: SecurityService, useClass: MockSecurityService }]
 };
 
 const componentDef: ITestComponentDef = {

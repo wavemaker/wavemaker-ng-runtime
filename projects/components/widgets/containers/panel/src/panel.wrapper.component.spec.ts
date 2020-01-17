@@ -4,7 +4,7 @@ import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { MenuDropdownItemComponent } from "../../../navigation/menu/src/menu-dropdown-item/menu-dropdown-item.component";
 import { MenuDropdownComponent } from "../../../navigation/menu/src//menu-dropdown/menu-dropdown.component";
-import { NavigationControlDirective } from "../../../navigation/nav/src/navigation-control.directive";
+import { NavigationControlDirective } from "../../../navigation/menu/src/nav/navigation-control.directive";
 import { MenuComponent } from "../../../navigation/menu/src//menu.component";
 import { Router } from '@angular/router';
 import { UserDefinedExecutionContext } from '@wm/core';
