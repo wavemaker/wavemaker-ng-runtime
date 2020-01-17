@@ -1254,5 +1254,12 @@ export const VALIDATOR = {
     MAXCHARS: 'maxchars',
     MINVALUE: 'minvalue',
     MAXVALUE: 'maxvalue',
-    REGEXP: 'regexp'
+    REGEXP: 'regexp',
+    MINDATE: 'mindate',
+    MAXDATE: 'maxdate',
+    MINTIME: 'mintime',
+    MAXTIME: 'maxtime',
+    STEP: 'step',
+    EXCLUDEDATES: 'excludedates',
+    EXCLUDEDAYS: 'excludedays'
 };

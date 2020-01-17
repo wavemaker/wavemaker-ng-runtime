@@ -53,6 +53,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected bsDatePickerDirective: BsDatepickerDirective;
 
     @ViewChild(BsDropdownDirective) protected bsDropdown;
+    private validateType: string;
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
@@ -91,6 +92,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     public validate() {
         if (this.invalidDateTimeFormat) {
+            // validateType is specific to min / max values for time, date, datetime widgets only.
+            this.validateType = '';
             return {
                 invalidDateTimeFormat: {
                     valid: false
@@ -111,6 +114,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 },
             };
         }
+        this.validateType = '';
         return null;
     }
 
@@ -158,12 +162,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
+                this.validateType = 'mindate';
                 this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
                 this.dateNotInRange = true;
+                this.validateType = 'maxdate';
                 this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
@@ -177,6 +183,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 excludeDatesArray = excludeDatesArray.map(d => getFormattedDate(this.datePipe, d, this.datepattern));
                 if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, newVal, this.datepattern)) > -1) {
                     this.dateNotInRange = true;
+                    this.validateType = 'excludedates';
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return;
                 }
@@ -185,6 +192,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 const excludeDaysArray =  _.split(this.excludedays, ',');
                 if (excludeDaysArray.indexOf(newVal.getDay().toString()) > -1) {
                     this.dateNotInRange = true;
+                    this.validateType = 'excludedays';
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return;
                 }
