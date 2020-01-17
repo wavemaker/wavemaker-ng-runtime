@@ -28,7 +28,11 @@ const DEFAULT_VALIDATOR = {
     max: 'maxvalue',
     min: 'minvalue',
     required: 'required',
-    maxlength: 'maxchars'
+    maxlength: 'maxchars',
+    mindate: 'mindate',
+    maxdate: 'maxdate',
+    excludedates: 'excludedates',
+    excludedays: 'excludedays'
 };
 
 @Directive({
@@ -223,6 +227,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (this.regexp) {
             _validator.push(Validators.pattern(this.regexp));
         }
+        if (_.isFunction(this.formWidget.validate)) {
+            _validator.push(this.formWidget.validate.bind(this.formWidget));
+        }
         return _validator;
     }
 
@@ -233,9 +240,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
         this._validators = this.getDefaultValidators();
 
-        if (_.isFunction(this.formWidget.validate)) {
-            this._validators.push(this.formWidget.validate.bind(this.formWidget));
-        }
         if (customValidator) {
             this._validators.push(customValidator);
         }
@@ -314,6 +318,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (value.bind) {
             this.watchDefaultValidatorExpr(value, key);
         } else {
+            this.widget[key] = value;
             this[key] = value;
         }
     }
@@ -572,12 +577,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         } else {
             const keys = _.keys(fieldErrors);
             const key = keys[0];
-            if (_.get(DEFAULT_VALIDATOR, key)) {
-                this.validationmessage = _.get(this.defaultValidatorMessages, DEFAULT_VALIDATOR[key]) || this.validationmessage;
+            const validationMsgKey = _.get(DEFAULT_VALIDATOR, key) || this.formWidget.validateType;
+            if (validationMsgKey) {
+                this.validationmessage = _.get(this.defaultValidatorMessages, validationMsgKey) || this.validationmessage;
             } else {
                 // fallback when there is no validationmessage for fields other than default validators.
-                // value of the first key in the error object will be shown as validation message.
-                this.validationmessage = (fieldErrors[key]).toString();
+                this.validationmessage = '';
             }
         }
     }

@@ -146,11 +146,22 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
     }
 
+    setValidateType(min, max, val) {
+        if (this.timeNotInRange) {
+            if (val < min) {
+                (this as any).validateType = 'mintime';
+            } else if (val > max) {
+                (this as any).validateType = 'maxtime';
+            }
+        }
+    }
+
     /**
      * This is an internal method used to validate mintime and maxtime
      */
     private mintimeMaxtimeValidation() {
         this.timeNotInRange = this.minTime && this.maxTime && (this.bsTimeValue < this.minTime || this.bsTimeValue > this.maxTime);
+        this.setValidateType(this.minTime, this.maxTime, this.bsTimeValue);
         this.invokeOnChange(this.datavalue, undefined, false);
     }
 
@@ -246,6 +257,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             this.bsTimeValue = newVal;
             // if the newVal is valid but not in the given range then highlight the input field
             this.timeNotInRange = this.minTime && this.maxTime && (newVal < this.minTime || newVal > this.maxTime);
+            this.setValidateType(this.minTime, this.maxTime, newVal);
         } else {
             // sometimes library is not returning the correct value when the min and max time are given, displaying the datavalue based on the value given by the user
             if (this.bsTimePicker && this.bsTimePicker.min && this.bsTimePicker.max) {
@@ -255,6 +267,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 timeInputValue =  getNativeDateObject(timeValue);
                 this.bsTimePicker.meridian = minTimeMeridian;
                 this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
+                this.setValidateType(this.bsTimePicker.min, this.bsTimePicker.max, timeInputValue);
             }
             this.bsTimeValue = timeInputValue;
         }
