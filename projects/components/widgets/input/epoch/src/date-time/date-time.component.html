@@ -1,75 +1,102 @@
 <ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
 
 <ng-template #dataPickerTemplate>
-    <div dropdown [isOpen]="isTimeOpen" autoClose="false" [container]="'body'" (onShown)="onTimepickerOpen()"
-         style="display: inherit;">
-        <input class="form-control app-textbox display-input" aria-label="Set the date and time"
-               focus-target
-               [name]="name"
-               [tabindex]="tabindex"
-               type="text"
-               [value]="displayValue"
-               (click)="toggleDpDropdown($event)"
-               (focus)="invokeOnFocus($event)"
-               (blur)="onInputBlur($event)"
-               (change)="onDateChange($event)"
-               [autofocus]="autofocus"
-               [disabled]="disabled || readonly || isCurrentDate"
-               [required]="required"
-               [readOnly]="isReadOnly"
-               [attr.placeholder]="placeholder"
-               [attr.accesskey]="shortcutkey"
-               (keydown)="onDisplayKeydown($event)">
-        <div style="width: 0;display: inline-block;" aria-label="datepicker dropdownmenu" aria-controls="date">
+    <div dropdown
+        [isOpen]="isTimeOpen"
+        autoClose="false"
+        [container]="'body'"
+        (onShown)="onTimepickerOpen()"
+        style="display: inherit;">
+        <input class="form-control app-textbox display-input"
+            aria-label="Set the date and time"
+            focus-target
+            [name]="name"
+            [tabindex]="tabindex"
+            type="text"
+            [value]="displayValue"
+            (click)="toggleDpDropdown($event)"
+            (focus)="invokeOnFocus($event)"
+            (blur)="onInputBlur($event)"
+            (change)="onDateChange($event)"
+            [autofocus]="autofocus"
+            [disabled]="disabled || readonly || isCurrentDate"
+            [required]="required"
+            [readOnly]="isReadOnly"
+            [attr.placeholder]="placeholder"
+            [attr.accesskey]="shortcutkey"
+            (keydown)="onDisplayKeydown($event)">
+        <div style="width: 0;display: inline-block;"
+            aria-label="datepicker dropdownmenu"
+            aria-controls="date">
             <input class="model-holder"
-                   focus-target
-                   [container]="'body'"
-                   [bsConfig]="_dateOptions"
-                   [isOpen]="isDateOpen"
-                   (onShown)="onDatePickerOpen()"
-                   (onHidden)="hideDatepickerDropdown()"
-                   #datepicker=bsDatepicker
-                   bsDatepicker
-                   [isDisabled]="disabled || readonly || isCurrentDate"
-                   [bsValue]="bsDateValue"
-                   (bsValueChange)="onModelUpdate($event, 'date')">
+                focus-target
+                [container]="'body'"
+                [bsConfig]="_dateOptions"
+                [isOpen]="isDateOpen"
+                (onShown)="onDatePickerOpen()"
+                (onHidden)="hideDatepickerDropdown()"
+                [daysDisabled]="excludedDaysToDisable"
+                [datesDisabled]="excludedDatesToDisable"
+                [selectFromOtherMonth]="selectFromOtherMonth"
+                #datepicker=bsDatepicker
+                bsDatepicker
+                [isDisabled]="disabled || readonly || isCurrentDate"
+                [bsValue]="bsDateValue"
+                (bsValueChange)="onModelUpdate($event, 'date')">
         </div>
         <span class="input-group-btn">
-            <button type="button" class="btn btn-default btn-date"
-                    [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select date" aria-haspopup="true"
-                    aria-expanded="false" (click)="toggleDpDropdown($event)">
-                <i aria-hidden="true" class="app-icon wi wi-calendar"></i>
+            <button type="button"
+                class="btn btn-default btn-date"
+                [tabindex]="tabindex"
+                [disabled]="disabled || readonly || isCurrentDate"
+                aria-label="Select date"
+                aria-haspopup="true"
+                aria-expanded="false"
+                (click)="toggleDpDropdown($event)">
+                <i aria-hidden="true"
+                    class="app-icon wi wi-calendar"></i>
             </button>
-            <button type="button" class="btn btn-default btn-time"
-                    [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentDate" aria-label="Select time" aria-haspopup="true"
-                    aria-expanded="false" (click)="toggleTimePicker(!isTimeOpen, $event)">
-                <i aria-hidden="true" class="app-icon wi wi-access-time"></i>
+            <button type="button"
+                class="btn btn-default btn-time"
+                [tabindex]="tabindex"
+                [disabled]="disabled || readonly || isCurrentDate"
+                aria-label="Select time"
+                aria-haspopup="true"
+                aria-expanded="false"
+                (click)="toggleTimePicker(!isTimeOpen, $event)">
+                <i aria-hidden="true"
+                    class="app-icon wi wi-access-time"></i>
             </button>
         </span>
-        <div *dropdownMenu class="dropdown-menu" aria-label="timepicker dropdown" aria-controls="time"
-             (click)="preventTpClose($event)">
+        <div *dropdownMenu
+            class="dropdown-menu"
+            aria-label="timepicker dropdown"
+            aria-controls="time"
+            (click)="preventTpClose($event)">
             <timepicker class="model-holder"
-                        [showMeridian]="ismeridian"
-                        [readonlyInput]="disabled || readonly || isCurrentDate"
-                        [(ngModel)]="bsTimeValue"
-                        [min]="minTime"
-                        [max]="maxTime"
-                        [hourStep]="hourstep"
-                        [minuteStep]="minutestep"
-                        [secondsStep]="secondsstep"
-                        [mousewheel]="true"
-                        [arrowkeys]="true"
-                        (isValid)="isValid($event)"
-                        [showSeconds]="showseconds" (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
+                [showMeridian]="ismeridian"
+                [readonlyInput]="disabled || readonly || isCurrentDate"
+                [(ngModel)]="bsTimeValue"
+                [min]="minTime"
+                [max]="maxTime"
+                [hourStep]="hourstep"
+                [minuteStep]="minutestep"
+                [secondsStep]="secondsstep"
+                [mousewheel]="true"
+                [arrowkeys]="true"
+                (isValid)="isValid($event)"
+                [showSeconds]="showseconds"
+                (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
         </div>
     </div>
 </ng-template>
 <ng-template #nativeDateTemplate>
-    <input type="datetime-local" class="form-control app-textbox"
-           role="input"
-           step="any"
-           [value]="displayValue"
-           [required]="required"
-           [disabled]="disabled || readonly || isCurrentDate"
-           (change)="onDateChange($event, true)">
+    <input type="datetime-local"
+        class="form-control app-textbox"
+        role="input"
+        step="any"
+        [value]="displayValue"
+        [required]="required"
+        [disabled]="disabled || readonly || isCurrentDate"
+        (change)="onDateChange($event, true)">
 </ng-template>

@@ -5,7 +5,7 @@ export const dateProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
-        ['dataentrymode', {value: 'default', ...PROP_STRING}],
+        ['dataentrymode', { value: 'default', ...PROP_STRING }],
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['datepattern', PROP_STRING],
@@ -16,23 +16,24 @@ export const dateProps = new Map(
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],
         ['name', PROP_STRING],
-        ['outputformat', {value: 'yyyy-MM-dd', ...PROP_STRING}],
-        ['placeholder', {value: 'Select Date', ...PROP_STRING}],
+        ['outputformat', { value: 'yyyy-MM-dd', ...PROP_STRING }],
+        ['placeholder', { value: 'Select Date', ...PROP_STRING }],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
-        ['show', {value: true, ...PROP_BOOLEAN}],
-        ['showdropdownon', {value: 'default', ...PROP_STRING}],
-        ['showbuttonbar', {value: true, ...PROP_BOOLEAN}], // TODO not addressed
-        ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
-        ['showweeks', {value: false, ...PROP_BOOLEAN}],
-        ['tabindex', {value: 0, ...PROP_NUMBER}]
+        ['show', { value: true, ...PROP_BOOLEAN }],
+        ['showdropdownon', { value: 'default', ...PROP_STRING }],
+        ['showbuttonbar', { value: true, ...PROP_BOOLEAN }], // TODO not addressed
+        ['showindevice', { displayType: 'inline-block', value: 'all', ...PROP_STRING }],
+        ['showweeks', { value: false, ...PROP_BOOLEAN }],
+        ['tabindex', { value: 0, ...PROP_NUMBER }],
+        ['selectFromOtherMonth', PROP_BOOLEAN]
     ]
 );
 
 export const registerProps = () => {
     if (isMobileApp()) {
-        dateProps.set('datepattern', {value: 'yyyy-MM-dd', ...PROP_STRING});
+        dateProps.set('datepattern', { value: 'yyyy-MM-dd', ...PROP_STRING });
     }
     register(
         'wm-date',

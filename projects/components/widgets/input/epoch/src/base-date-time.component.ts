@@ -24,6 +24,8 @@ const DATAENTRYMODE_DROPDOWN_OPTIONS = {
 
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
+    protected excludedDaysToDisable: Array<number>;
+    protected excludedDatesToDisable: Array<Date>;
     public excludedates;
     public outputformat;
     public mindate;
@@ -73,7 +75,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * returns true if the input value is default (i.e Data entry can be done either by selecting from the Date/DateTime/Time Picker or by entering  manually using the keyboard. )
      * @param1 dropdownvalue, user selected value
      * **/
-    protected  isDataEntryModeEnabledOnInput (dropdownvalue) {
+    protected isDataEntryModeEnabledOnInput(dropdownvalue) {
         return dropdownvalue === DATAENTRYMODE_DROPDOWN_OPTIONS.DEFAULT;
     }
     /**
@@ -158,7 +160,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (newVal) {
             newVal = moment(newVal).startOf('day').toDate();
             const minDate = moment(getDateObj(this.mindate)).startOf('day').toDate();
-            const maxDate =  moment(getDateObj(this.maxdate)).startOf('day').toDate();
+            const maxDate = moment(getDateObj(this.maxdate)).startOf('day').toDate();
             if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
@@ -189,7 +191,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 }
             }
             if (this.excludedays) {
-                const excludeDaysArray =  _.split(this.excludedays, ',');
+                const excludeDaysArray = _.split(this.excludedays, ',');
                 if (excludeDaysArray.indexOf(newVal.getDay().toString()) > -1) {
                     this.dateNotInRange = true;
                     this.validateType = 'excludedays';
@@ -233,14 +235,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private setActiveDateFocus(newDate, isMouseEvent?: boolean) {
         const activeMonth = this.activeDate.getMonth();
         // check for keyboard event
-         if (!isMouseEvent) {
+        if (!isMouseEvent) {
             if (newDate.getMonth() < activeMonth) {
-                this.isOtheryear(newDate) ?  this.goToOtherMonthOryear('next', 'days') :  this.goToOtherMonthOryear('previous', 'days');
+                this.isOtheryear(newDate) ? this.goToOtherMonthOryear('next', 'days') : this.goToOtherMonthOryear('previous', 'days');
             } else if (newDate.getMonth() > activeMonth) {
                 this.isOtheryear(newDate) ? this.goToOtherMonthOryear('previous', 'days') : this.goToOtherMonthOryear('next', 'days');
             }
-         }
-        setTimeout( () => {
+        }
+        setTimeout(() => {
             if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
                 this.hightlightToday();
             }
@@ -372,7 +374,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected addDatepickerKeyboardEvents(scope, isDateTime) {
         this.keyEventPluginInstance = scope.keyEventPlugin.constructor;
         this.elementScope = scope;
-        const dateContainer  = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
+        const dateContainer = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
         setAttr(dateContainer, 'tabindex', '0');
         dateContainer.onkeydown = (event) => {
             const action = this.keyEventPluginInstance.getEventFullKey(event);
@@ -524,7 +526,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.goToOtherMonthOryear('next', 'month');
             }
         }
-        setTimeout( () => {
+        setTimeout(() => {
             $(`.bs-datepicker-body table.months span:contains(${newMonth})`).focus();
             this.activeDate = newDate;
         });
@@ -551,7 +553,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             } else if (action === 'arrowright') {
                 newdate = moment(this.activeDate).add(+1, 'year').toDate();
                 this.setActiveYearFocus(newdate);
-            }  else if (action === 'control.arrowdown' || action === 'enter') {
+            } else if (action === 'control.arrowdown' || action === 'enter') {
                 if ($(document.activeElement).parent().hasClass('disabled')) {
                     return;
                 }
@@ -578,7 +580,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.goToOtherMonthOryear('next', 'year');
             }
         }
-        setTimeout( () => {
+        setTimeout(() => {
             $(`.bs-datepicker-body table.years span:contains(${newYear})`).focus();
             this.activeDate = newDate;
         });
@@ -687,17 +689,17 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     }
                 }
                 if (action === 'tab') {
-                   this.invalidDateTimeFormat = false;
-                   this.invokeOnChange(this.datavalue, undefined, false);
-                   const pattern = this.datepattern || this.timepattern;
+                    this.invalidDateTimeFormat = false;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    const pattern = this.datepattern || this.timepattern;
                     if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, pattern) === elementScope.displayValue) {
                         $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
                     }
                 }
-                if (action === 'arrowdown' ||  action === 'arrowup') {
+                if (action === 'arrowdown' || action === 'arrowup') {
                     this.timeFormatValidation();
                 }
-             } else if ($target.hasClass('btn-default')) {
+            } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {
                     elementScope.setIsTimeOpen(false);
                     this.focus();
@@ -739,12 +741,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {
-            this._dateOptions.minDate = (nv === CURRENT_DATE) ?  this.mindate = new Date() : getDateObj(nv);
+            this._dateOptions.minDate = (nv === CURRENT_DATE) ? this.mindate = new Date() : getDateObj(nv);
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'maxdate') {
-           this._dateOptions.maxDate = (nv === CURRENT_DATE) ?  this.maxdate = new Date() : getDateObj(nv);
+            this._dateOptions.maxDate = (nv === CURRENT_DATE) ? this.maxdate = new Date() : getDateObj(nv);
             this.minDateMaxDateValidationOnInput(this.datavalue);
-        }  else if (key === 'excludedates' || key === 'excludedays') {
+        } else if (key === 'excludedates' || key === 'excludedays') {
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);
@@ -754,34 +756,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
-        if (this.bsDatePickerDirective) {
-            this.dateOnShowSubscription = this.bsDatePickerDirective
-                .onShown
-                .subscribe(cal => {
-                    cal.daysCalendar.subscribe(data => {
-                        let excludedDates;
-                        if (this.excludedates) {
-                            if (isString(this.excludedates)) {
-                                excludedDates = _.split(this.excludedates, ',');
-                            } else {
-                                excludedDates = this.excludedates;
-                            }
-                            excludedDates = excludedDates.map(d => moment(d));
-                        }
-                        data[0].weeks.forEach(week => {
-                            week.days.forEach(day => {
-                                if (!day.isDisabled && this.excludedays) {
-                                    day.isDisabled = _.includes(this.excludedays, day.dayIndex);
-                                }
-
-                                if (!day.isDisabled && excludedDates) {
-                                    const md = moment(day.date);
-                                    day.isDisabled = excludedDates.some(ed => md.isSame(ed, 'day'));
-                                }
-                            });
-                        });
-                    });
-                });
+        if (this.excludedays) {
+            this.excludedDaysToDisable = _.split(this.excludedays, ',').map((day) => {
+                return +day;
+            })
+        }
+        if (this.excludedates) {
+            if (isString(this.excludedates)) {
+                this.excludedDatesToDisable = _.split(this.excludedates, ',');
+            } else {
+                this.excludedDatesToDisable = this.excludedates;
+            }
+            this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => moment(d));
         }
 
     }

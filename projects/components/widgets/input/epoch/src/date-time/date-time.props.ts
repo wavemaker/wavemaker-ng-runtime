@@ -5,7 +5,7 @@ export const dateTimeProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
-        ['dataentrymode', {value: 'default', ...PROP_STRING}],
+        ['dataentrymode', { value: 'default', ...PROP_STRING }],
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['datepattern', PROP_STRING],
@@ -13,30 +13,32 @@ export const dateTimeProps = new Map(
         ['excludedays', PROP_STRING],
         ['excludedates', PROP_STRING],
         ['hint', PROP_STRING],
-        ['hourstep', {value: 1, ...PROP_NUMBER}],
+        ['hourstep', { value: 1, ...PROP_NUMBER }],
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],
-        ['minutestep', {value: 15, ...PROP_NUMBER}],
+        ['minutestep', { value: 15, ...PROP_NUMBER }],
         ['name', PROP_STRING],
-        ['outputformat', {value: 'timestamp', ...PROP_STRING}],
-        ['placeholder', {value: 'Select date time', ...PROP_STRING}],
+        ['outputformat', { value: 'timestamp', ...PROP_STRING }],
+        ['placeholder', { value: 'Select date time', ...PROP_STRING }],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
-        ['secondsstep', {value: 1, ...PROP_NUMBER}],
+        ['secondsstep', { value: 1, ...PROP_NUMBER }],
         ['shortcutkey', PROP_STRING],
-        ['show', {value: true, ...PROP_BOOLEAN}],
-        ['showdropdownon', {value: 'default', ...PROP_STRING}],
+        ['show', { value: true, ...PROP_BOOLEAN }],
+        ['showdropdownon', { value: 'default', ...PROP_STRING }],
         ['showbuttonbar', PROP_BOOLEAN],
-        ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
+        ['showindevice', { displayType: 'inline-block', value: 'all', ...PROP_STRING }],
         ['showweeks', PROP_BOOLEAN],
-        ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['timestamp', PROP_STRING]
+        ['tabindex', { value: 0, ...PROP_NUMBER }],
+        ['timestamp', PROP_STRING],
+        ['selectFromOtherMonth', PROP_BOOLEAN]
+
     ]
 );
 
 export const registerProps = () => {
     if (isMobileApp()) {
-        dateTimeProps.set('datepattern', {value: 'yyyy-MM-ddTHH:mm:ss', ...PROP_STRING});
+        dateTimeProps.set('datepattern', { value: 'yyyy-MM-ddTHH:mm:ss', ...PROP_STRING });
     }
     register(
         'wm-datetime',

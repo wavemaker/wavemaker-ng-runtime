@@ -1,5 +1,5 @@
-import { moment } from 'ngx-bootstrap/chronos/test/chain';
 import { getHtmlSelectorElement } from "./component-test-util";
+declare const moment
 
 export const datepatternTest = (fixture, selector: string, inputSelector: string, attr?: string, isLower?: boolean) => {
     fixture.whenStable().then(() => {

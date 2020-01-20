@@ -192,7 +192,7 @@ bundleWeb() {
         ./libraries/mobile/placeholder/runtime-dynamic/bundles/index.umd.js \
         ./libraries/runtime/base/bundles/index.umd.js \
         ./libraries/runtime/dynamic/bundles/index.umd.js \
-        -o ./dist/bundles/wmapp/scripts/wm-loader.js -b
+        -o ./dist/bundles/wmapp/scripts/wm-loader.js -b 
 
     ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-loader.js \
         -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -m   -b beautify=false,ascii_only=true
@@ -470,8 +470,15 @@ buildTsLib() {
 }
 
 buildNgxBootstrap() {
-    execCommand "tsc" "ngx-bootstrap" "${TSC} --outDir dist/tmp/libs/ngx-bootstrap --target es5 ./node_modules/ngx-bootstrap/bundles/ngx-bootstrap.es2015.js --allowJs --skipLibCheck --module es2015"
-    execCommand "rollup" "ngx-bootstrap" "${ROLLUP} -c ./config/rollup.ngx-bootstrap.config.js --silent"
+    arr=(./node_modules/ngx-bootstrap/collapse/bundles/ngx-bootstrap-collapse.umd.js ./node_modules/ngx-bootstrap/chronos/bundles/ngx-bootstrap-chronos.umd.js ./node_modules/ngx-bootstrap/utils/bundles/ngx-bootstrap-utils.umd.js ./node_modules/ngx-bootstrap/positioning/bundles/ngx-bootstrap-positioning.umd.js ./node_modules/ngx-bootstrap/component-loader/bundles/ngx-bootstrap-component-loader.umd.js ./node_modules/ngx-bootstrap/dropdown/bundles/ngx-bootstrap-dropdown.umd.js ./node_modules/ngx-bootstrap/locale/bundles/ngx-bootstrap-locale.umd.js ./node_modules/ngx-bootstrap/buttons/bundles/ngx-bootstrap-buttons.umd.js ./node_modules/ngx-bootstrap/carousel/bundles/ngx-bootstrap-carousel.umd.js ./node_modules/ngx-bootstrap/mini-ngrx/bundles/ngx-bootstrap-mini-ngrx.umd.js ./node_modules/ngx-bootstrap/modal/bundles/ngx-bootstrap-modal.umd.js ./node_modules/ngx-bootstrap/pagination/bundles/ngx-bootstrap-pagination.umd.js ./node_modules/ngx-bootstrap/popover/bundles/ngx-bootstrap-popover.umd.js ./node_modules/ngx-bootstrap/progressbar/bundles/ngx-bootstrap-progressbar.umd.js ./node_modules/ngx-bootstrap/rating/bundles/ngx-bootstrap-rating.umd.js ./node_modules/ngx-bootstrap/sortable/bundles/ngx-bootstrap-sortable.umd.js ./node_modules/ngx-bootstrap/tabs/bundles/ngx-bootstrap-tabs.umd.js ./node_modules/ngx-bootstrap/timepicker/bundles/ngx-bootstrap-timepicker.umd.js ./node_modules/ngx-bootstrap/tooltip/bundles/ngx-bootstrap-tooltip.umd.js ./node_modules/ngx-bootstrap/typeahead/bundles/ngx-bootstrap-typeahead.umd.js ./node_modules/ngx-bootstrap/datepicker/bundles/ngx-bootstrap-datepicker.umd.js ./node_modules/ngx-bootstrap/accordion/bundles/ngx-bootstrap-accordion.umd.js) 
+    # Create the directory to place the concatinated ngx-bootstrap UMD files
+    exec $(mkdir -p "./dist/tmp/libs/ngx-bootstrap")
+    # Concatinated the all bootstrap umd files
+    exec $(cat ${arr[*]} > ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js)
+    # As bootstrap has bug in umd files replacing the module namespace
+    # Check:https://github.com/valor-software/ngx-bootstrap/issues/5609
+    execCommand  "Bootstrap-Module-Replace" "node" "node ./bootstrap-module-replace.js"
+
 }
 
 buildNgxToastr() {
@@ -510,7 +517,6 @@ bundleWebLibs() {
         ./node_modules/@angular/common/bundles/common-http.umd.js \
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
-        ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
         ./dist/tmp/libs/angular2-text-mask/angular2-text-mask.umd.js \
@@ -539,9 +545,10 @@ bundleWebLibs() {
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
-    ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
+         ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
         -c -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -m   -b beautify=false,ascii_only=true
 
 

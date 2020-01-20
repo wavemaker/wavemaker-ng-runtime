@@ -9,9 +9,7 @@
             "umdModuleIds": {
                 "@angular/core": "ng.core",
                 "@angular/forms": "ng.forms",
-
-                "ngx-bootstrap/pagination": "ngxBootstrap",
-
+                "ngx-bootstrap/pagination": "ngx-bootstrap.pagination",
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base"
             }
