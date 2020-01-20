@@ -8,9 +8,7 @@
             "umdId": "wm.components.data.card",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
-
-                "ngx-bootstrap/dropdown": "ngxBootstrap",
-
+                "ngx-bootstrap/dropdown": "ngx-bootstrap.dropdown",
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
                 "@wm/components/basic": "wm.components.basic",

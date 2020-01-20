@@ -8,12 +8,11 @@ import { TimepickerModule, BsDropdownModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { UserDefinedExecutionContext, AppDefaults } from '@wm/core';
-import { moment } from 'ngx-bootstrap/chronos/test/chain';
 import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
 import { DatePipe } from '@angular/common';
 import { WmComponentsModule } from '@wm/components/base';
-
+declare const moment
 const currentTime = moment(new Date()).format('hh:mm:ss');
 
 const markup = `<div wmTime  name="time1" hint="my time" datavalue="${currentTime}" maxtime="${currentTime}" mintime="${currentTime}" 

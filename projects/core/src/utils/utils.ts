@@ -51,7 +51,7 @@ const NUMBER_TYPES = ['int', DataType.INTEGER, DataType.FLOAT, DataType.DOUBLE, 
 const now: Date = new Date();
 const CURRENT_DATE = 'CURRENT_DATE';
 
-export const enum EVENT_LIFE {ONCE, WINDOW}
+export const enum EVENT_LIFE { ONCE, WINDOW }
 
 export const isDefined = v => 'undefined' !== typeof v;
 
@@ -59,7 +59,7 @@ export const isObject = v => null !== v && 'object' === typeof v;
 
 export const toBoolean = (val, identity?) => ((val && val !== 'false') ? true : (identity ? val === identity : false));
 
-function isIE11 () {
+function isIE11() {
     return window.navigator.appVersion.indexOf('Trident/') > -1;
 }
 
@@ -360,7 +360,7 @@ export const addEventListenerOnElement = (_element: Element, excludeElement: Ele
         }
         if (nativeElement.contains(event.target)) {
             if ($(event.target).is('input') && !isDropDownDisplayEnabledOnInput) {
-               return;
+                return;
             }
             element.removeEventListener(eventType, eventListener, isCapture);
             return;
@@ -387,7 +387,7 @@ export const getClonedObject = (object) => {
 };
 
 export const getFiles = (formName, fieldName, isList) => {
-    const files = _.get(document.forms, [formName , fieldName, 'files']);
+    const files = _.get(document.forms, [formName, fieldName, 'files']);
     return isList ? _.map(files, _.identity) : files && files[0];
 };
 
@@ -432,7 +432,7 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
-    const x2jsObj = new X2JS({'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false});
+    const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
         json = _.get(json, Object.keys(json)[0]);
@@ -491,7 +491,7 @@ export const findValueOf = (obj, key, create?) => {
 
         while (subParts.length) {
             subPart = subParts.shift();
-            keys.push({'key': subPart, 'value': subParts.length ? [] : {}}); // determine whether to create an array or an object
+            keys.push({ 'key': subPart, 'value': subParts.length ? [] : {} }); // determine whether to create an array or an object
         }
     });
 
@@ -546,15 +546,15 @@ export const isEmptyObject = (obj: any): boolean => {
 /*Function to check whether the specified object is a pageable object or not.*/
 export const isPageable = (obj: any): boolean => {
     const pageable = {
-        'content'         : [],
-        'first'           : true,
-        'last'            : true,
-        'number'          : 0,
+        'content': [],
+        'first': true,
+        'last': true,
+        'number': 0,
         'numberOfElements': 10,
-        'size'            : 20,
-        'sort'            : null,
-        'totalElements'   : 10,
-        'totalPages'      : 1
+        'size': 20,
+        'sort': null,
+        'totalElements': 10,
+        'totalPages': 1
     };
     return (_.isEqual(_.keys(pageable), _.keys(obj).sort()));
 };
@@ -632,9 +632,9 @@ export const getBlob = (val, valContentType?) => {
     }
     const jsonVal = getValidJSON(val);
     if (jsonVal && jsonVal instanceof Object) {
-        val = new Blob([JSON.stringify(jsonVal)], {type: valContentType || 'application/json'});
+        val = new Blob([JSON.stringify(jsonVal)], { type: valContentType || 'application/json' });
     } else {
-        val = new Blob([val], {type: valContentType || 'text/plain'});
+        val = new Blob([val], { type: valContentType || 'text/plain' });
     }
     return val;
 };
@@ -654,7 +654,7 @@ export const isEqualWithFields = (obj1, obj2, compareBy) => {
     _compareBy = _.map(_compareBy, _.trim);
 
     return _.isEqualWith(obj1, obj2, function (o1, o2) {
-        return _.every(_compareBy, function(cb) {
+        return _.every(_compareBy, function (cb) {
             let cb1, cb2, _cb;
 
             // If compareby contains : , compare the values by the keys on either side of :
@@ -720,10 +720,10 @@ export const loadScript = async url => {
     }
 
     return fetchContent('text', _url, false, text => {
-            const script = document.createElement('script');
-            script.textContent = text;
-            document.head.appendChild(script);
-        });
+        const script = document.createElement('script');
+        script.textContent = text;
+        document.head.appendChild(script);
+    });
 
     // return fetch(_url)
     //     .then(response => response.text())
@@ -774,7 +774,7 @@ export const getSessionStorageItem = key => {
     }
 };
 
-export const noop = (...args) => {};
+export const noop = (...args) => { };
 
 export const isArray = v => _.isArray(v);
 
@@ -788,7 +788,7 @@ export const isNumber = v => typeof v === 'number';
  * @returns promise having blob object
  */
 export const convertToBlob = (filepath): Promise<any> => {
-    return new Promise<any> ((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
         // Read the file entry from the file URL
         resolveLocalFileSystemURL(filepath, function (fileEntry) {
             fileEntry.file(function (file) {
@@ -796,9 +796,9 @@ export const convertToBlob = (filepath): Promise<any> => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const imgBlob = new Blob([reader.result], {
-                        'type' : file.type
+                        'type': file.type
                     });
-                    resolve({'blob' : imgBlob, 'filepath': filepath});
+                    resolve({ 'blob': imgBlob, 'filepath': filepath });
                 };
                 reader.onerror = reject;
                 reader.readAsArrayBuffer(file);
@@ -815,10 +815,10 @@ export const isSpotcues = /Spotcues/i.test(window['navigator'].userAgent);
 
 export const AppConstants = {
     INT_MAX_VALUE: 2147483647
-} ;
+};
 
 export const openLink = (link: string, target: string = '_self') => {
-    if ( hasCordova() && _.startsWith(link, '#')) {
+    if (hasCordova() && _.startsWith(link, '#')) {
         location.hash = link;
     } else {
         window.open(link, target);
@@ -828,7 +828,7 @@ export const openLink = (link: string, target: string = '_self') => {
 
 /* util function to load the content from a url */
 export const fetchContent = (dataType, url: string, inSync: boolean = false, success?, error?): Promise<any> => {
-    return $.ajax({type: 'get', dataType: dataType, url: url, async: !inSync})
+    return $.ajax({ type: 'get', dataType: dataType, url: url, async: !inSync })
         .done(response => success && success(response))
         .fail(reason => error && error(reason));
 };
@@ -895,7 +895,7 @@ export const getAbortableDefer = () => {
         promise: null,
         reject: null,
         resolve: null,
-        onAbort: () => {},
+        onAbort: () => { },
         isAborted: false
     };
     _defer.promise = new Promise((resolve, reject) => {
@@ -930,7 +930,7 @@ export const getUrlParams = (link) => {
 };
 
 export const getRouteNameFromLink = (link) => {
-    link  = link.replace('#/', '/');
+    link = link.replace('#/', '/');
     const index = link.indexOf('?');
     if (index !== -1) {
         link = link.substring(0, index);
@@ -942,10 +942,10 @@ export const isAppleProduct = /Mac|iPod|iPhone|iPad/.test(window.navigator.platf
 
 export const defer = () => {
     const d = {
-            promise: null,
-            resolve: noop,
-            reject : noop
-        };
+        promise: null,
+        resolve: noop,
+        reject: noop
+    };
     d.promise = new Promise((resolve, reject) => {
         d.resolve = resolve;
         d.reject = reject;
@@ -985,7 +985,7 @@ export const executePromiseChain = (fns, args, d?, i?) => {
  */
 export const isDataSourceEqual = (d1, d2) => {
     return d1.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) === d2.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) &&
-    _.isEqual(d1.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER), d2.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER));
+        _.isEqual(d1.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER), d2.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER));
 };
 
 /**
@@ -1024,7 +1024,7 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
                         // remove the existing databinding element
                         filterExpressions.rules = [];
                         // now add all the returned values
-                        _.forEach(newVal, function(value, target) {
+                        _.forEach(newVal, function (value, target) {
                             filterExpressions.rules.push({
                                 'target': target,
                                 'value': value,
@@ -1037,7 +1037,7 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
                         // setting value to the root node
                         obj[targetNodeKey] = newVal;
                     }
-                    filter$.next({filterExpressions, newVal});
+                    filter$.next({ filterExpressions, newVal });
                 })
             );
         }
@@ -1139,10 +1139,10 @@ $.cachedScript = (() => {
 })();
 
 const DEFAULT_DISPLAY_FORMATS = {
-    DATE : 'yyyy-MM-dd',
-    TIME : 'hh:mm a',
-    TIMESTAMP : 'yyyy-MM-dd hh:mm:ss a',
-    DATETIME : 'yyyy-MM-dd hh:mm:ss a',
+    DATE: 'yyyy-MM-dd',
+    TIME: 'hh:mm a',
+    TIMESTAMP: 'yyyy-MM-dd hh:mm:ss a',
+    DATETIME: 'yyyy-MM-dd hh:mm:ss a',
 };
 // This method returns the display date format for given type
 export const getDisplayDateTimeFormat = type => {
@@ -1167,27 +1167,28 @@ export const addForIdAttributes = (element: HTMLElement) => {
 };
 
 /**
- * This method is used to adjust the container position depending on the viewport and scroll height.
- * For example: 1. if the widget is at bottom of the page depending on the available bottom space, the picker will open at bottom or top automatically.
- * 2. When we have dataTable with form as a dialog, If widget(ex: search/date/time/datetime) is at bottom of the dialog, the picker is not visible completely. So open the picker at top of the widget.
+ * This method is used to adjust the container position
+ * For example: 1. When datepicker control placed closed to the screen left edges, it is going cutting the container.
+ * To Fix the container overlapping issue changing the contrainer left translation to 0
  * @param containerElem - picker/dropdown container element(jquery)
  * @param parentElem - widget native element
  * @param ref - scope of particular library directive
  * @param ele - Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
  */
 export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) => {
-    const containerHeight = ele ? _.parseInt(ele.css('height')) : _.parseInt(containerElem.css('height'));
-    const viewPortHeight = $(window).height() + window.scrollY;
-    const parentDimesion = parentElem.getBoundingClientRect();
-    const parentTop = parentDimesion.top + window.scrollY;
 
-    // Adjusting container position if is not visible at bottom
-    if (viewPortHeight - (parentTop + parentDimesion.height) < containerHeight) {
-        const newTop = parentTop - containerHeight;
-        ref._ngZone.onStable.subscribe(() => {
-            containerElem.css('top',  newTop + 'px');
-        });
-    }
+    ref._ngZone.onStable.subscribe(() => {
+        const containerEleTransformations = new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform);
+        if (containerEleTransformations.m41 < 0) {
+            containerEleTransformations.m41 = 0;
+        }
+        const translatePosition = "translate3d(" + containerEleTransformations.m41 + "px, " + containerEleTransformations.m42 + "px, 0px)";
+        containerElem[0].style.webkitTransform = translatePosition;
+        containerElem[0].style.MozTransform = translatePosition;
+        containerElem[0].style.msTransform = translatePosition;
+        containerElem[0].style.OTransform = translatePosition;
+        containerElem[0].style.transform = translatePosition;
+    });
 
 };
 
@@ -1216,7 +1217,7 @@ export const detectChanges = $appDigest;
  * @param scope - scope of the widget
  * @param item - item object
  */
-export const triggerItemAction  = (scope, item) => {
+export const triggerItemAction = (scope, item) => {
     let itemLink = item.link;
     const itemAction = item.action;
     const linkTarget = item.target;
@@ -1232,7 +1233,7 @@ export const triggerItemAction  = (scope, item) => {
             const queryParams = getUrlParams(itemLink);
             itemLink = getRouteNameFromLink(itemLink);
             const router = _.get(scope, 'route') || _.get(scope, 'menuRef.route');
-            router.navigate([itemLink], {queryParams});
+            router.navigate([itemLink], { queryParams });
         } else {
             openLink(itemLink, linkTarget);
         }
@@ -1257,7 +1258,7 @@ export const getDatasourceFromExpr = (expr, scope) => {
         const widgetScope = _.get(scope.viewParent.Widgets, parts[1]);
         const widgetDatasetBoundExpr = widgetScope.$attrs.get('datasetboundexpr');
         let widgetBoundExpression;
-        widgetBoundExpression = (!widgetScope.datasource && widgetDatasetBoundExpr) ? widgetDatasetBoundExpr :  widgetScope.binddataset;
+        widgetBoundExpression = (!widgetScope.datasource && widgetDatasetBoundExpr) ? widgetDatasetBoundExpr : widgetScope.binddataset;
         return getDatasourceFromExpr(widgetBoundExpression, widgetScope);
     }
 };

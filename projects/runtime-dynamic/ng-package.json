@@ -7,11 +7,21 @@
         "umdModuleIds": {
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
-
             "rxjs": "rxjs",
-
+            "ngx-bootstrap/utils": "ngx-bootstrap.utils",
+            "ngx-bootstrap/modal": "ngx-bootstrap.modal",
+            "ngx-bootstrap/accordion": "ngx-bootstrap.accordion",
+            "ngx-bootstrap/buttons": "ngx-bootstrap.buttons",
+            "ngx-bootstrap/carousel": "ngx-bootstrap.carousel",
+            "ngx-bootstrap/datepicker": "ngx-bootstrap.datepicker",
+            "ngx-bootstrap/dropdown": "ngx-bootstrap.dropdown",
+            "ngx-bootstrap/pagination": "ngx-bootstrap.pagination",
+            "ngx-bootstrap/popover": "ngx-bootstrap.popover",
+            "ngx-bootstrap/timepicker": "ngx-bootstrap.timepicker",
+            "ngx-bootstrap/typeahead": "ngx-bootstrap.typeahead",
+            "ngx-bootstrap/progressbar": "ngx-bootstrap.progressbar",
+            "ngx-bootstrap/componentLoader": "ngx-bootstrap.componentLoader",
             "ngx-toastr": "ngxToastr",
-
             "@wm/runtime/base": "wm.runtime.base",
             "@wm/mobile/runtime": "wm.mobile.runtime",
             "@wm/components/base": "wm.components.base",
@@ -21,7 +31,6 @@
             "@wm/variables": "wm.variables",
             "@wm/http": "wm.http",
             "@wm/transpiler": "wm.transpiler",
-
             "@wm/components/basic": "wm.components.basic",
             "@wm/components/basic/progress": "wm.components.basic.progress",
             "@wm/components/basic/rich-text-editor": "wm.components.basic.richtexteditor",

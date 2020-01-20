@@ -8,9 +8,7 @@
             "umdId": "wm.components.navigation.popover",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
-
-                "ngx-bootstrap/popover": "ngxBootstrap",
-
+                "ngx-bootstrap/popover": "ngx-bootstrap.popover",
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
                 "@wm/components/basic": "wm.components.basic"
