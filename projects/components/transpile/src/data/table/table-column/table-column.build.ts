@@ -250,7 +250,10 @@ register('wm-table-column', (): IBuildTaskDef => {
             return `${customExprTmpl}</${tagName}>`;
         },
         imports: (attrs: Map<String, String>): string[] => {
-            const widgetType = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
+            const widgetType = attrs.get('edit-widget-type')
+                || attrs.get('filterwidget')
+                || getDataTableFilterWidget(attrs.get('type')
+                || DataType.STRING);
             const requiredWidget = getRequiredFormWidget(widgetType);
             return [requiredWidget, 'wm-table'];
         }
