@@ -186,7 +186,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     private loadScripts() {
         return new Promise((resolve) => {
-            const scriptsRequired = this.pageDirective.$element.attr('scripts-to-load');
+            const scriptsRequired = this.pageDirective && this.pageDirective.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService
                     .load(...scriptsRequired.split(','))
@@ -199,7 +199,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     getPageTransitionTarget() {
         // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
-        return $('app-page-outlet:first').length?$('app-page-outlet:first'):$('div[data-role="pageContainer"]:first').parent();
+        return $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
     }
 
     ngAfterViewInit(): void {
