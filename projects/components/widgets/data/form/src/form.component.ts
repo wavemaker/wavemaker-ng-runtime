@@ -552,7 +552,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     // Event callbacks on success/error
-    onResult(data, status, event?) {
+    onResultCb(data, status, event?) {
         const params = {$event: event, $data: data, $operation: this.operationType};
         // whether service call success or failure call this method
         this.invokeEventCallback('result', params);
@@ -730,10 +730,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (!this.ngform) {
             return;
         }
-        setTimeout(() => {
-            this.ngform.markAsUntouched();
-            this.ngform.markAsPristine();
-        });
+        this.ngform.markAsUntouched();
+        this.ngform.markAsPristine();
     }
 
     reset() {
@@ -746,45 +744,65 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     submitForm($event) {
-        let formData, template, params;
+        let template;
         const dataSource = this.datasource;
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
             return;
         }
 
-        this.resetFormState();
+        let getFormData = () => {
+            return getClonedObject(this.constructDataObject());
+        };
 
-        formData = getClonedObject(this.constructDataObject());
+        let getParams = () => {
+            let formData = getFormData();
+            return {$event, $formData: formData, $data: formData};
+        };
 
-        params = {$event, $formData: formData, $data: formData};
 
-        if (this.onBeforeSubmitEvt && (this.invokeEventCallback('beforesubmit', params) === false)) {
-            return;
+        if (this.onBeforeSubmitEvt) {
+            if (this.invokeEventCallback('beforesubmit', getParams()) === false) {
+                return;
+            } else {
+                this.resetFormState();
+            }
+        } else {
+            this.resetFormState();
         }
 
         if (this.onSubmitEvt || dataSource) {
             // If on submit is there execute it and if it returns true do service variable invoke else return
             // If its a service variable call setInput and assign form data and invoke the service
             if (dataSource) {
-                performDataOperation(dataSource, formData, {})
+                performDataOperation(dataSource, getFormData(), {})
                     .then((data) => {
-                        this.onResult(data, true, $event);
-                        this.toggleMessage(true, this.postmessage, 'success');
-                        this.invokeEventCallback('submit', params);
+                        return {
+                            'result': data,
+                            'status': true,
+                            'message': this.postmessage,
+                            'type': 'success'
+                        };
                     }, (error) => {
                         template = this.errormessage || error.error || error;
-                        this.onResult(error, false, $event);
-                        this.toggleMessage(true, template, 'error');
-                        this.invokeEventCallback('submit', params);
                         $appDigest();
-                    });
+                        return {
+                            'result': error,
+                            'status': false,
+                            'message': template,
+                            'type': 'error'
+                        };
+                    }).then(response => {
+                    this.toggleMessage(true, response.message, response.type);
+                    this.invokeEventCallback('submit', getParams());
+                    this.onResultCb(response.result, response.status, $event);
+                });
             } else {
-                this.onResult({}, true, $event);
-                this.invokeEventCallback('submit', params);
+                this.invokeEventCallback('submit', getParams());
+                this.onResultCb({}, true, $event);
             }
         } else {
-            this.onResult({}, true, $event);
+            this.onResultCb({}, true, $event);
         }
     }
 

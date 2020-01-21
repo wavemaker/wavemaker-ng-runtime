@@ -310,20 +310,20 @@ export class LiveFilterDirective {
             if (data.error) {
                 // disable readonly and show the appropriate error
                 this.form.toggleMessage(true, data.error, 'error', 'ERROR');
-                this.form.onResult(data, false);
+                this.form.onResultCb(data, false);
             } else {
                 this._options = {
                     'page': page,
                     'orderBy': orderBy
                 };
                 this.form.result = getClonedObject(data);
-                this.form.onResult(data, true);
+                this.form.onResultCb(data, true);
             }
             $appDigest();
             return this.form.result;
         }, error => {
             this.form.toggleMessage(true, error, 'error', 'ERROR');
-            this.form.onResult(error, false);
+            this.form.onResultCb(error, false);
             return error;
         });
     }

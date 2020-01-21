@@ -485,14 +485,15 @@ export class LiveFormDirective {
         }).then((response) => {
             const msg = operationType === Live_Operations.INSERT ? this.form.insertmessage : (operationType === Live_Operations.UPDATE ?
                 this.form.updatemessage : this.form.deletemessage);
+            let result;
 
             if (operationType === Live_Operations.DELETE) {
-                this.form.onResult(requestData.row, true, event);
+                result = requestData.row;
                 this.emptyDataModel();
                 this.form.prevDataValues = [];
                 this.form.isSelected = false;
             } else {
-                this.form.onResult(response, true, event);
+                result = response;
             }
 
             this.form.toggleMessage(true, msg, 'success');
@@ -506,10 +507,23 @@ export class LiveFormDirective {
                 });
                 this.onDataSourceUpdate(response, newForm, updateMode);
             }
+            return {
+                'result': result,
+                'status': true
+            };
         }, (error) => {
-            this.form.onResult(error, false, event);
             this.form.toggleMessage(true, error, 'error');
             $appDigest();
-        }).then(this.form.resetFormState.bind(this.form));
+            return {
+                'result': error,
+                'status': false
+            };
+        }).then(response => {
+            // reset the form to pristine state
+            this.form.resetFormState();
+            this.form.onResultCb(response.result, response.status, event);
+        });
+
+
     }
 }
