@@ -497,9 +497,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // updates the model value using queryModel
     private updateDatavalueFromQueryModel() {
-        this._modelByValue = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
-        this._modelByKey = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
-        this.toBeProcessedDatavalue = undefined;
+        if (isDefined(this.queryModel)) {
+            this._modelByValue = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
+            this._modelByKey = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
+            this.toBeProcessedDatavalue = undefined;
+        }
     }
 
     private updateByDataset(data: any) {
