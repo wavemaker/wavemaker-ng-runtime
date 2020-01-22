@@ -612,7 +612,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (this.parentForm) {
             this.parentForm.formFields.push(formField);
             this.parentForm.formfields[formField.key] = formField;
-            this.parentForm.setFormData(this.parentForm.formdata, this.formFields);
+            // inner formfields are pushed to parentForm, passing current innerForm's formdata to set innerFormdata to these innerFormFields
+            this.parentForm.setFormData(this.parentForm.formdata, this.formFields, this.formdata || {});
         }
     }
 
@@ -686,17 +687,18 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         });
     }
 
-    setFieldValue(field, data) {
+    setFieldValue(field, data, innerFormdata?) {
         const key = field.key || field.name;
         // if customfield param value is not in the formdata then do not assign field value
         // as it can contain default value which will again be overridden by undefined.
-        if (data) {
-            if (data.hasOwnProperty(key)) {
-                field.value =  _.get(data, key);
+        const fd = innerFormdata ? innerFormdata : data;
+        if (fd) {
+            if (fd.hasOwnProperty(key)) {
+                field.value =  _.get(fd, key);
             } else if (_.includes(key, '.')) {
                 // key contains '.' when mapping the fields to child reference i.e. childCol is having key as "parent.childCol"
-                if (data.hasOwnProperty(_.split(key, '.')[0])) {
-                    field.value =  _.get(data, key);
+                if (fd.hasOwnProperty(_.split(key, '.')[0])) {
+                    field.value =  _.get(fd, key);
                 }
             }
         }
@@ -714,11 +716,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
-    setFormData(data, formFields?) {
+    setFormData(data, innerFormFields?, innerFormdata?) {
         // whereas formFields explicitly passed can contain innerform fields also.
-        formFields = formFields || this.formFields;
+        const formFields = innerFormFields || this.formFields;
         formFields.forEach(field => {
-            this.setFieldValue(field, data);
+            this.setFieldValue(field, data, innerFormdata);
         });
         this.constructDataObject();
     }
