@@ -407,6 +407,15 @@ describe('SearchComponent', () => {
         });
     }));
 
+    it('should clear the input value when clearText method is triggered', async( () => {
+        const testValue = 'test';
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+            wmComponent.clearText();
+            expect(input.value).toBe('');
+        });
+    }));
+
     xit('should invoke getTransformedData method ', async(() => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
