@@ -18,6 +18,7 @@ export const KEYBOARD_MOVEMENTS = {
     MOVE_DOWN : 'DOWN-ARROW',
     ON_ENTER : 'ENTER',
     ON_TAB : 'TAB',
+    ON_SHIFT_TAB : 'SHIFT-TAB',
     ON_ESCAPE : 'ESC'
 };
 
