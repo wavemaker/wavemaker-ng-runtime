@@ -985,12 +985,48 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         return this.ngform && this.ngform.dirty;
     }
 
+    /**
+     * This method sets the form state to pristine by internally calling angular markAsPristine method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @returns {void}
+     */
+    markAsPristine(value: boolean = false) {
+        this.ngform.markAsPristine({ onlySelf: value });
+    }
+
+    /**
+     * This method sets the form state to dirty by internally calling angular markAsDirty method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @returns {void}
+     */
+    markAsDirty(value: boolean = false) {
+        this.ngform.markAsDirty({ onlySelf: value });
+    }
+
     get invalid() {
         return this.ngform && this.ngform.invalid;
     }
 
     get touched() {
         return this.ngform && this.ngform.touched;
+    }
+
+    /**
+     * This method sets the form state to touched by internally calling angular markAsTouched method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @returns {void}
+     */
+    markAsTouched(value: boolean = false) {
+        this.ngform.markAsTouched({ onlySelf: value });
+    }
+    
+    /**
+     * This method sets the form state to untouched by internally calling angular markAsUntouched method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @returns {void}
+     */
+    markAsUntouched(value: boolean = false) {
+        this.ngform.markAsUntouched({ onlySelf: value });
     }
 
     invokeActionEvent($event, expression: string) {
