@@ -306,10 +306,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                  * 5. this means form name change applies only when there is single form (immediate child) inside the parentContainer.
                  */
                 const prefabInnerForm = parentContentEl.find('form').first();
-                const isInsideList = prefabInnerForm.closest('.app-livelist');
-                // check whether form inside prefab container is inside the list. If true, do not change the name.
-                if (!isInsideList.length && !prefabInnerForm.siblings('form').length) {
-                    binding = _.get(parentContainer, 'name');
+                if (_.get(prefabInnerForm[0], 'widget.widgetId') === this.widgetId) {
+                    // check whether form inside prefab container is inside the list. If true, do not change the name.
+                    if (!prefabInnerForm.isParentList && !prefabInnerForm.siblings('form').length) {
+                        binding = _.get(parentContainer, 'name');
+                    }
                 }
             }
             let counter = 1;
