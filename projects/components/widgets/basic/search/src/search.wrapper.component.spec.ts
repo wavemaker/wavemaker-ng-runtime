@@ -119,13 +119,13 @@ describe('SearchComponent', () => {
 
     let typeHeadElement = () => {
         return getElementByTagOnDocQuery('typeahead-container');
-    }
+    };
     let getUlElement = () => {
         return typeHeadElement()[0].querySelectorAll('ul');
-    }
+    };
     let getLIElement = () => {
         return getUlElement()[0].querySelectorAll('li');
-    }
+    };
 
     beforeEach(async(() => {
         fixture = compileTestComponent(testModuleDef, SearchWrapperComponent);
@@ -175,7 +175,7 @@ describe('SearchComponent', () => {
         const testValue = 'te';
         spyOn(wrapperComponent, 'search1Select').and.callThrough();
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
-            let liElement = getLIElement();;
+            let liElement = getLIElement();
             liElement[0].click();
             fixture.whenStable().then(() => {
                 expect(wrapperComponent.search1Select).toHaveBeenCalledTimes(1);
@@ -275,7 +275,7 @@ describe('SearchComponent', () => {
 
     it('should set the datacomplete message for typehead list', async(() => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
-        wmComponent.getWidget().datacompletemsg = 'No more data!'
+        wmComponent.getWidget().datacompletemsg = 'No more data!';
         const testValue = 'tes';
 
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
@@ -285,7 +285,7 @@ describe('SearchComponent', () => {
             let liElement = ulElement[0].querySelectorAll('li');
             expect(liElement.length).toBe(4);
             let dataCompleteEle = typeHead[0].querySelectorAll('.status')[0];
-            expect(dataCompleteEle.querySelectorAll('span')[0].textContent).toBe('No more data!')
+            expect(dataCompleteEle.querySelectorAll('span')[0].textContent).toBe('No more data!');
         });
 
 
@@ -345,7 +345,6 @@ describe('SearchComponent', () => {
         });
     }));
 
-
     it('last result has to be reset to undefined on changing the dataset', ((done) => {
         wmComponent.dataset = wrapperComponent.testdata;
         wmComponent.onPropertyChange('dataset', wrapperComponent.testdata, []);
@@ -362,6 +361,19 @@ describe('SearchComponent', () => {
         fixture.detectChanges();
     }));
 
+    it('should set the datavalue when searchkey is not set', (async(done) => {
+        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().displaylabel = 'name';
+        wmComponent.getWidget().datafield = 'name';
+        wmComponent.getWidget().datavalue = 'John';
+        fixture.detectChanges();
+        (wmComponent as any).dataset$.subscribe((result) => {
+            if (wmComponent.datasetItems.length) {
+                done();
+                expect(wmComponent.query).toEqual('John');
+            }
+        });
+    }));
 
 
     /************************************ Scenarios end ********************************** */
@@ -402,7 +414,7 @@ describe('SearchComponent', () => {
 
                 expect(wmComponent.typeaheadOnSelect).toHaveBeenCalled();
                 done();
-            }, 50)
+            }, 50);
 
         });
     }));
