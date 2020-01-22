@@ -400,24 +400,26 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.goToPage(event, callback);
     }
 
-    setBindDataSet(binddataset, parent, dataSource, dataset?, binddatasource?) {
+    setBindDataSet(binddataset, parent, dataSource, dataset?, binddatasource?, datasetBoundExpr?) {
         const parts = binddataset.split('.');
         let bindPagingOptions;
         if (parts[0] === 'Variables' || parts[0] === 'Widgets') {
             bindPagingOptions = `${parts[0]}.${parts[1]}.pagination`;
         }
-        if (!binddatasource && dataset) {
+        if (!binddatasource && dataset && !datasetBoundExpr) {
             this.dataset = dataset;
             this._debouncedApplyDataset();
             return;
         }
         this.binddataset = binddataset;
         setTimeout(() => {
+            // watching for dataset changes even when dataset is bound to "item." (i.e. by checking for datasetBoundExpr)
+            // item context is passed as dataSource here
             this.registerDestroyListener(
                 $watch(
                     binddataset,
                     parent,
-                    {},
+                    datasetBoundExpr ? dataSource : {},
                     nv => {
                         this.dataset = nv;
                         this._debouncedApplyDataset();
@@ -438,7 +440,10 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 )
             );
         });
-        this.datasource = dataSource;
+        // apply datasource only when dataset is not bound to "item.FIELD"
+        if (!datasetBoundExpr) {
+            this.datasource = dataSource;
+        }
     }
 
     // Set the datasource of pagination from the parent widget
