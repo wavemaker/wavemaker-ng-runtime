@@ -31,6 +31,12 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
             this.onPropertyChange('datavalue', value);
             this.updatePrevDatavalue(value);
         }
+        /* 
+         * WMS:18246
+         * Call onChange on default value, so that the Component Model is updated
+         * Do only When the Model Value is different from datavalue
+         */
+        (value!==this.datavalue) && this._onChange(this.datavalue);
     }
 
     public invokeOnChange(value, $event?: Event | any, valid?: boolean) {
