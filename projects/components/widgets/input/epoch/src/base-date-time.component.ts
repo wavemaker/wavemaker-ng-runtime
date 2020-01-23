@@ -430,6 +430,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             } else if (action === 'arrowright') {
                 newdate = moment(this.activeDate).add(+1, 'days').toDate();
                 this.setActiveDateFocus(newdate);
+            } else if (action === 'pageup') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(-1, 'month').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (action === 'pagedown') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(+1, 'month').toDate();
+                this.setActiveDateFocus(newdate);
             } else if (action === 'control.arrowup') {
                 // clicking on table header month name to load list of months
                 $('.bs-datepicker-head .current').first().click();

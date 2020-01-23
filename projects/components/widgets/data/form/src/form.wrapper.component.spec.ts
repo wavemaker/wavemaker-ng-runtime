@@ -172,4 +172,30 @@ describe('FormComponent', () => {
             });
         });
     }));
+
+    it('should be able to set form as dirty', () => {
+        expect(wmComponent.dirty).toBeFalsy();
+        wmComponent.markAsDirty();
+        expect(wmComponent.dirty).toBeTruthy();
+    });
+
+    it('should be able to set form as pristine', () => {
+        wmComponent.markAsDirty();
+        expect(wmComponent.dirty).toBeTruthy();
+        wmComponent.markAsPristine();
+        expect(wmComponent.dirty).toBeFalsy();
+    });
+
+    it('should be able to set form as touched', () => {
+        expect(wmComponent.touched).toBeFalsy();
+        wmComponent.markAsTouched();
+        expect(wmComponent.touched).toBeTruthy();
+    });
+
+    it('should be able to set form as untouched', () => {
+        wmComponent.markAsTouched();
+        expect(wmComponent.touched).toBeTruthy();
+        wmComponent.markAsUntouched();
+        expect(wmComponent.touched).toBeFalsy();
+    });
 });
