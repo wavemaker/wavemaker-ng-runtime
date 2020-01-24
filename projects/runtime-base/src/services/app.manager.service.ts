@@ -100,8 +100,8 @@ export class AppManagerService {
 
     }
 
-    loadSecurityConfig() {
-        return this.$security.load().then((r) => {
+    loadSecurityConfig(forceFlag?: boolean) {
+        return this.$security.load(forceFlag).then((r) => {
             if (!this.$app.landingPageName) {
                 this.setLandingPage();
             }
@@ -329,7 +329,7 @@ export class AppManagerService {
      * @returns {Promise<void>}
      */
     reloadAppData() {
-        return this.loadSecurityConfig().then(() => {
+        return this.loadSecurityConfig(true).then(() => {
             return this.loadMetadata().then(() => {
                 return this.updateLoggedInUserVariable();
             });
