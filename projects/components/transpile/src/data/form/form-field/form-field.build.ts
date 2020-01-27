@@ -121,6 +121,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));
+            attrs.set('__widgetType', widgetType);
             attrs.delete('widget');
             shared.set('counter', counter);
 
@@ -154,7 +155,8 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             return provider;
         },
         imports: (attrs: Map<String, String>): string[] => {
-            const requiredWidget = getRequiredFormWidget(attrs.get('widget'));
+            const requiredWidget = getRequiredFormWidget(attrs.get('__widgetType') || attrs.get('type'));
+            attrs.delete('__widgetType');
             return [requiredWidget, 'wm-form'];
         }
     };
