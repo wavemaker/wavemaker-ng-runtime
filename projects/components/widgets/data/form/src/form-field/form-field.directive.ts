@@ -553,7 +553,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     onStatusChange(status) {
         if (!this.isDestroyed) {
             this.showPendingSpinner = (status === 'PENDING');
-            this.formWidget.disabled = (status === 'PENDING');
+            // while running validation, widget is disabled and spinner is shown
+            // otherwise formWidget disabled state is reset to the state of the formField.
+            if (status === 'PENDING') {
+                this.formWidget.disabled = true;
+            } else if (this.formWidget.disabled !== (this as any).disabled) {
+                this.formWidget.disabled = (this as any).disabled;
+            }
         }
     }
 
