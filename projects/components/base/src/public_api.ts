@@ -5,6 +5,8 @@ export * from './utils/live-utils';
 export * from './utils/widget-utils';
 export * from './widgets/common/base/base.component';
 export * from './widgets/common/base/dataset-aware-nav.component';
+export * from './widgets/common/base/partial-container.directive';
+export * from './widgets/common/item-template/item-template.directive';
 export * from './widgets/common/base/stylable.component';
 export * from './widgets/common/message/message.component';
 export * from './widgets/common/pull-to-refresh/pull-to-refresh';

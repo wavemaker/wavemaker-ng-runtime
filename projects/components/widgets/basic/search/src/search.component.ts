@@ -77,6 +77,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private _domUpdated: boolean;
     private searchon: string;
     public matchmode: string;
+    public content: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -724,6 +725,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeEventCallback('submit', {$event});
 
         this.updatePrevDatavalue(this.datavalue);
+    }
+
+    setTemplateComponent(templateName) {
+        this.content = templateName;
     }
 
     onPropertyChange(key: string, nv: any, ov: any) {

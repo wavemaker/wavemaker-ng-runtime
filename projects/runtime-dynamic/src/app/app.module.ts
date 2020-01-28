@@ -20,7 +20,7 @@ import {
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 
-import { App, getWmProjectProperties } from '@wm/core';
+import { App, getWmProjectProperties, PartialRefProvider } from '@wm/core';
 // Basic widgets
 import { BasicModule } from '@wm/components/basic';
 import { ProgressModule } from '@wm/components/basic/progress';
@@ -93,7 +93,6 @@ import {
     ComponentRefProvider,
     PrefabConfigProvider,
     WM_MODULES_FOR_ROOT,
-    PartialRefProvider,
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
 } from '@wm/runtime/base';
 
