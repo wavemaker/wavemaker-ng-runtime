@@ -162,7 +162,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
-        this.setCustomValidationMessage();
         this._activeField = false;
     }
 
@@ -547,6 +546,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (!this.isDestroyed) {
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
+            if (this.form.touched) {
+                this.setCustomValidationMessage();
+            }
         }
     }
 
