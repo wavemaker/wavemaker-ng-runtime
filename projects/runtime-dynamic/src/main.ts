@@ -11,7 +11,7 @@ if (sessionStorage.getItem(DEBUG_MODE) !== 'true') {
     enableProdMode();
 }
 
-console.time('bootstrap');
+console.time('app-bootstrap');
 
 const createDirectory = (parent, name) => {
     return new Promise((resolve, reject) => {
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resolve();
         }
     }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
-        .then(() => console.timeEnd('bootstrap'), err => console.log(err));
+        .then(() => console.timeEnd('app-bootstrap'), err => console.log(err));
 });
 
 (window as any).debugMode = function(on) {
