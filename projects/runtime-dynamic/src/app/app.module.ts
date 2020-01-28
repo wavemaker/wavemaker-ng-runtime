@@ -6,8 +6,6 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {
-    defineLocale,
-    BsLocaleService,
     BsDatepickerModule,
     BsDropdownModule,
     CarouselModule as ngxCarouselModule,
@@ -51,10 +49,10 @@ import { LiveTableModule } from '@wm/components/data/live-table';
 import { PaginationModule } from '@wm/components/data/pagination';
 import { TableModule } from '@wm/components/data/table';
 
-//Chart
+// Chart
 import { ChartModule } from '@wm/components/chart';
 
-//Containers
+// Containers
 import { AccordionModule } from '@wm/components/containers/accordion';
 import { LayoutGridModule } from '@wm/components/containers/layout-grid';
 import { PanelModule } from '@wm/components/containers/panel';
@@ -62,7 +60,7 @@ import { TabsModule } from '@wm/components/containers/tabs';
 import { TileModule } from '@wm/components/containers/tile';
 import { WizardModule } from '@wm/components/containers/wizard';
 
-//Dialogs
+// Dialogs
 import { AlertDialogModule } from '@wm/components/dialogs/alert-dialog';
 import { IframeDialogModule } from '@wm/components/dialogs/iframe-dialog';
 import { LoginDialogModule } from '@wm/components/dialogs/login-dialog';
@@ -114,7 +112,7 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     headerName: getWmProjectProperties().xsrf_header_name
 });
 
-export const modalModule:ModuleWithProviders = ModalModule.forRoot();
+export const modalModule: ModuleWithProviders = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders = BsDatepickerModule.forRoot();
 export const datepickerModule: ModuleWithProviders = ngxDatepickerModule.forRoot();
 export const timepickerModule: ModuleWithProviders = ngxTimepickerModule.forRoot();
@@ -188,7 +186,7 @@ const componentsModule = [
     NavbarModule,
     PopoverModule,
 
-    //Advanced
+    // Advanced
     CarouselModule,
     LoginModule,
     MarqueeModule,
@@ -246,10 +244,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
     bootstrap: [AppComponent]
 })
 export class AppModule {
-    constructor(private app: App, private inj: Injector, private bsLocaleService: BsLocaleService, private componentRefProvider: ComponentRefProvider) {
-        const selectedLocale = this.app.getSelectedLocale();
-        defineLocale(selectedLocale);
-        this.bsLocaleService.use(selectedLocale);
+    constructor(private app: App, private inj: Injector, private componentRefProvider: ComponentRefProvider) {
         if (window['cordova']) {
             // clear the cached urls on logout, to load the Login Page and not the Main Page as app reload(window.location.reload) is not invoked in mobile
             this.app.subscribe('userLoggedOut', this.componentRefProvider.clearComponentFactoryRefCache.bind(this.componentRefProvider));
