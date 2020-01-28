@@ -2,7 +2,7 @@ import { ImportDef } from './build';
 
 const NG_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'FormsModule', as: 'ngFormsModule'}];
 const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'ReactiveFormsModule', as: 'ngReactiveFormsModule'}];
-const NGX_BS_DATE_PICKER: ImportDef[] = [{from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule', forRoot: true}];
+const NGX_BS_DATE_PICKER: ImportDef[] = [{from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule'}];
 const NGX_CAROUSEL_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true}];
 const NGX_COLOR_PICKER_MODULE: ImportDef[] = [{from: 'ngx-color-picker', name: 'ColorPickerModule', as: 'ngx_ColorPickerModule'}];
 const NGX_DROP_DOWN_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/dropdown', name: 'BsDropdownModule', as: 'ngxBsDropdownModule', forRoot: true}];
