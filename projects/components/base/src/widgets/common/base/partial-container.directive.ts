@@ -1,19 +1,17 @@
-import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 
 import { debounceTime, filter } from 'rxjs/operators';
 
-import { App, $invokeWatchers, noop } from '@wm/core';
+import { App, $invokeWatchers, noop, ComponentType, PartialRefProvider } from '@wm/core';
 
-import { WidgetRef } from '@wm/components/base';
-
-import { ComponentRefProvider, ComponentType, PartialRefProvider } from '../types/types';
+import { WidgetRef } from "../../framework/types";
 
 declare const _;
 
 @Directive({
     selector: '[partialContainer]'
 })
-export class PartialContainerDirective {
+export class PartialContainerDirective implements AfterViewInit {
 
     private contentInitialized = false;
     private $target;
@@ -59,7 +57,6 @@ export class PartialContainerDirective {
         private app: App,
         @Attribute('content') _content: string,
         private resolver: ComponentFactoryResolver,
-        private componentRefProvider: ComponentRefProvider,
         private partialRefProvider: PartialRefProvider
     ) {
 
@@ -84,5 +81,10 @@ export class PartialContainerDirective {
             .subscribe(() => this.renderPartial(componentInstance.content));
         // reload the partial content on partial param change
         componentInstance.registerDestroyListener(() => subscription.unsubscribe());
+    }
+    ngAfterViewInit() {
+        if (this.componentInstance.content) {
+            this._renderPartial(this.componentInstance.content);
+        }
     }
 }

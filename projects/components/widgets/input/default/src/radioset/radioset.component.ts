@@ -26,6 +26,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
 
     public layout = '';
     public disabled: boolean;
+    public content: string;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -65,6 +66,10 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
         } else if (!_.includes(['change'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
+    }
+
+    setTemplateComponent(templateName) {
+        this.content = templateName;
     }
 
     onPropertyChange(key, nv, ov?) {

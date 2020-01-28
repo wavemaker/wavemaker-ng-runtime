@@ -7,14 +7,15 @@ import {
     SystemJsNgModuleLoader,
     Inject,
     NgModuleFactory
-} from "@angular/core";
-import { PartialRefProvider, ComponentType } from "@wm/runtime/base";
+} from '@angular/core';
+import { PartialRefProvider } from '@wm/core';
+import { ComponentType } from '@wm/runtime/base';
 
 
 type ModuleWithRoot = Type<any> & { rootComponent: Type<any> };
 
 @Injectable({
-    providedIn: "root"
+    providedIn: 'root'
 })
 export class LazyComponentRefProviderService extends PartialRefProvider {
     private moduleRef: NgModuleRef<any>;
@@ -26,11 +27,11 @@ export class LazyComponentRefProviderService extends PartialRefProvider {
     }
     private getModulePath(componentName: string, componentType: ComponentType): string {
         if (componentName.length > 0) {
-            if (componentType == ComponentType.PARTIAL) {
+            if (componentType === ComponentType.PARTIAL) {
                 return `src/app/partials/${componentName}/${componentName}.module#${componentName
                     .charAt(0)
                     .toUpperCase()}${componentName.slice(1)}Module`;
-            } else if (componentType == ComponentType.PREFAB) {
+            } else if (componentType === ComponentType.PREFAB) {
                 return `src/app/prefabs/${componentName}/${componentName}.module#${componentName
                     .charAt(0)
                     .toUpperCase()}${componentName.slice(1)}Module`;
@@ -38,7 +39,7 @@ export class LazyComponentRefProviderService extends PartialRefProvider {
         }
         return null;
     }
-    public async getComponentFactoryRef(componentName:string,componentType: ComponentType) {
+    public async getComponentFactoryRef(componentName: string, componentType: ComponentType) {
         let moduleFactory: NgModuleFactory<any>;
         try {
             moduleFactory = await this.loader.load(
