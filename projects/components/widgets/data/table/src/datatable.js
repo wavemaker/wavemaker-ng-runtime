@@ -1274,7 +1274,7 @@ $.widget('wm.datatable', {
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var rowId = $row.attr('data-row-id');
         var rowData = this.preparedData[rowId];
-        data = this.options.data[rowId];
+        var data = this.options.data[rowId];
         this.options.assignSelectedItems(data, e);
     },
 
