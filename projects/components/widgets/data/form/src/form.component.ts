@@ -987,7 +987,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     /**
      * This method sets the form state to pristine by internally calling angular markAsPristine method on the form
-     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
      * @returns {void}
      */
     markAsPristine(value: boolean = false) {
@@ -996,7 +996,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     /**
      * This method sets the form state to dirty by internally calling angular markAsDirty method on the form
-     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
      * @returns {void}
      */
     markAsDirty(value: boolean = false) {
@@ -1011,18 +1011,26 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         return this.ngform && this.ngform.touched;
     }
 
+    get valid() {
+        return this.ngform && this.ngform.valid;
+    }
+
+    get pristine() {
+        return this.ngform && this.ngform.pristine;
+    }
+
     /**
      * This method sets the form state to touched by internally calling angular markAsTouched method on the form
-     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
      * @returns {void}
      */
     markAsTouched(value: boolean = false) {
         this.ngform.markAsTouched({ onlySelf: value });
     }
-    
+
     /**
      * This method sets the form state to untouched by internally calling angular markAsUntouched method on the form
-     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false 
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
      * @returns {void}
      */
     markAsUntouched(value: boolean = false) {
