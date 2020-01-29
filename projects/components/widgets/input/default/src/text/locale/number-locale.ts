@@ -27,6 +27,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public maxvalue: number;
     public updateon: string;
     public step: number;
+    private validateType: string;
 
     constructor(
         inj: Injector,
@@ -109,10 +110,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     private getValueInRange(value: number): number {
         if (!_.isNaN(this.minvalue) && value < this.minvalue) {
+            this.validateType = 'minvalue';
             return this.minvalue;
 
         }
         if (!_.isNaN(this.maxvalue) && value > this.maxvalue) {
+            this.validateType = 'maxvalue';
             return this.maxvalue;
         }
         return value;
@@ -241,6 +244,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public validate(c: AbstractControl) {
         if (this.isInvalidNumber) {
+            this.validateType = '';
             return {
                 invalidNumber: {
                     valid: false
@@ -254,6 +258,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
                 },
             };
         }
+        this.validateType = '';
         return null;
     }
 
@@ -287,5 +292,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
     onEnter($event) {
         this.datavalue = $event.target.value;
+    }
+
+    onPropertyChange(key, nv, ov?) {
+        if (key === 'minvalue' || key === 'maxvalue') {
+            this.isValid(nv);
+        } else {
+            super.onPropertyChange(key, nv, ov);
+        }
     }
 }
