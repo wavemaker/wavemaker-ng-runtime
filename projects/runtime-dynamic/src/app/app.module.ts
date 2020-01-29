@@ -15,7 +15,8 @@ import {
     PopoverModule as ngxPopoverModule,
     ProgressbarModule,
     TimepickerModule as ngxTimepickerModule,
-    TypeaheadModule
+    TypeaheadModule,
+    TooltipModule
 } from 'ngx-bootstrap';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
@@ -123,6 +124,7 @@ export const progressbarModule: ModuleWithProviders = ProgressbarModule.forRoot(
 export const carouselModule: ModuleWithProviders = ngxCarouselModule.forRoot();
 export const popoverModule: ModuleWithProviders = ngxPopoverModule.forRoot();
 export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModule.forRoot({});
+export const tooltipModule: ModuleWithProviders = TooltipModule.forRoot();
 
 const componentsModule = [
     // NGX Bootstrap
@@ -136,6 +138,7 @@ const componentsModule = [
     ngxCarouselModule,
     ngxPopoverModule,
     NgCircleProgressModule,
+    TooltipModule,
 
     // Basic widgets
     BasicModule,
@@ -222,6 +225,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         bsDropdownModule,
         paginationModule,
         typeaheadModule,
+        tooltipModule,
         progressbarModule,
         carouselModule,
         popoverModule,
