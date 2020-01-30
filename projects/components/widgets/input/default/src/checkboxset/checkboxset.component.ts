@@ -1,5 +1,5 @@
 import { Attribute, Component, Injector, OnInit } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { AppDefaults, noop, switchClass } from '@wm/core';
 import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, ToDatePipe, toggleAllHeaders } from '@wm/components/base';
@@ -18,6 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: D
     templateUrl: 'checkboxset.component.html',
     providers: [
         provideAs(CheckboxsetComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(CheckboxsetComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(CheckboxsetComponent)
     ]
 })
@@ -104,7 +105,10 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         if (key === 'tabindex') {
             return;
         }
-
+        if (key === 'required') {
+            this._onChange();
+            return;
+        }
         if (key === 'layout') {
             switchClass(this.nativeElement, nv, ov);
         } else if (key === 'groupby' || key === 'match') {

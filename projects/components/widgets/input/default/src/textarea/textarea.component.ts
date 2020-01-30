@@ -1,5 +1,5 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { provideAs, provideAsWidgetRef } from '@wm/components/base';
 
@@ -15,6 +15,7 @@ const WIDGET_CONFIG = {
     templateUrl: './textarea.component.html',
     providers: [
         provideAs(TextareaComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(TextareaComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(TextareaComponent)
     ]
 })
