@@ -1307,5 +1307,6 @@ export const VALIDATOR = {
     MINTIME: 'mintime',
     MAXTIME: 'maxtime',
     EXCLUDEDATES: 'excludedates',
-    EXCLUDEDAYS: 'excludedays'
+    EXCLUDEDAYS: 'excludedays',
+    FORMAT: 'format'
 };

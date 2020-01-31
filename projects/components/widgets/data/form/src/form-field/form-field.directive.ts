@@ -31,8 +31,11 @@ const DEFAULT_VALIDATOR = {
     maxlength: 'maxchars',
     mindate: 'mindate',
     maxdate: 'maxdate',
+    mintime: 'mintime',
+    maxtime: 'maxtime',
     excludedates: 'excludedates',
-    excludedays: 'excludedays'
+    excludedays: 'excludedays',
+    format: 'format'
 };
 
 @Directive({
@@ -568,11 +571,30 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     // Method to expose validation message and set control to invalid
-    setValidationMessage(val) {
-        setTimeout(() => {
-            this.validationmessage = val;
-            this.setUpValidators(customValidatorFn);
-        });
+    setValidationMessage(val: string | object, errorMsg?: string | Function) {
+        /**
+         * this sets the validation message for default validators when passed as an object.
+         * var obj = {};
+         * obj[VALIDATOR.REQUIRED] = 'ERROR_MSG' or function () { return 'ERROR_MSG' };
+         * invoke as setValidationMessage(obj);
+         */
+        if (_.isObject(val)) {
+            const keys = _.keys(val);
+            _.forEach(val, (error, k) => {
+                if (this.isDefaultValidator(k)) {
+                    this.defaultValidatorMessages[k] = error;
+                }
+            });
+        } else if (errorMsg) {
+            // when invoked as setValidationMessage(VALIDATOR.REQUIRED, 'ERROR_MSG' or function () { return 'ERROR_MSG' });
+            this.defaultValidatorMessages[(val as string)] = errorMsg;
+        } else {
+            // default way of setting validation message
+            setTimeout(() => {
+                this.validationmessage = val;
+                this.setUpValidators(customValidatorFn);
+            });
+        }
     }
 
     // sets the validation message from the control errors.

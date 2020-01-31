@@ -244,7 +244,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public validate(c: AbstractControl) {
         if (this.isInvalidNumber) {
-            this.validateType = '';
+            this.validateType = 'format';
             return {
                 invalidNumber: {
                     valid: false

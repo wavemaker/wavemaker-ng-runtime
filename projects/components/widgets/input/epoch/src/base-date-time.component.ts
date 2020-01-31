@@ -92,8 +92,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     public validate() {
         if (this.invalidDateTimeFormat) {
-            // validateType is specific to min / max values for time, date, datetime widgets only.
-            this.validateType = '';
+            // validateType is specific what type of validation is failing i.e. min / max / invalid format for time, date, datetime widgets only.
+            this.validateType = 'format';
             return {
                 invalidDateTimeFormat: {
                     valid: false
