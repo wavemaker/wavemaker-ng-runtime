@@ -2,8 +2,9 @@
     <li [ngClass]="['checkbox', 'app-checkbox', itemclass]"
         [class.active]="item.selected"
         *ngFor="let item of datasetItems; let i = index"
-        itemTemplate [userComponentParams]="item" [content]="content" partialContainer
+        [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
         (click)="onCheckboxLabelClick($event, item.key)">
+        <!-- Default item template -->
         <label *ngIf="!content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
             <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                    [tabindex]="tabindex"
@@ -11,6 +12,7 @@
                    [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
             <span class="caption" [textContent]="item.label"></span>
         </label>
+        <!-- Custom partial template -->
         <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
             <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                    [tabindex]="tabindex"
@@ -38,8 +40,9 @@
             <li *ngFor="let item of groupObj.data; let i = index;"
                 [ngClass]="['checkbox', 'app-checkbox', 'group-list-item', itemclass]"
                 [class.active]="item.selected"
-                itemTemplate [userComponentParams]="item" [content]="content" partialContainer
+                [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
                 (click)="onCheckboxLabelClick($event, item)">
+                <!-- Default item template -->
                 <label *ngIf="!content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
                     <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                            [tabindex]="tabindex"
@@ -47,6 +50,7 @@
                            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
                     <span class="caption" [textContent]="item.label"></span>
                 </label>
+                <!-- Custom partial template -->
                 <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
                     <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                            [tabindex]="tabindex"

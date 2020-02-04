@@ -1,8 +1,9 @@
 <li [ngClass]="['radio', 'app-radio', itemclass]"
     [class.active]="item.selected"
     *ngFor="let item of datasetItems;let i = index"
-    itemTemplate [userComponentParams]="item" [content]="content" partialContainer
+    [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
     (click)="onRadioLabelClick($event, item.key)">
+    <!-- Default item template -->
     <label *ngIf="!content" class="app-radioset-label"
            [ngClass]="{'disabled':disabled || readonly}"
            [title]="item.label">
@@ -10,6 +11,7 @@
                [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
         <span class="caption" [textContent]="item.label"></span>
     </label>
+    <!-- Custom partial template -->
     <label *ngIf="content" class="app-radioset-label"
            [ngClass]="{'disabled':disabled || readonly}"
            [title]="item.label">

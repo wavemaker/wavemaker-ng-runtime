@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
+import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
 
 import { debounceTime, filter } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ declare const _;
 @Directive({
     selector: '[partialContainer]'
 })
-export class PartialContainerDirective implements AfterViewInit {
+export class PartialContainerDirective {
 
     private contentInitialized = false;
     private $target;
@@ -81,10 +81,5 @@ export class PartialContainerDirective implements AfterViewInit {
             .subscribe(() => this.renderPartial(componentInstance.content));
         // reload the partial content on partial param change
         componentInstance.registerDestroyListener(() => subscription.unsubscribe());
-    }
-    ngAfterViewInit() {
-        if (this.componentInstance.content) {
-            this._renderPartial(this.componentInstance.content);
-        }
     }
 }

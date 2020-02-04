@@ -2,7 +2,7 @@ import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '../../framework/w
 
 export const registerProps = () => {
     register(
-        'item-template',
+        'wm-item-template',
         new Map(
             [
                 ['content', PROP_STRING]

@@ -11,6 +11,8 @@ import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, Typeah
 import { By } from '@angular/platform-browser';
 
 import { ScrollableDirective } from './scrollable.directive';
+import { WmComponentsModule } from '@wm/components/base';
+import { PartialRefProvider } from '@wm/core';
 import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, getHtmlSelectorElement } from 'projects/components/base/src/test/util/component-test-util';
@@ -26,7 +28,6 @@ const markup = `
              placeholder="Type here to search.."
              type="button"
              tabindex="1"
-            
              disabled="false"
              width="200" height="200" show="true" class="btn-primary"
              fontsize="20" fontfamily="Segoe UI" color="#0000FF" fontweight="700" whitespace="nowrap"
@@ -76,13 +77,15 @@ class SearchWrapperComponent {
 const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
-        TypeaheadModule.forRoot()
+        TypeaheadModule.forRoot(),
+        WmComponentsModule
     ],
     declarations: [SearchWrapperComponent, SearchComponent, ScrollableDirective],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: TypeaheadMatch, useValue: TypeaheadMatch },
-        { provide: ComponentFixtureAutoDetect, useValue: true }
+        { provide: ComponentFixtureAutoDetect, useValue: true },
+        { provide: PartialRefProvider, useClass: PartialRefProvider }
     ]
 };
 

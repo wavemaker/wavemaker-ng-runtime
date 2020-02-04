@@ -6,7 +6,6 @@ import { App } from '@wm/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap';
-import { SearchComponent } from '../../../widgets/basic/search/src/search.component';
 import { ToDatePipe } from '../pipes/custom-pipes';
 
 let mockApp = {};
@@ -14,7 +13,6 @@ let mockApp = {};
 @NgModule({
     declarations: [
         ButtonComponent,
-        SearchComponent,
         ImagePipe,
         TrustAsPipe
     ],

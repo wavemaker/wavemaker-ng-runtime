@@ -34,7 +34,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
 
     public handleHeaderClick: ($event) => void;
     private toggleAllHeaders: void;
-    public content: string;
 
     public disabled: boolean;
 
@@ -114,10 +113,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         } else {
             super.onPropertyChange(key, nv, ov);
         }
-    }
-
-    setTemplateComponent(templateName) {
-        this.content = templateName;
     }
 
     ngOnInit() {
