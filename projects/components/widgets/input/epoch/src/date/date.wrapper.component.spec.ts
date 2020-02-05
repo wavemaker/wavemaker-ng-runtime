@@ -278,7 +278,7 @@ describe('DateComponent', () => {
         checkElementClass(fixture, '.app-date', 'ng-invalid');
     }));
 
-    it('should disbale the excluded days on the calendar panel', async(() => {
+    it('should disable the excluded days on the calendar panel', async(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
             excludedDaysDisable(ele);
@@ -293,7 +293,8 @@ describe('DateComponent', () => {
     }));
 
 
-    it('should disbale the excluded date on the calendar panel', async(() => {
+    it('should disable the excluded date on the calendar panel', async(() => {
+        dateWrapperComponent.wmComponent.getWidget().datavalue = '2020-01-01';
         dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-02';
 
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
@@ -313,7 +314,7 @@ describe('DateComponent', () => {
     it('should close the caledar as soon as select the date and should select the date', async(() => {
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (el) => {
             const datePickerRows = el[0].querySelectorAll('tbody tr');
-            const eleRow = datePickerRows[0];
+            const eleRow = datePickerRows[1];
             eleRow.children[6].querySelector('[bsdatepickerdaydecorator]').click();
             fixture.detectChanges();
             expect(new Date(wmComponent.datavalue).getDay()).toEqual(5);

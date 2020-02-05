@@ -23,11 +23,11 @@ const getFormatedDate = (date?) => {
 
 const currentDate = getFormatedDate();
 
-const markup = `<div wmDateTime  name="datetime1" tabindex="0" datavalue="${currentDate}" showdropdownon="button" hint="Birthtime" 
-shortcutkey="t" showweeks="true" class="input-group-lg" readonly="false" required="true" autofocus="true" 
- outputformat="yyyy-MM-ddTHH:mm:ss" datepattern="yyyy-MM-ddTHH:mm:ss" mindate="2019-12-10" maxdate="2020-01-03" excludedays="1,6" 
+const markup = `<div wmDateTime  name="datetime1" tabindex="0" datavalue="${currentDate}" showdropdownon="button" hint="Birthtime"
+shortcutkey="t" showweeks="true" class="input-group-lg" readonly="false" required="true" autofocus="true"
+ outputformat="yyyy-MM-ddTHH:mm:ss" datepattern="yyyy-MM-ddTHH:mm:ss" mindate="2019-12-10" maxdate="2020-01-03" excludedays="1,6"
  excludedates="2020-01-01"  show="true" minutestep="30" hourstep="1" change.event="datetime1Change($event, widget, newVal, oldVal)"
-  focus.event="datetime1Focus($event, widget)" blur.event="datetime1Blur($event, widget)" click.event="datetime1Click($event, widget)" 
+  focus.event="datetime1Focus($event, widget)" blur.event="datetime1Blur($event, widget)" click.event="datetime1Click($event, widget)"
   mouseenter.event="datetime1Mouseenter($event, widget)" mouseleave.event="datetime1Mouseleave($event, widget)"
    tap.event="datetime1Tap($event, widget)"
    ngModel></div>`;
@@ -306,7 +306,7 @@ describe("DatetimeComponent", () => {
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
 
     }));
-    it('should disbale the excluded days on the calendar panel', async(() => {
+    it('should disable the excluded days on the calendar panel', async(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
             excludedDaysDisable(ele);
@@ -321,7 +321,7 @@ describe("DatetimeComponent", () => {
 
     }));
 
-    it('should disbale the excluded date on the calendar panel', async(() => {
+    it('should disable the excluded date on the calendar panel', async(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
             let datePickerRows = ele[0].querySelectorAll('tbody tr');
