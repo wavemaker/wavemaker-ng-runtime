@@ -4,6 +4,7 @@ export * from './utils/form-utils';
 export * from './utils/live-utils';
 export * from './utils/widget-utils';
 export * from './widgets/common/base/base.component';
+export * from './widgets/common/base/base-container.component';
 export * from './widgets/common/base/dataset-aware-nav.component';
 export * from './widgets/common/base/partial-container.directive';
 export * from './widgets/common/item-template/item-template.directive';
