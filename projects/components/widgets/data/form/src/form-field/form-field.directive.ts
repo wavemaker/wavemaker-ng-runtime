@@ -84,6 +84,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     isRange;
     name;
 
+    content;
+    userComponentParams;
+    _partialRef;
+
     // Validation properties
     required;
     maxchars;
@@ -144,6 +148,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.parentList = parentList;
         this.defaultValidatorMessages = [];
         this.notifyForFields = [];
+        this.userComponentParams = {};
 
         if (this.binddataset || this.$element.attr('dataset')) {
             this.isDataSetBound = true;
@@ -672,6 +677,37 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.registerDestroyListener(() => onMaxValueChangeSubscription.unsubscribe());
         }
         this.value =  _.get(this.form.formdata, this._fieldName);
+    }
+
+
+    onValueChanged(newVal?, oldVal?) {
+        this.value = this._partialRef.getValue();
+    }
+
+    setValidState(state, message?) {
+        if (!state) {
+            this._control.markAsTouched();
+            this._control.setErrors({'incorrect': true});
+            this.validationmessage = message;
+        } else {
+            this._control.setErrors(null);
+            this.validationmessage = '';
+        }
+    }
+
+    setTemplatePartial(partialName) {
+        this.userComponentParams.onValueChanged = this.onValueChanged.bind(this);
+        this.userComponentParams.setValidState = this.setValidState.bind(this);
+        this.userComponentParams.fieldDef = this.widget;
+        this.widget.content = partialName;
+    }
+
+    setPartialRef(partialRef) {
+        this._partialRef = partialRef;
+        if (this.datavalue) {
+            this._partialRef.setValue(this.datavalue);
+        }
+
     }
 
     ngOnInit() {

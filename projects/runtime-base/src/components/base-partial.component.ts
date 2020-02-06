@@ -132,6 +132,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         if (this.containerWidget.userComponentParams) {
             params = this.containerWidget.userComponentParams;
         }
+        if (this.containerWidget.setPartialRef) {
+            this.containerWidget.setPartialRef(this);
+        }
         this.onReady(params);
         if (this.getContainerWidgetInjector().view.component.resolveFragment) {
             this.getContainerWidgetInjector().view.component.resolveFragment();

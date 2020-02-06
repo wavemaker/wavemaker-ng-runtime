@@ -5,6 +5,7 @@ import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, getWidgetPropsByType } from '@w
 export const registerProps = () => {
     const formFieldMap = new Map(
         [
+            ['content', PROP_STRING],
             ['dataentrymode', {value: 'default', ...PROP_STRING}],
             ['debouncetime', {value: 250, ...PROP_NUMBER}],
             ['defaultvalue', PROP_STRING],

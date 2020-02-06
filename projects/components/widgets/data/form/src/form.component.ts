@@ -459,6 +459,19 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     // Disable the form submit if form is in invalid state. Highlight all the invalid fields if validation type is default
     validateFieldsOnSubmit() {
+        // check for custom component and check validators
+        _.forEach(this.formfields, formField => {
+            if (formField.content && formField._partialRef) {
+                const validationObj = formField._partialRef.isValid();
+                if (validationObj) {
+                    formField.setValidState(false, validationObj.errorMessage);
+                } else {
+                    formField.setValidState(true);
+                    formField.onValueChanged();
+                }
+            }
+        });
+
         this.setValidationMsgs();
         // Disable the form submit if form is in invalid state. For delete operation, do not check the validation.
         if (this.operationType !== 'delete' && (this.validationtype === 'html' || this.validationtype === 'default')
@@ -701,6 +714,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                     field.value =  _.get(fd, key);
                 }
             }
+            // If field has custom component then update the custom model
+            if (field.content && field._partialRef) {
+                field._partialRef.setValue(field.value);
+            }
+
         }
         const formGroupName = field.form.formGroupName;
         /**

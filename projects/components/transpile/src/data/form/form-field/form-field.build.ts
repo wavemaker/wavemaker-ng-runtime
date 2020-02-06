@@ -62,7 +62,7 @@ const getWidgetTemplate = (attrs, options) => {
     const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : (options.isInList ? `[formControlName]="${options.counter}._fieldName"` : `formControlName="${fieldName}"`);
     const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const widgetName = name ? (options.isMaxWidget ? `name="${name}_formWidgetMax"` : `name="${name}_formWidget"`) : '';
-    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef} ${widgetName}`;
+    const defaultTmpl = `[hidden]="${options.counter}.content" [class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${tmplRef} ${widgetName}`;
     return getFormWidgetTemplate(options.widgetType, defaultTmpl, attrs, {counter: options.counter, pCounter: options.pCounter});
 };
 
@@ -132,7 +132,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                 setDefaultPlaceholder(attrs, widgetType, 2);
             }
 
-            return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getFormMarkupAttr(attrs)}>
+            return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField partialContainer #${counter}="wmFormField" widgettype="${widgetType}" ${getFormMarkupAttr(attrs)}>
                         <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="${widgetType}">
                             <label [hidden]="!${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
@@ -140,6 +140,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                             <div [ngClass]="${counter}.displayname ? ${pCounter}._widgetClass : '${controlLayout}'">
                                  <label class="form-control-static app-label"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
+                                <div [ngClass]="{'ng-invalid': ${counter}._control.invalid, 'ng-touched': ${counter}._control.touched}" partial-container-target></div>
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, isInList)}
                                 <span aria-hidden="true" *ngIf="${counter}.showPendingSpinner" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span>
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
