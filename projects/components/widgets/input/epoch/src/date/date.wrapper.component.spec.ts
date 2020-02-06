@@ -23,8 +23,8 @@ const mockApp = {
 };
 const currentDate = new Date().toISOString().split('T')[0];
 
-const markup = `<div wmDate  name="date1" mindate="2019-12-02"  excludedays="1,6"
- excludedates="2020-01-01" datavalue="${currentDate}" dataentrymode="default" placeholder="Select birth date"
+const markup = `<div wmDate  name="date1" mindate="2019-12-02"
+  datavalue="${currentDate}" dataentrymode="default" placeholder="Select birth date"
    shortcutkey="d" class="input-group-sm" showdropdownon="button" showweeks="true"  hint="Test hint" datepattern="yyyy-MM-dd"
    outputformat="yyyy-MM-dd" required="true" tabindex="1"  autofocus="true" class="input-group-sm" color="#b6a9a9"
     change.event="date1Change($event, widget, newVal, oldVal)" focus.event="date1Focus($event, widget)"
@@ -274,20 +274,25 @@ describe('DateComponent', () => {
     }));
 
     it('should ignore the  excluded days', async(() => {
+        dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
         dateWrapperComponent.wmComponent.getWidget().datavalue = '2019-12-30';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
     }));
 
     it('should disable the excluded days on the calendar panel', async(() => {
+        dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
 
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
-            excludedDaysDisable(ele);
+            fixture.whenStable().then(() => {
+                excludedDaysDisable(ele);
+            })
 
         });
 
     }));
 
     it('should ignore the  excluded date', async(() => {
+        dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-01';
         dateWrapperComponent.wmComponent.getWidget().datavalue = '2020-01-01';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
     }));
@@ -299,8 +304,11 @@ describe('DateComponent', () => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
             const datePickerRows = ele[0].querySelectorAll('tbody tr');
-            const eleRow = datePickerRows[0];
-            expectCheckEleHasDisabled(eleRow, 5);
+            fixture.whenStable().then(() => {
+                const eleRow = datePickerRows[0];
+                expectCheckEleHasDisabled(eleRow, 5);
+
+            })
         });
 
     }));

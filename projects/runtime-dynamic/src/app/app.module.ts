@@ -5,24 +5,29 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import {
-    BsDatepickerModule,
-    BsDropdownModule,
-    CarouselModule as ngxCarouselModule,
-    DatepickerModule as ngxDatepickerModule,
-    ModalModule,
-    PaginationModule as ngxPaginationModule,
-    PopoverModule as ngxPopoverModule,
-    ProgressbarModule,
-    TimepickerModule as ngxTimepickerModule,
-    TypeaheadModule,
-    TooltipModule
-} from 'ngx-bootstrap';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { TimepickerModule as ngxTimepickerModule } from 'ngx-bootstrap/timepicker';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+import { PaginationModule as ngxPaginationModule } from 'ngx-bootstrap/pagination';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+
+
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { DatepickerModule as ngxDatepickerModule, } from 'ngx-bootstrap/datepicker';
+
+
+import { defineLocale } from 'ngx-bootstrap/chronos'
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { PopoverModule as ngxPopoverModule } from 'ngx-bootstrap/popover';
+
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
+import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
 import { App, getWmProjectProperties, PartialRefProvider } from '@wm/core';
-// Basic widgets
+// Basic widgets --
 import { BasicModule } from '@wm/components/basic';
 import { ProgressModule } from '@wm/components/basic/progress';
 import { RichTextEditorModule } from '@wm/components/basic/rich-text-editor';
@@ -104,9 +109,10 @@ import { AppVariablesProviderService } from './services/app-variables-provider.s
 import { ComponentRefProviderService } from './services/component-ref-provider.service';
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-export const routerModule = RouterModule.forRoot(routes, {useHash: true, scrollPositionRestoration: 'top'});
-export const toastrModule = ToastNoAnimationModule.forRoot({maxOpened: 1, autoDismiss: true });
+export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
+export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
 export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     cookieName: 'wm_xsrf_token',
     headerName: getWmProjectProperties().xsrf_header_name
@@ -137,7 +143,7 @@ const componentsModule = [
     ngxCarouselModule,
     ngxPopoverModule,
     NgCircleProgressModule,
-    TooltipModule,
+    BrowserAnimationsModule,
 
     // Basic widgets
     BasicModule,
@@ -238,11 +244,11 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
     ],
     providers: [
         AppResourceManagerService,
-        {provide: AppJSProvider, useClass: AppJSProviderService},
-        {provide: AppVariablesProvider, useClass: AppVariablesProviderService},
-        {provide: ComponentRefProvider, useClass: ComponentRefProviderService},
-        {provide: PartialRefProvider, useClass: ComponentRefProviderService},
-        {provide: PrefabConfigProvider, useClass: PrefabConfigProviderService}
+        { provide: AppJSProvider, useClass: AppJSProviderService },
+        { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
+        { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
+        { provide: PartialRefProvider, useClass: ComponentRefProviderService },
+        { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService }
     ],
     bootstrap: [AppComponent]
 })
