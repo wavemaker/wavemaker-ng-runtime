@@ -1535,7 +1535,7 @@ $.widget('wm.datatable', {
             if (!colDef.readonly) {
                 value = _.get(rowData, colDef.field);
                 editableTemplate = self.options.getInlineEditWidget(colDef.field, value, alwaysNewRow);
-                if (!(colDef.customExpression || colDef.formatpattern)) {
+                if (!(colDef.customExpression || (colDef.formatpattern && colDef.formatpattern !== 'None'))) {
                     $el.addClass('cell-editing').html(editableTemplate).data('originalText', cellText);
                 } else {
                     $el.addClass('cell-editing editable-expression').data('originalValue', {
