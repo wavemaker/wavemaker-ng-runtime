@@ -630,4 +630,24 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         this.currentview = {start: startDate, end: endDate};
         this.invokeOnViewRenderback();
     }
+
+    // This function will receive an object containing source of calendar, apikey and calendarId and will integrate the respective calendar with fullcalendar.
+    public addEventSource(eventObject) {
+        if(_.isEmpty(eventObject)) {
+            console.warn("addEventSource method requires an object as a parameter.");
+            return;
+        }
+        if(eventObject.source === 'google'){
+            if(!eventObject.googleCalendarApiKey || !eventObject.googleCalendarId ) {
+                console.warn("For google calendar integration, 'googleCalendarApiKey' and 'googleCalendarId' should be passed in the parameter object.");
+                return;
+            }
+            $.getScript("https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/gcal.js", () => {
+                this.$fullCalendar.fullCalendar('option', 'googleCalendarApiKey', eventObject.googleCalendarApiKey);
+                this.$fullCalendar.fullCalendar('addEventSource', {
+                    googleCalendarId: eventObject.googleCalendarId 
+                });
+            });
+        }
+    }
 }
