@@ -113,6 +113,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     filterControl;
     isDataSetBound;
     isFilterDataSetBound;
+    showPendingSpinner;
     private _dataoptions: any;
     private _datasource: any;
     private _debounceSetUpValidators;
@@ -321,6 +322,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 // Fetch the data for the related fields
                 this.isDataSetBound = true;
                 const bindings = _.split(this.binding, '.');
+                this.showPendingSpinner = true;
                 fetchRelatedFieldData(dataSource, this.widget, {
                     relatedField: _.head(bindings),
                     datafield: _.last(bindings),
@@ -337,7 +339,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // On table datasource change, get the data for row filters
     onDataSourceChange() {
         this.loadFilterData();
-        this.loadInlineWidgetData();
+        if (this.table.editmode === EDIT_MODE.QUICK_EDIT) {
+            this.loadInlineWidgetData();
+        }
     }
 
     // Set the data on the row filter widget
