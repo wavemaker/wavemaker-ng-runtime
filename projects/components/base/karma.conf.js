@@ -22,7 +22,8 @@ module.exports = function (config) {
         '../widgets/data/table/src/datatable.js',
         '../../../libraries/swipey/bundles/index.umd.js',
         '../../../../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css',
-        '../../../../wavemaker-artifacts/default/themes/material/style.css'
+        '../../../../wavemaker-artifacts/default/themes/material/style.css',
+        '../../../node_modules/fullcalendar/dist/fullcalendar.min.js'
     ],
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
