@@ -131,6 +131,9 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
             }).then(response => {
                 formField.dataset = response.data;
                 formField.displayfield = formField.displayfield || _.head(_.keys(_.get(response, '[0]')));
+                if (formField.showPendingSpinner) {
+                    formField.showPendingSpinner = false;
+                }
             }, noop);
         });
     }

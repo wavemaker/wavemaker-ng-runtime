@@ -504,6 +504,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                         },
                         getValidationMessage: () => {
                             return this.columns[fieldName] && this.columns[fieldName].validationmessage;
+                        },
+                        getPendingSpinnerStatus: () => {
+                            return this.columns[fieldName] && this.columns[fieldName].showPendingSpinner;
                         }
                     };
                     const rootNode = this.inlineEditNewViewRef.createEmbeddedView(tmpl, context).rootNodes[0];
@@ -527,6 +530,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     },
                     getValidationMessage: () => {
                         return this.columns[fieldName] && this.columns[fieldName].validationmessage;
+                    },
+                    getPendingSpinnerStatus: () => {
+                        return this.columns[fieldName] && this.columns[fieldName].showPendingSpinner;
                     }
                  };
                 const rootNode = this.inlineEditViewRef.createEmbeddedView(tmpl, context).rootNodes[0];
@@ -608,7 +614,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 ctrl.markAsTouched();
             }
         },
-        clearForm: this.clearForm.bind(this)
+        clearForm: this.clearForm.bind(this),
+        callLoadInlineWidgetData: () => {
+            this.fullFieldDefs.forEach(col => {
+                if (_.isUndefined(col.isDataSetBound)) {
+                    triggerFn(col.loadInlineWidgetData && col.loadInlineWidgetData.bind(col));
+                }
+            });
+        }
     };
 
     private _gridData;

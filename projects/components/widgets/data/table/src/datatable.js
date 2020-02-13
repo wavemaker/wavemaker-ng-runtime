@@ -1613,6 +1613,9 @@ $.widget('wm.datatable', {
         e.data = e.data || {};
         action = e.data.action || options.action;
         if (action === 'edit') {
+            if (this.options.editmode === this.CONSTANTS.INLINE) {
+                this.options.callLoadInlineWidgetData();
+            }
             if (advancedEdit && self.gridBody.find('tr.app-datagrid-row.row-editing:not(.always-new-row)').length) {
                 //In case of advanced edit, save the previous row
                 self.saveRow(function (skipFocus, error) {
