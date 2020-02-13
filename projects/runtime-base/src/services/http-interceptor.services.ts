@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 
 import { httpService, appManager } from '@wm/variables';
 import { WmHttpRequest, WmHttpResponse } from '@wm/http';
@@ -19,7 +18,7 @@ export class HttpCallInterceptor implements HttpInterceptor {
 
     wmHttpRequest: any;
     wmHttpResponse: any;
-    
+
     constructor() {
         this.wmHttpRequest = new WmHttpRequest();
         this.wmHttpResponse = new WmHttpResponse();

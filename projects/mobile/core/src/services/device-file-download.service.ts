@@ -5,7 +5,7 @@ import { File } from '@ionic-native/file';
 import { Observer } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { FileExtensionFromMimePipe } from '@wm/components';
+import { FileExtensionFromMimePipe } from '@wm/components/base';
 
 import { DeviceFileService } from './device-file.service';
 

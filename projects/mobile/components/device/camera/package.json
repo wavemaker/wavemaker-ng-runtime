@@ -1,0 +1,20 @@
+{
+    "name": "@wm/mobile/components/device/camera",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/device/camera",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.device.camera",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@ionic-native/camera": "ionicNative.plugins",
+                "@ionic-native/media-capture": "ionicNative.plugins",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

@@ -1,7 +1,7 @@
 
-import initSwipeyJqueryPlugin from './swipey.jquery.plugin';
+// import initSwipeyJqueryPlugin from './swipey.jquery.plugin';
 
-initSwipeyJqueryPlugin();
+// initSwipeyJqueryPlugin();
 
 declare const  $;
 
@@ -11,7 +11,12 @@ export abstract class SwipeAnimation {
     private _isGesturesEnabled = true;
 
     public abstract animation(): [{}] | {};
-    public bindEvents() { return ['touch']; }
+    public bindEvents() {
+        if (window['PointerEvent']) {
+            return ['pointer'];
+        }
+        return ['touch'];
+    }
     public bounds(e?, $d?: number) { return {}; }
     public context() { return {}; }
     public direction() { return $.fn.swipey.DIRECTIONS.HORIZONTAL; }
@@ -45,7 +50,8 @@ export abstract class SwipeAnimation {
             onAnimation: this.onAnimation.bind(this),
             onLower: this.onLower.bind(this),
             onUpper: this.onUpper.bind(this),
-            threshold: this.threshold()
+            threshold: this.threshold(),
+            disableMouse: true
         });
     }
 }

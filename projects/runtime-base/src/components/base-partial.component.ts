@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { AbstractI18nService, AbstractNavigationService, App, noop, ScriptLoaderService, UtilsService } from '@wm/core';
-import { PartialDirective, WidgetRef} from '@wm/components';
+import { PartialDirective, WidgetRef} from '@wm/components/base';
 import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
@@ -128,7 +128,11 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     }
 
     invokeOnReady() {
-        this.onReady();
+        let params;
+        if (this.containerWidget.userComponentParams) {
+            params = this.containerWidget.userComponentParams;
+        }
+        this.onReady(params);
         if (this.getContainerWidgetInjector().view.component.resolveFragment) {
             this.getContainerWidgetInjector().view.component.resolveFragment();
         }
@@ -163,6 +167,6 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.destroy$.complete();
     }
 
-    onReady() {
+    onReady(params?) {
     }
 }

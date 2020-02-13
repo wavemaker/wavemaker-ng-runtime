@@ -42,10 +42,10 @@ export class SecurityOfflineBehaviour {
          * @param successCallback
          * @param failureCallback
          */
-        this.securityService.load = () => {
+        this.securityService.load = (forceFlag?: boolean) => {
             return new Promise((resolve, reject) => {
                 if (this.networkService.isConnected()) {
-                    origLoad.call(this.securityService).then(config => {
+                    origLoad.call(this.securityService, forceFlag).then(config => {
                         this.securityConfig = config;
                         this.saveSecurityConfigLocally(config);
                         resolve(this.securityConfig);

@@ -1,0 +1,17 @@
+{
+    "name": "@wm/components/containers/accordion",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/containers/accordion",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.containers.accordion",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

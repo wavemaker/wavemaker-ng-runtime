@@ -1,0 +1,21 @@
+{
+    "name": "@wm/components/dialogs",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/dialogs/default",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.dialogs",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "ngx-bootstrap/modal": "ngxBootstrap",
+
+                "rxjs": "rxjs",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

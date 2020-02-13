@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, DoCheck, ElementRef, NgZone, ViewEncapsulation, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 
-import { setTheme } from 'ngx-bootstrap';
+import { setTheme } from 'ngx-bootstrap/utils';
 
 import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';

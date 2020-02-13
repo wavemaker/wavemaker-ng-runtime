@@ -1,0 +1,17 @@
+{
+    "name": "@wm/components/basic/tree",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/basic/tree",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.basic.tree",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

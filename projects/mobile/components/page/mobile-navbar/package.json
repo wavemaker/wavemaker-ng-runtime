@@ -1,0 +1,21 @@
+{
+    "name": "@wm/mobile/components/page/mobile-navbar",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/page/mobile-navbar",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.page.mobilenavbar",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/mobile/core": "wm.mobile.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/page": "wm.components.page",
+                "@wm/components/page/left-panel": "wm.components.page.leftpanel",
+                "@wm/components/basic/search": "wm.components.basic.search"
+            }
+        }
+    }
+}

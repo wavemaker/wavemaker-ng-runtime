@@ -1,0 +1,22 @@
+{
+    "name": "@wm/components/basic/search",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/basic/search",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.basic.search",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "rxjs": "rxjs",
+                "rxjs/operators": "rxjs.operators",
+                "ngx-bootstrap/typeahead": "ngxBootstrap",
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/input": "wm.components.input"
+            }
+        }
+    }
+}

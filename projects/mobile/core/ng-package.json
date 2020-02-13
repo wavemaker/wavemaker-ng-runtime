@@ -28,7 +28,7 @@
             "@ionic-native/calendar": "ionicNative.plugins",
 
             "@wm/core": "wm.core",
-            "@wm/components": "wm.components"
+            "@wm/components/base": "wm.components.base"
 
         }
     }

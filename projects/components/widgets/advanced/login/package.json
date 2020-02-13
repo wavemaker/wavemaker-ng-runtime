@@ -1,0 +1,19 @@
+{
+    "name": "@wm/components/advanced/login",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/advanced/login",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.advanced.login",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/data/form": "wm.components.data.form",
+                "@wm/components/input": "wm.components.input"
+            }
+        }
+    }
+}

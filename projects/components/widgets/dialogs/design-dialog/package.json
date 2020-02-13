@@ -1,0 +1,19 @@
+{
+    "name": "@wm/components/dialogs/design-dialog",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/dialogs/design-dialog",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.dialogs.designdialog",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/dialogs": "wm.components.dialogs",
+                "@wm/components/input": "wm.components.input"
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "name": "@wm/mobile/components/device/barcode-scanner",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/device/barcode-scanner",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.device.barcodescanner",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@ionic-native/barcode-scanner": "ionicNative.plugins",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

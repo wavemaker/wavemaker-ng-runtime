@@ -1,0 +1,21 @@
+{
+    "name": "@wm/components/data/card",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/data/card",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.data.card",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "ngx-bootstrap/dropdown": "ngxBootstrap",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
+                "@wm/components/navigation/menu": "wm.components.navigation.menu"
+            }
+        }
+    }
+}

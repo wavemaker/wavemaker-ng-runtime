@@ -5,6 +5,7 @@ import {
     Comment,
     getHtmlTagDefinition
 } from '@angular/compiler';
+import { WIDGET_IMPORTS } from './imports';
 declare const _;
 
 const CSS_REGEX = {
@@ -254,7 +255,7 @@ const processDimensionAttributes = attrMap => {
 // replace <:svg:svg> -> <svg>, <:svg:*> -> <svg:*>
 const getNodeName = name => name.replace(':svg:svg', 'svg').replace(':svg:', 'svg:');
 
-export const processNode = (node, providers?: Array<IProviderInfo>) => {
+export const processNode = (node, importCollector: (i: ImportDef[]) => void, providers?: Array<IProviderInfo>) => {
     const nodeDef = registry.get(node.name);
 
     let pre, post, template;
@@ -309,7 +310,7 @@ export const processNode = (node, providers?: Array<IProviderInfo>) => {
             markup = `<${nodeName} ${getAttrMarkup(attrMap)}>`;
         }
 
-        node.children.forEach(child => markup += processNode(child, providers));
+        node.children.forEach(child => markup += processNode(child, importCollector, providers));
 
         if (nodeDef) {
             if (provideInfo) {
@@ -328,7 +329,18 @@ export const processNode = (node, providers?: Array<IProviderInfo>) => {
             markup += node.value;
         }
     }
-
+    importCollector(WIDGET_IMPORTS.get(node.name));
+    if (nodeDef && nodeDef.imports) {
+        let imports = [];
+        if (typeof nodeDef.imports === 'function') {
+            imports = nodeDef.imports(attrMap);
+        } else {
+            imports = nodeDef.imports;
+        }
+        imports.forEach( i => {
+            importCollector(WIDGET_IMPORTS.get(i));
+        });
+    }
     return markup;
 };
 
@@ -336,7 +348,7 @@ export const transpile = (markup: string = '') => {
     if (!markup.length) {
         return;
     }
-
+    let requiredWMComponents = [];
     const nodes = htmlParser.parse(markup, '');
 
     if (nodes.errors.length) {
@@ -345,12 +357,29 @@ export const transpile = (markup: string = '') => {
 
     let output = '';
     for (const node of nodes.rootNodes) {
-        output += processNode(node);
+        output += processNode(node, (imports: ImportDef[]) => {
+            if (imports) {
+                requiredWMComponents = requiredWMComponents.concat(imports);
+            }
+        });
     }
-    return output;
+    requiredWMComponents = _.uniqWith(requiredWMComponents, _.isEqual);
+    requiredWMComponents = _.sortBy(requiredWMComponents, ['from', 'name']);
+    return {
+        markup: output,
+        requiredWMComponents: requiredWMComponents
+    };
 };
 
 export const register = (nodeName: string, nodeDefFn: () => IBuildTaskDef) => registry.set(nodeName, nodeDefFn());
+
+export interface ImportDef {
+    from: string;
+    name: string;
+    as?: string;
+    forRoot?: boolean;
+    platformType?: string;
+};
 
 export interface IBuildTaskDef {
     requires?: string | Array<string>;
@@ -358,6 +387,7 @@ export interface IBuildTaskDef {
     pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
     provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
     post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
+    imports?:  string[] | ((attrs: Map<string, string>) => string[])
 }
 
 export const scopeComponentStyles = (componentName, componentType, styles = '') => {
@@ -381,22 +411,27 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                 selector = selector.substring(firstNonSpaceCharIndex);
             }
             if (!selector.startsWith('/*') && selector.trim().length > 0) {
-                const spaceIndex = selector.indexOf(' ');
-                if (selector.startsWith('.wm-app')) {
-                    if (spaceIndex > 0) {
-                        selector = selector.substring(spaceIndex + 1);
-                    } else {
-                        return selector;
+                // splits the selector by commas and we iterate over the array and add page level scoping and join it.
+                selector = selector.split(',').map(s=>{
+                    const spaceIndex = selector.indexOf(' ');
+                    s = s.trim();
+                    if (s.startsWith('.wm-app')) {
+                        if (spaceIndex > 0) {
+                            s = s.substring(spaceIndex + 1);
+                        } else {
+                            return selector;
+                        }
                     }
-                }
-
-                if (componentType === 0 || componentType === 'PAGE') {
-                    selector = `.wm-app app-page-${componentName} ${selector}`;
-                } else if (componentType === 1 || componentType === 'PREFAB') {
-                    selector = `.wm-app app-prefab-${componentName} ${selector}`;
-                } else if (componentType === 2 || componentType === 'PARTIAL') {
-                    selector = `.wm-app app-partial-${componentName} ${selector}`;
-                }
+    
+                    if (componentType === 0 || componentType === 'PAGE') {
+                        s = `.wm-app app-page-${componentName} ${s}`;
+                    } else if (componentType === 1 || componentType === 'PREFAB') {
+                        s = `.wm-app app-prefab-${componentName} ${s}`;
+                    } else if (componentType === 2 || componentType === 'PARTIAL') {
+                        s = `.wm-app app-partial-${componentName} ${s}`;
+                    }
+                    return s;
+                }).join(',');
             }
             selector = prefixSpaceCharSeq + selector;
         }

@@ -1,3 +1,8 @@
+export enum ComponentType {
+    PAGE,
+    PREFAB,
+    PARTIAL
+}
 
 export class IDataSource {
     execute: (operation: Operation, options?: any) => boolean | string | Promise<any>;
@@ -135,6 +140,7 @@ export abstract class AbstractI18nService {
     public abstract setSelectedLocale(locale);
     public abstract loadDefaultLocale();
     public abstract getLocalizedMessage(message, ...args);
+    public abstract initCalendarLocale(): Promise<any>;
     protected abstract loadAppLocaleBundle();
     protected abstract loadMomentLocaleBundle(localeLang);
     protected abstract loadLocaleBundles(localeLang);
@@ -195,4 +201,8 @@ export abstract class AppDefaults {
 
 export abstract class DynamicComponentRefProvider {
     public abstract async getComponentFactoryRef(selector: string, markup: string, options?: any);
+}
+
+export abstract class PartialRefProvider {
+    abstract async getComponentFactoryRef(partialName: string, componentType: ComponentType): Promise<any>;
 }

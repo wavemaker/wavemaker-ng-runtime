@@ -1,0 +1,17 @@
+{
+    "name": "@wm/components/containers/layout-grid",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/containers/layout-grid",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.containers.layoutgrid",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

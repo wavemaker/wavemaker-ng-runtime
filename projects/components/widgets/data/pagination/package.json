@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/data/pagination",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/data/pagination",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.data.pagination",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "ngx-bootstrap/pagination": "ngxBootstrap",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

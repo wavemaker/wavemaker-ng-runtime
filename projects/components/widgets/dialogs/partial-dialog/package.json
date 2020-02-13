@@ -1,0 +1,19 @@
+{
+    "name": "@wm/components/dialogs/partial-dialog",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/dialogs/partial-dialog",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.dialogs.partialdialog",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/dialogs": "wm.components.dialogs",
+                "@wm/components/input": "wm.components.input"
+            }
+        }
+    }
+}

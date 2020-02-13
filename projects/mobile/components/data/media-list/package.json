@@ -1,0 +1,21 @@
+{
+    "name": "@wm/mobile/components/data/media-list",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/data/media-list",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.data.medialist",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
+                "@wm/components/page": "wm.components.page",
+                "@wm/mobile/components/basic": "wm.mobile.components.basic",
+                "@wm/mobile/components/page/mobile-navbar": "wm.mobile.components.page.mobilenavbar"
+            }
+        }
+    }
+}

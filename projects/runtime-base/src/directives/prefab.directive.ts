@@ -8,7 +8,7 @@ import {
     ViewContainerRef
 } from '@angular/core';
 
-import { WidgetRef } from '@wm/components';
+import { WidgetRef } from '@wm/components/base';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
 import { ComponentRefProvider, ComponentType } from '../types/types';

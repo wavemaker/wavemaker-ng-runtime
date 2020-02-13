@@ -2,7 +2,8 @@ import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers } from '@wm/core';
-import { PrefabContainerDirective, WidgetRef} from '@wm/components';
+import { WidgetRef} from '@wm/components/base';
+import { PrefabContainerDirective } from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';

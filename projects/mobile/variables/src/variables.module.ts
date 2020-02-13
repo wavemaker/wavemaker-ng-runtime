@@ -23,7 +23,7 @@ import { DatasyncService } from './services/datasync-service';
 import { DeviceService } from './services/device-service';
 import { ContactsService } from './services/contacts-service';
 import { ScanService } from './services/scan-service';
-import { FileSelectorService, ProcessManagementService } from '@wm/mobile/components';
+import { FileSelectorService, ProcessManagementService } from '@wm/mobile/components/basic';
 
 @NgModule({
     imports: [

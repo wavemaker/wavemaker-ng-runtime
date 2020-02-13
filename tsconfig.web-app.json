@@ -27,8 +27,20 @@
             "@wm/core": [
                 "libraries/core"
             ],
-            "@wm/components": [
-                "libraries/components"
+            "@wm/components/basic": [
+                "libraries/components/basic/default"
+            ],
+            "@wm/components/input": [
+                "libraries/components/input/default"
+            ],
+            "@wm/components/page": [
+                "libraries/components/page/default"
+            ],
+            "@wm/components/dialogs": [
+                "libraries/components/dialogs/default"
+            ],
+            "@wm/components/*": [
+                "libraries/components/*"
             ],
             "@wm/transpiler": [
                 "libraries/transpiler"
@@ -67,10 +79,10 @@
                 "libraries/runtime/dynamic"
             ],
             "@wm/mobile/runtime": [
-                "libraries/mobile/placeholder"
+                "libraries/mobile/placeholder/runtime"
             ],
-            "@wm/mobile/placeholder": [
-                "libraries/mobile/placeholder"
+            "@wm/mobile/runtime-dynamic": [
+                "libraries/mobile/placeholder/runtime/dynamic"
             ]
         }
     }

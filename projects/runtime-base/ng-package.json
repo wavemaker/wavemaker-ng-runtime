@@ -12,15 +12,26 @@
             "@angular/common": "ng.common",
             "@angular/router": "ng.router",
 
+
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators",
+
             "ngx-toastr":  "ngxToastr",
-            "ngx-bootstrap": "ngxBootstrap",
+
+            "ngx-bootstrap/chronos": "ngxBootstrap",
+            "ngx-bootstrap/datepicker": "ngxBootstrap",
+            "ngx-bootstrap/modal": "ngxBootstrap",
+            "ngx-bootstrap/utils": "ngxBootstrap",
 
             "@wm/core": "wm.core",
             "@wm/variables": "wm.variables",
             "@wm/transpiler": "wm.transpiler",
-            "@wm/components": "wm.components",
+            "@wm/components/base": "wm.components.base",
+            "@wm/components/dialogs": "wm.components.dialogs",
+            "@wm/components/dialogs/confirm-dialog": "wm.components.dialogs.confirmdialog",
+            "@wm/components/dialogs/design-dialog": "wm.components.dialogs.designdialog",
+            "@wm/components/prefab": "wm.components.prefab",
+            "@wm/components/page": "wm.components.page",
             "@wm/security": "wm.security",
             "@wm/oAuth": "wm.oAuth",
             "@wm/http": "wm.http",

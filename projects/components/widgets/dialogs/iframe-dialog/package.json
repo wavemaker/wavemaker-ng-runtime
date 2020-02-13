@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/dialogs/iframe-dialog",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/dialogs/iframe-dialog",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.dialogs.iframedialog",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
+                "@wm/components/dialogs": "wm.components.dialogs",
+                "@wm/components/input": "wm.components.input"
+            }
+        }
+    }
+}

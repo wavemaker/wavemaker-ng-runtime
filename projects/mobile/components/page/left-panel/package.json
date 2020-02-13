@@ -1,0 +1,20 @@
+{
+    "name": "@wm/mobile/components/page/left-panel",
+    "ngPackage": {
+        "dest": "../../../../../libraries/mobile/components/page/left-panel",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.mobile.components.page.leftpanel",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/mobile/core": "wm.mobile.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/page": "wm.components.page",
+                "@wm/components/page/left-panel": "wm.components.page.leftpanel"
+            }
+        }
+    }
+}

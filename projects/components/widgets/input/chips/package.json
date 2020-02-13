@@ -1,0 +1,20 @@
+{
+    "name": "@wm/components/input/chips",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/chips",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input.chips",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/input": "wm.components.input",
+                "@wm/components/basic/search": "wm.components.basic.search"
+            }
+        }
+    }
+}

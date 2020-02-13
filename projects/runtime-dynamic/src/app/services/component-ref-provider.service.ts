@@ -185,7 +185,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         return this.resouceMngr.get(url, true)
             .then(({markup, script, styles, variables}: IPageMinJSON) => {
                 const response = {
-                    markup: transpile(_decodeURIComponent(markup)),
+                    markup: transpile(_decodeURIComponent(markup)).markup,
                     script: _decodeURIComponent(script),
                     styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
                     variables: getValidJSON(_decodeURIComponent(variables))

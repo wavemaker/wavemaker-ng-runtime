@@ -1,10 +1,9 @@
 import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
-import { BsDropdownModule, CarouselModule, ModalModule, PopoverModule, TooltipModule } from 'ngx-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
 
 import {
     _WM_APP_PROJECT,
@@ -19,7 +18,11 @@ import {
     DynamicComponentRefProvider,
     isSpotcuesApp
 } from '@wm/core';
-import { WmComponentsModule } from '@wm/components';
+import { WmComponentsModule } from '@wm/components/base';
+import { DialogModule } from '@wm/components/dialogs';
+import { ConfirmDialogModule } from '@wm/components/dialogs/confirm-dialog';
+import { DesignDialogModule } from '@wm/components/dialogs/design-dialog';
+import { PrefabModule } from '@wm/components/prefab';
 import { MobileRuntimeModule } from '@wm/mobile/runtime';
 import { SecurityModule } from '@wm/security';
 import { HttpServiceModule } from '@wm/http';
@@ -27,7 +30,6 @@ import { VariablesModule } from '@wm/variables';
 import { OAuthModule } from '@wm/oAuth';
 
 import { AccessrolesDirective } from './directives/accessroles.directive';
-import { PartialContainerDirective } from './directives/partial-container.directive';
 import { AppSpinnerComponent } from './components/app-spinner.component';
 import { CustomToasterComponent } from './components/custom-toaster.component';
 import { EmptyPageComponent } from './components/empty-component/empty-page.component';
@@ -66,7 +68,6 @@ export function setAngularLocale(I18nService) {
 
 const definitions = [
     AccessrolesDirective,
-    PartialContainerDirective,
     AppSpinnerComponent,
     CustomToasterComponent,
     PrefabDirective,
@@ -75,10 +76,11 @@ const definitions = [
     EmptyPageComponent
 ];
 
-export const carouselModule = CarouselModule.forRoot();
-export const bsDropDownModule = BsDropdownModule.forRoot();
-export const popoverModule = PopoverModule.forRoot();
-export const tooltipModule = TooltipModule.forRoot();
+export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
+    ConfirmDialogModule,
+    DesignDialogModule,
+    DialogModule
+];
 
 // setting parseExpr as exprEvaluator for swipeAnimation
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
@@ -87,17 +89,25 @@ export const tooltipModule = TooltipModule.forRoot();
     declarations: definitions,
     imports: [
         CommonModule,
-        FormsModule,
         RouterModule,
-        ReactiveFormsModule,
         HttpClientModule,
 
-        carouselModule,
-        bsDropDownModule,
-        popoverModule,
-        tooltipModule,
+        ToastrModule,
+        WmComponentsModule,
+        PrefabModule,
+        MobileRuntimeModule,
+        CoreModule,
+        SecurityModule,
+        OAuthModule,
+        VariablesModule,
+        HttpServiceModule,
+        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
+    ],
+    exports: [
+        definitions,
 
-        ModalModule,
+        CommonModule,
+
         WmComponentsModule,
         MobileRuntimeModule,
         CoreModule,
@@ -105,27 +115,7 @@ export const tooltipModule = TooltipModule.forRoot();
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
-    ],
-    exports: [
-        definitions,
-
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-
-        ModalModule,
-        CarouselModule,
-        BsDropdownModule,
-        PopoverModule,
-        TooltipModule,
-
-        WmComponentsModule,
-        MobileRuntimeModule,
-        CoreModule,
-        SecurityModule,
-        OAuthModule,
-        VariablesModule,
-        HttpServiceModule
+        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     entryComponents: [CustomToasterComponent]
 })
@@ -201,7 +191,6 @@ export class RuntimeBaseModule {
 export const WM_MODULES_FOR_ROOT = [
     WmComponentsModule.forRoot(),
     MobileRuntimeModule.forRoot(),
-    ModalModule.forRoot(),
     CoreModule.forRoot(),
     SecurityModule.forRoot(),
     OAuthModule.forRoot(),

@@ -10,7 +10,6 @@
             "@angular/core": "ng.core",
 
             "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
 
             "@ionic-native/app-version": "ionicNative.plugins",
             "@ionic-native/barcode-scanner": "ionicNative.plugins",
@@ -27,7 +26,7 @@
             "@wm/security":  "wm.security",
             "@wm/core":  "wm.core",
             "@wm/variables":  "wm.variables",
-            "@wm/mobile/components": "wm.mobile.components"
+            "@wm/mobile/components/basic": "wm.mobile.components.basic"
         }
     }
 }

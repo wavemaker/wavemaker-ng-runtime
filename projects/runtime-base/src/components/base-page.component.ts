@@ -2,7 +2,7 @@ import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { ScriptLoaderService } from '@wm/core';
-import { PageDirective } from '@wm/components';
+import { PageDirective } from '@wm/components/page';
 
 import { Subject } from 'rxjs';
 
@@ -100,7 +100,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     registerPageParams() {
-        const subscription = this.route.queryParams.subscribe(params => this.pageParams = params);
+        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = params);
         this.registerDestroyListener(() => subscription.unsubscribe());
     }
 
@@ -156,7 +156,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     runPageTransition(transition: string): Promise<void> {
         return new Promise(resolve => {
-            const $target = $('app-page-outlet:first');
+            const $target = this.getPageTransitionTarget();
             if (transition) {
                 const onTransitionEnd = () => {
                     if (resolve) {
@@ -186,7 +186,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     private loadScripts() {
         return new Promise((resolve) => {
-            const scriptsRequired = this.pageDirective.$element.attr('scripts-to-load');
+            const scriptsRequired = this.pageDirective && this.pageDirective.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService
                     .load(...scriptsRequired.split(','))
@@ -197,27 +197,33 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         });
     }
 
+    getPageTransitionTarget() {
+        // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
+        return $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
+    }
+
     ngAfterViewInit(): void {
         this.loadScripts().then(() => {
             const transition = this.navigationService.getPageTransition();
             if (transition) {
-                const pageOutlet = $('app-page-outlet:first');
+                const pageOutlet = this.getPageTransitionTarget();
                 pageOutlet.prepend(pageOutlet.children().first().clone());
             }
             this.runPageTransition(transition).then(() => {
                 this.pageTransitionCompleted = true;
                 (this as any).compilePageContent = true;
+            }).then(() => {
+                setTimeout(() => {
+                    unMuteWatchers();
+                    this.viewInit$.complete();
+                    this.onPageContentReady = () => {
+                        this.fragmentsLoaded$.subscribe(noop, noop, () => {
+                            this.invokeOnReady();
+                        });
+                        this.onPageContentReady = noop;
+                    };
+                }, 300);
             });
-            setTimeout(() => {
-                unMuteWatchers();
-                this.viewInit$.complete();
-                this.onPageContentReady = () => {
-                    this.fragmentsLoaded$.subscribe(noop, noop, () => {
-                        this.invokeOnReady();
-                    });
-                    this.onPageContentReady = noop;
-                };
-            }, 300);
         });
     }
 

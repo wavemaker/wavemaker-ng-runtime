@@ -27,8 +27,32 @@
             "@wm/core": [
                 "libraries/core"
             ],
-            "@wm/components": [
-                "libraries/components"
+            "@wm/components/base": [
+                "libraries/components/base"
+            ],
+            "@wm/components/basic": [
+                "libraries/components/basic/default"
+            ],
+            "@wm/components/input": [
+                "libraries/components/input/default"
+            ],
+            "@wm/components/page": [
+                "libraries/components/page/default"
+            ],
+            "@wm/mobile/components/basic": [
+                "libraries/mobile/components/basic/default"
+            ],
+            "@wm/mobile/components/page": [
+                "libraries/mobile/components/page/default"
+            ],
+            "@wm/components/dialogs": [
+                "libraries/components/dialogs/default"
+            ],
+            "@wm/mobile/components/*": [
+                "libraries/mobile/components/*"
+            ],
+            "@wm/components/*": [
+                "libraries/components/*"
             ],
             "@wm/transpiler": [
                 "libraries/transpiler"
@@ -69,8 +93,8 @@
             "@wm/mobile/runtime": [
                 "libraries/mobile/runtime"
             ],
-            "@wm/mobile/placeholder": [
-                "libraries/mobile/placeholder"
+            "@wm/mobile/runtime/dynamic": [
+                "libraries/mobile/runtime-dynamic"
             ]
         }
     }

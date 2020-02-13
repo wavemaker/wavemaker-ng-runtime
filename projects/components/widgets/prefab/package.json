@@ -1,0 +1,17 @@
+{
+    "name": "@wm/components/prefab",
+    "ngPackage": {
+        "dest": "../../../../libraries/components/prefab",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.prefab",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

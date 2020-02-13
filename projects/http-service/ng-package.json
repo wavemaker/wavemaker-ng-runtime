@@ -11,6 +11,7 @@
             "@angular/common": "ng.common",
             "@angular/common/http": "ng.common.http",
 
+
             "rxjs": "rxjs",
 
             "@wm/core": "wm.core"

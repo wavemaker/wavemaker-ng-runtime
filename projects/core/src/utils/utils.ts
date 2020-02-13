@@ -813,6 +813,8 @@ export const hasCordova = () => {
     return !!window['cordova'];
 };
 
+export const isSpotcues = /Spotcues/i.test(window['navigator'].userAgent);
+
 export const AppConstants = {
     INT_MAX_VALUE: 2147483647
 } ;
@@ -1237,4 +1239,75 @@ export const triggerItemAction  = (scope, item) => {
             openLink(itemLink, linkTarget);
         }
     }
+};
+
+/**
+ * This method is to get datsource from the expression
+ * @param expr - expression of the dataset
+ * @param scope - scope of the widget
+ * Example1: expr - "Variables.staticVar1.dataSet.details[$i].addresses" then the method will return datasource as Variables.staticVar1
+ * Example2: expr - "Widgets.list1.currentItem.addresses" and list1 is bound to "Variables.staticVar1.dataSet.details" then the method will return datasource as Variables.staticVar1
+ */
+export const getDatasourceFromExpr = (expr, scope) => {
+    const isBoundToVariable = _.startsWith(expr, 'Variables.');
+    const isBoundToWidget = _.startsWith(expr, 'Widgets.');
+    const parts = expr.split('.');
+    if (isBoundToVariable) {
+        return _.get(scope.viewParent.Variables, parts[1]);
+    }
+    if (isBoundToWidget) {
+        const widgetScope = _.get(scope.viewParent.Widgets, parts[1]);
+        const widgetDatasetBoundExpr = widgetScope.$attrs.get('datasetboundexpr');
+        let widgetBoundExpression;
+        widgetBoundExpression = (!widgetScope.datasource && widgetDatasetBoundExpr) ? widgetDatasetBoundExpr :  widgetScope.binddataset;
+        return getDatasourceFromExpr(widgetBoundExpression, widgetScope);
+    }
+};
+
+/**
+ * This method is to get dataset bound expression from list currentitem expression
+ * @param expr - bound dataset expression
+ * @param scope - scope of the widget
+ * Example1: expr - "Widgets.list1.currentItem.details" and list1 is bound to "Variables.staticVar1.dataSet" then it returns expression as "Variables.staticVar1.dataSet[$i].details"
+ */
+export const extractCurrentItemExpr = (expr, scope) => {
+    const currentItemRegEx = /^Widgets\..*\.currentItem/g;
+    if (currentItemRegEx.test(expr)) {
+        const parts = expr.split('.');
+        const widgetScope = _.get(scope.viewParent.Widgets, parts[1]);
+        const widgetDatasetBoundExpr = widgetScope.$attrs.get('datasetboundexpr');
+        if (!widgetScope.datasource && widgetDatasetBoundExpr) {
+            expr = expr.replace(/^Widgets\..*\.currentItem/g, `${widgetDatasetBoundExpr}[$i]`);
+            return extractCurrentItemExpr(expr, scope);
+        } else {
+            expr = expr.replace(/^Widgets\..*\.currentItem/g, `${widgetScope.binddataset}[$i]`);
+        }
+    }
+    return expr;
+};
+
+// this will add the html tag to the widget to scope the css to the page.
+export const findRootContainer = ($el) => {
+    let root = $el.closest('.app-prefab');
+    if (!root.length) {
+        root = $el.closest('.app-partial');
+    }
+    if (!root.length) {
+        root = $el.closest('.app-page');
+    }
+    return root.length && root.parent()[0].tagName;
+};
+
+export const VALIDATOR = {
+    REQUIRED: 'required',
+    MAXCHARS: 'maxchars',
+    MINVALUE: 'minvalue',
+    MAXVALUE: 'maxvalue',
+    REGEXP: 'regexp',
+    MINDATE: 'mindate',
+    MAXDATE: 'maxdate',
+    MINTIME: 'mintime',
+    MAXTIME: 'maxtime',
+    EXCLUDEDATES: 'excludedates',
+    EXCLUDEDAYS: 'excludedays'
 };

@@ -1,0 +1,28 @@
+{
+    "name": "@wm/components/data/table",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/data/table",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.data.table",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "rxjs": "rxjs",
+
+                "ngx-bootstrap/tooltip": "ngxBootstrap",
+                "ngx-bootstrap/dropdown": "ngxBootstrap",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/basic": "wm.components.basic",
+                "@wm/components/navigation/menu": "wm.components.navigation.menu",
+                "@wm/components/input": "wm.components.input",
+                "@wm/components/data/list": "wm.components.data.list",
+                "@wm/components/data/pagination": "wm.components.data.pagination"
+            }
+        }
+    }
+}

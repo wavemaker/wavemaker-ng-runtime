@@ -1,0 +1,19 @@
+{
+    "name": "@wm/components/input/rating",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/rating",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input.rating",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "@wm/core": "wm.core",
+                "@wm/components/input": "wm.components.input",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

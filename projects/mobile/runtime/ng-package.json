@@ -12,7 +12,9 @@
             "@angular/common/http": "ng.common.http",
             "@angular/platform-browser": "ng.platformBrowser",
 
+
             "rxjs": "rxjs",
+            "rxjs/operators": "rxjs.operators",
 
             "@ionic-native/app-version": "ionicNative.plugins",
             "@ionic-native/barcode-scanner": "ionicNative.plugins",
@@ -31,9 +33,9 @@
             "@wm/core": "wm.core",
             "@wm/mobile/core": "wm.mobile.core",
             "@wm/mobile/variables": "wm.mobile.variables",
-            "@wm/mobile/components": "wm.mobile.components",
+            "@wm/mobile/components/basic": "wm.mobile.components.basic",
             "@wm/mobile/offline": "wm.mobile.offline",
-            "@wm/components": "wm.components",
+            "@wm/components/base": "wm.components.base",
             "@wm/variables": "wm.variables",
             "@wm/security": "wm.security"
         }

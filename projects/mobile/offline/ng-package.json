@@ -13,6 +13,7 @@
             "@angular/platform-browser": "ng.platformBrowser",
 
             "rxjs": "rxjs",
+
             "@ionic-native/app-version": "ionicNative.plugins",
             "@ionic-native/file": "ionicNative.plugins",
             "@ionic-native/sqlite": "ionicNative.plugins",
@@ -21,7 +22,7 @@
 
             "@wm/core": "wm.core",
             "@wm/mobile/core": "wm.mobile.core",
-            "@wm/components": "wm.components",
+            "@wm/components/base": "wm.components.base",
             "@wm/transpiler": "wm.transpiler",
             "@wm/security": "wm.security",
             "@wm/variables": "wm.variables"

@@ -1,4 +1,4 @@
-import { Element } from '@angular/compiler';
+import { Attribute, Element } from '@angular/compiler';
 
 import { FormWidgetType } from '../enums/enums';
 
@@ -114,6 +114,45 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
     return tmpl;
 };
 
+export const getRequiredFormWidget = (widgetType): string => {
+    switch (widgetType) {
+        case FormWidgetType.AUTOCOMPLETE:
+        case FormWidgetType.TYPEAHEAD:
+            return 'wm-search';
+        case FormWidgetType.CHIPS:
+            return 'wm-chips';
+        case FormWidgetType.COLORPICKER:
+            return 'wm-colorpicker';
+        case FormWidgetType.CURRENCY:
+            return 'wm-currency';
+        case FormWidgetType.DATE:
+            return 'wm-date';
+        case FormWidgetType.DATETIME:
+            return 'wm-datetime';
+        case FormWidgetType.TIME:
+        case FormWidgetType.TIMESTAMP:
+            return 'wm-time';
+        case FormWidgetType.RATING:
+            return 'wm-rating';
+        case FormWidgetType.RICHTEXT:
+            return 'wm-richtexteditor';
+        case FormWidgetType.SLIDER:
+            return 'wm-slider';
+        default:
+            return 'wm-text';
+    }
+};
+
+// This mehtod is used to add datasetboundexpr attribute for node
+const addDatasetBoundExprAttribute = (childNode, attr, attrValue) => {
+    attrValue = attrValue.replace('bind:', '');
+    const datasetBoundAttribute = childNode.attrs.find( a => a.name === 'datasetboundexpr');
+    if (attr.name === 'dataset' && !datasetBoundAttribute) {
+        childNode.attrs.push(new Attribute('datasetboundexpr', attrValue, attr.sourceSpan, attr.valueSpan));
+    }
+};
+
+
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
 export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '', referenceName: string = 'item') => {
 
@@ -123,7 +162,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
     let formWidgetsRegex;
     let nodes: Array<Element>;
     const widgetList = {
-        'wm-list': ['itemclass', 'disableitem']
+        'wm-list': ['itemclass', 'disableitem', 'dataset']
     };
 
     if (widgetName) {
@@ -142,6 +181,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
     nodes.forEach((childNode: Element) => {
         if (childNode.name) {
             const nodeName = childNode.name;
+            const parentDataSetLengthRegex =  new RegExp('bind:\\s*\\(*' + parentDataSet + '\\)*\\.length\\)*');
             childNode.attrs.forEach((attr) => {
                 // trim the extra spaces in bindings
                 let value = attr.value && attr.value.trim();
@@ -150,8 +190,9 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     if (!widgetList[nodeName] || (widgetList[nodeName] && widgetList[nodeName].indexOf(attr.name) > -1)) {
                         // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                         // [WMS-17908]: if child widget contains bind expression as parendataset.length > 0 then dont replace it with item
-                        if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet && !_.includes(value, 'bind:' + parentDataSet + '.length')) {
+                        if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet && !parentDataSetLengthRegex.test(value)) {
                             value = value.replace('bind:', '');
+                            addDatasetBoundExprAttribute(childNode, attr, value);
                             value = value.replace(regex, referenceName);
                             value = 'bind:' + value;
                         }
@@ -162,6 +203,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                         if (value.includes('.formWidgets') || value.includes('.filterWidgets')) {
                             value = value.replace(formWidgetsRegex, 'Widgets');
                         }
+                        addDatasetBoundExprAttribute(childNode, attr, value);
                         value = value.replace(currentItemRegEx, referenceName);
                     }
                     if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {

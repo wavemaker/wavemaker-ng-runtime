@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 
-import { PrefabDirective } from '@wm/components';
+import { PrefabDirective } from '@wm/components/prefab';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
 

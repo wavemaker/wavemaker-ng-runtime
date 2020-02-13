@@ -1,0 +1,21 @@
+{
+    "name": "@wm/components/input/color-picker",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/input/color-picker",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.input.colorpicker",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+                "@angular/forms": "ng.forms",
+
+                "ngx-color-picker": "zef.ngxColorPicker",
+
+                "@wm/core": "wm.core",
+                "@wm/components/input": "wm.components.input",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}

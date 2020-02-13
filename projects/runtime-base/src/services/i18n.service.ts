@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
-
-import { BsLocaleService, defineLocale } from 'ngx-bootstrap';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 
 import {
     _WM_APP_PROJECT,
@@ -135,6 +135,7 @@ export class I18nServiceImpl extends AbstractI18nService {
                 // For ngx bootstrap locale, get the config from script and apply locale
                 let _config;
                 fn.apply({moment: {defineLocale: (code, config) => _config = config}});
+                // TODO: Moved ngxBootstrap locale configuration to app.module.ts
                 defineLocale(this.selectedLocale, _config);
                 this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
             });
@@ -163,7 +164,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         });
     }
 
-    protected loadCalendarLocaleBundle(calendarLocale) {
+    protected loadCalendarLocaleBundle(calendarLocale, force = false) {
         const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
         let path: string;
         if (calendarLocale) {
@@ -173,7 +174,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         }
 
         // return in case of mobile app or if selected locale is default supported locale.
-        if (isMobile() || isMobileApp() || this.selectedLocale === this.defaultSupportedLocale) {
+        if (!force && (isMobile() || isMobileApp() || this.selectedLocale === this.defaultSupportedLocale)) {
             return;
         }
 
@@ -190,7 +191,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         if (libLocale.moment) {
             this.loadMomentLocaleBundle(libLocale.moment);
         }
-        if (libLocale.fullCalendar) {
+        if (libLocale.fullCalendar && window['FullCalendar']) {
             this.loadCalendarLocaleBundle(libLocale.fullCalendar);
         }
         if (libLocale.angular) {
@@ -267,6 +268,13 @@ export class I18nServiceImpl extends AbstractI18nService {
             });
         }
         return _.map(languages, _.toLower);
+    }
+
+    public initCalendarLocale(): Promise<any> {
+        if (this.selectedLocale !== 'en') {
+            return this.loadCalendarLocaleBundle(this.selectedLocale, true);
+        }
+        return Promise.resolve();
     }
 
     public isAngularLocaleLoaded() {

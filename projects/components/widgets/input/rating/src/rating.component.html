@@ -1,0 +1,19 @@
+<div [(ngModel)]="modelByKey" (focus)="onFocus($event)" ngDefaultControl role="radiogroup" class="ratings-wrapper">
+    <div *ngIf="!readonly" class="rating-style">
+        <label *ngFor="let rate of ratingItems;"
+               [ngClass]="{active : rate.index <= selectedRatingValue}"
+               [ngStyle]="{'font-size' :iconsize, color: rate.index <= selectedRatingValue && iconcolor}"
+               [title]="rate.label || rate.index"
+               (touchstart)="onTouchStart($event)"
+               (mouseleave)="onMouseleave($event, rate)"
+               (mouseover)="onMouseOver($event, rate)"
+               [for]="_id + '-' + rate.index">
+            <input #ratingInput type="radio" aria-label="rating radio buttons" aria-checked="false" aria-multiselectable="true"
+                   [id]="_id + '-' + rate.index" (click)="onRatingClick($event, rate)" name="ratings-id" [value]="rate.key || rate.index"/>
+        </label>
+    </div>
+    <div [class.hidden]="!readonly" [ngStyle]="{'font-size' :iconsize}" class="ratings-container disabled" >
+        <div class="ratings active" [ngStyle]="{width: ratingsWidth, color: iconcolor}"></div>
+    </div>
+    <label *ngIf="showcaptions" class="caption" [textContent]="caption"></label>
+</div>

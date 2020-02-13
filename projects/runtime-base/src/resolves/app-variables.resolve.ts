@@ -22,8 +22,8 @@ export class AppVariablesResolve implements Resolve<any> {
             return true;
         }
 
-        return this.appVariablesProvider.getAppVariables()
-            .then((variables) => this.appManager.loadAppVariables(variables))
+        return Promise.all([this.appManager.loadSecurityConfig(), this.appManager.loadMetadata(), this.appVariablesProvider.getAppVariables()])
+            .then((data) => this.appManager.loadAppVariables(data[2]))
             .then(() => appVariablesLoaded = true);
     }
 }

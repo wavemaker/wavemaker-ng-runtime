@@ -23,13 +23,16 @@ const generateHashForScripts = () => {
     return new Promise(resolve => {
         fs.readdir(opPath, (err, items) => {
             const promises = items.map(i => {
-                const nohashIndex = i.indexOf('-NOHASH.');
+                const nohashIndex = i.indexOf('-NOHASH.js');
                 if (nohashIndex > 0) {
-                    const ext = i.substring(nohashIndex + 8);
                     const key = i.substring(0, nohashIndex);
                     return generateHash(`${opPath}/${i}`).then( hash => {
-                        scriptsMap[`${key}.${ext}`] = `${key}.${hash}.${ext}`;
-                        return copyFile(`${opPath}/${key}-NOHASH.${ext}`, `${opPath}/${key}.${hash}.${ext}`);
+                        scriptsMap[`${key}.js`] = `${key}.${hash}.js`;
+                        return Promise.all([
+                            copyFile(`${opPath}/${key}-NOHASH.js`, `${opPath}/${key}.${hash}.js`),
+                            copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
+                            copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
+                        ]);
                     });
                 }
             });
@@ -41,6 +44,11 @@ const generateHashForScripts = () => {
 };
 (async () => {
     try {
+        const angularJson = require(`${process.cwd()}/angular.json`);
+        let deployUrl = angularJson['projects']['angular-app']['architect']['build']['options']['deployUrl'];
+        if (deployUrl.endsWith('/')) {
+            deployUrl = deployUrl.substr(0, deployUrl.length - 1);
+        }
         fs.copyFileSync('./dist/ng-bundle/index.html', './dist/index.html');
         const contents = await readFile(`./dist/index.html`, `utf8`);
         const $ = cheerio.load(contents);
@@ -49,7 +57,7 @@ const generateHashForScripts = () => {
         isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.js`);
             if(isDevBuild){
                 $("head").append(
-                    `<script> const WMStylesPath = "ng-bundle/wm-styles.js" </script>`
+                    `<script> const WMStylesPath = "${deployUrl}/wm-styles.js" </script>`
                 )
             }
             if(isProdBuild){
@@ -63,7 +71,7 @@ const generateHashForScripts = () => {
                 const hash = await generateHash(`${opPath}/wm-styles.css`);
                 copyCssFiles(hash);
                 $("head").append(
-                    `<script> const WMStylesPath = "ng-bundle/wm-styles.${hash}.css" </script>`
+                    `<script> const WMStylesPath = "${deployUrl}/wm-styles.${hash}.css" </script>`
                 );
             }
         await writeFile(`./dist/index.html`, $.html());

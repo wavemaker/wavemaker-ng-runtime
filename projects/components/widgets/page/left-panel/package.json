@@ -1,0 +1,19 @@
+{
+    "name": "@wm/components/page/left-panel",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/page/left-panel",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.page.leftpanel",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@swipey": "swipey",
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base",
+                "@wm/components/page": "wm.components.page"
+            }
+        }
+    }
+}

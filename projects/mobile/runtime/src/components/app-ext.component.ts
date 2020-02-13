@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 
 import { hasCordova } from '@wm/core';
-import { FileBrowserComponent, FileSelectorService, ProcessManagerComponent, ProcessManagementService } from '@wm/mobile/components';
+import { FileBrowserComponent, FileSelectorService, ProcessManagerComponent, ProcessManagementService } from '@wm/mobile/components/basic';
 
 @Component({
     selector: '[wmAppExt]',
-    template: `<ng-container>
+    template: `<ng-container> 
         <div wmNetworkInfoToaster></div>
         <div wmAppUpdate></div>
         <div wmMobileFileBrowser></div>
