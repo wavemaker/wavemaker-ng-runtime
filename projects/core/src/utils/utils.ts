@@ -1038,7 +1038,7 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
                         obj[targetNodeKey] = newVal;
                     }
                     filter$.next({filterExpressions, newVal});
-                })
+                }, undefined, false, {arrayType: _.includes(['in','notin'], obj.matchMode)})
             );
         }
     };
