@@ -9,6 +9,7 @@ export const registerProps = () => {
                 ['animationinterval', {value: 3, ...  PROP_NUMBER}],
                 ['controls', {value: 'both', ... PROP_STRING}],
                 ['dataset', PROP_ANY],
+                ['name', PROP_STRING],
                 ['nodatamessage', {value: 'No Data Found', ... PROP_STRING}],
                 ['show', PROP_BOOLEAN]
             ]
