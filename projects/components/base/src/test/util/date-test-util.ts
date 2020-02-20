@@ -1,5 +1,7 @@
-import { getHtmlSelectorElement } from "./component-test-util";
-declare const moment
+import { getElementByTagOnDocQuery, getHtmlSelectorElement, onClickCheckTaglengthOnBody } from "./component-test-util";
+import { defineLocale, deLocale } from "ngx-bootstrap";
+import { getFormattedDate, getNativeDateObject } from "@wm/core";
+declare const moment;
 
 export const datepatternTest = (fixture, selector: string, inputSelector: string, attr?: string, isLower?: boolean) => {
     fixture.whenStable().then(() => {
@@ -78,4 +80,46 @@ export const excludedDaysDisable = (ele) => {
 
 export const getTimePickerElement = () => {
     return document.getElementsByTagName('timepicker')[0].getElementsByClassName('btn-link');
+}
+
+export const localizedDatePickerTest = (fixture, btnClass) => {
+    onClickCheckTaglengthOnBody(fixture, btnClass, 'bs-datepicker-container', 1);
+    fixture.whenStable().then(() => {
+        expect($('bs-datepicker-container').find('.bs-datepicker-head button.current span')[0].innerText).toBe(deLocale.months[new Date().getMonth()]);
+        expect($('bs-datepicker-container').find('.days.weeks th')[new Date().getDay()].innerText).toBe(deLocale.weekdaysShort[new Date().getDay()]);
+    });
+}
+
+export const localizedTimePickerTest = (fixture, meridians, btnClass) => {
+    onClickCheckTaglengthOnBody(fixture, btnClass, null, null);
+    fixture.whenStable().then(() => {
+        const timePicker = getElementByTagOnDocQuery('timepicker');
+        expect(timePicker[0].querySelector('button').innerHTML).toEqual(meridians[0]);
+    });
+}
+
+export const localizedValueOnInputTest = (fixture, value, wmComponent, pattern?) => {
+    const input =  getHtmlSelectorElement(fixture, '.app-textbox');
+    input.nativeElement.value = value;
+    input.triggerEventHandler('change', {target: input.nativeElement});
+    fixture.detectChanges();
+    const dateObj = getNativeDateObject(value, {meridians: (wmComponent as any).meridians, pattern: pattern});
+    expect(getFormattedDate((wmComponent as any).datePipe, dateObj, (wmComponent as any).outputformat)).toEqual(wmComponent.datavalue);
+}
+
+export class MockAbstractI18nService {
+    public getSelectedLocale() {
+        return 'en';
+    }
+}
+
+export class MockAbstractI18nServiceDe {
+    constructor(bsLocaleService) {
+        defineLocale('de', deLocale);
+        bsLocaleService.use('de');
+        moment.defineLocale('de', deLocale);
+    }
+    public getSelectedLocale() {
+        return 'de';
+    }
 }

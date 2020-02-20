@@ -1,13 +1,23 @@
 import { Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
-
-import { TimepickerComponent } from 'ngx-bootstrap/timepicker';
-
-import { $appDigest, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject } from '@wm/core';
+import { TimepickerConfig } from 'ngx-bootstrap';
+import {
+    $appDigest,
+    AbstractI18nService,
+    addClass,
+    addEventListenerOnElement,
+    adjustContainerPosition,
+    AppDefaults,
+    EVENT_LIFE,
+    FormWidgetType,
+    getDisplayDateTimeFormat,
+    getFormattedDate,
+    getNativeDateObject
+} from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
-import { BaseDateTimeComponent } from './../base-date-time.component';
+import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './time.props';
 
 const CURRENT_TIME = 'CURRENT_TIME';
@@ -22,7 +32,8 @@ declare const _, moment, $;
     providers: [
         provideAs(TimeComponent, NG_VALUE_ACCESSOR, true),
         provideAs(TimeComponent, NG_VALIDATORS, true),
-        provideAsWidgetRef(TimeComponent)
+        provideAsWidgetRef(TimeComponent),
+        { provide: TimepickerConfig,  deps: [AbstractI18nService], useFactory: getTimepickerConfig }
     ]
 })
 export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
@@ -104,8 +115,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private bsTimeValue: Date;
 
     private keyEventPlugin;
-
-    @ViewChild(TimepickerComponent) bsTimePicker;
 
     constructor(
         inj: Injector,
@@ -224,7 +233,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method triggered when the time input changes
      */
     onDisplayTimeChange($event) {
-        const newVal = getNativeDateObject($event.target.value);
+        const newVal = getNativeDateObject($event.target.value, {meridians: this.meridians});
         // time pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value)) {
@@ -326,7 +335,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate);
+            const newVal = getNativeDateObject(enteredDate, {meridians: this.meridians});
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }

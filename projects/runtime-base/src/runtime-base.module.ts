@@ -52,17 +52,22 @@ import { PrefabPreviewComponent } from './components/prefab-preview.component';
 import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
 import {CanDeactivatePageGuard} from './guards/can-deactivate-page.guard';
 
-export function InitializeApp(I18nService) {
-    return () => {
+const initializeProjectDetails = () => {
     _WM_APP_PROJECT.id = location.href.split('/')[3];
     _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
     _WM_APP_PROJECT.ngDest = 'ng-bundle/';
+};
+
+export function InitializeApp(I18nService) {
+    return () => {
+        initializeProjectDetails();
         return I18nService.loadDefaultLocale();
     };
 }
 
 export function setAngularLocale(I18nService) {
-    return I18nService.isAngularLocaleLoaded() ? I18nService.getSelectedLocale() : I18nService.getDefaultSupportedLocale();
+    initializeProjectDetails();
+    return I18nService.deduceAppLocale();
 }
 
 const definitions = [

@@ -90,12 +90,12 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method triggered when the date input changes
      */
-    onDisplayDateChange($event, isNativePicker) {
+    onDisplayDateChange($event, isNativePicker?) {
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
         }
-        const newVal = getDateObj($event.target.value);
+        const newVal = getDateObj($event.target.value, {pattern: this.datepattern});
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -200,9 +200,9 @@ export class DateComponent extends BaseDateTimeComponent {
     private onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
-            const newVal = getDateObj(event.target.value);
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
+                const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
                 const inputVal = event.target.value.trim();

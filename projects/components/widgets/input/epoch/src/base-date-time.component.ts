@@ -1,9 +1,11 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { Validator, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/common';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
+import { TimepickerComponent, TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
+import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
 
 import { ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
@@ -22,6 +24,13 @@ const DATAENTRYMODE_DROPDOWN_OPTIONS = {
     DEFAULT: 'default'
 };
 
+// Providing meridians to the timepicker baesd on selected locale
+export function getTimepickerConfig(i18nService): TimepickerConfig {
+    return Object.assign(new TimepickerConfig(), {
+        meridians: getLocaleDayPeriods(i18nService.getSelectedLocale(), FormStyle.Format, TranslationWidth.Abbreviated)
+    });
+}
+
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
     protected excludedDaysToDisable: Array<number>;
@@ -39,8 +48,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public timepattern: string;
     protected showseconds: boolean;
     protected ismeridian: boolean;
+    protected meridians: any;
     protected datePipe;
+    protected i18nService;
     protected isReadOnly = false;
+    protected selectedLocale: string;
     public selectfromothermonth: boolean;
 
     protected dateNotInRange: boolean;
@@ -56,11 +68,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected bsDatePickerDirective: BsDatepickerDirective;
 
     @ViewChild(BsDropdownDirective) protected bsDropdown;
+    @ViewChild(TimepickerComponent) protected bsTimePicker;
     private validateType: string;
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
         this.datePipe = this.inj.get(ToDatePipe);
+        this.i18nService = this.inj.get(AbstractI18nService);
+        this.selectedLocale = this.i18nService.getSelectedLocale();
+
+        this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
     }
 
 
@@ -634,7 +651,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private timeFormatValidation() {
         const enteredDate = $(this.nativeElement).find('input').val();
-        const newVal = getNativeDateObject(enteredDate);
+        const newVal = getNativeDateObject(enteredDate, {meridians: this.meridians, pattern: this.datepattern});
         if (!this.formatValidation(newVal, enteredDate)) {
             return;
         }

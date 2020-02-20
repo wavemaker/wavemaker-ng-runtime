@@ -3,12 +3,12 @@ import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
-import { TimepickerComponent } from 'ngx-bootstrap/timepicker';
+import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges } from '@wm/core';
+import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
-import { BaseDateTimeComponent } from './../base-date-time.component';
+import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './date-time.props';
 
 declare const moment, $, _;
@@ -24,7 +24,8 @@ const CURRENT_DATE = 'CURRENT_DATE';
     providers: [
         provideAs(DatetimeComponent, NG_VALUE_ACCESSOR, true),
         provideAs(DatetimeComponent, NG_VALIDATORS, true),
-        provideAsWidgetRef(DatetimeComponent)
+        provideAsWidgetRef(DatetimeComponent),
+        { provide: TimepickerConfig,  deps: [AbstractI18nService], useFactory: getTimepickerConfig }
     ]
 })
 export class DatetimeComponent extends BaseDateTimeComponent implements AfterViewInit, OnDestroy {
@@ -57,7 +58,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
-    @ViewChild(TimepickerComponent) bsTimePicker;
 
     /**
      * This property checks if the timePicker is Open
@@ -212,7 +212,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
         // So actual bootstrap input target width we made it to 0 so bootstrap calculating the calendar container top position impropery.
         // To fix the container top position set the width 1px;
-        this.$element.find('.model-holder').width('1px')
+        this.$element.find('.model-holder').width('1px');
 
         this.bsDateValue ? this.activeDate = this.bsDateValue : this.activeDate = new Date();
         if (!this.bsDateValue) {
@@ -309,7 +309,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             return;
         }
         let newVal = $event.target.value.trim();
-        newVal = newVal ? getNativeDateObject(newVal) : undefined;
+        newVal = newVal ? getNativeDateObject(newVal, {pattern: this.datepattern, meridians: this.meridians}) : undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -331,9 +331,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             let newVal = event.target.value.trim();
-            newVal = newVal ? getNativeDateObject(newVal) : undefined;
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
+                newVal = newVal ? getNativeDateObject(newVal, {pattern: this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
                 const inputVal = event.target.value.trim();
@@ -364,7 +364,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate);
+            const newVal = getNativeDateObject(enteredDate, {pattern: this.datepattern, meridians: this.meridians});
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
