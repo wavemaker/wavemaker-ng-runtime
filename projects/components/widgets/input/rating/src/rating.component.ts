@@ -201,9 +201,18 @@ export class RatingComponent extends DatasetAwareFormComponent {
                 this.ratingsWidth = this.calculateRatingsWidth();
             }
         } else if (key === 'maxvalue') {
+            /** Storing the datavalue in temp variable and assiging back to datavalue 
+             * after default datalist is prepared to trigger Dataset Aware class select cycle 
+             * as the datavalue property change is triggering first rather than maxvalue 
+             * in the rating widget is used inside a datatable
+             */
+            let tempDataValue = this.datavalue;
             this.prepareRatingDataset();
             // reset all the items.
             this.resetDatasetItems();
+            if (!_.isUndefined(tempDataValue)) {
+                this.datavalue = tempDataValue;
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
