@@ -1,19 +1,51 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { TimeComponent } from './time.component';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
-import { ComponentsTestModule } from "../../../../../base/src/test/components.test.module";
-import { compileTestComponent, getHtmlSelectorElement, notHavingTheAttribute, hasAttributeCheck, checkCustomElementClass, onClickCheckTaglengthOnBody } from "../../../../../base/src/test/util/component-test-util";
-import { getTimeFieldValue, triggerTimerClickonArrowsByIndex, datepatternTest, outputpatternTest, getTimePickerElement } from '../../../../../base/src/test/util/date-test-util'
-import { TimepickerModule, BsDropdownModule } from 'ngx-bootstrap';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
+import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
+import {
+    compileTestComponent,
+    getHtmlSelectorElement,
+    notHavingTheAttribute,
+    hasAttributeCheck,
+    checkCustomElementClass,
+    onClickCheckTaglengthOnBody
+} from '../../../../../base/src/test/util/component-test-util';
+import {
+    getTimeFieldValue,
+    triggerTimerClickonArrowsByIndex,
+    datepatternTest,
+    outputpatternTest,
+    getTimePickerElement,
+    localizedTimePickerTest, localizedValueOnInputTest, MockAbstractI18nService
+} from '../../../../../base/src/test/util/date-test-util';
+import { TimepickerModule, BsDropdownModule, deLocale } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
 import { async, ComponentFixture } from '@angular/core/testing';
-import { UserDefinedExecutionContext, AppDefaults } from '@wm/core';
+import {
+    UserDefinedExecutionContext,
+    AppDefaults,
+    AbstractI18nService,
+    getNativeDateObject,
+    getFormattedDate
+} from '@wm/core';
 import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
-import { DatePipe } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import { WmComponentsModule } from '@wm/components/base';
-declare const moment
+import localeDE from '@angular/common/locales/de';
+
+declare const moment;
+
 const currentTime = moment(new Date()).format('hh:mm:ss');
+
+class MockAbstractI18nServiceDe {
+    constructor() {
+        moment.defineLocale('de', deLocale);
+    }
+    public getSelectedLocale() {
+        return 'de';
+    }
+}
 
 const markup = `<div wmTime  name="time1" hint="my time" datavalue="${currentTime}" maxtime="${currentTime}" mintime="${currentTime}"
 shortcutkey="g" tabindex="0" outputformat="hh:mm:ss"  timepattern="hh:mm:ss" hourstep="1" minutestep="20" required="true" showdropdownon="button"
@@ -66,9 +98,10 @@ const dateComponentModuleDef: ITestModuleDef = {
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: AppDefaults, useValue: AppDefaults },
         { provide: ToDatePipe, useClass: ToDatePipe },
-        { provide: DatePipe, useClass: DatePipe }
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ]
-}
+};
 
 const dateComponentDef: ITestComponentDef = {
     $unCompiled: $(markup),
@@ -78,7 +111,7 @@ const dateComponentDef: ITestComponentDef = {
 
     testModuleDef: dateComponentModuleDef,
     testComponent: TimeWrapperComponent
-}
+};
 
 const TestBase: ComponentTestBase = new ComponentTestBase(dateComponentDef);
 TestBase.verifyPropsInitialization();
@@ -216,8 +249,6 @@ describe("TimeComponent", () => {
         hasAttributeCheck(fixture, '.btn-date', 'disabled');
 
     }));
-
-
 
     it("should show the timer panel on click the time button ", async(() => {
         onClickCheckTaglengthOnBody(fixture, '.btn-date', null, null);
@@ -359,8 +390,62 @@ describe("TimeComponent", () => {
     }));
 
     /************************* Events end ****************************************** **/
+});
 
 
+const dateComponentLocaleModuleDef: ITestModuleDef = {
+    declarations: [TimeWrapperComponent, TimeComponent],
+    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'de' },
+        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: AppDefaults, useValue: AppDefaults },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nServiceDe }
+    ]
+};
 
+describe('TimeComponent with localization', () => {
+    let timeWrapperComponent: TimeWrapperComponent;
+    let wmComponent: TimeComponent;
+    let fixture: ComponentFixture<TimeWrapperComponent>;
 
+    beforeEach((async () => {
+        // register the selected locale language
+        registerLocaleData(localeDE);
+        fixture = compileTestComponent(dateComponentLocaleModuleDef, TimeWrapperComponent);
+        timeWrapperComponent = fixture.componentInstance;
+        wmComponent = timeWrapperComponent.wmComponent;
+        fixture.detectChanges();
+    }));
+
+    it('should create the time Component with de locale', () => {
+        expect(timeWrapperComponent).toBeTruthy() ;
+    });
+
+    it ('should display localized meriains in time picker', async(() => {
+         localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-date');
+    }));
+
+    it ('should display the defult value in de format', async(() => {
+        const time = '02:00 PM', timepattern = 'hh:mm a';
+        wmComponent.getWidget().timepattern = timepattern;
+        wmComponent.datavalue = time;
+        fixture.detectChanges();
+        const dateObj = getNativeDateObject(time);
+        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, timepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
+    }));
+
+    it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', async(() => {
+        const time = '03:15:00 nachm.', timepattern = 'hh:mm:ss a', input =  getHtmlSelectorElement(fixture, '.app-textbox');
+        wmComponent.getWidget().timepattern = timepattern;
+        localizedValueOnInputTest(fixture, '03:15:00 nachm.', wmComponent);
+    }));
+
+    it('should update the datavalue without error when we type "de" format time in inputbox with "24H" format', async(() => {
+        const time = '15:15:00', timepattern = 'HH:mm:ss';
+        wmComponent.getWidget().timepattern = timepattern;
+        localizedValueOnInputTest(fixture, '15:15:00', wmComponent);
+    }));
 });

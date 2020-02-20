@@ -1,9 +1,16 @@
 import { By } from '@angular/platform-browser';
-import { Component, ViewChild } from '@angular/core';
+import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
-import { UserDefinedExecutionContext, AppDefaults } from '@wm/core';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import {
+    UserDefinedExecutionContext,
+    AppDefaults,
+    AbstractI18nService,
+    getDateObj,
+    getFormattedDate
+} from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { DatePipe } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WmComponentsModule } from '@wm/components/base';
 
@@ -13,10 +20,19 @@ import { DateComponent } from './date.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
 import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
 import { compileTestComponent, getHtmlSelectorElement, checkElementClass, onClickCheckTaglengthOnBody, onClickCheckClassEleLengthOnBody, hasAttributeCheck } from '../../../../../base/src/test/util/component-test-util';
-import { datepatternTest, outputpatternTest, disableMaxDatePanel, disableMindatePanel, excludedDaysDisable, expectCheckEleHasDisabled } from '../../../../../base/src/test/util/date-test-util';
-import { moment } from 'ngx-bootstrap/chronos/test/chain';
+import {
+    datepatternTest,
+    outputpatternTest,
+    disableMaxDatePanel,
+    disableMindatePanel,
+    excludedDaysDisable,
+    expectCheckEleHasDisabled,
+    localizedDatePickerTest,
+    MockAbstractI18nService,
+    MockAbstractI18nServiceDe
+} from '../../../../../base/src/test/util/date-test-util';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
-// import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
+import localeDE from '@angular/common/locales/de';
 
 const mockApp = {
     subscribe: () => { }
@@ -74,7 +90,8 @@ const dateComponentModuleDef: ITestModuleDef = {
     { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
     { provide: AppDefaults, useValue: AppDefaults },
     { provide: ToDatePipe, useClass: ToDatePipe },
-    { provide: DatePipe, useClass: DatePipe }
+    { provide: DatePipe, useClass: DatePipe },
+    { provide: AbstractI18nService, useClass: MockAbstractI18nService }
 
     ]
 };
@@ -283,7 +300,7 @@ describe('DateComponent', () => {
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
             fixture.whenStable().then(() => {
                 excludedDaysDisable(ele);
-            })
+            });
 
         });
 
@@ -306,7 +323,7 @@ describe('DateComponent', () => {
                 const eleRow = datePickerRows[0];
                 expectCheckEleHasDisabled(eleRow, 5);
 
-            })
+            });
         });
 
     }));
@@ -369,5 +386,64 @@ describe('DateComponent', () => {
     //     })
 
     // });
+
+});
+
+const dateComponentLocaleModuleDef: ITestModuleDef = {
+    declarations: [DateWrapperComponent, DateComponent],
+    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'de' },
+        { provide: Router, useValue: Router },
+        { provide: SecurityService, useValue: SecurityService },
+        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: AppDefaults, useValue: AppDefaults },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AbstractI18nService,  deps: [BsLocaleService], useClass: MockAbstractI18nServiceDe }
+
+    ]
+};
+
+describe(('Date Component with Localization'), () => {
+    let dateWrapperComponent: DateWrapperComponent;
+    let wmComponent: DateComponent;
+    let fixture: ComponentFixture<DateWrapperComponent>;
+
+    beforeEach((async () => {
+        // register the selected locale language
+        registerLocaleData(localeDE);
+        fixture = compileTestComponent(dateComponentLocaleModuleDef, DateWrapperComponent);
+        dateWrapperComponent = fixture.componentInstance;
+        wmComponent = dateWrapperComponent.wmComponent;
+        fixture.detectChanges();
+    }));
+
+    it('should create the date Component with de locale', () => {
+        expect(dateWrapperComponent).toBeTruthy() ;
+    });
+
+    it ('should display localized dates in date picker', async(() => {
+         localizedDatePickerTest(fixture, '.btn-time');
+    }));
+
+    it ('should display the defult value in de format', async(() => {
+        const date = '2020-02-20', datepattern = 'yyyy-MM-dd';
+        wmComponent.getWidget().datepattern = datepattern;
+        wmComponent.datavalue = date;
+        fixture.detectChanges();
+        const dateObj = getDateObj(date);
+        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, datepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
+    }));
+
+    it('should update the datavalue without error when we type "de" format date in inputbox', async(() => {
+        const date = '2020, 21 Februar', datepattern = 'yyyy, dd MMMM', input =  getHtmlSelectorElement(fixture, '.app-textbox');
+        wmComponent.getWidget().datepattern = datepattern;
+        input.nativeElement.value = date;
+        input.triggerEventHandler('change', {target: input.nativeElement});
+        fixture.detectChanges();
+        const dateObj = getDateObj(date, {pattern: datepattern});
+        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, (wmComponent as any).outputformat)).toEqual(wmComponent.datavalue);
+    }));
 
 });

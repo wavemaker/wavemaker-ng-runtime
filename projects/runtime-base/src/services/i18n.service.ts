@@ -229,7 +229,8 @@ export class I18nServiceImpl extends AbstractI18nService {
         return this.loadLocaleBundles(libLocale).then(() => this.updateLocaleDirection());
     }
 
-    public loadDefaultLocale() {
+    private deduceAppLocale() {
+        // computation to find app default locale
         const _acceptLang = this.getAcceptedLanguages();
         _acceptLang.push(getWmProjectProperties().defaultLanguage);
 
@@ -242,7 +243,12 @@ export class I18nServiceImpl extends AbstractI18nService {
         _supportedLang = _supportedLang || [_defaultLang];
 
         const defaultLanguage = _defaultLang || _supportedLang[0];
-        return this.setSelectedLocale(defaultLanguage);
+        return defaultLanguage;
+    }
+
+    public loadDefaultLocale() {
+        const locale = this.deduceAppLocale();
+        return this.setSelectedLocale(locale);
     }
 
     public getLocalizedMessage(message, ...args) {
