@@ -37,4 +37,4 @@ export enum PROP_TYPE {
 export const PROP_STRING: any = {type: PROP_TYPE.STRING};
 export const PROP_NUMBER: any = {type: PROP_TYPE.NUMBER};
 export const PROP_BOOLEAN: any = {type: PROP_TYPE.BOOLEAN};
-export const PROP_ANY: any = {};
+export const PROP_ANY: any = {arrayType: true};

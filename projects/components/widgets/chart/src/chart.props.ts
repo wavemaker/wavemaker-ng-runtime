@@ -12,7 +12,7 @@ export const registerProps = () => {
                 ['bubblesize', PROP_STRING],
                 ['centerlabel', PROP_STRING],
                 ['class', PROP_STRING],
-                ['customcolors', PROP_STRING],
+                ['customcolors', PROP_ANY],
                 ['dataset', PROP_ANY],
                 ['datasource', PROP_STRING],
                 ['donutratio', {value: 'medium', ...PROP_STRING}],

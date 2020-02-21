@@ -1,6 +1,7 @@
 import { IDGenerator } from './id-generator';
 
 import { $parseExpr } from './expression-parser';
+import { findValueOf } from './utils';
 
 declare const _;
 
@@ -34,9 +35,59 @@ export const unMuteWatchers = () => {
     triggerWatchers();
 };
 
-export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false) => {
+const arrayConsumer = (listenerFn, restExpr, newVal, oldVal) => {
+    let data = newVal,
+        formattedData;
+
+    if (_.isArray(data)) {
+        formattedData = data.map(function (datum) {
+            return findValueOf(datum, restExpr);
+        });
+
+        // If resulting structure is an array of array, flatten it
+        if (_.isArray(formattedData[0])) {
+            formattedData = _.flatten(formattedData);
+        }
+
+        listenerFn(formattedData, oldVal);
+    }
+};
+
+const getUpdatedWatcInfo = (expr, acceptsArray, listener) => {
+    // listener doesn't accept array
+    // replace all `[$i]` with `[0]` and return the expression
+    let regex = /\[\$i\]/g,
+        $I                = '[$i]',
+        $0                = '[0]';
+    if (!acceptsArray) {
+        return {
+            'expr'     : expr.replace(regex, $0),
+            'listener' : listener
+        };
+    }
+
+    // listener accepts array
+    // replace all except the last `[$i]` with `[0]` and return the expression.
+    var index           = expr.lastIndexOf($I),
+        _expr           = expr.substr(0, index).replace($I, $0),
+        restExpr        = expr.substr(index + 5),
+        arrayConsumerFn = listener;
+
+    if (restExpr) {
+        arrayConsumerFn = arrayConsumer.bind(undefined, listener, restExpr);
+    }
+
+    return {
+        'expr'     : _expr,
+        'listener' : arrayConsumerFn
+    };
+};
+
+export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false, config?) => {
     if (expr.indexOf('[$i]') !== -1) {
-        expr = expr.replace(/\[\$i]/g, '[0]');
+        let watchInfo = getUpdatedWatcInfo(expr, config.arrayType, listener);
+        expr = watchInfo.expr;
+        listener = watchInfo.listener;
     }
     const fn = $parseExpr(expr);
 
