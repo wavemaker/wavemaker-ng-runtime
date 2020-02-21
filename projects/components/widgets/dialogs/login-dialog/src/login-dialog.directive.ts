@@ -62,7 +62,7 @@ export class LoginDialogDirective implements AfterViewInit, OnDestroy {
         this.dialogOpenSubscription = this.dialogRef.bsModal.onShown.subscribe(() => {
             setTimeout(() => {
                 // On enter key press submit the login form in Login Dialog
-                $('.app-textbox').keypress((evt) => {
+                (this as any).dialogRef.$element.find('.app-textbox').keypress((evt) => {
                     if (evt.which === 13) {
                         evt.stopPropagation();
                         /**
