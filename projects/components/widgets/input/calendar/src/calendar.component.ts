@@ -344,6 +344,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         let eventDay,
             dataset;
         this.eventData = {};
+        this.dayClass = [];
         if (!this.dataset) {
             return;
         }
