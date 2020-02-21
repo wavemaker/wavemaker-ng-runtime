@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { CalendarComponent } from './calendar.component';
-import { ComponentFixture } from '@angular/core/testing';
+import { async, ComponentFixture } from '@angular/core/testing';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 import { FormsModule } from '@angular/forms';
@@ -23,9 +23,13 @@ const markup = `<div
                 name="calendar1" 
                 width="500px" 
                 height="500px"
-                tabindex="2"
+                tabindex="0"
                 color="#c84c4c" 
                 backgroundcolor="#e25858"
+                view="month"
+                selectionmode="single"
+                margintop="4px"
+                calendartype="agenda"
                  >
                 </div>`;
 @Component({
@@ -34,6 +38,9 @@ const markup = `<div
 class CalendarWrapperComponent {
     @ViewChild(CalendarComponent)
     wmComponent: CalendarComponent;
+
+    public testData1 = [{title: 'event', start: '02/02/2020'}];
+    public testData2 = [{title: 'new event', start: '02/03/2020'}];
 }
 
 const calendarComponentModuleDef: ITestModuleDef = {
@@ -75,5 +82,28 @@ describe('CalendarComponent', () => {
     it('should create calendar component', () => {
         expect(CalendarWrapperComponent).toBeTruthy();
     })
+
+    it('should apply the view to be month view', async(() => {
+        fixture.whenStable().then(() => {
+            expect(document.getElementsByClassName('fc-month-view').length).toBe(1);
+        })
+    }))
+
+    it('should apply as agenda week button', async(() => {
+        fixture.whenStable().then(() => {
+            expect(document.getElementsByClassName('fc-agendaWeek-button').length).toBe(1);
+        })
+    }))
+
+    it('should apply events data to the calendar', async(() => {
+        fixture.whenStable().then(() => {
+            wmComponent.getWidget().dataset = calenderWrapperComponent.testData1;
+            fixture.detectChanges();
+            expect(document.getElementsByClassName('fc-title')[0].textContent).toBe('event');
+            wmComponent.getWidget().dataset = calenderWrapperComponent.testData2;
+            fixture.detectChanges();
+            expect(document.getElementsByClassName('fc-title')[0].textContent).toBe('new event');
+        })
+    }))
 
 });
