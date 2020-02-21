@@ -8,15 +8,23 @@ export abstract class BaseContainerComponent extends StylableComponent{
     @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
     public content;
     public Widgets;
+
+    private updateRedrawableComponents(widgets) {
+        _.pickBy(widgets, widget => {
+            // check for redrawable widget and whether it is already exist in reDrawableComponents query list or not
+            if (widget.nativeElement.hasAttribute('redrawable') && !_.includes(this.reDrawableComponents._results, widget)) {
+                this.reDrawableComponents._results.push(widget);
+            }
+            if (widget.Widgets) {
+                this.updateRedrawableComponents(widget.Widgets);
+            }
+        });
+    }
+
     private redrawChildren() {
         // If container is bound to partial content, manually updating reDrawableComponents query list.
         if (this.content && this.Widgets) {
-            _.pickBy(this.Widgets, (widget, widgetName) => {
-                // check for redrawable widget and whether it is already exist in reDrawableComponents query list or not
-                 if (widget.nativeElement.hasAttribute('redrawable') && !_.includes(this.reDrawableComponents._results, widget)) {
-                     this.reDrawableComponents._results.push(widget);
-                 }
-            });
+            this.updateRedrawableComponents(this.Widgets);
         }
         setTimeout(() => {
             if (this.reDrawableComponents) {
