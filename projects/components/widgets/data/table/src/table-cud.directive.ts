@@ -319,6 +319,9 @@ export class TableCUDDirective {
             onOpen: () => {
                 // Focus the cancel button on open
                 $('.cancel-action').focus();
+            },
+            onEscape: () => {
+                triggerFn(options.cancelRowDeleteCallback);
             }
         });
     }

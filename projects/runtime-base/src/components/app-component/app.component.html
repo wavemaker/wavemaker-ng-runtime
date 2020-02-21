@@ -13,8 +13,8 @@
         </ng-template>
     </div>
     <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext"
-         canceltext.bind="canceltext" closable="false"
-         iconclass.bind="iconclass" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
+         canceltext.bind="canceltext" closable="false" iconclass.bind="iconclass" 
+         escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
     <div wmAppExt></div>
     <i id="wm-mobile-display"></i>
 </ng-container>
