@@ -60,7 +60,7 @@
         "js-cookie": "2.2.0",
         "lodash": "4.17.11",
         "ng-circle-progress": "1.4.0",
-        "ngx-bootstrap": "5.5.0",
+        "ngx-bootstrap": "5.4.0",
         "ngx-color-picker": "7.3.0",
         "ngx-toastr": "9.1.1",
         "rxjs": "6.4.0",
