@@ -31,6 +31,10 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         if (key === 'tabindex') {
             return;
         }
+        if (key === 'required') {
+            /* WMS-18269 | Update Angular about the required attr value change */
+            this._onChange();
+        }
 
         if (key === 'class') {
             if (this.inputEl.nativeElement) {

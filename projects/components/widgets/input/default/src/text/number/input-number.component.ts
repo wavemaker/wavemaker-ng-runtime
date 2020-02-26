@@ -1,5 +1,5 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './input-number.props';
@@ -15,6 +15,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './input-number.component.html',
     providers: [
         provideAs(InputNumberComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(InputNumberComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(InputNumberComponent)
     ]
 })

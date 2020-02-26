@@ -1,9 +1,28 @@
-import { ControlValueAccessor, FormControlName } from '@angular/forms';
+import { ControlValueAccessor, FormControlName, Validator, ValidatorFn, AbstractControl } from '@angular/forms';
 import { OnInit } from '@angular/core';
 
 import { BaseFormComponent } from './base-form.component';
 
-export abstract class BaseFormCustomComponent extends BaseFormComponent implements ControlValueAccessor, OnInit {
+/*
+ * WMS-18269
+ * custom 'required' validator for components, 
+ * as the bound values are resolved at runtime
+ * Called on 'required' property change
+ * 
+ * Note: Component needs NG_VALIDATOR provider for this to work
+ */
+function validateRequiredBind(required: boolean): ValidatorFn {
+    return (control: AbstractControl) =>
+        required
+            ? (typeof control.value === "object"
+                ? !!control.value && !!control.value.length
+                : !!control.value)
+                ? null
+                : { required: true }
+            : null;
+}
+
+export abstract class BaseFormCustomComponent extends BaseFormComponent implements ControlValueAccessor, OnInit, Validator {
 
     private _formControl: FormControlName;
     protected _onChange: any = () => {};
@@ -58,5 +77,9 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
 
     protected invokeOnFocus($event: Event) {
         this.invokeEventCallback('focus', {$event});
+    }
+    /* WMS-18269 */
+    validate(control: AbstractControl):{[key: string]:any} {
+        return validateRequiredBind(this['required'])(control);
     }
 }

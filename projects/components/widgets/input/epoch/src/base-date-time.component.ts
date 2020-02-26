@@ -1,5 +1,5 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
-import { Validator } from '@angular/forms';
+import { Validator, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
@@ -90,7 +90,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $(this.nativeElement).find('.display-input').val('');
     }
 
-    public validate() {
+    public validate(c: AbstractControl) {
         if (this.invalidDateTimeFormat) {
             // validateType is specific to min / max values for time, date, datetime widgets only.
             this.validateType = '';
@@ -113,6 +113,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     valid: false
                 },
             };
+        }
+        /* WMS-18269 | Extending the existing validation for 'required' */
+        if (this["required"]) {
+            return !!c.value ? null : { required: true };
         }
         this.validateType = '';
         return null;
@@ -740,6 +744,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
+            return;
+        }
+        if (key === 'required') {
+            this._onChange();
             return;
         }
         if (this.useDatapicker && key === 'datepattern') {
