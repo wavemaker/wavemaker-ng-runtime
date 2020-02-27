@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
 import { $appDigest, addClass, removeClass, triggerItemAction, UserDefinedExecutionContext  } from '@wm/core';
-import { DatasetAwareNavComponent, isActiveNavItem, NavNode, provideAsWidgetRef, styler,  } from '@wm/components/base';
+import { DatasetAwareNavComponent, isActiveNavItem, NavNode, provideAsWidgetRef, styler, AUTOCLOSE_TYPE } from '@wm/components/base';
 import { NavComponent } from './nav/nav.component';
 
 import { registerProps } from './menu.props';
@@ -211,7 +211,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         }
 
         if (key === 'autoclose') {
-            this.bsDropdown.autoClose = nv !== 'disabled';
+            this.bsDropdown.autoClose = nv !== AUTOCLOSE_TYPE.DISABLED;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

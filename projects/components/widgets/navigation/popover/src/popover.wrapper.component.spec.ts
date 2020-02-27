@@ -52,6 +52,7 @@ const markup = `
             hint="4"
             tabindex="0"
             badgevalue="2"
+            autoclose="outsideClick"
             click.event="onClick()"
             mouseenter.event="onHover()"
         >
@@ -217,7 +218,21 @@ describe('PopoverComponent', () => {
             spyOn(popoverWrapperComponent,'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
             fixture.detectChanges();
-            expect(document.getElementsByTagName('popover-container')).toBeTruthy();
+            expect(document.getElementsByTagName('popover-container').length).toBe(1);
+        })
+    }))
+
+    it('should close the popover when user click outside', async (() => {
+        fixture.whenStable().then(() => {
+            spyOn(popoverWrapperComponent,'onClick');
+            getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
+            fixture.detectChanges();
+            expect(document.getElementsByTagName('popover-container').length).toBe(1);
+            fixture.whenStable().then(() => {
+                document.body.click();
+                fixture.detectChanges();
+                expect(document.getElementsByTagName('popover-container').length).toBe(0);
+            })
         })
     }))
 

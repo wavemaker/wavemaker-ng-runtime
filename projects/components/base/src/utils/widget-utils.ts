@@ -214,6 +214,12 @@ export const NAVIGATION_TYPE = {
     SCROLL: 'Scroll'
 };
 
+export const AUTOCLOSE_TYPE = {
+    OUTSIDECLICK: 'outsideClick',
+    ALWAYS: 'always',
+    DISABLED: 'disabled'
+}
+
 
 export const getWatchIdentifier = (...args) => args.join('_');
 
