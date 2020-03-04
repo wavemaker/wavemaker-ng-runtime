@@ -25,8 +25,8 @@ const currentDate = getFormatedDate();
 
 const markup = `<div wmDateTime  name="datetime1" tabindex="0" datavalue="${currentDate}" showdropdownon="button" hint="Birthtime"
 shortcutkey="t" showweeks="true" class="input-group-lg" readonly="false" required="true" autofocus="true"
- outputformat="yyyy-MM-ddTHH:mm:ss" datepattern="yyyy-MM-ddTHH:mm:ss" mindate="2019-12-10" maxdate="2020-01-03" excludedays="1,6"
- excludedates="2020-01-01"  show="true" minutestep="30" hourstep="1" change.event="datetime1Change($event, widget, newVal, oldVal)"
+ outputformat="yyyy-MM-ddTHH:mm:ss" datepattern="yyyy-MM-ddTHH:mm:ss" mindate="2019-12-10" maxdate="2020-01-03"
+  show="true" minutestep="30" hourstep="1" change.event="datetime1Change($event, widget, newVal, oldVal)"
   focus.event="datetime1Focus($event, widget)" blur.event="datetime1Blur($event, widget)" click.event="datetime1Click($event, widget)"
   mouseenter.event="datetime1Mouseenter($event, widget)" mouseleave.event="datetime1Mouseleave($event, widget)"
    tap.event="datetime1Tap($event, widget)"
@@ -302,14 +302,17 @@ describe("DatetimeComponent", () => {
     }));
 
     it('should ignore the  excluded days', async(() => {
+        wmComponent.getWidget().excludedays = '1,6';
         wmComponent.getWidget().datavalue = getFormatedDate('2019-12-30');
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
 
     }));
     it('should disable the excluded days on the calendar panel', async(() => {
-
+        wmComponent.getWidget().excludedays = '1,6';
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
-            excludedDaysDisable(ele);
+            fixture.whenStable().then(() => {
+                excludedDaysDisable(ele);
+            });
 
         });
 
@@ -322,11 +325,13 @@ describe("DatetimeComponent", () => {
     }));
 
     it('should disable the excluded date on the calendar panel', async(() => {
-
+        wmComponent.getWidget().excludedates = '2020-01-01';
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
             let datePickerRows = ele[0].querySelectorAll('tbody tr');
-            var eleRow = datePickerRows[0];
-            expectCheckEleHasDisabled(eleRow, 4);
+            fixture.whenStable().then(() => {
+                var eleRow = datePickerRows[0];
+                expectCheckEleHasDisabled(eleRow, 4);
+            });
         });
 
     }));

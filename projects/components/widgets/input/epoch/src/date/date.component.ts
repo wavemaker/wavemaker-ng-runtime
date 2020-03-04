@@ -48,7 +48,7 @@ export class DateComponent extends BaseDateTimeComponent {
         return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
     }
 
-    get datavalue () {
+    get datavalue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat) || '';
     }
 
@@ -99,7 +99,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
-           return;
+            return;
         }
         // min date and max date validation in mobile view.
         // if invalid dates are entered, device is showing an alert.
@@ -132,6 +132,12 @@ export class DateComponent extends BaseDateTimeComponent {
         if (!this.bsDataValue) {
             this.hightlightToday();
         }
+
+        // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
+        // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
+        // To fix the container top position set the width 1px;
+        this.$element.find('.model-holder').width('1px')
+
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
 
@@ -139,7 +145,7 @@ export class DateComponent extends BaseDateTimeComponent {
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('current-date')) {
             this.invokeOnTouched();
-            this.invokeEventCallback('blur', {$event});
+            this.invokeEventCallback('blur', { $event });
         }
     }
 
@@ -164,7 +170,7 @@ export class DateComponent extends BaseDateTimeComponent {
      */
     toggleDpDropdown($event) {
         if ($event.type === 'click') {
-            this.invokeEventCallback('click', {$event: $event});
+            this.invokeEventCallback('click', { $event: $event });
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
@@ -204,13 +210,13 @@ export class DateComponent extends BaseDateTimeComponent {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }
-                } else if (inputVal && inputVal !== formattedDate ) {
+                } else if (inputVal && inputVal !== formattedDate) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, event, false);
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue =  newVal;
+                    this.bsDatePickerDirective.bsValue = newVal;
                 }
                 this.toggleDpDropdown(event);
             } else {

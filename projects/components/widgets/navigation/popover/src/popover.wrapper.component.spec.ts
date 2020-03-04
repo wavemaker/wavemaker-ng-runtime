@@ -1,11 +1,11 @@
 import { async, ComponentFixture } from '@angular/core/testing';
-import {App} from '@wm/core';
+import { App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { PopoverComponent } from './popover.component';
 import { PopoverConfig, PopoverModule } from 'ngx-bootstrap';
 import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { AnchorComponent} from '../../../basic/default/src/anchor/anchor.component'; 
+import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
 import { TrustAsPipe } from '../../../../base/src/pipes/trust-as.pipe';
 import { ImagePipe } from '../../../../base/src/pipes/image.pipe';
 
@@ -14,38 +14,38 @@ const mockApp = {};
 
 const markup = `
         <wm-popover
-            wmPopover  
-            name="popover1" 
+            wmPopover
+            name="popover1"
             title="wavemaker"
             contentsource="inline"
-            content="qwerty" 
+            content="qwerty"
             caption="clickable"
             shortcutkey="enter"
-            popoverwidth="240" 
+            popoverwidth="240"
             popoverheight="360"
-            popoverarrow="true" 
-            fontsize="16" 
-            fontfamily="Times New Roman" 
-            fontweight="400" 
-            textalign="start" 
-            whitespace="normal" 
-            backgroundrepeat="repeat" 
-            backgroundsize="auto" 
+            popoverarrow="true"
+            fontsize="16"
+            fontfamily="Times New Roman"
+            fontweight="400"
+            textalign="start"
+            whitespace="normal"
+            backgroundrepeat="repeat"
+            backgroundsize="auto"
             backgroundattachment="scroll"
-            iconwidth="60" 
-            iconheight="40" 
-            iconmargin="4px" 
-            iconposition="top" 
-            iconurl="https://therightsofnature.org/wp-content/uploads/2018/01/turkey-3048299_1920-1366x550.jpg" 
-            tabindex="0" 
-            show="true" 
+            iconwidth="60"
+            iconheight="40"
+            iconmargin="4px"
+            iconposition="top"
+            iconurl="https://therightsofnature.org/wp-content/uploads/2018/01/turkey-3048299_1920-1366x550.jpg"
+            tabindex="0"
+            show="true"
             backgroundcolor
             backgroundposition
-            bordercolor="#000000" 
-            borderstyle 
-            marginright="0.5em" 
-            marginleft="0.5em" 
-            borderwidth="0px" 
+            bordercolor="#000000"
+            borderstyle
+            marginright="0.5em"
+            marginleft="0.5em"
+            borderwidth="0px"
             padding="0px"
             popoverplacement="Bottom"
             encodeurl="true"
@@ -80,10 +80,10 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         PopoverModule.forRoot(),
     ],
-    declarations: [PopoverwrapperComponent, PopoverComponent, AnchorComponent, ImagePipe, TrustAsPipe ],
+    declarations: [PopoverwrapperComponent, PopoverComponent, AnchorComponent, ImagePipe, TrustAsPipe],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: PopoverConfig},
+        { provide: App, useValue: mockApp },
+        { provide: PopoverConfig },
     ]
 };
 
@@ -113,7 +113,7 @@ describe('PopoverComponent', () => {
         fixture.detectChanges();
     }));
 
-    it('should create the popover Component',async () => {
+    it('should create the popover Component', async () => {
         await fixture.whenStable();
         expect(popoverWrapperComponent).toBeTruthy();
     });
@@ -137,29 +137,29 @@ describe('PopoverComponent', () => {
     it('should show the content', () => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
-        console.log("conten",)
+        console.log("conten")
         expect(document.getElementsByClassName('popover-body')[0].textContent).toContain('qwerty');
     })
-  
+
     it('should show popover arrow class ', () => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
         expect(document.getElementsByClassName('popover-arrow').length).toBe(1);
     })
 
-    it('should apply popover height 360px ', async (() => {
+    it('should apply popover height 360px ', async(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
-        fixture.whenStable().then(()=> { 
+        fixture.whenStable().then(() => {
             expect(document.getElementsByTagName('popover-container')[0]['style'].height).toBe('360px');
         })
     }))
 
-    xit('popover width ', async (() => {
+    xit('popover width ', async(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
-            expect( document.getElementsByTagName('popover-container')[0]['style'].width).toBe('240px');
+            expect(document.getElementsByTagName('popover-container')[0]['style'].width).toBe('240px');
         })
     }))
 
@@ -207,24 +207,24 @@ describe('PopoverComponent', () => {
         expect(document.getElementsByClassName('anchor-image-icon')[0]['style']['height']).toBe('40px');
     })
 
-   
+
 
     /************************* icon properties end ****************************************** **/
 
     /************************ Scenarios starts **************************************** */
 
-    it('should open the popover on mouse click', async (() => {
+    it('should open the popover on mouse click', async(() => {
         fixture.whenStable().then(() => {
-            spyOn(popoverWrapperComponent,'onClick');
+            spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
             fixture.detectChanges();
             expect(document.getElementsByTagName('popover-container').length).toBe(1);
         })
     }))
 
-    it('should close the popover when user click outside', async (() => {
+    it('should close the popover when user click outside', async(() => {
         fixture.whenStable().then(() => {
-            spyOn(popoverWrapperComponent,'onClick');
+            spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
             fixture.detectChanges();
             expect(document.getElementsByTagName('popover-container').length).toBe(1);
@@ -236,11 +236,11 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    xit('should open the popover on mouse hover', async (() => {
-        
+    xit('should open the popover on mouse hover', async(() => {
+
         fixture.whenStable().then(() => {
             wmComponent.getWidget().nativeElement.interaction = 'hover';
-            spyOn(popoverWrapperComponent,'onHover');
+            spyOn(popoverWrapperComponent, 'onHover');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.dispatchEvent(new MouseEvent('mouseenter'));
             fixture.detectChanges();
             expect(popoverWrapperComponent.onHover).toHaveBeenCalledTimes(1);

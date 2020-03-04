@@ -3,9 +3,9 @@ import { StylableComponent } from "./stylable.component";
 import { RedrawableDirective } from "../redraw/redrawable.directive";
 declare const _;
 
-export abstract class BaseContainerComponent extends StylableComponent{
+export abstract class BaseContainerComponent extends StylableComponent {
     // reference to the components which needs a redraw(eg, grid, chart) when the show of this component changes
-    @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
+    @ContentChildren(RedrawableDirective, { descendants: true }) reDrawableComponents;
     public content;
     public Widgets;
 

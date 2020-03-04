@@ -44,7 +44,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     // Setter for the datavalue.
-    set datavalue (value: number) {
+    set datavalue(value: number) {
         // set text value to null if data value is empty.
         if (_.includes([null, undefined, ''], value)) {
             const input = this.inputEl.nativeElement;
@@ -55,7 +55,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // if the widget has default value and if we change the locale, the value should be in selected locale format.
         if (this.isDefaultQuery) {
-            (value as any)  = this.transformNumber(value);
+            (value as any) = this.transformNumber(value);
         }
 
         // get a valid number form the text.
@@ -165,7 +165,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         // replaces all group separators form the number.
         const number = Number(parts[0].split(this.GROUP).join(''));
         const decimal = Number(`0.${parts[1] || 0}`);
-        if ( Number.isNaN(number) || Number.isNaN(decimal)) {
+        if (Number.isNaN(number) || Number.isNaN(decimal)) {
             return NaN;
         }
         // if the number is negative then calculate the number as number - decimal
@@ -178,7 +178,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const input = this.inputEl.nativeElement;
         const position: number = input.selectionStart;
         const preValue: string = input.value;
-        this.displayValue = input.value  = this.transformNumber(this.proxyModel);
+        this.displayValue = input.value = this.transformNumber(this.proxyModel);
         // in safari browser, setSelectionRange will focus the input by default, which may invoke the focus event on widget.
         // Hence preventing the setSelectionRange when default value is set i.e. widget is not focused.
         if (this.updateon === 'default' && !this.isDefaultQuery) {
@@ -191,7 +191,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @param value: number
      * @returns {number}
      */
-    private countDecimals (value) {
+    private countDecimals(value) {
         if ((value % 1) !== 0) {
             return value.toString().split('.')[1].length;
         }
@@ -216,16 +216,16 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             const inputValue = this.parseNumber(this.inputEl.nativeElement.value);
             // take the textbox value as current model if the value is valid.
             if (!_.isNaN(inputValue)) {
-               value = this.getValueInRange(inputValue);
-               proxyModel = inputValue;
-               this.resetValidations();
+                value = this.getValueInRange(inputValue);
+                proxyModel = inputValue;
+                this.resetValidations();
             }
         } else {
             if (_.isUndefined(proxyModel) || _.isNull(proxyModel)) {
-                proxyModel = value = this.getValueInRange( (this.minvalue || 0));
+                proxyModel = value = this.getValueInRange((this.minvalue || 0));
                 this.resetValidations();
             } else {
-                value = this.getValueInRange( proxyModel + (key === 'UP' ? this.step : -this.step));
+                value = this.getValueInRange(proxyModel + (key === 'UP' ? this.step : -this.step));
             }
         }
         if ((key === 'UP' && proxyModel <= value) || (key === 'DOWN' && proxyModel >= value)) {
@@ -289,7 +289,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (_.intersection(_.toArray(inputValue), ['e', 'E']).length && _.includes('eE', $event.key)) {
             return false;
         }
-        if ((_.includes(inputValue, '+') || _.includes(inputValue, '-') ) &&  ($event.key === '+' || $event.key === '-')) {
+        if ((_.includes(inputValue, '+') || _.includes(inputValue, '-')) && ($event.key === '+' || $event.key === '-')) {
             return false;
         }
     }

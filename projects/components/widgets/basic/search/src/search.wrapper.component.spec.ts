@@ -28,6 +28,7 @@ const markup = `
              placeholder="Type here to search.."
              type="button"
              tabindex="1"
+
              disabled="false"
              width="200" height="200" show="true" class="btn-primary"
              fontsize="20" fontfamily="Segoe UI" color="#0000FF" fontweight="700" whitespace="nowrap"
@@ -364,7 +365,7 @@ describe('SearchComponent', () => {
         fixture.detectChanges();
     }));
 
-    it('should set the datavalue when searchkey is not set', (async(done) => {
+    it('should set the datavalue when searchkey is not set', (async (done) => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displaylabel = 'name';
         wmComponent.getWidget().datafield = 'name';
@@ -422,7 +423,7 @@ describe('SearchComponent', () => {
         });
     }));
 
-    it('should clear the input value when clearText method is triggered', async( () => {
+    it('should clear the input value when clearText method is triggered', async(() => {
         const testValue = 'test';
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;

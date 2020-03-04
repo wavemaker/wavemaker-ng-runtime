@@ -54,7 +54,8 @@ class MenuWrapperComponent {
 
     public testdata = 'Op1,op2,op3';
 
-    public testDataforActions = [{firstname: 'keith', link: 'https://s3.amazonaws.com/wmstudio-apps/salesrep/Keith-Neilson.png' , icon: 'wi wi-home' }];
+    public testDataforActions = [{ firstname: 'keith', link: 'https://s3.amazonaws.com/wmstudio-apps/salesrep/Keith-Neilson.png', icon: 'wi wi-home' }];
+
 
     menu1Select($event, widget, $item) {
         console.log('calling on menu select!');
@@ -62,7 +63,7 @@ class MenuWrapperComponent {
 }
 
 const menuComponentModuleDef: ITestModuleDef = {
-    declarations: [MenuWrapperComponent, MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, ],
+    declarations: [MenuWrapperComponent, MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective,],
     imports: [ComponentsTestModule, BsDropdownModule.forRoot()],
     providers: [
         { provide: Router, useValue: Router },
@@ -91,7 +92,8 @@ describe('MenuComponent', () => {
     let wmComponent: MenuComponent;
     let fixture: ComponentFixture<MenuWrapperComponent>;
 
-    const  buttonClickFunction = () => {
+
+    const buttonClickFunction = () => {
         const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
         const btnEleInstance: ButtonComponent = buttonEle.componentInstance;
         btnEleInstance.caption = 'My Menu';
@@ -144,7 +146,7 @@ describe('MenuComponent', () => {
             const ulEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
             wmComponent.getWidget().menulayout = 'vertical';
             fixture.detectChanges();
-            expect(ulEle.nativeElement.classList) .toContain('vertical');
+            expect(ulEle.nativeElement.classList).toContain('vertical');
             wmComponent.getWidget().menulayout = 'horizontal';
             fixture.detectChanges();
             expect(ulEle.nativeElement.classList).toContain('horizontal');

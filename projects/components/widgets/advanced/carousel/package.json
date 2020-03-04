@@ -8,9 +8,7 @@
             "umdId": "wm.components.advanced.carousel",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
-
-                "ngx-bootstrap/carousel": "ngxBootstrap",
-
+                "ngx-bootstrap/carousel": "ngx-bootstrap.carousel",
                 "@swipey": "swipey",
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base"

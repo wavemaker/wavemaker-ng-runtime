@@ -12,13 +12,10 @@
             "@angular/router": "ng.router",
             "@angular/platform-browser": "ng.platformBrowser",
             "@angular/forms": "ng.forms",
-
             "rxjs": "rxjs",
-
-            "ngx-bootstrap/dropdown": "ngxBootstrap",
-            "ngx-bootstrap/datepicker": "ngxBootstrap",
-            "ngx-bootstrap/modal": "ngxBootstrap",
-
+            "ngx-bootstrap/dropdown": "ngx-bootstrap.dropdown",
+            "ngx-bootstrap/datepicker": "ngx-bootstrap.datepicker",
+            "ngx-bootstrap/modal": "ngx-bootstrap.modal",
             "@swipey": "swipey",
             "@wm/core": "wm.core",
             "@wm/security": "wm.security",
