@@ -763,6 +763,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._dateOptions.maxDate = (nv === CURRENT_DATE) ? this.maxdate = new Date() : getDateObj(nv);
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'excludedates' || key === 'excludedays') {
+            if (this.excludedays) {
+                this.excludedDaysToDisable = _.split(this.excludedays, ',').map((day) => {
+                    return +day;
+                })
+            }
+            if (this.excludedates) {
+                this.excludedDatesToDisable = this.excludedates;
+                if (isString(this.excludedates)) {
+                    this.excludedDatesToDisable = _.split(this.excludedates, ',');
+                }
+                this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => getDateObj(d));
+            }
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);
@@ -772,20 +784,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
-        if (this.excludedays) {
-            this.excludedDaysToDisable = _.split(this.excludedays, ',').map((day) => {
-                return +day;
-            })
-        }
-        if (this.excludedates) {
-            if (isString(this.excludedates)) {
-                this.excludedDatesToDisable = _.split(this.excludedates, ',');
-            } else {
-                this.excludedDatesToDisable = this.excludedates;
-            }
-            this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => moment(d));
-        }
-
     }
 
     ngOnDestroy() {
