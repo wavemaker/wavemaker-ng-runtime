@@ -97,14 +97,19 @@ export class LiveVariableUtils {
         const columns = variable.propertiesMap.columns;
         let column,
             relatedCols,
-            relatedCol;
+            relatedCol,
+            columnParts;
         if (_.includes(fieldName, '.')) {
+            columnParts = fieldName.split('.');
+            if (columnParts.length > 2) {
+                return undefined;
+            }
             column = _.find(columns, col => {
-                return col.fieldName === fieldName.split('.')[0];
+                return col.fieldName === columnParts[0];
             });
             relatedCols = column && column.columns;
             relatedCol = _.find(relatedCols, col => {
-                return col.fieldName === fieldName.split('.')[1];
+                return col.fieldName === columnParts[1];
             });
             return relatedCol && relatedCol[type];
         }
