@@ -145,6 +145,7 @@ const componentsModule = [
     ngxCarouselModule,
     ngxPopoverModule,
     NgCircleProgressModule,
+    TooltipModule,
     BrowserAnimationsModule,
 
     // Basic widgets
