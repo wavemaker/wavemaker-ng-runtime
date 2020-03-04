@@ -1,4 +1,4 @@
-import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild, HostListener } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
@@ -48,6 +48,9 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
             }
         );
     }
+
+    @HostListener('window:keydown.esc', ['$event'])
+    onEscape($event: KeyboardEvent){};
 
     protected getTemplateRef(): TemplateRef<any> {
         return this.dialogTemplate;
