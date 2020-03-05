@@ -41,6 +41,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected ismeridian: boolean;
     protected datePipe;
     protected isReadOnly = false;
+    public selectfromothermonth: boolean;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -776,6 +777,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => getDateObj(d));
             }
             this.minDateMaxDateValidationOnInput(this.datavalue);
+        } else if (key == 'selectfromothermonth') {
+            this._dateOptions.selectFromOtherMonth = nv;
+
         } else {
             super.onPropertyChange(key, nv, ov);
         }
