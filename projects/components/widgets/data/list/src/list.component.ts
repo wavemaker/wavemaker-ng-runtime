@@ -523,7 +523,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const dataNavigator = this.dataNavigator;
 
         dataNavigator.options = {
-            maxResults: this.pagesize || 5
+            maxResults: this.pagesize || 20
         };
 
         this.dataNavigatorWatched = true;
@@ -544,7 +544,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.pagesize = val;
         });
 
-        dataNavigator.maxResults = this.pagesize || 5;
+        dataNavigator.maxResults = this.pagesize || 20;
         this.removePropertyBinding('dataset');
         // when list having "datasetboundexpr" attr indicates that list is bound to item context
         // when dataset is bound to "item.FIELD" then item context is passed as the datasource.
