@@ -80,6 +80,6 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
     }
     /* WMS-18269 */
     validate(control: AbstractControl):{[key: string]:any} {
-        return validateRequiredBind(this['required'])(control);
+        return this['show'] ? validateRequiredBind(this['required'])(control) : null;
     }
 }

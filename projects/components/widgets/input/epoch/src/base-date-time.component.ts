@@ -117,7 +117,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             };
         }
         /* WMS-18269 | Extending the existing validation for 'required' */
-        if (this["required"]) {
+        if (this["show"] && this["required"]) {
             return !!c.value ? null : { required: true };
         }
         this.validateType = '';
