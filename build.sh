@@ -192,7 +192,7 @@ bundleWeb() {
         ./libraries/mobile/placeholder/runtime-dynamic/bundles/index.umd.js \
         ./libraries/runtime/base/bundles/index.umd.js \
         ./libraries/runtime/dynamic/bundles/index.umd.js \
-        -o ./dist/bundles/wmapp/scripts/wm-loader.js -b 
+        -o ./dist/bundles/wmapp/scripts/wm-loader.js -b
 
     ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-loader.js \
         -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -m   -b beautify=false,ascii_only=true
@@ -399,6 +399,7 @@ buildApp() {
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/components-transpilation_${SUCCESS_FILE}
         fi
+        isSourceModified=true
     fi
 
     ngBuild runtime-base projects/runtime-base '@wm/runtime/base'
@@ -470,7 +471,7 @@ buildTsLib() {
 }
 
 buildNgxBootstrap() {
-    arr=(./node_modules/ngx-bootstrap/collapse/bundles/ngx-bootstrap-collapse.umd.js ./node_modules/ngx-bootstrap/chronos/bundles/ngx-bootstrap-chronos.umd.js ./node_modules/ngx-bootstrap/utils/bundles/ngx-bootstrap-utils.umd.js ./node_modules/ngx-bootstrap/positioning/bundles/ngx-bootstrap-positioning.umd.js ./node_modules/ngx-bootstrap/component-loader/bundles/ngx-bootstrap-component-loader.umd.js ./node_modules/ngx-bootstrap/dropdown/bundles/ngx-bootstrap-dropdown.umd.js ./node_modules/ngx-bootstrap/locale/bundles/ngx-bootstrap-locale.umd.js ./node_modules/ngx-bootstrap/buttons/bundles/ngx-bootstrap-buttons.umd.js ./node_modules/ngx-bootstrap/carousel/bundles/ngx-bootstrap-carousel.umd.js ./node_modules/ngx-bootstrap/mini-ngrx/bundles/ngx-bootstrap-mini-ngrx.umd.js ./node_modules/ngx-bootstrap/modal/bundles/ngx-bootstrap-modal.umd.js ./node_modules/ngx-bootstrap/pagination/bundles/ngx-bootstrap-pagination.umd.js ./node_modules/ngx-bootstrap/popover/bundles/ngx-bootstrap-popover.umd.js ./node_modules/ngx-bootstrap/progressbar/bundles/ngx-bootstrap-progressbar.umd.js ./node_modules/ngx-bootstrap/rating/bundles/ngx-bootstrap-rating.umd.js ./node_modules/ngx-bootstrap/sortable/bundles/ngx-bootstrap-sortable.umd.js ./node_modules/ngx-bootstrap/tabs/bundles/ngx-bootstrap-tabs.umd.js ./node_modules/ngx-bootstrap/timepicker/bundles/ngx-bootstrap-timepicker.umd.js ./node_modules/ngx-bootstrap/tooltip/bundles/ngx-bootstrap-tooltip.umd.js ./node_modules/ngx-bootstrap/typeahead/bundles/ngx-bootstrap-typeahead.umd.js ./node_modules/ngx-bootstrap/datepicker/bundles/ngx-bootstrap-datepicker.umd.js ./node_modules/ngx-bootstrap/accordion/bundles/ngx-bootstrap-accordion.umd.js) 
+    arr=(./node_modules/ngx-bootstrap/collapse/bundles/ngx-bootstrap-collapse.umd.js ./node_modules/ngx-bootstrap/chronos/bundles/ngx-bootstrap-chronos.umd.js ./node_modules/ngx-bootstrap/utils/bundles/ngx-bootstrap-utils.umd.js ./node_modules/ngx-bootstrap/positioning/bundles/ngx-bootstrap-positioning.umd.js ./node_modules/ngx-bootstrap/component-loader/bundles/ngx-bootstrap-component-loader.umd.js ./node_modules/ngx-bootstrap/dropdown/bundles/ngx-bootstrap-dropdown.umd.js ./node_modules/ngx-bootstrap/locale/bundles/ngx-bootstrap-locale.umd.js ./node_modules/ngx-bootstrap/buttons/bundles/ngx-bootstrap-buttons.umd.js ./node_modules/ngx-bootstrap/carousel/bundles/ngx-bootstrap-carousel.umd.js ./node_modules/ngx-bootstrap/mini-ngrx/bundles/ngx-bootstrap-mini-ngrx.umd.js ./node_modules/ngx-bootstrap/modal/bundles/ngx-bootstrap-modal.umd.js ./node_modules/ngx-bootstrap/pagination/bundles/ngx-bootstrap-pagination.umd.js ./node_modules/ngx-bootstrap/popover/bundles/ngx-bootstrap-popover.umd.js ./node_modules/ngx-bootstrap/progressbar/bundles/ngx-bootstrap-progressbar.umd.js ./node_modules/ngx-bootstrap/rating/bundles/ngx-bootstrap-rating.umd.js ./node_modules/ngx-bootstrap/sortable/bundles/ngx-bootstrap-sortable.umd.js ./node_modules/ngx-bootstrap/tabs/bundles/ngx-bootstrap-tabs.umd.js ./node_modules/ngx-bootstrap/timepicker/bundles/ngx-bootstrap-timepicker.umd.js ./node_modules/ngx-bootstrap/tooltip/bundles/ngx-bootstrap-tooltip.umd.js ./node_modules/ngx-bootstrap/typeahead/bundles/ngx-bootstrap-typeahead.umd.js ./node_modules/ngx-bootstrap/datepicker/bundles/ngx-bootstrap-datepicker.umd.js ./node_modules/ngx-bootstrap/accordion/bundles/ngx-bootstrap-accordion.umd.js)
     # Create the directory to place the concatinated ngx-bootstrap UMD files
     exec $(mkdir -p "./dist/tmp/libs/ngx-bootstrap")
     # Concatinated the all bootstrap umd files
