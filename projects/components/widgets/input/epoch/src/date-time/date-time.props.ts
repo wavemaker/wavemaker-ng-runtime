@@ -30,7 +30,8 @@ export const dateTimeProps = new Map(
         ['showindevice', { displayType: 'inline-block', value: 'all', ...PROP_STRING }],
         ['showweeks', PROP_BOOLEAN],
         ['tabindex', { value: 0, ...PROP_NUMBER }],
-        ['timestamp', PROP_STRING]
+        ['timestamp', PROP_STRING],
+        ['selectfromothermonth', { value: true, ...PROP_BOOLEAN }]
 
     ]
 );

@@ -27,7 +27,8 @@ export const dateProps = new Map(
         ['showindevice', { displayType: 'inline-block', value: 'all', ...PROP_STRING }],
         ['showweeks', { value: false, ...PROP_BOOLEAN }],
         ['tabindex', { value: 0, ...PROP_NUMBER }],
-        ['selectFromOtherMonth', PROP_BOOLEAN]
+        ['selectfromothermonth', { value: true, ...PROP_BOOLEAN }]
+
     ]
 );
 
