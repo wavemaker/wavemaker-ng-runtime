@@ -15,6 +15,7 @@ export const registerProps = () => {
                 ['deletemessage', {value: 'Record deleted successfully', ...PROP_STRING}],
                 ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['editmode', PROP_STRING],
+                ['errorstyle', {value: 'hover', ...PROP_STRING}],
                 ['enablecolumnselection', {value: false, ...PROP_BOOLEAN}],
                 ['enablesort', {value: true, ...PROP_BOOLEAN}],
                 ['errormessage', PROP_STRING],

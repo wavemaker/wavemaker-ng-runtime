@@ -44,6 +44,7 @@ register('wm-table', (): IBuildTaskDef => {
             const provider = new Map();
             provider.set('table_reference', shared.get('counter'));
             provider.set('filtermode', attrs.get('filtermode'));
+            provider.set('errorstyle', attrs.get('errorstyle'));
             provider.set('editmode', attrs.get('editmode'));
             provider.set('shownewrow', attrs.get('shownewrow'));
             return provider;

@@ -1521,7 +1521,8 @@ $.widget('wm.datatable', {
             _rowData = _.clone(rowData);
 
         _rowData.$index = rowId + 1;
-
+        // Function to remove validators and set form state to untouched for inline form control
+        this.options.removeValidations();
         this.options.generateInlineEditRow(_rowData, alwaysNewRow);
 
         $originalElements.each(function () {
@@ -1545,8 +1546,14 @@ $.widget('wm.datatable', {
                     $el.addClass('cell-editing editable-expression').html(editableTemplate).data('originalText', cellText);
                 }
                 $el.addClass('form-group');
-                if (colDef.required) {
-                    $el.addClass('required-field');
+                // Function to apply validators to Inline form controls
+                if (colDef.binding !== 'rowOperations') {
+                    self.options.timeoutCall(function () {
+                        self.options.applyValidations(colDef);
+                        if (colDef.required) {
+                            $el.addClass('required-field');
+                        }
+                    });
                 }
             }
         });
@@ -1706,7 +1713,13 @@ $.widget('wm.datatable', {
                             }
                         }
                     });
-
+                    
+                    // Check for form control async state and recall save function
+                    if ($editableElements.find('.ng-pending').length > 0) {
+                        setTimeout(this.toggleEditRow.bind(this, e, options), 200);
+                        return;
+                    }
+                    
                     $requiredEls = $editableElements.find('.ng-invalid');
                     //If required fields are present and value is not filled, return here
                     if ($requiredEls.length > 0) {

@@ -101,7 +101,7 @@ const getInlineEditRowPropsTmpl = attrs => {
 };
 
 // get the inline widget template
-const getInlineEditWidgetTmpl = (attrs, isNewRow?, pCounter?) => {
+const getInlineEditWidgetTmpl = (attrs, isNewRow, errorstyle, pCounter?) => {
     const options: any = {};
     const fieldName = attrs.get('binding');
     const widget = attrs.get('edit-widget-type') || getEditModeWidget({
@@ -129,18 +129,32 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?, pCounter?) => {
     const rowPropsTl = getInlineEditRowPropsTmpl(attrs);
     const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl} ${rowPropsTl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
+    const pendingSpinnerStatus = isNewRow ? 'getPendingSpinnerStatusNew' : 'getPendingSpinnerStatus';
+    const validationErrorTmpl = getValiationErrorTemplate(errorstyle);
 
-    return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
+    return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage" let-${pendingSpinnerStatus}="${pendingSpinnerStatus}">
                 <div data-col-identifier="${fieldName}" >
                      ${widgetTmpl}
-                     <span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error"
-                        *ngIf="getValidationMessage() && getControl() && getControl().invalid && getControl().touched">
-                     </span>
-                     <div class="overlay" *ngIf="getPendingSpinnerStatus()"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>
-                     <span class="sr-only" *ngIf="getValidationMessage()">{{getValidationMessage()}}</span>
+                     ${validationErrorTmpl}
+                     <div class="overlay" *ngIf="${pendingSpinnerStatus}()"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>
                  </div>
             </ng-template>`;
 };
+
+const getValiationErrorTemplate = (errorTmplType) => {
+    let validationErrorTmpl = '';
+    switch (errorTmplType) {
+        case 'bottom':
+            validationErrorTmpl = `<span class="help-block text-danger" *ngIf="getValidationMessage() && getControl() && getControl().invalid && getControl().touched">{{getValidationMessage()}}</span>`;
+            break;
+        case 'hover':
+        default:
+            validationErrorTmpl = `<span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error"
+                                        *ngIf="getValidationMessage() && getControl() && getControl().invalid && getControl().touched">
+                                    </span>`;
+    }
+    return validationErrorTmpl;
+}
 
 const getFormatExpression = (attrs) => {
     const columnValue = `row.getProperty('${attrs.get('binding')}')`;
@@ -215,8 +229,8 @@ register('wm-table-column', (): IBuildTaskDef => {
                 rowFilterTmpl = (parentTable.get('filtermode') === 'multicolumn' && attrs.get('searchable') !== 'false') ? getFilterTemplate(attrs, pCounter) : '';
                 const editMode = parentTable.get('editmode');
                 const isInlineEdit = (editMode !== EDIT_MODE.DIALOG && editMode !== EDIT_MODE.FORM && attrs.get('readonly') !== 'true');
-                inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs, false, pCounter) : '';
-                inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true) : '';
+                inlineEditTmpl = isInlineEdit ? getInlineEditWidgetTmpl(attrs, false, parentTable.get('errorstyle'), pCounter) : '';
+                inlineNewEditTmpl = isInlineEdit && editMode === EDIT_MODE.QUICK_EDIT && parentTable.get('shownewrow') !== 'false' ? getInlineEditWidgetTmpl(attrs, true, attrs.get('errorstyle')) : '';
                 parentForm = ` [formGroup]="${pCounter}.ngform" `;
             }
             const formatPattern = attrs.get('formatpattern');
