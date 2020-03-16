@@ -33,7 +33,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         }
         if (key === 'required') {
             /* WMS-18269 | Update Angular about the required attr value change */
-            this._onChange();
+            this._onChange(this.datavalue);
         }
 
         if (key === 'class') {
