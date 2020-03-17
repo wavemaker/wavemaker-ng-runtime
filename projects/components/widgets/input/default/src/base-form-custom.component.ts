@@ -15,7 +15,7 @@ function validateRequiredBind(required: boolean): ValidatorFn {
     return (control: AbstractControl) =>
         required
             ? (typeof control.value === "object"
-                ? !!control.value && !!control.value.length
+                ? !!control.value && (!!control.value.length || !!Object.keys(control.value).length)
                 : !!control.value)
                 ? null
                 : { required: true }
