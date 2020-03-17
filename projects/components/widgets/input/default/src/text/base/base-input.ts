@@ -43,6 +43,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         } else if (key === 'datavalue') {
             // update the oldDataValue when the datavalue is modified programmatically
             this.updatePrevDatavalue(nv);
+            this._onChange(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);
         }

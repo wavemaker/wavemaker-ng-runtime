@@ -105,7 +105,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
             return;
         }
         if (key === 'required') {
-            this._onChange();
+            this._onChange(this.datavalue);
             return;
         }
         if (key === 'layout') {

@@ -65,7 +65,11 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
         }
         if(key === 'required') {
             /* WMS-18269 | Update Angular about the required attr value change */
-            this._onChange();
+            this._onChange(this.datavalue);
+            return;
+        }
+        if(key === 'datavalue') {
+            this._onChange(nv);
             return;
         }
         super.onPropertyChange(key, nv, ov);

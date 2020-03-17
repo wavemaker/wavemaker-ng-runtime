@@ -92,7 +92,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
             return;
         }
         if (key === 'required') {
-            this._onChange();
+            this._onChange(this.datavalue);
             return;
         }
 
@@ -108,6 +108,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
             this._uncheckedvalue = unStringify(nv, false);
         } else if (key === 'datavalue') {
             this.datavalue = unStringify(nv);
+            this._onChange(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);
         }

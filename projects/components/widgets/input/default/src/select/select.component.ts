@@ -75,7 +75,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'required')  {
-            this._onChange();
+            this._onChange(this.datavalue);
             return;
         }
         if (key === 'class' ||  key === 'tabindex') {
