@@ -427,7 +427,7 @@ export class LiveFormDirective {
 
             if (operationType === Live_Operations.DELETE) {
                 result = requestData.row;
-                this.emptyDataModel();
+                this.form.emptyDataModel();
                 this.form.prevDataValues = [];
                 this.form.isSelected = false;
             } else {
