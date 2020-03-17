@@ -858,7 +858,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             // If its a service variable call setInput and assign form data and invoke the service
             if (dataSource) {
                 const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
-                performDataOperation(dataSource, formData, {operationType: this.operationType})
+                const operationType = this.operationType ? this.operationType : (dataSource.operationType === 'create' ? 'insert' : '');
+                performDataOperation(dataSource, formData, {operationType: operationType})
                     .then((data) => {
                         this.onResult(data, true, $event);
                         this.toggleMessage(true, this.postmessage, 'success');

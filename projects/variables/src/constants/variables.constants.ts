@@ -93,6 +93,7 @@ export const VARIABLE_CONSTANTS = {
             NO_ACCESSTOKEN: 'missing_accesstoken',
             NO_CREDENTIALS: 'no_credentials',
             METADATA_MISSING: 'metadata_missing',
+            CRUD_OPERATION_MISSING: 'crud_operation_missing',
             USER_UNAUTHORISED: 'user_unauthorised',
             REQUIRED_FIELD_MISSING: 'required_field_missing',
         },
@@ -101,6 +102,7 @@ export const VARIABLE_CONSTANTS = {
             NO_CREDENTIALS: 'No credentials present',
             METADATA_MISSING: 'Metadata missing',
             USER_UNAUTHORISED: 'Unauthorized User',
+            CRUD_OPERATION_MISSING: 'This operation is not allowed. Please reimport swagger with proper CRUD endpoints',
             REQUIRED_FIELD_MISSING: 'Required field(s) missing: "${0}"'
         },
         UNCLOAKED_HEADERS: ['CONTENT-TYPE', 'ACCEPT', 'CONTENT-LENGTH', 'ACCEPT-ENCODING', 'ACCEPT-LANGUAGE'],

@@ -100,6 +100,30 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
         return getManager().invoke(this, options, success, error);
     }
 
+    createRecord(options?, success?, error?) {
+        options = options || {};
+        options.operation = 'create';
+        return getManager().invoke(this, options, success, error);
+    }
+
+    listRecords(options?, success?, error?) {
+        options = options || {};
+        options.operation = 'list';
+        return getManager().invoke(this, options, success, error);
+    }
+
+    updateRecord(options?, success?, error?) {
+        options = options || {};
+        options.operation = 'update';
+        return getManager().invoke(this, options, success, error);
+    }
+
+    deleteRecord(options?, success?, error?) {
+        options = options || {};
+        options.operation = 'delete';
+        return getManager().invoke(this, options, success, error);
+    }
+
     update(options, success?, error?) {
         return getManager().invoke(this, options, success, error);
     }

@@ -124,7 +124,7 @@ export class CrudVariableManager extends ServiceVariableManager {
     protected _invoke (variable: CrudVariable, options: any, success: Function, error: Function) {
         let inputFields = getClonedObject(options.inputFields || variable.dataBinding);
         if (options.operation === 'delete') {
-            inputFields = getClonedObject(options.row || inputFields.row);
+            inputFields = getClonedObject(options.row || inputFields.row || options.inputFields);
         } else if (options.operation === 'create' && options.row) {
             inputFields = getClonedObject(options.row);
         } else if (options.operation === 'update' && options.row) {
@@ -160,6 +160,24 @@ export class CrudVariableManager extends ServiceVariableManager {
             variable.paginationTransformationRequired = true;
         }
         const operationInfo = this.getMethodInfoForCrud(variable, inputFields, options);
+        if (!operationInfo) {
+            const err = {
+                'error' : {
+                    'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING,
+                    'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.CRUD_OPERATION_MISSING,
+                    'field': '_wmServiceOperationInfo'
+                }
+            };
+            const info = this.handleRequestMetaError(err, variable, success, error, options);
+            const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
+            triggerFn(error);
+            return Promise.reject(reason);
+            //debugger;
+            // const info = this.handleRequestMetaError(err, variable, success, error, options);
+            // const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
+            // triggerFn(error);
+            // return Promise.reject(reason);
+        }
         let pathParam, bodyTypeParam;
         if (!variable.paginationTransformationRequired && operationInfo) {
             operationInfo.parameters.forEach(function (parameter) {
