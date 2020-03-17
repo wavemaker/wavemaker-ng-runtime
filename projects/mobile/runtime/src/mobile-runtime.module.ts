@@ -116,6 +116,12 @@ export class MobileRuntimeModule {
             return;
         }
         this.initialized = true;
+        const unsubscribe = app.subscribe('pageReady', (page) => {
+            if (!isSpotcues) {
+                navigator.splashscreen.hide();
+            }
+            unsubscribe();
+        });
         app.deployedUrl = runtimeModule.getDeployedUrl();
         runtimeModule.getDeviceOS().then(os => {
             app.selectedViewPort = {
@@ -171,10 +177,6 @@ export class MobileRuntimeModule {
             if (hasCordova()) {
                 runtimeModule._$appEl.addClass('cordova');
                 runtimeModule.exposeOAuthService();
-
-                if (!isSpotcues) {
-                    navigator.splashscreen.hide();
-                }
                 // Fix for issue: ios device is not considering the background style, eventhough value is set in config.xml.
                 if (window['StatusBar']) {
                     window['StatusBar'].overlaysWebView(false);
