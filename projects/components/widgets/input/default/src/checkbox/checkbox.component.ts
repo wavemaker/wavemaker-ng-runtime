@@ -1,5 +1,5 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
@@ -41,6 +41,7 @@ const unStringify = (val, defaultVal?) => {
     templateUrl: './checkbox.component.html',
     providers: [
         provideAs(CheckboxComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(CheckboxComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(CheckboxComponent)
     ]
 })
@@ -88,6 +89,10 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
     onPropertyChange(key, nv, ov) {
         if (key === 'tabindex') {
+            return;
+        }
+        if (key === 'required') {
+            this._onChange();
             return;
         }
 

@@ -28,7 +28,11 @@ const DEFAULT_VALIDATOR = {
     max: 'maxvalue',
     min: 'minvalue',
     required: 'required',
-    maxlength: 'maxchars'
+    maxlength: 'maxchars',
+    mindate: 'mindate',
+    maxdate: 'maxdate',
+    excludedates: 'excludedates',
+    excludedays: 'excludedays'
 };
 
 @Directive({
@@ -158,7 +162,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
-        this.setCustomValidationMessage();
         this._activeField = false;
     }
 
@@ -223,6 +226,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (this.regexp) {
             _validator.push(Validators.pattern(this.regexp));
         }
+        if (_.isFunction(this.formWidget.validate)) {
+            _validator.push(this.formWidget.validate.bind(this.formWidget));
+        }
         return _validator;
     }
 
@@ -233,9 +239,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
         this._validators = this.getDefaultValidators();
 
-        if (_.isFunction(this.formWidget.validate)) {
-            this._validators.push(this.formWidget.validate.bind(this.formWidget));
-        }
         if (customValidator) {
             this._validators.push(customValidator);
         }
@@ -311,9 +314,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     // default validator is bound to a function then watch for value changes
     // otherwise set the value of default validator directly
     setDefaultValidator(key, value) {
-        if (value.bind) {
-            this.watchDefaultValidatorExpr(value, key);
+        if (value && value instanceof Function) {
+            // passing formfield and form as arguments to the default validator function
+            this.watchDefaultValidatorExpr(value.bind(undefined, this, this.form), key);
         } else {
+            this.widget[key] = value;
             this[key] = value;
         }
     }
@@ -324,7 +329,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this._syncValidators = [];
         _.forEach(validators, (obj, index) => {
             // custom validation is bound to function.
-            if (obj.bind) {
+            if (obj && obj instanceof Function) {
+                // passing formfield and form as arguments to the obj (i.e. validator function)
                 validators[index] = obj.bind(undefined, this, this.form);
                 this._syncValidators.push(validators[index]);
             } else {
@@ -542,13 +548,22 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (!this.isDestroyed) {
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
+            if (this.form.touched) {
+                this.setCustomValidationMessage();
+            }
         }
     }
 
     onStatusChange(status) {
         if (!this.isDestroyed) {
             this.showPendingSpinner = (status === 'PENDING');
-            this.formWidget.disabled = (status === 'PENDING');
+            // while running validation, widget is disabled and spinner is shown
+            // otherwise formWidget disabled state is reset to the state of the formField.
+            if (status === 'PENDING') {
+                this.formWidget.disabled = true;
+            } else if (this.formWidget.disabled !== (this as any).disabled) {
+                this.formWidget.disabled = (this as any).disabled;
+            }
         }
     }
 
@@ -572,12 +587,18 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         } else {
             const keys = _.keys(fieldErrors);
             const key = keys[0];
-            if (_.get(DEFAULT_VALIDATOR, key)) {
-                this.validationmessage = _.get(this.defaultValidatorMessages, DEFAULT_VALIDATOR[key]) || this.validationmessage;
+            const validationMsgKey = _.get(DEFAULT_VALIDATOR, key) || this.formWidget.validateType;
+            if (validationMsgKey) {
+                const msg = _.get(this.defaultValidatorMessages, validationMsgKey) || this.validationmessage;
+                if (msg && msg instanceof Function) {
+                    // passing formfield and form as arguments to the errorMessage function.
+                    this.validationmessage = msg(this, this.form);
+                } else {
+                    this.validationmessage = msg;
+                }
             } else {
                 // fallback when there is no validationmessage for fields other than default validators.
-                // value of the first key in the error object will be shown as validation message.
-                this.validationmessage = (fieldErrors[key]).toString();
+                this.validationmessage = '';
             }
         }
     }

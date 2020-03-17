@@ -4,6 +4,7 @@ import { isMobileApp } from '@wm/core';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
+declare const _;
 
 const findChild = (node: Element, childName: string): Element => {
     const child = node && node.children.find(e => (e instanceof Element && (e as Element).name === childName));
@@ -19,12 +20,30 @@ const addAtrribute = (node: Element, name: string, value: string) => {
     node.attrs.push(attr);
 };
 
+const getElementNode = (name, node) => {
+    let elementNode;
+    _.forEach(node.children, (child) => {
+        if (child instanceof Element) {
+            if ((child as Element).name === name) {
+                elementNode = child;
+            } else if (child.children) {
+                elementNode = getElementNode(name, child);
+            }
+        }
+        return !elementNode;
+    });
+    return elementNode;
+};
+
 const noSpan = ({} as ParseSourceSpan);
 
 register('wm-page', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
-            const pageContentNode = findChild(findChild(node, 'wm-content'), 'wm-page-content');
+            let pageContentNode = findChild(findChild(node, 'wm-content'), 'wm-page-content');
+            if (!pageContentNode) {
+                 pageContentNode = getElementNode('wm-page-content',  getElementNode('wm-content', node));
+            }
             if (pageContentNode) {
                 const conditionalNode = createElement('ng-container');
                 addAtrribute(conditionalNode, '*ngIf', 'compilePageContent');

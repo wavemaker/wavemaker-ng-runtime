@@ -1,21 +1,7 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
-import {
-    $appDigest,
-    getClonedObject,
-    getFiles,
-    isDefined,
-    removeClass,
-    App,
-    $parseEvent,
-    debounce,
-    DynamicComponentRefProvider,
-    extendProto,
-    DataSource,
-    AbstractDialogService,
-    DataType
-} from '@wm/core';
+import { $appDigest, getClonedObject, getFiles, isDefined, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource, AbstractDialogService, DataType } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
 import { ListComponent } from '@wm/components/data/list';
@@ -319,10 +305,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                  * 5. this means form name change applies only when there is single form (immediate child) inside the parentContainer.
                  */
                 const prefabInnerForm = parentContentEl.find('form').first();
-                const isInsideList = prefabInnerForm.closest('.app-livelist');
-                // check whether form inside prefab container is inside the list. If true, do not change the name.
-                if (!isInsideList.length && !prefabInnerForm.siblings('form').length) {
-                    binding = _.get(parentContainer, 'name');
+                if (_.get(prefabInnerForm[0], 'widget.widgetId') === this.widgetId) {
+                    // check whether form inside prefab container is inside the list. If true, do not change the name.
+                    if (!prefabInnerForm.isParentList && !prefabInnerForm.siblings('form').length) {
+                        binding = _.get(parentContainer, 'name');
+                    }
                 }
             }
             let counter = 1;
@@ -550,13 +537,22 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             case 'metadata':
                 this.generateFormFields();
                 break;
+            case 'dataset':
+                const formFields = this.getFormFields();
+                formFields.forEach(field => {
+                    // notifying the dataset change to the form-field widget.
+                    if (!field.isDataSetBound && _.get(field.formWidget, 'dataset$')) {
+                        field.formWidget.dataset$.next();
+                    }
+                });
+                break;
             default:
                 super.onPropertyChange(key, nv, ov);
         }
     }
 
     // Event callbacks on success/error
-    onResult(data, status, event?) {
+    onResultCb(data, status, event?) {
         const params = {$event: event, $data: data, $operation: this.operationType};
         // whether service call success or failure call this method
         this.invokeEventCallback('result', params);
@@ -615,7 +611,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (this.parentForm) {
             this.parentForm.formFields.push(formField);
             this.parentForm.formfields[formField.key] = formField;
-            this.parentForm.setFormData(this.parentForm.formdata, this.formFields);
+            // inner formfields are pushed to parentForm, passing current innerForm's formdata to set innerFormdata to these innerFormFields
+            this.parentForm.setFormData(this.parentForm.formdata, this.formFields, this.formdata || {});
         }
     }
 
@@ -689,17 +686,18 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         });
     }
 
-    setFieldValue(field, data) {
+    setFieldValue(field, data, innerFormdata?) {
         const key = field.key || field.name;
         // if customfield param value is not in the formdata then do not assign field value
         // as it can contain default value which will again be overridden by undefined.
-        if (data) {
-            if (data.hasOwnProperty(key)) {
-                field.value =  _.get(data, key);
+        const fd = innerFormdata ? innerFormdata : data;
+        if (fd) {
+            if (fd.hasOwnProperty(key)) {
+                field.value =  _.get(fd, key);
             } else if (_.includes(key, '.')) {
                 // key contains '.' when mapping the fields to child reference i.e. childCol is having key as "parent.childCol"
-                if (data.hasOwnProperty(_.split(key, '.')[0])) {
-                    field.value =  _.get(data, key);
+                if (fd.hasOwnProperty(_.split(key, '.')[0])) {
+                    field.value =  _.get(fd, key);
                 }
             }
         }
@@ -717,11 +715,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
-    setFormData(data, formFields?) {
+    setFormData(data, innerFormFields?, innerFormdata?) {
         // whereas formFields explicitly passed can contain innerform fields also.
-        formFields = formFields || this.formFields;
+        const formFields = innerFormFields || this.formFields;
         formFields.forEach(field => {
-            this.setFieldValue(field, data);
+            this.setFieldValue(field, data, innerFormdata);
         });
         this.constructDataObject();
     }
@@ -734,10 +732,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (!this.ngform) {
             return;
         }
-        setTimeout(() => {
-            this.ngform.markAsUntouched();
-            this.ngform.markAsPristine();
-        });
+        this.ngform.markAsUntouched();
+        this.ngform.markAsPristine();
     }
 
     reset() {
@@ -836,21 +832,31 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     submitForm($event) {
-        let formData, template, params;
+        let template;
         const dataSource = this.datasource;
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
             return;
         }
 
-        this.resetFormState();
+        const getFormData = () => {
+            return getClonedObject(this.constructDataObject());
+        };
 
-        formData = getClonedObject(this.constructDataObject());
+        const getParams = () => {
+            const formData = getFormData();
+            return {$event, $formData: formData, $data: formData};
+        };
 
-        params = {$event, $formData: formData, $data: formData};
 
-        if (this.onBeforeSubmitEvt && (this.invokeEventCallback('beforesubmit', params) === false)) {
-            return;
+        if (this.onBeforeSubmitEvt) {
+            if (this.invokeEventCallback('beforesubmit', getParams()) === false) {
+                return;
+            } else {
+                this.resetFormState();
+            }
+        } else {
+            this.resetFormState();
         }
 
         if (this.onSubmitEvt || dataSource) {
@@ -859,11 +865,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             if (dataSource) {
                 const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
                 const operationType = this.operationType ? this.operationType : (dataSource.operationType === 'create' ? 'insert' : '');
-                performDataOperation(dataSource, formData, {operationType: operationType})
+                performDataOperation(dataSource, getFormData(), {operationType: operationType})
                     .then((data) => {
-                        this.onResult(data, true, $event);
-                        this.toggleMessage(true, this.postmessage, 'success');
-                        this.invokeEventCallback('submit', params);
                         if (dataSource.category === 'wm.CrudVariable') {
                             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                                 'skipToggleState': true,
@@ -874,19 +877,32 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                                 this.closeDialog();
                             }
                         }
+                        return {
+                            'result': data,
+                            'status': true,
+                            'message': this.postmessage,
+                            'type': 'success'
+                        };
                     }, (error) => {
                         template = this.errormessage || error.error || error;
-                        this.onResult(error, false, $event);
-                        this.toggleMessage(true, template, 'error');
-                        this.invokeEventCallback('submit', params);
                         $appDigest();
-                    });
+                        return {
+                            'result': error,
+                            'status': false,
+                            'message': template,
+                            'type': 'error'
+                        };
+                    }).then(response => {
+                    this.toggleMessage(true, response.message, response.type);
+                    this.invokeEventCallback('submit', getParams());
+                    this.onResultCb(response.result, response.status, $event);
+                });
             } else {
-                this.onResult({}, true, $event);
-                this.invokeEventCallback('submit', params);
+                this.invokeEventCallback('submit', getParams());
+                this.onResultCb({}, true, $event);
             }
         } else {
-            this.onResult({}, true, $event);
+            this.onResultCb({}, true, $event);
         }
     }
 
@@ -1080,12 +1096,56 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         return this.ngform && this.ngform.dirty;
     }
 
+    /**
+     * This method sets the form state to pristine by internally calling angular markAsPristine method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
+     * @returns {void}
+     */
+    markAsPristine(value: boolean = false) {
+        this.ngform.markAsPristine({ onlySelf: value });
+    }
+
+    /**
+     * This method sets the form state to dirty by internally calling angular markAsDirty method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
+     * @returns {void}
+     */
+    markAsDirty(value: boolean = false) {
+        this.ngform.markAsDirty({ onlySelf: value });
+    }
+
     get invalid() {
         return this.ngform && this.ngform.invalid;
     }
 
     get touched() {
         return this.ngform && this.ngform.touched;
+    }
+
+    get valid() {
+        return this.ngform && this.ngform.valid;
+    }
+
+    get pristine() {
+        return this.ngform && this.ngform.pristine;
+    }
+
+    /**
+     * This method sets the form state to touched by internally calling angular markAsTouched method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
+     * @returns {void}
+     */
+    markAsTouched(value: boolean = false) {
+        this.ngform.markAsTouched({ onlySelf: value });
+    }
+
+    /**
+     * This method sets the form state to untouched by internally calling angular markAsUntouched method on the form
+     * @param value, When true, mark only this control. When false or not supplied, marks all direct ancestors. Default is false
+     * @returns {void}
+     */
+    markAsUntouched(value: boolean = false) {
+        this.ngform.markAsUntouched({ onlySelf: value });
     }
 
     invokeActionEvent($event, expression: string) {

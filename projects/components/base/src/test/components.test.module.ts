@@ -5,16 +5,15 @@ import { TrustAsPipe } from '../pipes/trust-as.pipe';
 import { App } from '@wm/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { TypeaheadModule } from 'ngx-bootstrap';
-import { SearchComponent } from '../../../widgets/basic/search/src/search.component';
-import { ToDatePipe } from '../pipes/custom-pipes';
 
 let mockApp = {};
 
 @NgModule({
     declarations: [
         ButtonComponent,
-        SearchComponent,
         ImagePipe,
         TrustAsPipe
     ],
@@ -25,6 +24,7 @@ let mockApp = {};
     imports: [
         CommonModule,
         FormsModule,
+        BrowserAnimationsModule,
         TypeaheadModule.forRoot()
     ],
     exports: [ButtonComponent, ImagePipe, TrustAsPipe]

@@ -566,7 +566,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const dataNavigator = this.dataNavigator;
 
         dataNavigator.options = {
-            maxResults: this.pagesize || 5
+            maxResults: this.pagesize || 20
         };
 
         this.dataNavigatorWatched = true;
@@ -587,9 +587,19 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.pagesize = val;
         });
 
-        dataNavigator.maxResults = this.pagesize || 5;
+        dataNavigator.maxResults = this.pagesize || 20;
         this.removePropertyBinding('dataset');
-        this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource, this.dataset, this.binddatasource);
+        // when list having "datasetboundexpr" attr indicates that list is bound to item context
+        // when dataset is bound to "item.FIELD" then item context is passed as the datasource.
+        const datasetBoundExpr = this.getAttr('datasetboundexpr');
+        this.dataNavigator.setBindDataSet(
+            this.binddataset,
+            this.viewParent,
+            datasetBoundExpr ? this.context : this.datasource,
+            this.dataset,
+            this.binddatasource,
+            datasetBoundExpr
+        );
     }
 
     private onDataSetChange(newVal) {

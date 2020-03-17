@@ -1,5 +1,5 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 
@@ -16,6 +16,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './input-email.component.html',
     providers: [
         provideAs(InputEmailComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(InputEmailComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(InputEmailComponent)
     ]
 })

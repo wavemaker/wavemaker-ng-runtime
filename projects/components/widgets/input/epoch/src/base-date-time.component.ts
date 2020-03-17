@@ -1,5 +1,5 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
-import { Validator } from '@angular/forms';
+import { Validator, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
@@ -24,6 +24,8 @@ const DATAENTRYMODE_DROPDOWN_OPTIONS = {
 
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
+    protected excludedDaysToDisable: Array<number>;
+    protected excludedDatesToDisable: Array<Date>;
     public excludedates;
     public outputformat;
     public mindate;
@@ -39,6 +41,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected ismeridian: boolean;
     protected datePipe;
     protected isReadOnly = false;
+    public selectfromothermonth: boolean;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -53,6 +56,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected bsDatePickerDirective: BsDatepickerDirective;
 
     @ViewChild(BsDropdownDirective) protected bsDropdown;
+    private validateType: string;
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
@@ -72,7 +76,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * returns true if the input value is default (i.e Data entry can be done either by selecting from the Date/DateTime/Time Picker or by entering  manually using the keyboard. )
      * @param1 dropdownvalue, user selected value
      * **/
-    protected  isDataEntryModeEnabledOnInput (dropdownvalue) {
+    protected isDataEntryModeEnabledOnInput(dropdownvalue) {
         return dropdownvalue === DATAENTRYMODE_DROPDOWN_OPTIONS.DEFAULT;
     }
     /**
@@ -89,8 +93,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $(this.nativeElement).find('.display-input').val('');
     }
 
-    public validate() {
+    public validate(c: AbstractControl) {
         if (this.invalidDateTimeFormat) {
+            // validateType is specific to min / max values for time, date, datetime widgets only.
+            this.validateType = '';
             return {
                 invalidDateTimeFormat: {
                     valid: false
@@ -111,6 +117,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 },
             };
         }
+        /* WMS-18269 | Extending the existing validation for 'required' */
+        if (this["show"] && this["required"]) {
+            return !!c.value ? null : { required: true };
+        }
+        this.validateType = '';
         return null;
     }
 
@@ -154,16 +165,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (newVal) {
             newVal = moment(newVal).startOf('day').toDate();
             const minDate = moment(getDateObj(this.mindate)).startOf('day').toDate();
-            const maxDate =  moment(getDateObj(this.maxdate)).startOf('day').toDate();
+            const maxDate = moment(getDateObj(this.maxdate)).startOf('day').toDate();
             if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.dateNotInRange = true;
+                this.validateType = 'mindate';
                 this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
                 this.dateNotInRange = true;
+                this.validateType = 'maxdate';
                 this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
@@ -177,14 +190,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 excludeDatesArray = excludeDatesArray.map(d => getFormattedDate(this.datePipe, d, this.datepattern));
                 if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, newVal, this.datepattern)) > -1) {
                     this.dateNotInRange = true;
+                    this.validateType = 'excludedates';
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return;
                 }
             }
             if (this.excludedays) {
-                const excludeDaysArray =  _.split(this.excludedays, ',');
+                const excludeDaysArray = _.split(this.excludedays, ',');
                 if (excludeDaysArray.indexOf(newVal.getDay().toString()) > -1) {
                     this.dateNotInRange = true;
+                    this.validateType = 'excludedays';
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return;
                 }
@@ -225,14 +240,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private setActiveDateFocus(newDate, isMouseEvent?: boolean) {
         const activeMonth = this.activeDate.getMonth();
         // check for keyboard event
-         if (!isMouseEvent) {
+        if (!isMouseEvent) {
             if (newDate.getMonth() < activeMonth) {
-                this.isOtheryear(newDate) ?  this.goToOtherMonthOryear('next', 'days') :  this.goToOtherMonthOryear('previous', 'days');
+                this.isOtheryear(newDate) ? this.goToOtherMonthOryear('next', 'days') : this.goToOtherMonthOryear('previous', 'days');
             } else if (newDate.getMonth() > activeMonth) {
                 this.isOtheryear(newDate) ? this.goToOtherMonthOryear('previous', 'days') : this.goToOtherMonthOryear('next', 'days');
             }
-         }
-        setTimeout( () => {
+        }
+        setTimeout(() => {
             if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
                 this.hightlightToday();
             }
@@ -364,7 +379,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected addDatepickerKeyboardEvents(scope, isDateTime) {
         this.keyEventPluginInstance = scope.keyEventPlugin.constructor;
         this.elementScope = scope;
-        const dateContainer  = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
+        const dateContainer = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
         setAttr(dateContainer, 'tabindex', '0');
         dateContainer.onkeydown = (event) => {
             const action = this.keyEventPluginInstance.getEventFullKey(event);
@@ -421,6 +436,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setActiveDateFocus(newdate);
             } else if (action === 'arrowright') {
                 newdate = moment(this.activeDate).add(+1, 'days').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (action === 'pageup') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(-1, 'month').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (action === 'pagedown') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(+1, 'month').toDate();
                 this.setActiveDateFocus(newdate);
             } else if (action === 'control.arrowup') {
                 // clicking on table header month name to load list of months
@@ -516,7 +539,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.goToOtherMonthOryear('next', 'month');
             }
         }
-        setTimeout( () => {
+        setTimeout(() => {
             $(`.bs-datepicker-body table.months span:contains(${newMonth})`).focus();
             this.activeDate = newDate;
         });
@@ -543,7 +566,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             } else if (action === 'arrowright') {
                 newdate = moment(this.activeDate).add(+1, 'year').toDate();
                 this.setActiveYearFocus(newdate);
-            }  else if (action === 'control.arrowdown' || action === 'enter') {
+            } else if (action === 'control.arrowdown' || action === 'enter') {
                 if ($(document.activeElement).parent().hasClass('disabled')) {
                     return;
                 }
@@ -570,7 +593,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.goToOtherMonthOryear('next', 'year');
             }
         }
-        setTimeout( () => {
+        setTimeout(() => {
             $(`.bs-datepicker-body table.years span:contains(${newYear})`).focus();
             this.activeDate = newDate;
         });
@@ -679,17 +702,17 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     }
                 }
                 if (action === 'tab') {
-                   this.invalidDateTimeFormat = false;
-                   this.invokeOnChange(this.datavalue, undefined, false);
-                   const pattern = this.datepattern || this.timepattern;
+                    this.invalidDateTimeFormat = false;
+                    this.invokeOnChange(this.datavalue, undefined, false);
+                    const pattern = this.datepattern || this.timepattern;
                     if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, pattern) === elementScope.displayValue) {
                         $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
                     }
                 }
-                if (action === 'arrowdown' ||  action === 'arrowup') {
+                if (action === 'arrowdown' || action === 'arrowup') {
                     this.timeFormatValidation();
                 }
-             } else if ($target.hasClass('btn-default')) {
+            } else if ($target.hasClass('btn-default')) {
                 if (action === 'tab' || action === 'escape') {
                     elementScope.setIsTimeOpen(false);
                     this.focus();
@@ -726,18 +749,37 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (key === 'tabindex') {
             return;
         }
+        if (key === 'required') {
+            this._onChange();
+            return;
+        }
         if (this.useDatapicker && key === 'datepattern') {
             this.updateFormat(key);
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {
-            this._dateOptions.minDate = (nv === CURRENT_DATE) ?  this.mindate = new Date() : getDateObj(nv);
+            this._dateOptions.minDate = (nv === CURRENT_DATE) ? this.mindate = new Date() : getDateObj(nv);
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'maxdate') {
-           this._dateOptions.maxDate = (nv === CURRENT_DATE) ?  this.maxdate = new Date() : getDateObj(nv);
+            this._dateOptions.maxDate = (nv === CURRENT_DATE) ? this.maxdate = new Date() : getDateObj(nv);
             this.minDateMaxDateValidationOnInput(this.datavalue);
-        }  else if (key === 'excludedates' || key === 'excludedays') {
+        } else if (key === 'excludedates' || key === 'excludedays') {
+            if (this.excludedays) {
+                this.excludedDaysToDisable = _.split(this.excludedays, ',').map((day) => {
+                    return +day;
+                })
+            }
+            if (this.excludedates) {
+                this.excludedDatesToDisable = this.excludedates;
+                if (isString(this.excludedates)) {
+                    this.excludedDatesToDisable = _.split(this.excludedates, ',');
+                }
+                this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => getDateObj(d));
+            }
             this.minDateMaxDateValidationOnInput(this.datavalue);
+        } else if (key == 'selectfromothermonth') {
+            this._dateOptions.selectFromOtherMonth = nv;
+
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -746,36 +788,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
-        if (this.bsDatePickerDirective) {
-            this.dateOnShowSubscription = this.bsDatePickerDirective
-                .onShown
-                .subscribe(cal => {
-                    cal.daysCalendar.subscribe(data => {
-                        let excludedDates;
-                        if (this.excludedates) {
-                            if (isString(this.excludedates)) {
-                                excludedDates = _.split(this.excludedates, ',');
-                            } else {
-                                excludedDates = this.excludedates;
-                            }
-                            excludedDates = excludedDates.map(d => moment(d));
-                        }
-                        data[0].weeks.forEach(week => {
-                            week.days.forEach(day => {
-                                if (!day.isDisabled && this.excludedays) {
-                                    day.isDisabled = _.includes(this.excludedays, day.dayIndex);
-                                }
-
-                                if (!day.isDisabled && excludedDates) {
-                                    const md = moment(day.date);
-                                    day.isDisabled = excludedDates.some(ed => md.isSame(ed, 'day'));
-                                }
-                            });
-                        });
-                    });
-                });
-        }
-
     }
 
     ngOnDestroy() {

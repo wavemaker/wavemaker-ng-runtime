@@ -20,6 +20,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public orderby: string;
     public multiple: boolean;
     public readonly: boolean;
+    public content: string;
 
     public binddisplayexpression: string;
     public binddisplayimagesrc: string;
@@ -274,6 +275,11 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected resetDatasetItems() {
         this.datasetItems.forEach(item => item.selected = false);
     }
+
+    protected setTemplatePartial(partialName) {
+        this.content = partialName;
+    }
+
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         super.onPropertyChange(key, nv, ov);

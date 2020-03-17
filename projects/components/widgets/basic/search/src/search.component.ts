@@ -15,7 +15,7 @@ import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provide
 
 declare const _;
 
-const WIDGET_CONFIG = {widgetType: 'wm-search', hostClass: 'input-group'};
+const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
 @Component({
     selector: '[wmSearch]',
@@ -107,22 +107,22 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
          */
         this.typeaheadDataSource = Observable
             .create((observer: any) => {
-            // Runs on every search
-            if (this.listenQuery) {
-                this._defaultQueryInvoked = false;
-                this._loadingItems = true;
-                observer.next(this.query);
-            }
-            // on keydown, while scrolling the dropdown items, when last item is reached next call is triggered
-            // unless the call is resolved, we are able to scroll next to first item and soon
-            // This shows flickering from first item to next new items appended.
-            // By setting container to undefined, key events changes will be stopped while loading items
-            if (this.lastSelectedIndex) {
-                this.typeahead._container = undefined;
-            }
-        }).pipe(
-            mergeMap((token: string) => this.getDataSourceAsObservable(token))
-        );
+                // Runs on every search
+                if (this.listenQuery) {
+                    this._defaultQueryInvoked = false;
+                    this._loadingItems = true;
+                    observer.next(this.query);
+                }
+                // on keydown, while scrolling the dropdown items, when last item is reached next call is triggered
+                // unless the call is resolved, we are able to scroll next to first item and soon
+                // This shows flickering from first item to next new items appended.
+                // By setting container to undefined, key events changes will be stopped while loading items
+                if (this.lastSelectedIndex) {
+                    this.typeahead._container = undefined;
+                }
+            }).pipe(
+                mergeMap((token: string) => this.getDataSourceAsObservable(token))
+            );
 
         this.dataProvider = new DataProvider();
 
@@ -185,7 +185,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     // function to  clear the input value
-    private clearText() {
+    public clearText() {
         this.$element.find('input').val('');
         this.showClosebtn = false;
     }
@@ -338,7 +338,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
             // trigger onSubmit only when the search input is cleared off and do not trigger when tab is pressed.
             if ($event && $event.which !== 9) {
-                this.invokeEventCallback('submit', {$event});
+                this.invokeEventCallback('submit', { $event });
             }
         } else {
             // invoking change event on every input value change.
@@ -376,12 +376,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.typeaheadContainer.selectActiveMatch();
         } else {
             this.queryModel = this.query;
-            this.invokeEventCallback('submit', {$event});
+            this.invokeEventCallback('submit', { $event });
         }
     }
 
     private invokeOnBeforeServiceCall(inputData) {
-        this.invokeEventCallback('beforeservicecall', {inputData});
+        this.invokeEventCallback('beforeservicecall', { inputData });
     }
 
     private onDropdownOpen() {
@@ -407,7 +407,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
             dropdownEl.insertAfter(this.$element.find('input:first'));
             const screenHeight = this.$element.closest('.app-content').height();
-            dropdownEl.css({position: 'relative', top: 0, height: screenHeight + 'px'});
+            dropdownEl.css({ position: 'relative', top: 0, height: screenHeight + 'px' });
             this.showClosebtn = this.query && this.query !== '';
 
             if (!this.dataProvider.isLastPage) {
@@ -448,7 +448,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         const $lastItem = typeAheadDropDown.find('li').last();
 
         // Check if last item is not below the full screen
-        if ($lastItem.length && typeAheadDropDown.length && (typeAheadDropDown.height() + typeAheadDropDown.position().top >  $lastItem.height() + $lastItem.position().top)) {
+        if ($lastItem.length && typeAheadDropDown.length && (typeAheadDropDown.height() + typeAheadDropDown.position().top > $lastItem.height() + $lastItem.position().top)) {
             this.loadMoreData(true);
         }
     }
@@ -497,9 +497,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // updates the model value using queryModel
     private updateDatavalueFromQueryModel() {
-        this._modelByValue = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
-        this._modelByKey = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
-        this.toBeProcessedDatavalue = undefined;
+        if (isDefined(this.queryModel)) {
+            this._modelByValue = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
+            this._modelByKey = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
+            this.toBeProcessedDatavalue = undefined;
+        }
     }
 
     private updateByDataset(data: any) {
@@ -509,7 +511,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             return;
         }
         const selectedItem = _.find(this.datasetItems, (item) => {
-            return  (_.isObject(item.value) ? _.isEqual(item.value, data) : (_.toString(item.value)).toLowerCase() === (_.toString(data)).toLowerCase());
+            return (_.isObject(item.value) ? _.isEqual(item.value, data) : (_.toString(item.value)).toLowerCase() === (_.toString(data)).toLowerCase());
         });
 
         // set the default only when it is available in dataset.
@@ -576,39 +578,39 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         return this.dataProvider.filter(dataConfig)
             .then((response: any) => {
-                    // response from dataProvider returns always data object.
-                    response = response.data || response;
+                // response from dataProvider returns always data object.
+                response = response.data || response;
 
-                    // for service variable, updating the dataset only if it is not defined or empty
-                    if ((!isDefined(this.dataset) || !this.dataset.length) && this.dataProvider.updateDataset) {
-                        this.dataset = response;
-                    }
+                // for service variable, updating the dataset only if it is not defined or empty
+                if ((!isDefined(this.dataset) || !this.dataset.length) && this.dataProvider.updateDataset) {
+                    this.dataset = response;
+                }
 
-                    if (this.dataProvider.hasMoreData) {
-                        this.formattedDataset = this.formattedDataset.concat(response);
-                    } else {
-                        this.formattedDataset = response;
-                    }
+                if (this.dataProvider.hasMoreData) {
+                    this.formattedDataset = this.formattedDataset.concat(response);
+                } else {
+                    this.formattedDataset = response;
+                }
 
-                    // explicitly setting the optionslimit as the matches more than 20 will be ignored if optionslimit is not specified.
-                    if (this.formattedDataset.length > 20 && !isDefined(this.limit)) {
-                        this.typeahead.typeaheadOptionsLimit = this.formattedDataset.length;
-                    }
+                // explicitly setting the optionslimit as the matches more than 20 will be ignored if optionslimit is not specified.
+                if (this.formattedDataset.length > 20 && !isDefined(this.limit)) {
+                    this.typeahead.typeaheadOptionsLimit = this.formattedDataset.length;
+                }
 
                 // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
                 if (this._isOpen && this.isMobileAutoComplete() && !this.dataProvider.isLastPage) {
                     this.triggerSearch();
                 }
 
-                    const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
+                const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
 
-                    // result contains the datafield values.
-                    this.result = _.map(transformedData, 'value');
-                    return transformedData;
-                }, (error) => {
-                    this._loadingItems = false;
-                    return [];
-                }
+                // result contains the datafield values.
+                this.result = _.map(transformedData, 'value');
+                return transformedData;
+            }, (error) => {
+                this._loadingItems = false;
+                return [];
+            }
             ).then(result => {
                 if (this.isScrolled) {
                     (_.debounce(() => {
@@ -718,8 +720,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this.$element.hasClass('full-screen')) {
             this.closeSearch();
         }
-        this.invokeEventCallback('select', {$event, selectedValue: this.datavalue});
-        this.invokeEventCallback('submit', {$event});
+        this.invokeEventCallback('select', { $event, selectedValue: this.datavalue });
+        this.invokeEventCallback('submit', { $event });
 
         this.updatePrevDatavalue(this.datavalue);
     }
@@ -728,6 +730,16 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (key === 'tabindex') {
             return;
         }
+
+
+        // Backward compatability from 10.3.1 to 10.3.2
+        // 10.3.1 we had displaylabel as modal value
+        // From 10.3.2 onwords we will be having displayexpresion as modal value
+        if (this.type === 'autocomplete' && this.displaylabel && !this.displayexpression && key === 'displaylabel') {
+            this.displayexpression = this.displaylabel;
+            this.displaylabel = undefined;
+        }
+
         // when dataoptions are provided and there is no displaylabel given then displaylabel is set as the relatedfield
         if (key === 'displaylabel' && this.dataoptions && this.binddisplaylabel === null) {
             this.query = _.get(this._modelByValue, nv) || this._modelByValue;

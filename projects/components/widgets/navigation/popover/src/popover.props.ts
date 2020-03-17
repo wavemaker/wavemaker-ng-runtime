@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-popover',
         new Map(
             [
+                ['autoclose', {value: 'outsideClick', ...PROP_STRING}],
                 ['badgevalue', PROP_STRING],
                 ['caption', {value: 'Link', ...PROP_STRING}],
                 ['class', PROP_STRING],

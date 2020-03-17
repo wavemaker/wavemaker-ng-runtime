@@ -8,7 +8,9 @@ import { App } from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
+import { WmComponentsModule } from '@wm/components/base';
 import { SearchComponent } from '@wm/components/basic/search';
+import { PartialRefProvider } from '@wm/core';
 
 let mockApp = {};
 
@@ -24,11 +26,13 @@ class ChipsWrapperComponent {
 const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
-        TypeaheadModule.forRoot()
+        TypeaheadModule.forRoot(),
+        WmComponentsModule
     ],
     declarations: [ChipsWrapperComponent, ChipsComponent, SearchComponent],
     providers: [
-        {provide: App, useValue: mockApp}
+        { provide: App, useValue: mockApp },
+        { provide: PartialRefProvider, useClass: PartialRefProvider }
     ]
 };
 

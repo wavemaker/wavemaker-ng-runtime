@@ -5,8 +5,8 @@ import { addClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
 import { registerProps } from './container.props';
-import { StylableComponent } from '../base/stylable.component';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import {BaseContainerComponent} from "../base/base-container.component";
 
 const DEFAULT_CLS = 'app-container';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -20,7 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(ContainerDirective)
     ]
 })
-export class ContainerDirective extends StylableComponent {
+export class ContainerDirective extends BaseContainerComponent {
     static initializeProps = registerProps();
 
     constructor(inj: Injector) {

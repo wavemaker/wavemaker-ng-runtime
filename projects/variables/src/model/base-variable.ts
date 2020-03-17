@@ -124,7 +124,7 @@ export abstract class BaseVariable {
                 }
             }
         }
-        return DatasetUtil.removeItem(this.dataSet, index, { exactMatch, path: options.path, parentIndex });
+        return DatasetUtil.removeItem(this.dataSet, index, { exactMatch, path: _.get(options, 'path'), parentIndex });
     }
 
     clearData() {

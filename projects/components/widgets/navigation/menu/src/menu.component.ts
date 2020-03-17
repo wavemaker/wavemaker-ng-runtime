@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
-import { $appDigest, addClass, removeClass, triggerItemAction, UserDefinedExecutionContext  } from '@wm/core';
-import { DatasetAwareNavComponent, isActiveNavItem, NavNode, provideAsWidgetRef, styler,  } from '@wm/components/base';
+import { $appDigest, addClass, removeClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
+import { DatasetAwareNavComponent, isActiveNavItem, NavNode, provideAsWidgetRef, styler, AUTOCLOSE_TYPE } from '@wm/components/base';
 import { NavComponent } from './nav/nav.component';
 
 import { registerProps } from './menu.props';
@@ -13,12 +13,13 @@ declare const _;
 
 export const KEYBOARD_MOVEMENTS = {
     MOVE_UP: 'UP-ARROW',
-    MOVE_LEFT : 'LEFT-ARROW',
-    MOVE_RIGHT : 'RIGHT-ARROW',
-    MOVE_DOWN : 'DOWN-ARROW',
-    ON_ENTER : 'ENTER',
-    ON_TAB : 'TAB',
-    ON_ESCAPE : 'ESC'
+    MOVE_LEFT: 'LEFT-ARROW',
+    MOVE_RIGHT: 'RIGHT-ARROW',
+    MOVE_DOWN: 'DOWN-ARROW',
+    ON_ENTER: 'ENTER',
+    ON_TAB: 'TAB',
+    ON_SHIFT_TAB: 'SHIFT-TAB',
+    ON_ESCAPE: 'ESC'
 };
 
 export const MENU_POSITION = {
@@ -51,7 +52,7 @@ const AUTO_OPEN = {
     ALWAYS: 'always'
 };
 
-const WIDGET_CONFIG = {widgetType: 'wm-menu', hostClass: 'dropdown app-menu'};
+const WIDGET_CONFIG = { widgetType: 'wm-menu', hostClass: 'dropdown app-menu' };
 @Component({
     selector: '[wmMenu]',
     templateUrl: './menu.component.html',
@@ -87,7 +88,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         }
         $appDigest();
     }
-    @HostListener('onHidden') onHide () {
+    @HostListener('onHidden') onHide() {
         this.$element.find('>.dropdown-toggle').focus();
         this.$element.find('li').removeClass('open');
         this._selectFirstItem = false;
@@ -147,17 +148,17 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             if (!_.isEmpty(this.nodes)) {
                 // If menu widget is inside nav widget then dont check for item isactive property because these will be handled form nav widget.
                 if (this.parentNav) {
-                   return;
+                    return;
                 }
                 let itemFound = false;
                 const getItem = (nodes) => {
-                     _.forEach(nodes, (item) => {
-                         if (itemFound) {
-                             return;
-                         }
+                    _.forEach(nodes, (item) => {
+                        if (itemFound) {
+                            return;
+                        }
                         if (item.isactive) {
                             itemFound = true;
-                            this.onMenuItemSelect({$event: {}, $item: item});
+                            this.onMenuItemSelect({ $event: {}, $item: item });
                             // Trigger the action associated with active item
                             triggerItemAction(this, item);
                             return false;
@@ -210,7 +211,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         }
 
         if (key === 'autoclose') {
-            this.bsDropdown.autoClose = nv !== 'disabled';
+            this.bsDropdown.autoClose = nv !== AUTOCLOSE_TYPE.DISABLED;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -245,9 +246,9 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     }
 
     public onMenuItemSelect(args) {
-        const {$event} = args;
+        const { $event } = args;
         const $item = args.$item.value;
-        this.invokeEventCallback('select', {$event, $item});
+        this.invokeEventCallback('select', { $event, $item });
     }
 
     ngAfterViewInit() {

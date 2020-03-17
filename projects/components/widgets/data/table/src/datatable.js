@@ -1274,7 +1274,7 @@ $.widget('wm.datatable', {
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var rowId = $row.attr('data-row-id');
         var rowData = this.preparedData[rowId];
-        data = this.options.data[rowId];
+        var data = this.options.data[rowId];
         this.options.assignSelectedItems(data, e);
     },
 
@@ -1535,7 +1535,7 @@ $.widget('wm.datatable', {
             if (!colDef.readonly) {
                 value = _.get(rowData, colDef.field);
                 editableTemplate = self.options.getInlineEditWidget(colDef.field, value, alwaysNewRow);
-                if (!(colDef.customExpression || colDef.formatpattern)) {
+                if (!(colDef.customExpression || (colDef.formatpattern && colDef.formatpattern !== 'None'))) {
                     $el.addClass('cell-editing').html(editableTemplate).data('originalText', cellText);
                 } else {
                     $el.addClass('cell-editing editable-expression').data('originalValue', {
@@ -1613,6 +1613,9 @@ $.widget('wm.datatable', {
         e.data = e.data || {};
         action = e.data.action || options.action;
         if (action === 'edit') {
+            if (this.options.editmode === this.CONSTANTS.INLINE) {
+                this.options.callLoadInlineWidgetData();
+            }
             if (advancedEdit && self.gridBody.find('tr.app-datagrid-row.row-editing:not(.always-new-row)').length) {
                 //In case of advanced edit, save the previous row
                 self.saveRow(function (skipFocus, error) {

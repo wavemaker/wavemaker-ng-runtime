@@ -22,6 +22,10 @@ export const getHtmlSelectorElement = (fixture, selector: string) => {
     return fixture.debugElement.query(By.css(selector));
 }
 
+export const getElementByTagOnDocQuery = (tagName: string) => {
+    return document.getElementsByTagName(tagName);
+}
+
 export const checkElementClass = (fixture, cssquery: string, eleClass: string) => {
     fixture.whenStable().then(() => {
         let dateControl = getHtmlSelectorElement(fixture, cssquery);

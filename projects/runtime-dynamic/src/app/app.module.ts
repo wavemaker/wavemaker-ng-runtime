@@ -5,25 +5,30 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import {
-    defineLocale,
-    BsLocaleService,
-    BsDatepickerModule,
-    BsDropdownModule,
-    CarouselModule as ngxCarouselModule,
-    DatepickerModule as ngxDatepickerModule,
-    ModalModule,
-    PaginationModule as ngxPaginationModule,
-    PopoverModule as ngxPopoverModule,
-    ProgressbarModule,
-    TimepickerModule as ngxTimepickerModule,
-    TypeaheadModule
-} from 'ngx-bootstrap';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { TimepickerModule as ngxTimepickerModule } from 'ngx-bootstrap/timepicker';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+import { PaginationModule as ngxPaginationModule } from 'ngx-bootstrap/pagination';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+
+
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { DatepickerModule as ngxDatepickerModule, } from 'ngx-bootstrap/datepicker';
+
+
+import { defineLocale } from 'ngx-bootstrap/chronos'
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { PopoverModule as ngxPopoverModule } from 'ngx-bootstrap/popover';
+
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
+import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import { App, getWmProjectProperties } from '@wm/core';
+import { App, getWmProjectProperties, PartialRefProvider } from '@wm/core';
 // Basic widgets
+
 import { BasicModule } from '@wm/components/basic';
 import { ProgressModule } from '@wm/components/basic/progress';
 import { RichTextEditorModule } from '@wm/components/basic/rich-text-editor';
@@ -51,10 +56,10 @@ import { LiveTableModule } from '@wm/components/data/live-table';
 import { PaginationModule } from '@wm/components/data/pagination';
 import { TableModule } from '@wm/components/data/table';
 
-//Chart
+// Chart
 import { ChartModule } from '@wm/components/chart';
 
-//Containers
+// Containers
 import { AccordionModule } from '@wm/components/containers/accordion';
 import { LayoutGridModule } from '@wm/components/containers/layout-grid';
 import { PanelModule } from '@wm/components/containers/panel';
@@ -62,7 +67,7 @@ import { TabsModule } from '@wm/components/containers/tabs';
 import { TileModule } from '@wm/components/containers/tile';
 import { WizardModule } from '@wm/components/containers/wizard';
 
-//Dialogs
+// Dialogs
 import { AlertDialogModule } from '@wm/components/dialogs/alert-dialog';
 import { IframeDialogModule } from '@wm/components/dialogs/iframe-dialog';
 import { LoginDialogModule } from '@wm/components/dialogs/login-dialog';
@@ -95,7 +100,6 @@ import {
     ComponentRefProvider,
     PrefabConfigProvider,
     WM_MODULES_FOR_ROOT,
-    PartialRefProvider,
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
 } from '@wm/runtime/base';
 
@@ -106,15 +110,16 @@ import { AppVariablesProviderService } from './services/app-variables-provider.s
 import { ComponentRefProviderService } from './services/component-ref-provider.service';
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-export const routerModule = RouterModule.forRoot(routes, {useHash: true, scrollPositionRestoration: 'top'});
-export const toastrModule = ToastNoAnimationModule.forRoot({maxOpened: 1, autoDismiss: true });
+export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
+export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
 export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     cookieName: 'wm_xsrf_token',
     headerName: getWmProjectProperties().xsrf_header_name
 });
 
-export const modalModule:ModuleWithProviders = ModalModule.forRoot();
+export const modalModule: ModuleWithProviders = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders = BsDatepickerModule.forRoot();
 export const datepickerModule: ModuleWithProviders = ngxDatepickerModule.forRoot();
 export const timepickerModule: ModuleWithProviders = ngxTimepickerModule.forRoot();
@@ -125,6 +130,7 @@ export const progressbarModule: ModuleWithProviders = ProgressbarModule.forRoot(
 export const carouselModule: ModuleWithProviders = ngxCarouselModule.forRoot();
 export const popoverModule: ModuleWithProviders = ngxPopoverModule.forRoot();
 export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModule.forRoot({});
+export const tooltipModule: ModuleWithProviders = TooltipModule.forRoot();
 
 const componentsModule = [
     // NGX Bootstrap
@@ -138,6 +144,8 @@ const componentsModule = [
     ngxCarouselModule,
     ngxPopoverModule,
     NgCircleProgressModule,
+    TooltipModule,
+    BrowserAnimationsModule,
 
     // Basic widgets
     BasicModule,
@@ -188,7 +196,7 @@ const componentsModule = [
     NavbarModule,
     PopoverModule,
 
-    //Advanced
+    // Advanced
     CarouselModule,
     LoginModule,
     MarqueeModule,
@@ -224,6 +232,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         bsDropdownModule,
         paginationModule,
         typeaheadModule,
+        tooltipModule,
         progressbarModule,
         carouselModule,
         popoverModule,
@@ -237,19 +246,16 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
     ],
     providers: [
         AppResourceManagerService,
-        {provide: AppJSProvider, useClass: AppJSProviderService},
-        {provide: AppVariablesProvider, useClass: AppVariablesProviderService},
-        {provide: ComponentRefProvider, useClass: ComponentRefProviderService},
-        {provide: PartialRefProvider, useClass: ComponentRefProviderService},
-        {provide: PrefabConfigProvider, useClass: PrefabConfigProviderService}
+        { provide: AppJSProvider, useClass: AppJSProviderService },
+        { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
+        { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
+        { provide: PartialRefProvider, useClass: ComponentRefProviderService },
+        { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService }
     ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
-    constructor(private app: App, private inj: Injector, private bsLocaleService: BsLocaleService, private componentRefProvider: ComponentRefProvider) {
-        const selectedLocale = this.app.getSelectedLocale();
-        defineLocale(selectedLocale);
-        this.bsLocaleService.use(selectedLocale);
+    constructor(private app: App, private inj: Injector, private componentRefProvider: ComponentRefProvider) {
         if (window['cordova']) {
             // clear the cached urls on logout, to load the Login Page and not the Main Page as app reload(window.location.reload) is not invoked in mobile
             this.app.subscribe('userLoggedOut', this.componentRefProvider.clearComponentFactoryRefCache.bind(this.componentRefProvider));

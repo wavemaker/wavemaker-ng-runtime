@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { DataSource, removeAttr, setAttr } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
@@ -16,6 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
     templateUrl: './select.component.html',
     providers: [
         provideAs(SelectComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(SelectComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(SelectComponent)
     ]
 })
@@ -73,11 +74,15 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'required')  {
+            this._onChange();
+            return;
+        }
         if (key === 'class' ||  key === 'tabindex') {
             return;
         } else if (key === 'readonly') {
              (nv === true) ? setAttr(this.selectEl.nativeElement, 'readonly', 'readonly') : removeAttr(this.selectEl.nativeElement, 'readonly') ;
-        }
+        } 
         super.onPropertyChange(key, nv, ov);
     }
 }

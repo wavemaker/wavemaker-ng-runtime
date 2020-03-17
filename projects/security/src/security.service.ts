@@ -42,8 +42,9 @@ export class SecurityService {
         return this.config;
     }
 
-    load() {
+    load(forceFlag?: boolean) {
         if(this.loadPromise) {return this.loadPromise;}
+        if (!forceFlag && this.config) {return Promise.resolve(this.config);}
         this.loadPromise = new Promise((resolve, reject) => {
                 this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
                     this.config = response.body;

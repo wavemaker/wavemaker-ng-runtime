@@ -37,6 +37,7 @@ import { PushService, PushServiceImpl } from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope, CONSTANTS } from '@wm/variables';
+import { BasicModule } from '@wm/mobile/components/basic';
 
 import { AppExtComponent } from './components/app-ext.component';
 import { CookieService } from './services/cookie.service';
@@ -79,7 +80,8 @@ const ionicServices = [
     ],
     imports: [
         MobileCoreModule,
-        VariablesModule
+        VariablesModule,
+        BasicModule
     ],
     bootstrap: []
 })
@@ -153,7 +155,7 @@ export class MobileRuntimeModule {
         deviceService.whenReady().then(() => {
             // To make wavelens work with spotcues environment
             if (isSpotcues) {
-                var params = location.search.substring(1)
+                const params = location.search.substring(1)
                     .split('&')
                     .map(s => s.split('='))
                     .reduce((a, c, i, s) => {

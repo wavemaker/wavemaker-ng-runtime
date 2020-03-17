@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 
 import { addClass, App, setAttr, setCSSFromObj, findRootContainer } from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE } from '@wm/components/base';
 
 import { registerProps } from './popover.props';
 
@@ -53,6 +53,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public contentsource: string;
     public content: string;
     public popoverplacement: string;
+    public outsideclick: boolean;
+    public autoclose: string;
 
     public class: string;
     public title: string;
@@ -175,6 +177,11 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             }
         };
 
+        //Whenever autoclose property is set to 'always', adding the onclick listener to the popover container to close the popover.
+        if (this.autoclose === AUTOCLOSE_TYPE.ALWAYS) {
+            popoverContainer.onclick = () => this.close();
+        }
+
         setAttr(popoverContainer, 'tabindex', 0);
         setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
@@ -243,6 +250,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
         if (key === 'content' && nv) {
             this.canPopoverOpen = true;
+        }
+        if (key === 'autoclose') {
+            this.outsideclick = (nv === AUTOCLOSE_TYPE.OUTSIDECLICK || nv === AUTOCLOSE_TYPE.ALWAYS) ? true : false;
         }
         super.onPropertyChange(key, nv, ov);
     }

@@ -8,7 +8,7 @@
             "umdId": "wm.components.containers.panel",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
-
+                "ngx-bootstrap/dropdown": "ngx-bootstrap.dropdown",
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
                 "@wm/components/navigation/menu": "wm.components.navigation.menu"

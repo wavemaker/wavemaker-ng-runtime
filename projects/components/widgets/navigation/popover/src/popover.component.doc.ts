@@ -123,6 +123,16 @@ export class Popover {
      * This property will be used to display the arrow on the popover.
      */
     @Input() popoverarrow: boolean = false;
+        /**
+     * This property controls the behaviour of popover when clicked outside.
+     * <p><em>Allowed Values: </em><code> outsideClick, always, disabled</code></p>
+     * <div class="summary">
+     * <p><code>outsideClick</code><em>: Closes when clicked outside the popover.</em></p>
+     * <p><code>always</code><em>: Closes when clicked on popover body.</em></p>
+     * <p><code>disabled</code><em>: Disabled auto-close.</em></p>
+     * </div>
+     */
+    @Input() autoclose: string = 'outsideClick';
 
     /**
      * This event handler is called when the widget is loaded.

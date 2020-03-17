@@ -130,12 +130,13 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow?, pCounter?) => {
     const innerTmpl = `${widgetRef} ${wmFormWidget} key="${fieldName}" data-field-name="${fieldName}" ${formControl} ${eventsTmpl} ${rowPropsTl}`;
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
 
-    return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage">
+    return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
                 <div data-col-identifier="${fieldName}" >
                      ${widgetTmpl}
                      <span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error"
                         *ngIf="getValidationMessage() && getControl() && getControl().invalid && getControl().touched">
                      </span>
+                     <div class="overlay" *ngIf="getPendingSpinnerStatus()"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>
                      <span class="sr-only" *ngIf="getValidationMessage()">{{getValidationMessage()}}</span>
                  </div>
             </ng-template>`;
@@ -250,9 +251,9 @@ register('wm-table-column', (): IBuildTaskDef => {
             return `${customExprTmpl}</${tagName}>`;
         },
         imports: (attrs: Map<String, String>): string[] => {
-            const widgetType = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
-            const requiredWidget = getRequiredFormWidget(widgetType);
-            return [requiredWidget, 'wm-table'];
+            const editWidgetType = attrs.get('edit-widget-type');
+            const filterWidgetType = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
+            return [getRequiredFormWidget(editWidgetType), getRequiredFormWidget(filterWidgetType), 'wm-table'];
         }
     };
 });

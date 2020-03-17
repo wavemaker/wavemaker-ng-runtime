@@ -118,6 +118,40 @@ export const getDataSource = (dataSetExpr: string): string => {
     }
 };
 
+const widgetChildAttrs = (() => {
+    let childAttrs = new Map();
+    const validChildAttrs = [
+        `required`
+    ];
+    return {
+        set: attrs => {
+            attrs.forEach((val,key)=>{
+                validChildAttrs.includes(key) && (childAttrs.set(key,val));
+            });
+        },
+        get: attrs => {
+            const fltrAttrs = new Map();
+            childAttrs.forEach((val,key)=>{
+                !attrs.get(key) && fltrAttrs.set(key,val);
+            });
+            return fltrAttrs;
+        },
+        clear: () => {
+            childAttrs.clear();
+        }
+    };
+})();
+export const setChildAttrs = attrs =>{
+    widgetChildAttrs.set(attrs);
+    return '';
+}
+export const getChildAttrs = attrs =>{
+    return getAttrMarkup(widgetChildAttrs.get(attrs));
+}
+export const clearChildAttrs = () =>{
+    widgetChildAttrs.clear();
+    return '';
+}
 export const getFormMarkupAttr = attrs => {
     if (attrs.get('datavalue.bind')) {
         const onDataValueBinding = getDataSource(attrs.get('datavalue.bind'));

@@ -85,7 +85,20 @@ export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {
         }
 
         this._$el.addClass('smoothscroll-wrapper');
-
+        /*  WMS-17904
+        document.scrollIntoView overrides default iScroll scroll,
+        so the fix is done to ensure, the scroll action from 'scrollIntoView'
+        is captured & executed through iScroll APIs
+        */
+        el.onscroll = function(e) {
+            if (e.target.iscroll && e.target.scrollTop) {
+                e.target.iscroll.scrollTo(
+                    e.target.iscroll.x,
+                    e.target.iscroll.y - e.target.scrollTop
+                );
+                e.target.scrollTop = 0;
+            }
+        };
         if (activeEl && activeEl.tagName === 'INPUT') {
             activeEl.focus();
         }
@@ -198,7 +211,8 @@ const refreshIscrolls = function(iScroll?: any) {
 
     // Fix for issue: keyboard hides the input on focus.
     // On input focus or window resize, keypad in device has to adjust.
-    if (($(document.activeElement).offset().top + document.activeElement.clientHeight) > window.innerHeight * 0.9) {
+    let bScrollIntoView = iScroll && iScroll.wrapper && iScroll.wrapper.contains(document.activeElement);
+    if (bScrollIntoView && ($(document.activeElement).offset().top + document.activeElement.clientHeight) > window.innerHeight * 0.9) {
         document.activeElement.scrollIntoView({behavior: 'auto', block: 'end', inline: 'end'});
     }
 

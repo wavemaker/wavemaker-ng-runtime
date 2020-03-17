@@ -27,7 +27,7 @@ export const registerProps = () => {
         textareaProps
     );
     registerFormWidget(
-        FormWidgetType.TOGGLE,
+        FormWidgetType.TEXTAREA,
         new Map(textareaProps)
     );
 };

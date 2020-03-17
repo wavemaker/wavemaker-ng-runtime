@@ -6,6 +6,7 @@ import { SecurityModule } from '@wm/security';
 
 import { ContainerDirective } from './widgets/common/container/container.directive';
 import { ImagePipe } from './pipes/image.pipe';
+import { ItemTemplateDirective } from "./widgets/common/item-template/item-template.directive";
 import { LazyLoadDirective } from './widgets/common/lazy-load/lazy-load.directive';
 import { MessageComponent } from './widgets/common/message/message.component';
 import { PartialDirective } from './widgets/common/partial/partial.directive';
@@ -13,6 +14,7 @@ import {
     PartialParamDirective,
     PartialParamHandlerDirective
 } from './widgets/common/partial-param/partial-param.directive';
+import { PartialContainerDirective} from "./widgets/common/base/partial-container.directive";
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SmoothScrollDirective } from './widgets/common/smooth-scroll/smooth-scroll.directive';
@@ -37,11 +39,13 @@ import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
 
 const wmComponents = [
     ContainerDirective,
+    ItemTemplateDirective,
     LazyLoadDirective,
     MessageComponent,
     PartialDirective,
     PartialParamHandlerDirective,
     PartialParamDirective,
+    PartialContainerDirective,
     RedrawableDirective,
     ShowInDeviceDirective,
     SmoothScrollDirective,

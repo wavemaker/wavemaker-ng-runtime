@@ -5,7 +5,7 @@ import { isDataSetWidget } from './widget-utils';
 
 declare const _;
 
-const noop = () => {};
+const noop = () => { };
 
 export enum Live_Operations {
     INSERT = 'insert',
@@ -17,13 +17,13 @@ export enum Live_Operations {
 export const ALLFIELDS = 'All Fields';
 
 export const LIVE_CONSTANTS = {
-    'EMPTY_KEY'     : 'EMPTY_NULL_FILTER',
-    'EMPTY_VALUE'   : 'No Value',
-    'LABEL_KEY'     : 'key',
-    'LABEL_VALUE'   : 'value',
-    'NULL_EMPTY'    : ['null', 'empty'],
-    'NULL'          : 'null',
-    'EMPTY'         : 'empty'
+    'EMPTY_KEY': 'EMPTY_NULL_FILTER',
+    'EMPTY_VALUE': 'No Value',
+    'LABEL_KEY': 'key',
+    'LABEL_VALUE': 'value',
+    'NULL_EMPTY': ['null', 'empty'],
+    'NULL': 'null',
+    'EMPTY': 'empty'
 };
 
 // Returns true if widget is autocomplete or chips
@@ -51,7 +51,7 @@ export function performDataOperation(dataSource, requestData, options): Promise<
                 case Live_Operations.INSERT:
                     fn = DataSource.Operation.INSERT_RECORD;
                     break;
-                case  Live_Operations.DELETE:
+                case Live_Operations.DELETE:
                     fn = DataSource.Operation.DELETE_RECORD;
                     break;
             }
@@ -78,8 +78,8 @@ export function refreshDataSource(dataSource, options): Promise<any> {
             return;
         }
         dataSource.execute(DataSource.Operation.LIST_RECORDS, {
-            'filterFields' : options.filterFields || {},
-            'orderBy' : options.orderBy,
+            'filterFields': options.filterFields || {},
+            'orderBy': options.orderBy,
             'page': options.page || 1
         }).then(res, rej);
     });
@@ -119,10 +119,13 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
     formField.displayfield = displayField = (formField.displayfield || displayField || formField._primaryKey);
 
     if (isSearchWidgetType(formField[options.widget])) {
-        formField.dataoptions = {'relatedField': relatedField, 'filterExpr': formField.filterexpressions ? formField.filterexpressions : {}};
+        formField.dataoptions = { 'relatedField': relatedField, 'filterExpr': formField.filterexpressions ? formField.filterexpressions : {} };
         formField.datasource = dataSource;
         formField.searchkey = formField.searchkey || displayField;
         formField.displaylabel = formField.displayfield = (formField.displaylabel || displayField);
+        if (formField.showPendingSpinner) {
+            formField.showPendingSpinner = false;
+        }
     } else {
         interpolateBindExpressions(formField.viewParent, formField.filterexpressions, (filterexpressions) => {
             formField.filterexpressions = filterexpressions;
@@ -135,6 +138,9 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
             }).then(response => {
                 formField.dataset = response.data;
                 formField.displayfield = formField.displayfield || _.head(_.keys(_.get(response, '[0]')));
+                if (formField.showPendingSpinner) {
+                    formField.showPendingSpinner = false;
+                }
             }, noop);
         });
     }
@@ -160,7 +166,7 @@ export const interpolateBindExpressions = (context, filterexpressions, callbackF
     debouncedFn();
     const filterExpressions = filterexpressions ? (_.isObject(filterexpressions) ? filterexpressions : JSON.parse(filterexpressions)) : {};
     const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _.noop;
-    const filterSubscription =  processFilterExpBindNode(context, filterExpressions).subscribe((response: any) => {
+    const filterSubscription = processFilterExpBindNode(context, filterExpressions).subscribe((response: any) => {
         filterexpressions = JSON.stringify(response.filterExpressions);
         debouncedFn();
     });
@@ -183,16 +189,16 @@ export const getDistinctFieldProperties = (dataSource, formField) => {
     const props: any = {};
     let fieldColumn;
     if (formField['is-related']) {
-        props.tableName     = formField['lookup-type'];
-        fieldColumn         = formField['lookup-field'];
+        props.tableName = formField['lookup-type'];
+        fieldColumn = formField['lookup-field'];
         props.distinctField = fieldColumn;
-        props.aliasColumn   = fieldColumn.replace('.', '$'); // For related fields, In response . is replaced by $
-        props.filterExpr    = formField.filterexpressions ? (_.isObject(formField.filterexpressions) ? formField.filterexpressions : JSON.parse(formField.filterexpressions)) : {};
+        props.aliasColumn = fieldColumn.replace('.', '$'); // For related fields, In response . is replaced by $
+        props.filterExpr = formField.filterexpressions ? (_.isObject(formField.filterexpressions) ? formField.filterexpressions : JSON.parse(formField.filterexpressions)) : {};
     } else {
-        props.tableName     = dataSource.execute(DataSource.Operation.GET_ENTITY_NAME);
-        fieldColumn         = formField.field || formField.key;
+        props.tableName = dataSource.execute(DataSource.Operation.GET_ENTITY_NAME);
+        fieldColumn = formField.field || formField.key;
         props.distinctField = fieldColumn;
-        props.aliasColumn   = fieldColumn;
+        props.aliasColumn = fieldColumn;
     }
     return props;
 };
@@ -224,7 +230,7 @@ export function getDistinctValues(dataSource, formField, widget) {
                 pagesize: formField.limit,
                 filterExpr: formField.filterexpressions ? JSON.parse(formField.filterexpressions) : {}
             }).then(response => {
-                res({'field': formField, 'data': response.data, 'aliasColumn': props.aliasColumn});
+                res({ 'field': formField, 'data': response.data, 'aliasColumn': props.aliasColumn });
             }, rej);
         }
     });
@@ -239,7 +245,7 @@ function setDataFields(formField, options?) {
         formField.displaylabel = formField.displayfield = (options.aliasColumn || LIVE_CONSTANTS.LABEL_VALUE);
         return;
     }
-    formField.datafield    = LIVE_CONSTANTS.LABEL_KEY;
+    formField.datafield = LIVE_CONSTANTS.LABEL_KEY;
     formField.displayfield = LIVE_CONSTANTS.LABEL_VALUE;
 }
 
@@ -261,20 +267,20 @@ function setDataFields(formField, options?) {
  */
 function setFieldDataSet(formField, data, options?) {
     const emptySupportWidgets = [FormWidgetType.SELECT, FormWidgetType.RADIOSET];
-    const emptyOption         = {};
+    const emptyOption = {};
     const dataSet = [];
     if (options.isEnableEmptyFilter && _.includes(emptySupportWidgets, formField[options.widget]) &&
         !formField['is-range'] && !formField.multiple) {
         // If empty option is selected, push an empty object in to dataSet
-        emptyOption[LIVE_CONSTANTS.LABEL_KEY]   = LIVE_CONSTANTS.EMPTY_KEY;
+        emptyOption[LIVE_CONSTANTS.LABEL_KEY] = LIVE_CONSTANTS.EMPTY_KEY;
         emptyOption[LIVE_CONSTANTS.LABEL_VALUE] = options.EMPTY_VALUE || LIVE_CONSTANTS.EMPTY_VALUE;
         dataSet.push(emptyOption);
     }
     _.each(data, key => {
-        const value  = key[options.aliasColumn];
+        const value = key[options.aliasColumn];
         const option = {};
         if (value !== null && value !== '') {
-            option[LIVE_CONSTANTS.LABEL_KEY]   = value;
+            option[LIVE_CONSTANTS.LABEL_KEY] = value;
             option[LIVE_CONSTANTS.LABEL_VALUE] = value;
             dataSet.push(option);
         }
@@ -327,7 +333,7 @@ export function getDistinctValuesForField(dataSource, formField, options?) {
         return;
     }
     if (isSearchWidgetType(formField[options.widget])) {
-        const dataoptions =  getDistinctFieldProperties(dataSource, formField);
+        const dataoptions = getDistinctFieldProperties(dataSource, formField);
         formField.dataoptions = dataoptions;
         setDataFields(formField, Object.assign(options || {}, dataoptions));
         formField.datasource = dataSource;
@@ -476,8 +482,8 @@ export const createArrayFrom = (data): Array<any> => {
  * @param {boolean} isFirst boolean value to check if this method is called on load
  */
 export function applyFilterOnField(dataSource, filterDef, formFields, newVal, options: any = {}) {
-    const fieldName      = filterDef.field || filterDef.key;
-    const filterOnFields = _.filter(formFields, {'filter-on': fieldName});
+    const fieldName = filterDef.field || filterDef.key;
+    const filterOnFields = _.filter(formFields, { 'filter-on': fieldName });
 
     newVal = filterDef['is-range'] ? getRangeFieldValue(filterDef.minValue, filterDef.maxValue) : (isDefined(newVal) ? newVal : filterDef.value);
     if (!dataSource || (options.isFirst && (_.isUndefined(newVal) || newVal === ''))) {
@@ -485,11 +491,11 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
     }
     // Loop over the fields for which the current field is filter on field
     _.forEach(filterOnFields, filterField => {
-        const filterKey    = filterField.field || filterField.key;
-        const lookUpField  = filterDef['lookup-field'] || filterDef._primaryKey;
+        const filterKey = filterField.field || filterField.key;
+        const lookUpField = filterDef['lookup-field'] || filterDef._primaryKey;
         const filterWidget = filterField['edit-widget-type'] || filterField.widgettype;
         let filterFields = {};
-        let filterOn     = filterField['filter-on'];
+        let filterOn = filterField['filter-on'];
         let filterVal;
         let fieldColumn;
         let matchMode;
@@ -498,7 +504,7 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
         }
         // For related fields, add lookupfield for query generation
         if (filterDef && filterDef['is-related']) {
-            filterOn += '.' +  lookUpField;
+            filterOn += '.' + lookUpField;
         }
         if (isDefined(newVal)) {
             if (filterDef['is-range']) {
@@ -510,8 +516,8 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
             }
             filterVal = (_.isObject(newVal) && !_.isArray(newVal)) ? newVal[lookUpField] : newVal;
             filterFields[filterOn] = {
-                'value'     : filterVal,
-                'matchMode' : matchMode
+                'value': filterVal,
+                'matchMode': matchMode
             };
         } else {
             filterFields = {};
@@ -522,9 +528,9 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
             filterField.dataoptions.filterFields = filterFields;
         } else {
             dataSource.execute(DataSource.Operation.GET_DISTINCT_DATA_BY_FIELDS, {
-                'fields'        : fieldColumn,
-                'filterFields'  : filterFields,
-                'pagesize'      : filterField.limit
+                'fields': fieldColumn,
+                'filterFields': filterFields,
+                'pagesize': filterField.limit
             }).then(response => {
                 setFieldDataSet(filterField, response.data, {
                     aliasColumn: fieldColumn,
@@ -562,7 +568,7 @@ export function transformData(dataObject, variableName) {
             // loop over the keys to form appropriate data object required for grid
             keys.forEach((key, index) => {
                 // loop over old keys to create new object at the iterative level
-                oldKeys.forEach(oldKey  => {
+                oldKeys.forEach(oldKey => {
                     tempObj = newObject[oldKey];
                 });
                 tempObj[key] = index === numKeys - 1 ? dataObject : {};

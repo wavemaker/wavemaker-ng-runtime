@@ -8,15 +8,14 @@ import { TimepickerModule, BsDropdownModule } from 'ngx-bootstrap';
 import { By } from '@angular/platform-browser';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { UserDefinedExecutionContext, AppDefaults } from '@wm/core';
-import { moment } from 'ngx-bootstrap/chronos/test/chain';
 import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
 import { DatePipe } from '@angular/common';
 import { WmComponentsModule } from '@wm/components/base';
-
+declare const moment
 const currentTime = moment(new Date()).format('hh:mm:ss');
 
-const markup = `<div wmTime  name="time1" hint="my time" datavalue="${currentTime}" maxtime="${currentTime}" mintime="${currentTime}" 
+const markup = `<div wmTime  name="time1" hint="my time" datavalue="${currentTime}" maxtime="${currentTime}" mintime="${currentTime}"
 shortcutkey="g" tabindex="0" outputformat="hh:mm:ss"  timepattern="hh:mm:ss" hourstep="1" minutestep="20" required="true" showdropdownon="button"
  change.event="time1Change($event, widget, newVal, oldVal)" focus.event="time1Focus($event, widget)" blur.event="time1Blur($event, widget)"
   click.event="time1Click($event, widget)" mouseenter.event="time1Mouseenter($event, widget)" mouseleave.event="time1Mouseleave($event, widget)"

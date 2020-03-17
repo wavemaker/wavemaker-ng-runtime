@@ -29,7 +29,6 @@ import { VariablesModule } from '@wm/variables';
 import { OAuthModule } from '@wm/oAuth';
 
 import { AccessrolesDirective } from './directives/accessroles.directive';
-import { PartialContainerDirective } from './directives/partial-container.directive';
 import { AppSpinnerComponent } from './components/app-spinner.component';
 import { CustomToasterComponent } from './components/custom-toaster.component';
 import { EmptyPageComponent } from './components/empty-component/empty-page.component';
@@ -55,9 +54,9 @@ import {CanDeactivatePageGuard} from './guards/can-deactivate-page.guard';
 
 export function InitializeApp(I18nService) {
     return () => {
-        _WM_APP_PROJECT.id = location.href.split('/')[3];
-        _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
-        _WM_APP_PROJECT.ngDest = 'ng-bundle/';
+    _WM_APP_PROJECT.id = location.href.split('/')[3];
+    _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
+    _WM_APP_PROJECT.ngDest = 'ng-bundle/';
         return I18nService.loadDefaultLocale();
     };
 }
@@ -68,7 +67,6 @@ export function setAngularLocale(I18nService) {
 
 const definitions = [
     AccessrolesDirective,
-    PartialContainerDirective,
     AppSpinnerComponent,
     CustomToasterComponent,
     PrefabDirective,

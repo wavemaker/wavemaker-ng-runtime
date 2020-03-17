@@ -141,9 +141,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         if (key === 'class' || key === 'name' || key === 'tabindex') {
             return;
         } else if (key === 'animation') {
-            this.modalOptions.class = this.modalOptions.class.replace('animated ' + ov, '');
+            this.modalOptions.class = this.modalOptions.class.replace(' animated ' + ov, '');
             if (nv) {
-                this.modalOptions.class = this.modalOptions.class + 'animated ' + nv;
+                this.modalOptions.class = this.modalOptions.class + ' animated ' + nv;
             }
         }
         super.onPropertyChange(key, nv, ov);

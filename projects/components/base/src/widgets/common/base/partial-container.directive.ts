@@ -2,11 +2,9 @@ import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Inj
 
 import { debounceTime, filter } from 'rxjs/operators';
 
-import { App, $invokeWatchers, noop } from '@wm/core';
+import { App, $invokeWatchers, noop, ComponentType, PartialRefProvider } from '@wm/core';
 
-import { WidgetRef } from '@wm/components/base';
-
-import { ComponentRefProvider, ComponentType, PartialRefProvider } from '../types/types';
+import { WidgetRef } from "../../framework/types";
 
 declare const _;
 
@@ -59,7 +57,6 @@ export class PartialContainerDirective {
         private app: App,
         @Attribute('content') _content: string,
         private resolver: ComponentFactoryResolver,
-        private componentRefProvider: ComponentRefProvider,
         private partialRefProvider: PartialRefProvider
     ) {
 

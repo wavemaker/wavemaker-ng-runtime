@@ -34,9 +34,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;
-    private isCurrentDate = false;
     private isOpen: boolean;
-    private timeinterval;
     private isEnterPressedOnDateInput = false;
 
     private keyEventPlugin;
@@ -50,7 +48,7 @@ export class DateComponent extends BaseDateTimeComponent {
         return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
     }
 
-    get datavalue () {
+    get datavalue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat) || '';
     }
 
@@ -58,12 +56,9 @@ export class DateComponent extends BaseDateTimeComponent {
     // sets the dataValue and computes the display model values
     set datavalue(newVal) {
         if (newVal === CURRENT_DATE) {
-            this.isCurrentDate = true;
-            this.setTimeInterval();
             this.bsDataValue = new Date();
         } else {
             this.bsDataValue = newVal ? getDateObj(newVal) : undefined;
-            this.clearTimeInterval();
         }
         // update the previous datavalue.
         this.invokeOnChange(this.datavalue, undefined, true);
@@ -104,7 +99,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
-           return;
+            return;
         }
         // min date and max date validation in mobile view.
         // if invalid dates are entered, device is showing an alert.
@@ -137,6 +132,12 @@ export class DateComponent extends BaseDateTimeComponent {
         if (!this.bsDataValue) {
             this.hightlightToday();
         }
+
+        // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
+        // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
+        // To fix the container top position set the width 1px;
+        this.$element.find('.model-holder').width('1px')
+
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
 
@@ -144,7 +145,7 @@ export class DateComponent extends BaseDateTimeComponent {
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('current-date')) {
             this.invokeOnTouched();
-            this.invokeEventCallback('blur', {$event});
+            this.invokeEventCallback('blur', { $event });
         }
     }
 
@@ -169,7 +170,7 @@ export class DateComponent extends BaseDateTimeComponent {
      */
     toggleDpDropdown($event) {
         if ($event.type === 'click') {
-            this.invokeEventCallback('click', {$event: $event});
+            this.invokeEventCallback('click', { $event: $event });
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
@@ -209,13 +210,13 @@ export class DateComponent extends BaseDateTimeComponent {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }
-                } else if (inputVal && inputVal !== formattedDate ) {
+                } else if (inputVal && inputVal !== formattedDate) {
                     this.invalidDateTimeFormat = true;
                     this.invokeOnChange(this.datavalue, event, false);
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue =  newVal;
+                    this.bsDatePickerDirective.bsValue = newVal;
                 }
                 this.toggleDpDropdown(event);
             } else {
@@ -223,28 +224,6 @@ export class DateComponent extends BaseDateTimeComponent {
             }
         } else {
             this.hideDatepickerDropdown();
-        }
-    }
-
-    /**
-     * This is an internal method used to maintain a time interval to update the time model when the data value is set to CURRENT_TIME
-     */
-    private setTimeInterval() {
-        if (this.timeinterval) {
-            return;
-        }
-        this.timeinterval = setInterval( () => {
-            this.bsDataValue = new Date();
-        }, 1000 * 60);
-    }
-
-    /**
-     * This is an internal method used to clear the time interval created
-     */
-    private clearTimeInterval() {
-        if (this.timeinterval) {
-            clearInterval(this.timeinterval);
-            this.timeinterval = null;
         }
     }
 
