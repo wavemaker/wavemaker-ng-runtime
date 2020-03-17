@@ -16,6 +16,7 @@ export class ImageCacheDirective implements DoCheck {
     private _cacheUrl;
     private _isEnabled = false;
     private _lastUrl = '';
+    private _isHttpScheme = location.href.startsWith('http');
 
     constructor(
         @Self() @Inject(WidgetRef) private componentInstance,
@@ -26,7 +27,7 @@ export class ImageCacheDirective implements DoCheck {
 
     public ngDoCheck() {
         if (this.componentInstance.imgSource) {
-            if (isSpotcues && this.componentInstance.imgSource.startsWith
+            if (this._isHttpScheme && this.componentInstance.imgSource.startsWith
                 && this.componentInstance.imgSource.startsWith('file')
                 && this._lastUrl !== this.componentInstance.imgSource) {
 
