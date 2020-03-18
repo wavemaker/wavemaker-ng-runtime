@@ -30,7 +30,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param {boolean} skipNotification
      * @param {boolean} skipDefaultNotification
      */
-    private processErrorResponse(variable: ServiceVariable, errMsg: string, errorCB: Function, xhrObj?: any, skipNotification?: boolean, skipDefaultNotification?: boolean) {
+    protected processErrorResponse(variable: ServiceVariable, errMsg: string, errorCB: Function, xhrObj?: any, skipNotification?: boolean, skipDefaultNotification?: boolean) {
         const methodInfo = this.getMethodInfo(variable, {}, {});
         const securityDefnObj = _.get(methodInfo, 'securityDefinitions.0');
         const advancedOptions: AdvancedOptions = this.prepareCallbackOptions(xhrObj);
@@ -62,7 +62,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param options
      * @param success
      */
-    private processSuccessResponse(response, variable, options, success) {
+    protected processSuccessResponse(response, variable, options, success) {
         let dataSet;
         let newDataSet;
         let pagination = {};
@@ -142,7 +142,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         };
     }
 
-    private uploadFileInFormData(variable: ServiceVariable, options: any, success: Function, error: Function, file, requestParams) {
+    protected uploadFileInFormData(variable: ServiceVariable, options: any, success: Function, error: Function, file, requestParams) {
         const promise = upload(file, requestParams.data, {
             fileParamName: 'files',
             url: requestParams.url
@@ -231,7 +231,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param errorCB
      * @param options
      */
-    private handleRequestMetaError(info, variable, success, errorCB, options) {
+    protected handleRequestMetaError(info, variable, success, errorCB, options) {
         const err_type = _.get(info, 'error.type');
 
         switch (err_type) {
@@ -244,6 +244,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
                 break;
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING:
+            case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING:
                 this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
                 break;
             default:
@@ -276,7 +277,8 @@ export class ServiceVariableManager extends BaseVariableManager {
         });
     }
 
-    /**
+
+        /**
      * gets the service operation info against a service variable
      * this is extracted from the metadataservice
      * @param variable
@@ -286,9 +288,12 @@ export class ServiceVariableManager extends BaseVariableManager {
      */
     private getMethodInfo(variable, inputFields, options) {
         const serviceDef = getClonedObject(metadataService.getByOperationId(variable.operationId, variable.getPrefabName()));
-        const methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
+        let methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
         if (!methodInfo) {
             return methodInfo;
+        }
+        if (_.isArray(methodInfo)) {
+            methodInfo = methodInfo[0];
         }
         const securityDefnObj = _.get(methodInfo.securityDefinitions, '0'),
             isOAuthTypeService = securityDefnObj && (securityDefnObj.type === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2);
@@ -335,7 +340,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     }
 
     // Makes the call for Uploading file/ files
-    private uploadFile(variable, options, success, error, inputFields, requestParams ) {
+    protected uploadFile(variable, options, success, error, inputFields, requestParams ) {
         let fileParamCount = 0;
         const fileArr: any = [], promArr: any = [];
         _.forEach(inputFields, (inputField) => {
@@ -382,7 +387,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @returns {any}
      * @private
      */
-    private _invoke (variable: ServiceVariable, options: any, success: Function, error: Function) {
+    protected _invoke (variable: ServiceVariable, options: any, success: Function, error: Function) {
         let inputFields = getClonedObject(options.inputFields || variable.dataBinding);
         // EVENT: ON_BEFORE_UPDATE
         const output: any = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, inputFields, options);
@@ -518,6 +523,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     public setInput(variable, key, val, options) {
         return setInput(variable.dataBinding, key, val, options);
     }
+
 
     /**
      * Cancels an on going service request

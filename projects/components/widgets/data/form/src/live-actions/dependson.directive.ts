@@ -1,8 +1,7 @@
 import { Directive, Attribute, ContentChildren, AfterContentInit, OnDestroy } from '@angular/core';
 
-import { AbstractDialogService, App } from '@wm/core';
+import { AbstractDialogService, App, DataSource } from '@wm/core';
 import { Live_Operations } from '@wm/components/base';
-
 import { FormComponent } from '../form.component';
 
 @Directive({
@@ -17,6 +16,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
     private isLayoutDialog;
     private form;
     private currentOp;
+    private currentFormData;
     private formSubscription;
     private eventSubscription;
 
@@ -43,12 +43,14 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
     private onUpdate() {
         this.form.operationType = Live_Operations.UPDATE;
         this.form.isSelected = true;
+        this.form.setFormData(this.currentFormData);
         this.form.edit();
     }
 
     private onInsert() {
         this.form.operationType = Live_Operations.INSERT;
         this.form.isSelected = true;
+        this.form.setFormData({});
         this.form.new();
     }
 
@@ -59,10 +61,11 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
         this.currentOp = options.eventName;
         switch (options.eventName) {
             case Live_Operations.UPDATE:
+                this.currentFormData = options.row;
                 if (this.isLayoutDialog) {
                     this.openFormDialog();
                 } else {
-                   this.onUpdate();
+                    this.onUpdate();
                 }
                 break;
             case Live_Operations.INSERT:
@@ -78,6 +81,14 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
             case Live_Operations.READ:
                 if (!this.isLayoutDialog) {
                     this.form.isUpdateMode = false;
+                }
+                break;
+            case 'rerender':
+                if (options.dataSource) {
+                        options.dataSource.execute(DataSource.Operation.LIST_RECORDS, {
+                            'skipToggleState': true,
+                            'operation': 'list'
+                        });
                 }
                 break;
         }
@@ -106,6 +117,9 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
                 this.onFormRender();
             });
         }
+
+        // find the dependent widget (table/list)
+        this.app.notify('setup-cud-listener', this.dependson);
     }
 
     ngOnDestroy() {

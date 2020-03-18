@@ -107,6 +107,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     loadingdatamsg;
     multiselect;
     name;
+    _isDependent;
     navigation;
     navigationSize;
     navigationalign;
@@ -707,6 +708,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
                 isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
             }
+        });
+
+        this.app.subscribe('setup-cud-listener', param => {
+            if (this.name !== param) {
+                return;
+            }
+            this._isDependent = true;
         });
 
         this.deleteoktext = this.appLocale.LABEL_OK;

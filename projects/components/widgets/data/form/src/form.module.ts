@@ -11,6 +11,7 @@ import { FormWidgetDirective } from './form-widget.directive';
 import { FormActionDirective } from './form-action/form-action.directive';
 import { FormFieldDirective } from './form-field/form-field.directive';
 import { LiveActionsDirective } from './live-actions/live-actions.directive';
+import { DependsonDirective } from './live-actions/dependson.directive';
 import { LiveFilterDirective } from './live-filter/live-filter.directive';
 import { LiveFormDirective } from './live-form/live-form.directive';
 
@@ -20,6 +21,7 @@ const components = [
     FormActionDirective,
     FormFieldDirective,
     LiveActionsDirective,
+    DependsonDirective,
     LiveFilterDirective,
     LiveFormDirective
 ];

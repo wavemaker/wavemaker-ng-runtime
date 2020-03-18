@@ -14,6 +14,7 @@ export abstract class ApiAwareVariable extends BaseVariable {
     inFlightBehavior: boolean;
     transformationRequired: boolean;
     canUpdate: boolean;
+    paginationTransformationRequired: boolean;
 
     firstRecord;
     lastRecord;
