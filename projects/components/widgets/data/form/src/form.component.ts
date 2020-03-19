@@ -797,6 +797,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         });
     }
 
+    setOperationType(mode) {
+        this.operationType = mode || 'insert';
+    }
+
     new() {
         this.resetFormState();
         this.operationType = Live_Operations.INSERT;

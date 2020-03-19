@@ -23,7 +23,7 @@ export class CrudVariableManager extends ServiceVariableManager {
         if (!options || !options.operation) {
             options.operation = 'list';
         }
-        let serviceDef = getClonedObject(metadataService.getByCrudId(variable.crudOperationId, variable.getPrefabName()));
+        const serviceDef = getClonedObject(metadataService.getByCrudId(variable.crudOperationId, variable.getPrefabName()));
         let methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
         methodInfo = serviceDef.filter(function(item) {
             return options.operation === item.operationType;
@@ -62,15 +62,8 @@ export class CrudVariableManager extends ServiceVariableManager {
         methodInfo.paginationInfo = null;
         return methodInfo.paginationInfo;
     }
-    /**
-     * gets the service operation info against a service variable
-     * this is extracted from the metadataservice
-     * @param variable
-     * @param inputFields: sample values, if provided, will be set against params in the definition
-     * @param options
-     * @returns {any}
-     */
-    private getMethodInfoForCrud(variable, inputFields, options?) {
+
+    private getOperationInfo(variable, options) {
         let serviceDef = getClonedObject(metadataService.getByCrudId(variable.crudOperationId, variable.getPrefabName()));
         let methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
         // fallback if there is no operation
@@ -80,6 +73,18 @@ export class CrudVariableManager extends ServiceVariableManager {
         methodInfo = serviceDef.filter(function(item) {
             return options.operation === item.operationType;
         })[0];
+        return methodInfo;
+    }
+    /**
+     * gets the service operation info against a service variable
+     * this is extracted from the metadataservice
+     * @param variable
+     * @param inputFields: sample values, if provided, will be set against params in the definition
+     * @param options
+     * @returns {any}
+     */
+    private getMethodInfoForCrud(variable, inputFields, options?) {
+        const methodInfo = this.getOperationInfo(variable, options);
         if (!methodInfo) {
             return methodInfo;
         }
@@ -143,22 +148,31 @@ export class CrudVariableManager extends ServiceVariableManager {
         if (_.isObject(output)) {
             inputFields = output;
         }
-        if (options.operation === 'create' || options.operation === 'update') {
-            inputFields.RequestBody = getClonedObject(inputFields);
-            //inputFields.employee = getClonedObject(inputFields);
+        const opInfo = this.getOperationInfo(variable, options);
+        if (opInfo) {
+            const bodyName = opInfo.parameters.filter(function(op) {
+                return op.parameterType === 'body';
+            })[0];
+            if (options.operation === 'create' || options.operation === 'update') {
+                if (bodyName) {
+                    inputFields[bodyName.name] = getClonedObject(inputFields);
+                } else {
+                    inputFields.RequestBody = getClonedObject(inputFields);
+                }
+            }
         }
         let paginationInfo = this.getPaginationInfo(variable, inputFields, options);
-        if (paginationInfo) {
-            inputFields[paginationInfo.pageMapping.name] = inputFields[paginationInfo.pageMapping.name] || options.page || 1;
-            inputFields[paginationInfo.sizeMapping.name] = inputFields[paginationInfo.sizeMapping.name] || (variable.pagination && variable.pagination.size) || 5;
-            //inputFields[paginationInfo.sortMapping.name] = inputFields[paginationInfo.sortMapping.name] || paginationInfo.defaultSortExpression;
-            if (options.orderBy && options.orderBy.split(' ').length > 1) {
-                const orderInfo = options.orderBy.split(' ');
-                inputFields[paginationInfo.sortMapping.name] = orderInfo[1] === 'asc' ? paginationInfo.ascSortExpression.replace('{{fieldName}}', orderInfo[0]) : paginationInfo.descSortExpression.replace('{{fieldName}}', orderInfo[0]);
-                //inputFields[paginationInfo.sortMapping.name] = orderInfo.join(' ');
-            }
-            variable.paginationTransformationRequired = true;
-        }
+        // if (paginationInfo) {
+        //     inputFields[paginationInfo.pageMapping.name] = inputFields[paginationInfo.pageMapping.name] || options.page || 1;
+        //     inputFields[paginationInfo.sizeMapping.name] = inputFields[paginationInfo.sizeMapping.name] || (variable.pagination && variable.pagination.size) || 5;
+        //     //inputFields[paginationInfo.sortMapping.name] = inputFields[paginationInfo.sortMapping.name] || paginationInfo.defaultSortExpression;
+        //     if (options.orderBy && options.orderBy.split(' ').length > 1) {
+        //         const orderInfo = options.orderBy.split(' ');
+        //         inputFields[paginationInfo.sortMapping.name] = orderInfo[1] === 'asc' ? paginationInfo.ascSortExpression.replace('{{fieldName}}', orderInfo[0]) : paginationInfo.descSortExpression.replace('{{fieldName}}', orderInfo[0]);
+        //         //inputFields[paginationInfo.sortMapping.name] = orderInfo.join(' ');
+        //     }
+        //     variable.paginationTransformationRequired = true;
+        // }
         const operationInfo = this.getMethodInfoForCrud(variable, inputFields, options);
         if (!operationInfo) {
             const err = {
