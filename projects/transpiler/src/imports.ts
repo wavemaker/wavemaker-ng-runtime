@@ -1,6 +1,7 @@
 import { ImportDef } from './build';
 
 const NG_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'FormsModule', as: 'ngFormsModule'}];
+const BROWSER_ANIMATION_MODULE: ImportDef[] = [{ from: '@angular/platform-browser/animations', name: 'BrowserAnimationsModule', as: 'BrowserAnimationsModule' }];
 const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'ReactiveFormsModule', as: 'ngReactiveFormsModule'}];
 const NGX_BS_DATE_PICKER: ImportDef[] = [{from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule'}];
 const NGX_CAROUSEL_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true}];
@@ -42,7 +43,7 @@ const CONFIRM_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/compon
 const CONTENT_MODULE: ImportDef[] = [{from: '@wm/components/page', name: 'PageModule'}];
 const CURRENCY_MODULE: ImportDef[] = [...INPUT_MODULE, {from: '@wm/components/input/currency', name: 'CurrencyModule'}];
 const DESIGN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/design-dialog', name: 'DesignDialogModule'}];
-const EPOCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE, ...NGX_DATE_PICKER, ...MOBILE_EPOCH_MODULE, {from: '@wm/components/input/epoch', name: 'EpochModule'}];
+const EPOCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE, ...NGX_DATE_PICKER, ...MOBILE_EPOCH_MODULE, ...BROWSER_ANIMATION_MODULE, {from: '@wm/components/input/epoch', name: 'EpochModule'}];
 const FILE_UPLOAD_MODULE: ImportDef[] = [...MOBILE_FILE_UPLOAD_MODULE, {from: '@wm/components/input/file-upload', name: 'FileUploadModule'}];
 const FOOTER_MODULE: ImportDef[] = [{from: '@wm/components/page/footer', name: 'FooterModule'}];
 const HEADER_MODULE: ImportDef[] = [{from: '@wm/components/page/header', name: 'HeaderModule'}];
