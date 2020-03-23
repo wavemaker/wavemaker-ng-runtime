@@ -117,14 +117,21 @@ export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {
                     iScroll.on(key, l);
                 });
             });
+            const scope = this;
             iScroll.on('scrollStart', function () {
                 this._scrolling = true;
+                //will notify the components which want to subscribe upon scrolling.
+                if (isMobileApp()) {
+                    scope.app.notify('iscroll-start',{});
+                }
             });
             iScroll.on('scrollEnd', function () {
                 this._scrolling = false;
             });
             iScroll.refresh();
         }
+
+        this.app.notify('iscroll-start',{});
 
         // refresh the indicators.
         iScroll.indicatorRefresh = () => {
