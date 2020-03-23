@@ -261,7 +261,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         this.validateType = '';
         /* WMS-18269 | Extending the existing validation for 'required' */
         if (this["show"] && this["required"]) {
-            return !!c.value ? null : { required: true };
+            return (!!c.value || c.value === 0) ? null : { required: true };
         }
         return null;
     }

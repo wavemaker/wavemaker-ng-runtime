@@ -11,14 +11,19 @@ import { BaseFormComponent } from './base-form.component';
  * 
  * Note: Component needs NG_VALIDATOR provider for this to work
  */
+function isValidValue(val):Boolean {
+    switch(typeof val){
+        case 'object': return (!!val && (!!val.length || !!Object.keys(val).length))
+        case 'number': return (!!val || val === 0)
+            default: return !!val
+    }
+}
 function validateRequiredBind(required: boolean): ValidatorFn {
     return (control: AbstractControl) =>
         required
-            ? (typeof control.value === "object"
-                ? !!control.value && (!!control.value.length || !!Object.keys(control.value).length)
-                : !!control.value)
+            ? (isValidValue(control.value)
                 ? null
-                : { required: true }
+                : { required: true })
             : null;
 }
 
