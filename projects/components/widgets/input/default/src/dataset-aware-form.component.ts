@@ -293,6 +293,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             case 'usekeys':
                 this._debouncedInitDatasetItems();
                 break;
+            case 'required':
+            case 'datavalue':
+                this._onChange(this.datavalue);
+                break;
         }
     }
 }

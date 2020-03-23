@@ -750,7 +750,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return;
         }
         if (key === 'required') {
-            this._onChange();
+            this._onChange(this.datavalue);
             return;
         }
         if (this.useDatapicker && key === 'datepattern') {

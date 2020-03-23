@@ -1,5 +1,5 @@
 import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { Observable, from, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
@@ -22,6 +22,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
     templateUrl: './search.component.html',
     providers: [
         provideAs(SearchComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(SearchComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(SearchComponent)
     ]
 })
@@ -730,7 +731,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (key === 'tabindex') {
             return;
         }
-
 
         // Backward compatability from 10.3.1 to 10.3.2
         // 10.3.1 we had displaylabel as modal value
