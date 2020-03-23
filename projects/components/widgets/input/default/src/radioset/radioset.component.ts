@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { switchClass } from '@wm/core';
 
@@ -18,6 +18,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
     templateUrl: './radioset.component.html',
     providers: [
         provideAs(RadiosetComponent, NG_VALUE_ACCESSOR, true),
+        provideAs(RadiosetComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(RadiosetComponent)
     ]
 })
@@ -71,7 +72,6 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
         if (key === 'tabindex') {
             return;
         }
-
         if (key === 'layout') {
             switchClass(this.nativeElement, nv, ov);
         } else {
