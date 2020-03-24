@@ -145,7 +145,6 @@ const componentsModule = [
     ngxPopoverModule,
     NgCircleProgressModule,
     TooltipModule,
-    BrowserAnimationsModule,
 
     // Basic widgets
     BasicModule,
@@ -221,6 +220,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         CommonModule,
         RouterModule,
         HttpClientModule,
