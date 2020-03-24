@@ -256,6 +256,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     removeValidations() {
         this.table.ngform.markAsUntouched();
         const control = this.getFormControl();
+        if (!control) {
+            return;
+        }
         control.clearValidators();
         control.clearAsyncValidators();
         control.updateValueAndValidity();
@@ -327,6 +330,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Get of the active from control
     get value() {
         const control = this.getFormControl(this.activeControlType === 'inlineInstanceNew' ? '_new' : undefined);
+        if (!control) {
+            return;
+        }
         return control.value;
     }
 
