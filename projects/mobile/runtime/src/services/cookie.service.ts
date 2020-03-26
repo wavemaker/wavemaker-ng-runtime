@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { IDeviceStartUpService } from '@wm/mobile/core';
+import { isIos } from '@wm/core';
 
 declare const _;
 
@@ -40,14 +41,37 @@ export class CookieService implements IDeviceStartUpService {
     }
 
     public getCookie(hostname: string, cookieName: string): Promise<any> {
-        return new Promise<void>((resolve, reject) => {
-            window['cookieEmperor'].getCookie(hostname, cookieName, resolve, reject);
+        return new Promise<any>((resolve, reject) => {
+            if (isIos()) {
+                const cookieString = window['cordova'].plugin.http.getCookieString(hostname);
+                if (cookieString) {
+                    const at = cookieString.indexOf(cookieName);
+                    if (at >= 0) {
+                        const start = at + cookieName.length + 1;
+                        const end = cookieString.indexOf(';', start);
+                        const cookieValue = cookieString.substring(start, end >= 0 ? end : undefined);
+                        resolve({
+                            cookieValue: cookieValue
+                        });
+                        return;
+                    }
+                }
+                reject();
+            } else {
+                window['cookieEmperor'].getCookie(hostname, cookieName, resolve, reject);
+            }
         });
     }
 
     public setCookie(hostname: string, cookieName: string, cookieValue: string): Promise<any> {
         return new Promise<void>((resolve, reject) => {
-            window['cookieEmperor'].setCookie(hostname, cookieName, cookieValue, resolve, reject);
+            if (isIos()) {
+                const cookieString = cookieName + '=' + cookieValue;
+                window['cordova'].plugin.http.setCookie(hostname, cookieString);
+                resolve();
+            } else {
+                window['cookieEmperor'].setCookie(hostname, cookieName, cookieValue, resolve, reject);
+            }
         });
     }
 

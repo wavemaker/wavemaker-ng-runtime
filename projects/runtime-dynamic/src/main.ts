@@ -2,6 +2,7 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
+import { isIos } from '@wm/core';
 
 declare const _;
 const DEBUG_MODE = 'debugMode';
@@ -54,6 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             resolve();
         }
+    }).then(() => {
+        return new Promise(resolve => {
+            if(isIos() && window['cordova'] && !window['__isLocalStorageReady']) {
+                document.addEventListener('localStorageReady', resolve);
+            } else {
+                resolve();
+            }
+        });
     }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
         .then(() => console.timeEnd('bootstrap'), err => console.log(err));
 });
