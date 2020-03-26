@@ -94,9 +94,7 @@ export class BaseFieldValidations {
             if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
                 opt['emitEvent'] = false;
             }
-            if(this.widgetContext.ngform.touched){
-                this.widgetControl.updateValueAndValidity(opt);
-            }
+            this.widgetControl.updateValueAndValidity(opt);
         }
     }
 

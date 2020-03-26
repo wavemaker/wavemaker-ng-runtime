@@ -191,7 +191,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
 
         // Quick edit new row control status change subscriber
-        if (this._isNewEditableRow && this.getFormControl('_new')) {
+        if (this._checkNewEditableRowControl()) {
             const onStatusChangeSubscription_new = this.getFormControl('_new').statusChanges
                 .pipe(debounceTime(100))
                 .subscribe(status => this.onStatusChange(status, 'inlineInstanceNew'));
@@ -244,8 +244,12 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Apply default|sync|async|prop validators for inline form control
     applyValidations() {
+        const _control = this.getFormControl();
+        if (!_control) {
+            return;
+        }
         // Instantiate custom validators class for inline edit form control
-        this.fieldValidations = new BaseFieldValidations(this, this['inlineInstance'], this.getFormControl(), this.table, 'inlineInstance');
+        this.fieldValidations = new BaseFieldValidations(this, this['inlineInstance'], _control, this.table, 'inlineInstance');
         this.fieldValidations.setValidators(this.syncValidators);
         this.fieldValidations.setUpValidators();
         this.fieldValidations.setAsyncValidators(this.asyncValidators);
@@ -272,6 +276,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     getFormControl(suffix?: string) {
         const ctrlName = suffix ? (this.binding + suffix) : this.binding;
         return this.table.ngform.controls[ctrlName];
+    }
+
+    private _checkNewEditableRowControl() {
+        return this._isNewEditableRow && this.getFormControl('_new');
     }
 
     // Setup the inline edit and filter widget
@@ -462,14 +470,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Watches control for dependent validation changes
     observeOn(fields) {
         this.observeOnFields = _.cloneDeep(fields);
-        if (this._isNewEditableRow) {
+        if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.observeOn(this.observeOnFields, 'columns');
         }
     }
 
     // Sets the default validators quickedit new row using props
     setUpValidators() {
-        if (this._isNewEditableRow) {
+        if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.setUpValidators();
         }
     }
@@ -477,7 +485,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Sets the Async validators on the quickedit new row form control
     setAsyncValidators(validators){
         this.asyncValidators = _.cloneDeep(validators);
-        if (this._isNewEditableRow) {
+        if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.setAsyncValidators(this.asyncValidators);
         }
     }
@@ -485,7 +493,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Sets the default/custom validators on the quickedit new row form control
     setValidators(validators) {
         this.syncValidators = _.cloneDeep(validators);
-        if (this._isNewEditableRow) {
+        if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.setValidators(this.syncValidators);
         }
     }
