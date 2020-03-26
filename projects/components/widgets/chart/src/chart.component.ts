@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
 
-import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn } from '@wm/core';
+import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn, isMobileApp, noop } from '@wm/core';
 import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 
 import { registerProps } from './chart.props';
@@ -96,7 +96,7 @@ const angle = d => {
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class ChartComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
+export class ChartComponent extends StylableComponent implements AfterViewInit, OnDestroy, IRedrawableComponent {
     static initializeProps = registerProps();
 
     xaxisdatakey;
@@ -145,6 +145,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     private sampleData: any[];
     private chartData: any[] = [];
     private _processedData: any[] = [];
+    private _subsciptions: any = [];
 
     @HostBinding('class.panel') title;
 
@@ -659,6 +660,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.selecteditem = dataObj;
                 this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
             });
+            
     }
 
     /*  Returns Y Scale min value
@@ -1034,7 +1036,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         this.chartReady = false;
         this.binddataset = this.nativeElement.getAttribute('dataset.bind');
         // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
+        this._subsciptions.push(this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this)));
+        // Will hide tolltip of a chart in mobile when the user scrolls.
+        this._subsciptions.push(this.app.subscribe('iscroll-start', () => { d3.selectAll('.nvtooltip').style('opacity', 0);}));
     }
 
     ngAfterViewInit() {
@@ -1058,5 +1062,12 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
+    ngOnDestroy() {
+        // destroy all subscriptions to prevent memory leak.
+        this._subsciptions.forEach((subscription)=>{
+            subscription();
+        });
+        super.ngOnDestroy();
+    }
     redraw = this._plotChartProxy.bind(this);
 }
