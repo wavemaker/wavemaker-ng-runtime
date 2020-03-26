@@ -35,7 +35,7 @@
            focus-target
            container="body"
            [disabled]="disabled"
-           autocomplete="off"
+           [autocomplete]="turnOffAutocomplete()"
            [(ngModel)]="query"
            [readonly]="readonly"
            [disabled]="disabled"
@@ -72,7 +72,7 @@
            focus-target
            container="body"
            [disabled]="disabled"
-           autocomplete="off"
+           [autocomplete]="turnOffAutocomplete()"
            [(ngModel)]="query"
            [readonly]="readonly"
            [typeahead]="typeaheadDataSource"

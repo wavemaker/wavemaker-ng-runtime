@@ -6,7 +6,7 @@ import { mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean,randomString } from '@wm/core';
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
@@ -169,6 +169,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+    }
+
+    // To turn off the autocomplete with random string
+
+    public turnOffAutocomplete(){
+      return  randomString(5);
     }
 
     // on clear, trigger search with page size 1
