@@ -728,6 +728,11 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
         });
     }
 
+    if (widgetContext.showlegend && (widgetContext.type === 'Donut' || widgetContext.type === 'Pie')) {
+        if(widgetContext.showlegend === 'right') {
+            chart.legendPosition('right');
+        }
+    }
     return chart;
 };
 
