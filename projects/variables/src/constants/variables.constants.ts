@@ -68,7 +68,7 @@ export const VARIABLE_CONSTANTS = {
         'APP': 'App',
         'PAGE': 'Page'
     },
-    REST_SUPPORTED_SERVICES: ['JavaService', 'SoapService', 'FeedService', 'RestService', 'SecurityServiceType', 'DataService', 'WebSocketService'],
+    REST_SUPPORTED_SERVICES: ['JavaService', 'SoapService', 'FeedService', 'RestService', 'SecurityServiceType', 'DataService', 'WebSocketService', 'OpenAPIService'],
     PAGINATION_PARAMS: ['page', 'size', 'sort'],
     REST_SERVICE: {
         'BASE_PATH_KEY': 'x-WM-BASE_PATH',
