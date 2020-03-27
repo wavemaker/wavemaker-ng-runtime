@@ -13,7 +13,8 @@ import {
     hasCordova,
     isSpotcues,
     noop,
-    removeExtraSlashes
+    removeExtraSlashes,
+    transformFileURI
 } from '@wm/core';
 import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
@@ -138,7 +139,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
                 if (url !== request.url) {
                     this.hasRemoteChanges = true;
                     return request.clone({
-                        url: url
+                        url: transformFileURI(url)
                     });
                 }
                 return request;
