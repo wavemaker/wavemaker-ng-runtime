@@ -12,8 +12,6 @@ declare const _, cordova, Connection, navigator;
 const AUTO_CONNECT_KEY = 'WM.NetworkService._autoConnect',
     IS_CONNECTED_KEY = 'WM.NetworkService.isConnected',
     excludedList = [new RegExp('/wmProperties.js')],
-    originalXMLHttpRequestOpen = XMLHttpRequest.prototype.open,
-    originalXMLHttpRequestSend = XMLHttpRequest.prototype.send,
     networkState = {
         isConnecting : false,
         isConnected : true,
@@ -35,15 +33,18 @@ const blockUrl = url => {
     return block;
 };
 
-// Intercept all XHR calls
-XMLHttpRequest.prototype.open = function (method: string, url: string, async: boolean = true, user?: string, password?: string) {
-    if (blockUrl(url)) {
-        const urlSplits = url.split('://');
-        const pathIndex = urlSplits[1].indexOf('/');
-        urlSplits[1] = 'localhost' + (pathIndex > 0 ? urlSplits[1].substr(pathIndex) : '/');
-        url = urlSplits.join('://');
-    }
-    return originalXMLHttpRequestOpen.apply(this, [method, url, async, user, password]);
+export const overrideXHROpen = (clazz) => {
+    const orig = clazz.prototype.open;
+    // Intercept all XHR calls
+    clazz.prototype.open = function (method: string, url: string, async: boolean = true, user?: string, password?: string) {
+        if (blockUrl(url)) {
+            const urlSplits = url.split('://');
+            const pathIndex = urlSplits[1].indexOf('/');
+            urlSplits[1] = 'localhost' + (pathIndex > 0 ? urlSplits[1].substr(pathIndex) : '/');
+            url = urlSplits.join('://');
+        }
+        return orig.apply(this, [method, url, async, user, password]);
+    };
 };
 
 @Injectable({ providedIn: 'root' })

@@ -85,7 +85,7 @@ const getUpdatedWatcInfo = (expr, acceptsArray, listener) => {
 
 export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false, config?) => {
     if (expr.indexOf('[$i]') !== -1) {
-        let watchInfo = getUpdatedWatcInfo(expr, config.arrayType, listener);
+        let watchInfo = getUpdatedWatcInfo(expr, config && config.arrayType, listener);
         expr = watchInfo.expr;
         listener = watchInfo.listener;
     }
