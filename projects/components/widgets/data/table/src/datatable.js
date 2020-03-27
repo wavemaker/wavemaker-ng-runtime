@@ -1522,7 +1522,9 @@ $.widget('wm.datatable', {
 
         _rowData.$index = rowId + 1;
         // Function to remove validators and set form state to untouched for inline form control
-        this.options.removeValidations();
+        if (!alwaysNewRow) {
+            this.options.removeValidations();
+        }
         this.options.generateInlineEditRow(_rowData, alwaysNewRow);
 
         $originalElements.each(function () {
@@ -1547,13 +1549,15 @@ $.widget('wm.datatable', {
                 }
                 $el.addClass('form-group');
                 // Function to apply validators to Inline form controls
-                if (colDef.binding !== 'rowOperations') {
+                if (colDef.binding !== 'rowOperations' && !alwaysNewRow) {
                     self.options.timeoutCall(function () {
                         self.options.applyValidations(colDef);
                         if (colDef.required) {
                             $el.addClass('required-field');
                         }
                     });
+                } else if (colDef.required) {
+                    $el.addClass('required-field');
                 }
             }
         });

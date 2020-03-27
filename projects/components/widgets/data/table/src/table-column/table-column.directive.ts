@@ -13,7 +13,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataentrymode', 'dataset'];
-const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required'];
+const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required', 'mindate', 'maxdate',
+                            'excludedates', 'excludedays', 'mintime', 'maxtime'];
 inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
 
 class FieldDef {
@@ -120,7 +121,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     activeControlType;
     private _dataoptions: any;
     private _datasource: any;
-    private _debounceSetUpValidatorsNew;
+    private _debounceSetUpValidators;
     private notifyForFields: any;
     private fieldValidations;
     private fieldValidations_new;
@@ -141,7 +142,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     ) {
         super(inj, WIDGET_CONFIG);
 
-        this._debounceSetUpValidatorsNew = debounce(this.setUpValidators.bind(this), 250);
+        this._debounceSetUpValidators = debounce(this.setUpValidators.bind(this), 250);
         this.notifyForFields = [];
     }
 
@@ -188,6 +189,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 .pipe(debounceTime(100))
                 .subscribe(status => this.onStatusChange(status, 'inlineInstance'));
             this.registerDestroyListener(() => onStatusChangeSubscription.unsubscribe());
+            // Instantiate custom validators class for inline edit form control
+            this.fieldValidations = new BaseFieldValidations(this, this['inlineInstance'], this.getFormControl(), this.table, 'inlineInstance');
         }
 
         // Quick edit new row control status change subscriber
@@ -215,6 +218,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             const s2 = this._inlineInstances.changes.subscribe((val) => {
                 // Listen on the inner inline widget and setup the widget
                 this.inlineInstance = val.first && val.first.widget;
+                this.fieldValidations.formwidget = val.first;
                 this.table.registerFormField(this.binding, new FieldDef(this.inlineInstance));
                 this.setUpInlineWidget('inlineInstance');
             });
@@ -224,6 +228,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 const s3 = this._inlineInstancesNew.changes.subscribe((val) => {
                     // Listen on the inner inline widget and setup the widget
                     this.inlineInstanceNew = val.first && val.first.widget;
+                    this.fieldValidations_new.formwidget = val.first;
                     this.setUpInlineWidget('inlineInstanceNew');
                 });
                 this.registerDestroyListener(() => s3.unsubscribe());
@@ -244,16 +249,19 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Apply default|sync|async|prop validators for inline form control
     applyValidations() {
-        const _control = this.getFormControl();
-        if (!_control) {
+        if (!this.getFormControl()) {
             return;
         }
-        // Instantiate custom validators class for inline edit form control
-        this.fieldValidations = new BaseFieldValidations(this, this['inlineInstance'], _control, this.table, 'inlineInstance');
-        this.fieldValidations.setValidators(this.syncValidators);
+        if (this.syncValidators.length > 0) {
+            this.fieldValidations.setValidators(this.syncValidators);
+        }
         this.fieldValidations.setUpValidators();
-        this.fieldValidations.setAsyncValidators(this.asyncValidators);
-        this.fieldValidations.observeOn(this.observeOnFields, 'columns');
+        if (this.asyncValidators.length > 0) {
+            this.fieldValidations.setAsyncValidators(this.asyncValidators);
+        }
+        if (this.observeOnFields.length > 0) {
+            this.fieldValidations.observeOn(this.observeOnFields, 'columns');
+        }
     }
 
     // Remove validators for the inline widget and set for to untouched
@@ -470,6 +478,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Watches control for dependent validation changes
     observeOn(fields) {
         this.observeOnFields = _.cloneDeep(fields);
+
+        this.fieldValidations.observeOn(this.observeOnFields, 'columns');
         if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.observeOn(this.observeOnFields, 'columns');
         }
@@ -477,6 +487,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Sets the default validators quickedit new row using props
     setUpValidators() {
+        this.fieldValidations.setUpValidators();
         if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.setUpValidators();
         }
@@ -485,6 +496,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Sets the Async validators on the quickedit new row form control
     setAsyncValidators(validators){
         this.asyncValidators = _.cloneDeep(validators);
+
+        this.fieldValidations.setAsyncValidators(this.asyncValidators);
         if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.setAsyncValidators(this.asyncValidators);
         }
@@ -493,6 +506,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Sets the default/custom validators on the quickedit new row form control
     setValidators(validators) {
         this.syncValidators = _.cloneDeep(validators);
+
+        this.fieldValidations.setValidators(this.syncValidators);
         if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.setValidators(this.syncValidators);
         }
@@ -512,7 +527,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this[widget][prop] = nv;
         }
         if (validationProps.includes(prop)) {
-            this._debounceSetUpValidatorsNew();
+            this._debounceSetUpValidators();
         }
     }
 
