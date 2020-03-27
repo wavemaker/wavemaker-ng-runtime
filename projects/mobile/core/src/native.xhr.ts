@@ -186,12 +186,16 @@ export class NativeXMLHttpREquest {
             headers: {},
             data: body,
             method: this._internal.method,
-            serializer: (typeof body === 'string' ? 'utf8' : null)
+            serializer: 'raw'
         };
 
-        if (body && body.constructor) {
-            if (body.constructor.toString().indexOf('FormData()') >= 0) {
+        if (body != null && body != undefined) {
+            if (body.constructor && body.constructor.toString().indexOf('FormData()') >= 0) {
                 options.serializer = 'multipart';
+            } else if(typeof body === 'string') {
+                options.serializer = 'utf8';
+            } else {
+                options.serializer = 'urlencoded';
             }
         }
         for (let key in this._internal.requestHeaders) {
