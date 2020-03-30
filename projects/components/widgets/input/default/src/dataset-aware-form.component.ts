@@ -1,10 +1,10 @@
-import { Injector } from '@angular/core';
+import { Injector, Attribute } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean } from '@wm/core';
+import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean, AppDefaults } from '@wm/core';
 
-import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformFormData, transformDataWithKeys } from '@wm/components/base';
+import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformFormData, transformDataWithKeys, groupData, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 
 declare const _;
@@ -32,6 +32,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
     protected dataset$ = new Subject();
     protected datavalue$ = new Subject();
+
+    protected match: string;
+    protected dateformat: string;
+    protected groupedData: any[];
 
     protected _modelByKey: any;
     public _modelByValue: any;
@@ -75,7 +79,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(val, undefined, true);
     }
 
-    protected constructor(inj: Injector, WIDGET_CONFIG) {
+    protected constructor(inj: Injector, WIDGET_CONFIG,  @Attribute('groupby') public groupby?: string,
+      private appDefaults?: AppDefaults,
+      public datePipe?: ToDatePipe) {
         super(inj, WIDGET_CONFIG);
 
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
@@ -278,6 +284,24 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     protected setTemplate(partialName) {
         this.content = partialName;
+    }
+
+
+    private getGroupedData() {
+        return this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults) : [];
+    }
+
+    private datasetSubscription() {
+        const datasetSubscription = this.dataset$.subscribe(() => {
+            this.groupedData = this.getGroupedData();
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
+    }
+
+    protected setGroupData() {
+        this.datasetSubscription();
+        // If groupby is set, get the groupedData from the datasetItems.
+        this.groupedData = this.getGroupedData();
     }
 
 

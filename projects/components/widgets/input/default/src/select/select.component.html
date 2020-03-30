@@ -12,8 +12,25 @@
         [attr.name]="name"
         [autofocus]="autofocus"
 >
-  <option selected value="undefined" [textContent]="placeholder" [hidden]="!placeholder" ></option>
-  <option
-          *ngFor="let item of datasetItems"
-          [value]="item.key" [selected]="item.selected" [textContent]="item.label"></option>
+    <option selected
+    value="undefined"
+    [textContent]="placeholder"
+    [hidden]="!placeholder"></option>
+
+    <ng-container *ngIf="groupby">
+        <optgroup *ngFor="let groupObj of groupedData"
+            [label]="groupObj.key">
+            <option *ngFor="let item of groupObj.data;"
+                [value]="item.key"
+                [selected]="item.selected"
+                [textContent]="item.label"></option>
+        </optgroup>
+    </ng-container>
+
+    <ng-container *ngIf="!groupby">
+        <option *ngFor="let item of datasetItems"
+            [value]="item.key"
+            [selected]="item.selected"
+            [textContent]="item.label"></option>
+    </ng-container>
 </select>
