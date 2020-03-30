@@ -187,7 +187,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // function to  clear the input value
     public clearText() {
-        this.$element.find('input').val('');
+        this.query = '';
         this.showClosebtn = false;
     }
 

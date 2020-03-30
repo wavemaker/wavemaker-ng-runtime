@@ -428,7 +428,10 @@ describe('SearchComponent', () => {
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
             wmComponent.clearText();
-            expect(input.value).toBe('');
+            fixture.detectChanges();
+            setTimeout(()=>{
+                expect(input.value).toBe('');
+            });
         });
     }));
 
