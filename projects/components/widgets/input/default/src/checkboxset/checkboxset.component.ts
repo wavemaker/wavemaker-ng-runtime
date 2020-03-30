@@ -1,4 +1,4 @@
-import { Attribute, Component, Injector, OnInit } from '@angular/core';
+import { Attribute, Component, Injector, OnInit} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { AppDefaults, noop, setListClass, switchClass} from '@wm/core';
@@ -40,12 +40,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(
-        inj: Injector,
-        @Attribute('groupby') public groupby: string,
-        private appDefaults: AppDefaults,
-        public datePipe: ToDatePipe
-    ) {
+    constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this.multiple = true;
@@ -89,18 +84,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
             super.handleEvent(node, eventName, callback, locals);
         }
     }
-
-    private getGroupedData() {
-        return this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults) : [];
-    }
-
-    private datasetSubscription() {
-        const datasetSubscription = this.dataset$.subscribe(() => {
-            this.groupedData = this.getGroupedData();
-        });
-        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
-    }
-
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
@@ -113,9 +96,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         if (key === 'itemsperrow') {
             setListClass(this);
         } else if (key === 'groupby' || key === 'match') {
-            this.datasetSubscription();
-            // If groupby is set, get the groupedData from the datasetItems.
-            this.groupedData = this.getGroupedData();
+             this.setGroupData();
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -124,9 +105,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
     ngOnInit() {
         super.ngOnInit();
         if (this.groupby) {
-            this.datasetSubscription();
-            // If groupby is set, get the groupedData from the datasetItems.
-            this.groupedData = this.getGroupedData();
+          this.setGroupData();
         }
         // adding the handler for header click and toggle headers.
         if (this.groupby && this.collapsible) {

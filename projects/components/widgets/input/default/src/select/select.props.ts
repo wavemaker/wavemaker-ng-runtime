@@ -24,7 +24,9 @@ export const selectProps = new Map(
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['usekeys', PROP_BOOLEAN]
+        ['usekeys', PROP_BOOLEAN],
+        ['groupby', PROP_STRING],
+        ['match', PROP_STRING]
     ]
 );
 
