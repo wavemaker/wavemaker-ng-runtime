@@ -161,6 +161,10 @@ export class CrudVariableManager extends ServiceVariableManager {
                 }
             }
         }
+        // merge fields with bindings
+        let bindingFields = _.get(variable.dataBinding, options.operation) || {};
+        _.merge(inputFields, variable.dataBinding.update);
+
         let paginationInfo = this.getPaginationInfo(variable, inputFields, options);
         // if (paginationInfo) {
         //     inputFields[paginationInfo.pageMapping.name] = inputFields[paginationInfo.pageMapping.name] || options.page || 1;
@@ -315,5 +319,69 @@ export class CrudVariableManager extends ServiceVariableManager {
 
     public setInput(variable, key, val, options) {
         return setInput(variable.dataBinding, key, val, options);
+    }
+
+    /**
+     * Initializes the bindings for the CRUD variable
+     * flatten the bindings (categorised by operation name) to a list of bindings
+     * each binding object's target is changed appended with the operation type
+     * E.g. Input binding will be like:
+     {
+       "list": [
+         {
+           "target": "q",
+           "type": "string",
+           "value": "X"
+         }
+       ],
+       "update": [
+         {
+           "target": "id",
+           "value": "bind:Widgets.UserControllerTable2.selecteditem.userId",
+           "type": "integer"
+         }
+       ]
+     }
+
+     * This function will convert it to
+     [
+         {
+           "target": "list.q",
+           "type": "string",
+           "value": "X"
+         },
+         {
+           "target": "update.id",
+           "value": "bind:Widgets.UserControllerTable2.selecteditem.userId",
+           "type": "integer"
+         }
+     ]
+
+     * The bindings will be evaluated through the base-manager initBinding method and will
+     * be stored in variable.dataBinding as follows:
+     {
+        list: {
+            q: "X"
+        },
+        update: {
+            id: "evaluated value"
+        }
+     }
+     * @param variable
+     */
+    public initBinding(variable) {
+        let crudBindInfo = variable.dataBinding || {},
+            flattenedBindInfo = [];
+
+        _.forEach(crudBindInfo, (bindNodes, operationType) => {
+            bindNodes = bindNodes || [];
+            bindNodes.forEach((bindNode)=>{
+                bindNode.target = operationType + '.' + bindNode.target;
+                flattenedBindInfo.push(bindNode);
+            });
+        });
+        variable.dataBinding = flattenedBindInfo;
+
+        super.initBinding(variable);
     }
 }
