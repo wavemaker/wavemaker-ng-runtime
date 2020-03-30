@@ -82,7 +82,16 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
             return;
         } else if (key === 'readonly') {
              (nv === true) ? setAttr(this.selectEl.nativeElement, 'readonly', 'readonly') : removeAttr(this.selectEl.nativeElement, 'readonly') ;
-        } 
+        } else if (key === 'groupby' || key === 'match') {
+           this.setGroupData();
+        }
         super.onPropertyChange(key, nv, ov);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        if (this.groupby) {
+            this.setGroupData();
+        }
     }
 }
