@@ -735,7 +735,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // Backward compatability from 10.3.1 to 10.3.2
         // 10.3.1 we had displaylabel as modal value
         // From 10.3.2 onwords we will be having displayexpresion as modal value
-        if (this.type === 'autocomplete' && this.displaylabel && !this.displayexpression && key === 'displaylabel') {
+        if (this.type === 'autocomplete' && key === 'displaylabel' && this.displaylabel && (!this.displayexpression || (this.displayexpression && !this.datasource)))  {
             this.displayexpression = this.displaylabel;
             this.displaylabel = undefined;
         }
