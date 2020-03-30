@@ -191,6 +191,7 @@ export class NativeXMLHttpREquest {
     }
 
     private prepareOptions(body: any) {
+        body = body || {};
         const options = {
             headers: {},
             data: body,
