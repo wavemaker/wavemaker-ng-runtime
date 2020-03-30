@@ -124,6 +124,15 @@ export class NativeXMLHttpREquest {
     public onerror = null;
     public timeout = 0;
     public withCredentials = false;
+    private progress = {
+        lengthComputable: false,
+        loaded : 0,
+        total: 0,
+        close: (success = false): void => {}
+    };
+    public upload =  {
+        addEventListener : this.addEventListener.bind(this)
+    };
     private _internal = new Internals(this);
 
     public abort() {
@@ -192,6 +201,7 @@ export class NativeXMLHttpREquest {
         if (body != null && body != undefined) {
             if (body.constructor && body.constructor.toString().indexOf('FormData()') >= 0) {
                 options.serializer = 'multipart';
+                this.startProgress();
             } else if(typeof body === 'string') {
                 options.serializer = 'utf8';
             } else {
@@ -202,6 +212,43 @@ export class NativeXMLHttpREquest {
             options.headers[key] = this._internal.requestHeaders[key];
         }
         return options;
+    }
+
+    /*
+     * Native plugin didn't provide any API to track upload progress.
+     * This method generates a synthetic event which does not co-relates with the actual upload progress.
+     */
+    private startProgress(total?) {
+        const _1mb = 1024 * 1024 * 8;
+        total = total || _1mb;
+        const interval = Math.ceil(total / _1mb) * 200;
+        const slice = Math.ceil(total / _1mb) * (_1mb / 10);
+        this.progress = {
+            lengthComputable: true,
+            loaded : 0,
+            total: total,
+            close: null
+        };
+        const triggerEvent = () => {
+            this._internal.triggerListeners(EVENT.PROGRESS, [{
+                lengthComputable: true,
+                total: this.progress.total,
+                loaded: this.progress.loaded
+            }]);
+        };
+        const intervalId = setInterval(() => {
+            if(this.progress.loaded + slice < total) {
+                this.progress.loaded += slice;
+            }
+            triggerEvent();
+        }, interval);
+        this.progress.close = (success = false) => {
+            if (success) {
+                this.progress.loaded = this.progress.total;
+            }
+            triggerEvent();
+            clearInterval(intervalId);
+        };
     }
 
     private sendBlobViaNativePlugin(body: any): void {
@@ -257,10 +304,12 @@ export class NativeXMLHttpREquest {
             cordova.plugin.http.sendRequest(new URL(this._internal.url).href, options, resolve, reject);
         }).then(response => {
             console.log('network call with request %O successed with response : %O', this, response);
+            this.progress.close(true);
             this._internal.copyNativeResponse(response);
             this._internal.triggerListeners(EVENT.LOAD);
             this.onload && this.onload();
         }, response => {
+            this.progress.close();
             this._internal.copyNativeResponse(response);
             console.error('network call with request %O failed with response : %O', this, response);
             this._internal.triggerListeners(EVENT.LOAD, [response]);
