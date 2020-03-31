@@ -21,8 +21,8 @@ export class BaseFieldValidations {
     
     // Instance of the directive table-column, form-field..
     private instance;
-    // Type of form widget
-    private formwidget;
+    // Inline form widget
+    public formwidget;
     // From control
     private widgetControl;
     // Parent widget context Table, Form..
@@ -170,15 +170,15 @@ export class BaseFieldValidations {
 
     // sets the default validation on the form field
     setValidators(validators) {
-        let _setValidators = _.cloneDeep(validators);
+        let _cloneValidators = _.cloneDeep(validators);
         this.hasValidators = true;
         this._syncValidators = [];
-        _.forEach(_setValidators, (obj, index) => {
+        _.forEach(_cloneValidators, (obj, index) => {
             // custom validation is bound to function.
             if (obj && obj instanceof Function) {
                 // passing formfield and form as arguments to the obj (i.e. validator function)
-                _setValidators[index] = obj.bind(undefined, this.widgetControl, this.widgetContext);
-                this._syncValidators.push(_setValidators[index]);
+                _cloneValidators[index] = obj.bind(undefined, this.widgetControl, this.widgetContext);
+                this._syncValidators.push(_cloneValidators[index]);
             } else {
                 // checks for default validator like required, maxchars etc.
                 const key = _.get(obj, 'type');
@@ -186,13 +186,13 @@ export class BaseFieldValidations {
                 if (this.isDefaultValidator(key)) {
                     const value = _.get(obj, 'validator');
                     this.setDefaultValidator(key, value);
-                    _setValidators[index] = '';
+                    _cloneValidators[index] = '';
                 }
             }
         });
 
         // _syncValidators contains all the custom validations on the form field. will not include default validators.
-        this.setValidators = _.filter(_setValidators, val => {
+        this._syncValidators = _.filter(_cloneValidators, val => {
             if (val) {
                 return val;
             }
@@ -242,10 +242,8 @@ export class BaseFieldValidations {
     applyDefaultValidators() {
         const validators = this.getDefaultValidators();
         this.widgetControl.setValidators(_.concat(this._syncValidators || [], validators));
-        if(this.widgetContext.ngform.touched){
-            this.widgetControl.updateValueAndValidity();
-            this.setCustomValidationMessage();
-        }
+        this.widgetControl.updateValueAndValidity();
+        this.setCustomValidationMessage();
     }
 
     setCustomValidationMessage() {
