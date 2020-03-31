@@ -230,7 +230,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.app.notify('wm-event', {eventName, widgetName: this.name, row: row});
     }
 
-    addNewRow() {
+    create() {
         if (this._isDependent) {
             this.triggerWMEvent('insert');
         }
@@ -246,7 +246,27 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
+    update(item?) {
+        if (this._isDependent) {
+            let listItem;
+            if (item) {
+                listItem = this.getItemRefByIndexOrModel(item).item;
+            }
+            this.triggerWMEvent('update', listItem);
+        }
+    }
+
     deleteRow(item?) {
+        if (this._isDependent) {
+            let listItem;
+            if (item) {
+                listItem = this.getItemRefByIndexOrModel(item).item;
+            }
+            this.triggerWMEvent('delete', listItem);
+        }
+    }
+
+    delete(item?) {
         if (this._isDependent) {
             let listItem;
             if (item) {
@@ -1096,9 +1116,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private setUpCUDHandlers() {
         const $addItem = document.getElementsByClassName("add-list-item")[0];
         if ($addItem) {
-            // Triggered on click of edit action
+            // Triggered on click of add action
             $addItem.addEventListener('click', evt => {
-                this.addNewRow();
+                this.create();
             });
         }
     }

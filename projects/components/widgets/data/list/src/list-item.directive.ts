@@ -104,14 +104,14 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         if ($editItem) {
             // Triggered on click of edit action
             $editItem.addEventListener('click', evt => {
-                this.listComponent.editRow();
+                this.listComponent.update();
             });
         }
 
         if ($deleteItem) {
             // Triggered on click of delete action
             $deleteItem.addEventListener('click', evt => {
-                this.listComponent.deleteRow();
+                this.listComponent.delete();
             });
         }
     }
