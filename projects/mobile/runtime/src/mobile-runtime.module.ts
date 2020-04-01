@@ -116,12 +116,6 @@ export class MobileRuntimeModule {
             return;
         }
         this.initialized = true;
-        const unsubscribe = app.subscribe('pageReady', (page) => {
-            if (!isSpotcues) {
-                navigator.splashscreen.hide();
-            }
-            unsubscribe();
-        });
         app.deployedUrl = runtimeModule.getDeployedUrl();
         runtimeModule.getDeviceOS().then(os => {
             app.selectedViewPort = {
@@ -130,6 +124,12 @@ export class MobileRuntimeModule {
             runtimeModule.applyOSTheme(os);
         });
         if (hasCordova()) {
+            const unsubscribe = app.subscribe('pageReady', (page) => {
+                if (!isSpotcues) {
+                    navigator.splashscreen.hide();
+                }
+                unsubscribe();
+            });
             runtimeModule.handleKeyBoardClass();
             deviceService.addStartUpService(cookieService);
             if (!isSpotcues) {
