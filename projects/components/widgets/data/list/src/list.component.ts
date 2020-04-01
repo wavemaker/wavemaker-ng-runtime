@@ -247,13 +247,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     update(item?) {
-        if (this._isDependent) {
-            let listItem;
-            if (item) {
-                listItem = this.getItemRefByIndexOrModel(item).item;
-            }
-            this.triggerWMEvent('update', listItem);
-        }
+        this.editRow(item);
     }
 
     deleteRow(item?) {
@@ -267,13 +261,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     delete(item?) {
-        if (this._isDependent) {
-            let listItem;
-            if (item) {
-                listItem = this.getItemRefByIndexOrModel(item).item;
-            }
-            this.triggerWMEvent('delete', listItem);
-        }
+        this.deleteRow(item);
     }
     handleLoading(data) {
         const dataSource = this.datasource;

@@ -84,7 +84,17 @@ export class LiveActionsDirective {
                 this.errorHandler(options, response.error);
                 return;
             }
-            this.getRecords(options, operation);
+            if (this.subscribedWidget.datasource.category === 'wm.CrudVariable' && operation === 'delete') {
+                this.subscribedWidget.datasource.execute(DataSource.Operation.LIST_RECORDS, {
+                    'skipToggleState': true
+                }).then(response => {
+                    this.successHandler(options, response);
+                }, err => {
+                    this.errorHandler(options, err);
+                });
+            } else {
+                this.getRecords(options, operation);
+            }
             // show delete success toaster
             if (operation === 'delete') {
                 this.app.notifyApp(this.app.appLocale.MESSAGE_DELETE_RECORD_SUCCESS, 'success');
