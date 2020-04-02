@@ -162,8 +162,8 @@ export class CrudVariableManager extends ServiceVariableManager {
             }
         }
         // merge fields with bindings
-        let bindingFields = _.get(variable.dataBinding, options.operation) || {};
-        _.merge(inputFields, variable.dataBinding.update);
+        const bindingFields = _.get(variable.dataBinding, options.operation) || {};
+        _.merge(inputFields, bindingFields);
 
         let paginationInfo = this.getPaginationInfo(variable, inputFields, options);
         // if (paginationInfo) {
