@@ -40,7 +40,7 @@ export class MetadataService {
         const map = this.metadataMap.get(context);
         let ops = [];
         for (let k in map) {
-            if (map[k].crudOperationId === crudId) {
+            if (map[k] && map[k].crudOperationId === crudId) {
                 ops.push(map[k].wmServiceOperationInfo);
                 ops[ops.length - 1].operationType = map[k].operationType;
             }

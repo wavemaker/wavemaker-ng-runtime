@@ -102,7 +102,7 @@ export const VARIABLE_CONSTANTS = {
             NO_CREDENTIALS: 'No credentials present',
             METADATA_MISSING: 'Metadata missing',
             USER_UNAUTHORISED: 'Unauthorized User',
-            CRUD_OPERATION_MISSING: 'This operation is not allowed.',
+            CRUD_OPERATION_MISSING: 'Operation "$operation" not allowed or metadata missing',
             REQUIRED_FIELD_MISSING: 'Required field(s) missing: "${0}"'
         },
         UNCLOAKED_HEADERS: ['CONTENT-TYPE', 'ACCEPT', 'CONTENT-LENGTH', 'ACCEPT-ENCODING', 'ACCEPT-LANGUAGE'],
