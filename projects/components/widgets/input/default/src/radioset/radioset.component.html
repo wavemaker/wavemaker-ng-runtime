@@ -17,7 +17,7 @@
            [title]="item.label">
         <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
                [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
-        <span class="caption" partial-container-target></span>
+        <span class="caption customTemplate" partial-container-target></span>
     </label>
 </li>
 

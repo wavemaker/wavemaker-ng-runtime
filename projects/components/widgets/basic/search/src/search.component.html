@@ -5,7 +5,7 @@
         <span [title]="model.label" [innerHtml]="highlight(match, query) || model.label"></span>
     </a>
     <!-- Custom partial template -->
-    <a *ngIf="content" partial-container-target>
+    <a *ngIf="content" class="customTemplate" partial-container-target>
     </a>
 </ng-template>
 
