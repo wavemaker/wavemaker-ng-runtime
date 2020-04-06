@@ -288,12 +288,9 @@ export class ServiceVariableManager extends BaseVariableManager {
      */
     private getMethodInfo(variable, inputFields, options) {
         const serviceDef = getClonedObject(metadataService.getByOperationId(variable.operationId, variable.getPrefabName()));
-        let methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
+        const methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
         if (!methodInfo) {
             return methodInfo;
-        }
-        if (_.isArray(methodInfo)) {
-            methodInfo = methodInfo[0];
         }
         const securityDefnObj = _.get(methodInfo.securityDefinitions, '0'),
             isOAuthTypeService = securityDefnObj && (securityDefnObj.type === VARIABLE_CONSTANTS.REST_SERVICE.SECURITY_DEFN.OAUTH2);
@@ -523,7 +520,6 @@ export class ServiceVariableManager extends BaseVariableManager {
     public setInput(variable, key, val, options) {
         return setInput(variable.dataBinding, key, val, options);
     }
-
 
     /**
      * Cancels an on going service request
