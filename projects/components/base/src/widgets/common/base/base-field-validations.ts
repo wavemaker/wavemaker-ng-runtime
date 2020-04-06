@@ -23,6 +23,8 @@ export class BaseFieldValidations {
     private instance;
     // Inline form widget
     public formwidget;
+    // Widget type
+    private widgettype;
     // From control
     private widgetControl;
     // Parent widget context Table, Form..
@@ -34,9 +36,10 @@ export class BaseFieldValidations {
     private _syncValidators: any;
     private _asyncValidatorFn: any;
 
-    constructor(instance, formwidget, widgetControl, widgetContext, tableFieldType?){
+    constructor(instance, formwidget, widgettype, widgetControl, widgetContext, tableFieldType?){
         this.instance = instance;
         this.formwidget = formwidget;
+        this.widgettype = widgettype;
         this.widgetControl = widgetControl;
         this.widgetContext = widgetContext;
 
@@ -51,7 +54,7 @@ export class BaseFieldValidations {
         const _validator = [];
         if (this.instance.required && this.instance.show !== false) {
             // For checkbox/toggle widget, required validation should consider true value only
-            if (this.instance.widgettype === FormWidgetType.CHECKBOX || this.instance.widgettype === FormWidgetType.TOGGLE) {
+            if (this.widgettype === FormWidgetType.CHECKBOX || this.widgettype === FormWidgetType.TOGGLE) {
                 _validator.push(Validators.requiredTrue);
             } else {
                 _validator.push(Validators.required);
@@ -63,7 +66,7 @@ export class BaseFieldValidations {
         if (this.instance.minvalue) {
             _validator.push(Validators.min(this.instance.minvalue));
         }
-        if (this.instance.maxvalue && this.instance.widgettype !== FormWidgetType.RATING) {
+        if (this.instance.maxvalue && this.widgettype !== FormWidgetType.RATING) {
             _validator.push(Validators.max(this.instance.maxvalue));
         }
         if (this.instance.regexp) {
@@ -224,10 +227,6 @@ export class BaseFieldValidations {
         }
     }
 
-    boundFn(fn) {
-        return fn();
-    }
-
     // watches for changes in the bound function for default validators.
     watchDefaultValidatorExpr(fn, key) {
         const watchName = `${this.instance.widgetId}_` + key + '_formField';
@@ -257,7 +256,7 @@ export class BaseFieldValidations {
         } else {
             const keys = _.keys(fieldErrors);
             const key = keys[0];
-            const validationMsgKey = _.get(DEFAULT_VALIDATOR, key) || this.instance.formwidget.validateType;
+            const validationMsgKey = _.get(DEFAULT_VALIDATOR, key) || this.formwidget.validateType;
             if (validationMsgKey) {
                 const msg = _.get(this.defaultValidatorMessages, validationMsgKey) || this.instance.validationmessage;
                 if (msg && msg instanceof Function) {

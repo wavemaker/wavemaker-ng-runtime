@@ -190,7 +190,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 .subscribe(status => this.onStatusChange(status, 'inlineInstance'));
             this.registerDestroyListener(() => onStatusChangeSubscription.unsubscribe());
             // Instantiate custom validators class for inline edit form control
-            this.fieldValidations = new BaseFieldValidations(this, this['inlineInstance'], this.getFormControl(), this.table, 'inlineInstance');
+            this.fieldValidations = new BaseFieldValidations(this, this['inlineInstance'], this.editWidgetType, this.getFormControl(), this.table, 'inlineInstance');
         }
 
         // Quick edit new row control status change subscriber
@@ -200,7 +200,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 .subscribe(status => this.onStatusChange(status, 'inlineInstanceNew'));
             this.registerDestroyListener(() => onStatusChangeSubscription_new.unsubscribe());
             // Instantiate custom validators class for Quick edit newrow form control
-            this.fieldValidations_new = new BaseFieldValidations(this, this['inlineInstanceNew'], this.getFormControl('_new'), this.table, 'inlineInstanceNew');
+            this.fieldValidations_new = new BaseFieldValidations(this, this['inlineInstanceNew'], this.editWidgetType, this.getFormControl('_new'), this.table, 'inlineInstanceNew');
         }
     }
 
@@ -344,12 +344,26 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     }
 
     // Get of the active from control
-    get value() {
+    get datavalue() {
+        return this[this.activeControlType] && this[this.activeControlType].datavalue;
+    }
+
+    set datavalue(val) {
         const control = this.getFormControl(this.activeControlType === 'inlineInstanceNew' ? '_new' : undefined);
         if (!control) {
             return;
         }
-        return control.value;
+        if (control && this.editWidgetType !== FormWidgetType.UPLOAD) {
+            control.setValue(val);
+        }
+    }
+
+    get value() {
+        return this.datavalue;
+    }
+
+    set value(val) {
+        this.datavalue = val;
     }
 
     // On field value change, apply cascading filter and set validation message
@@ -511,6 +525,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         if (this._checkNewEditableRowControl()) {
             this.fieldValidations_new.setValidators(this.syncValidators);
         }
+    }
+
+    boundFn(fn) {
+        return fn();
     }
 
     // Shows spinner for async validators based on status
