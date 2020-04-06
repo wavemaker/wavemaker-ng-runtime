@@ -1,6 +1,6 @@
 import { Component, Injector, SecurityContext } from '@angular/core';
 
-import { appendNode, createElement, removeNode } from '@wm/core';
+import { appendNode, createElement, removeNode, transformFileURI } from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
 
 import { registerProps } from './video.props';
@@ -58,6 +58,12 @@ export class VideoComponent extends StylableComponent {
             }, true);
 
             appendNode(track, this.nativeElement.querySelector('video'));
+        } else if (key === 'mp4format') {
+            this.mp4format = transformFileURI(nv);
+        } else if (key === 'webmformat') {
+            this.webmformat = transformFileURI(nv);
+        } else if (key === 'oggformat') {
+            this.oggformat = transformFileURI(nv);
         }
 
         super.onPropertyChange(key, nv, ov);

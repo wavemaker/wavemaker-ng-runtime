@@ -1310,3 +1310,10 @@ export const VALIDATOR = {
     EXCLUDEDATES: 'excludedates',
     EXCLUDEDAYS: 'excludedays'
 };
+
+export const transformFileURI = (url) => {
+    if(url && hasCordova() && isIos() && url.startsWith('file://')) {
+        return url.replace('file://', 'http://' + location.host + '/local-filesystem');
+    }
+    return url;
+};

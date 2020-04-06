@@ -1,11 +1,11 @@
 import { AfterContentInit, AfterViewInit, Attribute, ContentChild, ContentChildren, TemplateRef, Directive, Injector, OnInit, Optional } from '@angular/core';
-import { Validators } from '@angular/forms';
 
 import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
-import { applyFilterOnField, BaseComponent, EDIT_MODE, fetchRelatedFieldData, getDataTableFilterWidget, getDefaultValue, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField, getEditModeWidget, getWatchIdentifier, isDataSetWidget, provideAsWidgetRef, setHeaderConfigForTable } from '@wm/components/base';
+import { applyFilterOnField, BaseFieldValidations, EDIT_MODE, fetchRelatedFieldData, getDataTableFilterWidget, getDefaultValue, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField, getEditModeWidget, getWatchIdentifier, isDataSetWidget, provideAsWidgetRef, setHeaderConfigForTable, BaseComponent } from '@wm/components/base';
 import { registerProps } from './table-column.props';
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
+import { debounceTime } from 'rxjs/operators';
 
 declare const _;
 
@@ -13,7 +13,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataentrymode', 'dataset'];
-const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required'];
+const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required', 'mindate', 'maxdate',
+                            'excludedates', 'excludedays', 'mintime', 'maxtime'];
 inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
 
 class FieldDef {
@@ -59,6 +60,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     private _isInlineEditable;
     private _isNewEditableRow;
 
+    key;
     filterInstance;
     inlineInstance;
     inlineInstanceNew;
@@ -114,10 +116,19 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     isDataSetBound;
     isFilterDataSetBound;
     showPendingSpinner;
+    showPendingSpinnerNew;
+    validationmessage;
+    activeControlType;
     private _dataoptions: any;
     private _datasource: any;
     private _debounceSetUpValidators;
-    private _debounceSetUpValidatorsNew;
+    private notifyForFields: any;
+    private fieldValidations;
+    private fieldValidations_new;
+
+    private syncValidators = [];
+    private asyncValidators = [];
+    private observeOnFields = [];
 
     @ContentChild('filterTmpl') filterTemplateRef: TemplateRef<any>;
 
@@ -131,8 +142,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     ) {
         super(inj, WIDGET_CONFIG);
 
-        this._debounceSetUpValidators = debounce(this.setUpValidators.bind(this, 'inlineInstance'), 250);
-        this._debounceSetUpValidatorsNew = debounce(this.setUpValidators.bind(this, 'inlineInstanceNew'), 250);
+        this._debounceSetUpValidators = debounce(this.setUpValidators.bind(this), 250);
+        this.notifyForFields = [];
     }
 
     get dataoptions() {
@@ -171,6 +182,26 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.setUpControls();
 
         this._propsInitialized = true;
+
+        // Inline control status change subscriber
+        if (this.getFormControl()) {
+            const onStatusChangeSubscription = this.getFormControl().statusChanges
+                .pipe(debounceTime(100))
+                .subscribe(status => this.onStatusChange(status, 'inlineInstance'));
+            this.registerDestroyListener(() => onStatusChangeSubscription.unsubscribe());
+            // Instantiate custom validators class for inline edit form control
+            this.fieldValidations = new BaseFieldValidations(this, this['inlineInstance'], this.getFormControl(), this.table, 'inlineInstance');
+        }
+
+        // Quick edit new row control status change subscriber
+        if (this._checkNewEditableRowControl()) {
+            const onStatusChangeSubscription_new = this.getFormControl('_new').statusChanges
+                .pipe(debounceTime(100))
+                .subscribe(status => this.onStatusChange(status, 'inlineInstanceNew'));
+            this.registerDestroyListener(() => onStatusChangeSubscription_new.unsubscribe());
+            // Instantiate custom validators class for Quick edit newrow form control
+            this.fieldValidations_new = new BaseFieldValidations(this, this['inlineInstanceNew'], this.getFormControl('_new'), this.table, 'inlineInstanceNew');
+        }
     }
 
     ngAfterContentInit() {
@@ -187,6 +218,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             const s2 = this._inlineInstances.changes.subscribe((val) => {
                 // Listen on the inner inline widget and setup the widget
                 this.inlineInstance = val.first && val.first.widget;
+                this.fieldValidations.formwidget = val.first;
                 this.table.registerFormField(this.binding, new FieldDef(this.inlineInstance));
                 this.setUpInlineWidget('inlineInstance');
             });
@@ -196,11 +228,15 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 const s3 = this._inlineInstancesNew.changes.subscribe((val) => {
                     // Listen on the inner inline widget and setup the widget
                     this.inlineInstanceNew = val.first && val.first.widget;
+                    this.fieldValidations_new.formwidget = val.first;
                     this.setUpInlineWidget('inlineInstanceNew');
                 });
                 this.registerDestroyListener(() => s3.unsubscribe());
             }
         }
+        this.registerReadyStateListener(() => {
+            this.key = this.field || this.binding;
+        });
         super.ngAfterContentInit();
     }
 
@@ -209,6 +245,35 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         if (this.filterTemplateRef) {
             this.table.renderDynamicFilterColumn(this.filterTemplateRef);
         }
+    }
+
+    // Apply default|sync|async|prop validators for inline form control
+    applyValidations() {
+        if (!this.getFormControl()) {
+            return;
+        }
+        if (this.syncValidators.length > 0) {
+            this.fieldValidations.setValidators(this.syncValidators);
+        }
+        this.fieldValidations.setUpValidators();
+        if (this.asyncValidators.length > 0) {
+            this.fieldValidations.setAsyncValidators(this.asyncValidators);
+        }
+        if (this.observeOnFields.length > 0) {
+            this.fieldValidations.observeOn(this.observeOnFields, 'columns');
+        }
+    }
+
+    // Remove validators for the inline widget and set for to untouched
+    removeValidations() {
+        this.table.ngform.markAsUntouched();
+        const control = this.getFormControl();
+        if (!control) {
+            return;
+        }
+        control.clearValidators();
+        control.clearAsyncValidators();
+        control.updateValueAndValidity();
     }
 
     addFormControl(suffix?: string) {
@@ -221,6 +286,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         return this.table.ngform.controls[ctrlName];
     }
 
+    private _checkNewEditableRowControl() {
+        return this._isNewEditableRow && this.getFormControl('_new');
+    }
+
     // Setup the inline edit and filter widget
     setUpControls() {
         if (this._isInlineEditable) {
@@ -230,7 +299,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.addFormControl();
             const control = this.getFormControl();
             if (control) {
-                const onValueChangeSubscription =  control.valueChanges.subscribe(this.onValueChange.bind(this));
+                const onValueChangeSubscription =  control.valueChanges
+                    .pipe(debounceTime(200))
+                    .subscribe(value => this.onValueChange(value, 'inlineInstance'));
                 this.registerDestroyListener(() => onValueChangeSubscription.unsubscribe());
             }
 
@@ -238,8 +309,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 this.addFormControl('_new');
                 const newControl = this.getFormControl('_new');
                 if (newControl) {
-                   const onNewValueChangeSubscription =  newControl.valueChanges.subscribe(this.onValueChange.bind(this));
-                   this.registerDestroyListener(() => onNewValueChangeSubscription.unsubscribe());
+                    const onNewValueChangeSubscription =  newControl.valueChanges
+                        .pipe(debounceTime(200))
+                        .subscribe(value => this.onValueChange(value, 'inlineInstanceNew'));
+                    this.registerDestroyListener(() => onNewValueChangeSubscription.unsubscribe());
                 }
             }
         }
@@ -270,12 +343,31 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.table.rowFilter[this.field].value = val;
     }
 
-    // On field value change, apply cascading filter
-    onValueChange(val) {
+    // Get of the active from control
+    get value() {
+        const control = this.getFormControl(this.activeControlType === 'inlineInstanceNew' ? '_new' : undefined);
+        if (!control) {
+            return;
+        }
+        return control.value;
+    }
+
+    // On field value change, apply cascading filter and set validation message
+    onValueChange(val, widget) {
         if (val !== null) {
             applyFilterOnField(this.table.datasource, this.widget, this.table.fieldDefs, val, {
                 widget: 'edit-widget-type'
             });
+        }
+        if(this.table.ngform.touched){
+            this.activeControlType = widget;
+            if (widget === 'inlineInstance') {
+                this.notifyChanges();
+                this.fieldValidations.setCustomValidationMessage();
+            } else if (this._isNewEditableRow) {
+                this.notifyChanges('_new');
+                this.fieldValidations_new.setCustomValidationMessage();
+            }
         }
     }
 
@@ -372,38 +464,58 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         });
     }
 
-    // On change of any validation property, set the angular form validators
-    setUpValidators(widget) {
-        const control = this.getFormControl(widget === 'inlineInstanceNew' ? '_new' : undefined);
-        if (!control) {
-            return;
-        }
-        const validators = [];
-        if (this.required) {
-            // For checkbox/toggle widget, required validation should consider true value only
-            if (this.editWidgetType === FormWidgetType.CHECKBOX || this.editWidgetType === FormWidgetType.TOGGLE) {
-                validators.push(Validators.requiredTrue);
+    // Notifies all the dependent validation controls incase of any changes
+    notifyChanges(quickEdit?) {
+        _.forEach(this.notifyForFields, field => {
+            if (quickEdit && this._isNewEditableRow) {
+                field.fieldValidations_new.validate();
             } else {
-                validators.push(Validators.required);
+                field.fieldValidations.validate();
             }
+        });
+    }
+
+    // Watches control for dependent validation changes
+    observeOn(fields) {
+        this.observeOnFields = _.cloneDeep(fields);
+
+        this.fieldValidations.observeOn(this.observeOnFields, 'columns');
+        if (this._checkNewEditableRowControl()) {
+            this.fieldValidations_new.observeOn(this.observeOnFields, 'columns');
         }
-        if (this.maxchars) {
-            validators.push(Validators.maxLength(this.maxchars));
+    }
+
+    // Sets the default validators quickedit new row using props
+    setUpValidators() {
+        this.fieldValidations.setUpValidators();
+        if (this._checkNewEditableRowControl()) {
+            this.fieldValidations_new.setUpValidators();
         }
-        if (this.minvalue) {
-            validators.push(Validators.min(this.minvalue));
+    }
+    
+    // Sets the Async validators on the quickedit new row form control
+    setAsyncValidators(validators){
+        this.asyncValidators = _.cloneDeep(validators);
+
+        this.fieldValidations.setAsyncValidators(this.asyncValidators);
+        if (this._checkNewEditableRowControl()) {
+            this.fieldValidations_new.setAsyncValidators(this.asyncValidators);
         }
-        if (this.maxvalue) {
-            validators.push(Validators.max(this.maxvalue));
+    }
+
+    // Sets the default/custom validators on the quickedit new row form control
+    setValidators(validators) {
+        this.syncValidators = _.cloneDeep(validators);
+
+        this.fieldValidations.setValidators(this.syncValidators);
+        if (this._checkNewEditableRowControl()) {
+            this.fieldValidations_new.setValidators(this.syncValidators);
         }
-        if (this.regexp) {
-            validators.push(Validators.pattern(this.regexp));
-        }
-        if (this[widget] && _.isFunction(this[widget].validate)) {
-            validators.push(this[widget].validate.bind(this[widget]));
-        }
-        control.setValidators(validators);
-        control.updateValueAndValidity();
+    }
+
+    // Shows spinner for async validators based on status
+    onStatusChange(status, type) {
+        this['showPendingSpinner' + (type == 'inlineInstance' ? '' : 'New')] = (status === 'PENDING');
     }
 
     // Set the props on the inline edit widget
@@ -416,7 +528,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
         if (validationProps.includes(prop)) {
             this._debounceSetUpValidators();
-            this._debounceSetUpValidatorsNew();
         }
     }
 

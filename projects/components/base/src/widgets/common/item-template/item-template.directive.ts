@@ -32,6 +32,7 @@ export class ItemTemplateDirective extends StylableComponent {
     static initializeProps = registerProps();
     public context;
     public content;
+    public partialParams;
     public nativeElement: HTMLElement;
     get $index() {
         return this.context.index;
@@ -47,5 +48,9 @@ export class ItemTemplateDirective extends StylableComponent {
         super(inj, WIDGET_CONFIG);
         this.nativeElement = elRef.nativeElement;
         this.context = (<NgForOfContext<ItemTemplateDirective>>(<any>inj).view.context);
+    }
+    ngOnInit() {
+        super.ngOnInit();
+        this.partialParams.item = this.userComponentParams.dataObject;
     }
 }

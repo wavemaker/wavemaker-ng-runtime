@@ -122,7 +122,7 @@ export class Chart {
     @Input() tooltips: boolean = true;
     /**
      * This property controls where to show the legends.
-     * <p><em>Allowed Values: </em><code>Standard Patterns like 'hide', 'top', 'bottom' </code></p>
+     * <p><em>Allowed Values: </em><code>Standard Patterns like 'hide', 'top', 'bottom', right </code></p>
      */
     @Input() showlegend: string = 'top';
     /**

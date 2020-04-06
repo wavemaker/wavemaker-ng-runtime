@@ -506,8 +506,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                         getValidationMessage: () => {
                             return this.columns[fieldName] && this.columns[fieldName].validationmessage;
                         },
-                        getPendingSpinnerStatus: () => {
-                            return this.columns[fieldName] && this.columns[fieldName].showPendingSpinner;
+                        getPendingSpinnerStatusNew: () => {
+                            return this.columns[fieldName] && this.columns[fieldName].showPendingSpinnerNew;
                         }
                     };
                     const rootNode = this.inlineEditNewViewRef.createEmbeddedView(tmpl, context).rootNodes[0];
@@ -620,6 +620,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.fullFieldDefs.forEach(col => {
                 if (_.isUndefined(col.isDataSetBound)) {
                     triggerFn(col.loadInlineWidgetData && col.loadInlineWidgetData.bind(col));
+                }
+            });
+        },
+        // Function to apply validators to Inline form controls
+        applyValidations: (col) => {
+            triggerFn(col.applyValidations && col.applyValidations.bind(col));
+        },
+        // Function to remove validators and set form state to untouched for inline form control
+        removeValidations: () => {
+            this.fullFieldDefs.forEach(col => {
+                if (!col.readonly && col.binding !== 'rowOperations') {
+                    triggerFn(col.removeValidations && col.removeValidations.bind(col));
                 }
             });
         }

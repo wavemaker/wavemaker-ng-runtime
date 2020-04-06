@@ -148,7 +148,14 @@ export class AppRef {
 
     public notifyApp(template, type, title) {
         const notificationAction = _.get(this, 'Actions.appNotification');
+        const EXCLUDE_NOTIFICATION_MESSAGES = ['PROCESS_REJECTED_IN_QUEUE'];
+        let skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
         if (notificationAction) {
+            // do not notify the error to the app, just throw it in console
+            if (skipDefaultNotification) {
+                console.warn('App Error', template);
+                return;
+            }
             type = type || 'success';
             notificationAction.invoke({
                 message: template,
@@ -158,7 +165,7 @@ export class AppRef {
                 duration: type.toUpperCase() === 'ERROR' ? 0 : undefined
             });
         } else {
-            console.warn('The default Action "appNotification" doesn\'t exist in the app.');
+            console.warn('The default Action "appNotification" doesn\'t exist in the app. App notified following error:\n', template);
         }
     }
 }

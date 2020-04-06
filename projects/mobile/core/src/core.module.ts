@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 
-import { hasCordova } from '@wm/core';
+import { hasCordova, isIos } from '@wm/core';
 
 import { DeviceFileCacheService } from './services/device-file-cache.service';
 import { DeviceFileOpenerService } from './services/device-file-opener.service';
 import { DeviceFileService } from './services/device-file.service';
 import { DeviceService } from './services/device.service';
-import { NetworkService } from './services/network.service';
+import { NetworkService, overrideXHROpen } from './services/network.service';
+import { NativeXMLHttpREquest } from './native.xhr';
+
+declare const cordova;
 
 @NgModule({
     declarations: [],
@@ -43,6 +46,29 @@ export class MobileCoreModule {
         fileOpener: DeviceFileOpenerService,
         networkService: NetworkService
     ) {
-        MobileCoreModule.addStartupServices(deviceService, deviceFileService,  fileCacheService, fileOpener, networkService);
+        MobileCoreModule.addStartupServices(deviceService, deviceFileService, fileCacheService, fileOpener, networkService);
+        if (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) {
+            document.addEventListener("wmDeviceReady", () => {
+                window['XMLHttpRequest'] = NativeXMLHttpREquest;
+                overrideXHROpen(NativeXMLHttpREquest);
+                this.overrideResolveLocalFileSystemURL();
+            }, false);
+        } else {
+            overrideXHROpen(XMLHttpRequest);
+        }
+    }
+
+    private overrideResolveLocalFileSystemURL() {
+        const or = window['resolveLocalFileSystemURL'];
+        window['resolveLocalFileSystemURL'] = (path, onSuccess, onError) => {
+            if (path && path.startsWith('http://localhost')) {
+                path = new URL(path).pathname;
+                const lf = '/local-filesystem';
+                if (path.startsWith(lf)) {
+                    path = 'file://' + path.substring(lf.length);
+                }
+            }
+            or.call(window, path, onSuccess, onError);
+        };
     }
 }

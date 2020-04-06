@@ -3,7 +3,7 @@ import { Directive, DoCheck, Inject, Input, Self } from '@angular/core';
 import { File } from '@ionic-native/file';
 
 import { WidgetRef } from '@wm/components/base';
-import { hasCordova, isSpotcues, noop } from '@wm/core';
+import { hasCordova, isSpotcues, noop, transformFileURI } from '@wm/core';
 import { DeviceFileCacheService } from '@wm/mobile/core';
 
 const DEFAULT_IMAGE =  'resources/images/imagelists/default-image.png';
@@ -16,7 +16,6 @@ export class ImageCacheDirective implements DoCheck {
     private _cacheUrl;
     private _isEnabled = false;
     private _lastUrl = '';
-    private _isHttpScheme = location.href.startsWith('http');
 
     constructor(
         @Self() @Inject(WidgetRef) private componentInstance,
@@ -27,7 +26,7 @@ export class ImageCacheDirective implements DoCheck {
 
     public ngDoCheck() {
         if (this.componentInstance.imgSource) {
-            if (this._isHttpScheme && this.componentInstance.imgSource.startsWith
+            if (isSpotcues && this.componentInstance.imgSource.startsWith
                 && this.componentInstance.imgSource.startsWith('file')
                 && this._lastUrl !== this.componentInstance.imgSource) {
 
@@ -38,12 +37,14 @@ export class ImageCacheDirective implements DoCheck {
                 this.file.readAsDataURL(path, file).then((url) => {
                     this.componentInstance.imgSource = url;
                 });
-            } else if (this._isEnabled && this.componentInstance.imgSource.startsWith('http')) {
+            } else if (this._isEnabled
+                && this.componentInstance.imgSource.startsWith('http')
+                && !this.componentInstance.imgSource.startsWith('http://localhost')) {
                 if (this._lastUrl !== this.componentInstance.imgSource) {
                     this._lastUrl = this.componentInstance.imgSource;
                     this.componentInstance.imgSource = DEFAULT_IMAGE;
                     this.getLocalPath(this._lastUrl).then((localPath) => {
-                        this._cacheUrl = localPath;
+                        this._cacheUrl = transformFileURI(localPath);
                         this.componentInstance.imgSource = this._cacheUrl;
                     });
                 } else if (this._cacheUrl) {

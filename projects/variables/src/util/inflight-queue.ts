@@ -22,7 +22,7 @@ class InflightQueue {
      * @param process
      */
     private rejectProcess(process: any) {
-        process.reject('Process rejected in the queue. Check the "Inflight behavior" for more info.');
+        process.reject('PROCESS_REJECTED_IN_QUEUE');
     }
 
     /**

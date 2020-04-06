@@ -726,7 +726,7 @@ export class LocalDBManagementService {
                     return new Promise((resolve, reject) => {
                         // Cordova File reader has buffer issues with large files.
                         // so, using ajax to retrieve local json
-                        $.getJSON( folder + f['name'], data => resolve(data));
+                        $.getJSON((isIos() ? '/' + META_LOCATION + '/': folder) + f['name'], data => resolve(data));
                     });
                 }))
             );

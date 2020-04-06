@@ -415,11 +415,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private addKeyBoardEventsForDays() {
         const datePickerBody = $('.bs-datepicker-body');
-        if (datePickerBody.length > 0) {
-            datePickerBody[0].addEventListener('mouseenter', (event) => {
-                event.stopPropagation();
-            }, true);
-        }
         datePickerBody.keydown((event) => {
             const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;
@@ -750,7 +745,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return;
         }
         if (key === 'required') {
-            this._onChange();
+            this._onChange(this.datavalue);
             return;
         }
         if (this.useDatapicker && key === 'datepattern') {

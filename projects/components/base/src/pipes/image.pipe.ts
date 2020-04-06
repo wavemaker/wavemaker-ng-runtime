@@ -1,5 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+
+import { transformFileURI } from '@wm/core';
+
 import { getImageUrl } from '../utils/widget-utils';
 
 @Pipe({
@@ -7,6 +10,6 @@ import { getImageUrl } from '../utils/widget-utils';
 })
 export class ImagePipe implements PipeTransform {
     transform(url: string, encode?: boolean, defaultImageUrl?: string) {
-        return getImageUrl(url, encode, defaultImageUrl);
+        return transformFileURI(getImageUrl(url, encode, defaultImageUrl));
     }
 }

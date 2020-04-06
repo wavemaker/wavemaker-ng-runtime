@@ -1,10 +1,10 @@
 import {AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self} from '@angular/core';
-import { FormBuilder, FormGroup, Validators, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes,  VALIDATOR, $unwatch, $watch } from '@wm/core';
-import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes } from '@wm/core';
+import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
 import { registerProps } from './form-field.props';
@@ -21,18 +21,6 @@ const FILE_TYPES = {
     'image' : 'image/*',
     'video' : 'video/*',
     'audio' : 'audio/*'
-};
-
-const DEFAULT_VALIDATOR = {
-    pattern: 'regexp',
-    max: 'maxvalue',
-    min: 'minvalue',
-    required: 'required',
-    maxlength: 'maxchars',
-    mindate: 'mindate',
-    maxdate: 'maxdate',
-    excludedates: 'excludedates',
-    excludedays: 'excludedays'
 };
 
 @Directive({
@@ -91,7 +79,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     maxvalue;
     regexp;
     validationmessage;
-    hasValidators;
 
     public _fieldName;
 
@@ -99,11 +86,9 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _initPropsRes;
     private parentList;
     private showPendingSpinner: boolean;
-    private _syncValidators: any;
-    private _asyncValidatorFn: any;
-    private defaultValidatorMessages: any;
     private _activeField: boolean;
     private notifyForFields: any;
+    private fieldValidations;
 
     constructor(
         inj: Injector,
@@ -130,7 +115,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         super(inj, WIDGET_CONFIG, new Promise(res => this._initPropsRes = res));
 
-        this._validators = [];
         this.class = '';
         this.binddataset = binddataset;
         this.binddisplayexpression = binddisplayexpression;
@@ -142,7 +126,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.excludeProps = new Set(['type', 'name']);
         this.widgettype = _widgetType;
         this.parentList = parentList;
-        this.defaultValidatorMessages = [];
         this.notifyForFields = [];
 
         if (this.binddataset || this.$element.attr('dataset')) {
@@ -203,185 +186,31 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         return (this.value === undefined || this.value === null) ? (_.get(this.form.dataoutput, this._fieldName) || '') : this.value;
     }
 
-    // this method returns the collection of supported default validators
-    private getDefaultValidators() {
-        const _validator = [];
-        if (this.required && this.show !== false) {
-            // For checkbox/toggle widget, required validation should consider true value only
-            if (this.widgettype === FormWidgetType.CHECKBOX || this.widgettype === FormWidgetType.TOGGLE) {
-                _validator.push(Validators.requiredTrue);
-            } else {
-                _validator.push(Validators.required);
-            }
-        }
-        if (this.maxchars) {
-            _validator.push(Validators.maxLength(this.maxchars));
-        }
-        if (this.minvalue) {
-            _validator.push(Validators.min(this.minvalue));
-        }
-        if (this.maxvalue && this.widgettype !== FormWidgetType.RATING) {
-            _validator.push(Validators.max(this.maxvalue));
-        }
-        if (this.regexp) {
-            _validator.push(Validators.pattern(this.regexp));
-        }
-        if (_.isFunction(this.formWidget.validate)) {
-            _validator.push(this.formWidget.validate.bind(this.formWidget));
-        }
-        return _validator;
+    // Notifies changes to observing validation fields
+    notifyChanges() {
+        _.forEach(this.notifyForFields, field => {
+            field.fieldValidations.validate();
+        });
+    }
+
+    // Registers observer of validation fields
+    observeOn(fields) {
+        this.fieldValidations.observeOn(fields, 'formfields');
     }
 
     // Method to setup validators for reactive form control
-    private setUpValidators(customValidator?) {
-        if (this.hasValidators) {
-            return;
-        }
-        this._validators = this.getDefaultValidators();
-
-        if (customValidator) {
-            this._validators.push(customValidator);
-        }
-
-        if (this.ngform) {
-            this._control.setValidators(this._validators);
-            const opt = {};
-            // updating the value only when prevData is not equal to current value.
-            // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
-            if (this.value === this.formWidget.prevDatavalue) {
-                opt['emitEvent'] = false;
-            }
-            this._control.updateValueAndValidity(opt);
-        }
+    setUpValidators(customValidator?) {
+        this.fieldValidations.setUpValidators(customValidator);
     }
 
-    getPromiseList(validators) {
-        const arr = [];
-        _.forEach(validators, (fn, index) => {
-            let promise = fn;
-            if (fn instanceof Function && fn.bind) {
-                promise = fn(this, this.form);
-            }
-            if (promise instanceof Promise) {
-                arr.push(promise);
-            }
-        });
-        return arr;
+    // sets the custom async validation on the form field
+    setAsyncValidators(validators){
+        this.fieldValidations.setAsyncValidators(validators);
     }
 
-    // this method sets the asyncValidation on the form field. Assigns validationmessages from the returned response
-    setAsyncValidators(validators) {
-        this._asyncValidatorFn = () => {
-            return () => {
-                return Promise.all(this.getPromiseList(validators)).then(() => {
-                    this.validationmessage = '';
-                    return null;
-                }, err => {
-                    // if err obj has validationMessage key, then set validationMessage using this value
-                    // else return the value of the first key in the err object as validation message.
-                    if (err.hasOwnProperty('errorMessage')) {
-                        this.validationmessage = _.get(err, 'errorMessage');
-                    } else {
-                        const keys = _.keys(err);
-                        this.validationmessage = (err[keys[0]]).toString();
-                    }
-                    return err;
-                }).then(response => {
-                    // form control status is not changed from pending. This is an angular issue refer https://github.com/angular/angular/issues/13200
-                    const checkForStatusChange = () => {
-                        setTimeout(() => {
-                            if (this._control.status === 'PENDING') {
-                                checkForStatusChange();
-                            } else {
-                                this.onStatusChange(this._control.status);
-                            }
-                        }, 100);
-                    };
-                    checkForStatusChange();
-                    return response;
-                });
-            };
-        };
-
-        this._control.setAsyncValidators([this._asyncValidatorFn()]);
-        this._control.updateValueAndValidity();
-    }
-
-    isDefaultValidator(type) {
-        return _.get(VALIDATOR, _.toUpper(type));
-    }
-
-    // default validator is bound to a function then watch for value changes
-    // otherwise set the value of default validator directly
-    setDefaultValidator(key, value) {
-        if (value && value instanceof Function) {
-            // passing formfield and form as arguments to the default validator function
-            this.watchDefaultValidatorExpr(value.bind(undefined, this, this.form), key);
-        } else {
-            this.widget[key] = value;
-            this[key] = value;
-        }
-    }
-
-    // sets the default validation on the form field
+    // sets the default and custom sync validation on the form field
     setValidators(validators) {
-        this.hasValidators = true;
-        this._syncValidators = [];
-        _.forEach(validators, (obj, index) => {
-            // custom validation is bound to function.
-            if (obj && obj instanceof Function) {
-                // passing formfield and form as arguments to the obj (i.e. validator function)
-                validators[index] = obj.bind(undefined, this, this.form);
-                this._syncValidators.push(validators[index]);
-            } else {
-                // checks for default validator like required, maxchars etc.
-                const key = _.get(obj, 'type');
-                this.defaultValidatorMessages[key] = _.get(obj, 'errorMessage');
-                if (this.isDefaultValidator(key)) {
-                    const value = _.get(obj, 'validator');
-                    this.setDefaultValidator(key, value);
-                    validators[index] = '';
-                }
-            }
-        });
-
-        // _syncValidators contains all the custom validations on the form field. will not include default validators.
-        this._syncValidators = _.filter(validators, val => {
-            if (val) {
-                return val;
-            }
-        });
-        this.applyDefaultValidators();
-    }
-
-    observeOn(fields) {
-        _.forEach(fields, field => {
-           const formfield = _.find(this.form.formfields, {'key': field});
-           if (formfield) {
-               if (!formfield.notifyForFields) {
-                   formfield.notifyForFields = [];
-               }
-               formfield.notifyForFields.push(this);
-           }
-        });
-    }
-
-    notifyChanges() {
-        _.forEach(this.notifyForFields, field => {
-            field.validate();
-        });
-    }
-
-    validate() {
-        this.applyDefaultValidators();
-        if (this._asyncValidatorFn) {
-            this._control.setAsyncValidators([this._asyncValidatorFn()]);
-            this._control.updateValueAndValidity();
-        }
-        // show the validation erros show when form is touched and not on load. This just highlights the field that is subscribed for changes.
-        if (this.form.touched) {
-            this._control.markAsTouched();
-        }
+        this.fieldValidations.setValidators(validators);
     }
 
     // Method to set the properties on inner form widget
@@ -393,24 +222,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     boundFn(fn) {
         return fn();
-    }
-
-    // watches for changes in the bound function for default validators.
-    watchDefaultValidatorExpr(fn, key) {
-        const watchName = `${this.widgetId}_` + key + '_formField';
-        $unwatch(watchName);
-        this.registerDestroyListener($watch('boundFn(fn)', _.extend(this, this.viewParent), {fn}, (nv, ov) => {
-            this.widget[key] = nv;
-            this.applyDefaultValidators();
-        }, watchName));
-    }
-
-    // invokes both custom sync validations and default validations.
-    applyDefaultValidators() {
-        const validators = this.getDefaultValidators();
-        this._control.setValidators(_.concat(this._syncValidators || [], validators));
-        this._control.updateValueAndValidity();
-        this.setCustomValidationMessage();
     }
 
     // Method to set the properties on inner max form widget (when range is selected)
@@ -549,7 +360,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
             if (this.form.touched) {
-                this.setCustomValidationMessage();
+                this.fieldValidations.setCustomValidationMessage();
             }
         }
     }
@@ -573,34 +384,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.validationmessage = val;
             this.setUpValidators(customValidatorFn);
         });
-    }
-
-    // sets the validation message from the control errors.
-    setCustomValidationMessage() {
-        const fieldErrors = this._control.errors;
-
-        if (!fieldErrors) {
-            return;
-        }
-        if (fieldErrors.hasOwnProperty('errorMessage')) {
-            this.validationmessage = _.get(fieldErrors, 'errorMessage');
-        } else {
-            const keys = _.keys(fieldErrors);
-            const key = keys[0];
-            const validationMsgKey = _.get(DEFAULT_VALIDATOR, key) || this.formWidget.validateType;
-            if (validationMsgKey) {
-                const msg = _.get(this.defaultValidatorMessages, validationMsgKey) || this.validationmessage;
-                if (msg && msg instanceof Function) {
-                    // passing formfield and form as arguments to the errorMessage function.
-                    this.validationmessage = msg(this, this.form);
-                } else {
-                    this.validationmessage = msg;
-                }
-            } else {
-                // fallback when there is no validationmessage for fields other than default validators.
-                this.validationmessage = '';
-            }
-        }
     }
 
     setReadOnlyState() {
@@ -677,6 +460,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     ngOnInit() {
         this.ngform = this.form.ngform;
         this.registerFormField();
+        // Instantiate custom validators class for form field
+        this.fieldValidations = new BaseFieldValidations(this, this.formWidget, this._control, this.form);
         super.ngOnInit();
     }
 
