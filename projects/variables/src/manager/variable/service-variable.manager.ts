@@ -459,6 +459,8 @@ export class ServiceVariableManager extends BaseVariableManager {
             this.httpCall(requestParams, variable).then((response) => {
                 successHandler(response, resolve);
             }, err => {
+                const validJSON = getValidJSON(err.error);
+                err.error = isDefined(validJSON) ? validJSON : err.error;
                 errorHandler(err, reject);
             });
             // the _observable property on variable is used store the observable using which the network call is made
