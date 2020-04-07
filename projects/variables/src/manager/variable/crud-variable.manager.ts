@@ -65,15 +65,18 @@ export class CrudVariableManager extends ServiceVariableManager {
 
     private getOperationInfo(variable, options) {
         let serviceDef = getClonedObject(metadataService.getByCrudId(variable.crudOperationId, variable.getPrefabName()));
-        let methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
+        let methodInfo;
         // fallback if there is no operation
         if (options && !options.operation) {
             options.operation = 'list';
         }
+        if (!serviceDef.length) {
+            return;
+        }
         methodInfo = serviceDef.filter(function(item) {
             return options.operation === item.operationType;
         })[0];
-        return methodInfo;
+        return methodInfo ? methodInfo.wmServiceOperationInfo : {invalid: true};
     }
     /**
      * gets the service operation info against a service variable
@@ -85,7 +88,7 @@ export class CrudVariableManager extends ServiceVariableManager {
      */
     private getMethodInfoForCrud(variable, inputFields, options?) {
         const methodInfo = this.getOperationInfo(variable, options);
-        if (!methodInfo) {
+        if (!methodInfo || methodInfo.invalid) {
             return methodInfo;
         }
         const securityDefnObj = _.get(methodInfo.securityDefinitions, '0'),
@@ -149,64 +152,36 @@ export class CrudVariableManager extends ServiceVariableManager {
             inputFields = output;
         }
         const opInfo = this.getOperationInfo(variable, options);
-        if (opInfo) {
-            const bodyName = opInfo.parameters.filter(function(op) {
+        let bodyName;
+        if (opInfo && opInfo.parameters) {
+            bodyName = opInfo.parameters.filter(function(op) {
                 return op.parameterType === 'body';
             })[0];
-            if (options.operation === 'create' || options.operation === 'update') {
-                if (bodyName) {
-                    inputFields[bodyName.name] = getClonedObject(inputFields);
-                } else {
-                    inputFields.RequestBody = getClonedObject(inputFields);
-                }
+        }
+        if (options.operation === 'create' || options.operation === 'update') {
+            if (bodyName) {
+                inputFields[bodyName.name] = getClonedObject(inputFields);
+            } else {
+                inputFields.RequestBody = getClonedObject(inputFields);
             }
         }
         // merge fields with bindings
         const bindingFields = _.get(variable.dataBinding, options.operation) || {};
         _.merge(inputFields, bindingFields);
-
-        let paginationInfo = this.getPaginationInfo(variable, inputFields, options);
-        // if (paginationInfo) {
-        //     inputFields[paginationInfo.pageMapping.name] = inputFields[paginationInfo.pageMapping.name] || options.page || 1;
-        //     inputFields[paginationInfo.sizeMapping.name] = inputFields[paginationInfo.sizeMapping.name] || (variable.pagination && variable.pagination.size) || 5;
-        //     //inputFields[paginationInfo.sortMapping.name] = inputFields[paginationInfo.sortMapping.name] || paginationInfo.defaultSortExpression;
-        //     if (options.orderBy && options.orderBy.split(' ').length > 1) {
-        //         const orderInfo = options.orderBy.split(' ');
-        //         inputFields[paginationInfo.sortMapping.name] = orderInfo[1] === 'asc' ? paginationInfo.ascSortExpression.replace('{{fieldName}}', orderInfo[0]) : paginationInfo.descSortExpression.replace('{{fieldName}}', orderInfo[0]);
-        //         //inputFields[paginationInfo.sortMapping.name] = orderInfo.join(' ');
-        //     }
-        //     variable.paginationTransformationRequired = true;
-        // }
+        let paginationInfo;
         const operationInfo = this.getMethodInfoForCrud(variable, inputFields, options);
-        if (!operationInfo) {
-            const err = {
-                'error' : {
-                    'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING,
-                    'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.CRUD_OPERATION_MISSING.replace('$operation', options.operation),
-                    'field': '_wmServiceOperationInfo'
-                }
-            };
-            const info = this.handleRequestMetaError(err, variable, success, error, options);
-            const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
-            triggerFn(error);
-            return Promise.reject(reason);
-            //debugger;
-            // const info = this.handleRequestMetaError(err, variable, success, error, options);
-            // const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
-            // triggerFn(error);
-            // return Promise.reject(reason);
-        }
         let pathParam, bodyTypeParam;
-        if (!variable.paginationTransformationRequired && operationInfo) {
-            operationInfo.parameters.forEach(function (parameter) {
-                if (parameter.parameterType === 'path') {
-                    pathParam = parameter.name;
-                } else if (parameter.parameterType === 'body') {
-                    //inputFields.RequestBody = getClonedObject(inputFields);
-                    bodyTypeParam = parameter.name;
-                    inputFields[bodyTypeParam] = getClonedObject(inputFields);
-                }
-            });
+        if (!variable.paginationTransformationRequired && operationInfo && !operationInfo.invalid) {
+            if (operationInfo.parameters) {
+                operationInfo.parameters.forEach(function (parameter) {
+                    if (parameter.parameterType === 'path') {
+                        pathParam = parameter.name;
+                    } else if (parameter.parameterType === 'body') {
+                        bodyTypeParam = parameter.name;
+                        inputFields[bodyTypeParam] = getClonedObject(inputFields);
+                    }
+                });
+            }
             for (const key in inputFields) {
                 if (key !== bodyTypeParam) {
                     delete inputFields[key];
@@ -215,13 +190,17 @@ export class CrudVariableManager extends ServiceVariableManager {
             if (pathParam && inputFields[bodyTypeParam]) {
                 inputFields[pathParam] = getClonedObject(inputFields[bodyTypeParam][pathParam]);
             }
-        } else {
-            inputFields.totalMapping = paginationInfo && paginationInfo.totalMapping;
         }
+        // else {
+        //     inputFields.totalMapping = paginationInfo && paginationInfo.totalMapping;
+        // }
         const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
         inputFields.sortInfo = options.orderBy;
         // check errors
         if (requestParams.error) {
+            if (requestParams.error.type === VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING) {
+                requestParams.error.message = requestParams.error.message.replace('$operation', options.operation);
+            }
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
             const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
             triggerFn(error);

@@ -136,6 +136,14 @@ export class ServiceVariableUtils {
                     'field': '_wmServiceOperationInfo'
                 }
             };
+        } else if (operationInfo && operationInfo.invalid) {
+            return {
+                'error' : {
+                    'type': VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING,
+                    'message': VARIABLE_CONSTANTS.REST_SERVICE.ERR_MSG.CRUD_OPERATION_MISSING,
+                    'field': '_wmServiceOperationInfo'
+                }
+            };
         }
 
         const directPath = operationInfo.directPath || '',
