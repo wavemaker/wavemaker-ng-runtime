@@ -461,7 +461,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.ngform = this.form.ngform;
         this.registerFormField();
         // Instantiate custom validators class for form field
-        this.fieldValidations = new BaseFieldValidations(this, this.formWidget, this._control, this.form);
+        this.fieldValidations = new BaseFieldValidations(this, this.formWidget, this.widgettype, this._control, this.form);
         super.ngOnInit();
     }
 
