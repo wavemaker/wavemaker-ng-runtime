@@ -624,14 +624,22 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             });
         },
         // Function to apply validators to Inline form controls
-        applyValidations: (col) => {
-            triggerFn(col.applyValidations && col.applyValidations.bind(col));
+        applyValidations: (col, alwaysNewRow) => {
+            if (alwaysNewRow) {
+                triggerFn(col.applyNewRowValidations && col.applyNewRowValidations.bind(col));
+            } else {
+                triggerFn(col.applyValidations && col.applyValidations.bind(col));
+            }
         },
         // Function to remove validators and set form state to untouched for inline form control
-        removeValidations: () => {
+        removeValidations: (alwaysNewRow) => {
             this.fullFieldDefs.forEach(col => {
                 if (!col.readonly && col.binding !== 'rowOperations') {
-                    triggerFn(col.removeValidations && col.removeValidations.bind(col));
+                    if (alwaysNewRow) {
+                        triggerFn(col.removeNewRowValidations && col.removeNewRowValidations.bind(col));
+                    } else {
+                        triggerFn(col.removeValidations && col.removeValidations.bind(col));
+                    }
                 }
             });
         }
