@@ -43,10 +43,8 @@ export class LiveFormDirective {
             this.form.isLayoutDialog = formlayout === 'dialog';
         }
         // CUD operations
-        form.edit = this.edit.bind(this);
         form.cancel = this.cancel.bind(this);
         form.reset = this.reset.bind(this);
-        form.new = this.new.bind(this);
         form.delete = this.delete.bind(this);
         form.save = this.save.bind(this);
         form.saveAndNew = this.saveAndNew.bind(this);
@@ -128,22 +126,6 @@ export class LiveFormDirective {
         return href;
     }
 
-    resetFileUploadWidget(field, skipValueSet?) {
-        const $formEle = this.form.$element;
-        $formEle.find('[name="' + field.key + '_formWidget"]').val('');
-        field._control.reset();
-        if (!skipValueSet) {
-            field.href = '';
-            field.value = null;
-        }
-    }
-
-    setDefaultValues() {
-        this.form.formFields.forEach(field => {
-            this.onFieldDefaultValueChange(field, field.defaultvalue);
-        });
-    }
-
     setFormData(dataObj, formFields?) {
         if (!dataObj) {
             return;
@@ -154,7 +136,7 @@ export class LiveFormDirective {
             if (isTimeType(field)) {
                 field.value = getValidTime(value);
             } else if (field.type === DataType.BLOB) {
-                this.resetFileUploadWidget(field, true);
+                this.form.resetFileUploadWidget(field, true);
                 field.href  = this.getBlobURL(dataObj, field.key, value);
                 field.value = _.isString(value) ? '' : value;
             } else {
@@ -318,21 +300,9 @@ export class LiveFormDirective {
         });
     }
 
-    emptyDataModel() {
-        this.form.formFields.forEach(field => {
-            if (isDefined(field)) {
-                if (field.type === DataType.BLOB) {
-                    this.resetFileUploadWidget(field);
-                } else {
-                    field.datavalue = '';
-                }
-            }
-        });
-    }
-
     clearData() {
         this.form.toggleMessage(false);
-        this.emptyDataModel();
+        this.form.emptyDataModel();
     }
 
     setReadonlyFields() {
@@ -341,31 +311,13 @@ export class LiveFormDirective {
         });
     }
 
-    edit() {
-        this.form.resetFormState();
-        this.form.clearMessage();
-
-        this.form.operationType = Live_Operations.UPDATE;
-
-        if (this.form.isSelected) {
-            this.savePrevformFields();
-            this.savePrevDataValues();
-        }
-        this.form.prevDataObject = getClonedObject(this.form.formdata || {});
-
-        this.setReadonlyFields();
-        this.form.isUpdateMode = true;
-
-        $appDigest();
-    }
-
     reset() {
         let prevDataValues;
         this.form.resetFormState();
         prevDataValues = this.getPrevDataValues();
         this.form.formFields.forEach(field => {
             if (field.type === DataType.BLOB) {
-                this.resetFileUploadWidget(field, true);
+                this.form.resetFileUploadWidget(field, true);
                 field.href = this.getBlobURL(prevDataValues, field.key, field.value);
             }
         });
@@ -395,21 +347,7 @@ export class LiveFormDirective {
         $appDigest();
     }
 
-    new() {
-        this.form.resetFormState();
-        this.form.operationType = Live_Operations.INSERT;
-        this.form.clearMessage();
-        if (this.form.isSelected) {
-            this.savePrevformFields();
-        }
-        this.emptyDataModel();
-        setTimeout(() => {
-            this.setDefaultValues();
-            this.savePrevDataValues();
-            this.form.constructDataObject();
-        });
-        this.form.isUpdateMode = true;
-    }
+
 
     delete(callBackFn) {
         this.form.resetFormState();
@@ -489,7 +427,7 @@ export class LiveFormDirective {
 
             if (operationType === Live_Operations.DELETE) {
                 result = requestData.row;
-                this.emptyDataModel();
+                this.form.emptyDataModel();
                 this.form.prevDataValues = [];
                 this.form.isSelected = false;
             } else {

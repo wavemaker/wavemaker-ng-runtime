@@ -1,8 +1,8 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, isDefined, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource } from '@wm/core';
-import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
+import { $appDigest, getClonedObject, getFiles, isDefined, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource, AbstractDialogService, DataType } from '@wm/core';
+import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -124,8 +124,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     name;
     // Live Form Methods
     clearData: Function;
-    edit: Function;
-    new: Function;
     cancel: Function;
     delete: Function;
     save: Function;
@@ -218,6 +216,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         inj: Injector,
         private fb: FormBuilder,
         private app: App,
+        private dialogService: AbstractDialogService,
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private ngZone: NgZone,
         @Optional() public parentList: ListComponent,
@@ -746,6 +745,96 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.clearMessage();
     }
 
+    savePrevformFields() {
+        this.prevformFields = getClonedObject(this.formFields.map(field => {
+            return {
+                'key': field.key,
+                'type': field.type,
+                'widgettype': field.widgettype,
+                'outputformat': field.outputformat,
+                'value': field.value
+            };
+        }));
+    }
+
+    savePrevDataValues() {
+        this.prevDataValues = this.formFields.map((obj) => {
+            return {'key': obj.key, 'value': obj.value};
+        });
+    }
+
+    setReadonlyFields() {
+        this.formFields.forEach(field => {
+            field.setReadOnlyState();
+        });
+    }
+
+    resetFileUploadWidget(field, skipValueSet?) {
+        const $formEle = this.$element;
+        $formEle.find('[name="' + field.key + '_formWidget"]').val('');
+        field._control.reset();
+        if (!skipValueSet) {
+            field.href = '';
+            field.value = null;
+        }
+    }
+
+    emptyDataModel() {
+        this.formFields.forEach(field => {
+            if (isDefined(field)) {
+                if (field.type === DataType.BLOB) {
+                    this.resetFileUploadWidget(field);
+                } else {
+                    field.datavalue = '';
+                }
+            }
+        });
+    }
+
+    setDefaultValues() {
+        this.formFields.forEach(field => {
+            this.onFieldDefaultValueChange(field, field.defaultvalue);
+        });
+    }
+
+    setOperationType(mode) {
+        this.operationType = mode || 'insert';
+    }
+
+    new() {
+        this.resetFormState();
+        this.operationType = Live_Operations.INSERT;
+        this.clearMessage();
+        if (this.isSelected) {
+            this.savePrevformFields();
+        }
+        this.emptyDataModel();
+        setTimeout(() => {
+            this.setDefaultValues();
+            this.savePrevDataValues();
+            this.constructDataObject();
+        });
+        this.isUpdateMode = true;
+    }
+
+    edit() {
+        this.resetFormState();
+        this.clearMessage();
+
+        this.operationType = Live_Operations.UPDATE;
+
+        if (this.isSelected) {
+            this.savePrevformFields();
+            this.savePrevDataValues();
+        }
+        this.prevDataObject = getClonedObject(this.formdata || {});
+
+        this.setReadonlyFields();
+        this.isUpdateMode = true;
+
+        $appDigest();
+    }
+
     submitForm($event) {
         let template;
         const dataSource = this.datasource;
@@ -778,8 +867,20 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             // If on submit is there execute it and if it returns true do service variable invoke else return
             // If its a service variable call setInput and assign form data and invoke the service
             if (dataSource) {
-                performDataOperation(dataSource, getFormData(), {})
+                const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
+                const operationType = this.operationType ? this.operationType : (dataSource.operationType === 'create' ? 'insert' : '');
+                performDataOperation(dataSource, getFormData(), {operationType: operationType})
                     .then((data) => {
+                        if (dataSource.category === 'wm.CrudVariable') {
+                            this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
+                                'skipToggleState': true,
+                                'operation': 'list',
+                                'page': currentPageNum
+                            });
+                            if(this.dialogId) {
+                                this.closeDialog();
+                            }
+                        }
                         return {
                             'result': data,
                             'status': true,
@@ -809,6 +910,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         }
     }
 
+    closeDialog() {
+        this.dialogService.close(this.dialogId);
+    }
+
     // Method to show/hide the panel header or footer based on the buttons
     showButtons(position) {
         return _.some(this.buttonArray, btn => {
@@ -822,6 +927,16 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             // flip the active flag
             this.expanded = !this.expanded;
         }
+    }
+
+    onDataSourceUpdate(response, newForm, updateMode) {
+        if (newForm) {
+            this.new();
+        } else {
+            this.setFormData(response);
+            this.closeDialog();
+        }
+        this.isUpdateMode = isDefined(updateMode) ? updateMode : true;
     }
 
     /**

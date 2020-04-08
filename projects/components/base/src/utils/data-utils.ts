@@ -57,10 +57,19 @@ export function performDataOperation(dataSource, requestData, options): Promise<
             }
             dataSource.execute(fn, requestData).then(response => onSuccess(response, res, rej), rej);
         } else if (dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
-            dataSource.execute(DataSource.Operation.SET_INPUT, requestData);
-            dataSource.execute(DataSource.Operation.INVOKE, {
-                'skipNotification': true
-            }).then(res, rej);
+            if(dataSource.category === "wm.CrudVariable") {
+                const operation = options.operationType === 'insert' ? 'create' : (options.operationType === 'delete' ? 'delete' : 'update');
+                dataSource.execute(DataSource.Operation.INVOKE, {
+                    'skipNotification': true,
+                    'operation': operation,
+                    'inputFields': requestData
+                }).then(res, rej);
+            } else {
+                dataSource.execute(DataSource.Operation.SET_INPUT, requestData);
+                dataSource.execute(DataSource.Operation.INVOKE, {
+                    'skipNotification': true
+                }).then(res, rej);
+            }
         } else {
             res(requestData);
         }

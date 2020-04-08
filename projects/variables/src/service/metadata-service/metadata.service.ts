@@ -34,4 +34,16 @@ export class MetadataService {
         const map = this.metadataMap.get(context);
         return map && map[operationId];
     }
+
+    getByCrudId(crudId, context) {
+        context = context || this.CONTEXT_APP;
+        const map = this.metadataMap.get(context);
+        let ops = [];
+        for (let k in map) {
+            if (map[k] && map[k].crudOperationId === crudId) {
+                ops.push(map[k]);
+            }
+        }
+        return ops;
+    }
 }

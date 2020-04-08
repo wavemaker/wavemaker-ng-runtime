@@ -1,6 +1,7 @@
 import { ModelVariableManager } from '../manager/variable/model-variable.manager';
 import { ServiceVariableManager } from '../manager/variable/service-variable.manager';
 import { LiveVariableManager } from '../manager/variable/live-variable.manager';
+import { CrudVariableManager } from '../manager/variable/crud-variable.manager';
 import { NavigationActionManager } from '../manager/action/navigation-action.manager';
 import { NotificationActionManager } from '../manager/action/notification-action.manager';
 import { BaseVariableManager } from '../manager/variable/base-variable.manager';
@@ -18,6 +19,7 @@ const managerMap = new Map(),
         'wm.Variable': ModelVariableManager,
         'wm.ServiceVariable': ServiceVariableManager,
         'wm.LiveVariable': LiveVariableManager,
+        'wm.CrudVariable': CrudVariableManager,
         'wm.NavigationVariable': NavigationActionManager,
         'wm.NotificationVariable': NotificationActionManager,
         'wm.LoginVariable': LoginActionManager,

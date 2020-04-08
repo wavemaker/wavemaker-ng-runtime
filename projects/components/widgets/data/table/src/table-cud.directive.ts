@@ -1,6 +1,6 @@
 import { Directive, Inject, Self } from '@angular/core';
 
-import { $appDigest, AbstractDialogService, App, DataSource, extractCurrentItemExpr, triggerFn } from '@wm/core';
+import { $invokeWatchers, $appDigest, AbstractDialogService, App, DataSource, extractCurrentItemExpr, triggerFn } from '@wm/core';
 import { refreshDataSource } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
@@ -150,13 +150,14 @@ export class TableCUDDirective {
         if (!dataSource) {
             return;
         }
+        const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
         const dataObject = {
             row : options.row,
             skipNotification : true,
             period: options.period
         };
 
-        if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
+        if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE) || dataSource.category === 'wm.CrudVariable') {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
                 const extraOptions = this.generatePath(this.table.binddataset);
                 dataSource.execute(DataSource.Operation.ADD_ITEM, {item: options.row, path: extraOptions.path, parentIndex: extraOptions.index});
@@ -165,6 +166,13 @@ export class TableCUDDirective {
             }
             dataSource.execute(DataSource.Operation.INSERT_RECORD, dataObject).then(response => {
                 this.insertSuccessHandler(response, options);
+                if (dataSource.category === 'wm.CrudVariable') {
+                    dataSource.execute(DataSource.Operation.LIST_RECORDS, {
+                        'skipToggleState': true,
+                        'operation': 'list',
+                        'page': currentPageNum
+                    });
+                }
             }, error => {
                 this.table.invokeEventCallback('error', {$event: options.event, $operation: OPERATION.NEW, $data: error});
                 this.table.toggleMessage(true, 'error', this.table.errormessage || error);
@@ -205,6 +213,7 @@ export class TableCUDDirective {
         if (!dataSource) {
             return;
         }
+        const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
         const dataObject = {
             row : options.row,
             prevData : options.prevData,
@@ -212,7 +221,7 @@ export class TableCUDDirective {
             period : options.period
         };
 
-        if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
+        if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE) || dataSource.category === 'wm.CrudVariable') {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
                 const extraOptions = this.generatePath(this.table.binddataset);
                 dataSource.execute(DataSource.Operation.SET_ITEM, {prevItem: options.prevData, item: options.row, path: extraOptions.path, parentIndex: extraOptions.index});
@@ -221,6 +230,13 @@ export class TableCUDDirective {
             }
             dataSource.execute(DataSource.Operation.UPDATE_RECORD, dataObject).then(response => {
                 this.updateSuccessHandler(response, options);
+                if (dataSource.category === 'wm.CrudVariable') {
+                    dataSource.execute(DataSource.Operation.LIST_RECORDS, {
+                        'skipToggleState': true,
+                        'operation': 'list',
+                        'page': currentPageNum
+                    });
+                }
             }, error => {
                 this.table.invokeEventCallback('error', {$event: options.event, $operation: OPERATION.EDIT, $data: error});
                 this.table.toggleMessage(true, 'error', this.table.errormessage || error);
@@ -272,7 +288,8 @@ export class TableCUDDirective {
         if (!dataSource) {
             return;
         }
-        if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
+        const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
+        if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE) || this.table._isDependent || dataSource.category === 'wm.CrudVariable') {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
                 const extraOptions = this.generatePath(this.table.binddataset);
                 dataSource.execute(DataSource.Operation.REMOVE_ITEM, {item: options.row, path: extraOptions.path, parentIndex: extraOptions.index});
@@ -285,6 +302,14 @@ export class TableCUDDirective {
                 period: options.period
             }).then(response => {
                 this.deleteSuccessHandler(response, options.row, options.evt, options.callBack);
+                if (dataSource.category === 'wm.CrudVariable') {
+                    //this.triggerWMEvent('rerender', dataSource);
+                    dataSource.execute(DataSource.Operation.LIST_RECORDS, {
+                        'skipToggleState': true,
+                        'operation': 'list',
+                        'page': currentPageNum
+                    });
+                }
             }, error => {
                 triggerFn(options.callBack, undefined, true);
                 this.table.invokeEventCallback('error', {$event: options.evt, $operation: OPERATION.DELETE, $data: error});
@@ -328,6 +353,10 @@ export class TableCUDDirective {
 
     editRow(evt?) {
         let row;
+        if (this.table._isDependent) {
+            this.triggerWMEvent('update');
+            return;
+        }
         if (evt && evt.target) {
             this.table.callDataGridMethod('toggleEditRow', evt, {'selectRow': true, action: 'edit'});
         } else {
@@ -352,8 +381,16 @@ export class TableCUDDirective {
             this.table.callDataGridMethod('addNewRow');
             if (this.table._liveTableParent) {
                 this.table._liveTableParent.addNewRow();
+            } else if (this.table._isDependent) {
+                this.triggerWMEvent('insert');
+                //this.table.callDataGridMethod('addNewRow');
             }
         }
+    }
+
+    private triggerWMEvent(eventName, dataSource?) {
+        $invokeWatchers(true);
+        this.app.notify('wm-event', {eventName, widgetName: this.table.name, row: this.table.selecteditem, dataSource: dataSource});
     }
 
     deleteRow(evt) {

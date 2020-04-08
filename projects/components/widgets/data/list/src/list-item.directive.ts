@@ -97,13 +97,6 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         }
     }
 
-    private triggerWMEvent(eventName) {
-        $invokeWatchers(true);
-        // If we have multiselect for the livelist(List with form template), in run mode deleting a record is getting failed. Becuase the selecteditem will be array of objects. So consider the last object.
-        const row = this.listComponent.multiselect ? _.last(this.listComponent.selecteditem) : this.listComponent.selecteditem;
-        this.app.notify('wm-event', {eventName, widgetName: this.listComponent.name, row: row});
-    }
-
     private setUpCUDHandlers() {
         const $editItem = this.nativeElement.querySelector('.edit-list-item');
         const $deleteItem = this.nativeElement.querySelector('.delete-list-item');
@@ -111,19 +104,17 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         if ($editItem) {
             // Triggered on click of edit action
             $editItem.addEventListener('click', evt => {
-                this.triggerWMEvent('update');
+                this.listComponent.update();
             });
         }
 
         if ($deleteItem) {
             // Triggered on click of delete action
             $deleteItem.addEventListener('click', evt => {
-                this.triggerWMEvent('delete');
+                this.listComponent.delete();
             });
         }
     }
-
-
     ngOnInit() {
         if (this.listComponent.mouseEnterCB) {
             this.nativeElement.addEventListener('mouseenter', ($event) => {
