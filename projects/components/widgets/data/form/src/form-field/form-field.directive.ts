@@ -63,6 +63,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     viewmodewidget;
     binddataset;
     binddisplayexpression;
+    displayimagesrc: string;
+    binddisplayimagesrc;
     binddisplaylabel;
     form;
     filetype;
@@ -100,13 +102,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('displaylabel.bind') binddisplaylabel: string,
         @Attribute('widgettype') _widgetType,
         @Attribute('name') name,
+        @Attribute('displayimagesrc.bind') binddisplayimagesrc:String,
         @Attribute('key') key,
         @Attribute('is-range') isRange,
         @Attribute('pc-display') pcDisplay,
         @Attribute('mobile-display') mobileDisplay,
         @Self() @Inject(Context) contexts: Array<any>
     ) {
-
         const WIDGET_CONFIG = {
             widgetType: 'wm-form-field',
             hostClass: '',
@@ -117,6 +119,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
         this.class = '';
         this.binddataset = binddataset;
+        this.binddisplayimagesrc = binddisplayimagesrc;
         this.binddisplayexpression = binddisplayexpression;
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
@@ -474,6 +477,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             // setting displayExpressions on the formwidget explicitly as expr was evaluated to "".
             this.setFormWidget('binddisplaylabel', this.binddisplaylabel);
             this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
+            this.setFormWidget('binddisplayimagesrc', this.binddisplayimagesrc);
         }
 
         this.registerReadyStateListener(() => {
