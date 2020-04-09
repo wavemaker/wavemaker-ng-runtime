@@ -65,7 +65,7 @@ const getFilterTemplate = (attrs, pCounter)  => {
                 <i class="app-icon wi wi-clear" aria-hidden="true"></i>
             </button>
          </span>
-        <span class="input-group-addon" dropdown container="body">
+        <span class="input-group-addon" dropdown container="body" (onShown)="${pCounter}.adjustContainer('${fieldName}');">
             <button class="btn-transparent btn app-button" type="button" dropdownToggle><i class="app-icon wi wi-filter-list"></i></button>
             <ul class="matchmode-dropdown dropdown-menu" *dropdownMenu>
                    <li *ngFor="let matchMode of ${pCounter}.matchModeTypesMap['${type}']"
