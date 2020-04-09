@@ -25,7 +25,6 @@ import { AppManagerService, ComponentRefProvider, ComponentType } from '@wm/runt
 export class PageWrapperComponent implements OnInit, OnDestroy {
 
     subscription: Subscription;
-    queryParamSubscription: Subscription;
 
     constructor(
         private injector: Injector,
@@ -109,13 +108,6 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
             this.subscription = this.route.params.subscribe(({pageName}: any) => {
                this.loadPage(pageName);
             });
-            this.queryParamSubscription = this.route.queryParams.subscribe(p => {
-                // if we navigate to the same page with new page params only then re-render the page
-                // this.route.params.subscribe will takecare of navigation of new page
-                if (this.app.activePageName === this.route.snapshot.paramMap.get('pageName')) {
-                    this.loadPage(this.app.activePageName);
-                }
-            });
         }
     }
 
@@ -123,9 +115,6 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.vcRef.clear();
         if (this.subscription) {
             this.subscription.unsubscribe();
-        }
-        if (this.queryParamSubscription) {
-            this.queryParamSubscription.unsubscribe();
         }
     }
 }
