@@ -131,12 +131,15 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow, errorstyle, pCounter?) => {
     const widgetTmpl = getFormWidgetTemplate(widget, innerTmpl, attrs, options);
     const pendingSpinnerStatus = isNewRow ? 'getPendingSpinnerStatusNew' : 'getPendingSpinnerStatus';
     const validationErrorTmpl = getValiationErrorTemplate(errorstyle);
+    /* This element with error message is used to run Automation checks if any error message is present */
+    const errorMsgElementForAutomation = '<span class="sr-only" *ngIf="getValidationMessage()">{{getValidationMessage()}}</span>';
 
     return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage" let-${pendingSpinnerStatus}="${pendingSpinnerStatus}">
                 <div data-col-identifier="${fieldName}" >
                      ${widgetTmpl}
                      ${validationErrorTmpl}
                      <div class="overlay" *ngIf="${pendingSpinnerStatus}()"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>
+                     ${errorMsgElementForAutomation}
                  </div>
             </ng-template>`;
 };
