@@ -6,8 +6,8 @@ import { DeviceFileCacheService } from './services/device-file-cache.service';
 import { DeviceFileOpenerService } from './services/device-file-opener.service';
 import { DeviceFileService } from './services/device-file.service';
 import { DeviceService } from './services/device.service';
-import { NetworkService, overrideXHROpen } from './services/network.service';
-import { NativeXMLHttpREquest } from './native.xhr';
+import { NetworkService } from './services/network.service';
+import { NativeXMLHttpRequest } from './native.xhr';
 
 declare const cordova;
 
@@ -49,12 +49,9 @@ export class MobileCoreModule {
         MobileCoreModule.addStartupServices(deviceService, deviceFileService, fileCacheService, fileOpener, networkService);
         if (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) {
             document.addEventListener("wmDeviceReady", () => {
-                window['XMLHttpRequest'] = NativeXMLHttpREquest;
-                overrideXHROpen(NativeXMLHttpREquest);
+                window['XMLHttpRequest'] = NativeXMLHttpRequest;
                 this.overrideResolveLocalFileSystemURL();
             }, false);
-        } else {
-            overrideXHROpen(XMLHttpRequest);
         }
     }
 

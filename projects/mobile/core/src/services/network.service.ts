@@ -3,9 +3,10 @@ import { HttpClient } from '@angular/common/http';
 
 import { Network } from '@ionic-native/network';
 
-import { App, getAbortableDefer, noop, retryIfFails } from '@wm/core';
+import { App, getAbortableDefer, hasCordova, isIos, noop, retryIfFails } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
+import { NativeXMLHttpRequest } from './../native.xhr';
 
 declare const _, cordova, Connection, navigator;
 
@@ -18,6 +19,8 @@ const AUTO_CONNECT_KEY = 'WM.NetworkService._autoConnect',
         isNetworkAvailable : true,
         isServiceAvailable : true
     };
+
+let XML_HTTP_REQUEST = null;
 
 /**
  * If server is not connected and url does not match the unblock list of regular expressions,
@@ -33,7 +36,8 @@ const blockUrl = url => {
     return block;
 };
 
-export const overrideXHROpen = (clazz) => {
+const getXMLHttpRequestToUse = (() => {
+    const clazz = (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) ? NativeXMLHttpRequest : XMLHttpRequest;
     const orig = clazz.prototype.open;
     // Intercept all XHR calls
     clazz.prototype.open = function (method: string, url: string, async: boolean = true, user?: string, password?: string) {
@@ -45,7 +49,8 @@ export const overrideXHROpen = (clazz) => {
         }
         return orig.apply(this, [method, url, async, user, password]);
     };
-};
+    return clazz;
+});
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService implements IDeviceStartUpService {
@@ -57,6 +62,7 @@ export class NetworkService implements IDeviceStartUpService {
 
     constructor(private httpClient: HttpClient, private app: App, private network: Network) {
         networkState.isConnected = localStorage.getItem(IS_CONNECTED_KEY) === 'true';
+        XML_HTTP_REQUEST = XML_HTTP_REQUEST || getXMLHttpRequestToUse();
     }
 
     /**
@@ -232,6 +238,10 @@ export class NetworkService implements IDeviceStartUpService {
         excludedList.push(new RegExp(urlRegex));
     }
 
+    public getState() {
+        return _.clone(networkState);
+    }
+
     private checkForNetworkStateChange() {
         if (!_.isEqual(this._lastKnownNetworkState, networkState)) {
             this._lastKnownNetworkState = _.clone(networkState);
@@ -283,7 +293,7 @@ export class NetworkService implements IDeviceStartUpService {
      */
     private pingServer(maxTimeout = 60000): Promise<boolean> {
         return new Promise<boolean>(resolve => {
-            const oReq = new XMLHttpRequest();
+            const oReq = new XML_HTTP_REQUEST();
             let baseURL = this.app.deployedUrl;
             if (baseURL && !_.endsWith(baseURL, '/')) {
                 baseURL += '/';

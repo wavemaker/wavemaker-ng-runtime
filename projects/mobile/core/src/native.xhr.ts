@@ -46,9 +46,10 @@ class Internals {
     responseHeaders = {};
     responseHeaderText = '';
     url = '';
+    async = true;
     listeners = {};
 
-    constructor(public nXhr: NativeXMLHttpREquest) {}
+    constructor(public nXhr: NativeXMLHttpRequest) {}
 
     public triggerListeners(eventName: string, data?: any): void {
         const listeners = this.listeners[eventName];
@@ -90,8 +91,10 @@ class Internals {
         this.xhr.onreadystatechange = this.nXhr.onreadystatechange;
         this.xhr.onload = this.nXhr.onload;
         this.xhr.onerror = this.nXhr.onerror;
-        this.xhr.ontimeout = this.nXhr.ontimeout;
-        this.xhr.timeout = this.nXhr.timeout;
+        if (!this.async) {
+            this.xhr.ontimeout = this.nXhr.ontimeout;
+            this.xhr.timeout = this.nXhr.timeout;
+        }
         this.xhr.withCredentials = this.nXhr.withCredentials;
         for (let k in this.listeners) {
             this.xhr.addEventListener(k, e => {
@@ -109,7 +112,7 @@ class Internals {
     }
 }
 
-export class NativeXMLHttpREquest {
+export class NativeXMLHttpRequest {
     public onreadystatechange = null;
     public readyState = 0;
     public response = null;
@@ -160,13 +163,14 @@ export class NativeXMLHttpREquest {
         this._internal.xhr.overrideMimeType(mime);
     }
 
-    public open(method: string, url: string, async = true, user: string, password: string) {
+    public open(method: string, url: string, async = true, user?: string, password?: string) {
         this._internal.method = method;
         this._internal.url = url;
+        this._internal.async = async;
         this._internal.xhr.open(method, url, async, user, password);
     }
 
-    public send(body: any, useBrowserXHR = false) {
+    public send(body?: any, useBrowserXHR = false) {
         if (useBrowserXHR
             || this._internal.url.startsWith('http://localhost')
             || !this._internal.url.startsWith('http')) {
