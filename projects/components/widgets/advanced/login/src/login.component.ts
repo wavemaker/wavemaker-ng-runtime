@@ -54,7 +54,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
     doLogin() {
         if (this.eventsource) {
-            this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccessCB.bind(this), this.onErrorCB.bind(this));
+            this.formCmp.ngform.valid && this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccessCB.bind(this), this.onErrorCB.bind(this));
         } else {
             console.warn('Default action "loginAction" does not exist. Either create the Action or assign an event to onSubmit of the login widget');
         }
