@@ -121,7 +121,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     activeControlType;
     private _dataoptions: any;
     private _datasource: any;
-    private _debounceSetUpValidators;
     private notifyForFields: any;
     private fieldValidations;
     private fieldValidations_new;
@@ -142,7 +141,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     ) {
         super(inj, WIDGET_CONFIG);
 
-        this._debounceSetUpValidators = debounce(this.setUpValidators.bind(this), 250);
         this.notifyForFields = [];
     }
 
@@ -264,13 +262,42 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
     }
 
-    // Remove validators for the inline widget and set for to untouched
+    // Remove validators for the inline widget and set form to untouched
     removeValidations() {
         this.table.ngform.markAsUntouched();
         const control = this.getFormControl();
         if (!control) {
             return;
         }
+        control.clearValidators();
+        control.clearAsyncValidators();
+        control.updateValueAndValidity();
+    }
+
+    // Apply default|sync|async|prop validators for QuickEdit new row form control
+    applyNewRowValidations() {
+        if (!this._checkNewEditableRowControl()) {
+            return;
+        }
+        if (this.syncValidators.length > 0) {
+            this.fieldValidations_new.setValidators(this.syncValidators);
+        }
+        this.fieldValidations_new.setUpValidators();
+        if (this.asyncValidators.length > 0) {
+            this.fieldValidations_new.setAsyncValidators(this.asyncValidators);
+        }
+        if (this.observeOnFields.length > 0) {
+            this.fieldValidations_new.observeOn(this.observeOnFields, 'columns');
+        }
+    }
+
+    // Remove validators for the QuickEdit new row widget and set form to untouched
+    removeNewRowValidations() {
+        this.table.ngform.markAsUntouched();
+        if (!this._checkNewEditableRowControl()) {
+            return;
+        }
+        const control = this.getFormControl('_new');
         control.clearValidators();
         control.clearAsyncValidators();
         control.updateValueAndValidity();
@@ -492,14 +519,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Watches control for dependent validation changes
     observeOn(fields) {
         this.observeOnFields = _.cloneDeep(fields);
-
-        this.fieldValidations.observeOn(this.observeOnFields, 'columns');
-        if (this._checkNewEditableRowControl()) {
-            this.fieldValidations_new.observeOn(this.observeOnFields, 'columns');
-        }
     }
 
-    // Sets the default validators quickedit new row using props
+    // Sets the default validators inline and quickedit new row using props
     setUpValidators() {
         this.fieldValidations.setUpValidators();
         if (this._checkNewEditableRowControl()) {
@@ -507,17 +529,12 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
     }
     
-    // Sets the Async validators on the quickedit new row form control
+    // Sets the Async validators on the inline and quickedit new row form control
     setAsyncValidators(validators){
         this.asyncValidators = _.cloneDeep(validators);
-
-        this.fieldValidations.setAsyncValidators(this.asyncValidators);
-        if (this._checkNewEditableRowControl()) {
-            this.fieldValidations_new.setAsyncValidators(this.asyncValidators);
-        }
     }
 
-    // Sets the default/custom validators on the quickedit new row form control
+    // Sets the default/custom validators on the inline and quickedit new row form control
     setValidators(validators) {
         this.syncValidators = _.cloneDeep(validators);
 
@@ -543,9 +560,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         }
         if (this[widget] && isDefined(nv)) {
             this[widget][prop] = nv;
-        }
-        if (validationProps.includes(prop)) {
-            this._debounceSetUpValidators();
         }
     }
 
