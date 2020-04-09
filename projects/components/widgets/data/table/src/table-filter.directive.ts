@@ -1,6 +1,6 @@
 import { Directive, Inject, Self } from '@angular/core';
 
-import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType } from '@wm/core';
+import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType, adjustContainerPosition } from '@wm/core';
 import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSource } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
@@ -134,6 +134,13 @@ export class TableFilterSortDirective {
         table.getNavigationTargetBySortInfo = this.getNavigationTargetBySortInfo.bind(this);
         table.refreshData = this.refreshData.bind(this);
         table.clearFilter = this.clearFilter.bind(this);
+        table.adjustContainer =this.adjustContainer.bind(this);
+    }
+
+    adjustContainer(fieldName){
+        setTimeout(()=>{
+            adjustContainerPosition($('bs-dropdown-container'), this.table.rowFilterCompliedTl[fieldName], this.table, $('bs-dropdown-container .dropdown-menu'));
+        });
     }
 
     // Get first or last page based on sort info of primary key
