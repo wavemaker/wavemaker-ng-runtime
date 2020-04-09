@@ -41,28 +41,34 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
         this.isServiceAvailable = <boolean> this.networkService.isAvailable();
         this.isServiceConnected = this.networkService.isConnected();
         this._listenerDestroyer = app.subscribe('onNetworkStateChange', (data) => {
-            const oldState = this.networkState;
-            let autoHide = false;
-            if (data.isConnected) {
-                this.networkState = NetworkState.CONNECTED;
-                autoHide = true;
-            } else if (data.isConnecting) {
-                this.networkState = NetworkState.CONNECTING;
-            } else if (data.isServiceAvailable) {
-                this.networkState = NetworkState.SERVICE_AVAILABLE_BUT_NOT_CONNECTED;
-            } else if (data.isNetworkAvailable && !data.isServiceAvailable) {
-                this.networkState = NetworkState.NETWORK_AVAIABLE_BUT_SERVICE_NOT_AVAILABLE;
-            } else {
-                this.networkState = NetworkState.NETWORK_NOT_AVAIABLE;
-            }
-            this.showMessage = (!(oldState === undefined && data.isConnected)  && oldState !== this.networkState);
-            if (autoHide && this.showMessage) {
-                setTimeout(() => {
-                    this.showMessage = false;
-                    $appDigest();
-                }, 5000);
-            }
+            this.renderMessage(data);
         });
+        this.renderMessage();
+    }
+
+    private renderMessage(data?) {
+        data = data || this.networkService.getState();
+        const oldState = this.networkState;
+        let autoHide = false;
+        if (data.isConnected) {
+            this.networkState = NetworkState.CONNECTED;
+            autoHide = true;
+        } else if (data.isConnecting) {
+            this.networkState = NetworkState.CONNECTING;
+        } else if (data.isServiceAvailable) {
+            this.networkState = NetworkState.SERVICE_AVAILABLE_BUT_NOT_CONNECTED;
+        } else if (data.isNetworkAvailable && !data.isServiceAvailable) {
+            this.networkState = NetworkState.NETWORK_AVAIABLE_BUT_SERVICE_NOT_AVAILABLE;
+        } else {
+            this.networkState = NetworkState.NETWORK_NOT_AVAIABLE;
+        }
+        this.showMessage = (!(oldState === undefined && data.isConnected)  && oldState !== this.networkState);
+        if (autoHide && this.showMessage) {
+            setTimeout(() => {
+                this.showMessage = false;
+                $appDigest();
+            }, 5000);
+        }
     }
 
     public connect() {
