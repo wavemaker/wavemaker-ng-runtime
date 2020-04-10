@@ -4,7 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ScriptLoaderService } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
-import { Subject } from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 
 import {
     AbstractI18nService,
@@ -47,6 +47,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     pageTransitionCompleted = false;
     @ViewChild(PageDirective) pageDirective;
     scriptLoaderService: ScriptLoaderService;
+    queryParamSubscription: Subscription;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -225,10 +226,17 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                 }, 300);
             });
         });
+        this.queryParamSubscription = this.route.queryParams.subscribe(p => {
+            // force route reload whenever params change
+            this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        });
     }
 
     ngOnDestroy(): void {
         this.destroy$.complete();
+        if (this.queryParamSubscription) {
+            this.queryParamSubscription.unsubscribe();
+        }
     }
 
     onReady() {}
