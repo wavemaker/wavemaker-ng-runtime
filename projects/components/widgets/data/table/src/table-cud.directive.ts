@@ -288,6 +288,9 @@ export class TableCUDDirective {
         if (!dataSource) {
             return;
         }
+        if (dataSource.category === 'wm.CrudVariable') {
+            this.triggerWMEvent('resetEditMode');
+        }
         const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE) || this.table._isDependent || dataSource.category === 'wm.CrudVariable') {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {

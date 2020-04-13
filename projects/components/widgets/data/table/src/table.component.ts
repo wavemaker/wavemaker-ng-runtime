@@ -3,12 +3,32 @@ import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from 
 
 import { Observable, Subject } from 'rxjs';
 
-import { $appDigest, $parseEvent, $unwatch, $watch, App, closePopover, DataSource, getClonedObject, getDatasourceFromExpr, getValidJSON, IDGenerator, isDataSourceEqual, isDefined, isMobile, triggerFn, DynamicComponentRefProvider, extendProto } from '@wm/core';
+import {
+    $appDigest,
+    $parseEvent,
+    $unwatch,
+    $watch,
+    App,
+    closePopover,
+    DataSource,
+    getClonedObject,
+    getDatasourceFromExpr,
+    getValidJSON,
+    IDGenerator,
+    isDataSourceEqual,
+    isDefined,
+    isMobile,
+    triggerFn,
+    DynamicComponentRefProvider,
+    extendProto,
+    $invokeWatchers
+} from '@wm/core';
 import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
 import { registerProps } from './table.props';
+import {debounceTime} from "rxjs/operators";
 
 declare const _, $;
 
@@ -735,10 +755,21 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 return;
             }
             this._isDependent = true;
+            this.selectedItemChange$
+                .pipe(debounceTime(250))
+                .subscribe(this.triggerWMEvent.bind(this));
         });
 
         this.deleteoktext = this.appLocale.LABEL_OK;
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
+    }
+
+    private triggerWMEvent(newVal) {
+        if (this.editmode === 'dialog') {
+            return;
+        }
+        $invokeWatchers(true);
+        this.app.notify('wm-event', {eventName: 'selectedItemChange', widgetName: this.name, row: newVal, table: this});
     }
 
     ngAfterContentInit() {
