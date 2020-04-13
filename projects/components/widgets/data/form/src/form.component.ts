@@ -1,7 +1,22 @@
 import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
-import { $appDigest, getClonedObject, getFiles, isDefined, removeClass, App, $parseEvent, debounce, DynamicComponentRefProvider, extendProto, DataSource, AbstractDialogService, DataType } from '@wm/core';
+import {
+    $appDigest,
+    getClonedObject,
+    getFiles,
+    isDefined,
+    removeClass,
+    App,
+    $parseEvent,
+    debounce,
+    DynamicComponentRefProvider,
+    extendProto,
+    DataSource,
+    AbstractDialogService,
+    DataType,
+    $invokeWatchers
+} from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
 import { ListComponent } from '@wm/components/data/list';
@@ -835,6 +850,15 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         $appDigest();
     }
 
+    private triggerWMEvent(eventName) {
+        const tableId = this.nativeElement.getAttribute('dependson');
+        if (!tableId) {
+            return;
+        }
+        $invokeWatchers(true);
+        this.app.notify('wm-event', {eventName, widgetName: tableId});
+    }
+
     submitForm($event) {
         let template;
         const dataSource = this.datasource;
@@ -872,6 +896,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 performDataOperation(dataSource, getFormData(), {operationType: operationType})
                     .then((data) => {
                         if (dataSource.category === 'wm.CrudVariable') {
+                            this.triggerWMEvent('resetEditMode');
                             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                                 'skipToggleState': true,
                                 'operation': 'list',
