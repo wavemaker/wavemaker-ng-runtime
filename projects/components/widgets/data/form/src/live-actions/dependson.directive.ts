@@ -15,6 +15,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
     private dependson;
     private isLayoutDialog;
     private form;
+    private editMode;
     private currentOp;
     private currentFormData;
     private formSubscription;
@@ -40,13 +41,24 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
         this.dialogService.open(this.dialogId);
     }
 
-    private onUpdate() {
+    private onUpdate(newValue?, table?, editClicked?) {
+        this.editMode = editClicked || this.editMode ;
         this.form.operationType = Live_Operations.UPDATE;
         this.form.isSelected = true;
-        this.form.setFormData(this.currentFormData);
+        let rowData = this.currentFormData;
+        if (newValue && table) {
+            if (table.multiselect) {
+                rowData = newValue[0];
+            } else {
+                rowData = newValue[newValue.length - 1];
+            }
+        }
+        this.form.setFormData(rowData);
         this.form.edit();
+        if (!this.editMode) {
+            this.form.isUpdateMode = false;
+        }
     }
-
     private onInsert() {
         this.form.operationType = Live_Operations.INSERT;
         this.form.isSelected = true;
@@ -65,7 +77,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
                 if (this.isLayoutDialog) {
                     this.openFormDialog();
                 } else {
-                    this.onUpdate();
+                    this.onUpdate(undefined,undefined, true);
                 }
                 break;
             case Live_Operations.INSERT:
@@ -91,6 +103,13 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
                         });
                 }
                 break;
+            case 'selectedItemChange':
+                if (options.table) {
+                    this.onUpdate(options.row, options.table);
+                }
+                break;
+            case 'resetEditMode':
+                this.editMode = false;
         }
     }
 
@@ -99,7 +118,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
         if (this.form && this.isLayoutDialog) {
             setTimeout(() => {
                 if (this.currentOp === Live_Operations.UPDATE) {
-                    this.onUpdate();
+                    this.onUpdate(undefined, undefined, true);
                 } else if (this.currentOp === Live_Operations.INSERT) {
                     this.onInsert();
                 }
