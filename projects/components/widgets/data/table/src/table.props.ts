@@ -25,7 +25,7 @@ export const registerProps = () => {
                 ['filternullrecords', {value: true, ...PROP_BOOLEAN}],
                 ['forceellipses', {value: true, ...PROP_BOOLEAN}],
                 ['formposition', PROP_STRING],
-                ['gridclass', {value: 'table-bordered table-striped table-hover', ...PROP_STRING}],
+                ['gridclass', {value: 'table-hover', ...PROP_STRING}],
                 ['gridfirstrowselect', PROP_BOOLEAN],
                 ['iconclass', PROP_STRING],
                 ['insertmessage', {value: 'Record added successfully', ...PROP_STRING}],
