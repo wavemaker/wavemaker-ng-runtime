@@ -276,7 +276,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.datasetItems.forEach(item => item.selected = false);
     }
 
-    protected setTemplatePartial(partialName) {
+    protected setTemplate(partialName) {
         this.content = partialName;
     }
 
