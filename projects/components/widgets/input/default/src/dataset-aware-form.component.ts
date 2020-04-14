@@ -264,7 +264,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected postDatasetItemsInit() {
         if (this.datasetItems.length && !this._defaultQueryInvoked) {
             // use the latest of toBeProcessedDatavalue, datavalue
-            const _datavalue = !isDefined(this.toBeProcessedDatavalue) ? this.datavalue : this.toBeProcessedDatavalue;
+            const _datavalue = _.isEmpty(this.toBeProcessedDatavalue) ? this.datavalue : this.toBeProcessedDatavalue;
             this.selectByValue(_datavalue);
         }
         // notify the dataset listeners
