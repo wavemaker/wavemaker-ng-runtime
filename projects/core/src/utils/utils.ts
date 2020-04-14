@@ -1176,21 +1176,29 @@ export const addForIdAttributes = (element: HTMLElement) => {
  * @param ele - Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
  */
 export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) => {
+    const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
+    const viewPortWidth = $(window).width() + window.scrollX;
+    const parentDimesion = parentElem.getBoundingClientRect();
+    const parentRight = parentDimesion.right + window.scrollX;
+    let newLeft;
 
-    ref._ngZone.onStable.subscribe(() => {
+    const zoneRef = ref._ngZone || ref.ngZone;
+
+    zoneRef.onStable.subscribe(() => {
         const containerEleTransformations = new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform);
-        if (containerEleTransformations.m41 < 0) {
-            containerEleTransformations.m41 = 0;
-        }
-        const translatePosition = "translate3d(" + containerEleTransformations.m41 + "px, " + containerEleTransformations.m42 + "px, 0px)";
-        containerElem[0].style.webkitTransform = translatePosition;
-        containerElem[0].style.MozTransform = translatePosition;
-        containerElem[0].style.msTransform = translatePosition;
-        containerElem[0].style.OTransform = translatePosition;
-        containerElem[0].style.transform = translatePosition;
-    });
-
-};
+         if (viewPortWidth - (parentRight + parentDimesion.width) < containerWidth) {
+             newLeft = parentRight - containerWidth; containerEleTransformations.m41 = newLeft;
+         } else if (containerEleTransformations.m41 < 0) {
+             containerEleTransformations.m41 = 0;
+         }
+      const translatePosition = "translate3d(" + containerEleTransformations.m41 + "px, " + containerEleTransformations.m42 + "px, 0px)";
+      containerElem[0].style.webkitTransform = translatePosition;
+      containerElem[0].style.MozTransform = translatePosition;
+      containerElem[0].style.msTransform = translatePosition;
+      containerElem[0].style.OTransform = translatePosition;
+      containerElem[0].style.transform = translatePosition;
+     });
+   };
 
 // close all the popovers.
 export const closePopover = (element) => {

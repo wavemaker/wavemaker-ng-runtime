@@ -213,6 +213,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     onFilterConditionSelect = noop;
     showClearIcon = noop;
     clearRowFilter = noop;
+    adjustContainer = noop;
     getNavigationTargetBySortInfo: Function;
     refreshData: Function;
     clearFilter: Function;
