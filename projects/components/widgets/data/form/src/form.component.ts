@@ -860,19 +860,16 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     submitForm($event) {
-        let template;
+        let template, formData;
         const dataSource = this.datasource;
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
             return;
         }
 
-        const getFormData = () => {
-            return getClonedObject(this.constructDataObject());
-        };
+        formData = getClonedObject(this.constructDataObject());
 
         const getParams = () => {
-            const formData = getFormData();
             return {$event, $formData: formData, $data: formData};
         };
 
@@ -893,7 +890,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             if (dataSource) {
                 const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
                 const operationType = this.operationType ? this.operationType : (dataSource.operationType === 'create' ? 'insert' : '');
-                performDataOperation(dataSource, getFormData(), {operationType: operationType})
+                performDataOperation(dataSource, formData, {operationType: operationType})
                     .then((data) => {
                         if (dataSource.category === 'wm.CrudVariable') {
                             this.triggerWMEvent('resetEditMode');
@@ -902,7 +899,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                                 'operation': 'list',
                                 'page': currentPageNum
                             });
-                            if(this.dialogId) {
+                            if (this.dialogId) {
                                 this.closeDialog();
                             }
                         }
