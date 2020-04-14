@@ -116,6 +116,7 @@ export class DependsonDirective implements AfterContentInit, OnDestroy {
     private onFormRender() {
         // On opening the form in dialog mode, complete the pending operations
         if (this.form && this.isLayoutDialog) {
+            this.form.isLayoutDialog = true;
             setTimeout(() => {
                 if (this.currentOp === Live_Operations.UPDATE) {
                     this.onUpdate(undefined, undefined, true);
