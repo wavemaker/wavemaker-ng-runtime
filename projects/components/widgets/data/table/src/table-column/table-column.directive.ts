@@ -537,11 +537,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     // Sets the default/custom validators on the inline and quickedit new row form control
     setValidators(validators) {
         this.syncValidators = _.cloneDeep(validators);
-
-        this.fieldValidations.setValidators(this.syncValidators);
-        if (this._checkNewEditableRowControl()) {
-            this.fieldValidations_new.setValidators(this.syncValidators);
-        }
     }
 
     boundFn(fn) {
