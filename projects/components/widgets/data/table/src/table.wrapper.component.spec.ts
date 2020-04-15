@@ -380,6 +380,7 @@ const defaultValidators = (
     }]);
 
     if (isNewRow) {
+        formField.applyNewRowValidations();
         // New row
         let formFieldControlNew = formField.getFormControl('_new');
         // Positive case
@@ -442,6 +443,7 @@ const dateValidators = (
             expect(formFieldControl.valid).toBeTruthy();
 
             if (isNewRow) {
+                formField.applyNewRowValidations();
                 // New row
                 let formFieldControlNew = formField.getFormControl('_new');
                 // Positive case
@@ -462,6 +464,7 @@ const customValidatorSync = (isNewRow, wmComponent, fixture) => {
     formField.setValidators([fullNameValidator]);
 
     if (isNewRow) {
+        formField.applyNewRowValidations();
         // New row
         let formFieldControlNew = formField.getFormControl('_new');
         // Positive case
@@ -502,6 +505,7 @@ const defaultAndCustomValidator = (isNewRow, wmComponent, fixture) => {
     }, fullNameValidator]);
     
     if (isNewRow) {
+        formField.applyNewRowValidations();
         // New row
         let formFieldControlNew = formField.getFormControl('_new');
         formFieldControlNew.setValue('');
