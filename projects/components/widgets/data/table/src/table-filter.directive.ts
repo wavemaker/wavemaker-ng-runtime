@@ -1,6 +1,6 @@
 import { Directive, Inject, Self } from '@angular/core';
 
-import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType, adjustContainerPosition } from '@wm/core';
+import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType, adjustContainerRightEdges } from '@wm/core';
 import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSource } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
@@ -139,7 +139,7 @@ export class TableFilterSortDirective {
 
     adjustContainer(fieldName){
         setTimeout(()=>{
-            adjustContainerPosition($('bs-dropdown-container'), this.table.rowFilterCompliedTl[fieldName], this.table, $('bs-dropdown-container .dropdown-menu'));
+            adjustContainerRightEdges($('bs-dropdown-container'), this.table.rowFilterCompliedTl[fieldName], this.table, $('bs-dropdown-container .dropdown-menu'));
         });
     }
 
